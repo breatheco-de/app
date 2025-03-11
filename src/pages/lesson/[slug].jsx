@@ -15,11 +15,14 @@ import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import MktSideRecommendations from '../../common/components/MktSideRecommendations';
 import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
+import useAuth from '../../common/hooks/useAuth';
 import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
 import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
 import RelatedContent from '../../common/components/RelatedContent';
 import MktEventCards from '../../common/components/MktEventCards';
+import AssetsBreadcrumbs from '../../common/components/AssetsBreadcrumbs';
+import { getMarkdownFromCache } from '../../utils/requests';
 
 export const getStaticPaths = async () => {
   const assetList = await import('../../lib/asset-list.json');
@@ -45,8 +48,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
 
   try {
-    let markdown = '';
-    let ipynbHtml = {};
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
     const assetList = await import('../../lib/asset-list.json')
       .then((res) => res.default)
@@ -58,6 +59,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       en: 'en',
     };
 
+    const markdown = await getMarkdownFromCache(slug, lesson);
+
     const isCurrenLang = locale === engPrefix[lesson?.lang] || locale === lesson?.lang;
     if (!['ARTICLE', 'LESSON'].includes(lesson?.asset_type) || !isCurrenLang) {
       return {
@@ -65,7 +68,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       };
     }
 
-    if (!lesson.readme) {
+    if (!lesson || !markdown) {
       return {
         notFound: true,
       };
@@ -76,17 +79,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     const extension = urlPathname ? urlPathname.split('.').pop() : null;
     const translatedExtension = (lesson?.lang === 'us' || lesson?.lang === null) ? '' : `.${lesson?.lang}`;
     const finalPathname = `https://colab.research.google.com/github${pathnameWithoutExtension}${translatedExtension}.${extension}`;
-
-    if (extension !== 'ipynb') {
-      markdown = lesson.readme.decoded;
-    } else {
-      const ipynbIframe = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
-
-      ipynbHtml = {
-        html: lesson.readme.html,
-        iframe: ipynbIframe,
-      };
-    }
 
     const { title, description, translations } = lesson;
     const translationInEnglish = translations?.en || translations?.us;
@@ -154,7 +146,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         },
         translations: translationArray,
         markdown,
-        ipynbHtml,
       },
     };
   } catch (error) {
@@ -165,13 +156,14 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   }
 };
 
-function LessonSlug({ lesson, markdown, ipynbHtml }) {
+function LessonSlug({ lesson, markdown }) {
   const { t } = useTranslation('lesson');
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const { fontColor, borderColor, featuredLight } = useStyle();
+  const { isAuthenticated } = useAuth();
 
   const exensionName = getExtensionName(lesson.readme_url);
-  const isIpynb = exensionName === 'ipynb' || ipynbHtml?.iframe;
+  const isIpynb = exensionName === 'ipynb';
 
   return (
     <>
@@ -183,26 +175,14 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
           />
         </Head>
       )}
-      <GridContainer
-        withContainer
-        maxWidth="1280px"
+      <Box
+        maxWidth="854px"
         height="100%"
-        gridTemplateColumns={{ base: 'repeat(1, 1fr)', md: '0.5fr repeat(12, 1fr) 0.5fr' }}
         margin="3rem auto 0 auto"
-        gridGap="0"
+        padding="0 10px"
       >
-        <Link
-          href="/lessons"
-          color={useColorModeValue('blue.default', 'blue.300')}
-          display="inline-block"
-          letterSpacing="0.05em"
-          fontWeight="700"
-          paddingBottom="10px"
-          width="fit-content"
-        >
-          {`← ${t('backToLessons')}`}
-        </Link>
-      </GridContainer>
+        <AssetsBreadcrumbs />
+      </Box>
       <GridContainer
         maxWidth="1440px"
         margin="28px auto 0 auto"
@@ -232,15 +212,15 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
                   paddingX="0"
                 />
               </Box>
-              <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '0 0 1rem 0', md: '0px' }} position={{ base: '', md: 'block' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
-                {lesson?.readme_url && (
+              <Box display={isIpynb || (isAuthenticated && lesson?.readme_url) ? { base: 'flex', md: 'block' } : 'none'} margin={{ base: '0 0 1rem 0', md: '0px' }} width={{ base: '100%', md: '172px' }} height="auto" background={featuredLight} borderRadius="4px" color={fontColor}>
+                {isAuthenticated && lesson?.readme_url && (
                   <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={`${lesson?.readme_url}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
                     <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
                     {t('common:edit-on-github')}
                   </Link>
                 )}
 
-                {isIpynb && lesson?.collab_url && lesson?.readme_url && (
+                {isAuthenticated && isIpynb && lesson?.collab_url && lesson?.readme_url && (
                   <Box width={{ base: '1px', md: '100%' }} height={{ base: 'auto', md: '1px' }} background={borderColor} />
                 )}
 
@@ -305,7 +285,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
             <MktSideRecommendations technologies={lesson?.technologies} title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
           </Box>
 
-          {isIpynb && markdown === '' && ipynbHtml?.html && (
+          {isIpynb && (
             <Box
               height="100%"
               gridColumn="2 / span 12"
@@ -315,7 +295,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
             >
               <Box width="100%" height="100%">
                 <IpynbHtmlParser
-                  html={ipynbHtml.html}
+                  html={markdown}
                 />
                 {lesson?.slug && (
                   <RelatedContent
@@ -343,7 +323,6 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
 LessonSlug.propTypes = {
   lesson: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   markdown: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-  ipynbHtml: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])).isRequired,
 };
 
 export default LessonSlug;

@@ -21,6 +21,7 @@ import {
   calculateDifferenceDays,
   adjustNumberBeetwenMinMax,
   isValidDate,
+  getBrowserInfo,
 } from '../../../../../utils/index';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
@@ -209,12 +210,12 @@ function Dashboard() {
       }
 
       const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED' || sub.status === 'ERROR');
-      if (expiredCourse) {
+      const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
+      if (expiredCourse && !fullyPaidSub) {
         showToastAndRedirect(currentCohortSlug);
         return;
       }
 
-      const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
       if (fullyPaidSub) {
         setGrantAccess(true);
         return;
@@ -312,6 +313,7 @@ function Dashboard() {
             method: 'native',
             plan_financings: data?.plan_financings?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
             subscriptions: data?.subscriptions?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
+            agent: getBrowserInfo(),
           },
         });
       });
@@ -329,6 +331,7 @@ function Dashboard() {
             dataLayer: {
               current_cohort_id: cohort.id,
               current_cohort_slug: cohort.slug,
+              agent: getBrowserInfo(),
             },
           });
         }
@@ -656,7 +659,7 @@ function Dashboard() {
                 background="blue.default"
                 margin="40px 0 auto 0"
                 title={t('saasCohortcallToAction.title')}
-                href={`#${slugify(lastTaskDoneModuleData.label)}`}
+                href={`#${slugify(lastTaskDoneModuleData.label.us)}`}
                 text={languageFix(lastTaskDoneModuleData.description, lang)}
                 buttonText={t('saasCohortcallToAction.buttonText')}
                 width={{ base: '100%', md: 'fit-content' }}
@@ -748,7 +751,7 @@ function Dashboard() {
                         cohortData={cohortSession}
                         index={index}
                         title={label}
-                        slug={slugify(label)}
+                        slug={slugify(label.us)}
                         searchValue={searchValue}
                         description={description}
                         modules={modules}

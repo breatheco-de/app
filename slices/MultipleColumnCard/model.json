@@ -1,0 +1,77 @@
+{
+  "id": "multiple_column_card",
+  "type": "SharedSlice",
+  "name": "MultipleColumnCard",
+  "description": "MultipleColumnCard",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": { "label": "Title", "placeholder": "" }
+        },
+        "id_key": {
+          "type": "Text",
+          "config": { "label": "Id key", "placeholder": "" }
+        },
+        "font_family_title": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family Title",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"]
+          }
+        },
+        "margin_bottom": {
+          "type": "Text",
+          "config": { "label": "Margin Bottom", "placeholder": "" }
+        },
+        "margin_top": {
+          "type": "Text",
+          "config": { "label": "Margin Top", "placeholder": "" }
+        },
+        "max_width": {
+          "type": "Text",
+          "config": { "label": "Max Width", "placeholder": "" }
+        }
+      },
+      "items": {
+        "column_title": {
+          "type": "Text",
+          "config": { "label": "Column Title", "placeholder": "" }
+        },
+        "column_description": {
+          "type": "Text",
+          "config": { "label": "Column Description", "placeholder": "" }
+        },
+        "font_family_column": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family Column",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"]
+          }
+        },
+        "image": {
+          "type": "Image",
+          "config": { "label": "Image", "constraint": {}, "thumbnails": [] }
+        },
+        "flex_direction": {
+          "type": "Select",
+          "config": {
+            "label": "Flex Direction",
+            "placeholder": "",
+            "options": ["column", "column-reverse"],
+            "default_value": "column"
+          }
+        }
+      }
+    }
+  ]
+}

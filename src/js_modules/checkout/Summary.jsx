@@ -11,7 +11,7 @@ import useStyle from '../../common/hooks/useStyle';
 import useSignup from '../../common/store/actions/signupAction';
 import bc from '../../common/services/breathecode';
 import { reportDatalayer } from '../../utils/requests';
-import { getQueryString, getStorageItem, toCapitalize, unSlugify } from '../../utils';
+import { getQueryString, getStorageItem, toCapitalize, unSlugify, getBrowserInfo } from '../../utils';
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
 import { SILENT_CODE } from '../../lib/types';
 import axiosInstance from '../../axios';
@@ -90,6 +90,7 @@ function Summary() {
       dataLayer: {
         event: 'checkout_summary',
         plan: checkoutData?.plans[0].plan_slug,
+        agent: getBrowserInfo(),
       },
     });
   }, []);
@@ -113,6 +114,7 @@ function Summary() {
         event: 'open_syllabus_module',
         tasks: updatedTasks,
         cohort_id: cohortFound.id,
+        agent: getBrowserInfo(),
       },
     });
     startDay({
@@ -147,7 +149,7 @@ function Summary() {
 
     const timer = setTimeout(() => {
       setReadyToRedirect(true);
-    }, 1000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [sortedAssignments]);
@@ -181,6 +183,7 @@ function Summary() {
       dataLayer: {
         event: 'join_cohort',
         cohort_id: cohort?.id,
+        agent: getBrowserInfo(),
       },
     });
     bc.cohort().join(cohort?.id)

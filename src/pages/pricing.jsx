@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { Box, Flex, Container, Button, Img, Link, Image } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
@@ -8,8 +9,8 @@ import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
 import Faq from '../common/components/Faq';
 import useStyle from '../common/hooks/useStyle';
-import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
+import bc from '../common/services/breathecode';
 import PricingCard from '../common/components/PricingCard';
 import useSignup from '../common/store/actions/signupAction';
 import LoaderScreen from '../common/components/LoaderScreen';
@@ -42,7 +43,7 @@ function PricingView() {
   const { t, lang } = useTranslation('pricing');
   const { getSelfAppliedCoupon } = useSignup();
   const [activeType, setActiveType] = useState('monthly');
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, cohorts } = useAuth();
   const [relatedSubscription, setRelatedSubscription] = useState({});
   const { hexColor, modal } = useStyle();
   const [isFetching, setIsFetching] = useState({
@@ -96,6 +97,7 @@ function PricingView() {
     }
     return [];
   };
+
   const formatPlans = (allPlansList, hideYearlyOption = false) => {
     const freeTierList = allPlansList?.filter((p) => p?.isFreeTier);
     const financingList = allPlansList?.filter((p) => p?.period === 'FINANCING');
@@ -109,6 +111,7 @@ function PricingView() {
       ...initialFinancingOption,
       optionList: payablePlanList,
     };
+    console.log('todos los planes', allPlansList);
     if (freeTierList?.length > 0) {
       return freeTierList.concat(financingData);
     }
@@ -118,6 +121,7 @@ function PricingView() {
     }
     return allPlansList;
   };
+
   const handleFetchPlan = async () => {
     const data = await fetchSuggestedPlan(planSlug, planTranslations);
     const originalPlan = data?.plans?.original_plan || {};
@@ -125,7 +129,7 @@ function PricingView() {
     const allPlanList = [...originalPlan?.plans || [], ...suggestedPlan?.plans || []];
     const existsFreeTier = allPlanList?.some((p) => p?.price === 0);
 
-    await getSelfAppliedCoupon(suggestedPlan.slug);
+    await getSelfAppliedCoupon(suggestedPlan.slug || originalPlan.slug);
 
     const formatedPlanList = allPlanList?.length > 0
       ? insertFeaturedInfo(formatPlans(allPlanList, true))
@@ -168,6 +172,14 @@ function PricingView() {
     enabled: !!planSlug,
     staleTime: Infinity,
   });
+
+  useEffect(() => {
+    const hasActiveBootcamp = cohorts.some((cohort) => !cohort.available_as_saas
+      && cohort.ending_date && new Date(cohort.ending_date) > new Date()
+      && cohort.cohort_user.educational_status === 'ACTIVE');
+
+    if (hasActiveBootcamp) router.push('/choose-program');
+  }, [cohorts]);
 
   useEffect(() => {
     const mktQueryString = parseQuerys({
@@ -322,7 +334,7 @@ function PricingView() {
                       <Link
                         variant="buttonDefault"
                         borderRadius="3px"
-                        href={`/${lang}/pricing?course=${course?.slug}`}
+                        href={`/${lang}/bootcamp/${course?.slug}`}
                         textAlign="center"
                         width="100%"
                         opacity="0.9"
@@ -403,6 +415,7 @@ function PricingView() {
             {paymentOptions?.monthly?.length > 0 && paymentOptions.monthly.map((plan) => (
               <PricingCard
                 key={plan?.plan_id}
+                moneyBack
                 courseData={selectedCourseData}
                 item={plan}
                 isFetching={isFetching.selectedPlan}
@@ -415,6 +428,7 @@ function PricingView() {
             {paymentOptions?.yearly?.length > 0 && paymentOptions.yearly.map((plan) => (
               <PricingCard
                 key={plan?.plan_id}
+                moneyBack
                 courseData={selectedCourseData}
                 isFetching={isFetching.selectedPlan}
                 item={plan}
@@ -426,6 +440,7 @@ function PricingView() {
             {bootcampInfo?.type && (
               <PricingCard
                 item={bootcampInfo}
+                moneyBack={false}
                 width={{ base: '300px', md: '100%' }}
                 display="flex"
               />
@@ -438,27 +453,6 @@ function PricingView() {
           description={t('why-trust-us.description')}
           margin="60px 0 0 0"
         />
-        {/*
-          <Box marginTop="30px" borderRadius="11px" background={hexColor.featuredColor} padding="24px">
-            <Heading marginBottom="10px">{t('learning-code.title')}</Heading>
-            <Heading marginBottom="20px" maxWidth="835px" size="sm">{t('learning-code.description')}</Heading>
-            <Flex gap="10px" alignItems="center" flexDirection={{ base: 'column', sm: 'row' }}>
-              <Button
-                width={{ base: '100%', sm: 'fit-content' }}
-                variant="outline"
-                textTransform="uppercase"
-                color={hexColor.blueDefault}
-                borderColor={hexColor.blueDefault}
-                onClick={() => reportDatalayer({
-                  dataLayer: {
-                    event: 'open_pricing_chat',
-                  } })}
-              >
-                {t('learning-code.chat')}
-              </Button>
-            </Flex>
-          </Box>
-        */}
         <Flex flexDirection={{ base: 'column', sm: 'row' }} marginTop="30px" gap="30px" justifyContent="space-between">
           <Box color="white" width="100%" background="#00041A" padding="15px" borderRadius="10px">
             <Heading margin="20px 0" size="sm">

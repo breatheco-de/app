@@ -1,6 +1,7 @@
+import { useEffect, useState } from 'react';
 import { Avatar, Box, Divider, Flex } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { format } from 'date-fns';
 import Text from '../Text';
@@ -9,11 +10,12 @@ import HeadInfo from './HeadInfo';
 import FeatureIndicator from './FeatureIndicator';
 import { types } from './card-types';
 import useFormatDate from './useFormatDate';
-import { adjustNumberBeetwenMinMax, isValidDate, syncInterval, toCapitalize } from '../../../utils';
+import { adjustNumberBeetwenMinMax, isValidDate, syncInterval, toCapitalize, getBrowserInfo } from '../../../utils';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import Icon from '../Icon';
 import Link from '../NextChakraLink';
 import { reportDatalayer } from '../../../utils/requests';
+import { parseQuerys } from '../../../utils/url';
 import Heading from '../Heading';
 
 const getAssetPath = (asset) => {
@@ -47,6 +49,8 @@ export const getDifficultyColors = (currDifficulty) => {
 
 function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest }) {
   const { t, lang } = useTranslation('live-event');
+  const router = useRouter();
+  const { query } = router;
   const { featuredColor, borderColor, backgroundColor, fontColor } = useStyle();
   const [date, setDate] = useState({});
   const language = data?.lang;
@@ -60,10 +64,11 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
   const isWorkshopStarted = isWorkshop && startedButNotEnded;
   const description = data?.excerpt || data?.description;
   const langConnector = data?.lang === 'us' ? '' : `/${data?.lang}`;
-  const isLesson = getAssetPath(data) === 'lesson';
-  const isExercise = getAssetPath(data) === 'interactive-exercise';
-  const isProject = getAssetPath(data) === 'interactive-coding-tutorial';
-  const isHowTo = getAssetPath(data) === 'how-to';
+  const assetPath = getAssetPath(data);
+  const isLesson = assetPath === 'lesson';
+  const isExercise = assetPath === 'interactive-exercise';
+  const isProject = assetPath === 'interactive-coding-tutorial';
+  const isHowTo = assetPath === 'how-to';
 
   const getFormatedDate = () => {
     const endDate = data?.ended_at || data?.ending_at;
@@ -74,19 +79,19 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
   };
 
   const getLink = () => {
-    if (isLesson) {
-      return `${langConnector}/lesson/${data.slug}`;
-    }
-    if (isExercise) {
-      return `${langConnector}/interactive-exercise/${data.slug}`;
-    }
-    if (isProject) {
-      return `${langConnector}/interactive-coding-tutorial/${data.slug}`;
-    }
-    if (isHowTo) {
-      return `${langConnector}/how-to/${data.slug}`;
+    if (isLesson || isExercise || isProject || isHowTo) {
+      const search = parseQuerys(query);
+      return `${langConnector}/${assetPath}/${data.slug}${search}`;
     }
     return `/${data.slug}`;
+  };
+
+  const workshopActionText = () => {
+    if (date?.ended && data.recording_url) return t('watch-recording');
+    if (date?.ended && !data.recording_url) return t('event-details');
+    if (date?.started && !date?.ended) return t('join-workshop');
+    if (!date?.started && !date?.ended) return t('register-workshop');
+    return '';
   };
 
   useEffect(() => {
@@ -158,6 +163,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
                       asset_title: data?.title,
                       asset_lang: data?.lang,
                       asset_category: data?.category?.slug,
+                      agent: getBrowserInfo(),
                     },
                   });
                 }}
@@ -255,32 +261,24 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
         {isWorkshop ? (
           <>
             <Divider mb={isWorkshop ? '0px' : '16px'} />
-            {date?.ended ? (
-              <Text size="17px" padding="10px 0" lineHeight="normal" textAlign="center" fontWeight={700}>
-                {date?.text}
-              </Text>
-            ) : (
-              <Link
-                href={`${languageConnector}/workshops/${data?.slug}`}
-                color="blue.default"
-                fontSize="17px"
-                fontWeight={700}
-                letterSpacing="0.05em"
-                height="40px"
-                display="flex"
-                alignItems="center"
-                width="fit-content"
-                margin="0 auto"
-                gridGap="10px"
-              >
-                {date?.started
-                  ? t('join-workshop')
-                  : t('register-workshop')}
-                {date?.started && (
-                  <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
-                )}
-              </Link>
-            )}
+            <Link
+              href={`${languageConnector}/workshops/${data?.slug}`}
+              color="blue.default"
+              fontSize="17px"
+              fontWeight={700}
+              letterSpacing="0.05em"
+              height="40px"
+              display="flex"
+              alignItems="center"
+              width="fit-content"
+              margin="0 auto"
+              gridGap="10px"
+            >
+              {workshopActionText()}
+              {date?.started && (
+                <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
+              )}
+            </Link>
           </>
         ) : (
           <>

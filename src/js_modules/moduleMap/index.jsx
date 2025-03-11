@@ -5,7 +5,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { reportDatalayer } from '../../utils/requests';
-import { languageFix } from '../../utils';
+import { languageFix, getBrowserInfo } from '../../utils';
 import Text from '../../common/components/Text';
 import Module from './module';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
@@ -39,6 +39,7 @@ function ModuleMap({
         event: 'open_syllabus_module',
         tasks: updatedTasks,
         cohort_id: cohortId,
+        agent: getBrowserInfo(),
       },
     });
     startDay({

@@ -9,7 +9,9 @@ import Head from 'next/head';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 import Text from '../../common/components/Text';
+import Icon from '../../common/components/Icon';
 import useAuth from '../../common/hooks/useAuth';
+import useStyle from '../../common/hooks/useStyle';
 import FixedBottomCta from '../../js_modules/projects/FixedBottomCta';
 import SimpleTable from '../../js_modules/projects/SimpleTable';
 import TabletWithForm from '../../js_modules/projects/TabletWithForm';
@@ -25,6 +27,8 @@ import RelatedContent from '../../common/components/RelatedContent';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import MktEventCards from '../../common/components/MktEventCards';
 import SupplementaryMaterial from '../../common/components/SupplementaryMaterial';
+import AssetsBreadcrumbs from '../../common/components/AssetsBreadcrumbs';
+import { getMarkdownFromCache } from '../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../lib/asset-list.json');
@@ -73,13 +77,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       };
     }
 
-    if (!result.readme?.decoded) {
+    const markdown = await getMarkdownFromCache(slug, result);
+
+    if (!result || !markdown) {
       return {
         notFound: true,
       };
     }
-
-    const markdown = result.readme.decoded;
 
     const {
       title, description, translations, preview,
@@ -195,6 +199,7 @@ function TableInfo({ t, project, commonTextColor }) {
 function ProjectSlug({ project, markdown }) {
   const { t } = useTranslation('projects');
   const { isAuthenticated } = useAuth();
+  const { fontColor, featuredLight } = useStyle();
   const [isCtaVisible, setIsCtaVisible] = useState(true);
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const { colorMode } = useColorMode();
@@ -239,7 +244,7 @@ function ProjectSlug({ project, markdown }) {
         </Head>
       )}
       <FixedBottomCta
-        isCtaVisible={isCtaVisible && !isAuthenticated}
+        isCtaVisible={isCtaVisible}
         asset={project}
         videoUrl={project.intro_video_url}
         onClick={() => tabletWithFormRef.current?.scrollIntoView()}
@@ -257,18 +262,18 @@ function ProjectSlug({ project, markdown }) {
         // display={{ base: 'block', sm: 'grid' }}
       >
         <Flex display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '2 / span 10', lg: '2 / span 7' }} height="100%" gridGap="26px">
-          <Box flex="1" width="-webkit-fill-available">
-            <Link
-              margin="3rem 0 32px 0"
-              href="/interactive-coding-tutorials"
-              color={useColorModeValue('blue.default', 'blue.300')}
-              display="inline-block"
-              letterSpacing="0.05em"
-              width="fit-content"
-              fontWeight="700"
-            >
-              {`← ${t('projects:backToProjects')}`}
-            </Link>
+          <Box width="-webkit-fill-available">
+            <Box margin="20px 0 10px 0" display={{ base: 'block', md: 'flex' }} justifyContent="space-between" alignItems="center">
+              <AssetsBreadcrumbs />
+              {isAuthenticated && project?.readme_url && (
+                <Box height="fit-content" width="172px" background={featuredLight} borderRadius="4px">
+                  <Link display="flex" target="_blank" rel="noopener noreferrer" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={project.readme_url} textDecoration="none" _hover={{ opacity: 0.7 }} color={fontColor}>
+                    <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+                    {t('common:edit-on-github')}
+                  </Link>
+                </Box>
+              )}
+            </Box>
             {project?.title ? (
               <Heading
                 as="h1"

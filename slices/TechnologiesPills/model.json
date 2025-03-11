@@ -13,10 +13,7 @@
       "primary": {
         "id_key": {
           "type": "Text",
-          "config": {
-            "label": "id",
-            "placeholder": ""
-          }
+          "config": { "label": "id", "placeholder": "" }
         },
         "technologies": {
           "type": "StructuredText",
@@ -29,10 +26,15 @@
         },
         "margin": {
           "type": "Text",
-          "config": {
-            "label": "margin",
-            "placeholder": ""
-          }
+          "config": { "label": "margin", "placeholder": "" }
+        },
+        "background": {
+          "type": "Text",
+          "config": { "label": "background", "placeholder": "" }
+        },
+        "padding_top": {
+          "type": "Text",
+          "config": { "label": "padding top", "placeholder": "" }
         }
       },
       "items": {},

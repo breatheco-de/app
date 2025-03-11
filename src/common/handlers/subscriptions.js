@@ -1,5 +1,5 @@
 import { slugToTitle, unSlugifyCapitalize } from '../../utils';
-import { BASE_PLAN } from '../../utils/variables';
+import { BASE_PLAN, currenciesSymbols } from '../../utils/variables';
 import bc from '../services/breathecode';
 
 export const SUBS_STATUS = {
@@ -104,7 +104,7 @@ export const processPlans = (data, {
         ...relevantInfo,
         title: textInfo.one_payment,
         price: item?.monthly_price,
-        priceText: `$${item?.monthly_price}`,
+        priceText: `${currenciesSymbols[item?.currency?.code] || '$'}${item?.monthly_price}`,
         period: 'ONE_TIME',
         period_label: textInfo.one_payment,
         plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
@@ -130,7 +130,8 @@ export const processPlans = (data, {
         ...relevantInfo,
         title: singlePlan?.title ? singlePlan?.title : textInfo.monthly_payment,
         price: data?.price_per_month,
-        priceText: `$${data?.price_per_month}`,
+        pricePerMonth: data?.price_per_month,
+        priceText: `${currenciesSymbols[singlePlan?.currency?.code] || '$'}${data?.price_per_month}`,
         plan_id: `p-${data?.price_per_month}`,
         description: translations?.yearly_payment_description || '',
         period: 'MONTH',
@@ -142,8 +143,10 @@ export const processPlans = (data, {
         ...relevantInfo,
         title: singlePlan?.title ? singlePlan?.title : textInfo.quarterly_payment,
         price: data?.price_per_quarter,
-        priceText: `$${data?.price_per_quarter}`,
-        plan_id: `p-${data?.price_per_quarter}`,
+        pricePerMonth: data?.price_per_quarter ? (data.price_per_quarter / 4).toFixed(2) : 0,
+        pricePerMonthText: `${currenciesSymbols[data?.currency?.code] || '$'}${data?.price_per_quarter ? (data.price_per_quarter / 4).toFixed(2) : 0}`,
+        priceText: `${currenciesSymbols[data?.currency?.code] || '$'}${data?.price_per_quarter || 0}`,
+        plan_id: `p-${data?.price_per_quarter || 0}`,
         description: translations?.quarterly_payment_description || '',
         period: 'QUARTER',
         period_label: textInfo.label.quarterly,
@@ -155,8 +158,10 @@ export const processPlans = (data, {
         ...relevantInfo,
         title: singlePlan?.title ? singlePlan?.title : textInfo.half_yearly_payment,
         price: data?.price_per_half,
-        priceText: `$${data?.price_per_half}`,
-        plan_id: `p-${data?.price_per_half}`,
+        pricePerMonth: data?.price_per_half ? (data.price_per_half / 6).toFixed(2) : 0,
+        pricePerMonthText: `${currenciesSymbols[data?.currency?.code] || '$'}${data?.price_per_half ? (data.price_per_half / 6).toFixed(2) : 0}`,
+        priceText: `${currenciesSymbols[data?.currency?.code] || '$'}${data?.price_per_half || 0}`,
+        plan_id: `p-${data?.price_per_half || 0}`,
         description: translations?.half_yearly_payment_description || '',
         period: 'HALF',
         period_label: textInfo.label.half_yearly,
@@ -168,8 +173,10 @@ export const processPlans = (data, {
         ...relevantInfo,
         title: singlePlan?.title ? singlePlan?.title : textInfo.yearly_payment,
         price: data?.price_per_year,
-        priceText: `$${data?.price_per_year}`,
-        plan_id: `p-${data?.price_per_year}`,
+        pricePerMonth: data?.price_per_year ? (data.price_per_year / 12).toFixed(2) : 0,
+        pricePerMonthText: `${currenciesSymbols[data?.currency?.code] || '$'}${data?.price_per_year ? (data.price_per_year / 12).toFixed(2) : 0}`,
+        priceText: `${currenciesSymbols[data?.currency?.code] || '$'}${data?.price_per_year || 0}`,
+        plan_id: `p-${data?.price_per_year || 0}`,
         description: translations?.yearly_payment_description || '',
         period: 'YEAR',
         period_label: textInfo.label.yearly,
@@ -178,13 +185,13 @@ export const processPlans = (data, {
 
       const financingOption = financingOptionsExists ? financingOptions.map((item, index) => {
         const financingTitle = translations.many_months_payment(item?.how_many_months);
-        const financingOptionsDescription = translations?.financing_description(item?.monthly_price, item?.how_many_months);
+        const financingOptionsDescription = translations?.financing_description(item?.monthly_price, item?.how_many_months, currenciesSymbols[item?.currency?.code] || '$');
         return ({
           ...relevantInfo,
           financingId: index + 1,
           title: singlePlan?.title ? singlePlan?.title : financingTitle,
           price: item?.monthly_price,
-          priceText: `$${item?.monthly_price} x ${item?.how_many_months}`,
+          priceText: `${currenciesSymbols[item?.currency?.code] || '$'}${item?.monthly_price} x ${item?.how_many_months}`,
           plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
           description: financingOptionsDescription || '',
           period: 'FINANCING',
@@ -194,8 +201,8 @@ export const processPlans = (data, {
         });
       }) : [{}];
 
-      const planList = [trialPlan, onePaymentFinancing[0], monthPlan, quarterPlan, halfPlan, yearPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0 && plan.show);
-      const paymentList = [onePaymentFinancing[0], monthPlan, yearPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
+      const planList = [trialPlan, onePaymentFinancing[0], yearPlan, halfPlan, quarterPlan, monthPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0 && plan.show);
+      const paymentList = [onePaymentFinancing[0], yearPlan, monthPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
       const financingList = financingOption?.filter((plan) => Object.keys(plan).length > 0);
 
       resolve({
@@ -239,7 +246,7 @@ export const generatePlan = async (planSlug, translationsObj) => {
  * @param {Function} t - The translation function
  * @returns {object} - The translations object
  */
-export const getTranslations = (t = () => {}) => {
+export const getTranslations = (t = () => { }) => {
   const translations = {
     one_payment: t('signup:one_payment'),
     free_trial: t('signup:free_trial'),
@@ -271,7 +278,7 @@ export const getTranslations = (t = () => {}) => {
     quarterly_payment_description: t('signup:quarterly_payment_description'),
     half_yearly_payment_description: t('signup:half_yearly_payment_description'),
     yearly_payment_description: t('signup:yearly_payment_description'),
-    financing_description: (price, months) => t('signup:financing_many_months_description', { monthly_price: price, many_months: months }),
+    financing_description: (price, months, currency) => t('signup:financing_many_months_description', { monthly_price: price, many_months: months, currency }),
     monthly: t('signup:info.monthly'),
     quarterly: t('signup:info.quarterly'),
     half_yearly: t('signup:info.half-yearly'),

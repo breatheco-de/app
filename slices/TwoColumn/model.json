@@ -15,6 +15,10 @@
           "type": "Text",
           "config": { "label": "ID Key", "placeholder": "" }
         },
+        "padding": {
+          "type": "Text",
+          "config": { "label": "Padding", "placeholder": "" }
+        },
         "information_size": {
           "type": "Select",
           "config": {
@@ -22,6 +26,29 @@
             "placeholder": "Proportion of sizes",
             "options": ["Small", "Medium", "Large"]
           }
+        },
+        "border_radius": {
+          "type": "Text",
+          "config": { "label": "Border Radius", "placeholder": "" }
+        },
+        "max_width": {
+          "type": "Text",
+          "config": { "label": "Max Width", "placeholder": "" }
+        },
+        "margin": {
+          "type": "Text",
+          "config": {
+            "label": "Margin",
+            "placeholder": "top, right, bottom, left"
+          }
+        },
+        "margin_top": {
+          "type": "Text",
+          "config": { "label": "Margin Top", "placeholder": "" }
+        },
+        "margin_bottom": {
+          "type": "Text",
+          "config": { "label": "Margin Bottom", "placeholder": "" }
         },
         "text_background_color": {
           "type": "Color",
@@ -31,6 +58,19 @@
           "type": "Text",
           "config": { "label": "Title", "placeholder": "" }
         },
+        "custom_title_size": {
+          "type": "Text",
+          "config": { "label": "Custom Title Size", "placeholder": "" }
+        },
+        "fontFamily": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family Title",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"],
+            "default_value": "Lato"
+          }
+        },
         "title_color": {
           "type": "Color",
           "config": { "label": "Title Color", "placeholder": "" }
@@ -39,9 +79,25 @@
           "type": "Text",
           "config": { "label": "Subtitle", "placeholder": "" }
         },
+        "custom_subtitle_size": {
+          "type": "Text",
+          "config": { "label": "Custom Subtitle Size", "placeholder": "" }
+        },
+        "font_family_subtitle": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family Subtitle",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"]
+          }
+        },
         "subtitle_color": {
           "type": "Color",
           "config": { "label": "Subtitle Color", "placeholder": "" }
+        },
+        "description_title": {
+          "type": "Text",
+          "config": { "label": "Description Title", "placeholder": "" }
         },
         "description": {
           "type": "StructuredText",
@@ -56,13 +112,37 @@
           "type": "Color",
           "config": { "label": "Description Color", "placeholder": "" }
         },
+        "description_font_size": {
+          "type": "Text",
+          "config": { "label": "Description Font Size", "placeholder": "" }
+        },
         "image": {
           "type": "Image",
           "config": { "label": "image", "constraint": {}, "thumbnails": [] }
         },
+        "students_avatars": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Students Avatars",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "single": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "student_avatar_description": {
+          "type": "Text",
+          "config": {
+            "label": "Students Avatars Descriptions",
+            "placeholder": ""
+          }
+        },
         "button_label": {
           "type": "Text",
           "config": { "label": "Button label", "placeholder": "" }
+        },
+        "button_label_size": {
+          "type": "Text",
+          "config": { "label": "Button Label Size", "placeholder": "" }
         },
         "button_url": {
           "type": "Text",
@@ -90,7 +170,7 @@
           "config": {
             "label": "Button Color",
             "placeholder": "",
-            "options": ["Blue", "White"]
+            "options": ["Blue", "White", "Dark Blue"]
           }
         },
         "background_color": {
@@ -112,28 +192,30 @@
             "options": ["left", "right"]
           }
         },
-        "margin": {
-          "type": "Text",
-          "config": {
-            "label": "Margin",
-            "placeholder": "top, right, bottom, left"
-          }
-        },
         "grid_gap": {
           "type": "Text",
           "config": { "label": "Grid gap", "placeholder": "" }
         },
-        "fontFamily": {
-          "type": "Select",
+        "transparent": {
+          "type": "Boolean",
           "config": {
-            "label": "Font Family",
-            "placeholder": "",
-            "options": ["Lato", "Space Grotesk Variable"],
-            "default_value": "Lato"
+            "label": "Transparent",
+            "default_value": false,
+            "placeholder_true": "true",
+            "placeholder_false": "false"
           }
         }
       },
-      "items": {},
+      "items": {
+        "multi_description_title": {
+          "type": "Text",
+          "config": { "label": "Multi Description Title", "placeholder": "" }
+        },
+        "multi_description_content": {
+          "type": "Text",
+          "config": { "label": "Multi Description Content", "placeholder": "" }
+        }
+      },
       "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
     }
   ]

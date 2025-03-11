@@ -20,9 +20,12 @@ import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendations from '../../../common/components/MktSideRecommendations';
 import { cleanObject } from '../../../utils/index';
 import { ORIGIN_HOST, categoriesFor } from '../../../utils/variables';
+import useAuth from '../../../common/hooks/useAuth';
 import useStyle from '../../../common/hooks/useStyle';
 import RelatedContent from '../../../common/components/RelatedContent';
 import MktEventCards from '../../../common/components/MktEventCards';
+import AssetsBreadcrumbs from '../../../common/components/AssetsBreadcrumbs';
+import { getMarkdownFromCache } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -64,13 +67,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     }
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
 
-    if (!data.readme?.decoded) {
+    const markdown = await getMarkdownFromCache(slug, data);
+
+    if (!data || !markdown) {
       return {
         notFound: true,
       };
     }
-
-    const markdown = data.readme.decoded;
 
     const {
       title, description, translations, preview,
@@ -150,17 +153,16 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 };
 
 export default function HowToSlug({ data, markdown }) {
-  const { t, lang } = useTranslation('how-to');
+  const { t } = useTranslation('how-to');
+  const { isAuthenticated } = useAuth();
   const [neverLoaded, setNeverLoaded] = useState(false);
   const title = data?.title || '';
   const author = data?.author || '';
   const { fontColor, featuredLight } = useStyle();
   const router = useRouter();
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
-  const linkColor = useColorModeValue('blue.default', 'blue.300');
 
   const isHowTo = data?.category?.slug === 'how-to' || data?.category?.slug === 'como';
-  const langPrefix = lang === 'en' ? '' : `/${lang}`;
 
   useEffect(() => {
     if (!isHowTo) {
@@ -195,19 +197,9 @@ export default function HowToSlug({ data, markdown }) {
           borderBottom={1}
           borderStyle="solid"
           borderColor={useColorModeValue('gray.200', 'gray.900')}
+          margin="3rem 0"
         >
-          <Link
-            href={`${langPrefix}/how-to`}
-            margin="3rem 0 2.375rem 0"
-            gridColumn="2 / span 12"
-            color={linkColor}
-            display="inline-block"
-            letterSpacing="0.05em"
-            fontWeight="700"
-            width="fit-content"
-          >
-            {`← ${t('back-to')}`}
-          </Link>
+          <AssetsBreadcrumbs />
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="10px" justifyContent="space-between" mb="12px">
             <TagCapsule
               variant="rounded"
@@ -222,13 +214,14 @@ export default function HowToSlug({ data, markdown }) {
               gap="10px"
               paddingX="0"
             />
-            <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '0 0 1rem 0', md: '0px' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
-              <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={data?.readme_url} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
-                <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-                {t('common:edit-on-github')}
-              </Link>
-
-            </Box>
+            {isAuthenticated && (
+              <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '0 0 1rem 0', md: '0px' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
+                <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={data?.readme_url} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
+                  <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+                  {t('common:edit-on-github')}
+                </Link>
+              </Box>
+            )}
           </Box>
           {title ? (
             <Heading size="l" as="h1" fontWeight="700">

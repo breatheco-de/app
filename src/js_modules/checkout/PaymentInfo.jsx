@@ -5,6 +5,7 @@ import {
   Box, Button, Flex, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import PropTypes from 'prop-types';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import useSignup from '../../common/store/actions/signupAction';
@@ -12,7 +13,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
 import useAuth from '../../common/hooks/useAuth';
 import { reportDatalayer } from '../../utils/requests';
-import { getQueryString, getStorageItem } from '../../utils';
+import { getQueryString, getStorageItem, getBrowserInfo } from '../../utils';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import { getCohort } from '../../common/handlers/cohorts';
@@ -26,7 +27,7 @@ import AcordionList from '../../common/components/AcordionList';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import NextChakraLink from '../../common/components/NextChakraLink';
 
-function PaymentInfo() {
+function PaymentInfo({ setShowPaymentDetails }) {
   const { t, lang } = useTranslation('signup');
   const { isAuthenticated } = useAuth();
 
@@ -80,6 +81,7 @@ function PaymentInfo() {
         event: 'open_syllabus_module',
         tasks: updatedTasks,
         cohort_id: cohortFound.id,
+        agent: getBrowserInfo(),
       },
     });
     startDay({
@@ -92,6 +94,7 @@ function PaymentInfo() {
   const startRedirection = async () => {
     if (!isPaymentSuccess) {
       setPaymentStatus('idle');
+      setShowPaymentDetails(true);
       return;
     }
     setIsRedirecting(true);
@@ -152,6 +155,7 @@ function PaymentInfo() {
       dataLayer: {
         event: 'join_cohort',
         cohort_id: cohort?.id,
+        agent: getBrowserInfo(),
       },
     });
     bc.cohort().join(cohort?.id)
@@ -185,6 +189,7 @@ function PaymentInfo() {
       dataLayer: {
         event: 'checkout_payment_info_rendered',
         value: state?.selectedPlanCheckoutData?.price,
+        agent: getBrowserInfo(),
       },
     });
   }, []);
@@ -295,6 +300,7 @@ function PaymentInfo() {
           payment_type: 'Credit card',
           plan: state?.selectedPlanCheckoutData?.plan_slug,
           period_label: state?.selectedPlanCheckoutData?.period_label,
+          agent: getBrowserInfo(),
         },
       });
       await handlePayment({}, true)
@@ -335,6 +341,7 @@ function PaymentInfo() {
     };
 
     handleSubmit(actions, allValues);
+    setShowPaymentDetails(false);
   };
 
   const handleTryAgain = () => {
@@ -427,7 +434,7 @@ function PaymentInfo() {
                   allowToggle: true,
                 }}
                 descriptionStyle={{ padding: '10px 0 0 0' }}
-                defaultIndex={paymentMethods.length === 1 && [0]}
+                defaultIndex={paymentMethods?.findIndex((method) => method.is_credit_card)}
               />
             </Flex>
           </>
@@ -449,5 +456,13 @@ function PaymentInfo() {
     </Box>
   );
 }
+
+PaymentInfo.propTypes = {
+  setShowPaymentDetails: PropTypes.func,
+};
+
+PaymentInfo.defaultProps = {
+  setShowPaymentDetails: () => { },
+};
 
 export default PaymentInfo;

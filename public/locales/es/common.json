@@ -1,7 +1,9 @@
 {
   "change-language": "Cambiar idioma",
+  "reviews": "Reseñas",
+  "course-rating": "Calificación del curso",
   "connect-with-github": "Conéctate con Github",
-  "see-financing-options": "Ver opciones de financiamiento",
+  "see-financing-options": "Ver opciones de pago",
   "your-tutors-in-this-cohort": "Tus tutores:",
   "main-instructor": "Instructor Principal",
   "teacher-assistant": "Asistente de Profesor",
@@ -34,10 +36,16 @@
     "months": "meses",
     "years": "años"
   },
-  "timer":{
+  "timer": {
     "min": "min",
     "mins": "mins",
     "sec": "seg"
+  },
+  "back-to-asset": {
+    "lesson": "Regresar a lecciones",
+    "interactive-coding-tutorial": "Volver a Proyectos",
+    "interactive-exercise": "Volver a ejercicios",
+    "how-to": "Volver a Cómo hacerlo"
   },
   "no-translation-available": "No hay traduccion disponible",
   "read-next": "Leer a continuación",
@@ -70,18 +78,19 @@
   "enroll": "Unirse Ahora",
   "enroll-totally-free": "Entrar totalmente gratis",
   "enroll-for-connector": "Unete por",
+  "start-tutorial": "Empezar tutorial",
   "learn-more": "Aprender más",
-  "more-technologies":"Más tecnologías",
-  "continue-learning":"Continúa aprendiendo sobre:",
+  "more-technologies": "Más tecnologías",
+  "continue-learning": "Continúa aprendiendo sobre:",
   "technologies-and-more": "{{technologies}} y más.",
   "user-id": "ID de usuario",
   "day": "Día",
   "days": "Días",
   "short-seconds": "Seg",
   "interactive": "Interactivo",
-  "beginner": "Principiante", 
-  "easy": "Fácil", 
-  "intermediate": "Intermedio", 
+  "beginner": "Principiante",
+  "easy": "Fácil",
+  "intermediate": "Intermedio",
   "hard": "Dificil",
   "taken-by": "Tomado por",
   "attended": "Asistió",
@@ -93,6 +102,7 @@
   "email": "Correo electrónico",
   "confirm-email": "Confirmar correo electrónico",
   "phone": "Teléfono",
+  "popular-searches": "Búsquedas populares",
   "password": "Contraseña",
   "confirm-password": "Confirmar contraseña",
   "difficulty": "Dificultad",
@@ -124,12 +134,13 @@
   "clear-all": "Limpiar todo",
   "english": "Inglés",
   "spanish": "Español",
-  "remaining":"Restantes",
+  "remaining": "Restantes",
   "show-more": "Mostrar más",
   "show-less": "Mostrar menos",
   "seach-technology": "Buscar tecnología",
   "remove-difficulty": "Remover dificultad",
   "read-lesson": "Leer lección",
+  "repository-information": "información del repositorio",
   "asset-button": {
     "lesson": "Leer lección",
     "exercise": "Iniciar ejercicio",
@@ -147,7 +158,7 @@
     "mark-as-done": "Marcar como hecho",
     "mark-as-not-done": "Marcar como no hecho"
   },
-  "external":{
+  "external": {
     "title": "Este es un ejercicio externo",
     "description": "<strong>\"{{projectName}}\"</strong> es un ejercicio externo, serás redireccionado a una nueva pestaña para hacerlo; elige una de las siguientes opciones para comenzar a trabajar en el proyecto:"
   },
@@ -158,18 +169,57 @@
     "new-exercise": "Comenzar desde el principio",
     "continue-exercise": "Continuar desde una sesión anterior",
     "open-locally": "Abrir localmente en tu computadora",
-    "start-asset": "Empezar {{asset_type}} interactivo",
+    "start-interactive-asset": "Empezar {{asset_type}} interactivo",
+    "start-asset": "Empezar {{asset_type}}",
+    "continue-asset": "Continuar este {{asset_type}}",
     "asset_types": {
       "project": "proyecto",
       "exercise": "ejercicio"
     },
+    "dependencies": {
+      "node-js": "Node JS",
+      "python": "Python",
+      "javascript": "Javascript"
+    },
     "start-exercise": "Empezar ejercicio",
     "recommended": "Recomendado",
+    "install-specific-version": "Instala {{name}} con la versión {{version}} en tu ordenador",
+    "banner-description": "Es crucial instalar la versión especificada, de lo contrario, el proyecto puede no ejecutarse correctamente. Instala la versión {{version}}.",
     "open-in-learnpack-button": {
       "text": "Abrir en la nube",
       "title": "Abrir en la nube",
       "description": "Nosotros nos encargamos de la <a class=\"link\" href=\"/es/aprende-en-un-clic\">configuración e instalación</a> de todas las tecnologías requeridas para realizar este ejercicio.",
-      "type": "dropdown"
+      "type": "dropdown",
+      "steps": [
+        {
+          "label": "Verificar si el repositorio es una plantilla",
+          "description": "Verifica si el repositorio es una plantilla de GitHub antes de continuar.<br><br>Puedes averiguar si es una plantilla observando la sección de {{repoUrl}}.<br><br>Si tiene un botón `Usar esta plantilla` o si, después del nombre del repositorio ubicado en la parte superior de tu pantalla (en GitHub), dice `Template` o `Public template`, entonces es una plantilla.",
+          "video": "",
+          "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
+          "source-label": ""
+        },
+        {
+          "label": "Si no es una plantilla",
+          "description": "Si el repositorio no es una plantilla:\n1. Ve al repositorio de GitHub y haz clic en el botón `Fork`.\n2. Configura el propietario como 4Geeks si deseas horas gratis en Codespaces, o usa tu propia cuenta de usuario.\n3. Una vez que el fork se complete, tendrás una copia del repositorio en tu cuenta (el fork), que ahora puedes modificar y trabajar en él.\n\nContinúa con el paso 4.",
+          "video": "",
+          "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
+          "source-label": ""
+        },
+        {
+          "label": "Si es una plantilla",
+          "description": "Si el repositorio es una plantilla:\n1. Haz clic en `Usar esta plantilla` y selecciona `Crear un nuevo repositorio`.\n2. Elige un propietario (selecciona 4Geeks si eres estudiante para obtener horas gratuitas en Codespaces).\n3. Nombra tu repositorio (por ejemplo, `usuario-nombre-del-proyecto`) y hazlo público.\n4. Haz clic en `Crear repositorio desde plantilla`.\n5. Marca el repositorio con una estrella para encontrarlo fácilmente más tarde.",
+          "video": "",
+          "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
+          "source-label": ""
+        },
+        {
+          "label": "Abrir el repositorio",
+          "description": "Sigue una de estas opciones para abrir el repositorio:\n- **Abrir en Github Codespaces**: Haz clic en el botón `Code` y abre el proyecto en Codespaces.\n- **Abrir en Gitpod**: Instala la extensión de Gitpod y usa el botón de Gitpod para abrir el proyecto.",
+          "video": "",
+          "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
+          "source-label": ""
+        }
+      ]
     },
     "clone-title": "¿Cómo clonar un proyecto?",
     "clone-modal": {
@@ -177,9 +227,17 @@
       "need-help": "¿Necesitas ayuda? Programa una sesión de tutoría",
       "description": "Este ejercicio se puede descargar y ejecutar localmente en su computadora siguiendo estos pasos:",
       "select-os": "Seleccione su sistema operativo",
+      "intro": {
+        "slug": "intro",
+        "label": "Introduction",
+        "description": "This guide will walk you through the process of running your project on your computer. Follow these simple steps to set up everything you need and get your project up and running in no time. Let's get started!",
+        "video": "https://www.youtube.com/watch?v=AcC3XnW0GiI",
+        "source-label": "",
+        "source": ""
+      },
       "agent-vs-code": {
         "label": "Abrir el proyecto con VSCode",
-        "description": "Asegúrate de tener la <a href=\"https://learnpack.co\" target=\"_blank\">extensión de LearnPack</a> instalada, abre la carpeta en VSCode y escribr <span class=\"highlight-command\">learnpack start</span> en la terminal de vscode.",
+        "description": "Asegúrate de tener la <a href=\"https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode\" target=\"_blank\">extensión de LearnPack</a> instalada, abre la carpeta en VSCode y escribr <span class=\"highlight-command\">learnpack start</span> en la terminal de vscode.",
         "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo"
       },
       "agent-os": {
@@ -189,6 +247,7 @@
       },
       "project-readme": {
         "label": "Revisa el README.md dentro del proyecto",
+        "video": "https://www.youtube.com/watch?v=xNPsmUOyres",
         "description": "Una vez que abras el proyecto en tu editor de código, encontrarás un archivo README.es.md las instrucciones detalladas sobre como correr el proyecto."
       },
       "os-list": [
@@ -212,10 +271,19 @@
               "video": "https://www.youtube.com/watch?v=vYn679OksR0",
               "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-mac-os-node-js-y-npm",
               "source-label": "¿Cómo instalar NVM en MacOS?"
+            },
+            {
+              "name": "javascript",
+              "label": "Instala Node.JS en tu ordenador",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
+              "video": "https://www.youtube.com/watch?v=vYn679OksR0",
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-mac-os-node-js-y-npm",
+              "source-label": "¿Cómo instalar NVM en MacOS?"
             }
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",
@@ -223,6 +291,7 @@
               "source-label": "Ir a la pagina de descarga de VSCode"
             },
             {
+              "slug": "create-folders",
               "label": "Crea una carpeta donde guardarás estos ejercicios",
               "description": "Si ya creaste una carpeta para algún ejercicio anterior de 4Geeks, te recomendamos usar esa. Sino, crea una carpeta donde más te guste (En la carpeta Documents por ejemplo), y abre esta carpeta nueva en VSCode. Desde aquí abre la terminal para poder seguir con los siguientes pasos.",
               "video": "https://www.youtube.com/watch?v=gXVI3PxFajU",
@@ -249,6 +318,16 @@
               "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
               "source-label": "Ir a cómo cloner un repositorio de GitHub"
             }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Lee el contenido del readme",
+              "description": "Un README es un archivo estándar que explica de forma simple y clara de qué trata un proyecto. Imagina que es una pequeña guía que te dice qué hace, cómo usarlo y qué necesitas para hacerlo funcionar. Es como una carta de bienvenida para cualquiera que quiera entender o colaborar en el proyecto. Queremos que te acostumbres a leerlos, ya que son esenciales en casi todos los proyectos de la industria, todos los profesionales ya tienen el hábito de revisarlo.",
+              "video": "https://www.youtube.com/watch?v=xNPsmUOyres",
+              "source": "#markdown-body",
+              "source-label": "¡Llevame al readme!"
+            }
           ]
         },
         {
@@ -271,10 +350,19 @@
               "video": "https://www.youtube.com/watch?v=LuaunSg8ppI",
               "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-linux",
               "source-label": "¿Cómo instalar NVM en Linux?"
+            },
+            {
+              "name": "javascript",
+              "label": "Instala Node.JS en tu ordenador",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
+              "video": "https://www.youtube.com/watch?v=vYn679OksR0",
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-mac-os-node-js-y-npm",
+              "source-label": "¿Cómo instalar NVM en MacOS?"
             }
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",
@@ -308,6 +396,16 @@
               "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
               "source-label": "Ir a cómo cloner un repositorio de GitHub"
             }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Lee el contenido del readme",
+              "description": "Un README es un archivo estándar que explica de forma simple y clara de qué trata un proyecto. Imagina que es una pequeña guía que te dice qué hace, cómo usarlo y qué necesitas para hacerlo funcionar. Es como una carta de bienvenida para cualquiera que quiera entender o colaborar en el proyecto. Queremos que te acostumbres a leerlos, ya que son esenciales en casi todos los proyectos de la industria, todos los profesionales ya tienen el hábito de revisarlo.",
+              "video": "https://www.youtube.com/watch?v=xNPsmUOyres",
+              "source": "#markdown-body",
+              "source-label": "¡Llevame al readme!"
+            }
           ]
         },
         {
@@ -319,7 +417,7 @@
               "name": "python",
               "label": "Instala Python en tu ordenador",
               "description": "Para correr este proyecto, es necesario que tengas python instalado en tu ordenador, sigue las instrucciones en el siguiente link para instalar Python",
-              "video": "https://www.youtube.com/watch?v=KVdWWsklW6o",
+              "video": "https://www.youtube.com/watch?v=BJA1nLBeT70",
               "source": "https://4geeks.com/es/how-to/como-instalar-python",
               "source-label": "¿Cómo instalar Python?"
             },
@@ -330,20 +428,29 @@
               "video": "https://www.youtube.com/watch?v=nyiJ1PZhBuY",
               "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-windows",
               "source-label": "¿Cómo instalar NVM en Windows?"
+            },
+            {
+              "name": "javascript",
+              "label": "Instala Node.JS en tu ordenador",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
+              "video": "https://www.youtube.com/watch?v=vYn679OksR0",
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-mac-os-node-js-y-npm",
+              "source-label": "¿Cómo instalar NVM en MacOS?"
             }
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
-              "video": "",
+              "video": "https://www.youtube.com/watch?v=5VOejVAyMQU",
               "source": "https://code.visualstudio.com/download",
               "source-label": "Ir a la pagina de descarga de VSCode"
             },
             {
               "label": "Crea una carpeta donde guardarás estos ejercicios",
               "description": "Si ya creaste una carpeta para algún ejercicio anterior de 4Geeks, te recomendamos usar esa. Sino, crea una carpeta donde más te guste (En la carpeta Documents por ejemplo), y abre esta carpeta nueva en VSCode. Desde aquí abre la terminal para poder seguir con los siguientes pasos.",
-              "video": "https://www.youtube.com/watch?v=gXVI3PxFajU",
+              "video": "https://www.youtube.com/watch?v=ZSBqoMIeGho",
               "source": ""
             },
             {
@@ -362,16 +469,26 @@
             {
               "label": "Instala GIT en tu computadora",
               "description": "Debes instalar GIT para poder clonar el repositorio de GitHub localmente. Para esto sigue los pasos del siguiente link.",
-              "video": "https://www.youtube.com/watch?v=zyrhDewSa2c",
+              "video": "https://www.youtube.com/watch?v=kcLuJ0WxGkg",
               "source": "https://git-scm.com/downloads/win"
             },
             {
               "slug": "clone",
               "label": "Clona el proyecto en tu computadora",
               "description": "Puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone {{repoUrl}}`. Chequea el siguiente link para una explicación más completa.",
-              "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
+              "video": "https://www.youtube.com/watch?v=etk4EDtsNX4",
               "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
               "source-label": "Ir a cómo cloner un repositorio de GitHub"
+            }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Lee el contenido del readme",
+              "description": "Un README es un archivo estándar que explica de forma simple y clara de qué trata un proyecto. Imagina que es una pequeña guía que te dice qué hace, cómo usarlo y qué necesitas para hacerlo funcionar. Es como una carta de bienvenida para cualquiera que quiera entender o colaborar en el proyecto. Queremos que te acostumbres a leerlos, ya que son esenciales en casi todos los proyectos de la industria, todos los profesionales ya tienen el hábito de revisarlo.",
+              "video": "https://www.youtube.com/watch?v=xNPsmUOyres",
+              "source": "#markdown-body",
+              "source-label": "¡Llevame al readme!"
             }
           ]
         }
@@ -382,7 +499,7 @@
     "title": "Lo sentimos, no tiene suficientes privilegios para acceder a este bloque de contenido, regístrese o actualice su plan para acceder al contenido.",
     "button": "Comprar un plan"
   },
-  "asset-type-pronouns" : {
+  "asset-type-pronouns": {
     "lesson": "Esta lección",
     "exercise": "Este ejercicio",
     "project": "Este proyecto",
@@ -407,6 +524,8 @@
   "junior": "Junior",
   "mid-level": "Mid level",
   "senior": "Senior",
+  "money-back-guarantee": "Obtén un reembolso completo antes de 30 días si no es lo que esperabas",
+  "money-back-guarantee-short": "Garantía de reembolso del 100%",
   "start-free-trial": "Iniciar prueba gratuita",
   "proceed-to-payment": "Proceder al pago",
   "select-cohort": "Selecciona una cohorte",
@@ -420,9 +539,16 @@
   },
   "upgrade": "Mejora",
   "go-back": "Regresar",
+  "go-back-option": "Seleccionar otra opción",
+  "go-back-os": "Seleccionar otro sistema operativo",
   "modal-tech-title": "{{technology}}",
   "modal-tech-description": "Al ingresar tus datos desbloquearás el contenido interactivo de \"{{title}}\" y muchos más",
   "coming-soon": "Próximamente",
+  "option-open-locally": "Abrir local en tu computadora",
+  "option-provisioning-vendors": "Abrir en la nube (recomendado)",
+  "option-readme": "Readme only",
+  "choose-one-option": "Elige una de estas opciones",
+  "choose-one-description": "Puedes elegir una de las siguientes opciones para iniciar tu proyecto",
   "validators": {
     "owner_name-required": "El nombre del propietario es requerido",
     "owner_name-min": "El nombre del propietario es demasiado corto",
@@ -480,15 +606,17 @@
     "sub-description": "Únete a una cohorte en un ambiente de aula en vivo y obtén soporte ilimitado hasta que encuentres un trabajo.",
     "service_items": {
       "title": "Todo en vivo y con comentarios más...",
-      "items": [{
-        "label": "Talleres en vivo ilimitados"
-      },
-      {
-        "label": "Sesiones de tutoría individuales ilimitadas"
-      },
-      {
-        "label": "Sesiones de tutoría grupal ilimitadas"
-      }]
+      "items": [
+        {
+          "label": "Talleres en vivo ilimitados"
+        },
+        {
+          "label": "Sesiones de tutoría individuales ilimitadas"
+        },
+        {
+          "label": "Sesiones de tutoría grupal ilimitadas"
+        }
+      ]
     },
     "featured_info": [
       {
@@ -497,7 +625,11 @@
           "title": "Clases en vivo",
           "icon": "onlinePeople"
         },
-        "features": [{ "description": "Toma parte de un grupo de estudiantes aprendiendo juntos semanalmente en clases en vivo con un profesor." }]
+        "features": [
+          {
+            "description": "Toma parte de un grupo de estudiantes aprendiendo juntos semanalmente en clases en vivo con un profesor."
+          }
+        ]
       },
       {
         "service": {
@@ -505,7 +637,11 @@
           "title": "Career support",
           "icon": "support"
         },
-        "features": [{ "description": "Obtenga comentarios sobre su currículum, LinkedIn y otros perfiles en línea, y acceda a nuestra amplia red de socios de contratación, oportunidades de pasantías y más." }]
+        "features": [
+          {
+            "description": "Obtenga comentarios sobre su currículum, LinkedIn y otros perfiles en línea, y acceda a nuestra amplia red de socios de contratación, oportunidades de pasantías y más."
+          }
+        ]
       },
       {
         "service": {
@@ -513,7 +649,11 @@
           "title": "Garantía de trabajo*",
           "icon": "briefcase"
         },
-        "features": [{ "description": "Obtén un trabajo dentro de los 6 meses posteriores a la graduación o recibe tu dinero de vuelta; se aplican condiciones." }]
+        "features": [
+          {
+            "description": "Obtén un trabajo dentro de los 6 meses posteriores a la graduación o recibe tu dinero de vuelta; se aplican condiciones."
+          }
+        ]
       },
       {
         "service": {
@@ -521,7 +661,11 @@
           "title": "Certificados por el Dep. de Educación dee FL, U.S.",
           "icon": "certificate"
         },
-        "features": [{ "description": "Nuestros certificados de los bootcamps incluyen una insignia certificada por el Dep. de Educación de FL, U.S." }]
+        "features": [
+          {
+            "description": "Nuestros certificados de los bootcamps incluyen una insignia certificada por el Dep. de Educación de FL, U.S."
+          }
+        ]
       },
       {
         "service": {
@@ -529,7 +673,11 @@
           "title": "Acceso a la comunidad premium",
           "icon": "crown"
         },
-        "features": [{ "description": "Nuestra comunidad premium te ofrece acceso a espacios de oficina al rededor del mundo, eventos de las empresas asociadas y empleadores, ferias de trabajo, eventos para networking, un canal exclusivo de slack, y más beneficios." }]
+        "features": [
+          {
+            "description": "Nuestra comunidad premium te ofrece acceso a espacios de oficina al rededor del mundo, eventos de las empresas asociadas y empleadores, ferias de trabajo, eventos para networking, un canal exclusivo de slack, y más beneficios."
+          }
+        ]
       },
       {
         "service": {
@@ -537,7 +685,11 @@
           "title": "Espacio de oficinas en todo el mundo",
           "icon": "office"
         },
-        "features": [{ "description": "Obtenga acceso a espacios de oficinas en todo el mundo." }]
+        "features": [
+          {
+            "description": "Obtenga acceso a espacios de oficinas en todo el mundo."
+          }
+        ]
       }
     ]
   },

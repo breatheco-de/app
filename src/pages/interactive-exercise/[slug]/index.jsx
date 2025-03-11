@@ -28,8 +28,10 @@ import { ORIGIN_HOST } from '../../../utils/variables';
 import RelatedContent from '../../../common/components/RelatedContent';
 import MktEventCards from '../../../common/components/MktEventCards';
 import SupplementaryMaterial from '../../../common/components/SupplementaryMaterial';
+import AssetsBreadcrumbs from '../../../common/components/AssetsBreadcrumbs';
 import Icon from '../../../common/components/Icon';
 import useStyle from '../../../common/hooks/useStyle';
+import { getMarkdownFromCache } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -73,12 +75,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       };
     }
 
-    if (!result.readme?.decoded) {
+    const markdown = await getMarkdownFromCache(slug, result);
+
+    if (!result || !markdown) {
       return {
         notFound: true,
       };
     }
-    const markdown = result.readme.decoded;
 
     const {
       title, translations, description, preview,
@@ -169,7 +172,7 @@ function Exercise({ exercise, markdown }) {
   const { colorMode } = useColorMode();
   const tabletWithFormRef = useRef(null);
   const bullets = t('exercises:bullets', {}, { returnObjects: true });
-  const { hexColor } = useStyle();
+  const { hexColor, fontColor, featuredLight } = useStyle();
 
   const getElementTopOffset = (elem) => {
     if (elem && isWindow) {
@@ -210,7 +213,8 @@ function Exercise({ exercise, markdown }) {
         </Head>
       )}
       <FixedBottomCta
-        isCtaVisible={isCtaVisible && !isAuthenticated}
+        isCtaVisible={isCtaVisible}
+        isAuthenticated={isAuthenticated}
         asset={exercise}
         videoUrl={exercise.intro_video_url}
         onClick={() => tabletWithFormRef.current?.scrollIntoView()}
@@ -232,29 +236,42 @@ function Exercise({ exercise, markdown }) {
           position="relative"
         >
           <Flex flexDirection="column" gridColumn={{ base: '2 / span 6', lg: '2 / span 7' }}>
-            <Link
-              href="/interactive-exercises"
-              color={useColorModeValue('blue.default', 'blue.300')}
-              display="inline-block"
-              letterSpacing="0.05em"
-              fontWeight="700"
-              paddingBottom="10px"
-              width="fit-content"
-            >
-              {`← ${t('exercises:backToExercises')}`}
-            </Link>
-            <TagCapsule
-              isLink
-              variant="rounded"
-              tags={exercise?.technologies}
-              marginY="8px"
-              style={{
-                padding: '2px 10px',
-                margin: '0',
-              }}
-              gap="10px"
-              paddingX="0"
-            />
+            <Box display={{ base: 'block', md: 'flex' }} justifyContent="space-between" alignItems="center">
+              <Box>
+                <AssetsBreadcrumbs />
+                {/* <Link
+                  href="/interactive-exercises"
+                  color={useColorModeValue('blue.default', 'blue.300')}
+                  display="inline-block"
+                  letterSpacing="0.05em"
+                  fontWeight="700"
+                  paddingBottom="10px"
+                  width="fit-content"
+                >
+                  {`← ${t('exercises:backToExercises')}`}
+                </Link> */}
+                <TagCapsule
+                  isLink
+                  variant="rounded"
+                  tags={exercise?.technologies}
+                  marginY="8px"
+                  style={{
+                    padding: '2px 10px',
+                    margin: '0',
+                  }}
+                  gap="10px"
+                  paddingX="0"
+                />
+              </Box>
+              {isAuthenticated && exercise?.readme_url && (
+                <Box height="fit-content" width="172px" background={featuredLight} borderRadius="4px">
+                  <Link display="flex" target="_blank" rel="noopener noreferrer" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={exercise.readme_url} textDecoration="none" _hover={{ opacity: 0.7 }} color={fontColor}>
+                    <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+                    {t('common:edit-on-github')}
+                  </Link>
+                </Box>
+              )}
+            </Box>
             {exercise?.title ? (
               <Heading
                 as="h1"

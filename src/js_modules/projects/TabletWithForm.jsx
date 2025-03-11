@@ -9,7 +9,7 @@ import {
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import { getStorageItem } from '../../utils';
+import { getStorageItem, getBrowserInfo } from '../../utils';
 import { ORIGIN_HOST } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
 import noLearnpackAssets from '../../../public/no-learnpack-in-cloud.json';
@@ -53,6 +53,7 @@ const TabletWithForm = React.forwardRef(({
   };
 
   const getLoggedTitleMessage = () => {
+    if (asset.interactive && asset.learnpack_deploy_url) return t('start-immediately');
     if (asset.interactive) return t('download');
     if (asset.solution_url) return t('access-solution');
     return t('similar-projects');
@@ -64,6 +65,7 @@ const TabletWithForm = React.forwardRef(({
         event: 'open_interactive_exercise',
         user_id: user.id,
         vendor,
+        agent: getBrowserInfo(),
       },
     });
   };
@@ -73,10 +75,9 @@ const TabletWithForm = React.forwardRef(({
 
     const currentLang = lang === 'en' ? 'us' : lang;
     const theme = currentThemeValue;
-    const iframe = 'true';
     const token = userToken;
 
-    return `${asset?.learnpack_deploy_url}#language=${currentLang}&lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
+    return `${asset?.learnpack_deploy_url}#language=${currentLang}&lang=${currentLang}&theme=${theme}&token=${token}`;
   };
 
   return (
@@ -180,27 +181,27 @@ const TabletWithForm = React.forwardRef(({
                       href={buildLearnpackUrl()}
                       target="_blank"
                     >
-                      {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${asset?.asset_type?.toLowerCase() || ''}`) }).toUpperCase()}
+                      {t('common:learnpack.start-interactive-asset', { asset_type: t(`common:learnpack.asset_types.${asset?.asset_type?.toLowerCase() || ''}`) }).toUpperCase()}
                     </Button>
                   )
                   : (
                     <>
                       {asset.gitpod && (
-                      <Button
-                        borderRadius="3px"
-                        width="100%"
-                        padding="0"
-                        whiteSpace="normal"
-                        variant="default"
-                        color="white"
-                        alignItems="center"
-                        gridGap="8px"
-                        background={hexColor.greenLight}
-                        onClick={() => setShowModal(true)}
-                      >
-                        <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="learnpack" color="currentColor" />
-                        <Text fontSize="14px">{t('open-learnpack')}</Text>
-                      </Button>
+                        <Button
+                          borderRadius="3px"
+                          width="100%"
+                          padding="0"
+                          whiteSpace="normal"
+                          variant="default"
+                          color="white"
+                          alignItems="center"
+                          gridGap="8px"
+                          background={hexColor.greenLight}
+                          onClick={() => setShowModal(true)}
+                        >
+                          <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="learnpack" color="currentColor" />
+                          <Text fontSize="14px">{t('open-learnpack')}</Text>
+                        </Button>
                       )}
                       <Button
                         borderRadius="3px"

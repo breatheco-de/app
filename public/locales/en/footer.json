@@ -12,6 +12,10 @@
     "label": "Terms & Conditions",
     "href": "/terms-and-conditions"
   },
+  "code-of-conduct": {
+    "label": "Code of conduct",
+    "href": "/code-of-conduct-and-ethic"
+  },
   "privacy": {
     "label": "Privacy Policy",
     "href": "/privacy-policy"

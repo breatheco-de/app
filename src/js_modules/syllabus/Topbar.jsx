@@ -7,8 +7,9 @@ import SubtasksPill from './SubtasksPill';
 import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
+import ProjectInstructions from './ProjectInstructions';
 
-function TopBar({ currentAsset, ...rest }) {
+function TopBar({ currentAsset, handleStartLearnpack, buttonsHandlerVariant, ...rest }) {
   const { t } = useTranslation('syllabus');
   const { backgroundColor4, hexColor } = useStyle();
   const [isVisible, setIsVisible] = useState(false);
@@ -68,10 +69,15 @@ function TopBar({ currentAsset, ...rest }) {
         </Box>
         <Box display="flex" alignItems="center" gap="5px">
           {currentAsset?.asset_type === 'PROJECT' && (
-            <>
+            <Box display={{ base: 'none', md: 'flex' }} gap="5px">
+              <ProjectInstructions
+                currentAsset={currentAsset}
+                handleStartLearnpack={handleStartLearnpack}
+                variant={buttonsHandlerVariant}
+              />
               <StatusPill />
               <SubtasksPill />
-            </>
+            </Box>
           )}
           <Button visibility={!isVisible && 'hidden'} display="flex" alignItems="center" gap="5px" variant="ghost" color={hexColor.blueDefault} onClick={scrollTop}>
             <Icon icon="arrowLeft2" style={{ transform: 'rotate(90deg)' }} color={hexColor.blueDefault} />
@@ -85,9 +91,12 @@ function TopBar({ currentAsset, ...rest }) {
 
 TopBar.propTypes = {
   currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  handleStartLearnpack: PropTypes.func.isRequired,
+  buttonsHandlerVariant: PropTypes.string,
 };
 TopBar.defaultProps = {
   currentAsset: null,
+  buttonsHandlerVariant: 'extra-small',
 };
 
 export default TopBar;

@@ -62,8 +62,8 @@ function Instructors({ isLoading, list, limit, tryRigobot, ...rest }) {
           padding="4px 8px"
           background={featuredColor}
           borderRadius="43"
-          // cursor="pointer"
-          // onClick={tryRigobot}
+          cursor="pointer"
+          onClick={tryRigobot}
         >
           <Icon icon="avatar-glasses" width="36px" height="42px" />
           <Flex flexDirection="column" gridGap="6px">

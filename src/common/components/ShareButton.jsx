@@ -12,6 +12,7 @@ import Icon from './Icon';
 import Text from './Text';
 import Link from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
+import { getBrowserInfo } from '../../utils';
 
 function ShareButton({
   variant, title, shareText, message, link, socials, withParty, onlyModal, currentTask,
@@ -48,10 +49,10 @@ function ShareButton({
 
   const defaultSocial = [
     {
-      name: 'twitter',
-      label: 'Twitter',
-      href: 'https://www.twitter.com',
-      color: '#1DA1F2',
+      name: 'x',
+      label: 'X',
+      href: 'https://www.x.com',
+      color: '#040404',
     },
     {
       name: 'facebook',
@@ -108,6 +109,7 @@ function ShareButton({
                           method: l.name,
                           content_type: currentTask?.task_type || 'CERTIFICATE',
                           item_id: currentTask?.associated_slug || 'CERTIFICATE',
+                          agent: getBrowserInfo(),
                         },
                       });
                       if (l.target === 'popup') window.open(l.href, 'popup', 'width=600,height=600,scrollbars=no,resizable=no');
@@ -138,6 +140,7 @@ function ShareButton({
                         method: 'copy',
                         content_type: currentTask?.task_type || 'CERTIFICATE',
                         item_id: currentTask?.associated_slug || 'CERTIFICATE',
+                        agent: getBrowserInfo(),
                       },
                     });
                     onCopy();

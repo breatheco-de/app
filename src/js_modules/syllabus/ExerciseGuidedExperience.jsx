@@ -3,7 +3,7 @@ import { Box, Button } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { intervalToDuration } from 'date-fns';
-import { intervalToHours } from '../../utils';
+import { intervalToHours, getBrowserInfo } from '../../utils';
 import ProjectInstructions from './ProjectInstructions';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
@@ -17,10 +17,10 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
   const { colorMode } = useStyle();
   const [telemetryReport, setTelemetryReport] = useState([]);
 
-  const isExerciseStated = !!currentTask?.assignment_telemetry;
+  const isExerciseStarted = !!currentTask?.assignment_telemetry;
 
   useEffect(() => {
-    if (isExerciseStated) {
+    if (isExerciseStarted) {
       const { steps, workout_session: workoutSession, last_interaction_at: lastInteractionAt } = currentTask.assignment_telemetry;
       const completedSteps = steps.reduce((acum, elem) => {
         if (elem.completed_at) return acum + 1;
@@ -53,7 +53,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
 
       const totalHours = workoutSession.reduce((acum, elem) => {
         const startedAt = elem.started_at;
-        const endedAt = elem.ended_at || lastInteractionAt;
+        const endedAt = elem.ended_at || lastInteractionAt || elem.started_at;
 
         const duration = intervalToDuration({
           start: new Date(startedAt),
@@ -66,6 +66,9 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
       }, 0);
 
       const roundedHours = Math.round((totalHours + Number.EPSILON) * 100) / 100;
+
+      let minutes;
+      if (roundedHours < 1) minutes = Math.floor(Math.round(((totalHours * 60) + Number.EPSILON) * 100) / 100);
       setTelemetryReport([{
         label: t('completion-percentage'),
         icon: 'graph-up',
@@ -77,7 +80,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
       }, {
         label: t('total-time'),
         icon: 'clock',
-        value: `${roundedHours} hs`,
+        value: minutes ? `${minutes} min` : `${roundedHours} hs`,
       }, {
         label: t('successful-compiles'),
         icon: 'documentVerified',
@@ -98,6 +101,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
     dataLayer: {
       event: 'open_learnpack_instructions',
       asset_slug: currentAsset?.slug,
+      agent: getBrowserInfo(),
     },
   });
 
@@ -123,8 +127,8 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
         : (
           <>
             <Box display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }} flexGrow={100}>
-              <Box gap="16px" width="100%" display="flex" flexDirection={{ base: 'column', md: isExerciseStated ? 'column' : 'row' }} justifyContent="space-between">
-                <Box maxWidth={{ base: 'none', md: isExerciseStated ? 'none' : '40%' }}>
+              <Box gap="16px" width="100%" display="flex" flexDirection={{ base: 'column', md: isExerciseStarted ? 'column' : 'row' }} justifyContent="space-between">
+                <Box maxWidth={{ base: 'none', md: isExerciseStarted ? 'none' : '40%' }}>
                   <Heading color="white" mb="16px" size="l" fontWeight="400">
                     {currentAsset?.title}
                   </Heading>
@@ -132,7 +136,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                     {currentAsset?.description}
                   </Text>
                 </Box>
-                <Box width="100%" maxWidth={{ base: 'none', md: isExerciseStated ? 'none' : '50%' }} borderRadius="11px" overflow="hidden">
+                <Box width="100%" maxWidth={{ base: 'none', md: isExerciseStarted ? 'none' : '50%' }} borderRadius="11px" overflow="hidden">
                   <ReactPlayerV2
                     withThumbnail
                     controls={false}
@@ -144,7 +148,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                   />
                 </Box>
               </Box>
-              {isExerciseStated && (
+              {isExerciseStarted && (
                 <Box
                   width="100%"
                   height="fit-content"
@@ -168,7 +172,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                 </Box>
               )}
             </Box>
-            <ProjectInstructions currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} />
+            <ProjectInstructions currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} isStarted={isExerciseStarted} />
           </>
         )}
     </Box>
