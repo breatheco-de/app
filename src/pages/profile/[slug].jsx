@@ -67,7 +67,7 @@ function Profile() {
         duration: 5000,
       });
     }
-  }, []);
+  }, [cohorts]);
 
   return (
     <>
