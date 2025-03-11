@@ -16,4 +16,5 @@ export const categoriesFor = {
 
 export const currenciesSymbols = {
   USD: '$',
+  EUR: '€',
 };

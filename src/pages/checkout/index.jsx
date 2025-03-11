@@ -40,7 +40,7 @@ import Stepper from '../../js_modules/checkout/Stepper';
 import ServiceSummary from '../../js_modules/checkout/ServiceSummary';
 import Text from '../../common/components/Text';
 import SelectServicePlan from '../../js_modules/checkout/SelectServicePlan';
-import { BASE_PLAN, ORIGIN_HOST, BREATHECODE_HOST } from '../../utils/variables';
+import { BASE_PLAN, ORIGIN_HOST, BREATHECODE_HOST, currenciesSymbols } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
 import { getTranslations, processPlans } from '../../common/handlers/subscriptions';
 import Icon from '../../common/components/Icon';
@@ -107,6 +107,7 @@ function Checkout() {
   const [checkInfoLoader, setCheckInfoLoader] = useState(false);
   const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
   const { backgroundColor3, hexColor, backgroundColor } = useStyle();
+  const currencySymbol = currenciesSymbols[originalPlan?.currency?.code] || '$';
 
   const cohorts = cohortsData?.cohorts;
 
@@ -209,13 +210,20 @@ function Checkout() {
       plan: planFormated,
     }).verifyCoupon()
       .then((resp) => {
-        const correctCoupon = resp.data.find((coup) => coup.slug === discountCode || coupons);
+        const correctCoupon = resp.data.find((coup) => coup.slug === discountCode);
         if (correctCoupon) {
           const couponsToString = resp?.data.map((item) => item?.slug);
           saveCouponToBag(couponsToString, checkoutData?.id);
         } else {
           setDiscountCoupon(null);
           setCouponError(true);
+          toast({
+            position: 'top',
+            title: t('signup:coupon-error'),
+            status: 'error',
+            duration: 4000,
+            isClosable: true,
+          });
         }
       })
       .finally(() => {
@@ -620,7 +628,11 @@ function Checkout() {
 
         if (financingOptions.length === 1) {
           const finalPrice = applyDiscounts(financingOptions[0].monthly_price, discountValues);
-          financingText = t('free_trial_one_payment', { price: finalPrice.toFixed(2), description: originalPlan.selectedPlan.description });
+          financingText = t('free_trial_one_payment', {
+            price: finalPrice.toFixed(2),
+            description: originalPlan.selectedPlan.description,
+            currency: currencySymbol,
+          });
         }
 
         if (financingOptions.length > 1) {
@@ -632,6 +644,7 @@ function Checkout() {
             numPayments: financingOptions[financingOptions.length - 1].how_many_months,
             firstPrice: firstPrice.toFixed(2),
             oneTimePrice: lastPrice.toFixed(2),
+            currency: currencySymbol,
           });
         }
       }
@@ -639,12 +652,20 @@ function Checkout() {
       if (financingOptions.length === 0) {
         if (monthlyPayment) {
           const finalMonthlyPrice = applyDiscounts(monthlyPayment, discountValues);
-          financingText = t('free_trial_monthly_payment', { description: originalPlan.selectedPlan.description, monthlyPrice: finalMonthlyPrice.toFixed(2) });
+          financingText = t('free_trial_monthly_payment', {
+            description: originalPlan.selectedPlan.description,
+            monthlyPrice: finalMonthlyPrice.toFixed(2),
+            currency: currencySymbol,
+          });
         }
 
         if (yearlyPayment && !monthlyPayment) {
           const finalYearlyPrice = applyDiscounts(yearlyPayment, discountValues);
-          financingText = t('free_trial_yearly_payment', { description: originalPlan.selectedPlan.description, yearlyPrice: finalYearlyPrice.toFixed(2) });
+          financingText = t('free_trial_yearly_payment', {
+            description: originalPlan.selectedPlan.description,
+            yearlyPrice: finalYearlyPrice.toFixed(2),
+            currency: currencySymbol,
+          });
         }
       }
 
@@ -665,7 +686,7 @@ function Checkout() {
 
       return (
         <Text size="16px" color="green.400">
-          {`$${discountedPrice.toFixed(2)} / ${originalPlan?.selectedPlan?.title || selectedPlanCheckoutData?.title}`}
+          {`${currencySymbol}${discountedPrice.toFixed(2)} / ${originalPlan?.selectedPlan?.title || selectedPlanCheckoutData?.title}`}
         </Text>
       );
     }
@@ -675,7 +696,7 @@ function Checkout() {
 
       return (
         <Text size="16px" color="green.400">
-          {`$${discountedPrice.toFixed(2)} / ${userSelectedPlan?.title}`}
+          {`${currencySymbol}${discountedPrice.toFixed(2)} / ${userSelectedPlan?.title}`}
         </Text>
       );
     }
@@ -938,7 +959,7 @@ function Checkout() {
                           <Text size="18px" color="currentColor" lineHeight="normal">
                             {selectedPlanCheckoutData?.price <= 0
                               ? selectedPlanCheckoutData?.priceText
-                              : `$${selectedPlanCheckoutData?.price?.toFixed(2)} ${selectedPlanCheckoutData?.currency?.code}`}
+                              : `${currencySymbol}${selectedPlanCheckoutData?.price?.toFixed(2)} ${selectedPlanCheckoutData?.currency?.code}`}
                           </Text>
                         </Flex>
                         <Divider margin="6px 0" />
@@ -1034,13 +1055,13 @@ function Checkout() {
                           <Flex gridGap="1rem">
                             {allCoupons?.length > 0 && (
                               <Text size="18px" color="currentColor" textDecoration="line-through" opacity="0.5" lineHeight="normal">
-                                {`$${selectedPlanCheckoutData?.price?.toFixed(2)}`}
+                                {`${currencySymbol}${selectedPlanCheckoutData?.price?.toFixed(2)}`}
                               </Text>
                             )}
                             <Text size="18px" color="currentColor" lineHeight="normal">
                               {selectedPlanCheckoutData?.price <= 0
                                 ? selectedPlanCheckoutData?.priceText
-                                : `$${processedPrice?.price?.toFixed(2)} ${selectedPlanCheckoutData?.currency?.code}`}
+                                : `${currencySymbol}${processedPrice?.price?.toFixed(2)} ${selectedPlanCheckoutData?.currency?.code}`}
                             </Text>
                           </Flex>
                         </Flex>
@@ -1052,7 +1073,7 @@ function Checkout() {
                             <Text size="18px" color="currentColor" lineHeight="normal">
                               {selectedPlanCheckoutData.price <= 0
                                 ? selectedPlanCheckoutData.priceText
-                                : `$${calculateTotalPrice()} ${selectedPlanCheckoutData.currency?.code}`}
+                                : `${currencySymbol}${calculateTotalPrice()} ${selectedPlanCheckoutData.currency?.code}`}
                             </Text>
                           </Flex>
                         )}
