@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
 import {
   Box,
   Button,
@@ -19,10 +19,11 @@ import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import bc from '../../common/services/breathecode';
 import Heading from '../../common/components/Heading';
-import ModalToCloneProject from './ModalToCloneProject';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import useAuth from '../../common/hooks/useAuth';
+
+const ModalToCloneProject = lazy(() => import('./ModalToCloneProject'));
 
 export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, learnpackUrlFromPublicView, startWithLearnpack, openWithLearnpackNoSaas, variant, isStarted, publicView, ...rest }) {
   const { t } = useTranslation('common');
@@ -171,6 +172,19 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   const startWithLearnpack = currentAsset?.learnpack_deploy_url && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
   const openWithLearnpackNoSaas = isExternalExercise && currentAsset?.learnpack_deploy_url && !cohortSession.available_as_saas;
 
+  const renderModal = () => (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ModalToCloneProject
+        currentAsset={currentAsset}
+        isOpen={showCloneModal}
+        onClose={setShowCloneModal}
+        provisioningVendors={vendors}
+        publicView={publicView}
+        userID={user?.id}
+      />
+    </Suspense>
+  );
+
   if (variant === 'extra-small') {
     return (
       <>
@@ -199,7 +213,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
             publicView={publicView}
           />
         </Box>
-        <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} publicView={publicView} userID={user?.id} />
+        {showCloneModal && renderModal()}
       </>
     );
   }
@@ -236,7 +250,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
             </Box>
           </Box>
         </Box>
-        <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} publicView={publicView} />
+        {showCloneModal && renderModal()}
       </>
     );
   }
@@ -280,7 +294,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
           />
         </Box>
       </Box>
-      <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} publicView={publicView} />
+      {showCloneModal && renderModal()}
     </>
   );
 }
