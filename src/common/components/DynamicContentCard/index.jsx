@@ -3,6 +3,7 @@ import { Avatar, Box, Divider, Flex } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import { format } from 'date-fns';
 import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
 import HeadInfo from './HeadInfo';
@@ -131,6 +132,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
         date={date}
         duration={data?.duration}
         type={type}
+        publishedAt={data?.published_at ? format(new Date(data.published_at), 'MM/dd/yyyy') : null}
       />
       <Flex flexDirection="column" gridGap="10px">
         <Heading as="h3" size="18px" lineHeight="normal">

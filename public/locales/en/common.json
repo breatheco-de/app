@@ -8,8 +8,8 @@
   "main-instructor": "Main Instructor",
   "teacher-assistant": "Teacher Assistant",
   "rigo": "Rigo",
-  "rigobot-bubble": {
-    "greeting": "Hi!"
+  "rigobot-search-bar": {
+    "placeholder": "Get help from Rigobot on what to learn today"
   },
   "ai-tutor": "AI Tutor",
   "clone-modal": {
@@ -38,6 +38,10 @@
     "weeks": "weeks",
     "months": "months",
     "years": "years"
+  },
+  "assets-header": {
+    "title": "What are you reading today?",
+    "description": "The following lessons explain different programming concepts and have been published by our members. Search for a particular lesson using the filters"
   },
   "timer": {
     "min": "min",
@@ -68,6 +72,10 @@
   "project": "Project",
   "article": "How to",
   "how-to": "How to",
+  "lessons": "Lessons",
+  "exercises": "Exercises",
+  "projects": "Projects",
+  "how-tos": "How to's",
   "quiz": "Quiz",
   "tasks": "Tasks",
   "filter": "Filter",
