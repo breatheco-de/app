@@ -32,7 +32,7 @@ function LoaderContent({ cohortIsLoading }) {
     }
   }, [cohortIsLoading]);
 
-  return cohortIsLoading ? (
+  if (cohortIsLoading) return (
     <CardSkeleton
       quantity={1}
       display="flex"
@@ -42,7 +42,7 @@ function LoaderContent({ cohortIsLoading }) {
       cardWidth="100%"
       cardHeight="120px"
     />
-  ) : null;
+  );
 }
 function ChooseYourClass({
   setCohorts,
