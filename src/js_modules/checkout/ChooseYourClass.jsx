@@ -46,6 +46,7 @@ function LoaderContent({ cohortIsLoading }) {
     );
   }
 }
+
 function ChooseYourClass({
   setCohorts,
 }) {
