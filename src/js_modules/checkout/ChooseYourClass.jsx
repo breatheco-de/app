@@ -32,17 +32,19 @@ function LoaderContent({ cohortIsLoading }) {
     }
   }, [cohortIsLoading]);
 
-  if (cohortIsLoading) return (
-    <CardSkeleton
-      quantity={1}
-      display="flex"
-      gridGap="40px"
-      flexDirection="column"
-      width="100%"
-      cardWidth="100%"
-      cardHeight="120px"
-    />
-  );
+  if (cohortIsLoading) {
+    return (
+      <CardSkeleton
+        quantity={1}
+        display="flex"
+        gridGap="40px"
+        flexDirection="column"
+        width="100%"
+        cardWidth="100%"
+        cardHeight="120px"
+      />
+    );
+  }
 }
 function ChooseYourClass({
   setCohorts,
