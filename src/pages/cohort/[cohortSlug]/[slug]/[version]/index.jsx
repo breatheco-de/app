@@ -79,6 +79,8 @@ function Dashboard() {
   const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [isAvailableToShowWarningModal, setIsAvailableToShowModalMessage] = useState(false);
   const [showMandatoryModal, setShowMandatoryModal] = useState(false);
+  const [deletionOrders, setDeletionOrders] = useState([]);
+  const [showDeletionOrdersModal, setShowDeletionOrdersModal] = useState(false);
   const { cohortProgram, taskTodo, setTaskTodo } = useModuleHandler();
   const {
     state, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
@@ -319,6 +321,15 @@ function Dashboard() {
       });
   }, []);
 
+  const fetchDeletionOrders = async () => {
+    try {
+      const { data } = await bc.assignments().getDeletionOrders();
+      setDeletionOrders(data);
+    } catch (err) {
+      console.error('Error fetching deletion orders:', err);
+    }
+  };
+
   // Fetch cohort data with pathName structure
   useEffect(() => {
     if (user) {
@@ -342,6 +353,8 @@ function Dashboard() {
       }).finally(() => {
         setIsLoadingAssigments(false);
       });
+
+      fetchDeletionOrders();
     }
   }, [user]);
 
@@ -420,6 +433,34 @@ function Dashboard() {
 
   return (
     <>
+      {deletionOrders.length > 0 && (
+        <AlertMessage
+          full
+          type="warning"
+          style={{ borderRadius: '0px', justifyContent: 'center' }}
+        >
+          <Text
+            size="l"
+            color="black"
+            fontWeight="700"
+          >
+            {t('repository-deletion.description')}
+            {'  '}
+            <Button
+              variant="link"
+              color="black"
+              textDecoration="underline"
+              fontWeight="700"
+              fontSize="15px"
+              height="20px"
+              onClick={() => setShowDeletionOrdersModal(true)}
+              _active={{ color: 'black' }}
+            >
+              {t('repository-deletion.see-repositories')}
+            </Button>
+          </Text>
+        </AlertMessage>
+      )}
       {getMandatoryProjects() && getMandatoryProjects().length > 0 && (
         <AlertMessage
           full
@@ -957,6 +998,38 @@ function Dashboard() {
                 variant="open-only"
               />
             ))}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      {/* Add Deletion Orders Modal */}
+      <Modal
+        isOpen={showDeletionOrdersModal}
+        size="2xl"
+        margin="0 10px"
+        onClose={() => {
+          setShowDeletionOrdersModal(false);
+        }}
+      >
+        <ModalOverlay />
+        <ModalContent style={{ margin: '3rem 0 0 0' }}>
+          <ModalHeader pb="0" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor}>
+            {t('repository-deletion.title')}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody padding={{ base: '15px 22px' }}>
+            <Box>
+              {deletionOrders.map((order) => (
+                <Text
+                  key={order.repository_name}
+                  fontSize="14px"
+                  padding="10px"
+                  borderBottom="1px solid"
+                  borderColor={commonBorderColor}
+                >
+                  {order.repository_name}
+                </Text>
+              ))}
+            </Box>
           </ModalBody>
         </ModalContent>
       </Modal>
