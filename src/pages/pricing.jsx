@@ -21,6 +21,7 @@ import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../utils/variables';
 import MktTrustCards from '../common/components/MktTrustCards';
 import DraggableContainer from '../common/components/DraggableContainer';
 import Icon from '../common/components/Icon';
+import usePlanInfo from '../hooks/usePlanInfo';
 
 const switchTypes = {
   monthly: 'monthly',
@@ -51,6 +52,7 @@ function PricingView() {
     selectedPlan: true,
   });
   const router = useRouter();
+  const { getPlanFeatures } = usePlanInfo();
   const queryCourse = getQueryString('course');
   const queryPlan = getQueryString('plan');
   const courseFormated = useMemo(() => (queryCourse && encodeURIComponent(queryCourse)) || '', [queryCourse]);
@@ -74,28 +76,9 @@ function PricingView() {
     ...defaultYearlyPlans || [],
   ], [defaultMonthlyPlans, defaultYearlyPlans]);
 
-  const defaultFreeMktInfo = t('signup:pricing.basic-plan', {}, { returnObjects: true });
-  const defaultPaymentMktInfo = t('signup:pricing.premium-plan', {}, { returnObjects: true });
   const bootcampInfo = t('common:bootcamp', {}, { returnObjects: true });
   const planTranslations = getTranslations(t);
   const planSlug = selectedCourseData?.plan_slug || planFormated;
-
-  const insertFeaturedInfo = async (plans) => {
-    if (!plans?.length) return [];
-
-    return plans.map((plan) => {
-      const customFeatures = t(`signup:custom-plans-pricing.${plan?.plan_slug}`, {}, { returnObjects: true });
-      const defaultUsedMktInfo = plan?.price > 0 ? defaultPaymentMktInfo : defaultFreeMktInfo;
-
-      const isValidCustomFeatures = typeof customFeatures !== 'string';
-      const showedMktInfo = isValidCustomFeatures ? customFeatures : defaultUsedMktInfo;
-
-      return {
-        ...plan,
-        ...showedMktInfo,
-      };
-    });
-  };
 
   const formatPlans = (allPlansList, hideYearlyOption = false) => {
     const freeTierList = allPlansList?.filter((p) => p?.isFreeTier);
@@ -129,10 +112,10 @@ function PricingView() {
 
     await getSelfAppliedCoupon(suggestedPlan.slug || originalPlan.slug);
 
-    const formatedPlanList = allPlanList?.length > 0 ? await insertFeaturedInfo(formatPlans(allPlanList, true)) : [];
+    const formatedPlanList = allPlanList?.length > 0 ? await getPlanFeatures(formatPlans(allPlanList, true)) : [];
 
-    const originalPlanWithFeaturedInfo = originalPlan?.plans?.length > 0 ? await insertFeaturedInfo(formatPlans(originalPlan?.plans)) : [];
-    const suggestedPlanWithFeaturedInfo = suggestedPlan?.plans?.length > 0 ? await insertFeaturedInfo(formatPlans(suggestedPlan?.plans)) : [];
+    const originalPlanWithFeaturedInfo = originalPlan?.plans?.length > 0 ? await getPlanFeatures(formatPlans(originalPlan?.plans)) : [];
+    const suggestedPlanWithFeaturedInfo = suggestedPlan?.plans?.length > 0 ? await getPlanFeatures(formatPlans(suggestedPlan?.plans)) : [];
 
     const filteredPlanList = existsFreeTier
       ? formatedPlanList
@@ -166,8 +149,8 @@ function PricingView() {
     if (planSlug) {
       setIsFetching((prev) => ({ ...prev, selectedPlan: true }));
       setTimeout(async () => {
-        const updatedMonthlyPlans = await insertFeaturedInfo(paymentTypePlans.monthly);
-        const updatedYearlyPlans = await insertFeaturedInfo(paymentTypePlans.yearly);
+        const updatedMonthlyPlans = await getPlanFeatures(paymentTypePlans.monthly);
+        const updatedYearlyPlans = await getPlanFeatures(paymentTypePlans.yearly);
         setPaymentTypePlans((prev) => ({
           ...prev,
           monthly: updatedMonthlyPlans,

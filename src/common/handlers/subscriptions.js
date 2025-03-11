@@ -34,7 +34,6 @@ export const processPlans = (data, {
     try {
       const slug = encodeURIComponent(data?.slug);
       const resp = await bc.payment().getPlanProps(slug);
-      console.log(resp?.data);
       if (!resp) {
         throw new Error('The plan does not exist');
       }

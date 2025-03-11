@@ -3,7 +3,7 @@
 import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Image, Box, Button, Flex, Divider, Skeleton, SkeletonText } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import useStyle from '../hooks/useStyle';
 import useSignup from '../store/actions/signupAction';
 import Text from './Text';
@@ -25,7 +25,10 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
 
   const courseCoupon = selfAppliedCoupon?.plan === item?.plan_slug && selfAppliedCoupon;
 
-  const priceProcessed = getPriceWithDiscount(selectedFinancing?.price || item?.optionList?.[0]?.price || item.price, courseCoupon);
+  const priceProcessed = useMemo(() => getPriceWithDiscount(
+    selectedFinancing?.price || item?.optionList?.[0]?.price || item.price,
+    courseCoupon,
+  ), [selectedFinancing, item, courseCoupon]);
   const discountApplied = priceProcessed?.originalPrice && priceProcessed.price !== priceProcessed.originalPrice;
 
   const premiumColor = () => (courseCoupon ? hexColor.green : hexColor.blueDefault);
