@@ -399,10 +399,14 @@ function Dashboard() {
   }, [cohortProgram, taskTodo, router]);
 
   const hasShownMandatoryToast = useRef(false);
+  const hasShownFreeTrialToast = useRef(false);
+
+  const mandatoryProjects = getMandatoryProjects() || [];
 
   useEffect(() => {
-    const mandatoryProjectsCount = getMandatoryProjects()?.length || 0;
-    if (isSubscriptionFreeTrial) {
+    const mandatoryProjectsCount = mandatoryProjects.length;
+    if (isSubscriptionFreeTrial && !hasShownFreeTrialToast.current) {
+      hasShownFreeTrialToast.current = true;
       console.log('Alerta de prueba gratuita cerrada free trial');
       createToast({
         position: 'top',
@@ -452,7 +456,7 @@ function Dashboard() {
         duration: 5000,
       });
     }
-  }, [isSubscriptionFreeTrial, getMandatoryProjects()?.length]);
+  }, [isSubscriptionFreeTrial, mandatoryProjects?.length]);
 
   const dailyModuleData = getDailyModuleData() || '';
   const lastTaskDoneModuleData = getLastDoneTaskModuleData() || '';
