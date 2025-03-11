@@ -459,12 +459,11 @@ function MentoringConsumables({
                       {servicesWithMentorsAvailable.length > 0 && (
                         servicesWithMentorsAvailable.map((service) => (
                           <CanAccess
-                            key={service.name}
+                            key={service.slug}
                             fromMentorshipService={service.slug}
                             fromAcademy={service?.academy?.slug}
                           >
                             <Box
-                              key={service.name}
                               borderTop="1px solid"
                               cursor="pointer"
                               onClick={() => handleService(service)}

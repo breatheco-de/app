@@ -13,7 +13,7 @@ import useCanAccess from '../hooks/useCanAccess';
  */
 function CanAccess({ fromAcademy, fromCohort, fromMentorshipService, children }) {
   const { t } = useTranslation('common');
-  const overlayBg = useColorModeValue('rgba(200, 200, 200, 0.8)', 'rgba(50, 50, 50, 0.8)');
+  const overlayBg = useColorModeValue('rgba(218, 216, 216, 0.8)', 'rgba(50, 50, 50, 0.8)');
   const checkAccess = useCanAccess();
 
   const { hasAccess } = checkAccess({ fromAcademy, fromCohort, fromMentorshipService });

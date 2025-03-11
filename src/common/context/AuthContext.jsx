@@ -197,10 +197,10 @@ function AuthProvider({ children, pageProps }) {
 
   const fetchBlockedServices = async () => {
     try {
-      const blockedServicesResp = await bc.payment().getBlockedServices();
+      const { data } = await bc.payment().getBlockedServices();
       dispatch({
         type: 'SET_BLOCKED_SERVICES',
-        payload: blockedServicesResp,
+        payload: data,
       });
     } catch (err) {
       warn('Error fetching blocked services:', err);
