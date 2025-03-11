@@ -3,10 +3,10 @@ import { useRouter } from 'next/router';
 import { Box, Input, Button, Flex, Text, useColorModeValue } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Icon from './Icon';
-import Heading from './Heading';
 import useStyle from '../hooks/useStyle';
+import HeaderSection from './HeaderSection';
 
-function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches, background, popularSearchesTitle, ...rest }) {
+function MktSearchBar({ popularSearches, popularSearchesTitle, headingTop, headingBottom, subtitle, id, padding, ...rest }) {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const { hexColor, fontColor } = useStyle();
@@ -57,16 +57,13 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
   }, [debouncedSearch]);
 
   return (
-    <Box id={id} padding={{ base: '10px 0', md: '60px 80px' }} {...rest}>
-      <Box width="auto" maxWidth="961px" margin="0 auto">
-        <Heading fontSize="38px" fontWeight="bold" mb={2} textAlign="center">
-          {headingTop}
-          <br />
-          {headingBottom}
-        </Heading>
-        <Text fontSize="21px" color={useColorModeValue('gray.600')} mb={4} textAlign="center">
-          {subtitle}
-        </Text>
+    <HeaderSection
+      id={id}
+      headingTop={headingTop}
+      headingBottom={headingBottom}
+      subtitle={subtitle}
+      padding={padding}
+      searchBar={(
         <Box padding="24px" background={hexColor.white2} borderRadius="10px" margin={{ base: '10px', md: 'none' }} color={useColorModeValue('gray.600', 'white')}>
           <form onSubmit={handleSearchSubmit}>
             <Flex
@@ -118,8 +115,9 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
             )}
           </Box>
         </Box>
-      </Box>
-    </Box>
+      )}
+      {...rest}
+    />
   );
 }
 
@@ -127,16 +125,17 @@ MktSearchBar.propTypes = {
   headingTop: PropTypes.string.isRequired,
   headingBottom: PropTypes.string.isRequired,
   subtitle: PropTypes.string.isRequired,
-  popularSearches: PropTypes.arrayOf(PropTypes.string).isRequired,
-  background: PropTypes.string,
-  id: PropTypes.string,
+  popularSearches: PropTypes.arrayOf(PropTypes.string),
   popularSearchesTitle: PropTypes.string,
+  id: PropTypes.string,
+  padding: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 };
 
 MktSearchBar.defaultProps = {
-  background: 'auto',
   popularSearchesTitle: 'Popular searches',
+  popularSearches: null,
   id: '',
+  padding: null,
 };
 
 export default MktSearchBar;

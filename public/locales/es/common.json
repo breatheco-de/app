@@ -8,6 +8,9 @@
   "main-instructor": "Instructor Principal",
   "teacher-assistant": "Asistente de Profesor",
   "rigo": "Rigo",
+  "rigobot-search-bar": {
+    "placeholder": "Obtén ayuda de Rigobot sobre qué aprender hoy"
+  },
   "ai-tutor": "Tutor IA",
   "clone-modal": {
     "title": "¿Cómo clonar un proyecto?"
@@ -65,6 +68,10 @@
   "project": "Proyecto",
   "article": "Lección",
   "how-to": "Preguntas frecuentes",
+  "lessons": "Lecciones",
+  "exercises": "Ejercicios",
+  "projects": "Proyectos",
+  "how-tos": "Preguntas frecuentes",
   "quiz": "Cuestionario",
   "tasks": "Tareas",
   "filter": "Filtro",
