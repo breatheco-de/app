@@ -20,7 +20,7 @@ import Icon from '../../../common/components/Icon';
 import Heading from '../../../common/components/Heading';
 import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
-import { location, slugToTitle } from '../../../utils';
+import { location, slugToTitle, unSlugify } from '../../../utils';
 import useSubscriptionsHandler from '../../../common/store/actions/subscriptionAction';
 import { CardSkeleton, SimpleSkeleton } from '../../../common/components/Skeleton';
 import bc from '../../../common/services/breathecode';
@@ -219,7 +219,7 @@ function Subscriptions({ cohorts }) {
                         <Box display="flex" gap="10px" alignItems="center">
                           {logo && <Image src={logo} width={28} height={28} alt="Service logo" />}
                           <Heading size="16px">
-                            {service.name || t(`slug-translations.${service.slug}.title`)}
+                            {service.name || unSlugify(service.slug)}
                           </Heading>
                         </Box>
                         {servicesModal === 'mentorships' && (
