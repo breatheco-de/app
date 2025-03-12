@@ -1,0 +1,59 @@
+{
+    "info": {
+        "type": "Vuela solo",
+        "title": "Prueba la experiencia completa a tu propio ritmo de forma gratuita y decide más tarde",
+        "description": "Todo lo que necesitas para comenzar a aprender a programar",
+        "button": {
+            "variant": "default",
+            "title": "Comenzar gratis"
+        },
+        "service_items": {
+            "items": [
+                {
+                    "label": "Talleres en vivo ilimitados"
+                },
+                {
+                    "label": "1 Sesión de tutoría individual"
+                }
+            ]
+        },
+        "featured_info": [
+            {
+                "service": {
+                    "slug": "full-access-to-content",
+                    "title": "Acceso completo al contenido",
+                    "icon": "content"
+                },
+                "features": [
+                    {
+                        "description": "Cientos de ejercicios, proyectos y lecciones interactivos están disponibles gracias a <a style=\"text-decoration: underline;\" target=\"__blank\" href='https://learnpack.co' >LearnPack</a>, nuestro motor interactivo."
+                    }
+                ]
+            },
+            {
+                "service": {
+                    "slug": "access-to-courses",
+                    "title": "Acceso a cursos",
+                    "icon": "courses"
+                },
+                "features": [
+                    {
+                        "description": "Ofrecemos una amplia gama de cursos en diversas tecnologías, brindándole oportunidades para mejorar sus habilidades existentes o profundizar en otras nuevas."
+                    }
+                ]
+            },
+            {
+                "service": {
+                    "slug": "ai-interaction",
+                    "title": "Prueba nuestra interacción con IA",
+                    "icon": "message"
+                },
+                "features": [
+                    {
+                        "description": "Prueba nuestros modelos de IA entrenados internamente, capaces de revisar tu código constantemente y brindarte comentarios de ayuda, consejos mientras codifica y más."
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -1,0 +1,142 @@
+{
+    "info": {
+        "type": "Premium",
+        "title": "Aprende a tu propio ritmo con retroalimentación y eventos en vivo",
+        "description": "Todo el contenido que necesitas para convertirte en un desarrollador contratado",
+        "button": {
+            "variant": "default",
+            "color": "#000000",
+            "background": "#fff",
+            "title": "Obtener Plan"
+        },
+        "service_items": {
+            "title": "Todo en Vuela Solo más...",
+            "items": [
+                {
+                    "label": "Talleres en vivo ilimitados"
+                },
+                {
+                    "label": "4 Sesiones de mentoría individuales"
+                }
+            ]
+        },
+        "featured_info": [
+            {
+                "service": {
+                    "slug": "live-learning",
+                    "title": "Aprendizaje en vivo",
+                    "icon": "video"
+                },
+                "features": [
+                    {
+                        "description": "Contamos con muchos talleres y eventos en vivo organizados por grandes expertos cada semana."
+                    }
+                ]
+            },
+            {
+                "service": {
+                    "slug": "ai-feedback-support",
+                    "title": "Comentarios y soporte de IA",
+                    "icon": "message"
+                },
+                "features": [
+                    {
+                        "description": "Nuestros modelos de IA entrenados internamente revisarán constantemente su código y le brindarán comentarios, consejos mientras codifica y más. Además contamos con un chat de soporte técnico 24/7."
+                    }
+                ]
+            },
+            {
+                "service": {
+                    "slug": "access-to-community",
+                    "title": "Acceso a la comunidad",
+                    "icon": "community"
+                },
+                "features": [
+                    {
+                        "description": "Contamos con muchos talleres y eventos en vivo organizados por expertos cada semana."
+                    }
+                ]
+            },
+            {
+                "service": {
+                    "slug": "course-certificates",
+                    "title": "Certificados del curso",
+                    "icon": "certificate"
+                },
+                "features": [
+                    {
+                        "description": "Obtenga certificados verificables a medida que complete cada uno de los cursos."
+                    }
+                ]
+            }
+        ],
+        "checkout_features": [
+            {
+                "features": [
+                    {
+                        "description": "Prueba nuestros modelos de IA entrenados internamente que pueden revisar tu código constantemente y darte retroalimentación, consejos mientras programas y más.",
+                        "title": "Interacción con IA"
+                    }
+                ],
+                "service": {
+                    "slug": "interaccion-con-ia"
+                }
+            },
+            {
+                "features": [
+                    {
+                        "description": "Acceso a pruebas de LearnPack para validar tus conocimientos",
+                        "title": "Pruebas de LearnPack"
+                    }
+                ],
+                "service": {
+                    "slug": "pruebas-learnpack"
+                }
+            },
+            {
+                "features": [
+                    {
+                        "description": "Obtén sesiones de mentoría personalizadas con nuestros instructores expertos",
+                        "title": "Sesiones de mentoría personalizadas"
+                    }
+                ],
+                "service": {
+                    "slug": "sesion-mentoria-geekpal"
+                }
+            },
+            {
+                "features": [
+                    {
+                        "description": "Acceso a talleres técnicos y de carrera ilimitados",
+                        "title": "Talleres técnicos y de carrera ilimitados"
+                    }
+                ],
+                "service": {
+                    "slug": "unirse-talleres"
+                }
+            },
+            {
+                "features": [
+                    {
+                        "description": "Únete a una comunidad de más de 5000 desarrolladores",
+                        "title": "Comunidad de desarrolladores"
+                    }
+                ],
+                "service": {
+                    "slug": "unirse-comunidad-4geeks"
+                }
+            },
+            {
+                "features": [
+                    {
+                        "description": "Acceso a proyectos con desafíos de la vida real",
+                        "title": "Proyectos con desafíos de la vida real"
+                    }
+                ],
+                "service": {
+                    "slug": "proyectos-con-desafios-reales"
+                }
+            }
+        ]
+    }
+}

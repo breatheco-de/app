@@ -1,0 +1,72 @@
+{
+    "info": {
+        "type": "Fly Solo",
+        "title": "Try the self-paced experience for free and decide later",
+        "description": "Start learning and discover our amazing content and benefits",
+        "button": {
+            "variant": "default",
+            "title": "Start for free"
+        },
+        "service_items": {
+            "items": [
+                {
+                    "label": "Unlimited Live workshop"
+                },
+                {
+                    "label": "1 One-on-one mentoring session"
+                }
+            ]
+        },
+        "featured_info": [
+            {
+                "service": {
+                    "slug": "full-access-to-content",
+                    "title": "Full access to content",
+                    "icon": "content"
+                },
+                "features": [
+                    {
+                        "description": "Hundreds of interactive exercises, projects, and lessons are available thanks to <a style=\"text-decoration: underline;\" target=\"__blank\" href='https://learnpack.co' >LearnPack</a>, our interactive engine."
+                    }
+                ]
+            },
+            {
+                "service": {
+                    "slug": "access-to-courses",
+                    "title": "Access to courses",
+                    "icon": "courses"
+                },
+                "features": [
+                    {
+                        "description": "We offer a diverse range of courses across various technologies, providing you with opportunities to enhance your existing skills or delve into new ones."
+                    }
+                ]
+            },
+            {
+                "service": {
+                    "slug": "ai-interaction",
+                    "title": "Try our AI interaction",
+                    "icon": "message"
+                },
+                "features": [
+                    {
+                        "description": "Try our internally trained AI models which can constantly review your code and give you feedback, advice as you code, and more."
+                    }
+                ]
+            }
+        ],
+        "checkout_features": [
+            {
+                "features": [
+                    {
+                        "description": "Get personalized mentoring sessions with our expert instructors",
+                        "title": null
+                    }
+                ],
+                "service": {
+                    "slug": "geekpal-mentorship-session"
+                }
+            }
+        ]
+    }
+}
