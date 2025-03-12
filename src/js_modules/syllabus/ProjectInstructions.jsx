@@ -11,6 +11,7 @@ import {
   PopoverCloseButton,
   PopoverHeader,
   PopoverBody,
+  Skeleton,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -123,6 +124,9 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   const [vendors, setVendors] = useState([]);
   const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
 
+  console.log(currentAsset);
+  console.log(vendors);
+
   const fetchProvisioningVendors = async (academyId) => {
     try {
       const { data } = await bc.provisioning().academyVendors(academyId);
@@ -173,7 +177,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   const openWithLearnpackNoSaas = isExternalExercise && currentAsset?.learnpack_deploy_url && !cohortSession.available_as_saas;
 
   const renderModal = () => (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Skeleton height="300px" width="100%" />}>
       <ModalToCloneProject
         currentAsset={currentAsset}
         isOpen={showCloneModal}
