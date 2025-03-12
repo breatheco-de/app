@@ -130,6 +130,7 @@ export const processPlans = (data, {
         ...relevantInfo,
         title: singlePlan?.title ? singlePlan?.title : textInfo.monthly_payment,
         price: data?.price_per_month,
+        pricePerMonth: data?.price_per_month,
         priceText: `${currenciesSymbols[singlePlan?.currency?.code] || '$'}${data?.price_per_month}`,
         plan_id: `p-${data?.price_per_month}`,
         description: translations?.yearly_payment_description || '',
@@ -142,8 +143,10 @@ export const processPlans = (data, {
         ...relevantInfo,
         title: singlePlan?.title ? singlePlan?.title : textInfo.quarterly_payment,
         price: data?.price_per_quarter,
-        priceText: `${currenciesSymbols[data?.currency?.code] || '$'}${data?.price_per_quarter}`,
-        plan_id: `p-${data?.price_per_quarter}`,
+        pricePerMonth: data?.price_per_quarter ? (data.price_per_quarter / 4).toFixed(2) : 0,
+        pricePerMonthText: `${currenciesSymbols[data?.currency?.code] || '$'}${data?.price_per_quarter ? (data.price_per_quarter / 4).toFixed(2) : 0}`,
+        priceText: `${currenciesSymbols[data?.currency?.code] || '$'}${data?.price_per_quarter || 0}`,
+        plan_id: `p-${data?.price_per_quarter || 0}`,
         description: translations?.quarterly_payment_description || '',
         period: 'QUARTER',
         period_label: textInfo.label.quarterly,
@@ -155,8 +158,10 @@ export const processPlans = (data, {
         ...relevantInfo,
         title: singlePlan?.title ? singlePlan?.title : textInfo.half_yearly_payment,
         price: data?.price_per_half,
-        priceText: `${currenciesSymbols[data?.currency?.code] || '$'}${data?.price_per_half}`,
-        plan_id: `p-${data?.price_per_half}`,
+        pricePerMonth: data?.price_per_half ? (data.price_per_half / 6).toFixed(2) : 0,
+        pricePerMonthText: `${currenciesSymbols[data?.currency?.code] || '$'}${data?.price_per_half ? (data.price_per_half / 6).toFixed(2) : 0}`,
+        priceText: `${currenciesSymbols[data?.currency?.code] || '$'}${data?.price_per_half || 0}`,
+        plan_id: `p-${data?.price_per_half || 0}`,
         description: translations?.half_yearly_payment_description || '',
         period: 'HALF',
         period_label: textInfo.label.half_yearly,
@@ -168,8 +173,10 @@ export const processPlans = (data, {
         ...relevantInfo,
         title: singlePlan?.title ? singlePlan?.title : textInfo.yearly_payment,
         price: data?.price_per_year,
-        priceText: `${currenciesSymbols[data?.currency?.code] || '$'}${data?.price_per_year}`,
-        plan_id: `p-${data?.price_per_year}`,
+        pricePerMonth: data?.price_per_year ? (data.price_per_year / 12).toFixed(2) : 0,
+        pricePerMonthText: `${currenciesSymbols[data?.currency?.code] || '$'}${data?.price_per_year ? (data.price_per_year / 12).toFixed(2) : 0}`,
+        priceText: `${currenciesSymbols[data?.currency?.code] || '$'}${data?.price_per_year || 0}`,
+        plan_id: `p-${data?.price_per_year || 0}`,
         description: translations?.yearly_payment_description || '',
         period: 'YEAR',
         period_label: textInfo.label.yearly,
@@ -194,8 +201,8 @@ export const processPlans = (data, {
         });
       }) : [{}];
 
-      const planList = [trialPlan, onePaymentFinancing[0], monthPlan, quarterPlan, halfPlan, yearPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0 && plan.show);
-      const paymentList = [onePaymentFinancing[0], monthPlan, yearPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
+      const planList = [trialPlan, onePaymentFinancing[0], yearPlan, halfPlan, quarterPlan, monthPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0 && plan.show);
+      const paymentList = [onePaymentFinancing[0], yearPlan, monthPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
       const financingList = financingOption?.filter((plan) => Object.keys(plan).length > 0);
 
       resolve({

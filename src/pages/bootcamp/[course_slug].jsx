@@ -43,6 +43,7 @@ import completions from './completion-jobs.json';
 import Rating from '../../common/components/Rating';
 import SimpleModal from '../../common/components/SimpleModal';
 import CustomCarousel from '../../common/components/CustomCarousel';
+import { usePlanPrice } from '../../utils/getPriceWithDiscount';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -115,7 +116,7 @@ function CoursePage({ data, syllabus }) {
   const [coupon] = usePersistentBySession('coupon', '');
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);
-  const [isCtaVisible, setIsCtaVisible] = useState(true);
+  const [isCtaVisible, setIsCtaVisible] = useState(false);
   const [allDiscounts, setAllDiscounts] = useState([]);
   const { isAuthenticated, user, logout, cohorts } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
@@ -173,64 +174,13 @@ function CoursePage({ data, syllabus }) {
 
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
     plan: featuredPlanToEnroll?.plan_slug,
-    plan_id: featuredPlanToEnroll?.plan_id,
     has_available_cohorts: planData?.has_available_cohorts,
     cohort: cohortId,
     coupon: getQueryString('coupon'),
   }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
 
-  const handleCoupons = (priceText) => {
-    if (!allDiscounts.length === 0 || featuredPlanToEnroll.price === 0) return priceText;
-
-    const currencySymbol = priceText.replace(/[\d.,]/g, '');
-    let discountedPrice = featuredPlanToEnroll.price;
-
-    allDiscounts.forEach((discount) => {
-      if (discount.discount_type === 'PERCENT_OFF') {
-        discountedPrice -= (discountedPrice * discount.discount_value);
-      } else {
-        discountedPrice -= discount.discount_value;
-      }
-    });
-
-    discountedPrice = Math.floor(discountedPrice * 100) / 100;
-
-    return currencySymbol + discountedPrice;
-  };
-
-  const getPlanPrice = () => {
-    if (featuredPlanToEnroll?.plan_slug) {
-      if (featuredPlanToEnroll.period === 'MONTH') {
-        return `${t('signup:info.monthly')} ${handleCoupons(featuredPlanToEnroll.priceText)}`;
-      }
-      if (featuredPlanToEnroll.period === 'YEAR') {
-        return `${handleCoupons(featuredPlanToEnroll.priceText)} ${t('signup:info.monthly')}`;
-      }
-      if (featuredPlanToEnroll.period === 'ONE_TIME') {
-        return `${handleCoupons(featuredPlanToEnroll.priceText)}, ${t('signup:info.one-time-payment')}`;
-      }
-      if (featuredPlanToEnroll.period === 'FINANCING') {
-        return `${handleCoupons(featuredPlanToEnroll.priceText)} ${t('signup:info.installments')}`;
-      }
-      if (featuredPlanToEnroll?.type === 'TRIAL') {
-        return t('common:start-free-trial');
-      }
-      if (featuredPlanToEnroll?.type === 'FREE') {
-        return t('common:enroll-totally-free');
-      }
-    }
-    if (!featuredPlanToEnroll?.plan_slug && planList[0]?.isFreeTier) {
-      if (planList[0]?.type === 'FREE') {
-        return t('common:enroll-totally-free');
-      }
-      if (planList[0]?.type === 'TRIAL') {
-        return t('common:start-free-trial');
-      }
-    }
-    return t('common:enroll');
-  };
-
-  const featurePrice = getPlanPrice().toLocaleLowerCase();
+  const planPriceFormatter = usePlanPrice();
+  const featurePrice = planPriceFormatter(featuredPlanToEnroll, planList, allDiscounts).toLocaleLowerCase();
 
   const getAlternativeTranslation = (slug, params = {}, options = {}) => {
     const keys = slug.split('.');
@@ -293,22 +243,25 @@ function CoursePage({ data, syllabus }) {
   };
 
   useEffect(() => {
-    if (isWindow) {
-      const handleScroll = () => {
-        if (showBottomCTA.current) {
-          const { scrollY } = window;
-          const top = getElementTopOffset(showBottomCTA.current);
-          setIsCtaVisible(top - scrollY > 700);
-        }
-      };
-      window.addEventListener('scroll', handleScroll);
-      return () => {
-        window.removeEventListener('scroll', handleScroll);
-      };
-    }
+    const checkCtaVisibility = () => {
+      if (showBottomCTA.current) {
+        const { scrollY } = window;
+        const top = getElementTopOffset(showBottomCTA.current);
+        setIsCtaVisible(top - scrollY > 700);
+      }
+    };
 
-    return undefined;
-  }, [isWindow]);
+    checkCtaVisibility();
+
+    const handleScroll = () => {
+      checkCtaVisibility();
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const joinCohort = () => {
     if (isAuthenticated && existsRelatedSubscription) {
@@ -588,6 +541,7 @@ function CoursePage({ data, syllabus }) {
         </Head>
       )}
       <FixedBottomCta
+        isFetching={initialDataIsFetching}
         isCtaVisible={isCtaVisible}
         financingAvailable={planData?.financingOptions?.length > 0}
         videoUrl={data?.course_translation?.video_url}
@@ -597,9 +551,10 @@ function CoursePage({ data, syllabus }) {
         couponApplied={selfAppliedCoupon}
         width="calc(100vw - 15px)"
         left="7.5px"
+        zIndex={1100}
       />
-      <CouponTopBar />
-      <Flex flexDirection="column" mt="2rem">
+      <CouponTopBar display={{ base: 'none', md: 'block' }} />
+      <Flex flexDirection="column" mt={{ base: '0', md: '0.5rem' }}>
         <GridContainer maxWidth="1280px" gridTemplateColumns="repeat(12, 1fr)" gridGap="36px" padding="8px 10px 50px 10px" mt="17px">
           <Flex flexDirection="column" gridColumn="1 / span 8" gridGap="24px">
             {/* Title */}
@@ -694,6 +649,7 @@ function CoursePage({ data, syllabus }) {
           <Flex flexDirection="column" gridColumn="9 / span 4" mt={{ base: '2rem', md: '0' }} ref={showBottomCTA}>
             <ShowOnSignUp
               title={getAlternativeTranslation('join-cohort')}
+              alignSelf="center"
               maxWidth="396px"
               description={isAuthenticated ? getAlternativeTranslation('join-cohort-description') : getAlternativeTranslation('create-account-text')}
               borderColor={data.color || 'green.400'}
@@ -714,7 +670,6 @@ function CoursePage({ data, syllabus }) {
               invertHandlerPosition
               headContent={data?.course_translation?.video_url && (
                 <Flex flexDirection="column" position="relative">
-                  {/* <Image src={data?.icon_url} top="-1.5rem" left="-1.5rem" width="64px" height="64px" objectFit="cover" position="absolute" /> */}
                   <ReactPlayerV2
                     url={data?.course_translation?.video_url}
                     withThumbnail
@@ -757,9 +712,7 @@ function CoursePage({ data, syllabus }) {
                         >
                           <Flex flexDirection="column" alignItems="center">
                             <Text fontSize={!featuredPlanToEnroll?.isFreeTier ? '16px' : '14px'}>
-                              {!featuredPlanToEnroll?.isFreeTier
-                                ? `${getAlternativeTranslation('common:enroll-for-connector')} ${featurePrice}`
-                                : capitalizeFirstLetter(featurePrice)}
+                              {capitalizeFirstLetter(featurePrice)}
                             </Text>
                             {!featuredPlanToEnroll?.isFreeTier && (
                               <Flex alignItems="center" marginTop="5px" gap="5px" justifyContent="center">
@@ -771,20 +724,6 @@ function CoursePage({ data, syllabus }) {
                             )}
                           </Flex>
                         </Button>
-                        {payableList?.length > 1 && (
-                          <Button
-                            variant="outline"
-                            color="green.400"
-                            isLoading={initialDataIsFetching}
-                            borderColor="currentColor"
-                            width="100%"
-                            whiteSpace="normal"
-                            wordWrap="break-word"
-                            onClick={goToFinancingOptions}
-                          >
-                            {t('common:see-financing-options')}
-                          </Button>
-                        )}
                         {isAuthenticated ? (
                           <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                             {t('signup:switch-user-connector', { name: user?.first_name })}

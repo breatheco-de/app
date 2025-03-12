@@ -46,6 +46,7 @@ import { getTranslations, processPlans } from '../../common/handlers/subscriptio
 import Icon from '../../common/components/Icon';
 import { usePersistentBySession } from '../../common/hooks/usePersistent';
 import AcordionList from '../../common/components/AcordionList';
+import { handlePriceTextWithCoupon } from '../../utils/getPriceWithDiscount';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -103,7 +104,6 @@ function Checkout() {
   const [couponError, setCouponError] = useState(false);
   const [suggestedPlans, setSuggestedPlans] = useState(undefined);
   const [discountValues, setDiscountValues] = useState(undefined);
-  // const [suggestedPlansDiscounts, setSuggestedPlansDiscount] = useState(undefined);
   const [checkInfoLoader, setCheckInfoLoader] = useState(false);
   const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
   const { backgroundColor3, hexColor, backgroundColor } = useStyle();
@@ -189,7 +189,7 @@ function Checkout() {
       });
   };
 
-  const handleCoupon = (coupons, actions) => {
+  const handleCoupon = (coup, actions) => {
     const alreadyAppliedCoupon = (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === discountCode) || (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === couponValue);
     if (alreadyAppliedCoupon) {
       toast({
@@ -206,11 +206,11 @@ function Checkout() {
     }
 
     bc.payment({
-      coupons: [coupons || discountCode],
+      coupons: [coup || discountCode],
       plan: planFormated,
     }).verifyCoupon()
       .then((resp) => {
-        const correctCoupon = resp.data.find((coup) => coup.slug === discountCode);
+        const correctCoupon = resp.data.find((c) => c.slug === coup);
         if (correctCoupon) {
           const couponsToString = resp?.data.map((item) => item?.slug);
           saveCouponToBag(couponsToString, checkoutData?.id);
@@ -311,9 +311,9 @@ function Checkout() {
 
   useEffect(() => {
     // verify if coupon exists
-    if (checkoutData?.id) {
-      handleCoupon(couponValue);
+    if (checkoutData?.id && !checkoutData?.isTrial) {
       if (couponValue) setDiscountCode(couponValue);
+      handleCoupon(couponValue);
     }
   }, [couponValue, checkoutData?.id]);
 
@@ -872,7 +872,7 @@ function Checkout() {
                         )}
                         <Flex justifyContent="space-between" width="full" alignItems="center">
                           {showPaymentDetails && renderPlanDetails()}
-                          {!queryPlanId && originalPlan?.financingOptions.length > 0 && showPaymentDetails && (
+                          {!queryPlanId && (originalPlan?.financingOptions.length > 0 || originalPlan?.hasSubscriptionMethod) && showPaymentDetails && (
                             <Flex flexDirection="column" gap="4px">
                               <Heading as="h3" size="sm" width="100%" position="relative">
                                 <Menu>
@@ -913,7 +913,7 @@ function Checkout() {
                                       >
                                         <Flex justifyContent="space-between" alignItems="center" width="100%">
                                           <Text fontSize="md" flex="1" color={option.plan_id === selectedPlanCheckoutData?.plan_id ? useColorModeValue('#25BF6C', 'green') : 'auto'}>
-                                            {`${option?.price} / ${option?.title}`}
+                                            {originalPlan?.hasSubscriptionMethod ? `${handlePriceTextWithCoupon(option?.priceText, allCoupons, originalPlan?.plans)} / ${option?.title}${option?.pricePerMonthText ? `, (${handlePriceTextWithCoupon(option?.pricePerMonthText, allCoupons, originalPlan?.plans)}${t('signup:info.per-month')})` : ''}` : `${handlePriceTextWithCoupon(option?.priceText, allCoupons, originalPlan?.plans)} / ${option?.title}`}
                                           </Text>
                                           {option.plan_id === selectedPlanCheckoutData?.plan_id
                                             && (
