@@ -11,6 +11,7 @@ import Icon from './Icon';
 import { parseQuerys } from '../../utils/url';
 import { getQueryString, isWindow, slugToTitle } from '../../utils';
 import { usePersistentBySession } from '../hooks/usePersistent';
+import { currenciesSymbols } from '../../utils/variables';
 
 export default function PricingCard({ item, courseData, isFetching, relatedSubscription, moneyBack, ...rest }) {
   const { t, lang } = useTranslation('signup');
@@ -24,6 +25,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
   const [coupon] = usePersistentBySession('coupon', []);
 
   const courseCoupon = selfAppliedCoupon?.plan === item?.plan_slug && selfAppliedCoupon;
+  const currencySymbol = currenciesSymbols[item?.currency?.code] || '$';
 
   const priceProcessed = useMemo(() => getPriceWithDiscount(
     selectedFinancing?.price || item?.optionList?.[0]?.price || item.price,
@@ -191,11 +193,11 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                             <>
                               {priceProcessed.originalPrice && (
                                 <s style={{ fontSize: '16px' }}>
-                                  {`$${priceProcessed.originalPrice}`}
+                                  {`${currencySymbol}${priceProcessed.originalPrice}`}
                                 </s>
                               )}
                               <Text fontSize="64px" fontFamily="Space Grotesk Variable" fontWeight={700} lineHeight="70px">
-                                {`$${priceProcessed.price || item.price}`}
+                                {`${currencySymbol}${priceProcessed.price || item.price}`}
                               </Text>
                             </>
                           )
@@ -232,7 +234,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                       fontWeight={700}
                       textAlign="center"
                     >
-                      {isPayable && `$${item?.price}`}
+                      {isPayable && `${currencySymbol}${item?.price}`}
                       {isTotallyFree && item?.period_label}
                       {!isPayable && !isTotallyFree && item?.priceText}
                     </Box>
@@ -361,7 +363,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                           toggleAccordion();
                         }}
                       >
-                        {`$${calculateCouponOnFinancing(financing?.price, courseCoupon?.discount_value, courseCoupon?.discount_type)} / ${financing?.title}`}
+                        {`${currencySymbol}${calculateCouponOnFinancing(financing?.price, courseCoupon?.discount_value, courseCoupon?.discount_type)} / ${financing?.title}`}
                       </Button>
                     ),
                   )}

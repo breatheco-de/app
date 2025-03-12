@@ -3,7 +3,7 @@
   "reviews": "Ratings",
   "course-rating": "Course rating",
   "connect-with-github": "Connect with Github",
-  "see-financing-options": "See financing options",
+  "see-financing-options": "See payment options",
   "your-tutors-in-this-cohort": "Your tutors:",
   "main-instructor": "Main Instructor",
   "teacher-assistant": "Teacher Assistant",
@@ -140,6 +140,7 @@
   "remaining": "Remaining",
   "show-more": "Show more",
   "show-less": "Show less",
+  "repository-information": "repository's information section",
   "seach-technology": "Search technology",
   "remove-difficulty": "Remove difficulty",
   "read-lesson": "Read lesson",
@@ -179,7 +180,7 @@
       "project": "project",
       "exercise": "exercise"
     },
-    "dependencies":{
+    "dependencies": {
       "node-js": "Node JS",
       "python": "Python",
       "javascript": "Javascript"
@@ -195,14 +196,21 @@
       "type": "dropdown",
       "steps": [
         {
-          "label": "Identify the GitHub repository",
-          "description": "Decide which repository you need:\n- Start from scratch using a 4Geeks template.\n- Fork and clone an existing project.\n\nMake sure you have the correct repository URL.",
+          "label": "Verify if the repository is a template",
+          "description": "Check if the repository is a GitHub template before proceeding.<br><br>You can find out if it is a template by looking at the {{repoUrl}}.<br><br>If it has a `Use this template` button or if, after the name of the repository located on the top side of your screen (in GitHub), it says `Template` or `Public template`, then it is a template.",
           "video": "",
           "source": "https://4geeks.com/lesson/how-to-start-a-project",
           "source-label": ""
         },
         {
-          "label": "Is it a template?",
+          "label": "If it is not a template",
+          "description": "If the repository is not a template:\n1. Go to the GitHub repository and click on the `Fork` button.\n2. Set the owner to 4Geeks if you want free Codespaces hours, or use your own user account.\n3. After forking is completed, you will have a copy of the repository under your account (the fork), which you can now modify and work on.\n\nContinue with step 4.",
+          "video": "",
+          "source": "https://4geeks.com/lesson/how-to-start-a-project",
+          "source-label": ""
+        },
+        {
+          "label": "If it is a template",
           "description": "If the repository is a template:\n1. Click `Use this template` and select `Create a new repository`.\n2. Choose an owner (select 4Geeks if you're a student for free Codespaces hours).\n3. Name your repository (e.g., `username-project-name`) and make it public.\n4. Click `Create repository from template`.\n5. Star the repository to find it easily later.",
           "video": "",
           "source": "https://4geeks.com/lesson/how-to-start-a-project",
@@ -210,7 +218,7 @@
         },
         {
           "label": "Open the repository",
-          "description": "Choose one method:\n1. **Codespaces**: Click `<> Code` → `Create codespace on main` (recommended).\n2. **Gitpod**: Use a cloud environment.\n3. **Local machine**: Clone and work locally.",
+          "description": "Follow one of these options to open the repository:\n- **Open in Github Codespaces**: Click the `Code` button and open the project in Codespaces.\n- **Open in Gitpod**: Install the Gitpod extension and use the Gitpod button to open the project.",
           "video": "",
           "source": "https://4geeks.com/lesson/how-to-start-a-project",
           "source-label": ""
