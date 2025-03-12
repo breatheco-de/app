@@ -6,7 +6,7 @@ import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import AcordionList from './AcordionList';
 
-function CourseContent({ data }) {
+function CourseContent({ data, ...rest }) {
   const { hexColor } = useStyle();
   const { t } = useTranslation('course');
 
@@ -19,7 +19,7 @@ function CourseContent({ data }) {
         {t('course-content-description')}
       </Text>
 
-      <AcordionList defaultIndex={0} list={data} titleStyle={{ fontWeight: 'bold' }} />
+      <AcordionList defaultIndex={0} list={data} titleStyle={{ fontWeight: 'bold' }} {...rest} />
     </Flex>
   );
 }

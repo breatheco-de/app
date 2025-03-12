@@ -119,7 +119,7 @@ function CoursePage({ data, syllabus }) {
   const [isCtaVisible, setIsCtaVisible] = useState(false);
   const [allDiscounts, setAllDiscounts] = useState([]);
   const { isAuthenticated, user, logout, cohorts } = useAuth();
-  const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
+  const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor, backgroundColor7, backgroundColor8 } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
   const toast = useToast();
@@ -181,6 +181,8 @@ function CoursePage({ data, syllabus }) {
 
   const planPriceFormatter = usePlanPrice();
   const featurePrice = planPriceFormatter(featuredPlanToEnroll, planList, allDiscounts).toLocaleLowerCase();
+
+  console.log(data?.course_translation?.landing_variables);
 
   const getAlternativeTranslation = (slug, params = {}, options = {}) => {
     const keys = slug.split('.');
@@ -554,7 +556,7 @@ function CoursePage({ data, syllabus }) {
         zIndex={1100}
       />
       <CouponTopBar display={{ base: 'none', md: 'block' }} />
-      <Flex flexDirection="column" mt={{ base: '0', md: '0.5rem' }}>
+      <Flex flexDirection="column" mt={{ base: '0', md: '0.5rem' }} background={backgroundColor7}>
         <GridContainer maxWidth="1280px" gridTemplateColumns="repeat(12, 1fr)" gridGap="36px" padding="8px 10px 50px 10px" mt="17px">
           <Flex flexDirection="column" gridColumn="1 / span 8" gridGap="24px">
             {/* Title */}
@@ -579,6 +581,15 @@ function CoursePage({ data, syllabus }) {
                     </>
                   )
                 }
+              </Flex>
+
+              {/* Course description */}
+              <Flex flexDirection="column" gridGap="16px">
+                {data?.course_translation?.short_description && (
+                  <Text size="18px" fontWeight={500} color="currentColor" lineHeight="normal">
+                    {data?.course_translation?.short_description}
+                  </Text>
+                )}
               </Flex>
             </Flex>
 
@@ -636,22 +647,14 @@ function CoursePage({ data, syllabus }) {
               )}
               <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => setShowModal(true)} />
 
-              {/* Course description */}
-              <Flex flexDirection="column" gridGap="16px">
-                {data?.course_translation?.short_description && (
-                  <Text size="18px" fontWeight={700} color="currentColor" lineHeight="normal">
-                    {data?.course_translation?.short_description}
-                  </Text>
-                )}
-              </Flex>
             </Flex>
           </Flex>
           <Flex flexDirection="column" gridColumn="9 / span 4" mt={{ base: '2rem', md: '0' }} ref={showBottomCTA}>
             <ShowOnSignUp
-              title={getAlternativeTranslation('join-cohort')}
+              title={getAlternativeTranslation('sign-up-to-plus')}
               alignSelf="center"
               maxWidth="396px"
-              description={isAuthenticated ? getAlternativeTranslation('join-cohort-description') : getAlternativeTranslation('create-account-text')}
+              description={isAuthenticated ? getAlternativeTranslation('join-cohort-description') : getAlternativeTranslation('sign-up-to-plus-description')}
               borderColor={data.color || 'green.400'}
               textAlign="center"
               gridGap="11px"
@@ -794,7 +797,16 @@ function CoursePage({ data, syllabus }) {
             <Flex flexDirection="column" gridColumn="2 / span 12">
               {/* CourseContent comopnent */}
               {cohortData?.cohortSyllabus?.syllabus && (
-                <CourseContent data={courseContentList} assetCount={assetCount} />
+                <CourseContent
+                  data={courseContentList}
+                  assetCount={assetCount}
+                  backgroundColor={backgroundColor}
+                  titleStyle={{ textTransform: 'capitalize', fontSize: '18px', fontWeight: 'bold', fontFamily: 'Space Grotesk Variable' }}
+                  featuresStyle={{ background: backgroundColor8, padding: '4px', borderRadius: '4px' }}
+                  border="none"
+                  expanderText={t('navbar:course-details')}
+                  allowToggle
+                />
               )}
             </Flex>
           )}
