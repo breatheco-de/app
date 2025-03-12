@@ -12,7 +12,7 @@ import {
   ModalBody,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -20,14 +20,15 @@ import Icon from '../../../common/components/Icon';
 import Heading from '../../../common/components/Heading';
 import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
-import ModalInfo from '../../moduleMap/modalInfo';
 import { location, slugToTitle } from '../../../utils';
 import useSubscriptionsHandler from '../../../common/store/actions/subscriptionAction';
-import UpgradeModal from './UpgradeModal';
 import { CardSkeleton, SimpleSkeleton } from '../../../common/components/Skeleton';
 import bc from '../../../common/services/breathecode';
 import SubscriptionCard from './SubscriptionCard';
 import ConsumableCard from './ConsumableCard';
+
+const ModalInfo = lazy(() => import('../../moduleMap/modalInfo'));
+const UpgradeModal = lazy(() => import('./UpgradeModal'));
 
 function Subscriptions({ cohorts }) {
   const { t } = useTranslation('profile');
@@ -300,33 +301,34 @@ function Subscriptions({ cohorts }) {
               onOpenCancelSubscription={onOpenCancelSubscription}
             />
           ))}
-          <ModalInfo
-            isOpen={cancelModalIsOpen}
-            title={t('subscription.cancel-modal.title')}
-            description={t('subscription.cancel-modal.description', { cohort: slugToTitle(subscriptionProps?.slug) })}
-            closeText={t('subscription.cancel-modal.closeText')}
-            handlerText={t('subscription.cancel-modal.handlerText')}
-            headerStyles={{ textAlign: 'center' }}
-            descriptionStyle={{ color: fontColor, fontSize: '14px', textAlign: 'center' }}
-            footerStyle={{ flexDirection: 'row-reverse' }}
-            closeButtonStyles={{ variant: 'outline', color: 'blue.default', borderColor: 'currentColor' }}
-            buttonHandlerStyles={{ variant: 'default' }}
-            actionHandler={() => {
-              cancelSubscription(subscriptionProps?.id)
-                .finally(() => {
-                  setCancelModalIsOpen(false);
-                });
-            }}
-            onClose={() => setCancelModalIsOpen(false)}
-          />
+          <Suspense fallback={<SimpleSkeleton borderRadius="17px" height="108px" width={{ base: '100%', md: '265px' }} />}>
+            <ModalInfo
+              isOpen={cancelModalIsOpen}
+              title={t('subscription.cancel-modal.title')}
+              description={t('subscription.cancel-modal.description', { cohort: slugToTitle(subscriptionProps?.slug) })}
+              closeText={t('subscription.cancel-modal.closeText')}
+              handlerText={t('subscription.cancel-modal.handlerText')}
+              headerStyles={{ textAlign: 'center' }}
+              descriptionStyle={{ color: fontColor, fontSize: '14px', textAlign: 'center' }}
+              footerStyle={{ flexDirection: 'row-reverse' }}
+              closeButtonStyles={{ variant: 'outline', color: 'blue.default', borderColor: 'currentColor' }}
+              buttonHandlerStyles={{ variant: 'default' }}
+              actionHandler={() => {
+                cancelSubscription(subscriptionProps?.id)
+                  .finally(() => {
+                    setCancelModalIsOpen(false);
+                  });
+              }}
+              onClose={() => setCancelModalIsOpen(false)}
+            />
 
-          <UpgradeModal
-            upgradeModalIsOpen={upgradeModalIsOpen}
-            setUpgradeModalIsOpen={setUpgradeModalIsOpen}
-            subscriptionProps={subscriptionProps}
-            offerProps={offerProps}
-          />
-
+            <UpgradeModal
+              upgradeModalIsOpen={upgradeModalIsOpen}
+              setUpgradeModalIsOpen={setUpgradeModalIsOpen}
+              subscriptionProps={subscriptionProps}
+              offerProps={offerProps}
+            />
+          </Suspense>
         </Grid>
       ) : (
         <>

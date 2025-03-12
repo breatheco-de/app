@@ -527,7 +527,7 @@ function profileHandlers() {
           return {
             renewalDate: renewalDateText(nextPaymentDate),
             renewability: activeSince ? activeSinceText(activeSince) : false,
-            paymentInfo: invoiceAmount === 0 ? t('common:free') : paymentInfoText(invoiceAmount, payEveryUnit),
+            paymentInfo: invoiceAmount === 0 ? t('subscription.payment', { payment: t('common:free') }) : paymentInfoText(invoiceAmount, payEveryUnit),
           };
         },
         expired: () => ({
