@@ -21,7 +21,7 @@ import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../utils/variables';
 import MktTrustCards from '../common/components/MktTrustCards';
 import DraggableContainer from '../common/components/DraggableContainer';
 import Icon from '../common/components/Icon';
-import usePlanInfo from '../hooks/usePlanInfo';
+import usePlanMktInfo from '../common/hooks/usePlanMktInfo';
 
 const switchTypes = {
   monthly: 'monthly',
@@ -43,41 +43,28 @@ const getYearlyPlans = (originalPlans, suggestedPlans, allFeaturedPlans) => {
 function PricingView() {
   const { t, lang } = useTranslation('pricing');
   const { getSelfAppliedCoupon } = useSignup();
+  const { getPlanFeatures } = usePlanMktInfo();
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated, cohorts } = useAuth();
-  const [relatedSubscription, setRelatedSubscription] = useState({});
   const { hexColor, modal } = useStyle();
-  const [isFetching, setIsFetching] = useState({
-    courses: true,
-    selectedPlan: true,
-  });
-  const router = useRouter();
-  const { getPlanFeatures } = usePlanInfo();
-  const queryCourse = getQueryString('course');
-  const queryPlan = getQueryString('plan');
-  const courseFormated = useMemo(() => (queryCourse && encodeURIComponent(queryCourse)) || '', [queryCourse]);
-  const planFormated = useMemo(() => (queryPlan && encodeURIComponent(queryPlan)) || '', [queryPlan]);
+  const [relatedSubscription, setRelatedSubscription] = useState({});
   const [selectedPlanData, setSelectedPlanData] = useState({});
   const [selectedCourseData, setSelectedCourseData] = useState({});
   const [allFeaturedPlansSelected, setAllFeaturedPlansSelected] = useState([]);
   const [publicMktCourses, setPublicMktCourses] = useState([]);
-  const [paymentTypePlans, setPaymentTypePlans] = useState({
-    hasSubscriptionMethod: false,
-    monthly: [],
-    yearly: [],
-  });
-
+  const [isFetching, setIsFetching] = useState({ courses: true, selectedPlan: true });
+  const [paymentTypePlans, setPaymentTypePlans] = useState({ hasSubscriptionMethod: false, monthly: [], yearly: [] });
+  const router = useRouter();
+  const queryCourse = getQueryString('course');
+  const queryPlan = getQueryString('plan');
+  const planTranslations = getTranslations(t);
   const defaultMonthlyPlans = t('signup:pricing.monthly-plans', {}, { returnObjects: true });
   const defaultYearlyPlans = t('signup:pricing.yearly-plans', {}, { returnObjects: true });
-  const selectedPlanListExists = selectedPlanData?.planList?.length > 0;
-
-  const allDefaultPlansList = useMemo(() => [
-    ...defaultMonthlyPlans || [],
-    ...defaultYearlyPlans || [],
-  ], [defaultMonthlyPlans, defaultYearlyPlans]);
-
   const bootcampInfo = t('common:bootcamp', {}, { returnObjects: true });
-  const planTranslations = getTranslations(t);
+  const planFormated = useMemo(() => (queryPlan && encodeURIComponent(queryPlan)) || '', [queryPlan]);
+  const allDefaultPlansList = useMemo(() => [...defaultMonthlyPlans || [], ...defaultYearlyPlans || []], [defaultMonthlyPlans, defaultYearlyPlans]);
+  const courseFormated = useMemo(() => (queryCourse && encodeURIComponent(queryCourse)) || '', [queryCourse]);
+  const selectedPlanListExists = selectedPlanData?.planList?.length > 0;
   const planSlug = selectedCourseData?.plan_slug || planFormated;
 
   const formatPlans = (allPlansList, hideYearlyOption = false) => {
@@ -85,8 +72,7 @@ function PricingView() {
     const financingList = allPlansList?.filter((p) => p?.period === 'FINANCING');
     const payablePlanList = freeTierList?.length > 0
       ? allPlansList?.filter((p) => p?.price > 0 && (hideYearlyOption && p?.period !== 'YEAR'))
-      : allPlansList?.filter((p) => p?.period === 'FINANCING')
-        ?.sort((a, b) => (a?.how_many_months || 0) - (b?.how_many_months || 0));
+      : allPlansList?.filter((p) => p?.period === 'FINANCING')?.sort((a, b) => (a?.how_many_months || 0) - (b?.how_many_months || 0));
 
     const initialFinancingOption = payablePlanList[0] || {};
     const financingData = {
@@ -188,6 +174,7 @@ function PricingView() {
       .then(({ data }) => {
         const publicCourses = data?.filter((course) => course?.visibility === 'PUBLIC' && course?.plan_slug !== 'basic' && course?.plan_slug !== 'free-trial-deep-dive-into-python');
         setPublicMktCourses(publicCourses);
+
         const selectedCourseByQueryString = publicCourses.find((course) => course?.slug === courseFormated);
 
         if (selectedCourseByQueryString || planFormated) {

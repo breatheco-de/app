@@ -1,6 +1,6 @@
 import useTranslation from 'next-translate/useTranslation';
 
-const usePlanInfo = () => {
+const usePlanMktInfo = () => {
   const { t } = useTranslation('signup');
 
   const getPlanFeatures = async (plans) => {
@@ -37,4 +37,4 @@ const usePlanInfo = () => {
   return { getPlanFeatures };
 };
 
-export default usePlanInfo;
+export default usePlanMktInfo;
