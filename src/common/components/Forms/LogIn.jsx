@@ -137,9 +137,18 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
       onSubmit={(values, actions) => {
         if (step === 1) {
           const validate = values.email.match(emailRe);
-          if (validate) validateEmail(values.email);
-          else actions.setFieldTouched('email', true, true);
-          actions.setSubmitting(false);
+          if (validate) {
+            validateEmail(values.email)
+              .then(() => {
+                actions.setSubmitting(false);
+              })
+              .catch(() => {
+                actions.setSubmitting(false);
+              });
+          } else {
+            actions.setFieldTouched('email', true, true);
+            actions.setSubmitting(false);
+          }
           return;
         }
         login(values, disableRedirect)
