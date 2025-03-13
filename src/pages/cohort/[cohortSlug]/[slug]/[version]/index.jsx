@@ -323,7 +323,7 @@ function Dashboard() {
 
   const fetchDeletionOrders = async () => {
     try {
-      const { data } = await bc.assignments().getDeletionOrders();
+      const { data } = await bc.assignments({ status: 'transferring' }).getDeletionOrders();
       setDeletionOrders(data);
     } catch (err) {
       console.error('Error fetching deletion orders:', err);
