@@ -4,6 +4,7 @@ const handleEnv = ({ queryString, env }) => {
   let modifiedEnv = env;
   if (isWindow) {
     const urlHost = new URLSearchParams(window.location.search).get(queryString);
+    console.log('urlHost', urlHost);
     if (process.env.VERCEL_ENV !== 'production') {
       if (urlHost && urlHost[urlHost.length - 1] === '/') urlHost.slice(0, -1);
       if (urlHost) localStorage.setItem(queryString, urlHost);

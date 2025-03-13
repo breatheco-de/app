@@ -23,7 +23,7 @@ import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const { t, lang } = useTranslation('login');
   const router = useRouter();
-  const { query } = router;
+  const { query, pathname } = router;
   const [emailValidation, setEmailValidation] = useState({
     valid: false,
     loading: false,
@@ -50,10 +50,16 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
     : '#';
 
   useEffect(() => {
-    const { error, ...queryParams } = query;
+    const { error } = query;
     if (error === 'google-user-not-found') {
       setGoogleError(true);
-      router.push({ ...queryParams });
+      const params = new URLSearchParams(query);
+      params.delete('error');
+      router.replace(
+        { pathname, query: params.toString() },
+        undefined,
+        { shallow: true },
+      );
     }
   }, [query]);
 
