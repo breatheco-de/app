@@ -108,9 +108,11 @@
     "no-payment-left": "Payment: No payments left",
     "renewal-date": "Renewal date: {{date}}",
     "yearly-savings": "Save {{months}} months",
+    "yearly-savings-singular": "Save {{months}} month",
     "payment_unit": {
       "month": "Monthly",
-      "year": "Yearly"
+      "year": "Yearly",
+      "anual": "Anual"
     },
     "renewal-date-unknown": "Renewal date: Unknown",
     "payment-trial": "Payment: Trial",

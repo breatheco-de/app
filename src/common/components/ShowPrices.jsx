@@ -80,7 +80,7 @@ function ShowPrices({
   const getPlanLabel = (plan) => {
     switch (plan.period) {
       case 'YEAR':
-        return t('subscription.payment_unit.year');
+        return t('subscription.payment_unit.anual');
       case 'MONTH':
         return t('subscription.payment_unit.month');
       case 'ONE_TIME':
@@ -180,10 +180,23 @@ function ShowPrices({
               minWidth="max-content"
             >
               <Text fontSize="inherit" fontWeight="inherit" color="inherit">
-                {t('subscription.yearly-savings', { months: monthsSaved })}
+                {monthsSaved === 1
+                  ? t('subscription.yearly-savings-singular', { months: monthsSaved })
+                  : t('subscription.yearly-savings', { months: monthsSaved })}
               </Text>
             </Box>
           )}
+          {/* {selfAppliedCoupon && (
+            <Box
+              position="absolute"
+              top="-30px"
+              left="-25px"
+              fontSize="50px"
+              zIndex={1}
+            >
+              🔥
+            </Box>
+          )} */}
           <Box
             position="relative"
             borderRadius="20px"
@@ -193,7 +206,7 @@ function ShowPrices({
             borderColor={selectedPlan.period === 'YEAR' ? 'black' : backgroundColor}
           >
             <Box
-              bg="blue.default2"
+              bg={selfAppliedCoupon ? 'green.500' : 'blue.default2'}
               p={6}
               color="white"
               width={{ base: '100%', md: '250px' }}
@@ -205,11 +218,17 @@ function ShowPrices({
               borderTopRightRadius={{ base: '20px', md: '0' }}
               borderBottomLeftRadius={{ base: '0', md: '20px' }}
             >
-              <Flex alignItems="center" mb={3}>
-                <Text fontSize="sm" mr={2}>{t('learn-at-your-pace')}</Text>
-                <Box bg="#0062BD" px={2} py={0.5} borderRadius="md" border="1px solid" borderColor="white">
-                  <Text fontSize="xs" textWrap="nowrap" flexGrow={1} textAlign="center">{getPlanLabel(selectedPlan)}</Text>
-                </Box>
+              <Flex alignItems="center" mb={3} gap={2}>
+                <Text fontSize="sm">
+                  {t('learn-at-your-pace')}
+                </Text>
+                {selectedPlan.period !== 'FINANCING' && selectedPlan.period !== 'ONE_TIME' && (
+                  <Box bg={selfAppliedCoupon ? 'green.700' : '#0062BD'} px={2} py={0.5} borderRadius="md" border="1px solid" borderColor="white">
+                    <Text fontSize="xs" textWrap="nowrap" flexGrow={1} textAlign="center">
+                      {getPlanLabel(selectedPlan)}
+                    </Text>
+                  </Box>
+                )}
               </Flex>
               <Flex flexDirection="column" alignItems="center" mb={{ base: 4, md: 0 }}>
                 <Text
@@ -219,9 +238,16 @@ function ShowPrices({
                 >
                   {selectedPlan.priceText}
                 </Text>
-                <Text as="span" fontSize="md" color="#01455E" textDecoration="line-through">
-                  {selectedPlan.lastPrice}
-                </Text>
+                <Flex gap="10px" alignItems="center" direction="column">
+                  <Text as="span" fontSize="md" color="#01455E" textDecoration="line-through">
+                    {selectedPlan.lastPrice}
+                  </Text>
+                  {selfAppliedCoupon && (
+                    <Text as="span" fontSize="xs" color="#01455E">
+                      {t('signup:discount-applied')}
+                    </Text>
+                  )}
+                </Flex>
               </Flex>
               <Button
                 width="full"

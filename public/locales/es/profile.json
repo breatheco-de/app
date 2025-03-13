@@ -108,9 +108,11 @@
     "no-payment-left": "Pago: Sin pagos restantes",
     "renewal-date": "Fecha de renovación: {{date}}",
     "yearly-savings": "Ahorra {{months}} meses",
+    "yearly-savings-singular": "Ahorra {{months}} mes",
     "payment_unit": {
       "month": "Mensual",
-      "year": "Anual"
+      "year": "Anual",
+      "anual": "Anual"
     },
     "renewal-date-unknown": "Fecha de renovación: Desconocida",
     "payment-trial": "Pago: Prueba",
