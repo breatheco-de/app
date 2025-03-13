@@ -107,6 +107,7 @@
     "many-payments-left": "Payment: {{qty}} payments left",
     "no-payment-left": "Payment: No payments left",
     "renewal-date": "Renewal date: {{date}}",
+    "yearly-savings": "Save {{months}} months",
     "payment_unit": {
       "month": "Monthly",
       "year": "Yearly"

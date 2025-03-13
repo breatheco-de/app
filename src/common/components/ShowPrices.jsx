@@ -165,6 +165,11 @@ function ShowPrices({
     const availablePlans = allTiers.filter((plan) => plan.show && !plan.isFreeTier);
     const selectedPlan = availablePlans.find((plan) => plan.plan_id === selectedPlanId) || availablePlans[0];
     const hasValidPrice = selectedPlan?.price !== undefined;
+    const monthlyPlan = availablePlans.find((plan) => plan.period === 'MONTH');
+    const yearlyPlan = availablePlans.find((plan) => plan.period === 'YEAR');
+    const hasMonthlyAndYearly = monthlyPlan && yearlyPlan;
+    const monthsSaved = hasMonthlyAndYearly ? Math.floor((monthlyPlan.price * 12 - yearlyPlan.price) / monthlyPlan.price) : 0;
+    const shouldShowSavingsPill = selectedPlan?.period === 'YEAR' && hasMonthlyAndYearly && monthsSaved > 0;
 
     const getPlanLabel = (plan) => {
       switch (plan.period) {
@@ -198,7 +203,7 @@ function ShowPrices({
 
     return (
       <Flex flexDirection="column" mx="auto">
-        <Box display="flex" flexDirection="column" mb={6}>
+        <Box display="flex" flexDirection="column">
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
             <Heading as="h2" size="24px" color="blue.default2" flexGrow={1}>
               {title || data?.pricing['choose-plan']}
@@ -256,107 +261,141 @@ function ShowPrices({
         </Box>
 
         {hasValidPrice && (
-          <Box
-            position="relative"
-            borderRadius="xl"
-            overflow="hidden"
-            display="flex"
-            flexDirection={{ base: 'column', md: 'row' }}
-            border="1px"
-            borderColor={backgroundColor}
-          >
-            <Box
-              bg="blue.default2"
-              p={6}
-              color="white"
-              width={{ base: '100%', md: '250px' }}
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <Flex alignItems="center" mb={3}>
-                <Text fontSize="sm" mr={2}>{t('learn-at-your-pace')}</Text>
-                <Box bg="#0062BD" px={2} py={0.5} borderRadius="md" border="1px solid" borderColor="white">
-                  <Text fontSize="xs" textWrap="nowrap" flexGrow={1} textAlign="center">{getPlanLabel(selectedPlan)}</Text>
-                </Box>
-              </Flex>
-              <Flex flexDirection="column" alignItems="center" mb={{ base: 4, md: 0 }}>
-                <Text
-                  fontSize={{ base: '4xl', md: selectedPlan.period !== 'FINANCING' ? '55px' : '40px' }}
-                  fontWeight="bold"
-                  fontFamily="Space Grotesk Variable"
-                >
-                  {selectedPlan.priceText}
-                </Text>
-                <Text as="span" fontSize="md" color="#01455E" textDecoration="line-through">
-                  {selectedPlan.lastPrice}
-                </Text>
-              </Flex>
-              <Button
-                width="full"
-                bg="white"
-                size="lg"
-                color="black"
-                _hover="none"
-                onClick={() => {
-                  if (handleUpgrade === false) {
-                    router.push(`/checkout?syllabus=coding-introduction&plan=${selectedPlan?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
-                  } else {
-                    handleUpgrade(selectedPlan);
-                  }
-                }}
+          <Box position="relative" mt={6}>
+            {shouldShowSavingsPill && (
+              <Box
+                position="absolute"
+                top="-14px"
+                left="50%"
+                transform="translateX(-50%)"
+                bg="black"
+                color="white"
+                px={4}
+                py={1}
+                borderRadius="full"
+                fontSize="13px"
+                fontWeight="500"
+                whiteSpace="nowrap"
+                zIndex={1}
+                textAlign="center"
+                minWidth="max-content"
               >
-                <Icon icon="graduationCap" color="black" width="20px" height="20px" mr="10px" />
-                {t('common:enroll')}
-              </Button>
-            </Box>
-
-            <Box flex="1" p={{ base: 4, md: 6 }} bg={backgroundColor}>
-              <Text fontSize="18px" mb={4}>
-                {selectedPlan?.description || data?.pricing?.description}
-              </Text>
-
-              <Box mb={6} mt={7}>
-                <MktTechnologies
-                  padding="0"
-                  imageSize={{ base: '16px', md: '20px' }}
-                  gridColumn="1 / -1"
-                  gridSpacing={{ base: '12px', md: '40px' }}
-                  justifyContent={{ base: 'center', md: 'flex-start' }}
-                  alignItems="center"
-                  gridStart="1"
-                  gridEnd="-1"
-                  containerPadding="0"
-                />
+                <Text fontSize="inherit" fontWeight="inherit" color="inherit">
+                  {t('subscription.yearly-savings', { months: monthsSaved })}
+                </Text>
+              </Box>
+            )}
+            <Box
+              position="relative"
+              borderRadius="20px"
+              display="flex"
+              flexDirection={{ base: 'column', md: 'row' }}
+              border="1px"
+              borderColor={selectedPlan.period === 'YEAR' ? 'black' : backgroundColor}
+            >
+              <Box
+                bg="blue.default2"
+                p={6}
+                color="white"
+                width={{ base: '100%', md: '250px' }}
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="space-between"
+                borderTopLeftRadius="20px"
+                borderTopRightRadius={{ base: '20px', md: '0' }}
+                borderBottomLeftRadius={{ base: '0', md: '20px' }}
+              >
+                <Flex alignItems="center" mb={3}>
+                  <Text fontSize="sm" mr={2}>{t('learn-at-your-pace')}</Text>
+                  <Box bg="#0062BD" px={2} py={0.5} borderRadius="md" border="1px solid" borderColor="white">
+                    <Text fontSize="xs" textWrap="nowrap" flexGrow={1} textAlign="center">{getPlanLabel(selectedPlan)}</Text>
+                  </Box>
+                </Flex>
+                <Flex flexDirection="column" alignItems="center" mb={{ base: 4, md: 0 }}>
+                  <Text
+                    fontSize={{ base: '4xl', md: selectedPlan.period !== 'FINANCING' ? '55px' : '40px' }}
+                    fontWeight="bold"
+                    fontFamily="Space Grotesk Variable"
+                  >
+                    {selectedPlan.priceText}
+                  </Text>
+                  <Text as="span" fontSize="md" color="#01455E" textDecoration="line-through">
+                    {selectedPlan.lastPrice}
+                  </Text>
+                </Flex>
+                <Button
+                  width="full"
+                  bg="white"
+                  size="lg"
+                  color="black"
+                  _hover="none"
+                  onClick={() => {
+                    if (handleUpgrade === false) {
+                      router.push(`/checkout?syllabus=coding-introduction&plan=${selectedPlan?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
+                    } else {
+                      handleUpgrade(selectedPlan);
+                    }
+                  }}
+                >
+                  <Icon icon="graduationCap" color="black" width="20px" height="20px" mr="10px" />
+                  {t('common:enroll')}
+                </Button>
               </Box>
 
-              <hr />
-
-              <Grid
-                templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }}
-                templateRows={{ base: 'auto', md: 'auto auto' }}
-                gap={0}
-                mt={2}
+              <Box
+                flex="1"
+                p={{ base: 4, md: 6 }}
+                bg={backgroundColor}
+                borderBottomLeftRadius={{ base: '20px', md: '0' }}
+                borderBottomRightRadius="20px"
+                borderTopRightRadius={{ base: '0', md: '20px' }}
               >
-                {bullets?.map((bullet) => (
-                  <Flex
-                    key={bullet.id}
-                    alignItems="start"
-                    py={4}
-                    borderRadius="md"
-                  >
-                    <Icon
-                      icon={bullet.icon}
-                      width="30px"
-                      color={bullet.color}
-                      mr={2}
-                      mt={1}
-                    />
-                    <Text fontSize="sm">{bullet.text}</Text>
-                  </Flex>
-                ))}
-              </Grid>
+                <Text fontSize="18px" mb={4}>
+                  {selectedPlan?.description || data?.pricing?.description}
+                </Text>
+
+                <Box mb={6} mt={7}>
+                  <MktTechnologies
+                    padding="0"
+                    imageSize={{ base: '16px', md: '20px' }}
+                    gridColumn="1 / -1"
+                    gridSpacing={{ base: '12px', md: '40px' }}
+                    justifyContent={{ base: 'center', md: 'flex-start' }}
+                    alignItems="center"
+                    gridStart="1"
+                    gridEnd="-1"
+                    containerPadding="0"
+                  />
+                </Box>
+
+                <hr />
+
+                <Grid
+                  templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }}
+                  templateRows={{ base: 'auto', md: 'auto auto' }}
+                  gap={0}
+                  mt={2}
+                >
+                  {bullets?.map((bullet) => (
+                    <Flex
+                      key={bullet.id}
+                      alignItems="start"
+                      py={4}
+                      borderRadius="md"
+                    >
+                      <Icon
+                        icon={bullet.icon}
+                        width="30px"
+                        color={bullet.color}
+                        mr={2}
+                        mt={1}
+                      />
+                      <Text fontSize="sm">{bullet.text}</Text>
+                    </Flex>
+                  ))}
+                </Grid>
+              </Box>
             </Box>
           </Box>
         )}
