@@ -277,7 +277,7 @@ function ShowPrices({
               <Box mb={6} mt={7}>
                 <MktTechnologies
                   padding="0"
-                  imageSize={{ base: '16px', md: '20px' }}
+                  imageSize={{ base: '22px', md: '22px' }}
                   gridColumn="1 / -1"
                   gridSpacing={{ base: '12px', md: '40px' }}
                   justifyContent={{ base: 'center', md: 'flex-start' }}
