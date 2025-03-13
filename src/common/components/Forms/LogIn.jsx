@@ -179,8 +179,8 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
       }}
       validationSchema={validationSchema.login}
     >
-      {({ isSubmitting, values, errors }) => (
-        <Form>
+      {({ isSubmitting, values, errors, handleSubmit }) => (
+        <Form onSubmit={handleSubmit} noValidate>
           {/* FIRST STEP */}
           <Stack display={step !== 1 && 'none'} spacing={4} justifyContent="space-between">
             {googleError && (
@@ -311,6 +311,10 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                 variant="default"
                 fontSize={actionfontSize || 'l'}
                 type="submit"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSubmit();
+                }}
               >
                 {t('next')}
               </Button>
@@ -400,7 +404,17 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                 {t('login:forgot-password')}
               </Link>
             </Flex>
-            <Button width="100%" variant="default" fontSize={actionfontSize || 'l'} isLoading={isSubmitting} type="submit">
+            <Button
+              width="100%"
+              variant="default"
+              fontSize={actionfontSize || 'l'}
+              isLoading={isSubmitting}
+              type="submit"
+              onClick={(e) => {
+                e.preventDefault();
+                handleSubmit();
+              }}
+            >
               {t('login:login')}
             </Button>
           </Stack>
