@@ -12,7 +12,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { formatDuration, intervalToDuration, subMinutes } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import CustomTheme from '../../../styles/theme';
 import Text from './Text';
 import Icon from './Icon';
@@ -20,7 +20,6 @@ import { isNumber, isValidDate } from '../../utils';
 import useStyle from '../hooks/useStyle';
 import ProjectsSection from './ProjectsSection';
 import ButtonHandler from '../../js_modules/profile/Subscriptions/ButtonHandler';
-import UpgradeModal from '../../js_modules/profile/Subscriptions/UpgradeModal';
 
 function FreeTagCapsule({ isExpired, freeTrialExpireDateValue, now, lang }) {
   const { t } = useTranslation('program-card');
@@ -75,9 +74,6 @@ function ProgramCard({
 }) {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
-  const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
-  const [offerProps, setOfferProps] = useState({});
-  const [subscriptionProps, setSubscriptionProps] = useState({});
 
   const freeTrialExpireDateValue = isValidDate(freeTrialExpireDate) ? new Date(freeTrialExpireDate) : new Date(subMinutes(new Date(), 1));
   const now = new Date();
@@ -140,11 +136,6 @@ function ProgramCard({
     cancelled: t('status.cancelled'),
     payment_issue: t('status.payment_issue'),
     error: t('status.error'),
-  };
-
-  const onOpenUpgrade = (data) => {
-    setOfferProps(data);
-    setUpgradeModalIsOpen(true);
   };
 
   return (
@@ -335,8 +326,6 @@ function ProgramCard({
                   {isFreeTrial && isExpired ? (
                     <ButtonHandler
                       subscription={subscription}
-                      onOpenUpgrade={onOpenUpgrade}
-                      setSubscriptionProps={setSubscriptionProps}
                       onOpenCancelSubscription={() => {}}
                       // ------------------
                       marginTop={!isCancelled && '20px'}
@@ -471,8 +460,6 @@ function ProgramCard({
                   {((isAvailableAsSaas && isFreeTrial) || (isAvailableAsSaas && !statusActive)) && (
                     <ButtonHandler
                       subscription={subscription}
-                      onOpenUpgrade={onOpenUpgrade}
-                      setSubscriptionProps={setSubscriptionProps}
                       onOpenCancelSubscription={() => {}}
                       // ------------------
                       marginTop={!isCancelled && !isExpired && courseProgress > 0 && '5px'}
@@ -543,13 +530,6 @@ function ProgramCard({
         </>
 
       )}
-
-      <UpgradeModal
-        upgradeModalIsOpen={upgradeModalIsOpen}
-        setUpgradeModalIsOpen={setUpgradeModalIsOpen}
-        subscriptionProps={subscriptionProps}
-        offerProps={offerProps}
-      />
     </Box>
   );
 }

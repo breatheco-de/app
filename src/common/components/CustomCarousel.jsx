@@ -70,7 +70,6 @@ function CustomCarousel({ assignmentList }) {
         <Flex
           flexDirection={{ base: 'column', md: 'row' }}
           width="100%"
-          border="1px solid"
           borderColor={borderColorStrong}
           borderRadius="10px"
           overflow="hidden"

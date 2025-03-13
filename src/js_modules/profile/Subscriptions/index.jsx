@@ -28,7 +28,6 @@ import profileHandlers from './handlers';
 import { location, slugToTitle, toCapitalize, unSlugify } from '../../../utils';
 import useSubscriptionsHandler from '../../../common/store/actions/subscriptionAction';
 import ButtonHandler from './ButtonHandler';
-import UpgradeModal from './UpgradeModal';
 import { CardSkeleton, SimpleSkeleton } from '../../../common/components/Skeleton';
 import bc from '../../../common/services/breathecode';
 import { currenciesSymbols } from '../../../utils/variables';
@@ -230,7 +229,6 @@ function Subscriptions({ cohorts }) {
   const { statusStyles, statusLabel } = profileHandlers();
   const { borderColor2, hexColor, fontColor, featuredLight } = useStyle();
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
-  const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
   const [servicesModal, setServicesModal] = useState(null);
   const [consumables, setConsumables] = useState({
     cohort_sets: [],
@@ -246,15 +244,9 @@ function Subscriptions({ cohorts }) {
   });
   const [loadingServices, setLoadingServices] = useState(true);
   const [subscriptionProps, setSubscriptionProps] = useState({});
-  const [offerProps, setOfferProps] = useState({});
   const memberships = state?.subscriptions;
 
   const onOpenCancelSubscription = () => setCancelModalIsOpen(true);
-
-  const onOpenUpgrade = (data) => {
-    setOfferProps(data);
-    setUpgradeModalIsOpen(true);
-  };
 
   const getConsumables = async () => {
     try {
@@ -548,7 +540,6 @@ function Subscriptions({ cohorts }) {
                   <ButtonHandler
                     subscription={subscription}
                     allSubscriptions={membershipsFiltered}
-                    onOpenUpgrade={onOpenUpgrade}
                     setSubscriptionProps={setSubscriptionProps}
                     onOpenCancelSubscription={onOpenCancelSubscription}
                   />
@@ -574,13 +565,6 @@ function Subscriptions({ cohorts }) {
                 });
             }}
             onClose={() => setCancelModalIsOpen(false)}
-          />
-
-          <UpgradeModal
-            upgradeModalIsOpen={upgradeModalIsOpen}
-            setUpgradeModalIsOpen={setUpgradeModalIsOpen}
-            subscriptionProps={subscriptionProps}
-            offerProps={offerProps}
           />
 
         </Grid>
