@@ -182,8 +182,6 @@ function CoursePage({ data, syllabus }) {
   const planPriceFormatter = usePlanPrice();
   const featurePrice = planPriceFormatter(featuredPlanToEnroll, planList, allDiscounts).toLocaleLowerCase();
 
-  console.log(data?.course_translation?.landing_variables);
-
   const getAlternativeTranslation = (slug, params = {}, options = {}) => {
     const keys = slug.split('.');
     const result = keys.reduce((acc, key) => {
@@ -197,8 +195,6 @@ function CoursePage({ data, syllabus }) {
   const faqList = getAlternativeTranslation('faq', {}, { returnObjects: true }) || [];
   const features = getAlternativeTranslation('features', {}, { returnObjects: true }) || {};
   const featuredBullets = getAlternativeTranslation('featured-bullets', {}, { returnObjects: true }) || [];
-
-  console.log(data);
 
   useEffect(() => {
     if (isRigoInitialized && data.course_translation && !initialDataIsFetching && planData?.slug) {
