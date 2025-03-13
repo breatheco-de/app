@@ -135,6 +135,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
         password: '',
       }}
       onSubmit={(values, actions) => {
+        console.log('values', values);
         if (step === 1) {
           const validate = values.email.match(emailRe);
           if (validate) {
