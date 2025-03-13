@@ -18,7 +18,7 @@ function AcordionList({
           flexDirection="column"
           key={item?.title}
           border={unstyled ? '0px' : '1px solid'}
-          borderColor="blue.default"
+          borderColor="blue.default2"
           borderRadius="17px"
           {...rest}
           borderBottom={rest?.borderBottom && i < list.length - 1 ? rest.borderBottom : ''}
@@ -31,7 +31,7 @@ function AcordionList({
                   padding={paddingButton}
                   color={color}
                   _expanded={{
-                    color: item?.description ? (highlightColor || 'blue.default') : 'currentColor',
+                    color: item?.description ? (highlightColor || 'blue.default2') : 'currentColor',
                     padding: unstyled ? paddingButton : '17px 17px 0',
                   }}
                 >
@@ -59,25 +59,25 @@ function AcordionList({
                 <Flex gap="15px" padding="0 18px 18px 18px" alignItems="center">
                   {item?.certificate && (
                     <Flex gap="2px" {...featuresStyle}>
-                      <Icon icon="certificate" color="#0097CD" width="16px" height="16px" />
+                      <Icon icon="certificate" color="#0084FF" width="16px" height="16px" />
                       <Text fontSize="12px">{t('course:course-certificate')}</Text>
                     </Flex>
                   )}
                   {item?.readings > 0 && (
                     <Flex gap="2px" {...featuresStyle}>
-                      <Icon icon="book" color="#0097CD" width="16px" height="16px" />
+                      <Icon icon="book" color="#0084FF" width="16px" height="16px" />
                       <Text fontSize="12px">{t('course:course-readings', { count: item?.readings })}</Text>
                     </Flex>
                   )}
                   {item?.exercises > 0 && (
                     <Flex gap="2px" {...featuresStyle}>
-                      <Icon icon="strength" color="#0097CD" width="16px" height="16px" />
+                      <Icon icon="strength" color="#0084FF" width="16px" height="16px" />
                       <Text fontSize="12px">{t('course:course-exercises', { count: item?.readings })}</Text>
                     </Flex>
                   )}
                   {item?.time && (
                     <Flex gap="2px" {...featuresStyle}>
-                      <Icon icon="clock" color="#0097CD" width="16px" height="16px" />
+                      <Icon icon="clock" color="#0084FF" width="16px" height="16px" />
                       <Text fontSize="12px">{item.time}</Text>
                     </Flex>
                   )}

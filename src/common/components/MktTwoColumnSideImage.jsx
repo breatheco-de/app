@@ -30,6 +30,7 @@ function MktTwoColumnSideImage({
   subtitleColor,
   buttonColor,
   textBackgroundColor,
+  miniTitle,
   title,
   subTitle,
   description,
@@ -81,7 +82,7 @@ function MktTwoColumnSideImage({
     if (buttonColor === BUTTON_COLOR.BLUE) {
       return {
         color: '#FFF',
-        background: 'blue.default',
+        background: 'blue.default2',
       };
     }
     if (buttonColor === BUTTON_COLOR.WHITE) {
@@ -98,7 +99,7 @@ function MktTwoColumnSideImage({
     }
     return {
       color: '#FFF',
-      background: 'blue.default',
+      background: 'blue.default2',
     };
   };
   const buttonColors = getButtonColors();
@@ -190,6 +191,18 @@ function MktTwoColumnSideImage({
       >
         <Box flex={0.5} height="100%" style={{ direction: 'initial' }} background={sideBackgroundColor} padding={prismicStyles.padding} borderRadius={{ base: '0px', md: '11px' }} {...textSideProps}>
           <Flex color={fontColor} flexDirection="column" gridGap="16px" alignSelf="center">
+            {miniTitle && (
+              <Heading
+                fontSize={prismicStyles.descriptionSize}
+                lineHeight={prismicStyles.descriptionLineHeight || '14px'}
+                margin="15px 0"
+                alignItems="center"
+                color={fontColor || fontColor2}
+                fontFamily={fontFamily}
+              >
+                {miniTitle}
+              </Heading>
+            )}
             <Heading fontFamily={fontFamily} as="h2" size={customTitleSize || prismicStyles.titleSize} lineHeight={prismicStyles.titleLineHeight} color={titleColor || 'currentColor'} style={{ textWrap: 'balance' }}>
               {title}
             </Heading>
@@ -225,7 +238,6 @@ function MktTwoColumnSideImage({
               <Text
                 fontSize={prismicStyles.descriptionSize}
                 lineHeight={prismicStyles.descriptionLineHeight || '14px'}
-                margin="15px 0"
                 alignItems="center"
                 color={fontColor || fontColor2}
                 fontFamily={fontFamily}
@@ -377,6 +389,7 @@ MktTwoColumnSideImage.propTypes = {
   maxWidth: PropTypes.string,
   margin: PropTypes.string,
   borderRadius: PropTypes.string,
+  miniTitle: PropTypes.string,
 };
 
 MktTwoColumnSideImage.defaultProps = {
@@ -419,6 +432,7 @@ MktTwoColumnSideImage.defaultProps = {
   maxWidth: '',
   margin: '',
   borderRadius: '',
+  miniTitle: '',
 };
 
 export default MktTwoColumnSideImage;

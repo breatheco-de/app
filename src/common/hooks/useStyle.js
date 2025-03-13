@@ -9,7 +9,7 @@ const useStyle = () => {
   const backgroundColor5 = useColorModeValue('#E1F5FF', 'gray.800');
   const backgroundColor6 = useColorModeValue('#DCE9FF', 'gray.800');
   const backgroundColor7 = useColorModeValue('#F3FAFE', 'gray.800');
-  const backgroundColor8 = useColorModeValue('#E1F5FF', 'gray.700');
+  const backgroundColor8 = useColorModeValue('#E1F5FF', 'darkTheme');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const borderColor2 = useColorModeValue('gray.200', 'featuredDark');
   const borderColorStrong = useColorModeValue('gray.400', 'gray.500');

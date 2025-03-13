@@ -9,10 +9,47 @@
   "course-exercises": "{{count}} Ejercicios",
   "enroll-now-for-price": "Inscríbete ahora por {{price}} al mes",
   "join-cohort": "Unirse ahora",
+  "sign-up-to-plus": "Inscríbete a 4Geeks Plus",
+  "sign-up-to-plus-description": "Suscríbete y accede a cientos de desafíos, proyectos y cursos",
   "join-cohort-description": "Únete a esta cohorte y comienza tu viaje en el bootcamp hoy",
   "create-account-text": "Crea una cuenta y comienza tu viaje en el bootcamp hoy",
   "live-bootcamp": "Bootcamp en vivo",
   "free-course": "Curso Gratis",
+  "pricing-title": "Accede a todo nuestro contenido de aprendizaje, cursos y servicios",
+  "pricing-subtitle": "Aprende una nueva habilidad cada 30 minutos, nunca te quedarás atascado o perdido de nuevo.",
+  "course-default-bullets": [
+    {
+      "id": "portfolio",
+      "icon": "portfolio",
+      "text": "Crea tu portafolio con cientos de proyectos reales",
+      "color": "#0084FF"
+    },
+    {
+      "id": "cloud",
+      "icon": "cloud",
+      "text": "Miles de retos de codificación en la nube (no se requiere configuración)",
+      "color": "#0084FF"
+    },
+    {
+      "id": "rigobot-avatar-tiny",
+      "icon": "rigobot-avatar-tiny",
+      "text": "Nunca serás atascado o solo de nuevo, nuestra IA te conoce",
+      "color": "#0084FF"
+    },
+    {
+      "id": "certificates",
+      "icon": "certificate2",
+      "text": "Certificados de curso",
+      "color": "#0084FF"
+    },
+    {
+      "id": "school",
+      "icon": "certificate2",
+      "text": "Certificados de una escuela certificada en los Estados Unidos por el Departamento de Educación de Florida",
+      "color": "#0084FF",
+      "fullWidth": true
+    }
+  ],
   "students-course-images":{
     "deep-dive-into-python":[
       "https://randomuser.me/api/portraits/men/12.jpg",
@@ -259,6 +296,14 @@
     "title": "Certifícate en tu tecnología favorita",
     "description": "Tu certificado de 4Geeks abrirá puertas a oportunidades profesionales con nuestra extensa red de empresas en todo el mundo. Respaldado por instituciones internacionales, representa un estándar reconocido a nivel global, desbloqueando diversos caminos profesionales.",
     "button": "Ver precios",
+    "button-link": "#pricing"
+  },
+  "havent-decided": {
+    "mini-title": "¿No has decidido aún?",
+    "image": "/static/images/women-laptop-people.png",
+    "title": "Puedes probar 4Geeks en un plan gratuito",
+    "description": "Tenemos un plan gratuito para ti, con el que puedes disfrutar de muchos de nuestros beneficios, incluyendo una sesión de feedback gratis.",
+    "button": "Comienza tu prueba gratis",
     "button-link": "#pricing"
   },
   "job-section": {

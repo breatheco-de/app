@@ -15,6 +15,41 @@
   "create-account-text": "Create an account and start your coding journey today",
   "live-bootcamp": "Self-paced bootcamp",
   "free-course": "Free Course",
+  "pricing-title": "Get access to all of our learning database, courses, and services",
+  "pricing-subtitle": "Earn a new skills every 30 min, never get stuck or lost again.",
+  "course-default-bullets": [
+    {
+      "id": "portfolio",
+      "icon": "portfolio",
+      "text": "Build your portfolio with hundreds real-world projects",
+      "color": "#0084FF"
+    },
+    {
+      "id": "cloud",
+      "icon": "cloud",
+      "text": "Thousands of and cloud-based coding challenges (no setup needed)",
+      "color": "#0084FF"
+    },
+    {
+      "id": "ai",
+      "icon": "rigobot-avatar-tiny",
+      "text": "You will never be stuck or alone again, our AI knows who you are",
+      "color": "#0084FF"
+    },
+    {
+      "id": "certificates",
+      "icon": "certificate2",
+      "text": "Course certificates",
+      "color": "#0084FF"
+    },
+    {
+      "id": "school",
+      "icon": "certificate2",
+      "text": "Earn certificates from a USA certified school by the florida department of education",
+      "color": "#0084FF",
+      "fullWidth": true
+    }
+  ],
   "students-course-images":{
     "deep-dive-into-python":[
       "https://randomuser.me/api/portraits/men/32.jpg",
@@ -48,8 +83,8 @@
     "benefits-connector": "Learning at your own pace can be challenging, but we've developed the tools to keep you motivated, prevent you from getting stuck on problems, and accelerate your learning process."
   },
   "show-prices": {
-    "title": "Learning to code at your own pace is possible without a big investment!",
-    "description": "Your finances should not stop you from getting into tech. We’ve got your back.<br/><br/>Choose from up-front payment or flexible financing options. Start learning today!"
+    "title": "Get access to all of our learning database, courses, and services",
+    "description": "Earn a new skills every 30 min, never get stuck or lost again."
   },
   "rigobot": {
     "title": "Meet Rigobot, our internal AI designed for solo learners",
@@ -257,6 +292,14 @@
     "title": "Get certified in your favorite technology",
     "description": "Your 4Geeks certificate will open doors to professional opportunities with our extensive network of companies across the world. Endorsed by international institutions, it represents a globally recognized standard, unlocking diverse career paths.",
     "button": "See prices",
+    "button-link": "#pricing"
+  },
+  "havent-decided": {
+    "mini-title": "Haven't you decided yet?",
+    "image": "/static/images/women-laptop-people.png",
+    "title": "You can try 4Geeks on a free plan",
+    "description": "We have a free plan for you, with it you can enjoy many of our benefits, including a free feedback session.",
+    "button": "Start free trial",
     "button-link": "#pricing"
   },
   "job-section": {

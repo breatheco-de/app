@@ -12,14 +12,14 @@ function CourseContent({ data, ...rest }) {
 
   return (
     <Flex gridGap="12px" flexDirection="column">
-      <Heading as="h2" size="20px">
+      <Heading as="h2" size={{ base: '20px', md: '34px' }}>
         {t('course-content-text')}
       </Heading>
-      <Text size="16px" color={hexColor.fontColor2}>
+      <Text size={{ base: '16px', md: '18px' }} color={hexColor.fontColor2}>
         {t('course-content-description')}
       </Text>
 
-      <AcordionList defaultIndex={0} list={data} titleStyle={{ fontWeight: 'bold' }} {...rest} />
+      <AcordionList defaultIndex={0} list={data} {...rest} />
     </Flex>
   );
 }
