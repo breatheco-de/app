@@ -183,17 +183,16 @@
   },
   "featured-bullets": [
     {
-      "title": "Get help from our internally trained AI as you learn to code."
+      "title": "As little as 30 minutes every will take you to full python mastery within 2 months."
     },
     {
-      "title": "Join weekly live workshops, coding real-life projects with experts."
+      "title": "Build your portfolio with real-world projects and cloud-based challenges (no setup needed)."
     },
     {
-      "title": "Learn how to build your resume, optimize your LinkedIn profile, prepare for technical interviews, and more.",
-      "hideOnPublic": true
+      "title": "Our AI knows who you are, reads your code and gives you live feedback as you code. You will never be stuck again."
     },
     {
-      "title": "Access <strong>live one-on-one mentoring sessions</strong>."
+      "title": "Take control of your journey"
     }
   ],
   "why-learn-with-4geeks": {

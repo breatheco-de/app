@@ -8,7 +8,7 @@ import { generatePlan, getTranslations } from '../handlers/subscriptions';
 import { usePersistentBySession } from '../hooks/usePersistent';
 import { getQueryString } from '../../utils';
 
-function MktShowPrices({ id, externalPlanProps, cohortId, title, description, pricingMktInfo, plan, externalSelection, ...rest }) {
+function MktShowPrices({ id, externalPlanProps, cohortId, title, description, pricingMktInfo, plan, ...rest }) {
   const { t } = useTranslation('course');
   const router = useRouter();
   const [planProps, setPlanProps] = useState({});
@@ -28,12 +28,8 @@ function MktShowPrices({ id, externalPlanProps, cohortId, title, description, pr
   return planProps?.slug ? (
     <Box maxWidth="1280px" px="10px" id={id} padding="32px" {...rest}>
       <ShowPrices
-        version="v2"
-        cohortId={cohortId}
         title={t('pricing-title')}
         subtitle={t('pricing-subtitle')}
-        notReady={t('subscription.upgrade-modal.not_ready_to_commit')}
-        externalSelection={externalSelection}
         list={planProps?.paymentOptions?.length > 0 ? planProps?.paymentOptions : planProps?.consumableOptions}
         handleUpgrade={(item) => {
           const querys = new URLSearchParams({
@@ -45,7 +41,6 @@ function MktShowPrices({ id, externalPlanProps, cohortId, title, description, pr
           router.push(`/checkout?${querys}`);
         }}
         finance={planProps?.financingOptions}
-        outOfConsumables={planProps?.outOfConsumables}
         bullets={bullets}
       />
     </Box>
@@ -62,9 +57,8 @@ MktShowPrices.propTypes = {
   description: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   id: PropTypes.string,
   cohortId: PropTypes.number,
-  externalSelection: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.any)),
-  externalPlanProps: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.any)),
   pricingMktInfo: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
+  externalPlanProps: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.any)),
 };
 
 MktShowPrices.defaultProps = {
@@ -72,7 +66,6 @@ MktShowPrices.defaultProps = {
   description: '',
   id: '',
   cohortId: null,
-  externalSelection: {},
   externalPlanProps: {},
   pricingMktInfo: [],
 };

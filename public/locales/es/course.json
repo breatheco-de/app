@@ -184,17 +184,16 @@
   },
   "featured-bullets": [
     {
-      "title": "Obtén ayuda de nuestra IA entrenada internamente mientras aprendes a programar."
+      "title": "En tan solo 30 minutos podrás alcanzar la maestría en Python en 2 meses."
     },
     {
-      "title": "Únete a workshops semanales dónde desarrollarás proyectos de la vida real con expertos."
+      "title": "Construye tu portafolio con proyectos del mundo real y desafíos en la nube (sin necesidad de configuración)."
     },
     {
-      "title": "Aprende cómo crear tu curriculum, optimizar tu perfil de LinkedIn, prepárate para entrevistas técnicas y más.",
-      "hideOnPublic": true
+      "title": "Nuestra IA sabe quién eres, lee tu código y te da retroalimentación en vivo mientras programas. Nunca más te quedarás atascado."
     },
     {
-      "title": "Entra a <strong>sesiones de mentoría en vivo uno a uno</strong>."
+      "title": "Toma el control de tu viaje"
     }
   ],
   "why-learn-with-4geeks": {
