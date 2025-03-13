@@ -135,23 +135,6 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
         password: '',
       }}
       onSubmit={(values, actions) => {
-        console.log('values', values);
-        if (step === 1) {
-          const validate = values.email.match(emailRe);
-          if (validate) {
-            validateEmail(values.email)
-              .then(() => {
-                actions.setSubmitting(false);
-              })
-              .catch(() => {
-                actions.setSubmitting(false);
-              });
-          } else {
-            actions.setFieldTouched('email', true, true);
-            actions.setSubmitting(false);
-          }
-          return;
-        }
         login(values, disableRedirect)
           .then((data) => {
             actions.setSubmitting(false);
@@ -179,8 +162,8 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
       }}
       validationSchema={validationSchema.login}
     >
-      {({ isSubmitting, values, errors, handleSubmit }) => (
-        <Form onSubmit={handleSubmit} noValidate>
+      {({ isSubmitting, values, errors, setFieldTouched }) => (
+        <Form>
           {/* FIRST STEP */}
           <Stack display={step !== 1 && 'none'} spacing={4} justifyContent="space-between">
             {googleError && (
@@ -311,9 +294,12 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                 variant="default"
                 fontSize={actionfontSize || 'l'}
                 type="submit"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleSubmit();
+                onClick={() => {
+                  if (step === 1) {
+                    const validate = values.email.match(emailRe);
+                    if (validate) validateEmail(values.email);
+                    else setFieldTouched('email', true, true);
+                  }
                 }}
               >
                 {t('next')}
@@ -404,17 +390,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                 {t('login:forgot-password')}
               </Link>
             </Flex>
-            <Button
-              width="100%"
-              variant="default"
-              fontSize={actionfontSize || 'l'}
-              isLoading={isSubmitting}
-              type="submit"
-              onClick={(e) => {
-                e.preventDefault();
-                handleSubmit();
-              }}
-            >
+            <Button width="100%" variant="default" fontSize={actionfontSize || 'l'} isLoading={isSubmitting} type="submit">
               {t('login:login')}
             </Button>
           </Stack>
