@@ -5,6 +5,7 @@ import {
   Box, Button, Flex, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import PropTypes from 'prop-types';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import useSignup from '../../common/store/actions/signupAction';
@@ -25,7 +26,7 @@ import AcordionList from '../../common/components/AcordionList';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import NextChakraLink from '../../common/components/NextChakraLink';
 
-function PaymentInfo() {
+function PaymentInfo({ setShowPaymentDetails }) {
   const { t, lang } = useTranslation('signup');
   const { isAuthenticated, reSetUserAndCohorts } = useAuth();
 
@@ -94,6 +95,7 @@ function PaymentInfo() {
   const startRedirection = async () => {
     if (!isPaymentSuccess) {
       setPaymentStatus('idle');
+      setShowPaymentDetails(true);
       return;
     }
     setIsRedirecting(true);
@@ -330,6 +332,7 @@ function PaymentInfo() {
     };
 
     handleSubmit(actions, allValues);
+    setShowPaymentDetails(false);
   };
 
   const handleTryAgain = () => {
@@ -444,5 +447,13 @@ function PaymentInfo() {
     </Box>
   );
 }
+
+PaymentInfo.propTypes = {
+  setShowPaymentDetails: PropTypes.func,
+};
+
+PaymentInfo.defaultProps = {
+  setShowPaymentDetails: () => { },
+};
 
 export default PaymentInfo;

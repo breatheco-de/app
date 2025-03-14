@@ -150,7 +150,7 @@ function Summary() {
 
     const timer = setTimeout(() => {
       setReadyToRedirect(true);
-    }, 1000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [cohortsAssignments, cohortFound]);

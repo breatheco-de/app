@@ -11,6 +11,7 @@ import Icon from './Icon';
 import { parseQuerys } from '../../utils/url';
 import { getQueryString, isWindow, slugToTitle } from '../../utils';
 import { usePersistentBySession } from '../hooks/usePersistent';
+import { currenciesSymbols } from '../../utils/variables';
 
 export default function PricingCard({ item, courseData, isFetching, relatedSubscription, moneyBack, ...rest }) {
   const { t, lang } = useTranslation('signup');
@@ -24,6 +25,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
   const [coupon] = usePersistentBySession('coupon', []);
 
   const courseCoupon = selfAppliedCoupon?.plan === item?.plan_slug && selfAppliedCoupon;
+  const currencySymbol = currenciesSymbols[item?.currency?.code] || '$';
 
   const priceProcessed = getPriceWithDiscount(selectedFinancing?.price || item?.optionList?.[0]?.price || item.price, courseCoupon);
   const discountApplied = priceProcessed?.originalPrice && priceProcessed.price !== priceProcessed.originalPrice;
@@ -224,11 +226,11 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                             <>
                               {priceProcessed.originalPrice && (
                                 <s style={{ fontSize: '16px' }}>
-                                  {`$${priceProcessed.originalPrice}`}
+                                  {`${currencySymbol}${priceProcessed.originalPrice}`}
                                 </s>
                               )}
                               <Text fontSize="64px" fontFamily="Space Grotesk Variable" fontWeight={700} lineHeight="70px">
-                                {`$${priceProcessed.price || item.price}`}
+                                {`${currencySymbol}${priceProcessed.price || item.price}`}
                               </Text>
                             </>
                           )
@@ -257,7 +259,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                     <Skeleton height="48px" margin="0.85rem auto 1.4rem auto" width="10rem" borderRadius="4px" />
                   ) : (
                     <Box color={color} width={(isPayable || !isTotallyFree) ? 'auto' : '80%'} fontFamily="Space Grotesk Variable" margin={(!isPayable && !isTotallyFree) ? '0' : '2rem auto 2.5rem auto'} fontSize={isPayable ? 'var(--heading-xl)' : '38px'} fontWeight={700} textAlign="center">
-                      {isPayable && `$${item?.price}`}
+                      {isPayable && `${currencySymbol}${item?.price}`}
                       {isTotallyFree && item?.period_label}
                       {!isPayable && !isTotallyFree && item?.priceText}
                     </Box>
@@ -351,7 +353,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                           toggleAccordion();
                         }}
                       >
-                        {`$${calculateCouponOnFinancing(financing?.price, courseCoupon?.discount_value, courseCoupon?.discount_type)} / ${financing?.title}`}
+                        {`${currencySymbol}${calculateCouponOnFinancing(financing?.price, courseCoupon?.discount_value, courseCoupon?.discount_type)} / ${financing?.title}`}
                       </Button>
                     ),
                   )}
@@ -365,13 +367,6 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
             </Accordion>
           )}
         </Box>
-        {
-          isPayable && moneyBack && (
-            <Text size="14px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal" textAlign="center">
-              {t('common:money-back-guarantee')}
-            </Text>
-          )
-        }
       </Flex>
       <Flex padding="16px" flexDirection="column">
         <Flex gridGap="8px" flexDirection="column">

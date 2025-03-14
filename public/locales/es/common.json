@@ -1,12 +1,15 @@
 {
   "change-language": "Cambiar idioma",
+  "reviews": "Reseñas",
+  "course-rating": "Calificación del curso",
   "connect-with-github": "Conéctate con Github",
   "connect-with-rigobot": "Conéctate con Rigobot",
   "get-help-rigobot": "Pide ayuda a Rigobot",
-  "see-financing-options": "Ver opciones de financiamiento",
+  "see-financing-options": "Ver opciones de pago",
   "your-tutors-in-this-cohort": "Tus tutores:",
   "main-instructor": "Instructor Principal",
   "teacher-assistant": "Asistente de Profesor",
+  "hide": "Ocultar",
   "rigo": "Rigo",
   "see-workshops": "Ver todos los workshops",
   "schedule-mentoring": "Agenda una sesión de mentoria",
@@ -46,6 +49,12 @@
     "mins": "mins",
     "sec": "seg"
   },
+  "back-to-asset": {
+    "lesson": "Regresar a lecciones",
+    "interactive-coding-tutorial": "Volver a Proyectos",
+    "interactive-exercise": "Volver a ejercicios",
+    "how-to": "Volver a Cómo hacerlo"
+  },
   "no-translation-available": "No hay traduccion disponible",
   "read-next": "Leer a continuación",
   "heading": "Bienvenido a",
@@ -75,8 +84,10 @@
   "confirm": "Confirmar",
   "submit": "Enviar",
   "enroll": "Unirse Ahora",
+  "get-plan": "Obtener plan",
   "enroll-totally-free": "Entrar totalmente gratis",
   "enroll-for-connector": "Unete por",
+  "start-tutorial": "Empezar tutorial",
   "learn-more": "Aprender más",
   "more-technologies": "Más tecnologías",
   "continue-learning": "Continúa aprendiendo sobre:",
@@ -100,6 +111,7 @@
   "email": "Correo electrónico",
   "confirm-email": "Confirmar correo electrónico",
   "phone": "Teléfono",
+  "popular-searches": "Búsquedas populares",
   "password": "Contraseña",
   "confirm-password": "Confirmar contraseña",
   "difficulty": "Dificultad",
@@ -137,6 +149,7 @@
   "seach-technology": "Buscar tecnología",
   "remove-difficulty": "Remover dificultad",
   "read-lesson": "Leer lección",
+  "repository-information": "información del repositorio",
   "asset-button": {
     "lesson": "Leer lección",
     "exercise": "Iniciar ejercicio",
@@ -172,8 +185,15 @@
       "project": "proyecto",
       "exercise": "ejercicio"
     },
+    "dependencies": {
+      "node-js": "Node JS",
+      "python": "Python",
+      "javascript": "Javascript"
+    },
     "start-exercise": "Empezar ejercicio",
     "recommended": "Recomendado",
+    "install-specific-version": "Instala {{name}} con la versión {{version}} en tu ordenador",
+    "banner-description": "Es crucial instalar la versión especificada, de lo contrario, el proyecto puede no ejecutarse correctamente. Instala la versión {{version}}.",
     "open-in-learnpack-button": {
       "text": "Abrir en la nube",
       "title": "Abrir en la nube",
@@ -181,27 +201,34 @@
       "type": "dropdown",
       "steps": [
         {
-          "label": "Identifica el repositorio de GitHub",
-          "description": "Decide cuál repositorio necesitas:\n- Usa una plantilla de 4Geeks para empezar desde cero.\n- Forkea y clona un proyecto existente.\n\nAsegúrate de tener la URL correcta.",
+          "label": "Verificar si el repositorio es una plantilla",
+          "description": "Verifica si el repositorio es una plantilla de GitHub antes de continuar.<br><br>Puedes averiguar si es una plantilla observando la sección de {{repoUrl}}.<br><br>Si tiene un botón `Usar esta plantilla` o si, después del nombre del repositorio ubicado en la parte superior de tu pantalla (en GitHub), dice `Template` o `Public template`, entonces es una plantilla.",
           "video": "",
           "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
           "source-label": ""
         },
         {
-          "label": "¿Es una plantilla?",
-          "description": "Si el repositorio es una plantilla:\n1. Haz clic en `Use this template` y selecciona `Create a new repository`.\n2. Elige un propietario (4Geeks para horas gratuitas en Codespaces).\n3. Nómbralo y hazlo público.\n4. Haz clic en `Create repository from template`.\n5. Marca el repositorio como favorito con `Star`.",
+          "label": "Si no es una plantilla",
+          "description": "Si el repositorio no es una plantilla:\n1. Ve al repositorio de GitHub y haz clic en el botón `Fork`.\n2. Configura el propietario como 4Geeks si deseas horas gratis en Codespaces, o usa tu propia cuenta de usuario.\n3. Una vez que el fork se complete, tendrás una copia del repositorio en tu cuenta (el fork), que ahora puedes modificar y trabajar en él.\n\nContinúa con el paso 4.",
           "video": "",
           "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
           "source-label": ""
         },
         {
-          "label": "Abre el repositorio",
-          "description": "Elige cómo abrir el repositorio:\n1. **Codespaces** (recomendado): Haz clic en `<> Code` → `Create codespace on main`.\n2. **Gitpod**: Usa un entorno en la nube.\n3. **Local**: Clónalo en tu máquina.",
+          "label": "Si es una plantilla",
+          "description": "Si el repositorio es una plantilla:\n1. Haz clic en `Usar esta plantilla` y selecciona `Crear un nuevo repositorio`.\n2. Elige un propietario (selecciona 4Geeks si eres estudiante para obtener horas gratuitas en Codespaces).\n3. Nombra tu repositorio (por ejemplo, `usuario-nombre-del-proyecto`) y hazlo público.\n4. Haz clic en `Crear repositorio desde plantilla`.\n5. Marca el repositorio con una estrella para encontrarlo fácilmente más tarde.",
+          "video": "",
+          "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
+          "source-label": ""
+        },
+        {
+          "label": "Abrir el repositorio",
+          "description": "Sigue una de estas opciones para abrir el repositorio:\n- **Abrir en Github Codespaces**: Haz clic en el botón `Code` y abre el proyecto en Codespaces.\n- **Abrir en Gitpod**: Instala la extensión de Gitpod y usa el botón de Gitpod para abrir el proyecto.",
           "video": "",
           "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
           "source-label": ""
         }
-    ]     
+      ]
     },
     "clone-title": "¿Cómo clonar un proyecto?",
     "clone-modal": {
@@ -213,7 +240,7 @@
         "slug": "intro",
         "label": "Introduction",
         "description": "This guide will walk you through the process of running your project on your computer. Follow these simple steps to set up everything you need and get your project up and running in no time. Let's get started!",
-        "video": "",
+        "video": "https://www.youtube.com/watch?v=AcC3XnW0GiI",
         "source-label": "",
         "source": ""
       },
@@ -229,6 +256,7 @@
       },
       "project-readme": {
         "label": "Revisa el README.md dentro del proyecto",
+        "video": "https://www.youtube.com/watch?v=xNPsmUOyres",
         "description": "Una vez que abras el proyecto en tu editor de código, encontrarás un archivo README.es.md las instrucciones detalladas sobre como correr el proyecto."
       },
       "os-list": [
@@ -305,7 +333,7 @@
               "slug": "read-readme",
               "label": "Lee el contenido del readme",
               "description": "Un README es un archivo estándar que explica de forma simple y clara de qué trata un proyecto. Imagina que es una pequeña guía que te dice qué hace, cómo usarlo y qué necesitas para hacerlo funcionar. Es como una carta de bienvenida para cualquiera que quiera entender o colaborar en el proyecto. Queremos que te acostumbres a leerlos, ya que son esenciales en casi todos los proyectos de la industria, todos los profesionales ya tienen el hábito de revisarlo.",
-              "video": "",
+              "video": "https://www.youtube.com/watch?v=xNPsmUOyres",
               "source": "#markdown-body",
               "source-label": "¡Llevame al readme!"
             }
@@ -383,7 +411,7 @@
               "slug": "read-readme",
               "label": "Lee el contenido del readme",
               "description": "Un README es un archivo estándar que explica de forma simple y clara de qué trata un proyecto. Imagina que es una pequeña guía que te dice qué hace, cómo usarlo y qué necesitas para hacerlo funcionar. Es como una carta de bienvenida para cualquiera que quiera entender o colaborar en el proyecto. Queremos que te acostumbres a leerlos, ya que son esenciales en casi todos los proyectos de la industria, todos los profesionales ya tienen el hábito de revisarlo.",
-              "video": "",
+              "video": "https://www.youtube.com/watch?v=xNPsmUOyres",
               "source": "#markdown-body",
               "source-label": "¡Llevame al readme!"
             }
@@ -398,7 +426,7 @@
               "name": "python",
               "label": "Instala Python en tu ordenador",
               "description": "Para correr este proyecto, es necesario que tengas python instalado en tu ordenador, sigue las instrucciones en el siguiente link para instalar Python",
-              "video": "https://www.youtube.com/watch?v=KVdWWsklW6o",
+              "video": "https://www.youtube.com/watch?v=BJA1nLBeT70",
               "source": "https://4geeks.com/es/how-to/como-instalar-python",
               "source-label": "¿Cómo instalar Python?"
             },
@@ -424,14 +452,14 @@
               "slug": "download-ide",
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
-              "video": "",
+              "video": "https://www.youtube.com/watch?v=5VOejVAyMQU",
               "source": "https://code.visualstudio.com/download",
               "source-label": "Ir a la pagina de descarga de VSCode"
             },
             {
               "label": "Crea una carpeta donde guardarás estos ejercicios",
               "description": "Si ya creaste una carpeta para algún ejercicio anterior de 4Geeks, te recomendamos usar esa. Sino, crea una carpeta donde más te guste (En la carpeta Documents por ejemplo), y abre esta carpeta nueva en VSCode. Desde aquí abre la terminal para poder seguir con los siguientes pasos.",
-              "video": "https://www.youtube.com/watch?v=gXVI3PxFajU",
+              "video": "https://www.youtube.com/watch?v=ZSBqoMIeGho",
               "source": ""
             },
             {
@@ -450,14 +478,14 @@
             {
               "label": "Instala GIT en tu computadora",
               "description": "Debes instalar GIT para poder clonar el repositorio de GitHub localmente. Para esto sigue los pasos del siguiente link.",
-              "video": "https://www.youtube.com/watch?v=zyrhDewSa2c",
+              "video": "https://www.youtube.com/watch?v=kcLuJ0WxGkg",
               "source": "https://git-scm.com/downloads/win"
             },
             {
               "slug": "clone",
               "label": "Clona el proyecto en tu computadora",
               "description": "Puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone {{repoUrl}}`. Chequea el siguiente link para una explicación más completa.",
-              "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
+              "video": "https://www.youtube.com/watch?v=etk4EDtsNX4",
               "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
               "source-label": "Ir a cómo cloner un repositorio de GitHub"
             }
@@ -467,7 +495,7 @@
               "slug": "read-readme",
               "label": "Lee el contenido del readme",
               "description": "Un README es un archivo estándar que explica de forma simple y clara de qué trata un proyecto. Imagina que es una pequeña guía que te dice qué hace, cómo usarlo y qué necesitas para hacerlo funcionar. Es como una carta de bienvenida para cualquiera que quiera entender o colaborar en el proyecto. Queremos que te acostumbres a leerlos, ya que son esenciales en casi todos los proyectos de la industria, todos los profesionales ya tienen el hábito de revisarlo.",
-              "video": "",
+              "video": "https://www.youtube.com/watch?v=xNPsmUOyres",
               "source": "#markdown-body",
               "source-label": "¡Llevame al readme!"
             }
@@ -506,6 +534,7 @@
   "mid-level": "Mid level",
   "senior": "Senior",
   "money-back-guarantee": "Obtén un reembolso completo antes de 30 días si no es lo que esperabas",
+  "money-back-guarantee-short": "Garantía de reembolso del 100%",
   "start-free-trial": "Iniciar prueba gratuita",
   "proceed-to-payment": "Proceder al pago",
   "select-cohort": "Selecciona una cohorte",

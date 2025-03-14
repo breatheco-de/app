@@ -2,13 +2,66 @@
   "course-content-text": "Prepárate para obtener un trabajo con nuestro syllabus",
   "course-content-description": "Hemos ajustado nuestro contenido del curso con cientos de posiciones laborales para prepararte para una entrada exitosa en el mundo de la tecnología.",
   "students-enrolled-count": "+{{count}} estudiantes inscritos",
+  "students-enrolled": "cientos de estudiantes inscritos",
   "instructors-more": "+{{count}} instructores más",
+  "course-certificate": "Certificado del curso",
+  "course-readings": "{{count}} Lecturas",
+  "course-exercises": "{{count}} Ejercicios",
   "enroll-now-for-price": "Inscríbete ahora por {{price}} al mes",
   "join-cohort": "Unirse ahora",
+  "sign-up-to-plus": "Inscríbete a 4Geeks Plus",
+  "sign-up-to-plus-description": "Suscríbete y accede a cientos de desafíos, proyectos y cursos",
   "join-cohort-description": "Únete a esta cohorte y comienza tu viaje en el bootcamp hoy",
   "create-account-text": "Crea una cuenta y comienza tu viaje en el bootcamp hoy",
   "live-bootcamp": "Bootcamp en vivo",
   "free-course": "Curso Gratis",
+  "pricing-title": "Accede a todo nuestro contenido de aprendizaje, cursos y servicios",
+  "pricing-subtitle": "Aprende una nueva habilidad cada 30 minutos, nunca te quedarás atascado o perdido de nuevo.",
+  "course-default-bullets": [
+    {
+      "id": "portfolio",
+      "icon": "portfolio",
+      "text": "Crea tu portafolio con cientos de proyectos reales",
+      "color": "#0084FF"
+    },
+    {
+      "id": "cloud",
+      "icon": "cloud",
+      "text": "Miles de retos de codificación en la nube (no se requiere configuración)",
+      "color": "#0084FF"
+    },
+    {
+      "id": "rigobot-avatar-tiny",
+      "icon": "rigobot-avatar-tiny",
+      "text": "Nunca serás atascado o solo de nuevo, nuestra IA te conoce",
+      "color": "#0084FF"
+    },
+    {
+      "id": "certificates",
+      "icon": "certificate2",
+      "text": "Certificados de curso",
+      "color": "#0084FF"
+    },
+    {
+      "id": "school",
+      "icon": "certificate2",
+      "text": "Certificados de una escuela certificada en los Estados Unidos por el Departamento de Educación de Florida",
+      "color": "#0084FF",
+      "fullWidth": true
+    }
+  ],
+  "students-course-images":{
+    "deep-dive-into-python":[
+      "https://randomuser.me/api/portraits/men/12.jpg",
+      "https://randomuser.me/api/portraits/women/25.jpg",
+      "https://randomuser.me/api/portraits/men/17.jpg"
+    ],
+    "full-stack-development":[
+      "https://randomuser.me/api/portraits/men/23.jpg",
+      "https://randomuser.me/api/portraits/women/15.jpg",
+      "https://randomuser.me/api/portraits/men/27.jpg"
+    ]
+  },
   "coupon-bar": {
     "headline": "¡¡Precios tan bajos como {{discount}} de descuento!!",
     "ends-in": "Termina en {{time}}",
@@ -37,24 +90,110 @@
   "rigobot": {
     "title": "Conoce a Rigobot, nuestra IA interna diseñada para quienes aprenden solos",
     "description": "4Geeks.com es la primera plataforma diseñada para maximizar el aprendizaje a tu propio ritmo. Únete a sesiones en vivo cuando tu puedas, obtén ayuda de forma inmediata con IA y pide mentorías uno a uno. Todo nuestro contenido es totalmente interactivo y con videos.",
-    "button": "Prueba Rigobot gratis",
+    "button": "Ver demo",
+    "video_url": "https://www.youtube.com/watch?v=3PMP26t62To",
     "link": "https://codespaces.new/breatheco-de/exercise-postcard",
     "message": "¿Hay algo que quieras saber sobre el programa {{title}}?",
     "payment-methods": "- Tarjeta de crédito. - Contacta a soporte para mas opciones"
   },
+  "reviews": {
+    "full-stack-development": {
+      "rating": 4.5,
+      "total_ratings": 1621,
+      "reviews_numbers": 345,
+      "reviews": [
+        {
+          "name": "Felipe Cespedes",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/felipe-profile-picture-jpg",
+          "rating": 5,
+          "date": "hace 1 semana",
+          "review": "Este curso es muy flexible y me permitió aprender mientras hacía otras cosas en mi vida."
+        },
+        {
+          "name": "Rubi Rimache",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/ruby-profile-picture-jpg",
+          "rating": 5,
+          "date": "hace 2 semanas",
+          "review": "Me encanta el programa, es muy bueno y cómodo. Lo recomendaría por su comodidad y la claridad con la que se explican las cosas."
+        },
+        {
+          "name": "Brian Hernandes",
+          "avatar": "https://example.com/avatar3.jpg",
+          "rating": 4,
+          "date": "hace 1 semana",
+          "review": "Contenido y estructura increíbles. ¡La herramienta de IA es maravillosa!"
+        }
+      ]
+    },
+    "deep-dive-into-python": {
+      "rating": 4.5,
+      "total_ratings": 1346,
+      "reviews_numbers": 134,
+      "reviews": [
+        {
+          "name": "Felipe Cespedes",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/felipe-profile-picture-jpg",
+          "rating": 5,
+          "date": "hace 1 semana",
+          "review": "Este curso es muy flexible y me permitió aprender mientras hacía otras cosas en mi vida."
+        },
+        {
+          "name": "Rubi Rimache",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/ruby-profile-picture-jpg",
+          "rating": 5,
+          "date": "hace 2 semanas",
+          "review": "Me encanta el programa, es muy bueno y cómodo. Lo recomendaría por su comodidad y la claridad con la que se explican las cosas."
+        },
+        {
+          "name": "Brian Hernandes",
+          "avatar": "https://example.com/avatar3.jpg",
+          "rating": 4,
+          "date": "hace 1 semana",
+          "review": "Contenido y estructura increíbles. ¡La herramienta de IA es maravillosa!"
+        }
+      ]
+    },
+    "data-science-and-ml": {
+      "rating": 4.5,
+      "total_ratings": 803,
+      "reviews_numbers": 98,
+      "reviews": [
+        {
+          "name": "Felipe Cespedes",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/felipe-profile-picture-jpg",
+          "rating": 5,
+          "date": "hace 1 semana",
+          "review": "Este curso es muy flexible y me permitió aprender mientras hacía otras cosas en mi vida."
+        },
+        {
+          "name": "Rubi Rimache",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/ruby-profile-picture-jpg",
+          "rating": 5,
+          "date": "hace 2 semanas",
+          "review": "Me encanta el programa, es muy bueno y cómodo. Lo recomendaría por su comodidad y la claridad con la que se explican las cosas."
+        },
+        {
+          "name": "Brian Hernandes",
+          "avatar": "https://example.com/avatar3.jpg",
+          "rating": 4,
+          "date": "hace 1 semana",
+          "review": "Contenido y estructura increíbles. ¡La herramienta de IA es maravillosa!"
+        }
+      ]
+    }
+  },
   "featured-bullets": [
     {
-      "title": "Obtén ayuda de nuestra IA entrenada internamente mientras aprendes a programar."
+      "title": "En tan solo 30 minutos podrás alcanzar la maestría en Python en 2 meses."
     },
     {
-      "title": "Únete a workshops semanales dónde desarrollarás proyectos de la vida real con expertos."
+      "title": "Construye tu portafolio con proyectos del mundo real y desafíos en la nube (sin necesidad de configuración)."
     },
     {
-      "title": "Aprende cómo crear tu curriculum, optimizar tu perfil de LinkedIn, prepárate para entrevistas técnicas y más.",
-      "hideOnPublic": true
+      "title": "Nuestra IA sabe quién eres, lee tu código y te da retroalimentación en vivo mientras programas. Nunca más te quedarás atascado."
     },
     {
-      "title": "Entra a <strong>sesiones de mentoría en vivo uno a uno</strong>."
+      "title": "Toma el control de tu viaje"
     }
   ],
   "why-learn-with-4geeks": {
@@ -156,6 +295,14 @@
     "title": "Certifícate en tu tecnología favorita",
     "description": "Tu certificado de 4Geeks abrirá puertas a oportunidades profesionales con nuestra extensa red de empresas en todo el mundo. Respaldado por instituciones internacionales, representa un estándar reconocido a nivel global, desbloqueando diversos caminos profesionales.",
     "button": "Ver precios",
+    "button-link": "#pricing"
+  },
+  "havent-decided": {
+    "mini-title": "¿No has decidido aún?",
+    "image": "/static/images/women-laptop-people.png",
+    "title": "Puedes probar 4Geeks en un plan gratuito",
+    "description": "Tenemos un plan gratuito para ti, con el que puedes disfrutar de muchos de nuestros beneficios, incluyendo una sesión de feedback gratis.",
+    "button": "Comienza tu prueba gratis",
     "button-link": "#pricing"
   },
   "job-section": {

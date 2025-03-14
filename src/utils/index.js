@@ -256,15 +256,14 @@ const calcSVGViewBox = (pathId) => {
 
 const number2DIgits = (number) => number.toString().padStart(2, '0');
 
-const sortToNearestTodayDate = (data, minutes = 30) => {
-  // sort date to the nearest today date and 30minutes after starting time
+const sortToNearestTodayDate = (data, minutes = 30, includeExpired = false) => {
+  if (!data || data.length === 0) return [];
+
   const currentDate = new Date();
-  if (data === undefined || data?.length === 0) return [];
 
   const filteredDates = data.filter((item) => {
-    const endDate = item.ended_at || item.ending_at;
     const startingDate = new Date(item.starting_at);
-    const endingDate = new Date(endDate);
+    const endingDate = new Date(item.ended_at || item.ending_at);
     const timeDiff = startingDate - currentDate;
     const minutesDiff = Math.round(timeDiff / (1000 * 60));
 
@@ -272,11 +271,30 @@ const sortToNearestTodayDate = (data, minutes = 30) => {
     const isGoingToStartInAnyMin = (minutesDiff >= 0 && minutesDiff <= minutes) || hasStarted;
     const hasExpired = endingDate < currentDate;
 
-    return isGoingToStartInAnyMin && !hasExpired;
+    return includeExpired ? isGoingToStartInAnyMin || hasExpired : isGoingToStartInAnyMin && !hasExpired;
   });
-  const sortedDates = filteredDates.sort((a, b) => new Date(a.starting_at) - new Date(b.starting_at));
 
-  return sortedDates;
+  return filteredDates.sort((a, b) => {
+    const aStartingDate = new Date(a.starting_at);
+    const aEndingDate = new Date(a.ended_at || a.ending_at);
+    const bStartingDate = new Date(b.starting_at);
+    const bEndingDate = new Date(b.ended_at || b.ending_at);
+
+    const aHasStarted = aStartingDate < currentDate;
+    const aHasExpired = aEndingDate < currentDate;
+    const bHasStarted = bStartingDate < currentDate;
+    const bHasExpired = bEndingDate < currentDate;
+
+    if (aHasStarted && !aHasExpired && !(bHasStarted && !bHasExpired)) return -1;
+    if (!(aHasStarted && !aHasExpired) && bHasStarted && !bHasExpired) return 1;
+
+    if (!aHasStarted && !aHasExpired && (bHasStarted || bHasExpired)) return -1;
+    if ((aHasStarted || aHasExpired) && !bHasStarted && !bHasExpired) return 1;
+
+    if (aHasExpired && bHasExpired) return bStartingDate - aStartingDate;
+
+    return aStartingDate - bStartingDate;
+  });
 };
 
 const isNumber = (value) => Number.isFinite(Number(value)); // number or string with number (without letters)

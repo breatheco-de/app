@@ -136,7 +136,7 @@ function MentoringConsumables({
     return latestB - latestA;
   };
 
-  const currentServiceSubscription = Array.isArray(allSubscriptions) && allSubscriptions.sort(sortByMostRecentInvoice).find((subscription) => subscription.selected_mentorship_service_set.mentorship_services.some((service) => service.slug === mentoryProps?.service?.slug));
+  const currentServiceSubscription = Array.isArray(allSubscriptions) && allSubscriptions.sort(sortByMostRecentInvoice).find((subscription) => subscription.selected_mentorship_service_set?.mentorship_services?.some((service) => service.slug === mentoryProps?.service?.slug));
   const currentSubscription = currentServiceSubscription || allSubscriptions?.[0];
 
   useEffect(() => {

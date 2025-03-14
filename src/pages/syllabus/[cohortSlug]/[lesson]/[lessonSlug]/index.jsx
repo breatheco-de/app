@@ -247,7 +247,7 @@ function SyllabusContent() {
     try {
       let aiContext;
       const cachedContext = JSON.parse(sessionStorage.getItem(`context-${currentAsset.slug}`));
-      if (!cachedContext) {
+      if (!cachedContext && currentAsset?.id) {
         const resp = await bc.lesson().getAssetContext(currentAsset.id);
         if (resp?.status === 200) {
           aiContext = resp.data;
@@ -424,7 +424,16 @@ function SyllabusContent() {
     cleanCurrentData();
   };
 
-  const EventIfNotFound = () => {
+  const EventIfNotFound = (task) => {
+    if (task.target === 'blank' && task.task_type === 'LESSON') {
+      setReadme({
+        content: t('external-read', { link: task.url }),
+      });
+      setCurrentAsset({
+        title: task?.title || t('no-content-found'),
+      });
+      return;
+    }
     setReadme({
       content: t('no-content-found-description'),
     });
@@ -436,7 +445,11 @@ function SyllabusContent() {
   useEffect(() => {
     const currTask = sortedAssignments[currentModuleIndex]?.content?.find((l) => l.slug === lessonSlug);
     const currentLanguageTaskUrl = currTask?.translations?.[lang === 'en' ? 'us' : lang]?.slug || lessonSlug;
-    if (cohortSession) {
+    if (cohortSession && sortedAssignments.length > 0) {
+      if (currTask?.task_type === 'LESSON' && currTask?.target === 'blank') {
+        EventIfNotFound(currTask);
+        return undefined;
+      }
       bc.lesson({ asset_type: assetTypeValues[lesson] }).getAsset(currentLanguageTaskUrl).then(({ data }) => {
         const translations = data?.translations;
         const exensionName = getExtensionName(data.readme_url);
@@ -446,11 +459,6 @@ function SyllabusContent() {
         const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
         const extension = urlPathname ? urlPathname.split('.').pop() : null;
         const finalPathname = `${pathnameWithoutExtension}.${extension}`;
-
-        if (currTask?.target === 'blank') {
-          setCurrentAsset(data);
-          return;
-        }
 
         setReadmeUrlPathname(finalPathname);
         let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
@@ -497,7 +505,7 @@ function SyllabusContent() {
             });
         }
       }).catch(() => {
-        EventIfNotFound();
+        EventIfNotFound(currTask);
       });
     }
     return () => {
@@ -506,7 +514,7 @@ function SyllabusContent() {
         translations: [],
       });
     };
-  }, [router, lessonSlug, cohortSession]);
+  }, [router, lessonSlug, cohortSession, sortedAssignments]);
 
   useEffect(() => {
     const currentSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);

@@ -36,6 +36,7 @@ import { getAllMySubscriptions } from '../../handlers/subscriptions';
 function NavbarWithSubNavigation({ translations, pageProps }) {
   const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
 
+  const [uniqueLanguages, setUniqueLanguages] = useState([]);
   const [haveSession, setHaveSession] = useState(HAVE_SESSION);
   const { userSession, location } = useSession();
   const isUtmMediumAcademy = userSession?.utm_medium === 'academy';
@@ -99,6 +100,18 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
     )}`,
   };
 
+  const handleGetStartedButton = (e) => {
+    e.preventDefault();
+
+    const enrollButton = document.getElementById('bootcamp-enroll-button');
+
+    if (enrollButton) {
+      enrollButton.click();
+    } else {
+      window.location.href = `/${locale}/pricing${parseQuerys({ internal_cta_placement: 'navbar-get-started' }, false)}`;
+    }
+  };
+
   const verifyIfHasPaidSubscription = async () => {
     const subscriptions = await getAllMySubscriptions();
 
@@ -114,6 +127,12 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
       verifyIfHasPaidSubscription();
     }
   }, [isLoading, isAuthenticated]);
+
+  useEffect(() => {
+    const filteredLanguages = [...new Map(((translationsPropsExists && translations) || languagesTR)
+      .map((lang) => [lang.value, lang])).values()];
+    setUniqueLanguages(filteredLanguages);
+  }, [router.asPath]);
 
   useEffect(() => {
     axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQueryString}`)
@@ -368,23 +387,20 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                     </Text>
                     {disableLangSwitcher !== true && (
                       <Box display="flex" flexDirection="row">
-                        {((translationsPropsExists
-                          && translations)
-                          || languagesTR).map((l, i) => {
-                          const lang = languagesTR.filter((language) => language?.value === l?.lang)[0];
+                        {uniqueLanguages.map((l, i) => {
+                          const lang = languagesTR.find((language) => language?.value === l?.lang);
                           const value = translationsPropsExists ? lang?.value : l.value;
                           const path = translationsPropsExists ? l?.link : router.asPath;
 
                           const cleanedPath = (path === '/' && value !== 'en') ? '' : path;
-                          const localePrefix = `${value !== 'en' && !cleanedPath.includes(`/${value}`) ? `/${value}` : ''}`;
-
+                          const localePrefix = `${value !== 'en' && !cleanedPath?.includes(`/${value}`) ? `/${value}` : ''}`;
                           const link = `${localePrefix}${cleanedPath}`;
 
                           const getIconFlags = value === 'en' ? 'usaFlag' : 'spainFlag';
                           const getLangName = value === 'en' ? 'Eng' : 'Esp';
 
                           return (
-                            <Fragment key={lang || value}>
+                            <>
                               <Link
                                 _hover={{
                                   textDecoration: 'none',
@@ -403,12 +419,10 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                                 <Icon icon={getIconFlags} width="16px" height="16px" />
                                 {getLangName}
                               </Link>
-                              {
-                                  i < langs.length - 1 && (
-                                    <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
-                                  )
-                                }
-                            </Fragment>
+                              {i < langs.length - 1 && (
+                                <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
+                              )}
+                            </>
                           );
                         })}
                       </Box>
@@ -514,9 +528,12 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               >
                 {t('login')}
               </NextChakraLink>
-              <Link variant="buttonDefault" href={`/${locale}/pricing${parseQuerys({ internal_cta_placement: 'navbar-get-started' }, false)}`}>
+              <Button
+                variant="default"
+                onClick={handleGetStartedButton}
+              >
                 {t('get-started')}
-              </Link>
+              </Button>
             </Box>
           )}
         </Stack>

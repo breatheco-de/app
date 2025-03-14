@@ -24,6 +24,7 @@ function Page({ page }) {
       router.push('/login');
     }
   }, []);
+
   return prismicRef && prismicApi && (
     <Box className="prismic-body" pt="3rem">
       <SliceZone slices={page?.data?.slices} components={components} />

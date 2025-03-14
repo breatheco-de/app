@@ -97,6 +97,7 @@ function PricingView() {
     }
     return [];
   };
+
   const formatPlans = (allPlansList, hideYearlyOption = false) => {
     const freeTierList = allPlansList?.filter((p) => p?.isFreeTier);
     const financingList = allPlansList?.filter((p) => p?.period === 'FINANCING');
@@ -110,6 +111,7 @@ function PricingView() {
       ...initialFinancingOption,
       optionList: payablePlanList,
     };
+    console.log('todos los planes', allPlansList);
     if (freeTierList?.length > 0) {
       return freeTierList.concat(financingData);
     }
@@ -119,6 +121,7 @@ function PricingView() {
     }
     return allPlansList;
   };
+
   const handleFetchPlan = async () => {
     const data = await fetchSuggestedPlan(planSlug, planTranslations);
     const originalPlan = data?.plans?.original_plan || {};
@@ -331,7 +334,7 @@ function PricingView() {
                       <Link
                         variant="buttonDefault"
                         borderRadius="3px"
-                        href={`/${lang}/pricing?course=${course?.slug}`}
+                        href={`/${lang}/bootcamp/${course?.slug}`}
                         textAlign="center"
                         width="100%"
                         opacity="0.9"
