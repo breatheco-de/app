@@ -46,7 +46,7 @@ function CommentCard({ review, ...rest }) {
     </Flex>
   );
 }
-function Rating({ variant, totalRatings, totalReviews, rating, reviews, link, ...rest }) {
+function Rating({ variant, totalRatings, totalReviews, rating, reviews, link, cardStyles, ...rest }) {
   const { t } = useTranslation('common');
   const router = useRouter();
   const roundedRating = Math.round(rating) || 0;
@@ -99,7 +99,7 @@ function Rating({ variant, totalRatings, totalReviews, rating, reviews, link, ..
             marginTop="22px"
           >
             {reviews.map((review) => (
-              <CommentCard review={review} />
+              <CommentCard review={review} {...cardStyles} />
             ))}
           </SimpleGrid>
         </Flex>
@@ -115,6 +115,7 @@ Rating.propTypes = {
   rating: PropTypes.string,
   reviews: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])),
   link: PropTypes.string,
+  cardStyles: PropTypes.objectOf(PropTypes.string),
 };
 
 CommentCard.propTypes = {
@@ -128,5 +129,6 @@ Rating.defaultProps = {
   totalReviews: 0,
   rating: 0,
   reviews: [],
+  cardStyles: {},
 };
 export default Rating;

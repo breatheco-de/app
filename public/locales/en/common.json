@@ -7,6 +7,7 @@
   "your-tutors-in-this-cohort": "Your tutors:",
   "main-instructor": "Main Instructor",
   "teacher-assistant": "Teacher Assistant",
+  "hide": "Hide",
   "rigo": "Rigo",
   "rigobot-bubble": {
     "greeting": "Hi!"
@@ -79,6 +80,7 @@
   "confirm": "Confirm",
   "submit": "Submit",
   "enroll": "Enroll now",
+  "get-plan": "Get plan",
   "enroll-totally-free": "Enroll totally free",
   "enroll-for-connector": "Enroll for",
   "start-tutorial": "Start tutorial",
