@@ -17,6 +17,7 @@ import Text from '../components/Text';
 import { SILENT_CODE } from '../../lib/types';
 import { warn } from '../../utils/logging';
 import { generateUserContext } from '../../utils/rigobotContext';
+import useCohortAction from '../store/actions/cohortAction';
 
 const initialState = {
   isLoading: true,
@@ -83,6 +84,14 @@ const reducer = (state, action) => {
         cohorts: action.payload,
       };
     }
+    case 'SET_COHORTS_AND_USER': {
+      const { user, cohorts } = action.payload;
+      return {
+        ...state,
+        user,
+        cohorts,
+      };
+    }
     case 'LOADING': {
       return {
         ...state,
@@ -132,6 +141,7 @@ export const AuthContext = createContext({
 
 function AuthProvider({ children, pageProps }) {
   const router = useRouter();
+  const { setMyCohorts } = useCohortAction();
   const { t, lang } = useTranslation('footer');
   const toast = useToast();
   const { rigo, isRigoInitialized } = useRigo();
@@ -188,6 +198,36 @@ function AuthProvider({ children, pageProps }) {
     };
   };
 
+  const fetchUserAndCohorts = async () => {
+    try {
+      const { data } = await bc.admissions().me();
+      const { cohorts: cohortUsers, ...userData } = data;
+      const cohorts = cohortUsers.map(parseCohort);
+
+      return { cohorts, userData };
+    } catch (e) {
+      console.log(e);
+      return e;
+    }
+  };
+
+  const reSetUserAndCohorts = async () => {
+    const { cohorts, userData } = await fetchUserAndCohorts();
+    dispatch({
+      type: 'SET_COHORTS_AND_USER',
+      payload: { user: userData, cohorts },
+    });
+
+    return { cohorts, userData };
+  };
+
+  const setCohorts = (cohorts) => {
+    dispatch({
+      type: 'SET_COHORTS',
+      payload: cohorts,
+    });
+  };
+
   const authHandler = async () => {
     const token = getToken();
 
@@ -215,9 +255,7 @@ function AuthProvider({ children, pageProps }) {
         try {
           // only fetch user info if it is null
           if (!user) {
-            const { data } = await bc.admissions().me();
-            const { cohorts: cohortUsers, ...userData } = data;
-            const cohorts = cohortUsers.map(parseCohort);
+            const { cohorts, userData } = await fetchUserAndCohorts();
 
             const respRigobotAuth = await bc.auth().verifyRigobotConnection(token);
             const isAuthenticatedWithRigobot = respRigobotAuth && respRigobotAuth?.status === 200;
@@ -226,24 +264,24 @@ function AuthProvider({ children, pageProps }) {
               type: 'INIT',
               payload: { user: userData, cohorts, isAuthenticated: true, isAuthenticatedWithRigobot, isLoading: false },
             });
-            const settingsLang = data?.settings.lang;
+            const settingsLang = userData?.settings.lang;
 
             reportDatalayer({
               dataLayer: {
                 event: 'session_load',
                 method: 'native',
-                user_id: data.id,
-                email: data.email,
-                is_academy_legacy: [...new Set(data.roles.map((role) => role.academy.id))].join(','),
-                is_available_as_saas: !data.roles.some((r) => r.academy.id !== 47),
-                first_name: data.first_name,
-                last_name: data.last_name,
-                avatar_url: data.profile?.avatar_url || data.github?.avatar_url,
-                language: data.profile?.settings?.lang === 'us' ? 'en' : data.profile?.settings?.lang,
+                user_id: userData.id,
+                email: userData.email,
+                is_academy_legacy: [...new Set(userData.roles.map((role) => role.academy.id))].join(', '),
+                is_available_as_saas: !userData.roles.some((r) => r.academy.id !== 47),
+                first_name: userData.first_name,
+                last_name: userData.last_name,
+                avatar_url: userData.profile?.avatar_url || userData.github?.avatar_url,
+                language: userData.profile?.settings?.lang === 'us' ? 'en' : userData.profile?.settings?.lang,
                 agent: getBrowserInfo(),
               },
             });
-            if (data.github) {
+            if (userData.github) {
               localStorage.setItem('showGithubWarning', 'closed');
             } else if (!localStorage.getItem('showGithubWarning') || localStorage.getItem('showGithubWarning') !== 'postponed') {
               localStorage.setItem('showGithubWarning', 'active');
@@ -405,6 +443,7 @@ function AuthProvider({ children, pageProps }) {
     localStorage.removeItem('showGithubWarning');
     localStorage.removeItem('redirect');
     dispatch({ type: 'LOGOUT' });
+    setMyCohorts([]);
   };
 
   const updateProfile = async (payload) => {
@@ -425,6 +464,9 @@ function AuthProvider({ children, pageProps }) {
         register,
         updateProfile,
         conntectToRigobot,
+        setCohorts,
+        reSetUserAndCohorts,
+        fetchUserAndCohorts,
       }}
     >
       {children}

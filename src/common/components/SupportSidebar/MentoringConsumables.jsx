@@ -62,7 +62,7 @@ function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mento
 }
 
 function ProfilesSection({
-  profiles,
+  profiles, size,
 }) {
   const { usersConnected } = useOnline();
 
@@ -74,8 +74,8 @@ function ProfilesSection({
         const isOnline = usersConnected?.includes(c.user.id);
         return (
           <AvatarUser
-            width="48px"
-            height="48px"
+            width={size || '48px'}
+            height={size || '48px'}
             index={i}
             key={`${c.id} - ${c.user.first_name}`}
             isWrapped
@@ -578,3 +578,5 @@ MentoringConsumables.defaultProps = {
 };
 
 export default MentoringConsumables;
+
+export { ProfilesSection };

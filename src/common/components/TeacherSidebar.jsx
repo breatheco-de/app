@@ -101,7 +101,7 @@ function TeacherSidebar({
 
         <Box pt="3" display="flex" flexDirection="column" alignItems="center">
           {/* Start attendance */}
-          {cohortSession.ending_date && (
+          {cohortSession?.ending_date && (
             <ItemButton actionHandler={() => setOpenAttendance(true)}>
               <ItemText text={t('teacher-sidebar.take-attendancy')} />
               <Box>
@@ -111,7 +111,7 @@ function TeacherSidebar({
           )}
 
           {/* Review attendance */}
-          {cohortSession.ending_date && (
+          {cohortSession?.ending_date && (
             <ItemButton
               actionHandler={() => {
                 window.open(`/cohort/${cohortSlug}/attendance`, '_blank');

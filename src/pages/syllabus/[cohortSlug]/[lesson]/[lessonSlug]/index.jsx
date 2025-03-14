@@ -54,11 +54,6 @@ function SyllabusContent() {
   const { user, isLoading, isAuthenticatedWithRigobot } = useAuth();
   const { rigo, isRigoInitialized } = useRigo();
   const {
-    taskTodo,
-    cohortProgram,
-    setTaskTodo,
-    startDay,
-    updateAssignment,
     setCurrentTask,
     currentTask,
     nextModule,
@@ -99,9 +94,9 @@ function SyllabusContent() {
   const [learnpackStart, setLearnpackStart] = useState(false);
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
-    getCohortAssignments, getCohortData, prepareTasks, state,
+    getCohortUserCapabilities, getCohortData, cohortSession, sortedAssignments, setCohortSession, taskTodo,
+    updateAssignment, startDay, updateTask,
   } = useCohortHandler();
-  const { cohortSession, sortedAssignments } = state;
   // const isAvailableAsSaas = false;
   const isAvailableAsSaas = cohortSession?.available_as_saas;
 
@@ -119,8 +114,8 @@ function SyllabusContent() {
   const Open = !isOpen;
   const { label, teacherInstructions, keyConcepts } = selectedSyllabus;
 
-  const firstTask = nextModule?.modules[0];
-  const lastPrevTask = prevModule?.modules && prevModule.modules[prevModule.modules.length - 1];
+  const firstTask = nextModule?.content[0];
+  const lastPrevTask = prevModule?.content && prevModule.content[prevModule.content.length - 1];
 
   const cohortSlug = router?.query?.cohortSlug;
   const lesson = router?.query?.lesson;
@@ -134,8 +129,8 @@ function SyllabusContent() {
   const isLesson = lesson === 'read';
 
   const filteredCurrentAssignments = sortedAssignments.map((section) => (showPendingTasks
-    ? section.filteredModulesByPending
-    : section.filteredModules));
+    ? section.filteredContentByPending
+    : section.filteredContent));
 
   const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug || l.translations?.[language]?.slug === lessonSlug || (currentAsset?.id && l.translations?.[language]?.slug === currentAsset.slug)));
 
@@ -179,7 +174,7 @@ function SyllabusContent() {
   };
 
   const handleStartDay = async (module = null, avoidRedirect = false) => {
-    const moduleToUpdate = module?.modules || nextModule.modules;
+    const moduleToUpdate = module?.content || nextModule.content;
     const updatedTasks = moduleToUpdate?.map((l) => ({
       ...l,
       associated_slug: l.slug,
@@ -192,6 +187,7 @@ function SyllabusContent() {
     };
     if (user?.id) {
       await startDay({
+        cohort: cohortSession,
         newTasks: updatedTasks,
         customHandler,
       });
@@ -202,7 +198,7 @@ function SyllabusContent() {
     const cohort = await getCohortData({
       cohortSlug,
     });
-    getCohortAssignments({
+    getCohortUserCapabilities({
       cohort,
     });
   };
@@ -219,8 +215,11 @@ function SyllabusContent() {
       if (result.data) {
         const updateTasks = taskTodo.map((task) => ({ ...task }));
         const index = updateTasks.findIndex((el) => el.task_type === assetTypeValues[lesson] && el.associated_slug === lessonSlug);
-        updateTasks[index].opened_at = result.data.opened_at;
-        setTaskTodo([...updateTasks]);
+        const updatedTask = {
+          ...updateTasks[index],
+          opened_at: result.data.opened_at,
+        };
+        updateTask(updatedTask, cohortSession);
       }
     } catch (e) {
       log('update_task_error:', e);
@@ -274,6 +273,13 @@ function SyllabusContent() {
       updateOpenedAt();
     }
   }, [currentTask]);
+
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => {
+      setCohortSession(null);
+    };
+  }, []);
 
   useEffect(() => {
     const translations = currentAsset?.translations
@@ -360,7 +366,7 @@ function SyllabusContent() {
 
       setGrantAccess(true);
     }
-    if (Object.keys(cohortSession).length > 0 && (cohortSession.cohort_role !== 'STUDENT' || cohortSession.available_as_saas === false)) setGrantAccess(true);
+    if (cohortSession?.cohort_role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
   }, [cohortSession, allSubscriptions]);
 
   const toggleSettings = () => {
@@ -408,9 +414,13 @@ function SyllabusContent() {
   };
 
   const onClickAssignment = (e, item) => {
-    const link = `/syllabus/${cohortSlug}/${item.type?.toLowerCase()}/${item.slug}`;
-
-    router.push(link);
+    router.push({
+      query: {
+        ...router.query,
+        lesson: item.type?.toLowerCase(),
+        lessonSlug: item?.slug,
+      },
+    });
     cleanCurrentData();
   };
 
@@ -433,9 +443,9 @@ function SyllabusContent() {
   };
 
   useEffect(() => {
-    const currTask = sortedAssignments[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
+    const currTask = sortedAssignments[currentModuleIndex]?.content?.find((l) => l.slug === lessonSlug);
     const currentLanguageTaskUrl = currTask?.translations?.[lang === 'en' ? 'us' : lang]?.slug || lessonSlug;
-    if (Object.keys(cohortSession).length > 0 && sortedAssignments.length > 0) {
+    if (cohortSession && sortedAssignments.length > 0) {
       if (currTask?.task_type === 'LESSON' && currTask?.target === 'blank') {
         EventIfNotFound(currTask);
         return undefined;
@@ -509,13 +519,13 @@ function SyllabusContent() {
   useEffect(() => {
     const currentSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
     const currModuleIndex = sortedAssignments.findIndex(
-      (l) => l.modules.some((m) => m.slug === lessonSlug),
+      (l) => l.content.some((m) => m.slug === lessonSlug),
     );
     const nextModuleData = sortedAssignments[currModuleIndex + 1];
     const prevModuleData = sortedAssignments[currModuleIndex - 1];
 
     const defaultSyllabus = sortedAssignments.find(
-      (l) => l.modules.find((m) => m.slug === lessonSlug),
+      (l) => l.content.find((m) => m.slug === lessonSlug),
     );
 
     if (defaultSyllabus) {
@@ -534,11 +544,7 @@ function SyllabusContent() {
     }
   }, [selectedSyllabus]);
 
-  useEffect(() => {
-    prepareTasks();
-  }, [cohortProgram, taskTodo, router]);
-
-  const teacherActions = professionalRoles.includes(cohortSession.cohort_role)
+  const teacherActions = professionalRoles.includes(cohortSession?.cohort_role)
     ? [
       {
         icon: 'key',
@@ -587,6 +593,7 @@ function SyllabusContent() {
         setCurrentBlankProps(nextAssignment);
         router.push({
           query: {
+            ...router.query,
             cohortSlug,
             lesson: nextAssignment?.type?.toLowerCase(),
             lessonSlug: nextAssignment?.slug,
@@ -596,6 +603,7 @@ function SyllabusContent() {
         setCurrentBlankProps(null);
         router.push({
           query: {
+            ...router.query,
             cohortSlug,
             lesson: nextAssignment?.type?.toLowerCase(),
             lessonSlug: nextAssignment?.slug,
@@ -604,9 +612,10 @@ function SyllabusContent() {
       }
     } else if (nextModule) {
       if (firstTask.target !== 'blank') {
-        if (cohortSlug && !!firstTask && nextModule?.filteredModules[0]) {
+        if (cohortSlug && !!firstTask && nextModule?.filteredContent[0]) {
           router.push({
             query: {
+              ...router.query,
               cohortSlug,
               lesson: firstTask?.type?.toLowerCase(),
               lessonSlug: firstTask?.slug,
@@ -618,6 +627,7 @@ function SyllabusContent() {
       } else {
         router.push({
           query: {
+            ...router.query,
             cohortSlug,
             lesson: firstTask?.type?.toLowerCase(),
             lessonSlug: firstTask?.slug,
@@ -631,12 +641,12 @@ function SyllabusContent() {
   const handlePrevPage = () => {
     cleanCurrentData();
     scrollMainContainerTop();
-    console.log('HEY!!');
     if (previousAssignment !== null) {
       if (previousAssignment?.target === 'blank') {
         setCurrentBlankProps(previousAssignment);
         router.push({
           query: {
+            ...router.query,
             cohortSlug,
             lesson: previousAssignment?.type?.toLowerCase(),
             lessonSlug: previousAssignment?.slug,
@@ -646,6 +656,7 @@ function SyllabusContent() {
         setCurrentBlankProps(null);
         router.push({
           query: {
+            ...router.query,
             cohortSlug,
             lesson: previousAssignment?.type?.toLowerCase(),
             lessonSlug: previousAssignment?.slug,
@@ -657,6 +668,7 @@ function SyllabusContent() {
         if (cohortSlug && !!lastPrevTask) {
           router.push({
             query: {
+              ...router.query,
               cohortSlug,
               lesson: lastPrevTask?.type?.toLowerCase(),
               lessonSlug: lastPrevTask?.slug,
@@ -668,6 +680,7 @@ function SyllabusContent() {
         setCurrentAsset(lastPrevTask);
         router.push({
           query: {
+            ...router.query,
             cohortSlug,
             lesson: lastPrevTask?.type?.toLowerCase(),
             lessonSlug: lastPrevTask?.slug,
@@ -683,6 +696,7 @@ function SyllabusContent() {
       setCurrentBlankProps(previousAssignment);
       router.push({
         query: {
+          ...router.query,
           cohortSlug,
           lesson: previousAssignment?.type?.toLowerCase(),
           lessonSlug: previousAssignment?.slug,
@@ -702,6 +716,7 @@ function SyllabusContent() {
         setCurrentBlankProps(nextAssignment);
         router.push({
           query: {
+            ...router.query,
             cohortSlug,
             lesson: nextAssignment?.type?.toLowerCase(),
             lessonSlug: nextAssignment?.slug,
@@ -864,7 +879,7 @@ function SyllabusContent() {
             setShowPendingTasks={setShowPendingTasks}
             isOpen={isOpen}
             onToggle={onToggle}
-            isStudent={!professionalRoles.includes(cohortSession.cohort_role)}
+            isStudent={!professionalRoles.includes(cohortSession?.cohort_role)}
             teacherInstructions={{
               existContentToShow: extendedInstructions !== null,
               actionHandler: () => {

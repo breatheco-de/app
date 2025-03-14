@@ -7,7 +7,6 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState, memo } from 'react';
-import useModuleHandler from '../../common/hooks/useModuleHandler';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
 import { ButtonHandlerByTaskStatus } from './ButtonHandlerByTaskStatus';
@@ -24,8 +23,7 @@ function Module({
 }) {
   const { t, lang } = useTranslation('dashboard');
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const { taskTodo, updateAssignment } = useModuleHandler();
-  const { state } = useCohortHandler();
+  const { taskTodo, state, updateAssignment } = useCohortHandler();
   const { cohortSession } = state;
   const [currentAssetData, setCurrentAssetData] = useState(null);
   const [fileData, setFileData] = useState(null);
