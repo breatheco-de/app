@@ -102,14 +102,8 @@ function SubscriptionInfo({ subscription }) {
           }),
       }),
       error: () => ({
-        errorMessage: t('subscription.error-message', {
-          error: sub?.status_message || 'Something went wrong',
-        }),
-        paymentInfo: t('subscription.payment', {
-          payment: sub.invoices[0]?.amount
-            ? `${subCurrency}${sub.invoices[0]?.amount}/${t(`subscription.payment_unit.${sub?.pay_every_unit?.toLowerCase()}`)}`
-            : 'Error',
-        }),
+        errorMessage: t('subscription.error-message', { error: sub?.status_message || 'Something went wrong' }),
+        paymentInfo: t('subscription.payment', { payment: `${subCurrency}${sub.invoices[0]?.amount || 0}/${t(`subscription.payment_unit.${sub?.pay_every_unit?.toLowerCase()}`)}` }),
       }),
       payment_issue: () => {
         if (isPlanFinancing) {

@@ -19,7 +19,6 @@ import useAuth from '../../hooks/useAuth';
 import { reportDatalayer } from '../../../utils/requests';
 import { generatePlan, getTranslations } from '../../handlers/subscriptions';
 
-// eslint-disable-next-line no-unused-vars
 const useSignup = () => {
   const { isAuthenticated } = useAuth();
   const { userSession } = useSession();
@@ -35,6 +34,7 @@ const useSignup = () => {
   const redirectedFrom = getStorageItem('redirected-from');
   const couponsQuery = getQueryString('coupons');
   const planTranslationsObj = getTranslations(t);
+  const defaultPlan = process.env.BASE_PLAN || 'basic';
 
   const { syllabus, academy } = router.query;
   const nextMonthText = getNextDateInMonths(1).translation[locale];
@@ -180,14 +180,15 @@ const useSignup = () => {
               return { plan: { ...restOfPlan } };
             });
           }
+          console.log('selectedPlanCheckoutData', selectedPlanCheckoutData);
           reportDatalayer({
             dataLayer: {
               event: 'purchase',
-              value: selectedPlanCheckoutData?.price,
+              value: selectedPlanCheckoutData?.price || 0,
               currency,
               payment_type: 'Credit card',
-              plan: selectedPlanCheckoutData?.plan_slug,
-              period_label: selectedPlanCheckoutData?.period_label,
+              plan: selectedPlanCheckoutData?.plan_slug || transactionData?.plan?.slug || defaultPlan,
+              period_label: selectedPlanCheckoutData?.period_label || 'one-time',
               items: simplePlans,
               agent: getBrowserInfo(),
             },
