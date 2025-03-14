@@ -67,7 +67,6 @@ const useRecommendations = (endpoint, technologies, lang) => {
 
       const coursesData = await response.json();
       const coursesFiltered = coursesData?.filter((course) => course?.course_translation);
-      console.log(coursesData);
 
       if (coursesFiltered.length > 0) {
         const coursesGraded = gradeCourseBasedOnTech(coursesFiltered);
