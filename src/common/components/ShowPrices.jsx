@@ -186,7 +186,7 @@ function ShowPrices({
               </Text>
             </Box>
           )}
-          {/* {selfAppliedCoupon && (
+          {selfAppliedCoupon && (
             <Box
               position="absolute"
               top="-30px"
@@ -196,7 +196,7 @@ function ShowPrices({
             >
               🔥
             </Box>
-          )} */}
+          )}
           <Box
             position="relative"
             borderRadius="20px"
