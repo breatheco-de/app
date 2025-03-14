@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Box, Button, Flex, Image, Link, SkeletonText, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, Link, SkeletonText, useFormControlStyles, useToast } from '@chakra-ui/react';
 import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -375,18 +375,17 @@ function CoursePage({ data, syllabus }) {
             });
           });
         }
-        const lastProjects = projects?.length > 0 ? projects.slice(-3) : [];
-        const lastExercises = exercises?.length > 0 ? exercises.slice(-3) : [];
-        const relatedAssetsToShow = [...lastProjects, ...lastExercises].slice(0, 3);
+        const relatedAssetsToShow = [...projects, ...exercises];
         const language = lang === 'en' ? 'us' : lang;
         const assignmentsFetch = relatedAssetsToShow?.length > 0 ? await Promise.all(relatedAssetsToShow.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[language]?.slug || item?.slug}`)
           .then((assignmentResp) => assignmentResp.json())
           .then((respData) => respData)
           .catch(() => []))) : [];
+        const assignmentsToShow = assignmentsFetch?.length > 0 ? assignmentsFetch.filter((assignment) => assignment?.feature === true) : [];
 
         return {
           count: assetTypeCount || {},
-          assignmentList: assignmentsFetch || [],
+          assignmentList: assignmentsToShow || [],
         };
       } catch (errorMsg) {
         error('Error fetching module info:', errorMsg);
