@@ -288,17 +288,19 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
             )}
             {!invitationSent ? (
               <Button
-                onClick={() => {
-                  const validate = values.email.match(emailRe);
-                  if (validate) validateEmail(values.email);
-                  else setFieldTouched('email', true, true);
-                }}
                 width="100%"
                 isLoading={emailValidation.loading}
                 isDisabled={errors.email}
                 variant="default"
                 fontSize={actionfontSize || 'l'}
-                type="button"
+                type="submit"
+                onClick={() => {
+                  if (step === 1) {
+                    const validate = values.email.match(emailRe);
+                    if (validate) validateEmail(values.email);
+                    else setFieldTouched('email', true, true);
+                  }
+                }}
               >
                 {t('next')}
               </Button>
@@ -408,7 +410,7 @@ LogIn.defaultProps = {
   hideLabel: false,
   actionfontSize: '',
   disableRedirect: false,
-  callBack: () => {},
+  callBack: () => { },
 };
 
 export default LogIn;
