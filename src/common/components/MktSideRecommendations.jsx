@@ -167,7 +167,15 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
                   borderRadius={rest.borderRadius || '8px'}
                 >
                   {recom?.course_translation?.video_url && (
-                    <ReactPlayerV2 url={recom?.course_translation?.video_url} width="100%" height="120px" />
+                  <ReactPlayerV2
+                    width="100%"
+                    withModal
+                    url={recom?.course_translation?.video_url}
+                    withThumbnail
+                    thumbnailStyle={{
+                      borderRadius: '0 0 0 0',
+                    }}
+                  />
                   )}
                   {recom?.banner_image && !recom?.course_translation?.video_url && (
                     <Image src={recom?.banner_image} width="100%" height="120px" />
