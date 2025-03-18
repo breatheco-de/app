@@ -350,62 +350,59 @@ function CoursePage({ data, syllabus }) {
   const getInitialData = async () => {
     setInitialDataIsFetching(true);
     const cohortSyllabus = await generateCohortSyllabusModules(cohortId);
+
     const getModulesInfo = async () => {
       try {
-        const assetTypeCount = {
-          lesson: 0,
-          project: 0,
-          quiz: 0,
-          exercise: 0,
-        };
+        const assetTypeCount = { lesson: 0, project: 0, quiz: 0, exercise: 0 };
         const projects = [];
         const exercises = [];
-        if (cohortSyllabus?.syllabus?.modules?.length > 0) {
-          cohortSyllabus.syllabus?.modules?.forEach((module) => {
-            module?.content.forEach((task) => {
-              if (task?.task_type) {
-                const taskType = task?.task_type?.toLowerCase();
-                assetTypeCount[taskType] += 1;
-              }
-              if (task?.task_type === 'PROJECT') {
-                projects.push(task);
-              }
-              if (task?.task_type === 'EXERCISE') {
-                exercises.push(task);
-              }
-            });
-          });
-        }
-        const relatedAssetsToShow = [...projects, ...exercises];
+        const featuredAssetSlugs = data?.course_translation?.featured_assets?.split(',') || [];
         const language = lang === 'en' ? 'us' : lang;
-        const assignmentsFetch = relatedAssetsToShow?.length > 0 ? await Promise.all(relatedAssetsToShow.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[language]?.slug || item?.slug}`)
-          .then((assignmentResp) => assignmentResp.json())
-          .then((respData) => respData)
-          .catch(() => []))) : [];
 
-        const featuredAssignments = assignmentsFetch?.filter((assignment) => assignment?.feature === true);
-        const assignmentsToShow = featuredAssignments?.length > 0
-          ? featuredAssignments
-          : (() => {
-            const lastProjects = projects?.length > 0 ? projects.slice(-3) : [];
-            const lastExercises = exercises?.length > 0 ? exercises.slice(-3) : [];
-            const lastAssets = [...lastProjects, ...lastExercises].slice(0, 3);
-            return lastAssets.map((asset) => {
-              const assetSlug = asset?.translations?.[language]?.slug || asset?.slug;
-              return assignmentsFetch.find((assignment) => assignment?.slug === assetSlug);
-            }).filter(Boolean);
-          })();
+        cohortSyllabus?.syllabus?.modules?.forEach((module) => {
+          module?.content.forEach((task) => {
+            if (task?.task_type) {
+              const taskType = task.task_type.toLowerCase();
+              assetTypeCount[taskType] += 1;
+              if (taskType === 'project') projects.push(task);
+              if (taskType === 'exercise') exercises.push(task);
+            }
+          });
+        });
+
+        const filterAssets = (assets, isFeatured) => assets.filter((asset) => {
+          const assetSlug = asset?.translations?.[language]?.slug || asset?.slug;
+          return isFeatured ? featuredAssetSlugs.includes(assetSlug) : !featuredAssetSlugs.includes(assetSlug);
+        });
+
+        let combinedFeaturedAssets = [
+          ...filterAssets(projects, true),
+          ...filterAssets(exercises, true),
+        ];
+
+        if (combinedFeaturedAssets.length < 3) {
+          const remainingNeeded = 3 - combinedFeaturedAssets.length;
+          const additionalItems = [
+            ...filterAssets(projects, false),
+            ...filterAssets(exercises, false),
+          ].slice(-remainingNeeded);
+
+          combinedFeaturedAssets = [...combinedFeaturedAssets, ...additionalItems];
+        }
+
+        const assignmentsFetch = await Promise.all(
+          combinedFeaturedAssets.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[language]?.slug || item?.slug}`)
+            .then((assignmentResp) => assignmentResp.json())
+            .catch(() => [])),
+        );
 
         return {
-          count: assetTypeCount || {},
-          assignmentList: assignmentsToShow || [],
+          count: assetTypeCount,
+          assignmentList: assignmentsFetch.filter(Boolean),
         };
       } catch (errorMsg) {
         error('Error fetching module info:', errorMsg);
-        return {
-          count: {},
-          assignmentList: [],
-        };
+        return { count: {}, assignmentList: [] };
       }
     };
     const formatedPlanData = await fetchSuggestedPlan(data?.plan_slug, translationsObj, 'mkt_plans').then((finalData) => finalData);
