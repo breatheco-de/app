@@ -16,7 +16,7 @@ import validationSchema from './validationSchemas';
 import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
 import { BREATHECODE_HOST } from '../../../utils/variables';
-import { getBrowserInfo } from '../../../utils';
+import { getBrowserInfo, isWindow } from '../../../utils';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|net|org|edu|gov|mil|io|co|us|es|dev)$/i;
@@ -37,18 +37,8 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
 
   const { login } = useAuth();
   const toast = useToast();
-  const [curUrl, setUrl] = useState('');
   const [invitationSent, setInvitationSent] = useState(false);
-  useEffect(() => setUrl(typeof window !== 'undefined' ? window.location.href : ''), []);
   const { hexColor, borderColor } = useStyle();
-
-  const githubLoginUrl = (typeof window !== 'undefined')
-    ? `${BREATHECODE_HOST}/v1/auth/github?url=${curUrl}`
-    : '#';
-
-  const googleLoginUrl = (typeof window !== 'undefined')
-    ? `${BREATHECODE_HOST}/v1/auth/google?url=${curUrl}`
-    : '#';
 
   useEffect(() => {
     const { error } = query;
@@ -180,7 +170,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
             <Stack display={step !== 1 && 'none'} spacing={4} justifyContent="space-between">
               <Button
                 as="a"
-                href={googleLoginUrl}
+                href={isWindow ? `${BREATHECODE_HOST}/v1/auth/google?url=${window.location.href}` : '#'}
                 cursor="pointer"
                 variant="outline"
                 weight="700"
@@ -203,7 +193,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
               </Button>
               <Button
                 as="a"
-                href={githubLoginUrl}
+                href={isWindow ? `${BREATHECODE_HOST}/v1/auth/github?url=${window.location.href}` : '#'}
                 cursor="pointer"
                 variant="outline"
                 weight="700"
@@ -394,7 +384,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                   fontSize={actionfontSize}
                   target="_blank"
                   rel="noopener noreferrer"
-                  href={`${BREATHECODE_HOST}/v1/auth/password/reset?url=${curUrl}`}
+                  href={isWindow ? `${BREATHECODE_HOST}/v1/auth/password/reset?url=${window.location.href}` : ''}
                 >
                   {t('login:forgot-password')}
                 </Link>
