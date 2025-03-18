@@ -141,6 +141,7 @@ function CoursePage({ data, syllabus }) {
   const limitViewStudents = 3;
   const cohortId = data?.cohort?.id;
   const isVisibilityPublic = data.visibility === 'PUBLIC';
+  const courseColor = data?.color;
 
   const structuredData = data?.course_translation ? {
     '@context': 'https://schema.org',
@@ -481,6 +482,8 @@ function CoursePage({ data, syllabus }) {
     project: assetCount?.project || 0,
   };
 
+  console.log(data);
+
   const courseContentList = data?.course_translation?.course_modules?.length > 0
     ? data?.course_translation?.course_modules.map((module) => ({
       certificate: module.certificate,
@@ -702,7 +705,7 @@ function CoursePage({ data, syllabus }) {
                           id="bootcamp-enroll-button"
                           variant="default"
                           isLoading={initialDataIsFetching || (planList?.length === 0 && !featuredPlanToEnroll?.price)}
-                          background="green.500"
+                          background={courseColor || 'green.500'}
                           display="flex"
                           flexDirection="column"
                           color="white"
@@ -714,11 +717,12 @@ function CoursePage({ data, syllabus }) {
                         >
                           <Flex flexDirection="column" alignItems="center">
                             <Text fontSize={!featuredPlanToEnroll?.isFreeTier ? '16px' : '14px'}>
+                              {allDiscounts.length > 0 && '🔥'}
                               {capitalizeFirstLetter(featurePrice)}
                             </Text>
                             {!featuredPlanToEnroll?.isFreeTier && (
                               <Flex alignItems="center" marginTop="5px" gap="5px" justifyContent="center">
-                                <Icon icon="shield" color="#ffffff" width="23px" />
+                                <Icon icon="shield" color="#ffffff" secondColor={courseColor || '#00b765'} width="23px" />
                                 <Text fontSize="13px" fontWeight="medium" paddingTop="2px">
                                   {t('common:money-back-guarantee-short')}
                                 </Text>

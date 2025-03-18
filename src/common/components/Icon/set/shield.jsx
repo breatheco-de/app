@@ -1,4 +1,4 @@
-const shield = ({ color, width, height, style }) => (
+const shield = ({ color, secondColor, width, height, style }) => (
   <svg
     style={style}
     width={width || '26px'}
@@ -15,7 +15,7 @@ const shield = ({ color, width, height, style }) => (
     {/* Check más grande y grueso */}
     <path
       d="M12 14L10 12L9 13L12 16L17 10L16 9L11 14Z"
-      fill={color === '#ffffff' ? '#00b765' : '#ffffff'}
+      fill={secondColor || '#ffffff'}
     />
   </svg>
 );
