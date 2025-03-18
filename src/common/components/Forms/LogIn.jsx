@@ -15,9 +15,7 @@ import validationSchema from './validationSchemas';
 import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
 import { BREATHECODE_HOST } from '../../../utils/variables';
-import { getBrowserInfo } from '../../../utils';
-
-const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|net|org|edu|gov|mil|io|co|us|es|dev)$/i;
+import { getBrowserInfo, isValidEmail } from '../../../utils';
 
 function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const { t, lang } = useTranslation('login');
@@ -128,8 +126,6 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
       });
     }
   };
-
-  const isValidEmail = (email) => EMAIL_REGEX.test(email);
 
   return (
     <Formik
