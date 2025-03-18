@@ -482,8 +482,6 @@ function CoursePage({ data, syllabus }) {
     project: assetCount?.project || 0,
   };
 
-  console.log(data);
-
   const courseContentList = data?.course_translation?.course_modules?.length > 0
     ? data?.course_translation?.course_modules.map((module) => ({
       certificate: module.certificate,
