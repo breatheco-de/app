@@ -28,11 +28,13 @@ const ModalToCloneProject = lazy(() => import('./ModalToCloneProject'));
 
 export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, learnpackUrlFromPublicView, startWithLearnpack, openWithLearnpackNoSaas, variant, isStarted, publicView, ...rest }) {
   const { t } = useTranslation('common');
+  const { cohorts } = useAuth();
 
   const isExternalExercise = currentAsset.external && currentAsset.asset_type === 'EXERCISE';
+  const noSaaSCohortsAvailable = cohorts.some((c) => c?.available_as_saas === false) && publicView;
 
   //____USED ONLY ON PUBLIC VIEWS____
-  if (learnpackUrlFromPublicView) {
+  if (learnpackUrlFromPublicView && !noSaaSCohortsAvailable) {
     return (
       <Button
         cursor="pointer"
@@ -50,13 +52,15 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
         _active="none"
         {...rest}
       >
-        {t('common:learnpack.start-exercise').toUpperCase()}
+        {publicView
+          ? t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) }).toUpperCase()
+          : t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
       </Button>
     );
   }
 
   //___USED ON PRIVATE VIEWS NO SAAS___
-  if (isExternalExercise && !startWithLearnpack) {
+  if ((isExternalExercise && !startWithLearnpack) || (isExternalExercise && noSaaSCohortsAvailable)) {
     return (
       <Button
         cursor="pointer"
@@ -74,7 +78,9 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
         _active="none"
         {...rest}
       >
-        {t('common:learnpack.start-exercise')}
+        {publicView
+          ? t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) }).toUpperCase()
+          : t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
       </Button>
     );
   }
@@ -171,6 +177,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
     fetchVendors();
   }, [cohortSession, cohorts]);
 
+  const NoSaasOnPublicView = cohorts.some((c) => c?.available_as_saas === false);
   const isInteractive = currentAsset?.interactive;
   const isExternalExercise = currentAsset?.external && currentAsset?.asset_type === 'EXERCISE';
   const startWithLearnpack = currentAsset?.learnpack_deploy_url && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
