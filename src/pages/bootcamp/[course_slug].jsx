@@ -968,7 +968,7 @@ function CoursePage({ data, syllabus }) {
           />
         )}
 
-        {freePlan && (
+        {featuredPlanToEnroll?.type !== 'FREE' && (
           <MktTwoColumnSideImage
             mt="6.25rem"
             imageUrl={getAlternativeTranslation('havent-decided.image')}
