@@ -19,6 +19,7 @@
   "connected-with-rigobot": "You are connected to Rigo AI",
   "rigobot-requires-github-connection": "You must sync with GitHub to use Rigobot",
   "save-changes": "Save changes",
+  "learn-at-your-pace": "Learn at your own pace",
   "certificate-preview-not-available": "Certificate Preview Not Available",
   "tabList": [
     {
@@ -70,14 +71,32 @@
     "title": "Upload your profile image",
     "submit-button": "Update profile picture"
   },
+  "slug-translations": {
+    "ai-conversation-message": {
+      "title": "AI Conversation Message",
+      "description": "An AI-powered messaging system that guides you step by step in your code development."
+    },
+    "ai-compilation": {
+      "title": "AI Compilation",
+      "description": "A curated selection of AI-generated insights."
+    }
+  },
   "subscription": {
+    "totally-paid": "Total paid: You've paid the full amount of the plan of {{currencySymbol}}{{amount}}.",
+    "error-message": "Error message: {{error}}",
+    "total-paid": "Total paid to the date: {{currencySymbol}}{{paidAmount}}/{{currencySymbol}}{{pendingAmount}}",
+    "expiration-date": "Expiration date: {{date}}",
+    "expired-on": "Your plan expired on: {{date}}",
+    "active-since": "Active subscription since: {{date}}",
     "what-you-will-get": "What you will get:",
     "bootcamp-mentorships": "You have unlimited access to those mentorship services with this icon ∞ because you belong to the bootcamp",
     "mentoring-available": "Mentoring sessions available",
+    "rigo-available": "Rigobot consumables",
     "your-mentoring-available": "Your mentoring services available",
     "workshop-available": "Workshop sessions available",
     "your-workshop-available": "Your workshop sessions available",
     "see-details": "See details",
+    "next-payment-with-price": "Next payment: {{currencySymbol}}{{amount}} on {{date}}",
     "next-payment": "Next payment on {{date}}",
     "last-payment": "Last payment on {{date}}",
     "duration": "Duration: {{duration}}",
@@ -88,6 +107,13 @@
     "many-payments-left": "Payment: {{qty}} payments left",
     "no-payment-left": "Payment: No payments left",
     "renewal-date": "Renewal date: {{date}}",
+    "yearly-savings": "Save {{months}} months",
+    "yearly-savings-singular": "Save {{months}} month",
+    "payment_unit": {
+      "month": "Monthly",
+      "year": "Yearly",
+      "anual": "Anual"
+    },
     "renewal-date-unknown": "Renewal date: Unknown",
     "payment-trial": "Payment: Trial",
     "payment-free": "Payment: Free",

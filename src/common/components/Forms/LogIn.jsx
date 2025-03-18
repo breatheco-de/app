@@ -17,8 +17,9 @@ import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import { getBrowserInfo } from '../../../utils';
-import { email as emailRe } from '../../../utils/regex';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
+
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|net|org|edu|gov|mil|io|co|us|es|dev)$/i;
 
 function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const { t, lang } = useTranslation('login');
@@ -136,6 +137,8 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
     }
   };
 
+  const isValidEmail = (email) => EMAIL_REGEX.test(email);
+
   return (
     <>
       <Formik
@@ -171,7 +174,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
         }}
         validationSchema={validationSchema.login}
       >
-        {({ isSubmitting, values, errors, setFieldTouched }) => (
+        {({ isSubmitting, values, setFieldTouched }) => (
           <Form>
             {/* FIRST STEP */}
             <Stack display={step !== 1 && 'none'} spacing={4} justifyContent="space-between">
@@ -252,15 +255,15 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                     }}
                   >
                     {!hideLabel && (
-                      <FormLabel
-                        margin="0px"
-                        color="gray.default"
-                        fontSize="sm"
-                        float="left"
-                        htmlFor="email"
-                      >
-                        {t('common:email')}
-                      </FormLabel>
+                    <FormLabel
+                      margin="0px"
+                      color="gray.default"
+                      fontSize="sm"
+                      float="left"
+                      htmlFor="email"
+                    >
+                      {t('common:email')}
+                    </FormLabel>
                     )}
                     <Input
                       {...field}
@@ -277,32 +280,36 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                 )}
               </Field>
               {emailValidation.error && !invitationSent && (
-                <Text marginTop="5px !important" color={hexColor.danger}>
-                  {emailValidation.error}
-                  {emailValidation.status === 403 && (
-                    <>
-                      ,
-                      {'  '}
-                      <Button textDecoration="underline" padding="0" color={hexColor.danger} variant="link" onClick={() => sendConfirmationLink(values.email)}>
-                        {t('validation-link')}
-                      </Button>
-                    </>
-                  )}
-                </Text>
+              <Text marginTop="5px !important" color={hexColor.danger}>
+                {emailValidation.error}
+                {emailValidation.status === 403 && (
+                  <>
+                    ,
+                    {'  '}
+                    <Button textDecoration="underline" padding="0" color={hexColor.danger} variant="link" onClick={() => sendConfirmationLink(values.email)}>
+                      {t('validation-link')}
+                    </Button>
+                  </>
+                )}
+              </Text>
               )}
               {!invitationSent ? (
                 <Button
-                  onClick={() => {
-                    const validate = values.email.match(emailRe);
-                    if (validate) validateEmail(values.email);
-                    else setFieldTouched('email', true, true);
-                  }}
                   width="100%"
                   isLoading={emailValidation.loading}
-                  isDisabled={errors.email}
+                  isDisabled={!isValidEmail(values.email)}
                   variant="default"
                   fontSize={actionfontSize || 'l'}
-                  type="button"
+                  type="submit"
+                  onClick={() => {
+                    if (step === 1) {
+                      if (isValidEmail(values.email)) {
+                        validateEmail(values.email);
+                      } else {
+                        setFieldTouched('email', true, true);
+                      }
+                    }
+                  }}
                 >
                   {t('next')}
                 </Button>
@@ -330,15 +337,15 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                 {({ field, form }) => (
                   <FormControl marginTop="4px !important" isInvalid={form.errors.password && form.touched.password}>
                     {!hideLabel && (
-                      <FormLabel
-                        margin="0px"
-                        color="gray.default"
-                        fontSize="sm"
-                        float="left"
-                        htmlFor="password"
-                      >
-                        {t('common:password')}
-                      </FormLabel>
+                    <FormLabel
+                      margin="0px"
+                      color="gray.default"
+                      fontSize="sm"
+                      float="left"
+                      htmlFor="password"
+                    >
+                      {t('common:password')}
+                    </FormLabel>
                     )}
                     <InputGroup>
                       <Input
@@ -438,7 +445,7 @@ LogIn.defaultProps = {
   hideLabel: false,
   actionfontSize: '',
   disableRedirect: false,
-  callBack: () => {},
+  callBack: () => { },
 };
 
 export default LogIn;
