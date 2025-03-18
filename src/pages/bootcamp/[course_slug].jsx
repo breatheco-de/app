@@ -7,7 +7,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { parseQuerys } from '../../utils/url';
-import { BREATHECODE_HOST, ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { BREATHECODE_HOST, ORIGIN_HOST, WHITE_LABEL_ACADEMY, BASE_COURSE } from '../../utils/variables';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import GridContainer from '../../common/components/GridContainer';
@@ -167,7 +167,6 @@ function CoursePage({ data, syllabus }) {
   const payableList = planList.filter((plan) => plan?.type === 'PAYMENT');
   const freePlan = planList?.find((plan) => plan?.type === 'TRIAL' || plan?.type === 'FREE');
   const featuredPlanToEnroll = freePlan?.plan_slug ? freePlan : payableList?.[0];
-  console.log('featuredPlanToEnroll', featuredPlanToEnroll);
   const pathname = router.asPath.split('#')[0];
 
   const reviewsData = t('course:reviews', {}, { returnObjects: true });
@@ -976,7 +975,7 @@ function CoursePage({ data, syllabus }) {
             title={getAlternativeTranslation('havent-decided.title')}
             description={getAlternativeTranslation('havent-decided.description')}
             informationSize="Medium"
-            buttonUrl={getAlternativeTranslation('havent-decided.button-link')}
+            buttonUrl={BASE_COURSE ? `/${lang}/bootcamp/${BASE_COURSE}` : `/${lang}/bootcamp/coding-introduction`}
             buttonLabel={getAlternativeTranslation('havent-decided.button')}
             background="transparent"
             textBackgroundColor="#E1F5FF"
