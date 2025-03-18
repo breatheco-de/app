@@ -82,12 +82,25 @@ function Subscriptions({ cohorts }) {
           return evRes.data.event_types;
         });
 
+        const promiseVoids = data.voids.map(async (elem) => {
+          const voidRes = await bc.payment().getServiceInfo(elem.slug);
+          const serviceData = voidRes.data[0];
+
+          return {
+            ...serviceData,
+            name: serviceData.features[0]?.title || serviceData.service.title || '',
+            description: serviceData.features[0]?.description || '',
+            one_line_desc: serviceData.features[0]?.one_line_desc || '',
+          };
+        });
+
         const resMentorships = await Promise.all(promiseMentorship);
         const resWorkshops = await Promise.all(promiseEvents);
+        const resVoids = await Promise.all(promiseVoids);
 
         allServices.mentorships = [...resMentorships.flat(), ...nonSaasServices];
         allServices.workshops = resWorkshops.flat();
-        allServices.voids = [...data.voids];
+        allServices.voids = resVoids.flat();
       }
 
       setServices(allServices);
@@ -230,7 +243,7 @@ function Subscriptions({ cohorts }) {
                         {servicesModal === 'voids' && (
                           <>
                             <Box width="30px" height="30px" background={hexColor.featuredColor3} padding="5px" borderRadius="full">
-                              {service?.balance?.unit >= 0 ? (
+                              {service?.balance?.unit >= 0 && service?.balance?.unit < 100 ? (
                                 <Text textAlign="center" size="l" fontWeight="700">
                                   {service?.balance?.unit}
                                 </Text>
@@ -242,7 +255,7 @@ function Subscriptions({ cohorts }) {
                         )}
                       </Box>
                       <Text size="md" color={hexColor.fontColor3}>
-                        {service.description || t(`slug-translations.${service.slug}.description`)}
+                        {service?.description}
                       </Text>
                     </Box>
                   );

@@ -17,7 +17,7 @@ function ConsumableCard({ title, icon, totalAvailable, onClick }) {
       <Box display="flex" justifyContent="space-between" alignItems="end">
         <Box display="flex" gap="10px" alignItems="center">
           <Icon icon={icon} color={hexColor.blueDefault} width="34px" height="34px" />
-          {totalAvailable >= 0 ? (
+          {totalAvailable >= 0 && totalAvailable < 100 ? (
             <Text color={hexColor.fontColor3} fontSize="34px" fontWeight="700">
               {totalAvailable}
             </Text>
