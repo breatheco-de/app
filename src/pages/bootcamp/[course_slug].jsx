@@ -167,6 +167,7 @@ function CoursePage({ data, syllabus }) {
   const payableList = planList.filter((plan) => plan?.type === 'PAYMENT');
   const freePlan = planList?.find((plan) => plan?.type === 'TRIAL' || plan?.type === 'FREE');
   const featuredPlanToEnroll = freePlan?.plan_slug ? freePlan : payableList?.[0];
+  console.log('featuredPlanToEnroll', featuredPlanToEnroll);
   const pathname = router.asPath.split('#')[0];
 
   const reviewsData = t('course:reviews', {}, { returnObjects: true });
