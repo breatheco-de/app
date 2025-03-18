@@ -310,10 +310,12 @@
     ],
     "basic-plan": {
       "type": "Vuela solo",
-      "hook-message": "Prueba la experiencia completa a tu propio ritmo de forma gratuita y decide más tarde",
-      "title": "Miembro Gratuito",
+      "title": "Prueba la experiencia completa a tu propio ritmo de forma gratuita y decide más tarde",
       "description": "Todo lo que necesitas para comenzar a aprender a programar",
-      "button-title": "Comenzar gratis",
+      "button": {
+        "variant": "default",
+        "title": "Comenzar gratis"
+      },
       "service_items": {
         "items": [
           {
@@ -365,10 +367,14 @@
     },
     "premium-plan": {
       "type": "Premium",
-      "hook-message": "Aprende a tu propio ritmo con retroalimentación y eventos en vivo",
-      "title": "Miembro Premium",
+      "title": "Aprende a tu propio ritmo con retroalimentación y eventos en vivo",
       "description": "Todo el contenido que necesitas para convertirte en un desarrollador contratado",
-      "button-title": "Obtener Plan",
+      "button": {
+        "variant": "default",
+        "color": "#000000",
+        "background": "#fff",
+        "title": "Obtener Plan"
+      },
       "service_items": {
         "title": "Todo en Vuela Solo más...",
         "items": [
