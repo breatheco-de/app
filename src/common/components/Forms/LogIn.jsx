@@ -16,7 +16,8 @@ import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import { getBrowserInfo } from '../../../utils';
-import { email as emailRe } from '../../../utils/regex';
+
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|net|org|edu|gov|mil|io|co|us|es|dev)$/i;
 
 function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const { t, lang } = useTranslation('login');
@@ -128,6 +129,8 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
     }
   };
 
+  const isValidEmail = (email) => EMAIL_REGEX.test(email);
+
   return (
     <Formik
       initialValues={{
@@ -162,7 +165,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
       }}
       validationSchema={validationSchema.login}
     >
-      {({ isSubmitting, values, errors, setFieldTouched }) => (
+      {({ isSubmitting, values, setFieldTouched }) => (
         <Form>
           {/* FIRST STEP */}
           <Stack display={step !== 1 && 'none'} spacing={4} justifyContent="space-between">
@@ -288,17 +291,21 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
             )}
             {!invitationSent ? (
               <Button
-                onClick={() => {
-                  const validate = values.email.match(emailRe);
-                  if (validate) validateEmail(values.email);
-                  else setFieldTouched('email', true, true);
-                }}
                 width="100%"
                 isLoading={emailValidation.loading}
-                isDisabled={errors.email}
+                isDisabled={!isValidEmail(values.email)}
                 variant="default"
                 fontSize={actionfontSize || 'l'}
-                type="button"
+                type="submit"
+                onClick={() => {
+                  if (step === 1) {
+                    if (isValidEmail(values.email)) {
+                      validateEmail(values.email);
+                    } else {
+                      setFieldTouched('email', true, true);
+                    }
+                  }
+                }}
               >
                 {t('next')}
               </Button>
@@ -408,7 +415,7 @@ LogIn.defaultProps = {
   hideLabel: false,
   actionfontSize: '',
   disableRedirect: false,
-  callBack: () => {},
+  callBack: () => { },
 };
 
 export default LogIn;
