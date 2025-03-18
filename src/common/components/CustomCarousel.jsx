@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Flex, Box, Text, Image, Badge } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 
 function CustomCarousel({ assignmentList }) {
+  const { t } = useTranslation();
   const { borderColorStrong, backgroundColor, lightColor, fontColor } = useStyle();
   const [currentSlide, setCurrentSlide] = useState(0);
   const totalSlides = assignmentList?.length;
@@ -68,7 +70,6 @@ function CustomCarousel({ assignmentList }) {
         <Flex
           flexDirection={{ base: 'column', md: 'row' }}
           width="100%"
-          border="1px solid"
           borderColor={borderColorStrong}
           borderRadius="10px"
           overflow="hidden"
@@ -101,7 +102,7 @@ function CustomCarousel({ assignmentList }) {
 
           <Flex flex="1" flexDirection="column" gridGap="10px" justifyContent="space-between">
             <Flex gridGap="8px" justifyContent="space-between" alignItems="flex-start">
-              <Flex gap="10px">
+              <Flex gap="5px" flexWrap="wrap" flexGrow="1" alignItems="center">
                 {assignmentList[currentSlide].technologies.map((tech) => (
                   <Box>
                     {tech.icon_url ? (
@@ -113,7 +114,7 @@ function CustomCarousel({ assignmentList }) {
                 ))}
               </Flex>
 
-              <Flex gridGap="16px" alignItems="center">
+              <Flex alignItems="center">
                 <Badge
                   borderRadius="20px"
                   display="flex"
@@ -141,7 +142,7 @@ function CustomCarousel({ assignmentList }) {
                 borderRadius="10px"
                 padding="3px 5px"
               >
-                {assignmentList[currentSlide].difficulty.charAt(0) + assignmentList[currentSlide].difficulty.slice(1).toLowerCase()}
+                {t(`common:${assignmentList[currentSlide].difficulty.toLowerCase()}`)}
               </Badge>
               <Flex gap="10px">
                 <Icon icon="rigobot-avatar-tiny" width="18px" height="18px" />

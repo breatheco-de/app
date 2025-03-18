@@ -27,6 +27,7 @@ function MktEventCards({
   techFilter,
   searchSensitive,
   showCheckedInEvents,
+  sortPrioOneTechs,
   ...rest
 }) {
   const [originalEvents, setOriginalEvents] = useState([]);
@@ -43,6 +44,7 @@ function MktEventCards({
     featured: true,
     academy: WHITE_LABEL_ACADEMY,
     is_public: true,
+    status: techFilter ? 'ACTIVE,FINISHED' : 'ACTIVE',
     past: !!techFilter,
   }, (endpoint && endpoint?.includes('?')));
 
@@ -61,6 +63,16 @@ function MktEventCards({
       console.error('Error fetching checked-in events:', error);
     }
   };
+
+  const transformEventsWithTechnologies = (events, technologiesList) => events.map((event) => {
+    const techSlugs = event.event_type?.technologies
+      ? event.event_type.technologies.split(',').map((tech) => tech.trim())
+      : [];
+
+    const formattedTechnologies = techSlugs.map((slug) => technologiesList.find((tech) => tech.slug === slug) || null).filter(Boolean);
+
+    return { ...event, technologies: formattedTechnologies };
+  });
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -83,9 +95,9 @@ function MktEventCards({
           const filteredByLang = existentLiveClasses?.filter((l) => l?.lang === englishLang || l?.lang === lang);
 
           const eventsFilteredByLang = isMoreThanAnyEvents ? filteredByLang : existentLiveClasses;
+          const eventsWithTechnologies = transformEventsWithTechnologies(eventsFilteredByLang, sortPrioOneTechs);
 
-          const eventsFilteredByTech = techFilter ? eventsFilteredByLang.filter((event) => event?.event_type?.technologies?.split(',').includes(techFilter.toLowerCase())) : eventsFilteredByLang;
-
+          const eventsFilteredByTech = techFilter ? eventsWithTechnologies.filter((event) => event?.event_type?.technologies?.split(',').includes(techFilter.toLowerCase())) : eventsWithTechnologies;
           if (showCheckedInEvents && user?.id && eventsFilteredByTech.length > 0) {
             fetchCheckedInEvents();
             return;
@@ -103,7 +115,7 @@ function MktEventCards({
     };
 
     fetchEvents();
-  }, [externalEvents, techFilter]);
+  }, [externalEvents, techFilter, sortPrioOneTechs]);
 
   useEffect(() => {
     if (!searchSensitive || techFilter) return undefined;
@@ -192,6 +204,7 @@ function MktEventCards({
                     <DynamicContentCard
                       type="workshop"
                       data={event}
+                      technologies={event?.technologies}
                       maxHeight="256px"
                       userSelect="none"
                       transition="transform 0.15s ease-in-out"
@@ -235,6 +248,7 @@ MktEventCards.propTypes = {
   endpoint: PropTypes.string,
   hoursToLimit: PropTypes.number,
   externalEvents: PropTypes.oneOfType([PropTypes.array, PropTypes.any]),
+  sortPrioOneTechs: PropTypes.oneOfType([PropTypes.array, PropTypes.any]),
   hideDescription: PropTypes.bool,
   searchSensitive: PropTypes.bool,
   techFilter: PropTypes.string,
@@ -248,6 +262,7 @@ MktEventCards.defaultProps = {
   endpoint: '',
   hoursToLimit: 1440,
   externalEvents: null,
+  sortPrioOneTechs: [],
   hideDescription: false,
   searchSensitive: false,
   techFilter: null,

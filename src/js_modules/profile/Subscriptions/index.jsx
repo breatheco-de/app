@@ -28,14 +28,12 @@ import SubscriptionCard from './SubscriptionCard';
 import ConsumableCard from './ConsumableCard';
 
 const ModalInfo = lazy(() => import('../../moduleMap/modalInfo'));
-const UpgradeModal = lazy(() => import('./UpgradeModal'));
 
 function Subscriptions({ cohorts }) {
   const { t } = useTranslation('profile');
   const { state, isLoading, fetchSubscriptions, cancelSubscription } = useSubscriptionsHandler();
   const { hexColor, fontColor } = useStyle();
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
-  const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
   const [servicesModal, setServicesModal] = useState(null);
   const [consumables, setConsumables] = useState({
     cohort_sets: [],
@@ -51,15 +49,9 @@ function Subscriptions({ cohorts }) {
   });
   const [loadingServices, setLoadingServices] = useState(true);
   const [subscriptionProps, setSubscriptionProps] = useState({});
-  const [offerProps, setOfferProps] = useState({});
   const memberships = state?.subscriptions;
 
   const onOpenCancelSubscription = () => setCancelModalIsOpen(true);
-
-  const onOpenUpgrade = (data) => {
-    setOfferProps(data);
-    setUpgradeModalIsOpen(true);
-  };
 
   const getConsumables = async () => {
     try {
@@ -296,7 +288,6 @@ function Subscriptions({ cohorts }) {
               key={subscription?.id}
               subscription={subscription}
               allSubscriptions={membershipsFiltered}
-              onOpenUpgrade={onOpenUpgrade}
               setSubscriptionProps={setSubscriptionProps}
               onOpenCancelSubscription={onOpenCancelSubscription}
             />
@@ -320,13 +311,6 @@ function Subscriptions({ cohorts }) {
                   });
               }}
               onClose={() => setCancelModalIsOpen(false)}
-            />
-
-            <UpgradeModal
-              upgradeModalIsOpen={upgradeModalIsOpen}
-              setUpgradeModalIsOpen={setUpgradeModalIsOpen}
-              subscriptionProps={subscriptionProps}
-              offerProps={offerProps}
             />
           </Suspense>
         </Grid>

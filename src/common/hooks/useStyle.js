@@ -8,6 +8,8 @@ const useStyle = () => {
   const backgroundColor4 = useColorModeValue('#F4FAFF', 'gray.800');
   const backgroundColor5 = useColorModeValue('#E1F5FF', 'gray.800');
   const backgroundColor6 = useColorModeValue('#DCE9FF', 'gray.800');
+  const backgroundColor7 = useColorModeValue('#F3FAFE', 'gray.800');
+  const backgroundColor8 = useColorModeValue('#E1F5FF', 'darkTheme');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const borderColor2 = useColorModeValue('gray.200', 'featuredDark');
   const borderColorStrong = useColorModeValue('gray.400', 'gray.500');
@@ -15,6 +17,7 @@ const useStyle = () => {
   const disabledColor = useColorModeValue('gray.500', 'gray.350');
   const disabledColor2 = useColorModeValue('gray.default', '#CACACA');
   const featuredColor = useColorModeValue('featuredLight', 'featuredDark');
+  const featuredColor2 = useColorModeValue('#D2E2FE', 'featuredDark2');
   const fontColor = useColorModeValue('black', 'white');
   const fontColor2 = useColorModeValue('gray.dark', 'gray.250');
   const fontColor3 = useColorModeValue('gray.700', 'gray.300');
@@ -85,6 +88,8 @@ const useStyle = () => {
     backgroundColor4,
     backgroundColor5,
     backgroundColor6,
+    backgroundColor7,
+    backgroundColor8,
     borderColor,
     borderColor2,
     borderColorStrong,
@@ -92,6 +97,7 @@ const useStyle = () => {
     disabledColor,
     disabledColor2,
     featuredColor,
+    featuredColor2,
     fontColor,
     fontColor2,
     fontColor3,

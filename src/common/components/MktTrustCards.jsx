@@ -13,7 +13,7 @@ import Link from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
 import PrismicTextComponent from './PrismicTextComponent';
 
-function Card({ card }) {
+function Card({ card, ...rest }) {
   const { t } = useTranslation('common');
   const { images, title, description, aricle_url } = card;
   const { fontColor, hexColor } = useStyle();
@@ -49,6 +49,7 @@ function Card({ card }) {
       flexDirection="column"
       justifyContent="space-between"
       overflow="hidden"
+      {...rest}
     >
       <Box width="100%" height="95px" marginBottom="16px" position="relative">
         <Box display={images?.length > 1 ? 'block' : 'none'} width="100%" height="100%" position="absolute" left={0} top={0} opacity={0} _hover={{ opacity: 1 }} transition="opacity 300ms ease-in-out" zIndex={10}>
@@ -121,6 +122,7 @@ function MktTrustCards({
   description,
   slice,
   fontFamily,
+  cardStyles,
   ...rest
 }) {
   const { lang } = useTranslation('common');
@@ -169,7 +171,7 @@ function MktTrustCards({
       </Box>
       <Box width="100%" display="flex" gap="24px" justifyContent="space-between" flexWrap={{ base: 'wrap', md: 'nowrap' }}>
         {cards.map((card) => (
-          <Card card={card} key={`${card.title}`} />
+          <Card card={card} key={`${card.title}`} {...cardStyles} />
         ))}
       </Box>
     </Box>

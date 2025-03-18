@@ -19,6 +19,7 @@
   "connected-with-rigobot": "You are connected to Rigo AI",
   "rigobot-requires-github-connection": "You must sync with GitHub to use Rigobot",
   "save-changes": "Save changes",
+  "learn-at-your-pace": "Learn at your own pace",
   "certificate-preview-not-available": "Certificate Preview Not Available",
   "tabList": [
     {
@@ -96,9 +97,12 @@
     "many-payments-left": "Payment: {{qty}} payments left",
     "no-payment-left": "Payment: No payments left",
     "renewal-date": "Renewal date: {{date}}",
+    "yearly-savings": "Save {{months}} months",
+    "yearly-savings-singular": "Save {{months}} month",
     "payment_unit": {
       "month": "Monthly",
-      "year": "Yearly"
+      "year": "Yearly",
+      "anual": "Anual"
     },
     "renewal-date-unknown": "Renewal date: Unknown",
     "payment-trial": "Payment: Trial",
