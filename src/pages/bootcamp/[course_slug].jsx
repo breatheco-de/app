@@ -381,7 +381,19 @@ function CoursePage({ data, syllabus }) {
           .then((assignmentResp) => assignmentResp.json())
           .then((respData) => respData)
           .catch(() => []))) : [];
-        const assignmentsToShow = assignmentsFetch?.length > 0 ? assignmentsFetch.filter((assignment) => assignment?.feature === true) : [];
+
+        const featuredAssignments = assignmentsFetch?.filter((assignment) => assignment?.feature === true);
+        const assignmentsToShow = featuredAssignments?.length > 0
+          ? featuredAssignments
+          : (() => {
+            const lastProjects = projects?.length > 0 ? projects.slice(-3) : [];
+            const lastExercises = exercises?.length > 0 ? exercises.slice(-3) : [];
+            const lastAssets = [...lastProjects, ...lastExercises].slice(0, 3);
+            return lastAssets.map((asset) => {
+              const assetSlug = asset?.translations?.[language]?.slug || asset?.slug;
+              return assignmentsFetch.find((assignment) => assignment?.slug === assetSlug);
+            }).filter(Boolean);
+          })();
 
         return {
           count: assetTypeCount || {},
