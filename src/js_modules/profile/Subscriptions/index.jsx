@@ -98,6 +98,8 @@ function Subscriptions({ cohorts }) {
         const resWorkshops = await Promise.all(promiseEvents);
         const resVoids = await Promise.all(promiseVoids);
 
+        console.log(resVoids);
+
         allServices.mentorships = [...resMentorships.flat(), ...nonSaasServices];
         allServices.workshops = resWorkshops.flat();
         allServices.voids = resVoids.flat();
@@ -243,9 +245,9 @@ function Subscriptions({ cohorts }) {
                         {servicesModal === 'voids' && (
                           <>
                             <Box width="30px" height="30px" background={hexColor.featuredColor3} padding="5px" borderRadius="full">
-                              {service?.balance?.unit >= 0 && service?.balance?.unit < 100 ? (
+                              {service?.how_many >= 0 && service?.how_many < 100 ? (
                                 <Text textAlign="center" size="l" fontWeight="700">
-                                  {service?.balance?.unit}
+                                  {service?.how_many}
                                 </Text>
                               ) : (
                                 <Icon icon="infinite" color={hexColor.fontColor3} />
