@@ -97,12 +97,13 @@ export function Code({ inline, showLineNumbers, showInlineLineNumbers, className
         padding: showLineNumbers ? '1em 0px' : '16px',
       }}
       language={match[1]}
+      codeTagProps={{ className: '' }}
       PreTag="div"
     >
       {String(children).replace(/\n$/, '')}
     </SyntaxHighlighter>
   ) : (
-    <code className={`${className ?? ''} highlight`}>
+    <code className="highlight">
       {children}
     </code>
   );
