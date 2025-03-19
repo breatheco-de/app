@@ -13,6 +13,7 @@
     "greeting": "Hi!"
   },
   "ai-tutor": "AI Tutor",
+  "tooltip-ai-tutor": "Click to see the Rigobot tutorial",
   "clone-modal": {
     "title": "How to clone a project?"
   },
