@@ -71,16 +71,6 @@
     "title": "Sube tu imagen de perfil",
     "submit-button": "Actualizar imagen de perfil"
   },
-  "slug-translations": {
-    "ai-conversation-message": {
-      "title": "Conversación con IA",
-      "description": "un sistema de mensajeria impulsado con IA que te lleva de la mano en el desarrollo de tu codigo"
-    },
-    "ai-compilation": {
-      "title": "Compilación de IA",
-      "description": "Una selección curada de ideas generadas por IA."
-    }
-  },
   "subscription": {
     "totally-paid": "Total pagado: Has pagado el precio completo del plan de {{currencySymbol}}{{amount}}.",
     "error-message": "Mensaje de error: {{error}}",

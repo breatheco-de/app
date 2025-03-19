@@ -71,16 +71,6 @@
     "title": "Upload your profile image",
     "submit-button": "Update profile picture"
   },
-  "slug-translations": {
-    "ai-conversation-message": {
-      "title": "AI Conversation Message",
-      "description": "An AI-powered messaging system that guides you step by step in your code development."
-    },
-    "ai-compilation": {
-      "title": "AI Compilation",
-      "description": "A curated selection of AI-generated insights."
-    }
-  },
   "subscription": {
     "totally-paid": "Total paid: You've paid the full amount of the plan of {{currencySymbol}}{{amount}}.",
     "error-message": "Error message: {{error}}",
