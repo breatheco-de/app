@@ -6,6 +6,7 @@
   "moduleMap": "Mapa de módulos",
   "module": "Módulo",
   "modules-count": "{{count}} Módulos",
+  "feedback-pending": "Feedback pendiente para revisión",
   "path-to-claim": "Vía para reclamar tu certificado",
   "open": "Abrir",
   "completed": "¡Completed!",
@@ -153,6 +154,7 @@
   },
   "mandatoryProjects": {
     "title": "Proyectos obligatorios pendientes",
+    "showing-comments": "Mostrando comentarios",
     "description": "Tienes asignaturas obligatorias pendientes, tienes que terminarlas para poder completar el curso."
   },
   "modalInfo": {

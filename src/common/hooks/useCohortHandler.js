@@ -304,6 +304,24 @@ function useCohortHandler() {
     });
   };
 
+  const updateTaskReadAt = async (task) => {
+    try {
+      const response = await bc.todo().update({
+        id: task.id,
+        read_at: new Date().toISOString(),
+      });
+
+      if (response.status < 400) {
+        updateTask(response.data, task.cohort);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error updating read_at:', error);
+      return false;
+    }
+  };
+
   const addTasks = (tasks, cohort) => {
     const { id, slug, name } = cohort;
     const cohortData = cohortsAssignments[cohort.slug];
@@ -474,11 +492,14 @@ function useCohortHandler() {
     return lastDoneTaskModule;
   };
 
-  const getMandatoryProjects = () => {
-    const mandatoryProjects = sortedAssignments.flatMap(
+  const getMandatoryProjects = (cohortSlug = null) => {
+    const assignments = cohortSlug ? cohortsAssignments[cohortSlug]?.modules : sortedAssignments;
+    if (!assignments) return [];
+
+    const mandatoryProjects = assignments.flatMap(
       (module) => module.filteredContent.filter(
         (l) => {
-          const isMandatoryTimeOut = l.task_type === 'PROJECT' && l.task_status === 'PENDING'
+          const isMandatoryTimeOut = l.task_type === 'PROJECT' && (l.task_status === 'PENDING' || l.revision_status === 'REJECTED')
             && l.mandatory === true && l.daysDiff >= 14; // exceeds 2 weeks
 
           return isMandatoryTimeOut;
@@ -506,6 +527,7 @@ function useCohortHandler() {
     cohortProgram,
     addTasks,
     updateTask,
+    updateTaskReadAt,
     updateAssignment,
     startDay,
     getCohortsModules,

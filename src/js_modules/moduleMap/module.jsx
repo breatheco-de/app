@@ -19,12 +19,12 @@ import { getBrowserInfo } from '../../utils';
 // import { usePersistent } from '../../common/hooks/usePersistent';
 
 function Module({
-  data, currIndex, isDisabled, onDisabledClick, variant,
+  data, currIndex, isDisabled, onDisabledClick, variant, showWarning, cohortSlug,
 }) {
   const { t, lang } = useTranslation('dashboard');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { taskTodo, state, updateAssignment } = useCohortHandler();
-  const { cohortSession } = state;
+  const { cohortSession, cohortsAssignments } = state;
   const [currentAssetData, setCurrentAssetData] = useState(null);
   const [fileData, setFileData] = useState(null);
   const [, setUpdatedTask] = useState(null);
@@ -32,8 +32,9 @@ function Module({
   const { hexColor } = useStyle();
   const toast = useToast();
 
-  const currentSlug = data.slug ? data.slug : '';
-  const currentTask = taskTodo?.length > 0 ? taskTodo.find((el) => el?.task_type === data?.task_type
+  const currentSlug = data.slug || '';
+  const tasks = cohortSlug ? cohortsAssignments[cohortSlug]?.tasks : taskTodo;
+  const currentTask = tasks?.length > 0 ? tasks.find((el) => el?.task_type === data?.task_type
   && el.associated_slug === currentSlug) : {};
   const taskTypeLowerCase = data?.task_type.toLowerCase();
 
@@ -165,7 +166,7 @@ function Module({
   };
 
   const isDone = currentTask?.task_status === 'DONE' || currentTask?.revision_status === 'APPROVED';
-  const isMandatoryTimeOut = data?.task_type === 'PROJECT' && !isDone && data?.mandatory === true && data?.daysDiff >= 14; // exceeds 2 weeks
+  const isMandatoryTimeOut = showWarning && data?.task_type === 'PROJECT' && !isDone && data?.mandatory === true && data?.daysDiff >= 14; // exceeds 2 weeks
 
   const wordConnector = {
     lesson: t('modules.read'),
@@ -176,7 +177,14 @@ function Module({
   const langLink = lang !== 'en' ? `/${lang}` : '';
   const taskTranslations = lang === 'en' ? (data?.translations?.en || data?.translations?.us) : (data?.translations?.[lang] || {});
 
-  const link = isDisabled ? '#disabled' : `${langLink}/syllabus/${cohortSession.slug}/${data.type.toLowerCase()}/${taskTranslations?.slug || currentTask?.associated_slug}`;
+  const baseLink = `${langLink}/syllabus/${cohortSlug || cohortSession.slug}/${data.type.toLowerCase()}/${taskTranslations?.slug || currentTask?.associated_slug}`;
+  const generateLink = () => {
+    if (cohortSlug) {
+      return `/main-cohort/${cohortSession.slug}${baseLink}`;
+    }
+    return baseLink;
+  };
+  const link = isDisabled ? '#disabled' : generateLink();
 
   const variants = {
     'open-only': {
@@ -253,6 +261,8 @@ Module.propTypes = {
   isDisabled: PropTypes.bool,
   onDisabledClick: PropTypes.func,
   variant: PropTypes.string,
+  showWarning: PropTypes.bool,
+  cohortSlug: PropTypes.string,
 };
 Module.defaultProps = {
   data: {},
@@ -260,6 +270,8 @@ Module.defaultProps = {
   isDisabled: false,
   onDisabledClick: () => {},
   variant: 'default',
+  showWarning: true,
+  cohortSlug: null,
 };
 
 export default memo(Module);

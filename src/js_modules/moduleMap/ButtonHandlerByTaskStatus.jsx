@@ -7,6 +7,7 @@ import useStyle from '../../common/hooks/useStyle';
 import ReviewModal from '../../common/components/ReviewModal';
 import Icon from '../../common/components/Icon';
 import PopoverTaskHandler, { IconByTaskStatus, textByTaskStatus } from '../../common/components/PopoverTaskHandler';
+import useCohortHandler from '../../common/hooks/useCohortHandler';
 
 export function ButtonHandlerByTaskStatus({
   onlyPopoverDialog, currentTask, sendProject, changeStatusAssignment, toggleSettings, closeSettings,
@@ -14,6 +15,7 @@ export function ButtonHandlerByTaskStatus({
   hasPendingSubtasks, togglePendingSubtasks,
 }) {
   const { hexColor } = useStyle();
+  const { updateTaskReadAt } = useCohortHandler();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [acceptTC, setAcceptTC] = useState(false);
   const [loaders, setLoaders] = useState({
@@ -28,12 +30,19 @@ export function ButtonHandlerByTaskStatus({
   const noDeliveryFormat = deliveryFormatExists && currentAssetData?.delivery_formats.includes('no_delivery');
   const isButtonDisabled = currentTask === null || taskIsApproved;
 
-  const openAssignmentFeedbackModal = () => {
-    setIsReviewModalOpen(true);
-    setLoaders((prevState) => ({
-      ...prevState,
-      isOpeningReviewModal: false,
-    }));
+  const openAssignmentFeedbackModal = async () => {
+    if (currentTask) {
+      setLoaders((prevState) => ({
+        ...prevState,
+        isOpeningReviewModal: true,
+      }));
+      await updateTaskReadAt(currentTask);
+      setIsReviewModalOpen(true);
+      setLoaders((prevState) => ({
+        ...prevState,
+        isOpeningReviewModal: false,
+      }));
+    }
   };
 
   const handleTaskButton = (event) => {

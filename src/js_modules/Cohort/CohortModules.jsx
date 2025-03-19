@@ -18,6 +18,7 @@ import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import { es, en } from 'date-fns/locale';
 import { useReward } from 'react-rewards';
+import PendingActivitiesModal from './PendingActivitiesModal';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
@@ -28,7 +29,7 @@ import Progress from '../../common/components/ProgressBar/Progress';
 
 const locales = { es, en };
 
-function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault }) {
+function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault, tasks }) {
   const containerRef = useRef(null);
   const { reward } = useReward(cohort.slug, 'confetti', {
     lifetime: 50,
@@ -44,6 +45,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
   const [loadingStartCourse, setLoadingStartCourse] = useState(false);
   const [loadingModule, setLoadingModule] = useState(null);
   const [shareModal, setShareModal] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const router = useRouter();
   const { backgroundColor, hexColor } = useStyle();
   const { colorMode } = useColorMode();
@@ -58,31 +60,36 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
     return module.label[langDict[lang]];
   };
 
-  const getModulesProgress = (acc, curr) => {
-    if (!(curr.task_type in acc)) {
-      acc[curr.task_type] = {
-        total: 1,
-        icon: curr.icon,
-        done: curr.task_status === 'DONE' ? 1 : 0,
-      };
-    } else {
-      acc[curr.task_type].total += 1;
-      if (curr.task_status === 'DONE') acc[curr.task_type].done += 1;
-    }
-    return acc;
-  };
-
   const modulesProgress = useMemo(() => {
     if (!modules || !Array.isArray(modules)) return null;
 
     const modulesDict = {};
+
+    const pendingRevisions = cohortsAssignments[cohort.slug].tasks.filter((task) => task.reviewed_at !== null && (task.reviewed_at > task.read_at || task.read_at === null));
+
     modules.forEach((module) => {
-      const assignmentsCount = module.content.reduce(getModulesProgress, {});
+      const assignmentsCount = module.content.reduce((acc, curr) => {
+        if (!(curr.task_type in acc)) {
+          // Check if any assignment in the module has a pending revision
+          const pendingRevisionsCount = module.content.filter((assignment) => pendingRevisions.some((task) => task.associated_slug === assignment.slug && task.task_type === curr.task_type)).length;
+          acc[curr.task_type] = {
+            total: 1,
+            icon: curr.icon,
+            done: curr.task_status === 'DONE' ? 1 : 0,
+            pendingRevision: pendingRevisionsCount,
+          };
+        } else {
+          acc[curr.task_type].total += 1;
+          if (curr.task_status === 'DONE') acc[curr.task_type].done += 1;
+        }
+        return acc;
+      }, {});
 
       const typesPerModule = Object.keys(assignmentsCount);
       const moduleTotalAssignments = typesPerModule.reduce((acc, curr) => assignmentsCount[curr].total + acc, 0);
       const moduleDoneAssignments = typesPerModule.reduce((acc, curr) => assignmentsCount[curr].done + acc, 0);
       const isStarted = module.filteredContent.length > 0;
+
       modulesDict[module.id] = {
         moduleTotalAssignments,
         moduleDoneAssignments,
@@ -92,7 +99,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
     });
 
     return modulesDict;
-  }, [modules]);
+  }, [modules, tasks]);
 
   const cohortProgress = useMemo(() => {
     if (!modulesProgress) return null;
@@ -113,19 +120,19 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
     };
   }, [modulesProgress]);
 
-  const updateMicroCohortModules = (tasks) => {
-    const cohortModulesUpdated = serializeModulesMap(cohortsAssignments[cohort.slug].syllabus.json.days, tasks);
-    const allMicroCohortAssignments = {
-      ...cohortsAssignments,
-      [cohort.slug]: {
-        ...cohortsAssignments[cohort.slug],
-        modules: cohortModulesUpdated,
-        tasks: [...cohortsAssignments[cohort.slug].tasks, tasks],
-      },
-    };
+  // const updateMicroCohortModules = (tasks) => {
+  //   const cohortModulesUpdated = serializeModulesMap(cohortsAssignments[cohort.slug].syllabus.json.days, tasks);
+  //   const allMicroCohortAssignments = {
+  //     ...cohortsAssignments,
+  //    [cohort.slug]: {
+  //      ...cohortsAssignments[cohort.slug],
+  //      modules: cohortModulesUpdated,
+  //      tasks: [...cohortsAssignments[cohort.slug].tasks, tasks],
+  //    },
+  // };
 
-    setCohortsAssingments(allMicroCohortAssignments);
-  };
+  // setCohortsAssingments(allMicroCohortAssignments);
+  // };
 
   const startCourse = async () => {
     try {
@@ -249,6 +256,11 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
     window.open(certfLink);
   };
 
+  const showFeedback = (e) => {
+    e.stopPropagation();
+    setShowFeedbackModal(true);
+  };
+
   useEffect(() => {
     if (certificate) {
       setTimeout(() => {
@@ -258,207 +270,239 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
   }, [certificate]);
 
   return (
-    <Accordion defaultIndex={openByDefault && 0} allowToggle>
-      <AccordionItem background={colorVariations[colorMode].mode5} borderRadius="8px" padding="16px" border={`1px solid ${cohortColor}`}>
-        {({ isExpanded }) => (
-          <>
-            <AccordionButton as="div" ref={containerRef} position="relative" cursor={cohortProgress?.isCohortStarted ? 'pointer' : 'auto'} _hover={{ background: 'none' }} padding="0" flexDirection="column" alignItems="flex-start" gap="9px">
-              <Box display="flex" justifyContent="space-between" width="100%" gap="10px">
-                <Box display="flex" textAlign="left" gap="10px" alignItems="center" width="100%">
-                  <Box display="flex" gap="10px" alignItems="center" minWidth="fit-content">
-                    <Icon icon="badge" />
-                    <Heading size="18px" fontWeight="400">
-                      {cohort.name}
-                    </Heading>
-                  </Box>
-                  <Box display={{ base: 'none', md: 'flex' }} gap="10px" alignItems="center" justifyContent="space-between" width="100%">
-                    {isGraduated && (
-                      <Box padding="5px 7px" borderRadius="27px" background="yellow.default">
+    <>
+      <Accordion defaultIndex={openByDefault && 0} allowToggle>
+        <AccordionItem background={colorVariations[colorMode].mode5} borderRadius="8px" padding="16px" border={`1px solid ${cohortColor}`}>
+          {({ isExpanded }) => (
+            <>
+              <AccordionButton as="div" ref={containerRef} position="relative" cursor={cohortProgress?.isCohortStarted ? 'pointer' : 'auto'} _hover={{ background: 'none' }} padding="0" flexDirection="column" alignItems="flex-start" gap="9px">
+                <Box display="flex" justifyContent="space-between" width="100%" gap="10px">
+                  <Box display="flex" textAlign="left" gap="10px" alignItems="center" width="100%">
+                    <Box display="flex" gap="10px" alignItems="center" minWidth="fit-content">
+                      <Icon icon="badge" />
+                      <Heading size="18px" fontWeight="400">
+                        {cohort.name}
+                      </Heading>
+                    </Box>
+                    <Box display={{ base: 'none', md: 'flex' }} gap="10px" alignItems="center" width="100%">
+                      {isGraduated && (
+                        <Box padding="5px 7px" borderRadius="27px" background="yellow.default">
+                          <Text color="white">
+                            {t('completed')}
+                          </Text>
+                        </Box>
+                      )}
+                      <Box padding="5px 7px" borderRadius="27px" background={colorVariations[colorMode].mode1}>
                         <Text color="white">
-                          {t('completed')}
+                          {t('modules-count', { count: modules?.length })}
                         </Text>
                       </Box>
-                    )}
-                    <Box padding="5px 7px" borderRadius="27px" background={colorVariations[colorMode].mode1}>
+                      <Button maxHeight="28px" onClick={showFeedback} padding="5px 7px" borderRadius="27px" background="yellow.light" display="flex" gap="5px" alignItems="center" fontWeight="400">
+                        <Icon icon="comment" width="14px" height="14px" color={hexColor.blueDefault} />
+                        <Text as="span" color="black">
+                          {t('feedback-pending')}
+                        </Text>
+                      </Button>
+                    </Box>
+                  </Box>
+                  {cohortProgress?.isCohortStarted && (
+                    <Box display="flex" gap="5px" alignItems="center" minWidth="fit-content">
+                      <Text>
+                        {t(isExpanded ? 'hide-content' : 'show-content')}
+                      </Text>
+                      <AccordionIcon />
+                    </Box>
+                  )}
+                </Box>
+                <Box display={{ base: 'flex', md: 'none' }} gap="10px" alignItems="center" justifyContent="space-between" width="100%">
+                  {isGraduated && (
+                    <Box padding="5px 7px" borderRadius="27px" background="yellow.default">
                       <Text color="white">
-                        {t('modules-count', { count: modules?.length })}
+                        {t('completed')}
                       </Text>
                     </Box>
-                  </Box>
-                </Box>
-                {cohortProgress?.isCohortStarted && (
-                  <Box display="flex" gap="5px" alignItems="center" minWidth="fit-content">
-                    <Text>
-                      {t(isExpanded ? 'hide-content' : 'show-content')}
-                    </Text>
-                    <AccordionIcon />
-                  </Box>
-                )}
-              </Box>
-              <Box display={{ base: 'flex', md: 'none' }} gap="10px" alignItems="center" justifyContent="space-between" width="100%">
-                {isGraduated && (
-                  <Box padding="5px 7px" borderRadius="27px" background="yellow.default">
+                  )}
+                  <Box padding="5px 7px" borderRadius="27px" background={colorVariations[colorMode].mode1}>
                     <Text color="white">
-                      {t('completed')}
+                      {t('modules-count', { count: modules?.length })}
                     </Text>
                   </Box>
-                )}
-                <Box padding="5px 7px" borderRadius="27px" background={colorVariations[colorMode].mode1}>
-                  <Text color="white">
-                    {t('modules-count', { count: modules?.length })}
-                  </Text>
                 </Box>
-              </Box>
-              <Box mt={isGraduated && '10px'} width="100%" display="flex">
-                {isGraduated && (
-                  <Box onClick={showCertificate} display="flex" flexDirection="column" gap="10px" background={colorVariations[colorMode].mode4} borderRadius="4px" padding="8px 16px">
-                    <Icon
-                      icon="certificate-2"
-                      props={{
-                        color: cohortColor,
-                        color2: colorVariations[colorMode].mode4,
-                      }}
-                      onClick={showCertificate}
-                    />
-                    <Text color={cohortColor}>
-                      {t('open')}
-                    </Text>
-                  </Box>
-                )}
-                {cohortProgress?.isCohortStarted && (
-                  <Box borderRadius="4px" paddingX="8px" width="100%" {...progressBoxStyles()}>
-                    <Box display="flex">
-                      <Box width="100%">
-                        <Text textAlign="left" size="md" mb="5px" display={isGraduated && 'none'}>
-                          {t('path-to-claim')}
-                        </Text>
-                        <Box position="relative">
-                          <Progress width="calc(100% - 35px)" progressColor={cohortColor} percents={cohortProgress.percentage} barHeight="8px" borderRadius="4px" />
-                          {cohortProgress.percentage !== 100 ? (
-                            <Box position="absolute" right="0" top="-15px" display="flex" flexDirection="column" justifyContent="center" width="40px" height="40px" border="2px solid" borderColor={colorVariations[colorMode].mode5} borderRadius="full" background={colorVariations[colorMode].mode4}>
-                              <Icon
-                                icon="certificate-small"
-                                style={{ margin: 'auto' }}
-                                color={colorVariations[colorMode].mode5}
-                              />
-                            </Box>
-                          ) : (
-                            <Box
-                              id={cohort.slug}
-                              style={{
-                                margin: 'auto',
-                                position: 'absolute',
-                                right: '0',
-                                top: '-25px',
-                              }}
-                            >
-                              <Icon
-                                icon="party-popper"
-                              />
-                            </Box>
-                          )}
-                        </Box>
-                        <Text textAlign="left" mt="5px" size="md" display={isGraduated && 'none'}>
-                          {`${cohortProgress.percentage}%`}
-                        </Text>
-                      </Box>
+                <Box mt={isGraduated && '10px'} width="100%" display="flex">
+                  {isGraduated && (
+                    <Box onClick={showCertificate} display="flex" flexDirection="column" gap="10px" background={colorVariations[colorMode].mode4} borderRadius="4px" padding="8px 16px">
+                      <Icon
+                        icon="certificate-2"
+                        props={{
+                          color: cohortColor,
+                          color2: colorVariations[colorMode].mode4,
+                        }}
+                        onClick={showCertificate}
+                      />
+                      <Text color={cohortColor}>
+                        {t('open')}
+                      </Text>
                     </Box>
-                    {isGraduated && (
-                      <Box mt={{ base: '10px', sm: '0' }} display="flex" alignItems={{ base: 'baseline', sm: 'center' }} gap="10px" flexDirection={{ base: 'column-reverse', sm: 'row' }}>
-                        <Box display="flex" alignItems="center" gap="5px">
-                          <Icon icon="clock" width="14px" height="14px" color={cohortColor} />
-                          <Text size="md" textAlign="left">
-                            {t('hours-worked', { hours: cohort.syllabus_version.duration_in_hours })}
+                  )}
+                  {cohortProgress?.isCohortStarted && (
+                    <Box borderRadius="4px" paddingX="8px" width="100%" {...progressBoxStyles()}>
+                      <Box display="flex">
+                        <Box width="100%">
+                          <Text textAlign="left" size="md" mb="5px" display={isGraduated && 'none'}>
+                            {t('path-to-claim')}
                           </Text>
-                        </Box>
-                        <Box display="flex" alignItems="center" gap="5px">
-                          <Icon icon="attendance" color={cohortColor} />
-                          <Text size="md" textAlign="left">
-                            {t('issued-on', { date: format(new Date(certificate.issued_at), 'MMMM d y', {
-                              locale: locales[lang],
-                            }) })}
-                          </Text>
-                        </Box>
-                        {shareModal && (
-                          <ShareButton
-                            title={t('profile:share-certificate.title')}
-                            shareText={t('profile:share-certificate.shareText')}
-                            link={certfLink}
-                            socials={socials}
-                            alignItems="center"
-                            gap="5px"
-                            height="40px"
-                            onlyModal
-                            onClose={() => setShareModal(false)}
-                          />
-                        )}
-                        <Button onClick={share} width="fit-content" display="flex" alignItems="center" gap="5px" color="white" background={cohortColor} _hover={{ background: cohortColor, opacity: 0.7 }}>
-                          <Icon icon="share" />
-                          {t('share')}
-                        </Button>
-                      </Box>
-                    )}
-                  </Box>
-                )}
-              </Box>
-            </AccordionButton>
-            {cohortProgress?.isCohortStarted ? (
-              <AccordionPanel paddingX="0" display="flex" flexDirection="column" gap="16px">
-                {modules?.map((module) => {
-                  const assignmentsCount = modulesProgress?.[module.id].assignmentsCount;
-                  const moduleTotalAssignments = modulesProgress?.[module.id].moduleTotalAssignments;
-                  const moduleDoneAssignments = modulesProgress?.[module.id].moduleDoneAssignments;
-
-                  const typesPerModule = Object.keys(assignmentsCount);
-
-                  return (
-                    <Box key={getModuleLabel(module)} onClick={() => redirectToModule(module)} background={backgroundColor} cursor="pointer" _hover={{ opacity: 0.7 }} display="flex" alignItems="center" justifyContent="space-between" padding="8px" borderRadius="8px">
-                      <Box display="flex" alignItems="center" gap="16px">
-                        {loadingModule === module.id ? (
-                          <Spinner color={cohortColor} />
-                        ) : (
-                          <>
-                            {moduleTotalAssignments === moduleDoneAssignments ? (
-                              <Icon icon="verified" width="26px" height="26px" color={hexColor.green} />
+                          <Box position="relative">
+                            <Progress width="calc(100% - 35px)" progressColor={cohortColor} percents={cohortProgress.percentage} barHeight="8px" borderRadius="4px" />
+                            {cohortProgress.percentage !== 100 ? (
+                              <Box position="absolute" right="0" top="-15px" display="flex" flexDirection="column" justifyContent="center" width="40px" height="40px" border="2px solid" borderColor={colorVariations[colorMode].mode5} borderRadius="full" background={colorVariations[colorMode].mode4}>
+                                <Icon
+                                  icon="certificate-small"
+                                  style={{ margin: 'auto' }}
+                                  color={colorVariations[colorMode].mode5}
+                                />
+                              </Box>
                             ) : (
-                              <CircularProgress color={hexColor.green} size="26px" value={(moduleDoneAssignments * 100) / moduleTotalAssignments} />
+                              <Box
+                                id={cohort.slug}
+                                style={{
+                                  margin: 'auto',
+                                  position: 'absolute',
+                                  right: '0',
+                                  top: '-25px',
+                                }}
+                              >
+                                <Icon
+                                  icon="party-popper"
+                                />
+                              </Box>
                             )}
-                          </>
-                        )}
-                        <Text size="md">
-                          {getModuleLabel(module)}
-                        </Text>
+                          </Box>
+                          <Text textAlign="left" mt="5px" size="md" display={isGraduated && 'none'}>
+                            {`${cohortProgress.percentage}%`}
+                          </Text>
+                        </Box>
                       </Box>
-                      <Box display={{ base: 'none', sm: 'flex' }} alignItems="center" gap="16px">
-                        {typesPerModule.map((taskType) => {
-                          const { icon, total, done } = assignmentsCount[taskType];
-                          return (
-                            <Box background={colorVariations[colorMode].mode4} padding="4px 8px" borderRadius="18px" display="flex" gap="5px" alignItems="center">
-                              <Icon icon={icon} color={cohortColor} width="13px" height="13px" />
-                              <Text>
-                                {`${done}/`}
-                                {total}
-                              </Text>
-                              {done === total && <Icon icon="checked2" color={hexColor.green} />}
-                            </Box>
-                          );
-                        })}
-                      </Box>
+                      {isGraduated && (
+                        <Box mt={{ base: '10px', sm: '0' }} display="flex" alignItems={{ base: 'baseline', sm: 'center' }} gap="10px" flexDirection={{ base: 'column-reverse', sm: 'row' }}>
+                          <Box display="flex" alignItems="center" gap="5px">
+                            <Icon icon="clock" width="14px" height="14px" color={cohortColor} />
+                            <Text size="md" textAlign="left">
+                              {t('hours-worked', { hours: cohort.syllabus_version.duration_in_hours })}
+                            </Text>
+                          </Box>
+                          <Box display="flex" alignItems="center" gap="5px">
+                            <Icon icon="attendance" color={cohortColor} />
+                            <Text size="md" textAlign="left">
+                              {t('issued-on', { date: format(new Date(certificate.issued_at), 'MMMM d y', {
+                                locale: locales[lang],
+                              }) })}
+                            </Text>
+                          </Box>
+                          {shareModal && (
+                            <ShareButton
+                              title={t('profile:share-certificate.title')}
+                              shareText={t('profile:share-certificate.shareText')}
+                              link={certfLink}
+                              socials={socials}
+                              alignItems="center"
+                              gap="5px"
+                              height="40px"
+                              onlyModal
+                              onClose={() => setShareModal(false)}
+                            />
+                          )}
+                          <Button onClick={share} width="fit-content" display="flex" alignItems="center" gap="5px" color="white" background={cohortColor} _hover={{ background: cohortColor, opacity: 0.7 }}>
+                            <Icon icon="share" />
+                            {t('share')}
+                          </Button>
+                        </Box>
+                      )}
                     </Box>
-                  );
-                })}
-              </AccordionPanel>
-            ) : (
-              <Button onClick={startCourse} _hover={{ background: colorVariations[colorMode].mode4, opacity: 0.7 }} background={colorVariations[colorMode].mode4} mt="10px" width="100%" color={cohortColor} isLoading={loadingStartCourse}>
-                {t('start-course')}
-                {' '}
-                →
-              </Button>
-            )}
-          </>
-        )}
-      </AccordionItem>
-    </Accordion>
+                  )}
+                </Box>
+              </AccordionButton>
+              {cohortProgress?.isCohortStarted ? (
+                <AccordionPanel paddingX="0" display="flex" flexDirection="column" gap="16px">
+                  {modules?.map((module) => {
+                    const assignmentsCount = modulesProgress?.[module.id].assignmentsCount;
+                    const moduleTotalAssignments = modulesProgress?.[module.id].moduleTotalAssignments;
+                    const moduleDoneAssignments = modulesProgress?.[module.id].moduleDoneAssignments;
+
+                    const typesPerModule = Object.keys(assignmentsCount);
+
+                    return (
+                      <Box key={getModuleLabel(module)} onClick={() => redirectToModule(module)} background={backgroundColor} cursor="pointer" _hover={{ opacity: 0.7 }} display="flex" alignItems="center" justifyContent="space-between" padding="8px" borderRadius="8px">
+                        <Box display="flex" alignItems="center" gap="16px">
+                          {loadingModule === module.id ? (
+                            <Spinner color={cohortColor} />
+                          ) : (
+                            <>
+                              {moduleTotalAssignments === moduleDoneAssignments ? (
+                                <Icon icon="verified" width="26px" height="26px" color={hexColor.green} />
+                              ) : (
+                                <CircularProgress color={hexColor.green} size="26px" value={(moduleDoneAssignments * 100) / moduleTotalAssignments} />
+                              )}
+                            </>
+                          )}
+                          <Text size="md">
+                            {getModuleLabel(module)}
+                          </Text>
+                        </Box>
+                        <Box display={{ base: 'none', sm: 'flex' }} alignItems="center" gap="16px">
+                          {typesPerModule.map((taskType) => {
+                            const { icon, total, done, pendingRevision } = assignmentsCount[taskType];
+                            return (
+                              <Box background={colorVariations[colorMode].mode4} padding="4px 8px" borderRadius="18px" display="flex" gap="5px" alignItems="center" position="relative">
+                                <Icon icon={icon} color={cohortColor} width="13px" height="13px" />
+                                <Text>
+                                  {`${done}/`}
+                                  {total}
+                                </Text>
+                                {done === total && <Icon icon="checked2" color={hexColor.green} />}
+                                {pendingRevision > 0 && (
+                                  <Box
+                                    position="absolute"
+                                    top="18px"
+                                    left="8px"
+                                    background="yellow.default"
+                                    color="black"
+                                    borderRadius="full"
+                                    width="14px"
+                                    height="14px"
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    fontSize="8px"
+                                    fontWeight="bold"
+                                  >
+                                    {pendingRevision}
+                                  </Box>
+                                )}
+                              </Box>
+                            );
+                          })}
+                        </Box>
+                      </Box>
+                    );
+                  })}
+                </AccordionPanel>
+              ) : (
+                <Button onClick={startCourse} _hover={{ background: colorVariations[colorMode].mode4, opacity: 0.7 }} background={colorVariations[colorMode].mode4} mt="10px" width="100%" color={cohortColor} isLoading={loadingStartCourse}>
+                  {t('start-course')}
+                  {' '}
+                  →
+                </Button>
+              )}
+            </>
+          )}
+        </AccordionItem>
+      </Accordion>
+      <PendingActivitiesModal
+        isOpen={showFeedbackModal}
+        onClose={() => setShowFeedbackModal(false)}
+        cohortSlug={cohort.slug}
+      />
+    </>
   );
 }
 
@@ -467,6 +511,7 @@ export default CohortModules;
 CohortModules.propTypes = {
   cohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   modules: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  tasks: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   mainCohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   certificate: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   openByDefault: PropTypes.bool,
@@ -477,4 +522,5 @@ CohortModules.defaultProps = {
   modules: null,
   certificate: null,
   openByDefault: false,
+  tasks: [],
 };

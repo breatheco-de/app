@@ -31,6 +31,7 @@ import ModuleMap from '../../../../../js_modules/moduleMap/index';
 import Module from '../../../../../js_modules/moduleMap/module';
 import Header from '../../../../../js_modules/Cohort/Header';
 import CohortModules from '../../../../../js_modules/Cohort/CohortModules';
+import PendingActivitiesModal from '../../../../../js_modules/Cohort/PendingActivitiesModal';
 import CohortSideBar from '../../../../../common/components/CohortSideBar';
 import Icon from '../../../../../common/components/Icon';
 import SupportSidebar from '../../../../../common/components/SupportSidebar';
@@ -587,6 +588,7 @@ function Dashboard() {
                               key={microCohort.slug}
                               cohort={microCohort}
                               modules={cohortsAssignments[microCohort.slug]?.modules}
+                              tasks={cohortsAssignments[microCohort.slug]?.tasks}
                               mainCohort={cohortSession}
                               certificate={certificates.find((cert) => cert.cohort.id === microCohort.id)}
                             />
@@ -1036,38 +1038,10 @@ function Dashboard() {
           </ModalContent>
         </Modal>
       )}
-      {/* Mandatory projects modal */}
-      <Modal
+      <PendingActivitiesModal
         isOpen={showMandatoryModal}
-        size="2xl"
-        margin="0 10px"
-        onClose={() => {
-          setShowMandatoryModal(false);
-        }}
-      >
-        <ModalOverlay />
-        <ModalContent style={{ margin: '3rem 0 0 0' }}>
-          <ModalHeader pb="0" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor}>
-            {t('mandatoryProjects.title')}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody padding={{ base: '15px 22px' }}>
-            <Text color={hexColor.fontColor3} fontSize="14px" lineHeight="24px" marginBottom="15px" fontWeight="400">
-              {t('mandatoryProjects.description')}
-            </Text>
-            {mandatoryProjects.map((module, i) => (
-              <Module
-                // eslint-disable-next-line react/no-array-index-key
-                key={`${module.title}-${i}`}
-                currIndex={i}
-                data={module}
-                taskTodo={taskTodo}
-                variant="open-only"
-              />
-            ))}
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+        onClose={() => setShowMandatoryModal(false)}
+      />
       <ModalInfo
         isOpen={modalIsOpen}
         onClose={() => setModalIsOpen(false)}

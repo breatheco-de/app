@@ -6,6 +6,7 @@
   "moduleMap": "Module map",
   "module": "Module",
   "modules-count": "{{count}} Modules",
+  "feedback-pending": "Feedback pending for review",
   "path-to-claim": "Path to claim your certificate",
   "open": "Open",
   "completed": "Completed!",
@@ -152,6 +153,7 @@
   },
   "mandatoryProjects": {
     "title": "Pending mandatory projects",
+    "showing-comments": "Showing comments",
     "description": "You have pending mandatory subjects, you have to finish them in order to complete the course."
   },
   "modalInfo": {
