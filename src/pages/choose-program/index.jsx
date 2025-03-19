@@ -133,6 +133,7 @@ function chooseProgram() {
               ...service,
               academy: {
                 id: role?.academy.id,
+                slug: role?.academy.slug,
                 available_as_saas: role?.academy?.available_as_saas,
               },
             }));

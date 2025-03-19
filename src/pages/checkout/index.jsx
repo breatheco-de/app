@@ -865,7 +865,12 @@ function Checkout() {
                       <Flex flexDirection="column" gridGap="7px" justifyContent="center" width="100%" ref={flexRef}>
                         <Heading fontSize={showPriceInformation ? '38px' : '24px'} display="flex" alignItems="center" gap="10px">
                           {!showPriceInformation && <Icon icon="4Geeks-avatar" width="35px" height="35px" maxHeight="35px" borderRadius="50%" background="blue.default" />}
-                          {originalPlan?.title}
+                          {originalPlan?.title.split(' ').map((word) => {
+                            const firstLetter = word.match(/[a-zA-Z]/);
+                            if (!firstLetter) return word;
+                            const { index } = firstLetter;
+                            return word.slice(0, index) + word.charAt(index).toUpperCase() + word.slice(index + 1);
+                          }).join(' ')}
                         </Heading>
                         {originalPlan?.selectedPlan?.description && showPriceInformation && (
                           <Text fontSize="16px" py="10px">{originalPlan?.selectedPlan?.description}</Text>

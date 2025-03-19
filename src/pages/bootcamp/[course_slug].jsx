@@ -43,9 +43,8 @@ import completions from './completion-jobs.json';
 import Rating from '../../common/components/Rating';
 import SimpleModal from '../../common/components/SimpleModal';
 import CustomCarousel from '../../common/components/CustomCarousel';
-import useCustomToast from '../../common/hooks/useCustomToast'
+import useCustomToast from '../../common/hooks/useCustomToast';
 import { usePlanPrice } from '../../utils/getPriceWithDiscount';
-
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -121,7 +120,7 @@ function CoursePage({ data, syllabus }) {
   const [isCtaVisible, setIsCtaVisible] = useState(false);
   const [allDiscounts, setAllDiscounts] = useState([]);
   const { isAuthenticated, user, logout, cohorts } = useAuth();
-  const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
+  const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor, backgroundColor7, backgroundColor8 } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
   const { createToast } = useCustomToast({ toastId: 'choose-program-pricing-detail' });
@@ -347,6 +346,7 @@ function CoursePage({ data, syllabus }) {
   const assetCount = cohortData?.modulesInfo?.count;
   const assignmentList = cohortData?.modulesInfo?.assignmentList;
   const studentsImages = t(`students-course-images.${data?.slug}`, {}, { returnObjects: true });
+  const benefitsBullets = t('course-default-bullets', {}, { returnObjects: true });
 
   const getInitialData = async () => {
     setInitialDataIsFetching(true);
@@ -556,7 +556,7 @@ function CoursePage({ data, syllabus }) {
         zIndex={1100}
       />
       <CouponTopBar display={{ base: 'none', md: 'block' }} />
-      <Flex flexDirection="column" mt={{ base: '0', md: '0.5rem' }}>
+      <Flex flexDirection="column" background={backgroundColor7}>
         <GridContainer maxWidth="1280px" gridTemplateColumns="repeat(12, 1fr)" gridGap="36px" padding="8px 10px 50px 10px" mt="17px">
           <Flex flexDirection="column" gridColumn="1 / span 8" gridGap="24px">
             {/* Title */}
@@ -565,22 +565,31 @@ function CoursePage({ data, syllabus }) {
                 {
                   data?.course_translation?.heading ? (
                     <>
-                      <Heading as="span" size={{ base: '33px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal" dangerouslySetInnerHTML={{ __html: adjustFontSizeForMobile(data?.course_translation?.heading) }} />
+                      <Heading as="span" size={{ base: '33px', md: '45px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal" dangerouslySetInnerHTML={{ __html: adjustFontSizeForMobile(data?.course_translation?.heading) }} />
                     </>
                   ) : (
                     <>
-                      <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
+                      <Heading as="span" size={{ base: '38px', md: '40px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
                         {!isVisibilityPublic ? getAlternativeTranslation('title-connectors.learning') : getAlternativeTranslation('title-connectors.start')}
                       </Heading>
-                      <Heading as="span" color="blue.default" width="100%" size={{ base: '42px', md: '64px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
+                      <Heading as="span" color="blue.default2" width="100%" size={{ base: '42px', md: '45px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
                         {data?.course_translation?.title}
                       </Heading>
-                      <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
+                      <Heading as="span" size={{ base: '38px', md: '40px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
                         {!isVisibilityPublic ? getAlternativeTranslation('title-connectors.own-pace') : getAlternativeTranslation('title-connectors.end')}
                       </Heading>
                     </>
                   )
                 }
+              </Flex>
+
+              {/* Course description */}
+              <Flex flexDirection="column" gridGap="16px">
+                {data?.course_translation?.short_description && (
+                  <Text size="18px" fontWeight={500} color="currentColor" lineHeight="normal">
+                    {data?.course_translation?.short_description}
+                  </Text>
+                )}
               </Flex>
             </Flex>
 
@@ -638,22 +647,14 @@ function CoursePage({ data, syllabus }) {
               )}
               <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => setShowModal(true)} />
 
-              {/* Course description */}
-              <Flex flexDirection="column" gridGap="16px">
-                {data?.course_translation?.short_description && (
-                  <Text size="18px" fontWeight={700} color="currentColor" lineHeight="normal">
-                    {data?.course_translation?.short_description}
-                  </Text>
-                )}
-              </Flex>
             </Flex>
           </Flex>
           <Flex flexDirection="column" gridColumn="9 / span 4" mt={{ base: '2rem', md: '0' }} ref={showBottomCTA}>
             <ShowOnSignUp
-              title={getAlternativeTranslation('join-cohort')}
+              title={getAlternativeTranslation('sign-up-to-plus')}
               alignSelf="center"
               maxWidth="396px"
-              description={isAuthenticated ? getAlternativeTranslation('join-cohort-description') : getAlternativeTranslation('create-account-text')}
+              description={isAuthenticated ? getAlternativeTranslation('join-cohort-description') : getAlternativeTranslation('sign-up-to-plus-description')}
               borderColor={data.color || 'green.400'}
               textAlign="center"
               gridGap="11px"
@@ -786,8 +787,11 @@ function CoursePage({ data, syllabus }) {
               handleButton={() => setShowModal(true)}
               buttonText={getAlternativeTranslation('rigobot.button')}
               buttonProps={{ id: 'try-rigobot' }}
+              titleStyles={{
+                fontSize: '34px',
+              }}
             >
-              <Text size="14px" color="currentColor">
+              <Text size={{ base: '14px', md: '18px' }} color="currentColor">
                 {getAlternativeTranslation('rigobot.description')}
               </Text>
             </OneColumnWithIcon>
@@ -796,15 +800,24 @@ function CoursePage({ data, syllabus }) {
             <Flex flexDirection="column" gridColumn="2 / span 12">
               {/* CourseContent comopnent */}
               {cohortData?.cohortSyllabus?.syllabus && (
-                <CourseContent data={courseContentList} assetCount={assetCount} />
+                <CourseContent
+                  data={courseContentList}
+                  assetCount={assetCount}
+                  backgroundColor={backgroundColor}
+                  titleStyle={{ textTransform: 'capitalize', fontSize: '18px', fontWeight: 'bold', fontFamily: 'Space Grotesk Variable' }}
+                  featuresStyle={{ background: backgroundColor8, padding: '4px', borderRadius: '4px' }}
+                  border="none"
+                  expanderText={t('navbar:course-details')}
+                  allowToggle
+                />
               )}
             </Flex>
           )}
           <Flex flexDirection="column" gridGap="16px">
-            <Heading size="24px" lineHeight="normal" textAlign="center">
+            <Heading size={{ base: '24px', md: '34px' }} lineHeight="normal" textAlign="center">
               {getAlternativeTranslation('build-connector.what-you-will')}
               {' '}
-              <Box as="span" color="blue.default">
+              <Box as="span" color="blue.default2">
                 {getAlternativeTranslation('build-connector.build')}
               </Box>
             </Heading>
@@ -826,10 +839,10 @@ function CoursePage({ data, syllabus }) {
             <Flex padding="40px 10px" gridColumn="1 / span 12" flexDirection="column" gridGap="64px">
               <Flex flexDirection="column" gridGap="4rem">
                 <Flex flexDirection="column" gridGap="1rem">
-                  <Heading size="24px" textAlign="center">
+                  <Heading size={{ base: '24px', md: '34px' }} textAlign="center">
                     {getAlternativeTranslation('why-learn-4geeks-connector.why-learn-with')}
                     {' '}
-                    <Box as="span" color="blue.default">4Geeks</Box>
+                    <Box as="span" color="blue.default2">4Geeks</Box>
                     ?
                   </Heading>
                   <Text size="18px" margin={{ base: 'auto', md: '0 8vw' }} textAlign="center" style={{ textWrap: 'balance' }}>
@@ -864,6 +877,7 @@ function CoursePage({ data, syllabus }) {
                 informationSize="Medium"
                 buttonUrl={features?.['what-is-learnpack']?.link}
                 buttonLabel={features?.['what-is-learnpack']?.button}
+                customTitleSize={{ base: '24px', md: '34px' }}
                 textSideProps={{
                   padding: '24px 0px',
                 }}
@@ -889,6 +903,8 @@ function CoursePage({ data, syllabus }) {
           informationSize="Medium"
           buttonUrl={getAlternativeTranslation('certificate.button-link')}
           buttonLabel={getAlternativeTranslation('certificate.button')}
+          background="transparent"
+          customTitleSize={{ base: '24px', md: '34px' }}
           containerProps={{
             padding: '0px',
             marginTop: '0px',
@@ -897,8 +913,19 @@ function CoursePage({ data, syllabus }) {
           }}
         />
 
+        <GridContainer padding="0 10px" maxWidth="1280px" width="100%" mt="6.25rem" withContainer childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} gridTemplateColumns="repeat(12, 1fr)" gridColumn="1 / 12 span">
+          <MktTrustCards
+            title={getAlternativeTranslation('why-learn-with-4geeks.title')}
+            description={getAlternativeTranslation('why-learn-with-4geeks.description')}
+            cardStyles={{
+              border: 'none',
+            }}
+          />
+        </GridContainer>
+
         <MktTwoColumnSideImage
           mt="6.25rem"
+          customTitleSize={{ base: '24px', md: '34px' }}
           imageUrl={getAlternativeTranslation('job-section.image')}
           title={getAlternativeTranslation('job-section.title')}
           subTitle={getAlternativeTranslation('job-section.subtitle')}
@@ -907,9 +934,9 @@ function CoursePage({ data, syllabus }) {
           buttonUrl={getAlternativeTranslation('job-section.button-link')}
           buttonLabel={getAlternativeTranslation('job-section.button')}
           imagePosition="right"
-          textBackgroundColor="#EEF9FE"
           titleColor="#0097CF"
           subtitleColor="#01455E"
+          background="transparent"
           containerProps={{
             padding: '0px',
             marginTop: '0px',
@@ -928,26 +955,48 @@ function CoursePage({ data, syllabus }) {
         {data?.plan_slug && (
           <MktShowPrices
             id="pricing"
-            mt="6.25rem"
             externalPlanProps={planData}
             externalSelection={financeSelected}
-            gridTemplateColumns="repeat(12, 1fr)"
-            gridColumn1="1 / span 7"
-            gridColumn2="8 / span 5"
-            gridGap="3rem"
             title={getAlternativeTranslation('show-prices.title')}
             description={getAlternativeTranslation('show-prices.description')}
             plan={data?.plan_slug}
             cohortId={cohortId}
+            pricingMktInfo={benefitsBullets}
+            padding={{ base: '10px', md: '0px' }}
+            margin="0px auto"
+            mt="50px"
           />
         )}
 
-        <GridContainer padding="0 10px" maxWidth="1280px" width="100%" mt="6.25rem" withContainer childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} gridTemplateColumns="repeat(12, 1fr)" gridColumn="1 / 12 span">
-          <MktTrustCards
-            title={getAlternativeTranslation('why-learn-with-4geeks.title')}
-            description={getAlternativeTranslation('why-learn-with-4geeks.description')}
+        {freePlan && (
+          <MktTwoColumnSideImage
+            mt="6.25rem"
+            imageUrl={getAlternativeTranslation('havent-decided.image')}
+            miniTitle={getAlternativeTranslation('havent-decided.mini-title')}
+            title={getAlternativeTranslation('havent-decided.title')}
+            description={getAlternativeTranslation('havent-decided.description')}
+            informationSize="Medium"
+            buttonUrl={getAlternativeTranslation('havent-decided.button-link')}
+            buttonLabel={getAlternativeTranslation('havent-decided.button')}
+            background="transparent"
+            textBackgroundColor="#E1F5FF"
+            imagePosition="right"
+            titleColor="blue.default2"
+            textSideProps={{
+              flex: 2,
+            }}
+            imageSideProps={{
+              width: '273px',
+              margin: '0',
+            }}
+            containerProps={{
+              padding: '0px',
+              marginTop: '0px',
+              gridGap: '32px',
+              alignItems: 'start',
+            }}
           />
-        </GridContainer>
+        )}
         {reviewsForCurrentCourse && (
           <GridContainer padding="0 10px" maxWidth="1280px" width="100%" gridTemplateColumns="repeat(1, 1fr)">
             <Rating
@@ -957,23 +1006,25 @@ function CoursePage({ data, syllabus }) {
               id="rating-commnets"
               marginTop="40px"
               reviews={reviewsForCurrentCourse.reviews}
+              cardStyles={{
+                border: 'none',
+              }}
             />
           </GridContainer>
         )}
         {/* FAQ section */}
-        <Box mt="6.25rem" background={hexColor.lightColor}>
+        <Box mt="6.25rem">
           <GridContainer padding="0 10px" maxWidth="1280px" width="100%" gridTemplateColumns="repeat(12, 1fr)">
             {Array.isArray(faqList) && faqList?.length > 0 && (
               <Faq
                 width="100%"
                 gridColumn="1 / span 12"
-                background="transparent"
                 headingStyle={{
                   margin: '0px',
                   fontSize: '38px',
                   padding: '0 0 24px',
                 }}
-                padding="1.5rem 0"
+                padding="1.5rem"
                 highlightColor={complementaryBlue}
                 acordionContainerStyle={{
                   background: hexColor.white2,

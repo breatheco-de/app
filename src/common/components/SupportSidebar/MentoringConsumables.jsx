@@ -20,6 +20,8 @@ import { validatePlanExistence } from '../../handlers/subscriptions';
 import { getStorageItem, getBrowserInfo } from '../../../utils';
 import { reportDatalayer } from '../../../utils/requests';
 import { BREATHECODE_HOST } from '../../../utils/variables';
+import CanAccess from '../CanAccess';
+import useCanAccess from '../../hooks/useCanAccess';
 import useCustomToast from '../../hooks/useCustomToast';
 
 function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mentoryProps, subscriptionData, disableBackButton = false, ...rest }) {
@@ -118,6 +120,7 @@ function MentoringConsumables({
   const { createToast } = useCustomToast({ toastId: 'finding-mentor-error-service' });
   const mentorshipBalance = consumableOfService?.balance?.unit;
   const currentBalance = Number(mentorshipBalance && mentorshipBalance);
+  const checkAccess = useCanAccess();
 
   const calculateExistenceOfConsumable = () => {
     if (consumableOfService.available_as_saas === false) return true;
@@ -174,6 +177,23 @@ function MentoringConsumables({
   };
 
   const handleService = async (service) => {
+    // Check if service is blocked using the checkAccess function
+    const serviceAccess = checkAccess({
+      fromMentorshipService: service.slug,
+      fromAcademy: service?.academy?.slug,
+    });
+
+    if (!serviceAccess.hasAccess) {
+      createToast({
+        position: 'top',
+        title: t('common:service-blocked'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
     try {
       if (allMentorsAvailable.length > 0) {
         const mentorsByService = allMentorsAvailable.filter((mentor) => mentor.services.some((s) => s.slug === service.slug));
@@ -439,20 +459,25 @@ function MentoringConsumables({
                     <>
                       {servicesWithMentorsAvailable.length > 0 && (
                         servicesWithMentorsAvailable.map((service) => (
-                          <Box
-                            key={service.name}
-                            borderTop="1px solid"
-                            cursor="pointer"
-                            onClick={() => handleService(service)}
-                            borderColor={borderColor}
-                            py="14px"
-                            background={commonBackground}
-                            width="100%"
-                            px="22px"
-                            _hover={{ background: useColorModeValue('featuredLight', 'gray.700') }}
+                          <CanAccess
+                            key={service.slug}
+                            fromMentorshipService={service.slug}
+                            fromAcademy={service?.academy?.slug}
                           >
-                            {service.name}
-                          </Box>
+                            <Box
+                              borderTop="1px solid"
+                              cursor="pointer"
+                              onClick={() => handleService(service)}
+                              borderColor={borderColor}
+                              py="14px"
+                              background={commonBackground}
+                              width="100%"
+                              px="22px"
+                              _hover={{ background: useColorModeValue('featuredLight', 'gray.700') }}
+                            >
+                              {service.name}
+                            </Box>
+                          </CanAccess>
                         ))
                       )}
                       {servicesWithMentorsAvailable.length === 0 && (
@@ -474,62 +499,67 @@ function MentoringConsumables({
             )}
 
             {mentoryProps?.service && !mentoryProps?.mentor && (
-              <>
-                <InputGroup mt="15px" borderBottom="1px solid" borderColor={borderColor}>
-                  <Input onChange={(e) => setSearchProps({ ...searchProps, mentorSearch: e.target.value?.toLowerCase() })} background={commonBackground} borderBottomRadius="0" border="0" placeholder={t('supportSideBar.search-mentor')} />
-                  <InputRightElement>
-                    <Icon icon="arrowDown" color="#606060" width="35px" height="30px" ml="10px" />
-                  </InputRightElement>
-                </InputGroup>
-                <Box maxHeight="18rem" width="100%" background={commonBackground} overflow="auto" borderBottomRadius="0.375rem">
-                  {mentorsFiltered.length > 0 ? mentorsFiltered.map((mentor, i) => (
-                    <Fragment key={mentor?.user?.id}>
-                      {i !== 0 && (
-                        <Box as="hr" borderColor="gray.300" margin="0 18px" />
-                      )}
-                      <Box display="flex" gridGap="18px" flexDirection="row" py="14px" width="100%" px="18px" _hover={{ background: useColorModeValue('featuredLight', 'gray.700') }}>
-                        <Image
-                          src={mentor?.user.profile?.avatar_url}
-                          alt={`${mentor?.user?.first_name} ${mentor?.user?.last_name}`}
-                          width={78}
-                          height={78}
-                          objectFit="cover"
-                          style={{ minWidth: '78px', width: '78px !important', height: '78px !important' }}
-                          styleImg={{ borderRadius: '50px' }}
-                        />
-                        <Box display="flex" flexDirection="column" width="100%">
-                          <Box fontSize="15px" fontWeight="600">
-                            {`${mentor.user.first_name} ${mentor.user.last_name}`}
-                          </Box>
-                          <Box as="hr" borderColor={borderColor} my="5px" />
-                          <Box>
-                            {(mentor.one_line_bio && mentor.one_line_bio !== '') ? `${mentor.one_line_bio} ` : ''}
-                            {mentor?.booking_url ? (
-                              <Link
-                                variant="default"
-                                onClick={() => reportBookMentor(mentor)}
-                                href={`${BREATHECODE_HOST}/mentor/${mentor?.slug}?utm_campaign=${mentoryProps?.service?.slug}&utm_source=4geeks&salesforce_uuid=${user?.id}&token=${accessToken}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {t('supportSideBar.create-session-text')}
-                              </Link>
-                            ) : (
-                              <Box fontSize="15px">
-                                {t('supportSideBar.no-mentor-link')}
-                              </Box>
-                            )}
+              <CanAccess
+                fromMentorshipService={mentoryProps?.service?.slug}
+                fromAcademy={mentoryProps?.service?.academy?.slug}
+              >
+                <>
+                  <InputGroup mt="15px" borderBottom="1px solid" borderColor={borderColor}>
+                    <Input onChange={(e) => setSearchProps({ ...searchProps, mentorSearch: e.target.value?.toLowerCase() })} background={commonBackground} borderBottomRadius="0" border="0" placeholder={t('supportSideBar.search-mentor')} />
+                    <InputRightElement>
+                      <Icon icon="arrowDown" color="#606060" width="35px" height="30px" ml="10px" />
+                    </InputRightElement>
+                  </InputGroup>
+                  <Box maxHeight="18rem" width="100%" background={commonBackground} overflow="auto" borderBottomRadius="0.375rem">
+                    {mentorsFiltered.length > 0 ? mentorsFiltered.map((mentor, i) => (
+                      <Fragment key={mentor?.user?.id}>
+                        {i !== 0 && (
+                          <Box as="hr" borderColor="gray.300" margin="0 18px" />
+                        )}
+                        <Box display="flex" gridGap="18px" flexDirection="row" py="14px" width="100%" px="18px" _hover={{ background: useColorModeValue('featuredLight', 'gray.700') }}>
+                          <Image
+                            src={mentor?.user.profile?.avatar_url}
+                            alt={`${mentor?.user?.first_name} ${mentor?.user?.last_name}`}
+                            width={78}
+                            height={78}
+                            objectFit="cover"
+                            style={{ minWidth: '78px', width: '78px !important', height: '78px !important' }}
+                            styleImg={{ borderRadius: '50px' }}
+                          />
+                          <Box display="flex" flexDirection="column" width="100%">
+                            <Box fontSize="15px" fontWeight="600">
+                              {`${mentor.user.first_name} ${mentor.user.last_name}`}
+                            </Box>
+                            <Box as="hr" borderColor={borderColor} my="5px" />
+                            <Box>
+                              {(mentor.one_line_bio && mentor.one_line_bio !== '') ? `${mentor.one_line_bio} ` : ''}
+                              {mentor?.booking_url ? (
+                                <Link
+                                  variant="default"
+                                  onClick={() => reportBookMentor(mentor)}
+                                  href={`${BREATHECODE_HOST}/mentor/${mentor?.slug}?utm_campaign=${mentoryProps?.service?.slug}&utm_source=4geeks&salesforce_uuid=${user?.id}&token=${accessToken}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {t('supportSideBar.create-session-text')}
+                                </Link>
+                              ) : (
+                                <Box fontSize="15px">
+                                  {t('supportSideBar.no-mentor-link')}
+                                </Box>
+                              )}
+                            </Box>
                           </Box>
                         </Box>
+                      </Fragment>
+                    )) : (
+                      <Box borderTop="1px solid" borderColor={borderColor} py="14px" background={commonBackground} width="100%" px="22px">
+                        {t('supportSideBar.no-mentors')}
                       </Box>
-                    </Fragment>
-                  )) : (
-                    <Box borderTop="1px solid" borderColor={borderColor} py="14px" background={commonBackground} width="100%" px="22px">
-                      {t('supportSideBar.no-mentors')}
-                    </Box>
-                  )}
-                </Box>
-              </>
+                    )}
+                  </Box>
+                </>
+              </CanAccess>
             )}
           </>
         )}
