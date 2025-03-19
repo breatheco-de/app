@@ -143,12 +143,14 @@ function CustomCarousel({ assignmentList }) {
 
             <Flex alignItems="flex-end" justifyContent="space-between" mt="auto">
               <Badge
-                colorScheme={difficultyLevel[assignmentList[currentSlide]?.difficulty]}
+                colorScheme={assignmentList[currentSlide]?.difficulty ? difficultyLevel[assignmentList[currentSlide]?.difficulty] : 'transparent'}
                 alignSelf="flex-start"
                 borderRadius="10px"
                 padding="3px 5px"
               >
-                {t(`common:${assignmentList[currentSlide]?.difficulty?.toLowerCase()}`)}
+                {assignmentList[currentSlide]?.difficulty && (
+                  t(`common:${assignmentList[currentSlide]?.difficulty?.toLowerCase()}`)
+                )}
               </Badge>
               <Flex gap="10px">
                 <Icon icon="rigobot-avatar-tiny" width="18px" height="18px" />
