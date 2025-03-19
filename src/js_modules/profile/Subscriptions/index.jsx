@@ -98,8 +98,6 @@ function Subscriptions({ cohorts }) {
         const resWorkshops = await Promise.all(promiseEvents);
         const resVoids = await Promise.all(promiseVoids);
 
-        console.log(resVoids);
-
         allServices.mentorships = [...resMentorships.flat(), ...nonSaasServices];
         allServices.workshops = resWorkshops.flat();
         allServices.voids = resVoids.flat();
