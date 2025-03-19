@@ -27,6 +27,8 @@ function Page({ page }) {
   const loggedInWorkshopsView = isAuthenticated === true && router.query.uid === 'workshops';
   const backgroundByMode = useColorModeValue(background, backgroundDarkMode);
 
+  console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaa', router.locale);
+
   useEffect(() => {
     if (!page?.id) {
       window.location.href = '/404';
