@@ -111,7 +111,6 @@ function PricingView() {
       ...initialFinancingOption,
       optionList: payablePlanList,
     };
-    console.log('todos los planes', allPlansList);
     if (freeTierList?.length > 0) {
       return freeTierList.concat(financingData);
     }
