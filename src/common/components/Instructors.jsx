@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Avatar, Flex, Skeleton } from '@chakra-ui/react';
+import { Avatar, Flex, Skeleton, Tooltip } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { BREATHECODE_HOST } from '../../utils/variables';
 import Text from './Text';
@@ -54,27 +54,29 @@ function Instructors({ isLoading, list, limit, tryRigobot, ...rest }) {
               </Flex>
             );
           })}
-        <Flex
-          id="ai-tutor"
-          alignItems="center"
-          gridGap="8px"
-          minWidth="144px"
-          padding="4px 8px"
-          background={featuredColor2}
-          borderRadius="43"
-          cursor="pointer"
-          onClick={tryRigobot}
-        >
-          <Icon icon="avatar-glasses" width="36px" height="42px" />
-          <Flex flexDirection="column" gridGap="6px">
-            <Text size="14px" fontWeight={700} lineHeight="normal">
-              {t('rigo')}
-            </Text>
-            <Text size="14px" lineHeight="normal">
-              {t('ai-tutor')}
-            </Text>
+        <Tooltip label={t('tooltip-ai-tutor')} aria-label="Tooltip for Rigobot" placement="top" borderRadius="4px">
+          <Flex
+            id="ai-tutor"
+            alignItems="center"
+            gridGap="8px"
+            minWidth="144px"
+            padding="4px 8px"
+            background={featuredColor2}
+            borderRadius="43"
+            cursor="pointer"
+            onClick={tryRigobot}
+          >
+            <Icon icon="avatar-glasses" width="36px" height="42px" />
+            <Flex flexDirection="column" gridGap="6px">
+              <Text size="14px" fontWeight={700} lineHeight="normal">
+                {t('rigo')}
+              </Text>
+              <Text size="14px" lineHeight="normal">
+                {t('ai-tutor')}
+              </Text>
+            </Flex>
           </Flex>
-        </Flex>
+        </Tooltip>
         {restInstructors > 0 && (
           <Flex alignItems="center" gridGap="8px">
             <Text size="14px" lineHeight="normal">
@@ -97,6 +99,6 @@ Instructors.defaultProps = {
   list: [],
   limit: 2,
   isLoading: false,
-  tryRigobot: () => {},
+  tryRigobot: () => { },
 };
 export default Instructors;
