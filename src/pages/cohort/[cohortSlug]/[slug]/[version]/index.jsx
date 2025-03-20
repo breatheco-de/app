@@ -85,7 +85,7 @@ function Dashboard() {
     getMandatoryProjects, getTasksWithoutCohort, setSortedAssignments, getLastDoneTaskModuleData,
   } = useCohortHandler();
 
-  const { cohortSession, sortedAssignments, taskCohortNull, myCohorts } = state;
+  const { cohortSession, sortedAssignments, mandatoryProjects, taskCohortNull, myCohorts } = state;
 
   const mainTechnologies = cohortProgram?.main_technologies
     ? cohortProgram?.main_technologies.split(',').map((el) => el.trim())
@@ -387,6 +387,7 @@ function Dashboard() {
 
   useEffect(() => {
     getTasksWithoutCohort({ setModalIsOpen });
+    getMandatoryProjects();
   }, [sortedAssignments]);
 
   // Sort all data fetched in order of taskTodo
@@ -400,8 +401,6 @@ function Dashboard() {
 
   const hasShownMandatoryToast = useRef(false);
   const hasShownFreeTrialToast = useRef(false);
-
-  const mandatoryProjects = getMandatoryProjects() || [];
 
   useEffect(() => {
     const mandatoryProjectsCount = mandatoryProjects.length;
