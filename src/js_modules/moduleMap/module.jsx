@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  useToast,
   Link,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
@@ -18,6 +17,7 @@ import Icon from '../../common/components/Icon';
 import { reportDatalayer } from '../../utils/requests';
 import { getBrowserInfo } from '../../utils';
 // import { usePersistent } from '../../common/hooks/usePersistent';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
 function Module({
   data, currIndex, isDisabled, onDisabledClick, variant,
@@ -32,7 +32,7 @@ function Module({
   const [, setUpdatedTask] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const { hexColor } = useStyle();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'something-wrong-module' });
 
   const currentSlug = data.slug ? data.slug : '';
   const currentTask = taskTodo?.length > 0 ? taskTodo.find((el) => el?.task_type === data?.task_type
@@ -101,7 +101,7 @@ function Module({
       }
       setSettingsOpen(!settingsOpen);
     } else {
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:something-went-wrong'),
         status: 'error',

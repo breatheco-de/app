@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
   Text,
@@ -18,7 +18,6 @@ import PropTypes from 'prop-types';
 import ReCAPTCHA from 'react-google-recaptcha';
 import NextChakraLink from './NextChakraLink';
 import Icon from './Icon';
-import AlertMessage from './AlertMessage';
 import useStyle from '../hooks/useStyle';
 import useAuth from '../hooks/useAuth';
 import useSession from '../hooks/useSession';
@@ -26,6 +25,7 @@ import bc from '../services/breathecode';
 import { GithubIcon, LogoIcon, YoutubeIcon } from './Icon/components';
 import { log } from '../../utils/logging';
 import FooterTC from './FooterTC';
+import useCustomToast from '../hooks/useCustomToast';
 
 function Footer({ pageProps }) {
   const captcha = useRef(null);
@@ -35,6 +35,18 @@ function Footer({ pageProps }) {
   const [email, setEmail] = useState('');
   const [formStatus, setFormStatus] = useState('');
   const { isAuthenticated } = useAuth();
+  const { createToast } = useCustomToast({ toastId: 'newsletter-toast' });
+
+  useEffect(() => {
+    if (formStatus) {
+      createToast({
+        position: 'top',
+        title: t(`newsletter.${formStatus}`),
+        status: formStatus === 'success' ? 'success' : 'error',
+        duration: 5000,
+      });
+    }
+  }, [formStatus]);
 
   const iconogram = t('iconogram', {}, { returnObjects: true });
 
@@ -153,12 +165,7 @@ function Footer({ pageProps }) {
                     </Box>
                   )}
                 </form>
-              ) : (
-                <AlertMessage
-                  type={formStatus}
-                  message={t(`newsletter.${formStatus}`)}
-                />
-              )}
+              ) : null}
             </Box>
           </Flex>
           <Divider borderBottomWidth="2px" />
