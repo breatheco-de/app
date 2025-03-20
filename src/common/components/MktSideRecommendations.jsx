@@ -1,25 +1,21 @@
 import { Box, Image, Link, useColorModeValue } from '@chakra-ui/react';
-import useTranslation from 'next-translate/useTranslation';
-import { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import { useMemo, useCallback } from 'react';
 import { useRouter } from 'next/router';
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
 import Heading from './Heading';
 import Text from './Text';
-import { CardSkeleton } from './Skeleton';
-// import Link from './NextChakraLink';
-// import modifyEnv from '../../../modifyEnv';
-// import { toCapitalize } from '../../utils';
 import TagCapsule from './TagCapsule';
+import { CardSkeleton } from './Skeleton';
 import { getBrowserSize, setStorageItem, getBrowserInfo } from '../../utils';
-import { ORIGIN_HOST, WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../utils/variables';
+import { ORIGIN_HOST } from '../../utils/variables';
+import { reportDatalayer } from '../../utils/requests';
 import useStyle from '../hooks/useStyle';
 import useSession from '../hooks/useSession';
-import { parseQuerys } from '../../utils/url';
-import { error } from '../../utils/logging';
-import { reportDatalayer } from '../../utils/requests';
+import useRecommendations from '../hooks/useRecommendations';
+import ReactPlayerV2 from './ReactPlayerV2';
 
 const defaultEndpoint = '/v1/marketing/course';
-const coursesLimit = 1;
 
 function Container({ recommendation, recommendations, borderRadius, children, ...rest }) {
   const router = useRouter();
@@ -48,131 +44,56 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
   const { t, lang } = useTranslation('common');
   const { hexColor } = useStyle();
   const { location } = useSession();
-  const [isLoading, setIsLoading] = useState(true);
-  const [recommendations, setRecommendations] = useState([]);
+  const { isLoading, error, recommendations } = useRecommendations(endpoint, technologies, lang);
   const router = useRouter();
-  const langConnector = router.locale === 'en' ? '' : `/${router.locale}`;
-  const qs = parseQuerys({
-    academy: WHITE_LABEL_ACADEMY,
-    featured: true,
-  });
 
-  const headers = {
-    'Accept-Language': lang,
-  };
+  const langConnector = useMemo(
+    () => (router.locale === 'en' ? '' : `/${router.locale}`),
+    [router.locale],
+  );
 
-  const technologiesList = technologies.map((tech) => tech?.slug || tech);
-  const technologiesArray = typeof technologiesList === 'string' ? technologiesList.split(',') : technologiesList;
-
-  const fetchTutorials = async () => {
-    const response = await fetch(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=EXERCISE&status=PUBLISHED&technologies=${technologiesArray.join(',')}`, { headers });
-    if (!response.ok) throw new Error(`Failed to fetch tutorials: ${response.statusText}`);
-    return response.json();
-  };
-
-  const filterMatchingTutorials = (tutorialsData) => tutorialsData.filter((tutorial) => {
-    const matchingTechnologies = tutorial.technologies.filter((tech) => technologiesArray.includes(tech));
-    return matchingTechnologies.length >= 2;
-  });
-
-  const sortAndSetRecommendations = (tutorials) => {
-    tutorials.sort((a, b) => {
-      const aMatches = a.technologies.filter((tech) => technologiesArray.includes(tech)).length;
-      const bMatches = b.technologies.filter((tech) => technologiesArray.includes(tech)).length;
-      return bMatches - aMatches;
-    });
-    setRecommendations([tutorials[0]]);
-  };
-
-  const gradeCourseBasedOnTech = (courses) => {
-    const coursesGraded = [];
-    courses.forEach((course) => {
-      const courseTechnologies = course.technologies.split(',');
-      const techCount = courseTechnologies.length;
-
-      const eachTechValue = 1 / techCount;
-
-      const techsRelated = courseTechnologies
-        .filter((tech) => technologiesArray.includes(tech));
-
-      const relatedTechCount = techsRelated.length;
-      const score = relatedTechCount * eachTechValue;
-
-      coursesGraded.push({ ...course, score, relatedTechCount });
-    });
-
-    return coursesGraded;
-  };
-
-  const fetchAndSetCourses = async () => {
-    try {
-      const response = await fetch(`${BREATHECODE_HOST}${endpoint}${qs}`, { headers });
-      if (!response.ok) throw new Error(`Failed to fetch courses: ${response.statusText}`);
-
-      const coursesData = await response.json();
-      const coursesGraded = gradeCourseBasedOnTech(coursesData);
-
-      if (coursesData.length > 0) {
-        const sortedCourses = coursesGraded.sort((a, b) => {
-          if (b.relatedTechCount !== a.relatedTechCount) {
-            return b.relatedTechCount - a.relatedTechCount;
-          }
-          return b.score - a.score;
-        });
-
-        setRecommendations(sortedCourses.slice(0, coursesLimit));
-      }
-    } catch (err) {
-      console.error(err);
+  const getLink = useCallback((recommendation) => {
+    if (recommendation?.course_translation?.landing_url) {
+      return recommendation.course_translation.landing_url;
     }
-  };
-
-  const handleFetchError = (err) => {
-    error(err);
-    setIsLoading(false);
-  };
-
-  const fetchContent = async () => {
-    try {
-      const tutorialsData = await fetchTutorials();
-      const matchingTutorials = filterMatchingTutorials(tutorialsData);
-
-      if (matchingTutorials.length > 1) {
-        sortAndSetRecommendations(matchingTutorials);
-      } else {
-        await fetchAndSetCourses();
-      }
-    } catch (err) {
-      handleFetchError(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const getLink = (recommendation) => {
-    if (recommendation?.course_translation?.landing_url) return recommendation?.course_translation?.landing_url;
     return `${ORIGIN_HOST}${langConnector}/interactive-exercise/${recommendation?.slug}`;
-  };
+  }, [langConnector]);
 
-  const getMainTechIcon = () => {
+  const getMainTechIcon = useCallback(() => {
     const techWithURL = technologies.find((tech) => tech.icon_url !== null);
-    if (!techWithURL) return undefined;
-    return techWithURL.icon_url;
-  };
+    return techWithURL?.icon_url;
+  }, [technologies]);
 
-  const determineIconBackgroundColor = (recom) => {
-    if (recom?.color) {
-      return recom.color;
-    }
-    return 'blue.50';
-  };
+  const determineIconBackgroundColor = useCallback(
+    (recom) => recom?.color || 'blue.50',
+    [],
+  );
 
-  useEffect(() => {
-    setIsLoading(true);
-    fetchContent();
-  }, [lang]);
+  const handleInteraction = useCallback((link, recom) => {
+    setStorageItem('redirected-from', link);
+    reportDatalayer({
+      dataLayer: {
+        event: 'ad_interaction',
+        course_slug: recom.slug,
+        course_title: recom?.course_translation?.title || recom.title,
+        ad_position: 'top-left',
+        ad_type: 'course',
+        agent: getBrowserInfo(),
+      },
+    });
+  }, []);
 
   if (location?.countryShort === 'ES') return null;
+  if (error) {
+    return (
+      <Box>
+        Error:
+        {error.message}
+      </Box>
+    );
+  }
+  if (isLoading) return <CardSkeleton quantity={1} cardHeight="350px" cardWidth="250px" gridTemplateColumns="none" />;
+  if (!recommendations?.length) return null;
 
   return recommendations?.length > 0 && (
     <>
@@ -184,8 +105,17 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
           return (
             <>
               <Box display="flex" alignItems="center" gap="10px">
-                {(recom.icon_url || getMainTechIcon())
-                  && <Image src={recom.icon_url ? recom.icon_url : getMainTechIcon()} width="46px" height="46px" borderRadius="8px" padding={!recom.icon_url && '8px'} color="white" background={determineIconBackgroundColor(recom)} />}
+                {(recom.icon_url || getMainTechIcon()) && (
+                  <Image
+                    src={recom.icon_url ? recom.icon_url : getMainTechIcon()}
+                    width="46px"
+                    height="46px"
+                    borderRadius="8px"
+                    padding={!recom.icon_url && '8px'}
+                    color="white"
+                    background={determineIconBackgroundColor(recom)}
+                  />
+                )}
                 <Heading as="span" size="18px" paddingLeft={!recom.icon_url && !getMainTechIcon() && '20px'}>
                   {recom?.course_translation?.title || recom.title}
                 </Heading>
@@ -193,17 +123,7 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
               <Link
                 variant="buttonDefault"
                 onClick={() => {
-                  setStorageItem('redirected-from', link);
-                  reportDatalayer({
-                    dataLayer: {
-                      event: 'ad_interaction',
-                      course_slug: recom.slug,
-                      course_title: recom?.course_translation?.title || recom.title,
-                      ad_position: 'top-left',
-                      ad_type: 'course',
-                      agent: getBrowserInfo(),
-                    },
-                  });
+                  handleInteraction(link, recom);
                 }}
                 href={link}
                 alignItems="center"
@@ -239,15 +159,74 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
               const tags = [];
 
               return (
-                <Box key={recom?.slug} overflow="hidden" border="1px solid" borderColor={recom.color || { base: 'default', md: 'success' }} borderRadius={rest.borderRadius || '8px'}>
-                  {recom?.banner_image
-                  && <Image src={recom?.banner_image} width="100%" height="120px" />}
-                  <Container borderRadius="none" padding={containerPadding} course={recom} courses={recommendations}>
-                    <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'none', md: 'inherit' }} />
-                    <Box mb="10px" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px" alignItems="center">
-                      <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'inherit', md: 'none' }} />
-                      {(recom.icon_url || getMainTechIcon())
-                        && <Image display={{ base: 'none', md: 'inherit' }} src={recom.icon_url ? recom.icon_url : getMainTechIcon()} width="46px" height="46px" borderRadius="8px" padding={!recom.icon_url && '8px'} />}
+                <Box
+                  key={recom?.slug}
+                  overflow="hidden"
+                  border="1px solid"
+                  borderColor={recom.color || { base: 'default', md: 'success' }}
+                  borderRadius={rest.borderRadius || '8px'}
+                >
+                  {recom?.course_translation?.video_url && (
+                    <ReactPlayerV2
+                      width="100%"
+                      withModal
+                      url={recom?.course_translation?.video_url}
+                      withThumbnail
+                      thumbnailStyle={{
+                        borderRadius: '0 0 0 0',
+                      }}
+                    />
+                  )}
+                  {recom?.banner_image && !recom?.course_translation?.video_url && (
+                    <Image src={recom?.banner_image} width="100%" height="120px" />
+                  )}
+                  <Container
+                    borderRadius="none"
+                    padding={containerPadding}
+                    course={recom}
+                    courses={recommendations}
+                  >
+                    <TagCapsule
+                      tags={tags}
+                      background="green.light"
+                      color="green.500"
+                      fontWeight={700}
+                      fontSize="13px"
+                      marginY="0"
+                      paddingX="0"
+                      variant="rounded"
+                      gap="10px"
+                      display={{ base: 'none', md: 'inherit' }}
+                    />
+                    <Box
+                      mb="10px"
+                      display="flex"
+                      flexDirection={{ base: 'column', md: 'row' }}
+                      gridGap="8px"
+                      alignItems="center"
+                    >
+                      <TagCapsule
+                        tags={tags}
+                        background="green.light"
+                        color="green.500"
+                        fontWeight={700}
+                        fontSize="13px"
+                        marginY="0"
+                        paddingX="0"
+                        variant="rounded"
+                        gap="10px"
+                        display={{ base: 'inherit', md: 'none' }}
+                      />
+                      {(recom.icon_url || getMainTechIcon()) && (
+                        <Image
+                          display={{ base: 'none', md: 'inherit' }}
+                          src={recom.icon_url ? recom.icon_url : getMainTechIcon()}
+                          width="46px"
+                          height="46px"
+                          borderRadius="8px"
+                          padding={!recom.icon_url && '8px'}
+                        />
+                      )}
                       <Heading as="span" fontWeight="400" size="xsm">
                         {recom?.course_translation?.title || recom.title}
                       </Heading>
@@ -257,17 +236,7 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
                     </Text>
                     <Link
                       onClick={() => {
-                        setStorageItem('redirected-from', link);
-                        reportDatalayer({
-                          dataLayer: {
-                            event: 'ad_interaction',
-                            course_slug: recom.slug,
-                            course_title: recom?.course_translation?.title ? recom.course_translation.title : recom.title,
-                            ad_position: 'top-left',
-                            ad_type: 'course',
-                            agent: getBrowserInfo(),
-                          },
-                        });
+                        handleInteraction(link, recom);
                       }}
                       href={link}
                       _hover={{ textDecoration: 'none' }}
