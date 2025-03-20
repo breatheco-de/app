@@ -406,7 +406,6 @@ function Dashboard() {
     const mandatoryProjectsCount = mandatoryProjects.length;
     if (isSubscriptionFreeTrial && !hasShownFreeTrialToast.current) {
       hasShownFreeTrialToast.current = true;
-      console.log('Alerta de prueba gratuita cerrada free trial');
       createToast({
         position: 'top',
         title: (
@@ -969,7 +968,7 @@ function Dashboard() {
             <Text color={hexColor.fontColor3} fontSize="14px" lineHeight="24px" marginBottom="15px" fontWeight="400">
               {t('mandatoryProjects.description')}
             </Text>
-            {getMandatoryProjects().map((module, i) => (
+            {mandatoryProjects.map((module, i) => (
               <Module
                 // eslint-disable-next-line react/no-array-index-key
                 key={`${module.title}-${i}`}
