@@ -21,6 +21,7 @@ import ConnectionProvider from '../common/context/ConnectionContext';
 import Footer from '../common/components/Footer';
 import Helmet from '../common/components/Helmet';
 import InterceptionLoader from '../common/components/InterceptionLoader';
+import handleTheme from '../../modifyTheme';
 
 import '../../styles/globals.css';
 import '../../styles/react-tags-input.css';
@@ -58,6 +59,11 @@ function App({ Component, pageProps }) {
 
   useEffect(() => {
     TagManager.initialize({ gtmId: process.env.TAG_MANAGER_KEY });
+    const hasThemeParam = new URLSearchParams(window.location.search).has('theme');
+    const hasStoredTheme = localStorage.getItem('chakra-ui-color-mode');
+    if (!hasStoredTheme || hasThemeParam) {
+      handleTheme();
+    }
   }, []);
 
   return (
