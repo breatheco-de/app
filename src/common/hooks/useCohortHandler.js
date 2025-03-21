@@ -56,7 +56,7 @@ function useCohortHandler() {
     slug, cohort, updatedUser = undefined,
   }) => {
     if (user) {
-      const academyId = cohort?.academy.id;
+      const academyId = cohort?.academy?.id;
       const version = cohort?.syllabus_version?.version;
       const syllabusSlug = cohort?.syllabus_version?.slug || slug;
       const currentAcademy = user.roles.find((role) => role.academy.id === academyId) || updatedUser?.roles.find((role) => role.academy.id === academyId);
