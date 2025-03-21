@@ -676,6 +676,8 @@ function CoursePage({ data, syllabus }) {
                     url={data?.course_translation?.video_url}
                     withThumbnail
                     withModal
+                    preview
+                    previewDuration={10}
                     thumbnailStyle={{
                       borderRadius: '17px 17px 0 0',
                     }}

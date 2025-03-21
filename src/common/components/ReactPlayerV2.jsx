@@ -2,12 +2,12 @@ import PropTypes from 'prop-types';
 import ReactPlayer from 'react-player';
 import useTranslation from 'next-translate/useTranslation';
 import { Box, Flex, Heading, IconButton, Image, Skeleton } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 
 function ReactPlayerV2({
-  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, containerStyle, autoPlay, loop, autoFullScreen, muted, volume, pictureInPicture, playerConfig,
+  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, containerStyle, autoPlay, loop, autoFullScreen, muted, volume, pictureInPicture, playerConfig, preview, previewDuration,
   ...rest
 }) {
   const { lang } = useTranslation('exercises');
@@ -15,9 +15,12 @@ function ReactPlayerV2({
   const isLoomVideo = url && url.includes('loom.com');
   const [showVideo, setShowVideo] = useState(false);
   const [videoThumbnail, setVideoThumbnail] = useState('');
+  const [isPreviewReady, setIsPreviewReady] = useState(false);
   const { backgroundColor, hexColor, featuredColor } = useStyle();
   const isExternalVideoProvider = isVideoFromDrive || isLoomVideo;
   const existsThumbnail = thumbnail && thumbnail.length > 0;
+  const previewPlayerRef = useRef(null);
+
   const getVideo = () => {
     if (isLoomVideo) {
       return url.replace('/share/', '/embed/');
@@ -27,13 +30,31 @@ function ReactPlayerV2({
   const videoUrl = getVideo();
 
   const handleButtonClick = () => {
+    // Reset preview player progress before showing modal
+    if (previewPlayerRef.current) {
+      previewPlayerRef.current.seekTo(0);
+    }
     setShowVideo(true);
   };
+
   const handleContainerClose = () => {
     if (closeOnOverlayClick) {
       setShowVideo(false);
     }
   };
+
+  const handlePreviewProgress = ({ playedSeconds }) => {
+    if (preview && previewDuration && playedSeconds >= previewDuration) {
+      if (previewPlayerRef.current) {
+        previewPlayerRef.current.seekTo(0);
+      }
+    }
+  };
+
+  const handlePreviewReady = () => {
+    setIsPreviewReady(true);
+  };
+
   const getThumbnail = async () => {
     if (url) {
       const resp = await fetch(`https://noembed.com/embed?url=${url}`);
@@ -60,20 +81,112 @@ function ReactPlayerV2({
             background="black"
             onClick={handleButtonClick}
             cursor="pointer"
-            backgroundPosition="center center"
-            backgroundSize="cover"
-            backgroundImage={`url(${thumbnail || videoThumbnail || ''})`}
+            position="relative"
+            overflow="hidden"
             borderRadius="4px"
             style={{ ...thumbnailStyle }}
           >
+            {preview ? (
+              <Box
+                position="absolute"
+                width="100%"
+                height="100%"
+                top={0}
+                left={0}
+                pointerEvents="none"
+                zIndex={0}
+              >
+                <ReactPlayer
+                  ref={previewPlayerRef}
+                  className={`react-player-preview ${className}`}
+                  url={videoUrl}
+                  playing={isPreviewReady}
+                  muted
+                  loop
+                  width="100%"
+                  height="100%"
+                  onReady={handlePreviewReady}
+                  onProgress={handlePreviewProgress}
+                  playsinline
+                  controls={false}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    ...iframeStyle,
+                  }}
+                  config={{
+                    youtube: {
+                      playerVars: {
+                        modestbranding: 1,
+                        controls: 0,
+                        showinfo: 0,
+                        rel: 0,
+                        playsinline: 1,
+                        autoplay: 1,
+                        disablekb: 1,
+                        iv_load_policy: 3,
+                      },
+                    },
+                    vimeo: {
+                      playerOptions: {
+                        background: true,
+                        controls: false,
+                        autoplay: true,
+                        keyboard: false,
+                        title: false,
+                        transparent: true,
+                      },
+                    },
+                    file: {
+                      attributes: {
+                        autoPlay: true,
+                        playsInline: true,
+                        controls: false,
+                      },
+                    },
+                  }}
+                  {...rest}
+                />
+              </Box>
+            ) : ((thumbnail || videoThumbnail) && (
+              <Box
+                position="absolute"
+                width="100%"
+                height="100%"
+                backgroundImage={`url(${thumbnail || videoThumbnail})`}
+                backgroundPosition="center center"
+                backgroundSize="cover"
+                zIndex={0}
+              />
+            ))}
             <IconButton
               aria-label="Play video"
               icon={<Icon icon="play2" width="40px" height="40px" borderRadius="6px" padding="4px" />}
+              position="relative"
+              zIndex={1}
+              backgroundColor="rgba(0, 0, 0, 0.5)"
+              _hover={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+              transition="all 0.2s"
             />
           </Flex>
 
-          <Box display={showVideo ? 'flex' : 'none'} className="video-overlay" onClick={handleContainerClose}>
-            <Box className="video-container" position="relative" onClick={(e) => e.stopPropagation()} background={featuredColor} padding="25px 25px" borderRadius="12px">
+          <Box
+            display={showVideo ? 'flex' : 'none'}
+            className="video-overlay"
+            onClick={handleContainerClose}
+          >
+            <Box
+              className="video-container"
+              position="relative"
+              onClick={(e) => e.stopPropagation()}
+              background={featuredColor}
+              borderRadius="12px"
+              padding="25px"
+              style={{ ...containerStyle }}
+            >
               {title?.length > 0 && (<Heading as="h2" size="xl" mb="25px">{title}</Heading>)}
               <IconButton
                 position="absolute"
@@ -84,6 +197,7 @@ function ReactPlayerV2({
                 background={backgroundColor}
                 onClick={() => setShowVideo(false)}
                 icon={<Icon icon="close" color={hexColor.black} width="25px" height="25px" />}
+                zIndex={2}
               />
               <ReactPlayer
                 className={`react-player ${className}`}
@@ -106,13 +220,24 @@ function ReactPlayerV2({
       ) : (
         <>
           {url && !isExternalVideoProvider && (
-            <Box position="relative" {...containerStyle}>
+            <Box
+              position="relative"
+              {...containerStyle}
+            >
               <ReactPlayer
                 className={`react-player ${className}`}
                 url={videoUrl}
                 light={existsThumbnail ? <Image src={thumbnail} width="100%" height="100%" /> : withThumbnail}
                 playing={withThumbnail || existsThumbnail || autoPlay}
-                playIcon={<Icon icon="play2" width="40px" height="40px" borderRadius="6px" padding="4px" position="absolute" />}
+                playIcon={(
+                  <IconButton
+                    aria-label="Play video"
+                    icon={<Icon icon="play2" width="40px" height="40px" borderRadius="6px" padding="4px" />}
+                    backgroundColor="rgba(0, 0, 0, 0.5)"
+                    _hover={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+                    transition="all 0.2s"
+                  />
+                )}
                 controls={controls}
                 width="100%"
                 volume={volume}
@@ -176,6 +301,8 @@ ReactPlayerV2.propTypes = {
   pictureInPicture: PropTypes.bool,
   volume: PropTypes.number,
   playerConfig: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
+  preview: PropTypes.bool,
+  previewDuration: PropTypes.number,
 };
 ReactPlayerV2.defaultProps = {
   url: '',
@@ -196,6 +323,8 @@ ReactPlayerV2.defaultProps = {
   volume: null,
   pictureInPicture: false,
   playerConfig: {},
+  preview: false,
+  previewDuration: 10,
 };
 
 export default ReactPlayerV2;
