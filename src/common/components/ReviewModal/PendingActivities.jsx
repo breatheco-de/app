@@ -11,7 +11,7 @@ import useCohortHandler from '../../hooks/useCohortHandler';
 import useStyle from '../../hooks/useStyle';
 import Module from '../../../js_modules/moduleMap/module';
 
-function PendingActivities({ cohortSlug }) {
+function PendingActivities({ cohortSlug, setStage }) {
   const { t } = useTranslation('dashboard');
 
   const { hexColor, featuredLight, fontColor } = useStyle();
@@ -40,6 +40,7 @@ function PendingActivities({ cohortSlug }) {
           taskTodo={taskTodo}
           showWarning={false}
           cohortSlug={cohortSlug}
+          setStage={setStage}
         />
       ))}
     </Box>
@@ -48,10 +49,12 @@ function PendingActivities({ cohortSlug }) {
 
 PendingActivities.propTypes = {
   cohortSlug: PropTypes.string,
+  setStage: PropTypes.func,
 };
 
 PendingActivities.defaultProps = {
   cohortSlug: null,
+  setStage: null,
 };
 
 export default PendingActivities;

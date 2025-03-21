@@ -54,6 +54,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
     cohortsAssignments,
     setCohortsAssingments,
     handleOpenReviewModal,
+    getMandatoryProjects,
   } = useCohortHandler();
 
   const cohortColor = cohort.color || hexColor.blueDefault;
@@ -93,12 +94,14 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
       const typesPerModule = Object.keys(assignmentsCount);
       const moduleTotalAssignments = typesPerModule.reduce((acc, curr) => assignmentsCount[curr].total + acc, 0);
       const moduleDoneAssignments = typesPerModule.reduce((acc, curr) => assignmentsCount[curr].done + acc, 0);
+      const hasPendingRevisions = typesPerModule.some((taskType) => assignmentsCount[taskType].pendingRevision > 0);
       const isStarted = module.filteredContent.length > 0;
 
       modulesDict[module.id] = {
         moduleTotalAssignments,
         moduleDoneAssignments,
         assignmentsCount,
+        hasPendingRevisions,
         isStarted,
       };
     });
@@ -112,6 +115,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
     const allModules = Object.values(modulesProgress);
     const totalAssignments = allModules.reduce((acc, curr) => curr.moduleTotalAssignments + acc, 0);
     const doneAssignments = allModules.reduce((acc, curr) => curr.moduleDoneAssignments + acc, 0);
+    const hasPendingRevisions = allModules.some((module) => module.hasPendingRevisions);
 
     const percentage = cohort.cohort_user.educational_status === 'GRADUATED' ? 100 : Math.floor((doneAssignments * 100) / 100);
 
@@ -122,6 +126,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
       doneAssignments,
       percentage,
       isCohortStarted,
+      hasPendingRevisions,
     };
   }, [modulesProgress]);
 
@@ -274,6 +279,9 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
     }
   }, [certificate]);
 
+  const mandatoryProjects = getMandatoryProjects(cohort.slug);
+  const { hasPendingRevisions } = cohortProgress;
+
   return (
     <>
       <Accordion defaultIndex={openByDefault && 0} allowToggle>
@@ -302,12 +310,14 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
                           {t('modules-count', { count: modules?.length })}
                         </Text>
                       </Box>
-                      <Button maxHeight="28px" onClick={showFeedback} padding="5px 7px" borderRadius="27px" background="yellow.light" display="flex" gap="5px" alignItems="center" fontWeight="400">
-                        <Icon icon="comment" width="14px" height="14px" color={hexColor.blueDefault} />
-                        <Text as="span" color="black">
-                          {t('feedback-pending')}
-                        </Text>
-                      </Button>
+                      {mandatoryProjects.length > 0 && (
+                        <Button maxHeight="28px" onClick={showFeedback} padding="5px 7px" borderRadius="27px" background="yellow.light" display="flex" gap="5px" alignItems="center" fontWeight="400">
+                          <Icon icon="comment" width="14px" height="14px" color={hexColor.blueDefault} />
+                          <Text as="span" color="black">
+                            {t(hasPendingRevisions ? 'feedback-pending' : 'pending-activities')}
+                          </Text>
+                        </Button>
+                      )}
                     </Box>
                   </Box>
                   {cohortProgress?.isCohortStarted && (

@@ -6,6 +6,7 @@
   "moduleMap": "Mapa de módulos",
   "module": "Módulo",
   "modules-count": "{{count}} Módulos",
+  "pending-activities": "Actividades pendientes",
   "feedback-pending": "Feedback pendiente para revisión",
   "path-to-claim": "Vía para reclamar tu certificado",
   "open": "Abrir",

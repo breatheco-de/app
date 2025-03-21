@@ -343,7 +343,7 @@ function useCohortHandler() {
   };
 
   const updateAssignment = async ({
-    task, closeSettings, githubUrl, taskStatus,
+    task, githubUrl, taskStatus,
   }) => {
     // Task case
     const { cohort, ...taskData } = task;
@@ -400,7 +400,6 @@ function useCohortHandler() {
           duration: 6000,
           isClosable: true,
         });
-        closeSettings();
       } else {
         toast({
           position: 'top',
@@ -409,7 +408,6 @@ function useCohortHandler() {
           duration: 5000,
           isClosable: true,
         });
-        closeSettings();
       }
     } catch (error) {
       console.log(error);
@@ -420,7 +418,27 @@ function useCohortHandler() {
         duration: 5000,
         isClosable: true,
       });
-      closeSettings();
+    }
+  };
+
+  const changeStatusAssignment = async (event, task, taskStatus) => {
+    if (task?.slug || task?.associated_slug) {
+      event.preventDefault();
+      reportDatalayer({
+        dataLayer: {
+          event: 'assignment_status_updated',
+          task_status: taskStatus,
+          task_id: task.id,
+          task_title: task.title,
+          task_associated_slug: task.associated_slug,
+          task_type: task.task_type,
+          task_revision_status: task.revision_status,
+          agent: getBrowserInfo(),
+        },
+      });
+      await updateAssignment({
+        task, taskStatus,
+      });
     }
   };
 
@@ -565,6 +583,7 @@ function useCohortHandler() {
     sortedAssignments,
     handleOpenReviewModal,
     handleCloseReviewModal,
+    changeStatusAssignment,
     ...state,
   };
 }

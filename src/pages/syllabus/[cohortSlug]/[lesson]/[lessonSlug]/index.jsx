@@ -389,17 +389,10 @@ function SyllabusContent() {
     }
   };
 
-  const changeStatusAssignment = async (event, task, taskStatus) => {
-    event.preventDefault();
-    await updateAssignment({
-      task, taskStatus, closeSettings,
-    });
-  };
-
   const sendProject = async ({ task, githubUrl, taskStatus }) => {
     setShowModal(true);
     await updateAssignment({
-      task, closeSettings, githubUrl, taskStatus,
+      task, githubUrl, taskStatus,
     });
   };
 
@@ -1188,7 +1181,6 @@ function SyllabusContent() {
                                 allowText
                                 currentTask={currentTask}
                                 sendProject={sendProject}
-                                changeStatusAssignment={changeStatusAssignment}
                                 currentAssetData={currentAsset}
                                 toggleSettings={toggleSettings}
                                 closeSettings={closeSettings}
@@ -1342,7 +1334,6 @@ function SyllabusContent() {
                                   variant="rounded"
                                   currentTask={currentTask}
                                   sendProject={sendProject}
-                                  changeStatusAssignment={changeStatusAssignment}
                                   currentAssetData={currentAsset}
                                   toggleSettings={toggleSettings}
                                   closeSettings={closeSettings}
@@ -1441,7 +1432,6 @@ function SyllabusContent() {
                 currentTask={currentTask}
                 hasPendingSubtasks={hasPendingSubtasks}
                 sendProject={sendProject}
-                changeStatusAssignment={changeStatusAssignment}
                 togglePendingSubtasks={handleNavigateToLastPendingSubtask}
                 toggleSettings={toggleSettings}
                 closeSettings={closeSettings}
@@ -1595,7 +1585,6 @@ function SyllabusContent() {
         currentTask={reviewModalState.currentTask}
         fileData={reviewModalState.fileData}
         isStudent
-        changeStatusAssignment={changeStatusAssignment}
       />
     </>
   );

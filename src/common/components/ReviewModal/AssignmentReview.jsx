@@ -35,7 +35,6 @@ function AssignmentReview({
   contextData,
   setStage,
   rejectOrApprove,
-  changeStatusAssignment,
   updpateAssignment,
   onClose,
   resetState,
@@ -49,7 +48,7 @@ function AssignmentReview({
   const [currentAssetData, setCurrentAssetData] = useState(null);
   const [fileData, setFileData] = useState();
   const { isAuthenticatedWithRigobot } = useAuth();
-  const { cohortSession, updateAssignment } = useCohortHandler();
+  const { cohortSession, updateAssignment, changeStatusAssignment } = useCohortHandler();
 
   const commitFiles = contextData?.commitFiles || {};
   const codeRevisions = contextData?.code_revisions || [];
@@ -345,6 +344,7 @@ function AssignmentReview({
                     }));
                     changeStatusAssignment(event, currentTask, PENDING)
                       .finally(() => {
+                        closeSettings();
                         setLoaders((prevState) => ({
                           ...prevState,
                           isRemovingDelivery: false,
@@ -416,7 +416,6 @@ AssignmentReview.propTypes = {
   contextData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   setStage: PropTypes.func,
   rejectOrApprove: PropTypes.func,
-  changeStatusAssignment: PropTypes.func,
   updpateAssignment: PropTypes.func,
   onClose: PropTypes.func,
   resetState: PropTypes.func,
@@ -434,7 +433,6 @@ AssignmentReview.defaultProps = {
   contextData: {},
   setStage: () => {},
   rejectOrApprove: () => {},
-  changeStatusAssignment: () => {},
   updpateAssignment: () => {},
   onClose: () => {},
   resetState: () => {},

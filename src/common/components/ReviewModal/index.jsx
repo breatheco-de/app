@@ -40,7 +40,7 @@ const inputLimit = 450;
 function ReviewModal({
   isExternal, externalFiles, isOpen, isStudent, externalData, defaultStage,
   fixedStage, onClose, updpateAssignment, currentTask, cohortSlug,
-  projectLink, changeStatusAssignment, disableRate, disableLiking, ...rest }) {
+  projectLink, disableRate, disableLiking, ...rest }) {
   const { t } = useTranslation('assignments');
   const { isAuthenticated, isAuthenticatedWithRigobot, user } = useAuth();
   const toast = useToast();
@@ -62,10 +62,13 @@ function ReviewModal({
     my_revisions: [],
     revision_content: {},
   });
-  const [stageHistory, setStageHistory] = useState({
+
+  const initialStage = {
     current: defaultStage,
     previous: {},
-  });
+  };
+
+  const [stageHistory, setStageHistory] = useState(initialStage);
   const { hexColor } = useStyle();
   const revisionStatus = currentTask?.revision_status;
   const hasBeenApproved = revisionStatus === APPROVED;
@@ -74,7 +77,7 @@ function ReviewModal({
   const stage = stageHistory?.current;
 
   const isStageWithDefaultStyles = hasBeenApproved || (stage === stages.initial || stage === stages.approve_or_reject_code_revision || noFilesToReview);
-  const showGoBackButton = stage !== stages.initial && !fixedStage;
+  const showGoBackButton = Object.keys(stageHistory.previous).length > 1;
 
   const revisionStatusUpperCase = {
     approve: APPROVED,
@@ -258,6 +261,7 @@ function ReviewModal({
   const resetState = () => {
     setContextData({});
     setStage(stages.initial);
+    setStageHistory(initialStage);
     setReviewStatus('');
     setSelectedText('');
   };
@@ -430,7 +434,6 @@ function ReviewModal({
           contextData={contextData}
           setStage={setStage}
           rejectOrApprove={rejectOrApprove}
-          changeStatusAssignment={changeStatusAssignment}
           updpateAssignment={updpateAssignment}
           onClose={onClose}
           resetState={resetState}
@@ -483,7 +486,7 @@ function ReviewModal({
       )}
 
       {stage === stages.pending_activities && (
-        <PendingActivities cohortSlug={cohortSlug} />
+        <PendingActivities cohortSlug={cohortSlug} setStage={setStage} />
       )}
     </SimpleModal>
   );
@@ -498,7 +501,6 @@ ReviewModal.propTypes = {
   updpateAssignment: PropTypes.func,
   externalData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   isStudent: PropTypes.bool,
-  changeStatusAssignment: PropTypes.func,
   fixedStage: PropTypes.bool,
   disableRate: PropTypes.bool,
   disableLiking: PropTypes.bool,
@@ -514,7 +516,6 @@ ReviewModal.defaultProps = {
   updpateAssignment: () => { },
   externalData: null,
   isStudent: false,
-  changeStatusAssignment: () => { },
   fixedStage: false,
   disableRate: false,
   disableLiking: false,

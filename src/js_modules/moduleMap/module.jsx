@@ -14,12 +14,9 @@ import ModuleComponent from '../../common/components/Module';
 import bc from '../../common/services/breathecode';
 import ShareButton from '../../common/components/ShareButton';
 import Icon from '../../common/components/Icon';
-import { reportDatalayer } from '../../utils/requests';
-import { getBrowserInfo } from '../../utils';
-// import { usePersistent } from '../../common/hooks/usePersistent';
 
 function Module({
-  data, currIndex, isDisabled, onDisabledClick, variant, showWarning, cohortSlug,
+  data, currIndex, isDisabled, onDisabledClick, variant, showWarning, cohortSlug, setStage,
 }) {
   const { t, lang } = useTranslation('dashboard');
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -87,7 +84,7 @@ function Module({
     if (assetResp?.status < 400) {
       const assetData = await assetResp.data;
       if (assetData?.translations?.[lang]) {
-        const localeResp = await bc.lesson().getAsset(assetResp?.data?.translations[lang]);
+        const localeResp = await bc.lesson().getAsset(assetResp.data.translations[lang]);
         const localeData = await localeResp.data;
         if (localeResp?.status < 400) {
           setCurrentAssetData(localeData);
@@ -131,33 +128,12 @@ function Module({
     }
   };
 
-  const changeStatusAssignment = async (event, task, taskStatus) => {
-    if (currentTask?.slug || currentTask?.associated_slug) {
-      event.preventDefault();
-      reportDatalayer({
-        dataLayer: {
-          event: 'assignment_status_updated',
-          task_status: taskStatus,
-          task_id: task.id,
-          task_title: task.title,
-          task_associated_slug: task.associated_slug,
-          task_type: task.task_type,
-          task_revision_status: task.revision_status,
-          agent: getBrowserInfo(),
-        },
-      });
-      await updateAssignment({
-        task, taskStatus, closeSettings,
-      });
-    }
-  };
-
   const sendProject = async ({
     task, githubUrl, taskStatus,
   }) => {
     setShowModal(true);
     await updateAssignment({
-      task, closeSettings, githubUrl, taskStatus,
+      task, githubUrl, taskStatus,
     });
   };
 
@@ -217,13 +193,13 @@ function Module({
           <ButtonHandlerByTaskStatus
             currentTask={currentTask}
             sendProject={sendProject}
-            changeStatusAssignment={changeStatusAssignment}
             toggleSettings={toggleSettings}
             closeSettings={closeSettings}
             settingsOpen={settingsOpen}
             handleOpen={handleOpen}
             currentAssetData={currentAssetData}
             fileData={fileData}
+            setStage={setStage}
           />
         ) : (
           <Button variant="link" gridGap="4px" onClick={() => onDisabledClick({ ...data, title: taskTranslations?.title || title })}>
@@ -259,6 +235,7 @@ Module.propTypes = {
   variant: PropTypes.string,
   showWarning: PropTypes.bool,
   cohortSlug: PropTypes.string,
+  setStage: PropTypes.func,
 };
 
 Module.defaultProps = {
@@ -269,6 +246,7 @@ Module.defaultProps = {
   variant: 'default',
   showWarning: true,
   cohortSlug: null,
+  setStage: null,
 };
 
 export default memo(Module);

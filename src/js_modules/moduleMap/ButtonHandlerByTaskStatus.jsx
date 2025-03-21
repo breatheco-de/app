@@ -9,12 +9,12 @@ import PopoverTaskHandler, { IconByTaskStatus, textByTaskStatus } from '../../co
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 
 export function ButtonHandlerByTaskStatus({
-  onlyPopoverDialog, currentTask, sendProject, changeStatusAssignment, toggleSettings, closeSettings,
+  onlyPopoverDialog, currentTask, sendProject, toggleSettings, closeSettings,
   settingsOpen, allowText, onClickHandler, currentAssetData, fileData, handleOpen, isGuidedExperience,
-  hasPendingSubtasks, togglePendingSubtasks,
+  hasPendingSubtasks, togglePendingSubtasks, setStage,
 }) {
   const { hexColor } = useStyle();
-  const { updateTaskReadAt, handleOpenReviewModal } = useCohortHandler();
+  const { updateTaskReadAt, handleOpenReviewModal, changeStatusAssignment } = useCohortHandler();
 
   const [loaders, setLoaders] = useState({
     isFetchingCommitFiles: false,
@@ -35,10 +35,14 @@ export function ButtonHandlerByTaskStatus({
         isOpeningReviewModal: true,
       }));
       await updateTaskReadAt(currentTask);
+      if (setStage) {
+        setStage('initial');
+      }
       handleOpenReviewModal({
         currentTask,
         fileData,
         cohortSlug: currentTask.cohort?.slug,
+        defaultStage: 'initial',
       });
       setLoaders((prevState) => ({
         ...prevState,
@@ -55,6 +59,7 @@ export function ButtonHandlerByTaskStatus({
       }));
       changeStatusAssignment(event, currentTask)
         .finally(() => {
+          closeSettings();
           setLoaders((prevState) => ({
             ...prevState,
             isChangingTaskStatus: false,
@@ -219,7 +224,6 @@ export function ButtonHandlerByTaskStatus({
 ButtonHandlerByTaskStatus.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   sendProject: PropTypes.func.isRequired,
-  changeStatusAssignment: PropTypes.func.isRequired,
   toggleSettings: PropTypes.func,
   togglePendingSubtasks: PropTypes.func,
   closeSettings: PropTypes.func.isRequired,
@@ -232,6 +236,7 @@ ButtonHandlerByTaskStatus.propTypes = {
   onlyPopoverDialog: PropTypes.bool,
   isGuidedExperience: PropTypes.bool,
   hasPendingSubtasks: PropTypes.bool,
+  setStage: PropTypes.func,
 };
 
 ButtonHandlerByTaskStatus.defaultProps = {
@@ -246,4 +251,5 @@ ButtonHandlerByTaskStatus.defaultProps = {
   onlyPopoverDialog: false,
   isGuidedExperience: false,
   hasPendingSubtasks: undefined,
+  setStage: null,
 };
