@@ -4,6 +4,7 @@ import {
   SET_TASK_COHORT_NULL,
   SET_USER_CAPABILITIES,
   SET_COHORTS_ASSIGNMENTS,
+  SET_REVIEW_MODAL_STATE,
 } from '../types';
 import { usePersistent } from '../../hooks/usePersistent';
 
@@ -49,12 +50,22 @@ const useCohortAction = () => {
     });
   };
 
+  const setReviewModalState = (payload) => {
+    dispatch({
+      type: SET_REVIEW_MODAL_STATE,
+      payload: {
+        reviewModalState: payload,
+      },
+    });
+  };
+
   return {
     state,
     setCohortSession,
     setTaskCohortNull,
     setUserCapabilities,
     setCohortsAssingments,
+    setReviewModalState,
   };
 };
 

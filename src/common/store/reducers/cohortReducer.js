@@ -3,6 +3,7 @@ import {
   SET_TASK_COHORT_NULL,
   SET_USER_CAPABILITIES,
   SET_COHORTS_ASSIGNMENTS,
+  SET_REVIEW_MODAL_STATE,
 } from '../types';
 
 const initialState = {
@@ -10,6 +11,13 @@ const initialState = {
   cohortsAssignments: {},
   taskCohortNull: [],
   userCapabilities: [],
+  reviewModalState: {
+    isOpen: false,
+    currentTask: null,
+    fileData: null,
+    defaultStage: undefined,
+    cohortSlug: undefined,
+  },
 };
 
 const cohortHandlerReducer = (state = initialState, action) => {
@@ -40,6 +48,13 @@ const cohortHandlerReducer = (state = initialState, action) => {
       return {
         ...state,
         cohortsAssignments,
+      };
+    }
+    case SET_REVIEW_MODAL_STATE: {
+      const { reviewModalState } = action.payload;
+      return {
+        ...state,
+        reviewModalState,
       };
     }
     default: {

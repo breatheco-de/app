@@ -9,7 +9,6 @@ import {
   Img, Modal, ModalBody, ModalCloseButton, ModalContent,
   ModalHeader, ModalOverlay, Button, Accordion, AccordionItem, AccordionButton, AccordionPanel,
 } from '@chakra-ui/react';
-// import io from 'socket.io-client';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import {
@@ -28,10 +27,8 @@ import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
 import ModuleMap from '../../../../../js_modules/moduleMap/index';
-import Module from '../../../../../js_modules/moduleMap/module';
 import Header from '../../../../../js_modules/Cohort/Header';
 import CohortModules from '../../../../../js_modules/Cohort/CohortModules';
-import PendingActivitiesModal from '../../../../../js_modules/Cohort/PendingActivitiesModal';
 import CohortSideBar from '../../../../../common/components/CohortSideBar';
 import Icon from '../../../../../common/components/Icon';
 import SupportSidebar from '../../../../../common/components/SupportSidebar';
@@ -58,6 +55,7 @@ import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
 import useStyle from '../../../../../common/hooks/useStyle';
 import Feedback from '../../../../../common/components/Feedback';
+import ReviewModal, { stages } from '../../../../../common/components/ReviewModal';
 
 function Dashboard() {
   const { t, lang } = useTranslation('dashboard');
@@ -88,10 +86,10 @@ function Dashboard() {
   const {
     state, getCohortUserCapabilities, getCohortData, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, setCohortSession,
-    cohortProgram, taskTodo, addTasks, sortedAssignments,
+    cohortProgram, taskTodo, addTasks, sortedAssignments, handleOpenReviewModal, handleCloseReviewModal,
   } = useCohortHandler();
 
-  const { cohortSession, taskCohortNull, cohortsAssignments } = state;
+  const { cohortSession, taskCohortNull, cohortsAssignments, reviewModalState } = state;
 
   const isAvailableAsSaas = cohortSession?.available_as_saas;
   const hasMicroCohorts = cohortSession?.micro_cohorts?.length > 0;
@@ -516,7 +514,7 @@ function Dashboard() {
               fontWeight="700"
               fontSize="15px"
               height="20px"
-              onClick={() => setShowMandatoryModal(true)}
+              onClick={() => handleOpenReviewModal({ defaultStage: stages.pending_activities, fixedStage: true })}
               _active={{ color: 'black' }}
             >
               {t('deliverProject.see-mandatory-projects')}
@@ -590,6 +588,7 @@ function Dashboard() {
                               modules={cohortsAssignments[microCohort.slug]?.modules}
                               tasks={cohortsAssignments[microCohort.slug]?.tasks}
                               mainCohort={cohortSession}
+                              onOpenReviewModal={handleOpenReviewModal}
                               certificate={certificates.find((cert) => cert.cohort.id === microCohort.id)}
                             />
                           ))
@@ -1038,9 +1037,11 @@ function Dashboard() {
           </ModalContent>
         </Modal>
       )}
-      <PendingActivitiesModal
-        isOpen={showMandatoryModal}
-        onClose={() => setShowMandatoryModal(false)}
+      <ReviewModal
+        isOpen={reviewModalState.isOpen}
+        isStudent
+        onClose={handleCloseReviewModal}
+        {...reviewModalState}
       />
       <ModalInfo
         isOpen={modalIsOpen}

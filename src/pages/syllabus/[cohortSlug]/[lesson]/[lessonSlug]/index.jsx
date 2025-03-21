@@ -44,6 +44,7 @@ import { parseQuerys } from '../../../../../utils/url';
 import completions from './completion-jobs.json';
 import { generateUserContext } from '../../../../../utils/rigobotContext';
 import SubTasks from '../../../../../common/components/MarkDownParser/SubTasks';
+import ReviewModal from '../../../../../common/components/ReviewModal';
 
 function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
@@ -95,7 +96,7 @@ function SyllabusContent() {
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
     getCohortUserCapabilities, getCohortData, cohortSession, sortedAssignments, setCohortSession, taskTodo,
-    updateAssignment, startDay, updateTask,
+    updateAssignment, startDay, updateTask, reviewModalState, handleCloseReviewModal,
   } = useCohortHandler();
   // const isAvailableAsSaas = false;
   const isAvailableAsSaas = cohortSession?.available_as_saas;
@@ -1588,6 +1589,14 @@ function SyllabusContent() {
           <MarkDownParser content={extendedInstructions?.content || ''} />
         </SimpleModal>
       )}
+      <ReviewModal
+        isOpen={reviewModalState.isOpen}
+        onClose={handleCloseReviewModal}
+        currentTask={reviewModalState.currentTask}
+        fileData={reviewModalState.fileData}
+        isStudent
+        changeStatusAssignment={changeStatusAssignment}
+      />
     </>
   );
 }

@@ -22,6 +22,7 @@ function useCohortHandler() {
     setUserCapabilities,
     setMyCohorts,
     setCohortsAssingments,
+    setReviewModalState,
     state,
   } = useCohortAction();
 
@@ -509,6 +510,36 @@ function useCohortHandler() {
     return mandatoryProjects;
   };
 
+  const handleOpenReviewModal = (options = {}) => {
+    const {
+      currentTask = null,
+      fileData = null,
+      defaultStage = undefined,
+      cohortSlug = undefined,
+      fixedStage = false,
+    } = options;
+
+    setReviewModalState({
+      isOpen: true,
+      currentTask,
+      fileData,
+      defaultStage,
+      cohortSlug,
+      fixedStage,
+    });
+  };
+
+  const handleCloseReviewModal = () => {
+    setReviewModalState({
+      isOpen: false,
+      currentTask: null,
+      fileData: null,
+      defaultStage: undefined,
+      cohortSlug: undefined,
+      fixedStage: false,
+    });
+  };
+
   return {
     setCohortSession,
     setMyCohorts,
@@ -532,6 +563,8 @@ function useCohortHandler() {
     startDay,
     getCohortsModules,
     sortedAssignments,
+    handleOpenReviewModal,
+    handleCloseReviewModal,
     ...state,
   };
 }

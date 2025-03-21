@@ -482,15 +482,14 @@ function PopoverTaskHandler({
   closeSettings,
   toggleSettings,
   buttonChildren,
-  acceptTC,
-  handleAcceptTC,
 }) {
   const { hexColor } = useStyle();
   const taskIsApproved = allowText && currentTask?.revision_status === 'APPROVED';
   const isButtonDisabled = currentTask === null || taskIsApproved;
+  const [acceptTC, setAcceptTC] = useState(false);
 
   const handleCloseFile = () => {
-    handleAcceptTC(false);
+    setAcceptTC(false);
     closeSettings();
   };
 
@@ -531,7 +530,7 @@ function PopoverTaskHandler({
           onClickHandler={onClickHandler}
           allowText={allowText}
           closeSettings={closeSettings}
-          handleAcceptTC={handleAcceptTC}
+          handleAcceptTC={setAcceptTC}
           acceptTC={acceptTC}
         />
       </Popover>
@@ -585,7 +584,7 @@ function PopoverTaskHandler({
         sendProject={sendProject}
         onClickHandler={onClickHandler}
         closeSettings={closeSettings}
-        handleAcceptTC={handleAcceptTC}
+        handleAcceptTC={setAcceptTC}
         acceptTC={acceptTC}
       />
     </Popover>

@@ -4,7 +4,6 @@ import {
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import useStyle from '../../common/hooks/useStyle';
-import ReviewModal from '../../common/components/ReviewModal';
 import Icon from '../../common/components/Icon';
 import PopoverTaskHandler, { IconByTaskStatus, textByTaskStatus } from '../../common/components/PopoverTaskHandler';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
@@ -15,9 +14,8 @@ export function ButtonHandlerByTaskStatus({
   hasPendingSubtasks, togglePendingSubtasks,
 }) {
   const { hexColor } = useStyle();
-  const { updateTaskReadAt } = useCohortHandler();
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [acceptTC, setAcceptTC] = useState(false);
+  const { updateTaskReadAt, handleOpenReviewModal } = useCohortHandler();
+
   const [loaders, setLoaders] = useState({
     isFetchingCommitFiles: false,
     isOpeningReviewModal: false,
@@ -37,7 +35,11 @@ export function ButtonHandlerByTaskStatus({
         isOpeningReviewModal: true,
       }));
       await updateTaskReadAt(currentTask);
-      setIsReviewModalOpen(true);
+      handleOpenReviewModal({
+        currentTask,
+        fileData,
+        cohortSlug: currentTask.cohort?.slug,
+      });
       setLoaders((prevState) => ({
         ...prevState,
         isOpeningReviewModal: false,
@@ -118,18 +120,6 @@ export function ButtonHandlerByTaskStatus({
               <IconByTaskStatus currentTask={currentTask} noDeliveryFormat={noDeliveryFormat} />
             )}
           </Button>
-
-          <ReviewModal
-            isOpen={isReviewModalOpen}
-            isStudent
-            changeStatusAssignment={changeStatusAssignment}
-            externalFiles={fileData}
-            currentTask={currentTask}
-            projectLink={currentTask?.github_url}
-            onClose={() => setIsReviewModalOpen(false)}
-            acceptTC={acceptTC}
-            handleAcceptTC={setAcceptTC}
-          />
         </>
       );
     }
@@ -173,8 +163,6 @@ export function ButtonHandlerByTaskStatus({
         allowText={allowText}
         closeSettings={closeSettings}
         toggleSettings={toggleSettings}
-        acceptTC={acceptTC}
-        handleAcceptTC={setAcceptTC}
       />
     );
   }
@@ -245,6 +233,7 @@ ButtonHandlerByTaskStatus.propTypes = {
   isGuidedExperience: PropTypes.bool,
   hasPendingSubtasks: PropTypes.bool,
 };
+
 ButtonHandlerByTaskStatus.defaultProps = {
   currentTask: null,
   allowText: false,

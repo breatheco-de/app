@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { useEffect, useState } from 'react';
 import { Box, Button, Flex, Link, Avatar } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
@@ -35,25 +36,28 @@ function Feedback({ storyConfig }) {
   };
 
   const handleOpen = (data) => {
-    const isFileCodeBase64 = base64regex.test(data?.file?.content);
-    const isReviewCodeBase64 = base64regex.test(data?.original_code);
-    const fileContent = isFileCodeBase64 ? decodeBase64(data?.file?.content) : data?.file?.content;
-    const originalCode = isReviewCodeBase64 ? decodeBase64(data.original_code) : data.original_code;
-    setSelectedData({
-      code_revisions: codeRevisions,
-      commitFile: {
-        ...data?.file,
-        path: data?.file?.name,
-        url: data?.file?.file_url,
-        name: data?.file?.name,
-        code: fileContent,
-      },
-      revision_content: {
-        ...data,
-        code: originalCode,
-      },
-    });
-    setIsOpen(true);
+    if (data) {
+      const { file, original_code } = data;
+      const isFileCodeBase64 = base64regex.test(file?.content);
+      const isReviewCodeBase64 = base64regex.test(original_code);
+      const fileContent = isFileCodeBase64 ? decodeBase64(file?.content) : file?.content;
+      const originalCode = isReviewCodeBase64 ? decodeBase64(original_code) : original_code;
+      setSelectedData({
+        code_revisions: codeRevisions,
+        commitFile: {
+          ...file,
+          path: file?.name,
+          url: file?.file_url,
+          name: file?.name,
+          code: fileContent,
+        },
+        revision_content: {
+          ...data,
+          code: originalCode,
+        },
+      });
+      setIsOpen(true);
+    }
   };
 
   const getCodeRevisions = async () => {

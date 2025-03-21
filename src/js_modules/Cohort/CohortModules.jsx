@@ -18,7 +18,6 @@ import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import { es, en } from 'date-fns/locale';
 import { useReward } from 'react-rewards';
-import PendingActivitiesModal from './PendingActivitiesModal';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
@@ -26,6 +25,7 @@ import ShareButton from '../../common/components/ShareButton';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import Progress from '../../common/components/ProgressBar/Progress';
+import { stages } from '../../common/components/ReviewModal';
 
 const locales = { es, en };
 
@@ -45,11 +45,16 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
   const [loadingStartCourse, setLoadingStartCourse] = useState(false);
   const [loadingModule, setLoadingModule] = useState(null);
   const [shareModal, setShareModal] = useState(false);
-  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const router = useRouter();
   const { backgroundColor, hexColor } = useStyle();
   const { colorMode } = useColorMode();
-  const { serializeModulesMap, startDay, cohortsAssignments, setCohortsAssingments } = useCohortHandler();
+  const {
+    serializeModulesMap,
+    startDay,
+    cohortsAssignments,
+    setCohortsAssingments,
+    handleOpenReviewModal,
+  } = useCohortHandler();
 
   const cohortColor = cohort.color || hexColor.blueDefault;
   const isGraduated = !!certificate;
@@ -258,7 +263,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
 
   const showFeedback = (e) => {
     e.stopPropagation();
-    setShowFeedbackModal(true);
+    handleOpenReviewModal({ defaultStage: stages.pending_activities, cohortSlug: cohort.slug, fixedStage: true });
   };
 
   useEffect(() => {
@@ -429,9 +434,10 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
                     const moduleDoneAssignments = modulesProgress?.[module.id].moduleDoneAssignments;
 
                     const typesPerModule = Object.keys(assignmentsCount);
+                    const moduleLabel = getModuleLabel(module);
 
                     return (
-                      <Box key={getModuleLabel(module)} onClick={() => redirectToModule(module)} background={backgroundColor} cursor="pointer" _hover={{ opacity: 0.7 }} display="flex" alignItems="center" justifyContent="space-between" padding="8px" borderRadius="8px">
+                      <Box key={moduleLabel} onClick={() => redirectToModule(module)} background={backgroundColor} cursor="pointer" _hover={{ opacity: 0.7 }} display="flex" alignItems="center" justifyContent="space-between" padding="8px" borderRadius="8px">
                         <Box display="flex" alignItems="center" gap="16px">
                           {loadingModule === module.id ? (
                             <Spinner color={cohortColor} />
@@ -445,14 +451,14 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
                             </>
                           )}
                           <Text size="md">
-                            {getModuleLabel(module)}
+                            {moduleLabel}
                           </Text>
                         </Box>
                         <Box display={{ base: 'none', sm: 'flex' }} alignItems="center" gap="16px">
                           {typesPerModule.map((taskType) => {
                             const { icon, total, done, pendingRevision } = assignmentsCount[taskType];
                             return (
-                              <Box background={colorVariations[colorMode].mode4} padding="4px 8px" borderRadius="18px" display="flex" gap="5px" alignItems="center" position="relative">
+                              <Box key={`${moduleLabel}-${taskType}`} background={colorVariations[colorMode].mode4} padding="4px 8px" borderRadius="18px" display="flex" gap="5px" alignItems="center" position="relative">
                                 <Icon icon={icon} color={cohortColor} width="13px" height="13px" />
                                 <Text>
                                   {`${done}/`}
@@ -497,11 +503,6 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
           )}
         </AccordionItem>
       </Accordion>
-      <PendingActivitiesModal
-        isOpen={showFeedbackModal}
-        onClose={() => setShowFeedbackModal(false)}
-        cohortSlug={cohort.slug}
-      />
     </>
   );
 }

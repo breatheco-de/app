@@ -27,7 +27,6 @@ function Module({
   const { cohortSession, cohortsAssignments } = state;
   const [currentAssetData, setCurrentAssetData] = useState(null);
   const [fileData, setFileData] = useState(null);
-  const [, setUpdatedTask] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const { hexColor } = useStyle();
   const toast = useToast();
@@ -147,9 +146,6 @@ function Module({
           agent: getBrowserInfo(),
         },
       });
-      setUpdatedTask({
-        ...task,
-      });
       await updateAssignment({
         task, taskStatus, closeSettings,
       });
@@ -177,10 +173,10 @@ function Module({
   const langLink = lang !== 'en' ? `/${lang}` : '';
   const taskTranslations = lang === 'en' ? (data?.translations?.en || data?.translations?.us) : (data?.translations?.[lang] || {});
 
-  const baseLink = `${langLink}/syllabus/${cohortSlug || cohortSession.slug}/${data.type.toLowerCase()}/${taskTranslations?.slug || currentTask?.associated_slug}`;
+  const baseLink = `${langLink}/syllabus/${cohortSlug || cohortSession?.slug}/${data.type.toLowerCase()}/${taskTranslations?.slug || currentTask?.associated_slug}`;
   const generateLink = () => {
     if (cohortSlug) {
-      return `/main-cohort/${cohortSession.slug}${baseLink}`;
+      return `/main-cohort/${cohortSession?.slug}${baseLink}`;
     }
     return baseLink;
   };
@@ -264,6 +260,7 @@ Module.propTypes = {
   showWarning: PropTypes.bool,
   cohortSlug: PropTypes.string,
 };
+
 Module.defaultProps = {
   data: {},
   currIndex: 0,
