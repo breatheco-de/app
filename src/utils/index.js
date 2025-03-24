@@ -2,7 +2,6 @@
 import { addDays, format, isAfter } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { email as emailRegex } from './regex';
-
 const isWindow = typeof window !== 'undefined';
 
 const HAVE_SESSION = isWindow ? localStorage.getItem('accessToken') !== null : false;
