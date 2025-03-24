@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import Text from '../Text';
 import Icon from '../Icon';
 import bc from '../../services/breathecode';
@@ -12,6 +13,7 @@ import '@uiw/react-markdown-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
 import Heading from '../Heading';
 import MarkDownParser from '../MarkDownParser';
+import tomorrow from '../MarkDownParser/syntaxHighlighter/tomorrow';
 import { reportDatalayer } from '../../../utils/requests';
 import { getBrowserInfo } from '../../../utils';
 import useAuth from '../../hooks/useAuth';
@@ -270,7 +272,7 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
 
   return (
     <>
-      <Box flex={0.6} maxHeight="76vh" overflow="auto" onMouseUp={(isStudent || view !== views.initial) ? () => {} : handleSelectedText}>
+      <Box flex={0.6} maxHeight="76vh" overflow="auto" onMouseUp={(isStudent || view !== views.initial) ? () => { } : handleSelectedText}>
         {!repoData?.raw
           ? 'Loading...' : (
             <MarkdownEditor
@@ -281,7 +283,6 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
               style={{ height: 'auto', minWidth: '100%' }}
               visible={false}
               enableScroll
-              renderPreview={() => null}
               hideToolbar
               toolbars={[]}
             />
@@ -366,11 +367,19 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
                       <Text fontSize="18px" color="#fff" fontWeight={700} mb="14px">
                         {t('code-review.you-selected-the-code')}
                       </Text>
-                      <pre>
-                        <code className="language-bash">
-                          {selectedText}
-                        </code>
-                      </pre>
+                      <SyntaxHighlighter
+                        language={commitData?.file?.language || 'javascript'}
+                        style={tomorrow}
+                        customStyle={{
+                          padding: '16px',
+                          background: 'rgb(45, 45, 45)',
+                          border: 'none',
+                        }}
+                        codeTagProps={{ className: '' }}
+                        PreTag="div"
+                      >
+                        {selectedText.replace(/\n$/, '')}
+                      </SyntaxHighlighter>
                     </Box>
                   )}
 
@@ -391,9 +400,19 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
                       <MarkDownParser content={revisionContent?.comment} />
 
                       <Box fontSize="13px" color="#fff" padding="6px 16px" borderRadius="6px" whiteSpace="pre-wrap" overflow="auto" background="rgb(45, 45, 45)">
-                        <MarkDownParser
-                          content={`\`\`\`${revisionContent?.file?.language}${revisionContent?.code}\`\`\``}
-                        />
+                        <SyntaxHighlighter
+                          language={revisionContent?.file?.language || 'javascript'}
+                          style={tomorrow}
+                          customStyle={{
+                            padding: '16px',
+                            background: 'rgb(45, 45, 45)',
+                            border: 'none',
+                          }}
+                          codeTagProps={{ className: '' }}
+                          PreTag="div"
+                        >
+                          {revisionContent?.code?.replace(/```+$/, '')}
+                        </SyntaxHighlighter>
                       </Box>
                     </>
                   ) : (
@@ -425,15 +444,15 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
                   {!disableRate && (
                     <Flex flexDirection="column" gridGap="24px" mt="2rem">
                       {!revisionContent?.hasBeenReviewed && (
-                      <>
-                        {reviewRateStatus
-                          ? <Divider margin="18px 0 -8px 0" />
-                          : (
-                            <Box fontSize="18px" textAlign="center">
-                              {t('code-review.did-feedback-useful')}
-                            </Box>
-                          )}
-                      </>
+                        <>
+                          {reviewRateStatus
+                            ? <Divider margin="18px 0 -8px 0" />
+                            : (
+                              <Box fontSize="18px" textAlign="center">
+                                {t('code-review.did-feedback-useful')}
+                              </Box>
+                            )}
+                        </>
                       )}
                       <Box fontSize="14px" textAlign="center">
                         {(reviewRateStatus === null && !revisionContent?.hasBeenReviewed) && t('code-review.rate-comment')}
@@ -540,7 +559,7 @@ CodeReview.propTypes = {
 };
 CodeReview.defaultProps = {
   selectedText: '',
-  handleSelectedText: () => {},
+  handleSelectedText: () => { },
   isStudent: false,
   disableRate: false,
   isExternal: false,
