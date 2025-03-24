@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
   Button, FormControl, Stack, Box, Input, FormErrorMessage,
@@ -32,6 +32,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const [showPSW, setShowPSW] = useState(false);
   const [googleError, setGoogleError] = useState(false);
   const [step, setStep] = useState(1);
+  const passwordInputRef = useRef(null);
 
   const { login } = useAuth();
   const toast = useToast();
@@ -51,6 +52,12 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
       );
     }
   }, [query]);
+
+  useEffect(() => {
+    if (step === 2 && passwordInputRef.current) {
+      passwordInputRef.current.focus();
+    }
+  }, [step]);
 
   const validateEmail = async (email) => {
     try {
@@ -343,6 +350,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                         height="50px"
                         borderColor="gray.default"
                         borderRadius="3px"
+                        ref={passwordInputRef}
                       />
                       <InputRightElement width="2.5rem" top="5px" right="10px">
                         <Button
