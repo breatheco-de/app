@@ -18,7 +18,7 @@ function orderArrayByRole(array) {
 
 function Instructors({ isLoading, list, limit, tryRigobot, ...rest }) {
   const { t } = useTranslation('common');
-  const { featuredColor2 } = useStyle();
+  const { featuredColor3 } = useStyle();
   const intructorsToShow = list.length > limit ? orderArrayByRole(list.slice(0, limit)) : orderArrayByRole(list);
   const restInstructors = list.length - limit;
 
@@ -40,7 +40,7 @@ function Instructors({ isLoading, list, limit, tryRigobot, ...rest }) {
               max: 20,
             });
             return (
-              <Flex key={instructor?.user?.id} alignItems="center" gridGap="8px" minWidth="200px" padding="4px 8px" background={featuredColor2} borderRadius="43">
+              <Flex key={instructor?.user?.id} alignItems="center" gridGap="8px" minWidth="200px" padding="4px 8px" background={featuredColor3} borderRadius="43">
                 <Avatar src={avatarPicture || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`} />
                 <Flex flexDirection="column" gridGap="6px" mr="1rem">
                   <Text size="14px" fontWeight={700} lineHeight="normal">
@@ -61,7 +61,7 @@ function Instructors({ isLoading, list, limit, tryRigobot, ...rest }) {
             gridGap="8px"
             minWidth="144px"
             padding="4px 8px"
-            background={featuredColor2}
+            background={featuredColor3}
             borderRadius="43"
             cursor="pointer"
             onClick={tryRigobot}
