@@ -37,12 +37,12 @@
   "discount-applied": "Descuento aplicado",
   "course-details": "Detalles del plan",
   "see-financing-opt": "Opciones de financiamiento",
-  "one_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",
-  "monthly_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",
-  "quarterly_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",
-  "half_yearly_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",
-  "yearly_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",
-  "financing_many_months_description": "Pagarás {{currency}}{{monthly_price}} durante {{many_months}} meses y obtendrás acceso completo a todas las funciones durante la duración del curso.",
+  "one_payment_description": "Acceso a cientos de ejercicios, proyectos tutoriales para desarrollar y cursos en las tecnologías más buscadas",
+  "monthly_payment_description": "Acceso a cientos de ejercicios, proyectos tutoriales para desarrollar y cursos en las tecnologías más buscadas",
+  "quarterly_payment_description": "Acceso a cientos de ejercicios, proyectos tutoriales para desarrollar y cursos en las tecnologías más buscadas",
+  "half_yearly_payment_description": "Acceso a cientos de ejercicios, proyectos tutoriales para desarrollar y cursos en las tecnologías más buscadas",
+  "yearly_payment_description": "Acceso a cientos de ejercicios, proyectos tutoriales para desarrollar y cursos en las tecnologías más buscadas",
+  "financing_many_months_description": "Pagarás {{currency}}{{monthly_price}} durante {{many_months}} meses y obtendrás acceso a cientos de ejercicios, proyectos tutoriales para desarrollar y cursos en las tecnologías más buscadas",
   "what-includes": "¿Qué incluye?",
   "continue-learning": "Continuar aprendiendo",
   "switch-user-connector": "¿No eres {{name}}?",
@@ -310,10 +310,12 @@
     ],
     "basic-plan": {
       "type": "Vuela solo",
-      "hook-message": "Prueba la experiencia completa a tu propio ritmo de forma gratuita y decide más tarde",
-      "title": "Miembro Gratuito",
+      "title": "Prueba la experiencia completa a tu propio ritmo de forma gratuita y decide más tarde",
       "description": "Todo lo que necesitas para comenzar a aprender a programar",
-      "button-title": "Comenzar gratis",
+      "button": {
+        "variant": "default",
+        "title": "Comenzar gratis"
+      },
       "service_items": {
         "items": [
           {
@@ -365,10 +367,14 @@
     },
     "premium-plan": {
       "type": "Premium",
-      "hook-message": "Aprende a tu propio ritmo con retroalimentación y eventos en vivo",
-      "title": "Miembro Premium",
+      "title": "Aprende a tu propio ritmo con retroalimentación y eventos en vivo",
       "description": "Todo el contenido que necesitas para convertirte en un desarrollador contratado",
-      "button-title": "Obtener Plan",
+      "button": {
+        "variant": "default",
+        "color": "#000000",
+        "background": "#fff",
+        "title": "Obtener Plan"
+      },
       "service_items": {
         "title": "Todo en Vuela Solo más...",
         "items": [

@@ -1,6 +1,7 @@
 /* eslint-disable indent */
 import { addDays, format, isAfter } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { email as emailRegex } from './regex';
 
 const isWindow = typeof window !== 'undefined';
 
@@ -458,6 +459,8 @@ const getBrowserInfo = () => {
   return browser;
 };
 
+const isValidEmail = (email) => emailRegex.test(email);
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify, unSlugifyCapitalize, location,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
@@ -468,5 +471,5 @@ export {
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, intervalToHours, capitalizeFirstLetter,
   adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle, decodeBase64,
-  removeSessionStorageItem, languageFix, getBrowserInfo,
+  removeSessionStorageItem, languageFix, getBrowserInfo, isValidEmail,
 };

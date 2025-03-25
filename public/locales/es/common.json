@@ -7,8 +7,10 @@
   "your-tutors-in-this-cohort": "Tus tutores:",
   "main-instructor": "Instructor Principal",
   "teacher-assistant": "Asistente de Profesor",
+  "hide": "Ocultar",
   "rigo": "Rigo",
   "ai-tutor": "Tutor IA",
+  "tooltip-ai-tutor": "Nunca vuelvas a quedar atascado, nuestro tutor IA te ayudará en todo, cada paso de la manera.",
   "clone-modal": {
     "title": "¿Cómo clonar un proyecto?"
   },
@@ -76,6 +78,7 @@
   "confirm": "Confirmar",
   "submit": "Enviar",
   "enroll": "Unirse Ahora",
+  "get-plan": "Obtener plan",
   "enroll-totally-free": "Entrar totalmente gratis",
   "enroll-for-connector": "Unete por",
   "start-tutorial": "Empezar tutorial",
@@ -194,7 +197,7 @@
         {
           "label": "Verificar si el repositorio es una plantilla",
           "description": "Verifica si el repositorio es una plantilla de GitHub antes de continuar.<br><br>Puedes averiguar si es una plantilla observando la sección de {{repoUrl}}.<br><br>Si tiene un botón `Usar esta plantilla` o si, después del nombre del repositorio ubicado en la parte superior de tu pantalla (en GitHub), dice `Template` o `Public template`, entonces es una plantilla.",
-          "video": "",
+          "video": "https://www.youtube.com/watch?v=KicyD4GLBwY",
           "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
           "source-label": ""
         },
@@ -693,5 +696,6 @@
       }
     ]
   },
-  "hrs-average": "{{number}}hrs promedio"
+  "hrs-average": "{{number}}hrs promedio",
+  "service-blocked": "Fuiste bloqueado de acceder a este servicio. Envía un correo a support@4geeks.com o habla con tu profesor para obtener acceso."
 }
