@@ -30,7 +30,7 @@ module.exports = {
     '/mentorship/schedule': ['mentorship', 'dashboard', 'signup', 'common'],
     '/how-to': ['how-to'],
     '/paymentmethod': ['payment'],
-    '/pricing': ['pricing', 'signup'],
+    '/pricing': ['pricing', 'signup', 'plans/full-stack-development', 'plans/free-trial-full-stack-development'],
     '/how-to/[slug]': ['how-to'],
     '/profile': ['profile'],
     '/profile/[slug]': ['profile'],

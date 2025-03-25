@@ -1,0 +1,142 @@
+{
+    "info": {
+      "type": "Live & with feedback",
+      "title": "Learn at your own pace with feedback and live events",
+      "description": "All the content you need to become a hireable developer",
+      "button": {
+        "variant": "default",
+        "color": "#000000",
+        "background": "#fff",
+        "title": "Get Plan"
+      },
+      "service_items": {
+        "title": "Everything on Fly Solo plus...",
+        "items": [
+          {
+            "label": "Unique workshops every week"
+          },
+          {
+            "label": "4 One-on-one Mentoring sessions"
+          }
+        ]
+      },
+      "featured_info": [
+        {
+          "service": {
+            "slug": "live-learning",
+            "title": "Live learning",
+            "icon": "video"
+          },
+          "features": [
+            {
+              "description": "We have many workshops and Live Events hosted by great experts every week."
+            }
+          ]
+        },
+        {
+          "service": {
+            "slug": "ai-feedback-support",
+            "title": "AI Feedback & support",
+            "icon": "message"
+          },
+          "features": [
+            {
+              "description": "Our internally trained AI models will constantly review your code and give you feedback, advice as you code and more. Plus we have a technical support chat 24/7."
+            }
+          ]
+        },
+        {
+          "service": {
+            "slug": "access-to-community",
+            "title": "Access to community",
+            "icon": "community"
+          },
+          "features": [
+            {
+              "description": "We have many workshops and Live Events hosted by experts every week."
+            }
+          ]
+        },
+        {
+          "service": {
+            "slug": "course-certificates",
+            "title": "Course certificates",
+            "icon": "certificate"
+          },
+          "features": [
+            {
+              "description": "Earn verifiable certificates as you complete each of the courses."
+            }
+          ]
+        }
+      ],
+      "checkout_features": [
+        {
+          "features": [
+            {
+              "description": "Try our internally trained AI models which can constantly review your code and give you feedback, advice as you code, and more.",
+              "title": null
+            }
+          ],
+          "service": {
+            "slug": "ai-interaction"
+          }
+        },
+        {
+          "features": [
+            {
+              "description": "Access to LearnPack tests to validate your knowledge",
+              "title": null
+            }
+          ],
+          "service": {
+            "slug": "learnpack-test"
+          }
+        },
+        {
+          "features": [
+            {
+              "description": "Get personalized mentoring sessions with our expert instructors",
+              "title": null
+            }
+          ],
+          "service": {
+            "slug": "geekpal-mentorship-session"
+          }
+        },
+        {
+          "features": [
+            {
+              "description": "Access to unlimited technical and career workshops",
+              "title": null
+            }
+          ],
+          "service": {
+            "slug": "join-workshops"
+          }
+        },
+        {
+          "features": [
+            {
+              "description": "Join a community of more than 5000 developers",
+              "title": null
+            }
+          ],
+          "service": {
+            "slug": "join-the-4geeks-community"
+          }
+        },
+        {
+          "features": [
+            {
+              "description": "Access to projects with real life challenges",
+              "title": null
+            }
+          ],
+          "service": {
+            "slug": "projects-with-real-life-challenges"
+          }
+        }
+      ]
+    }
+}

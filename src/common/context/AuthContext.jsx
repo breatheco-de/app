@@ -25,6 +25,7 @@ const initialState = {
   isAuthenticatedWithRigobot: false,
   user: null,
   cohorts: [],
+  blockedServices: null,
 };
 
 const langHelper = {
@@ -96,6 +97,12 @@ const reducer = (state, action) => {
       return {
         ...state,
         isLoading: action.payload,
+      };
+    }
+    case 'SET_BLOCKED_SERVICES': {
+      return {
+        ...state,
+        blockedServices: action.payload,
       };
     }
     default: {
@@ -228,6 +235,22 @@ function AuthProvider({ children, pageProps }) {
     });
   };
 
+  const fetchBlockedServices = async () => {
+    try {
+      const { data } = await bc.payment().getBlockedServices();
+      dispatch({
+        type: 'SET_BLOCKED_SERVICES',
+        payload: data,
+      });
+    } catch (err) {
+      warn('Error fetching blocked services:', err);
+      dispatch({
+        type: 'SET_BLOCKED_SERVICES',
+        payload: null,
+      });
+    }
+  };
+
   const authHandler = async () => {
     const token = getToken();
 
@@ -257,7 +280,11 @@ function AuthProvider({ children, pageProps }) {
           if (!user) {
             const { cohorts, userData } = await fetchUserAndCohorts();
 
-            const respRigobotAuth = await bc.auth().verifyRigobotConnection(token);
+            const [respRigobotAuth] = await Promise.all([
+              bc.auth().verifyRigobotConnection(token),
+              fetchBlockedServices(),
+            ]);
+
             const isAuthenticatedWithRigobot = respRigobotAuth && respRigobotAuth?.status === 200;
 
             dispatch({
