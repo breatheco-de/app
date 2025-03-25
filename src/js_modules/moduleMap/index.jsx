@@ -45,8 +45,8 @@ function ModuleMap({
       newTasks: updatedTasks,
     });
 
-    if (modules && modules.length > 0) {
-      const firstModule = modules[0];
+    if (content && content.length > 0) {
+      const firstModule = content[0];
       const langPrefix = lang !== 'en' ? `/${lang}` : '';
       const moduleSlug = firstModule?.slug?.slug || firstModule.slug;
       const moduleType = firstModule.task_type.toLowerCase();
