@@ -65,7 +65,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
       <Button
         cursor="pointer"
         as="a"
-        href={openWithLearnpackNoSaas ? currentAsset?.learnpack_deploy_url : currentAsset.url}
+        href={openWithLearnpackNoSaas ? t?.learnpack_deploy_url : t.url}
         target="_blank"
         size="sm"
         padding="4px 8px"
@@ -79,8 +79,8 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
         {...rest}
       >
         {publicView
-          ? t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) }).toUpperCase()
-          : t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+          ? t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${t?.asset_type?.toLowerCase() || ''}`) }).toUpperCase()
+          : t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${t?.asset_type?.toLowerCase() || ''}`) })}
       </Button>
     );
   }
@@ -90,8 +90,8 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
     <>
       {startWithLearnpack ? (
         <Button cursor="pointer" as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
-          {isStarted ? t('common:learnpack.continue-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })
-            : t('common:learnpack.start-interactive-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+          {isStarted ? t('common:learnpack.continue-asset', { asset_type: t(`common:learnpack.asset_types.${t?.asset_type?.toLowerCase() || ''}`) })
+            : t('common:learnpack.start-interactive-asset', { asset_type: t(`common:learnpack.asset_types.${t?.asset_type?.toLowerCase() || ''}`) })}
         </Button>
       ) : (
         <Button
@@ -111,15 +111,15 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
           {...rest}
         >
           {publicView
-            ? t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) }).toUpperCase()
-            : t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+            ? t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${t?.asset_type?.toLowerCase() || ''}`) }).toUpperCase()
+            : t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${t?.asset_type?.toLowerCase() || ''}`) })}
         </Button>
       )}
     </>
   );
 }
 
-function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isStarted, publicViewLearnpack, publicView, ...rest }) {
+function ProjectInstructions({ t, variant, handleStartLearnpack, isStarted, publicViewLearnpack, publicView, ...rest }) {
   const { t } = useTranslation('common');
   const { cohorts } = useAuth();
   const { currentTask } = useModuleHandler();
