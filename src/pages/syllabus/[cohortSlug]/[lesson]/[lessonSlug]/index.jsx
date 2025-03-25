@@ -508,7 +508,7 @@ function SyllabusContent() {
         translations: [],
       });
     };
-  }, [router, lessonSlug, cohortSession, sortedAssignments]);
+  }, [router, lessonSlug, cohortSession, sortedAssignments.length]);
 
   useEffect(() => {
     const currentSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);

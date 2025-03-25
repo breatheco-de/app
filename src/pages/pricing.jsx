@@ -79,7 +79,6 @@ function PricingView() {
       ...initialFinancingOption,
       optionList: payablePlanList,
     };
-
     if (freeTierList?.length > 0) {
       return freeTierList.concat(financingData);
     }

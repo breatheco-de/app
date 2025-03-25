@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Box, Button, Flex, Image, Link, SkeletonText, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, Link, SkeletonText, useFormControlStyles, useToast } from '@chakra-ui/react';
 import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -141,6 +141,7 @@ function CoursePage({ data, syllabus }) {
   const limitViewStudents = 3;
   const cohortId = data?.cohort?.id;
   const isVisibilityPublic = data.visibility === 'PUBLIC';
+  const courseColor = data?.color;
 
   const structuredData = data?.course_translation ? {
     '@context': 'https://schema.org',
@@ -350,51 +351,59 @@ function CoursePage({ data, syllabus }) {
   const getInitialData = async () => {
     setInitialDataIsFetching(true);
     const cohortSyllabus = await generateCohortSyllabusModules(cohortId);
+
     const getModulesInfo = async () => {
       try {
-        const assetTypeCount = {
-          lesson: 0,
-          project: 0,
-          quiz: 0,
-          exercise: 0,
-        };
+        const assetTypeCount = { lesson: 0, project: 0, quiz: 0, exercise: 0 };
         const projects = [];
         const exercises = [];
-        if (cohortSyllabus?.syllabus?.modules?.length > 0) {
-          cohortSyllabus.syllabus?.modules?.forEach((module) => {
-            module?.content.forEach((task) => {
-              if (task?.task_type) {
-                const taskType = task?.task_type?.toLowerCase();
-                assetTypeCount[taskType] += 1;
-              }
-              if (task?.task_type === 'PROJECT') {
-                projects.push(task);
-              }
-              if (task?.task_type === 'EXERCISE') {
-                exercises.push(task);
-              }
-            });
-          });
-        }
-        const lastProjects = projects?.length > 0 ? projects.slice(-3) : [];
-        const lastExercises = exercises?.length > 0 ? exercises.slice(-3) : [];
-        const relatedAssetsToShow = [...lastProjects, ...lastExercises].slice(0, 3);
+        const featuredAssetSlugs = data?.course_translation?.featured_assets?.split(',') || [];
         const language = lang === 'en' ? 'us' : lang;
-        const assignmentsFetch = relatedAssetsToShow?.length > 0 ? await Promise.all(relatedAssetsToShow.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[language]?.slug || item?.slug}`)
-          .then((assignmentResp) => assignmentResp.json())
-          .then((respData) => respData)
-          .catch(() => []))) : [];
+
+        cohortSyllabus?.syllabus?.modules?.forEach((module) => {
+          module?.content.forEach((task) => {
+            if (task?.task_type) {
+              const taskType = task.task_type.toLowerCase();
+              assetTypeCount[taskType] += 1;
+              if (taskType === 'project') projects.push(task);
+              if (taskType === 'exercise') exercises.push(task);
+            }
+          });
+        });
+
+        const filterAssets = (assets, isFeatured) => assets.filter((asset) => {
+          const assetSlug = asset?.translations?.[language]?.slug || asset?.slug;
+          return isFeatured ? featuredAssetSlugs.includes(assetSlug) : !featuredAssetSlugs.includes(assetSlug);
+        });
+
+        let combinedFeaturedAssets = [
+          ...filterAssets(projects, true),
+          ...filterAssets(exercises, true),
+        ];
+
+        if (combinedFeaturedAssets.length < 3) {
+          const remainingNeeded = 3 - combinedFeaturedAssets.length;
+          const additionalItems = [
+            ...filterAssets(projects, false),
+            ...filterAssets(exercises, false),
+          ].slice(-remainingNeeded);
+
+          combinedFeaturedAssets = [...combinedFeaturedAssets, ...additionalItems];
+        }
+
+        const assignmentsFetch = await Promise.all(
+          combinedFeaturedAssets.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[language]?.slug || item?.slug}`)
+            .then((assignmentResp) => assignmentResp.json())
+            .catch(() => [])),
+        );
 
         return {
-          count: assetTypeCount || {},
-          assignmentList: assignmentsFetch || [],
+          count: assetTypeCount,
+          assignmentList: assignmentsFetch.filter(Boolean),
         };
       } catch (errorMsg) {
         error('Error fetching module info:', errorMsg);
-        return {
-          count: {},
-          assignmentList: [],
-        };
+        return { count: {}, assignmentList: [] };
       }
     };
     const formatedPlanData = await fetchSuggestedPlan(data?.plan_slug, translationsObj, 'mkt_plans').then((finalData) => finalData);
@@ -676,6 +685,8 @@ function CoursePage({ data, syllabus }) {
                     url={data?.course_translation?.video_url}
                     withThumbnail
                     withModal
+                    preview
+                    previewDuration={10}
                     thumbnailStyle={{
                       borderRadius: '17px 17px 0 0',
                     }}
@@ -702,7 +713,7 @@ function CoursePage({ data, syllabus }) {
                           id="bootcamp-enroll-button"
                           variant="default"
                           isLoading={initialDataIsFetching || (planList?.length === 0 && !featuredPlanToEnroll?.price)}
-                          background="green.500"
+                          background={courseColor || 'green.500'}
                           display="flex"
                           flexDirection="column"
                           color="white"
@@ -714,11 +725,12 @@ function CoursePage({ data, syllabus }) {
                         >
                           <Flex flexDirection="column" alignItems="center">
                             <Text fontSize={!featuredPlanToEnroll?.isFreeTier ? '16px' : '14px'}>
+                              {allDiscounts.length > 0 && '🔥'}
                               {capitalizeFirstLetter(featurePrice)}
                             </Text>
                             {!featuredPlanToEnroll?.isFreeTier && (
                               <Flex alignItems="center" marginTop="5px" gap="5px" justifyContent="center">
-                                <Icon icon="shield" color="#ffffff" width="23px" />
+                                <Icon icon="shield" color="#ffffff" secondColor={courseColor || '#00b765'} width="23px" />
                                 <Text fontSize="13px" fontWeight="medium" paddingTop="2px">
                                   {t('common:money-back-guarantee-short')}
                                 </Text>
