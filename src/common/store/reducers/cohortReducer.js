@@ -4,7 +4,6 @@ import {
   SET_SORTED_ASSIGNMENTS,
   SET_TASK_COHORT_NULL,
   SET_USER_CAPABILITIES,
-  SET_MANDATORY_PROJECTS,
 } from '../types';
 
 const initialState = {
@@ -13,7 +12,6 @@ const initialState = {
   sortedAssignments: [],
   taskCohortNull: [],
   userCapabilities: [],
-  mandatoryProjects: [],
 };
 
 const cohortHandlerReducer = (state = initialState, action) => {
@@ -51,13 +49,6 @@ const cohortHandlerReducer = (state = initialState, action) => {
       return {
         ...state,
         userCapabilities,
-      };
-    }
-    case SET_MANDATORY_PROJECTS: {
-      const { mandatoryProjects } = action.payload;
-      return {
-        ...state,
-        mandatoryProjects,
       };
     }
     default: {
