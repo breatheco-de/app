@@ -1007,7 +1007,7 @@ function Dashboard() {
       {/* Add Deletion Orders Modal */}
       <Modal
         isOpen={showDeletionOrdersModal}
-        size="2xl"
+        size="md"
         margin="0 10px"
         onClose={() => {
           setShowDeletionOrdersModal(false);
@@ -1021,17 +1021,42 @@ function Dashboard() {
           <ModalCloseButton />
           <ModalBody padding={{ base: '15px 22px' }}>
             <Box>
-              {deletionOrders.map((order) => (
-                <Text
-                  key={order.repository_name}
-                  fontSize="14px"
-                  padding="10px"
-                  borderBottom="1px solid"
-                  borderColor={commonBorderColor}
-                >
-                  {order.repository_name}
-                </Text>
-              ))}
+              {deletionOrders.map((order) => {
+                let daysLeft;
+                if (order.starts_transferring_at) {
+                  const startDate = new Date(order.starts_transferring_at);
+                  const deletionDate = new Date(startDate.setMonth(startDate.getMonth() + 2));
+                  const today = new Date();
+                  daysLeft = Math.ceil((deletionDate - today) / (1000 * 60 * 60 * 24));
+                }
+
+                return (
+                  <Flex
+                    key={order.repository_name}
+                    fontSize="14px"
+                    padding="10px"
+                    borderBottom="1px solid"
+                    borderColor={commonBorderColor}
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <NextChakraLink
+                      href={`https://github.com/${order.repository_user}/${order.repository_name}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      color="blue.500"
+                      _hover={{ textDecoration: 'underline' }}
+                    >
+                      {order.repository_name}
+                    </NextChakraLink>
+                    {typeof daysLeft === 'number' && (
+                      <Text fontWeight="700">
+                        {daysLeft > 0 ? `${t('repository-deletion.days-left', { days: daysLeft })}` : t('repository-deletion.deletion-imminent')}
+                      </Text>
+                    )}
+                  </Flex>
+                );
+              })}
             </Box>
           </ModalBody>
         </ModalContent>
