@@ -104,6 +104,11 @@
       "year": "Yearly",
       "anual": "Anual"
     },
+    "payment_unit_short": {
+      "month": "mo",
+      "year": "yr",
+      "anual": "yr"
+    },
     "renewal-date-unknown": "Renewal date: Unknown",
     "payment-trial": "Payment: Trial",
     "payment-free": "Payment: Free",
