@@ -3,10 +3,11 @@
   "reviews": "Reseñas",
   "course-rating": "Calificación del curso",
   "connect-with-github": "Conéctate con Github",
-  "see-financing-options": "Ver opciones de financiamiento",
+  "see-financing-options": "Ver opciones de pago",
   "your-tutors-in-this-cohort": "Tus tutores:",
   "main-instructor": "Instructor Principal",
   "teacher-assistant": "Asistente de Profesor",
+  "hide": "Ocultar",
   "rigo": "Rigo",
   "ai-tutor": "Tutor IA",
   "clone-modal": {
@@ -76,6 +77,7 @@
   "confirm": "Confirmar",
   "submit": "Enviar",
   "enroll": "Unirse Ahora",
+  "get-plan": "Obtener plan",
   "enroll-totally-free": "Entrar totalmente gratis",
   "enroll-for-connector": "Unete por",
   "start-tutorial": "Empezar tutorial",
@@ -693,5 +695,6 @@
       }
     ]
   },
-  "hrs-average": "{{number}}hrs promedio"
+  "hrs-average": "{{number}}hrs promedio",
+  "service-blocked": "Fuiste bloqueado de acceder a este servicio. Envía un correo a support@4geeks.com o habla con tu profesor para obtener acceso."
 }

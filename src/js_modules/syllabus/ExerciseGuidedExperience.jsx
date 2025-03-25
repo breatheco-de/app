@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, Flex } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { intervalToDuration } from 'date-fns';
@@ -106,7 +106,18 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
   });
 
   return (
-    <Box className={`horizontal-sroll ${colorMode}`} overflowY="auto" borderRadius="11px" background="blue.1000" height="83vh" mb="30px" padding={learnpackStart ? '0' : '16px'} display="flex" flexDirection="column" justifyContent="space-between" gap={learnpackStart ? '0px' : '20px'}>
+    <Box
+      className={`horizontal-sroll ${colorMode}`}
+      overflowY="auto"
+      borderRadius="11px"
+      background="blue.1000"
+      height="83vh"
+      padding={learnpackStart ? '0' : '16px'}
+      display="flex"
+      flexDirection="column"
+      justifyContent="space-between"
+      gap={learnpackStart ? '0px' : '20px'}
+    >
       {learnpackStart
         ? (
           <>
@@ -126,32 +137,69 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
         )
         : (
           <>
-            <Box display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }} flexGrow={100}>
-              <Box gap="16px" width="100%" display="flex" flexDirection={{ base: 'column', md: isExerciseStarted ? 'column' : 'row' }} justifyContent="space-between">
-                <Box maxWidth={{ base: 'none', md: isExerciseStarted ? 'none' : '40%' }}>
+            <Box
+              display="flex"
+              gap="16px"
+              flexDirection={{ base: 'column', md: 'row' }}
+              flexGrow={10}
+            >
+              <Box
+                display="flex"
+                flexDirection={{ base: 'column', md: isExerciseStarted ? 'column' : 'row' }}
+                width="100%"
+                height="100%"
+                gap={!isExerciseStarted && '10px'}
+              >
+                <Flex flexDirection="column" overflowY="hidden" maxWidth={{ base: 'none', md: !isExerciseStarted && '50%' }}>
                   <Heading color="white" mb="16px" size="l" fontWeight="400">
                     {currentAsset?.title}
                   </Heading>
-                  <Text color="white" size="l">
-                    {currentAsset?.description}
-                  </Text>
-                </Box>
-                <Box width="100%" maxWidth={{ base: 'none', md: isExerciseStarted ? 'none' : '50%' }} borderRadius="11px" overflow="hidden">
-                  <ReactPlayerV2
-                    withThumbnail
-                    controls={false}
-                    thumbnailStyle={{
-                      width: '100%',
-                      borderRadius: '11px',
-                    }}
-                    url={currentAsset?.intro_video_url}
-                  />
-                </Box>
+                  <Box
+                    className={`horizontal-sroll ${colorMode}`}
+                    overflowY="auto"
+                    flexGrow={1}
+                    paddingRight={isExerciseStarted && '8px'}
+                    maxHeight={isExerciseStarted && '70px'}
+                  >
+                    <Text color="white" size="l">
+                      {currentAsset?.description}
+                    </Text>
+                  </Box>
+                </Flex>
+                <Flex justifyContent="center" flexGrow={1}>
+                  <Box
+                    flexGrow={isExerciseStarted && 1}
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    width="100%"
+                    height={isExerciseStarted && '100%'}
+                    overflow="hidden"
+                    borderRadius="10px"
+                  >
+                    <Box
+                      borderRadius="10px"
+                      width={{ base: '100%', md: 'auto' }}
+                      maxWidth="100%"
+                      aspectRatio="16 / 9"
+                      height="100%"
+                    >
+                      <ReactPlayerV2
+                        withThumbnail
+                        controls={false}
+                        width="100%"
+                        height="100%"
+                        style={{ objectFit: 'contain' }}
+                        url={currentAsset?.intro_video_url}
+                      />
+                    </Box>
+                  </Box>
+                </Flex>
               </Box>
+
               {isExerciseStarted && (
                 <Box
                   width="100%"
-                  height="fit-content"
                   display="flex"
                   flexWrap="wrap"
                   gap="16px"
@@ -161,10 +209,10 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                       label={elem.label}
                       icon={elem.icon}
                       value={elem.value}
+                      fontSize={{ base: '17px', sm: '25px', lg: '30px' }}
                       variationColor="#3A3A3A"
                       background="blue.1200"
                       border="none"
-                      height="160px"
                       width={{ base: '100%', md: 'calc(50% - 8px)' }}
                       textProps={{ textTransform: 'none', color: 'gray.dark' }}
                     />
@@ -172,7 +220,16 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                 </Box>
               )}
             </Box>
-            <ProjectInstructions currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} isStarted={isExerciseStarted} />
+
+            <ProjectInstructions
+              currentAsset={currentAsset}
+              handleStartLearnpack={handleStartLearnpack}
+              isStarted={isExerciseStarted}
+              flexGrow="1"
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+            />
           </>
         )}
     </Box>
