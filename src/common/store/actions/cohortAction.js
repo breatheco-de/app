@@ -5,7 +5,6 @@ import {
   SET_SORTED_ASSIGNMENTS,
   SET_TASK_COHORT_NULL,
   SET_USER_CAPABILITIES,
-  SET_MANDATORY_PROJECTS,
 } from '../types';
 import { usePersistent } from '../../hooks/usePersistent';
 
@@ -19,15 +18,6 @@ const useCohortAction = () => {
       type: SET_MY_COHORTS,
       payload: {
         myCohorts: payload,
-      },
-    });
-  };
-
-  const setMandatoryProjects = (payload) => {
-    dispatch({
-      type: SET_MANDATORY_PROJECTS,
-      payload: {
-        mandatoryProjects: payload,
       },
     });
   };
@@ -76,7 +66,6 @@ const useCohortAction = () => {
     setTaskCohortNull,
     setSortedAssignments,
     setUserCapabilities,
-    setMandatoryProjects,
   };
 };
 
