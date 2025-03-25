@@ -130,6 +130,9 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   const [vendors, setVendors] = useState([]);
   const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
 
+  console.log(currentAsset);
+  console.log(vendors);
+
   const fetchProvisioningVendors = async (academyId) => {
     try {
       const { data } = await bc.provisioning().academyVendors(academyId);
