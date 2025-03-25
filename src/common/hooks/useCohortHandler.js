@@ -15,7 +15,7 @@ function useCohortHandler() {
   const router = useRouter();
   const { user } = useAuth();
   const { t, lang } = useTranslation('dashboard');
-  const { setCohortSession, setTaskCohortNull, setSortedAssignments, setMandatoryProjects, setUserCapabilities, setMyCohorts, state } = useCohortAction();
+  const { setCohortSession, setTaskCohortNull, setSortedAssignments, setUserCapabilities, setMyCohorts, state } = useCohortAction();
   const { cohortProgram, taskTodo, setCohortProgram, setTaskTodo } = useModuleHandler();
 
   const {
@@ -250,7 +250,7 @@ function useCohortHandler() {
         },
       ),
     );
-    setMandatoryProjects(mandatoryProjects);
+    return mandatoryProjects;
   };
 
   return {
