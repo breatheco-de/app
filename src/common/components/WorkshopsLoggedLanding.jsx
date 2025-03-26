@@ -29,14 +29,11 @@ function WorkshopsLoggedLanding() {
   useEffect(() => {
     const fetchEventTypes = async () => {
       try {
-        // Obtener los eventTypes
         const res = await bc.events({ lang }).getAllEventTypes();
         const { data } = res;
 
         if (data && Array.isArray(data) && data.length > 0) {
-          // Obtener los primeros 5 nombres de eventTypes
           const eventTypeNames = data.slice(0, 5).map((eventType) => eventType.name);
-          // Combinar con las tecnologías existentes
           setPopularSearchTerms([
             'Python',
             'HTML',

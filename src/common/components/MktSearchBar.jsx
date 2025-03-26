@@ -43,21 +43,17 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
   };
 
   const clearSearch = () => {
-    // Clear any pending timeout
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
-    // Clear the input
     setSearch('');
-    // Clear URL parameter
     updateQueryParams({ search: null });
   };
 
   const handleInputChange = (e) => {
     const { value } = e.target;
     setSearch(value);
-    // Clear any existing timeout
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -65,13 +61,11 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
       clearSearch();
       return;
     }
-    // Set a timeout to update the URL after typing stops
     timeoutRef.current = setTimeout(() => {
       updateQueryParams({ search: value });
     }, 500);
   };
 
-  // Sync search input with URL on mount and when URL changes
   useEffect(() => {
     const searchParam = router.query.search;
     if (searchParam !== undefined && searchParam !== search) {
@@ -79,7 +73,6 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
     }
   }, [router.query.search]);
 
-  // Clean up timeouts on unmount
   useEffect(() => () => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
