@@ -85,7 +85,7 @@ function Dashboard() {
     getMandatoryProjects, getTasksWithoutCohort, setSortedAssignments, getLastDoneTaskModuleData,
   } = useCohortHandler();
 
-  const { cohortSession, sortedAssignments, mandatoryProjects, taskCohortNull, myCohorts } = state;
+  const { cohortSession, sortedAssignments, taskCohortNull, myCohorts } = state;
 
   const mainTechnologies = cohortProgram?.main_technologies
     ? cohortProgram?.main_technologies.split(',').map((el) => el.trim())
@@ -402,8 +402,8 @@ function Dashboard() {
   const hasShownMandatoryToast = useRef(false);
   const hasShownFreeTrialToast = useRef(false);
 
+  const mandatoryProjectsCount = getMandatoryProjects().length;
   useEffect(() => {
-    const mandatoryProjectsCount = mandatoryProjects.length;
     if (isSubscriptionFreeTrial && !hasShownFreeTrialToast.current) {
       hasShownFreeTrialToast.current = true;
       createToast({
@@ -454,7 +454,7 @@ function Dashboard() {
         duration: 5000,
       });
     }
-  }, [isSubscriptionFreeTrial, mandatoryProjects?.length]);
+  }, [isSubscriptionFreeTrial, mandatoryProjectsCount]);
 
   const dailyModuleData = getDailyModuleData() || '';
   const lastTaskDoneModuleData = getLastDoneTaskModuleData() || '';
@@ -968,7 +968,7 @@ function Dashboard() {
             <Text color={hexColor.fontColor3} fontSize="14px" lineHeight="24px" marginBottom="15px" fontWeight="400">
               {t('mandatoryProjects.description')}
             </Text>
-            {mandatoryProjects.map((module, i) => (
+            {getMandatoryProjects().map((module, i) => (
               <Module
                 // eslint-disable-next-line react/no-array-index-key
                 key={`${module.title}-${i}`}
