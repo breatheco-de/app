@@ -18,6 +18,7 @@ const useStyle = () => {
   const disabledColor2 = useColorModeValue('gray.default', '#CACACA');
   const featuredColor = useColorModeValue('featuredLight', 'featuredDark');
   const featuredColor2 = useColorModeValue('#D2E2FE', 'featuredDark2');
+  const featuredColor3 = useColorModeValue('#D2E2FE', 'featuredDark');
   const fontColor = useColorModeValue('black', 'white');
   const fontColor2 = useColorModeValue('gray.dark', 'gray.250');
   const fontColor3 = useColorModeValue('gray.700', 'gray.300');
@@ -98,6 +99,7 @@ const useStyle = () => {
     disabledColor2,
     featuredColor,
     featuredColor2,
+    featuredColor3,
     fontColor,
     fontColor2,
     fontColor3,

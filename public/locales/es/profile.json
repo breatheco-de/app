@@ -104,6 +104,11 @@
       "year": "Anual",
       "anual": "Anual"
     },
+    "payment_unit_short": {
+      "month": "mes",
+      "year": "año",
+      "anual": "año"
+    },
     "renewal-date-unknown": "Fecha de renovación: Desconocida",
     "payment-trial": "Pago: Prueba",
     "payment-free": "Pago: Libre",
