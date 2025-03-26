@@ -10,7 +10,7 @@ function AlertMessage({
   message, type, iconColor, withoutIcon, style, textStyle, full, textColor, dangerouslySetInnerHTML, title, children, onClose, ...rest
 }) {
   const { fontColor } = useStyle();
-  const alertTop = useBreakpointValue({ base: '90px', sm: '86px', lg: '90px', xl: '100px' });
+  const alertTop = useBreakpointValue({ xl: '100px' });
   const alertColors = {
     soft: { background: '#FFF4DC' },
     warning: { background: '#ffefcc', borderColor: '#FFB718' },
@@ -22,7 +22,6 @@ function AlertMessage({
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    setVisible(true);
   }, []);
 
   const handleClose = () => {

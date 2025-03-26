@@ -47,7 +47,6 @@ import { BREATHECODE_HOST } from '../../../../../utils/variables';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
-import AlertMessage from '../../../../../common/components/AlertMessage';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
 import LiveEvent from '../../../../../common/components/LiveEvent';
@@ -418,6 +417,7 @@ function Dashboard() {
 
   const hasShownMandatoryToast = useRef(false);
   const hasShownFreeTrialToast = useRef(false);
+  const hasShownDeletionToast = useRef(false);
 
   const mandatoryProjectsCount = getMandatoryProjects().length;
   useEffect(() => {
@@ -471,7 +471,34 @@ function Dashboard() {
         duration: 5000,
       });
     }
-  }, [isSubscriptionFreeTrial, mandatoryProjectsCount]);
+    if (deletionOrders.length > 0 && !hasShownDeletionToast.current) {
+      hasShownDeletionToast.current = true;
+      createToast({
+        position: 'top',
+        title: (
+          <span>
+            {t('repository-deletion.description')}
+            {' '}
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={() => setShowDeletionOrdersModal(true)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  setShowDeletionOrdersModal(true);
+                }
+              }}
+              style={{ textDecoration: 'underline', cursor: 'pointer', color: 'black', fontWeight: '700' }}
+            >
+              {t('repository-deletion.see-repositories')}
+            </span>
+          </span>
+        ),
+        status: 'warning',
+        duration: 5000,
+      });
+    }
+  }, [isSubscriptionFreeTrial, mandatoryProjectsCount, deletionOrders.length]);
 
   const dailyModuleData = getDailyModuleData() || '';
   const lastTaskDoneModuleData = getLastDoneTaskModuleData() || '';
@@ -501,77 +528,6 @@ function Dashboard() {
 
   return (
     <>
-      {deletionOrders.length > 0 && (
-        <AlertMessage
-          full
-          type="warning"
-          style={{ borderRadius: '0px', justifyContent: 'center' }}
-        >
-          <Text
-            size="l"
-            color="black"
-            fontWeight="700"
-          >
-            {t('repository-deletion.description')}
-            {'  '}
-            <Button
-              variant="link"
-              color="black"
-              textDecoration="underline"
-              fontWeight="700"
-              fontSize="15px"
-              height="20px"
-              onClick={() => setShowDeletionOrdersModal(true)}
-              _active={{ color: 'black' }}
-            >
-              {t('repository-deletion.see-repositories')}
-            </Button>
-          </Text>
-        </AlertMessage>
-      )}
-      {getMandatoryProjects() && getMandatoryProjects().length > 0 && (
-        <AlertMessage
-          full
-          type="warning"
-          style={{ borderRadius: '0px', justifyContent: 'center' }}
-        >
-          <Text
-            size="l"
-            color="black"
-            fontWeight="700"
-          >
-            {t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
-            {'  '}
-            <Button
-              variant="link"
-              color="black"
-              textDecoration="underline"
-              fontWeight="700"
-              fontSize="15px"
-              height="20px"
-              onClick={() => setShowMandatoryModal(true)}
-              _active={{ color: 'black' }}
-            >
-              {t('deliverProject.see-mandatory-projects')}
-            </Button>
-          </Text>
-        </AlertMessage>
-      )}
-      {subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists && (
-        <AlertMessage
-          full
-          type="warning"
-          style={{ borderRadius: '0px', justifyContent: 'center' }}
-        >
-          <Text
-            size="l"
-            color="black"
-            dangerouslySetInnerHTML={{
-              __html: t('free-trial-msg', { link: '/profile/subscriptions' }),
-            }}
-          />
-        </AlertMessage>
-      )}
       <Container maxW="container.xl">
         <Box width="fit-content" marginTop="18px" marginBottom="48px">
           <NextChakraLink

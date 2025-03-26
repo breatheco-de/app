@@ -100,7 +100,7 @@ function useModuleHandler() {
               ? t('alert-message:delivery-success')
               : t('alert-message:delivery-removed'),
             status: 'success',
-            duration: 6000,
+            duration: 3000,
             isClosable: true,
           });
           closeSettings();

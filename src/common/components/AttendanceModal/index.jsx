@@ -126,7 +126,7 @@ function AttendanceModal({
           position: 'top',
           title: t('alert-message:attendancy-reported'),
           status: 'success',
-          duration: 900,
+          duration: 5000,
           isClosable: true,
         });
       })
@@ -135,7 +135,7 @@ function AttendanceModal({
           position: 'top',
           title: t('alert-message:attendancy-report-error'),
           status: 'error',
-          duration: 9000,
+          duration: 5000,
           isClosable: true,
         });
       })

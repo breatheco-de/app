@@ -73,7 +73,6 @@ function TaskCodeRevisions() {
       if (!isAuthenticatedWithRigobot || !currentTask.github_url) return;
       const response = await bc.assignments().getPersonalCodeRevisionsByTask(currentTask.id);
       const data = await response.json();
-
       if (response.ok) {
         const codeRevisionsSortedByDate = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         setContextData((prev) => ({
@@ -83,7 +82,8 @@ function TaskCodeRevisions() {
       } else {
         createToast({
           title: t('alert-message:something-went-wrong'),
-          description: `Cannot get code revisions: ${data?.detail}`,
+          // description: `Cannot get code revisions: ${data?.detail}`,
+          description: `Error: ${data?.Error}. ${data?.solution || ''}`,
           status: 'error',
           duration: 5000,
           position: 'top',

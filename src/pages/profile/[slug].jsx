@@ -63,7 +63,7 @@ function Profile() {
             }}
           />
         ),
-        status: 'success',
+        status: 'info',
         duration: 5000,
       });
     }

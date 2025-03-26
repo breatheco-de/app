@@ -42,7 +42,7 @@ function Information() {
         position: 'top',
         title: t('alert-message:file-type-error', { type: file.type.split('/')[1] }),
         status: 'warning',
-        duration: 3000,
+        duration: 5000,
       });
     }
     return setImages([...e.target.files]);
