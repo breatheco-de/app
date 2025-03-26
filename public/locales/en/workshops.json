@@ -1,5 +1,7 @@
 {
   "no-event-found": "No event available with this URL 😕",
+  "clear-search": "Clear search",
+  "search-workshops": "Search workshops",
   "host-label-text": "Host for this event",
   "workshop-asset-ended": "The following project was built during this workshop",
   "workshop-asset-upcoming": "During this workshop we will be building the following project",

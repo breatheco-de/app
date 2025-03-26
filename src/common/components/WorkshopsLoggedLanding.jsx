@@ -9,8 +9,9 @@ import Heading from './Heading';
 import bc from '../services/breathecode';
 
 function WorkshopsLoggedLanding() {
-  const { t } = useTranslation('workshops');
+  const { t, lang } = useTranslation('workshops');
   const [techs, setTechs] = useState([]);
+  const [popularSearchTerms, setPopularSearchTerms] = useState(['Python', 'HTML', 'Pandas']);
 
   useEffect(() => {
     const fetchTechnologies = async () => {
@@ -25,6 +26,28 @@ function WorkshopsLoggedLanding() {
     fetchTechnologies();
   }, []);
 
+  useEffect(() => {
+    const fetchEventTypes = async () => {
+      try {
+        const res = await bc.events({ lang }).getAllEventTypes();
+        const { data } = res;
+
+        if (data && Array.isArray(data) && data.length > 0) {
+          const eventTypeNames = data.slice(0, 5).map((eventType) => eventType.name);
+          setPopularSearchTerms([
+            'Python',
+            'HTML',
+            'Pandas',
+            ...eventTypeNames.filter((name) => !['Python', 'HTML', 'Pandas'].includes(name)),
+          ]);
+        }
+      } catch (err) {
+        console.error('Error fetching event types:', err);
+      }
+    };
+    fetchEventTypes();
+  }, []);
+
   return (
     <>
       <MktTechnologiesPills background="blue.50" paddingTop="50px" technologies={['MACHINE LEARNING', 'DATA SCIENCE', 'SOFTWARE ENGINEERING', 'CYBERSECURITY', '+MORE TECHNOLOGIES']} />
@@ -33,7 +56,7 @@ function WorkshopsLoggedLanding() {
         headingBottom={t('intro.lower-title')}
         subtitle={t('intro.subtitle')}
         backgroundColor={useColorModeValue('blue.50')}
-        popularSearches={['Python', 'HTML', 'Pandas']}
+        popularSearches={popularSearchTerms}
         popularSearchesTitle={t('common:popular-searches')}
       />
       <MktEventCards margin="50px auto" searchSensitive sortPrioOneTechs={techs} />
