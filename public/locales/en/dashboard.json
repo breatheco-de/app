@@ -207,7 +207,8 @@
   },
   "repository-deletion": {
     "title": "These repositories will be deleted soon",
-    "description": "The following repositories are about to be deleted. Accept the transfer request that you should've received on your email to avoid the deletion.",
+    "warning": "The following repositories are about to be deleted. Accept the transfer request that you should've received on your email to avoid the deletion.",
+    "description": "The following repositories will be deleted soon if you don't accept the transfer request. You should've received an email requesting the transfer to your github user, accept it to avoid deletion",
     "see-repositories": "See repositories",
     "days-left": "{{days}} days left",
     "deletion-imminent": "Deletion imminent"
