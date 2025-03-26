@@ -260,12 +260,13 @@ function chooseProgram() {
 
   useEffect(() => {
     if (cohorts.length > 0) {
+      console.log('calling getCohortsModules', cohorts);
       getCohortsModules(cohorts);
     }
   }, [cohorts]);
 
   useEffect(() => {
-    if (cohorts.length > 0 && Object.keys(cohortsAssignments).length > 0) {
+    if (cohorts.length > 0 && Object.keys(cohortsAssignments).length === cohorts.length) {
       cohorts.map(processCohort);
     }
   }, [cohorts, cohortsAssignments]);
