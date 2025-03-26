@@ -3,9 +3,9 @@ import {
   useEffect, useState,
 } from 'react';
 import {
-  Box, Flex, Container, useColorModeValue, Skeleton, useToast,
+  Box, Flex, Container, useToast,
   Checkbox, Input, InputGroup, InputRightElement, IconButton,
-  keyframes, usePrefersReducedMotion, Avatar, useColorMode,
+  keyframes, usePrefersReducedMotion, Avatar,
   Img, Modal, ModalBody, ModalCloseButton, ModalContent,
   ModalHeader, ModalOverlay, Button, Accordion, AccordionItem, AccordionButton, AccordionPanel,
 } from '@chakra-ui/react';
@@ -61,7 +61,7 @@ function Dashboard() {
   const { t, lang } = useTranslation('dashboard');
   const toast = useToast();
   const router = useRouter();
-  const { colorMode } = useColorMode();
+
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -73,7 +73,6 @@ function Dashboard() {
   const [events, setEvents] = useState(null);
   const [liveClasses, setLiveClasses] = useState([]);
   const [certificates, setCertificates] = useState([]);
-  const { featuredColor, hexColor, modal } = useStyle();
   const [isLoadingAssigments, setIsLoadingAssigments] = useState(true);
   const { isAuthenticated, cohorts } = useAuth();
   const { rigo, isRigoInitialized } = useRigo();
@@ -82,7 +81,6 @@ function Dashboard() {
   const [subscriptionData, setSubscriptionData] = useState(null);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [isAvailableToShowWarningModal, setIsAvailableToShowModalMessage] = useState(false);
-  const [showMandatoryModal, setShowMandatoryModal] = useState(false);
   const {
     state, getCohortUserCapabilities, getCohortData, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, setCohortSession,
@@ -91,11 +89,15 @@ function Dashboard() {
 
   const { cohortSession, taskCohortNull, cohortsAssignments, reviewModalState } = state;
 
+  const {
+    featuredColor, hexColor, modal, disabledColor2, fontColor2, fontColor3, borderColor, lightColor, backgroundColor2, backgroundColor3,
+  } = useStyle();
+
   const isAvailableAsSaas = cohortSession?.available_as_saas;
   const hasMicroCohorts = cohortSession?.micro_cohorts?.length > 0;
 
   const mainTechnologies = cohortProgram?.main_technologies
-    ? cohortProgram?.main_technologies.split(',').map((el) => el.trim())
+    ? cohortProgram.main_technologies.split(',').map((el) => el.trim())
     : [];
 
   const academyOwner = cohortProgram?.academy_owner;
@@ -117,16 +119,6 @@ function Dashboard() {
     ? undefined
     : `${slideLeft} 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both`;
 
-  const skeletonStartColor = useColorModeValue('gray.300', 'gray.light');
-  const commonInputColor = useColorModeValue('gray.default', 'gray.300');
-  const commonInputActiveColor = useColorModeValue('gray.800', 'gray.100');
-  const skeletonEndColor = useColorModeValue('gray.400', 'gray.400');
-  const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
-  const commonFontColor = useColorModeValue('gray.600', 'gray.200');
-  const commonActiveBackground = useColorModeValue('gray.light', 'rgba(255, 255, 255, 0.22)');
-  const iconColor = useColorModeValue('#000000', '#FFFFFF');
-  const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
-  const commonModalColor = useColorModeValue('gray.dark', 'gray.light');
   const accessToken = getStorageItem('accessToken');
   const showGithubWarning = getStorageItem('showGithubWarning');
   const TwelveHours = 720;
@@ -140,7 +132,6 @@ function Dashboard() {
 
   const syncTaskWithCohort = async () => {
     const tasksToUpdate = ((taskCohortNull !== undefined) && taskCohortNull).map((task) => ({
-      // ...task,
       id: task.id,
       cohort: cohortSession.id,
     }));
@@ -154,7 +145,6 @@ function Dashboard() {
         toast({
           position: 'top',
           title: t('alert-message:task-cant-sync-with-cohort'),
-          // title: 'Some Tasks cannot synced with current cohort',
           status: 'error',
           duration: 5000,
           isClosable: true,
@@ -598,23 +588,17 @@ function Dashboard() {
                     </Box>
                   ) : (
                     <Flex flexDirection="column" gap="20px">
-                      <Skeleton
-                        startColor={skeletonStartColor}
-                        endColor={skeletonEndColor}
+                      <SimpleSkeleton
                         height="100px"
                         width="100%"
                         borderRadius="10px"
                       />
-                      <Skeleton
-                        startColor={skeletonStartColor}
-                        endColor={skeletonEndColor}
+                      <SimpleSkeleton
                         height="100px"
                         width="100%"
                         borderRadius="10px"
                       />
-                      <Skeleton
-                        startColor={skeletonStartColor}
-                        endColor={skeletonEndColor}
+                      <SimpleSkeleton
                         height="100px"
                         width="100%"
                         borderRadius="10px"
@@ -635,9 +619,7 @@ function Dashboard() {
                         {cohortSession?.syllabus_version?.name || cohortProgram.name}
                       </Heading>
                     ) : (
-                      <Skeleton
-                        startColor={skeletonStartColor}
-                        endColor={skeletonEndColor}
+                      <SimpleSkeleton
                         height="60px"
                         width="100%"
                         borderRadius="10px"
@@ -675,7 +657,7 @@ function Dashboard() {
                         padding="10px"
                         display="flex"
                         justifyContent="space-around"
-                        bg={colorMode === 'light' ? '#F2F2F2' || 'blue.light' : 'featuredDark'}
+                        bg={featuredColor}
                       >
                         <Avatar
                           name={academyOwner.name}
@@ -780,7 +762,7 @@ function Dashboard() {
                     </Box>
                     )}
 
-                    <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="32px" />
+                    <Box height="2px" bg={borderColor} marginY="32px" />
 
                     <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} justifyContent="space-between" gridGap="18px">
                       <Heading as="h2" fontWeight="900" size="15px" textTransform="uppercase">{t('moduleMap')}</Heading>
@@ -791,7 +773,7 @@ function Dashboard() {
                             borderRadius="25px"
                             type="text"
                             value={searchValue}
-                            backgroundColor={commonBackground}
+                            backgroundColor={backgroundColor2}
                             style={{
                               cursor: 'default',
                               opacity: showSearch ? 1 : 0,
@@ -799,22 +781,22 @@ function Dashboard() {
                             isDisabled={!showSearch}
                             animation={showSearch ? slideLeftAnimation : ''}
                             onChange={(e) => setSearchValue(e.target.value)}
-                            color={commonInputColor}
+                            color={disabledColor2}
                             _focus={{
-                              color: commonInputActiveColor,
-                              backgroundColor: commonActiveBackground,
+                              color: fontColor3,
+                              backgroundColor: backgroundColor3,
                             }}
                             _hover={{
-                              color: commonInputActiveColor,
-                              backgroundColor: commonActiveBackground,
+                              color: fontColor3,
+                              backgroundColor: backgroundColor3,
                             }}
                           />
                           <InputRightElement>
-                            <IconButton onClick={() => setShowSearch(!showSearch)} pr="8px" background="transparent" _hover={{ background: 'transparent' }} _active={{ background: 'transparent' }} aria-label="Search in modules" icon={<Icon icon="search" color={showSearch ? iconColor : ''} width="18px" height="18px" />} />
+                            <IconButton onClick={() => setShowSearch(!showSearch)} pr="8px" background="transparent" _hover={{ background: 'transparent' }} _active={{ background: 'transparent' }} aria-label="Search in modules" icon={<Icon icon="search" color={showSearch ? hexColor.black : ''} width="18px" height="18px" />} />
                           </InputRightElement>
                         </InputGroup>
                         {modulesExists && (
-                        <Checkbox onChange={(e) => setShowPendingTasks(e.target.checked)} textAlign="right" gridGap="10px" display="flex" flexDirection="row-reverse" color={commonFontColor}>
+                        <Checkbox onChange={(e) => setShowPendingTasks(e.target.checked)} textAlign="right" gridGap="10px" display="flex" flexDirection="row-reverse" color={lightColor}>
                           {t('modules.show-pending-tasks')}
                         </Checkbox>
                         )}
@@ -906,7 +888,7 @@ function Dashboard() {
                       padding="10px"
                       display="flex"
                       justifyContent="space-around"
-                      bg={colorMode === 'light' ? '#F2F2F2' || 'blue.light' : 'featuredDark'}
+                      bg={featuredColor}
                     >
                       <Avatar
                         name={academyOwner.name}
@@ -971,7 +953,7 @@ function Dashboard() {
         >
           <ModalOverlay />
           <ModalContent background={modal.background3} style={{ margin: '3rem 0 0 0' }}>
-            <ModalHeader color={commonModalColor} borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
+            <ModalHeader color={fontColor2} borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={borderColor} textAlign="center">
               {t('warningModal.title')}
             </ModalHeader>
             <ModalCloseButton />
@@ -981,11 +963,11 @@ function Dashboard() {
               </Text>
               {isAvailableToShowWarningModal && (
                 <Flex flexDirection="column" gridGap="10px" marginBottom="25px">
-                  <Text color={commonFontColor} fontSize="12px" lineHeight="auto">
+                  <Text color={lightColor} fontSize="12px" lineHeight="auto">
                     {t('warningModal.text')}
                   </Text>
                   <Text
-                    color={commonFontColor}
+                    color={lightColor}
                     fontSize="12px"
                     lineHeight="auto"
                     dangerouslySetInnerHTML={{
@@ -1025,7 +1007,7 @@ function Dashboard() {
                 lineHeight="22px"
                 fontWeight="700"
                 display="block"
-                color={commonModalColor}
+                color={fontColor2}
                 onClick={() => {
                   setShowWarningModal(false);
                   localStorage.setItem('showGithubWarning', 'postponed');

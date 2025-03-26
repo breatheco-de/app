@@ -16,6 +16,7 @@
   "available-programs": "Programas disponibles",
   "read-to-start-learning": "List@ para comenzar a aprender?",
   "whats-app-link": "https://chat.whatsapp.com/K39ELB5TIK63r4INTBd7SG",
+  "welcome-video": "https://www.youtube.com/embed/TgkIpTZ75NM",
   "invite": {
     "notify": "¡Oye! Hay {{cohortInvitationWord}} para ti.",
     "plural-word": "{{invitesLength}} nuevas invitaciones de cohorte",

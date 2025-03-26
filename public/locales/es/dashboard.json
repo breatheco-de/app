@@ -19,6 +19,7 @@
   "start-course": "Empezar el curso",
   "backToChooseProgram": "Volver a elegir programa",
   "progressText": "Progreso en el programa",
+  "member-since": "{{role}} en esta cohorte desde",
   "students-modal": {
     "students-course": "Estudiantes en este curso",
     "select-student": "Selecciona un estudiante para ver el reporte de su progreso",

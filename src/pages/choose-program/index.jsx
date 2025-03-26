@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import {
-  Flex, Box, Button, useToast, Skeleton, useColorModeValue,
+  Flex, Box, Button, useToast,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
@@ -18,6 +18,7 @@ import { usePersistent } from '../../common/hooks/usePersistent';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import LiveEvent from '../../common/components/LiveEvent';
 import NextChakraLink from '../../common/components/NextChakraLink';
+import { SimpleSkeleton } from '../../common/components/Skeleton';
 import useProgramList from '../../common/store/actions/programListAction';
 import handlers from '../../common/handlers';
 import useSubscriptionsHandler from '../../common/store/actions/subscriptionAction';
@@ -48,7 +49,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 };
 
 function chooseProgram() {
-  const { t, lang } = useTranslation('choose-program');
+  const { t } = useTranslation('choose-program');
   const { setCohortSession, getCohortsModules, cohortsAssignments } = useCohortHandler();
   const { user, cohorts, isLoading, reSetUserAndCohorts, fetchUserAndCohorts, setCohorts } = useAuth();
   const [subscriptionProcess] = usePersistent('subscription-process', null);
@@ -72,16 +73,10 @@ function chooseProgram() {
     data: [],
   });
   const toast = useToast();
-  const commonStartColor = useColorModeValue('gray.300', 'gray.light');
-  const commonEndColor = useColorModeValue('gray.400', 'gray.400');
   const { hexColor } = useStyle();
   const isClosedLateModal = getStorageItem('isClosedLateModal');
   const TwelveHoursInMinutes = 720;
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
-  const welcomeVideoLinks = {
-    es: 'https://www.youtube.com/embed/TgkIpTZ75NM',
-    en: 'https://www.youtube.com/embed/ijEp5XHm7qo',
-  };
 
   const getStudentAndTeachers = async (item) => {
     const users = await bc.cohort({
@@ -247,6 +242,8 @@ function chooseProgram() {
       }).getMembers();
       const teacher = studentAndTeachers?.data?.filter((st) => st.role === 'TEACHER') || [];
       const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT') || [];
+      console.log('cohort slug', slug);
+      console.log('cohortsAssignments', cohortsAssignments);
       const { tasks, syllabus } = cohortsAssignments[slug];
       const assignmentData = await handlers.getAssignmentsCount({ data: syllabus, taskTodo: tasks, cohortId: cohort.id });
 
@@ -480,7 +477,7 @@ function chooseProgram() {
         </Box>
         <Box padding="0 15px 15px">
           <ReactPlayerV2
-            url={welcomeVideoLinks?.[lang] || welcomeVideoLinks?.en}
+            url={t('welcome-video')}
             width="100%"
             height="100%"
             iframeStyle={{ borderRadius: '3px 3px 13px 13px' }}
@@ -612,11 +609,9 @@ function chooseProgram() {
               height="auto"
             >
               {Array(1).fill(0).map((_, i) => (
-                <Skeleton
+                <SimpleSkeleton
                   // eslint-disable-next-line react/no-array-index-key
-                  key={i}
-                  startColor={commonStartColor}
-                  endColor={commonEndColor}
+                  key={`${i}-skeleton-revalidating`}
                   width="100%"
                   height="286px"
                   color="white"
@@ -635,11 +630,9 @@ function chooseProgram() {
               height="auto"
             >
               {Array(3).fill(0).map((_, i) => (
-                <Skeleton
+                <SimpleSkeleton
                   // eslint-disable-next-line react/no-array-index-key
-                  key={i}
-                  startColor={commonStartColor}
-                  endColor={commonEndColor}
+                  key={`${i}-skeleton-loading`}
                   width="100%"
                   height="286px"
                   color="white"
