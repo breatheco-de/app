@@ -121,8 +121,6 @@ function MktEventCards({
     fetchEvents();
   }, [externalEvents, techFilter, sortPrioOneTechs]);
 
-  console.log('original events', originalEvents);
-
   useEffect(() => {
     if (!searchSensitive || techFilter) return undefined;
 
