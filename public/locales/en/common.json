@@ -17,6 +17,7 @@
     "greeting": "Hi!"
   },
   "ai-tutor": "AI Tutor",
+  "tooltip-ai-tutor": "Never be stuck again, our internally developed AI tutor will help you everywhere, every step of the way.",
   "clone-modal": {
     "title": "How to clone a project?"
   },
@@ -178,6 +179,7 @@
     "description2": "This practice will reroute your browser to LearnPack - an interactive learning tool that runs integrated with VSCode.",
     "new-exercise": "Start from the beginning",
     "continue-exercise": "Continue from a previous session",
+    "open-with-vendor": "Open with {{vendor}}",
     "open-locally": "Open locally on your computer",
     "start-interactive-asset": "Start interactive {{asset_type}}",
     "start-asset": "Start {{asset_type}}",

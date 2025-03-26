@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import ReactPlayer from 'react-player';
 import useTranslation from 'next-translate/useTranslation';
-import { Box, Flex, Heading, IconButton, Image, Skeleton } from '@chakra-ui/react';
+import { Box, Flex, Heading, IconButton, Image, Skeleton, Portal } from '@chakra-ui/react';
 import { useEffect, useState, useRef } from 'react';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
@@ -173,49 +173,61 @@ function ReactPlayerV2({
             />
           </Flex>
 
-          <Box
-            display={showVideo ? 'flex' : 'none'}
-            className="video-overlay"
-            onClick={handleContainerClose}
-          >
-            <Box
-              className="video-container"
-              position="relative"
-              onClick={(e) => e.stopPropagation()}
-              background={featuredColor}
-              borderRadius="12px"
-              padding="25px"
-              style={{ ...containerStyle }}
-            >
-              {title?.length > 0 && (<Heading as="h2" size="xl" mb="25px">{title}</Heading>)}
-              <IconButton
-                position="absolute"
-                top={4}
-                right={5}
-                borderColor="blue.default"
-                color="blue.default"
-                background={backgroundColor}
-                onClick={() => setShowVideo(false)}
-                icon={<Icon icon="close" color={hexColor.black} width="25px" height="25px" />}
-                zIndex={2}
-              />
-              <ReactPlayer
-                className={`react-player ${className}`}
-                url={videoUrl}
-                playing={showVideo}
-                controls={controls}
+          {showVideo && (
+            <Portal>
+              <Box
+                position="fixed"
+                top="0"
+                left="0"
                 width="100%"
-                height="auto"
-                aspectRatio="16/9"
-                style={{
-                  background: 'black',
-                  borderRadius: '4px',
-                  ...iframeStyle,
-                }}
-                {...rest}
-              />
-            </Box>
-          </Box>
+                height="100%"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                background="rgba(0, 0, 0, 0.7)"
+                zIndex="9999"
+                className="video-overlay"
+                onClick={handleContainerClose}
+              >
+                <Box
+                  className="video-container"
+                  position="relative"
+                  onClick={(e) => e.stopPropagation()}
+                  background={featuredColor}
+                  padding="25px 25px"
+                  borderRadius="12px"
+                  style={{ ...containerStyle }}
+                >
+                  {title?.length > 0 && (<Heading as="h2" size="xl" mb="25px">{title}</Heading>)}
+                  <IconButton
+                    position="absolute"
+                    top={4}
+                    right={5}
+                    borderColor="blue.default"
+                    color="blue.default"
+                    background={backgroundColor}
+                    onClick={() => setShowVideo(false)}
+                    icon={<Icon icon="close" color={hexColor.black} width="25px" height="25px" />}
+                  />
+                  <ReactPlayer
+                    className={`react-player ${className}`}
+                    url={videoUrl}
+                    playing={showVideo}
+                    controls={controls}
+                    width="100%"
+                    height="auto"
+                    aspectRatio="16/9"
+                    style={{
+                      background: 'black',
+                      borderRadius: '4px',
+                      ...iframeStyle,
+                    }}
+                    {...rest}
+                  />
+                </Box>
+              </Box>
+            </Portal>
+          )}
         </>
       ) : (
         <>

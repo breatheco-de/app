@@ -228,5 +228,12 @@
   "welcome-modal": {
     "title": "Bienvenido a 4Geeks!",
     "description": "Mira este breve video que explica cómo aprovechar al máximo 4Geeks y mejorar tu experiencia de aprendizaje"
+  },
+  "repository-deletion": {
+    "title": "Estos repositorios se eliminarán pronto",
+    "description": "Los siguientes repositorios están a punto de ser eliminados. Acepta la solicitud de transferencia que deberías haber recibido en tu email para evitar la eliminación.",
+    "see-repositories": "Ver repositorios",
+    "days-left": "{{days}} días restantes",
+    "deletion-imminent": "Eliminación inminente"
   }
 }

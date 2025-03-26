@@ -81,6 +81,8 @@ function Dashboard() {
   const [subscriptionData, setSubscriptionData] = useState(null);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [isAvailableToShowWarningModal, setIsAvailableToShowModalMessage] = useState(false);
+  const [deletionOrders, setDeletionOrders] = useState([]);
+  const [showDeletionOrdersModal, setShowDeletionOrdersModal] = useState(false);
   const {
     state, getCohortUserCapabilities, getCohortData, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, setCohortSession,
@@ -336,6 +338,19 @@ function Dashboard() {
     return context;
   };
 
+  const fetchDeletionOrders = async () => {
+    try {
+      const resp = await bc.assignments({ status: 'transferring' }).getDeletionOrders();
+      const { data } = resp;
+      if (resp.status < 400) {
+        setDeletionOrders(data);
+      }
+    } catch (err) {
+      console.error('Error fetching deletion orders:', err);
+    }
+  };
+
+  // Fetch cohort data with pathName structure
   useEffect(() => {
     if (isRigoInitialized && cohortSession && cohortSession.cohort_role === 'STUDENT' && !isLoadingAssigments) {
       let context = '';
@@ -360,6 +375,8 @@ function Dashboard() {
         showBubble: false,
         context,
       });
+
+      fetchDeletionOrders();
     }
   }, [isRigoInitialized, cohortSession, isLoadingAssigments]);
 
@@ -484,6 +501,34 @@ function Dashboard() {
 
   return (
     <Container minHeight="93vh" display="flex" flexDirection="column" maxW="none" padding="0">
+      {deletionOrders.length > 0 && (
+        <AlertMessage
+          full
+          type="warning"
+          style={{ borderRadius: '0px', justifyContent: 'center' }}
+        >
+          <Text
+            size="l"
+            color="black"
+            fontWeight="700"
+          >
+            {t('repository-deletion.description')}
+            {'  '}
+            <Button
+              variant="link"
+              color="black"
+              textDecoration="underline"
+              fontWeight="700"
+              fontSize="15px"
+              height="20px"
+              onClick={() => setShowDeletionOrdersModal(true)}
+              _active={{ color: 'black' }}
+            >
+              {t('repository-deletion.see-repositories')}
+            </Button>
+          </Text>
+        </AlertMessage>
+      )}
       {cohortSession && !isAvailableAsSaas && mandatoryProjects && mandatoryProjects.length > 0 && (
         <AlertMessage
           full
@@ -1042,6 +1087,63 @@ function Dashboard() {
         actionHandler={() => syncTaskWithCohort()}
         handlerText={t('unsynced.sync')}
       />
+      {/* Add Deletion Orders Modal */}
+      <Modal
+        isOpen={showDeletionOrdersModal}
+        size="md"
+        margin="0 10px"
+        onClose={() => {
+          setShowDeletionOrdersModal(false);
+        }}
+      >
+        <ModalOverlay />
+        <ModalContent style={{ margin: '3rem 0 0 0' }}>
+          <ModalHeader pb="0" fontSize="15px" textTransform="uppercase" borderColor={borderColor}>
+            {t('repository-deletion.title')}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody padding={{ base: '15px 22px' }}>
+            <Box>
+              {deletionOrders.map((order) => {
+                let daysLeft;
+                if (order.starts_transferring_at) {
+                  const startDate = new Date(order.starts_transferring_at);
+                  const deletionDate = new Date(startDate.setMonth(startDate.getMonth() + 2));
+                  const today = new Date();
+                  daysLeft = Math.ceil((deletionDate - today) / (1000 * 60 * 60 * 24));
+                }
+
+                return (
+                  <Flex
+                    key={order.repository_name}
+                    fontSize="14px"
+                    padding="10px"
+                    borderBottom="1px solid"
+                    borderColor={borderColor}
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <NextChakraLink
+                      href={`https://github.com/${order.repository_user}/${order.repository_name}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      color="blue.500"
+                      _hover={{ textDecoration: 'underline' }}
+                    >
+                      {order.repository_name}
+                    </NextChakraLink>
+                    {typeof daysLeft === 'number' && (
+                      <Text fontWeight="700">
+                        {daysLeft > 0 ? `${t('repository-deletion.days-left', { days: daysLeft })}` : t('repository-deletion.deletion-imminent')}
+                      </Text>
+                    )}
+                  </Flex>
+                );
+              })}
+            </Box>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Container>
   );
 }
