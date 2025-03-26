@@ -13,6 +13,7 @@
     "greeting": "Hi!"
   },
   "ai-tutor": "AI Tutor",
+  "tooltip-ai-tutor": "Never be stuck again, our internally developed AI tutor will help you everywhere, every step of the way.",
   "clone-modal": {
     "title": "How to clone a project?"
   },
@@ -174,6 +175,7 @@
     "description2": "This practice will reroute your browser to LearnPack - an interactive learning tool that runs integrated with VSCode.",
     "new-exercise": "Start from the beginning",
     "continue-exercise": "Continue from a previous session",
+    "open-with-vendor": "Open with {{vendor}}",
     "open-locally": "Open locally on your computer",
     "start-interactive-asset": "Start interactive {{asset_type}}",
     "start-asset": "Start {{asset_type}}",
@@ -200,7 +202,7 @@
         {
           "label": "Verify if the repository is a template",
           "description": "Check if the repository is a GitHub template before proceeding.<br><br>You can find out if it is a template by looking at the {{repoUrl}}.<br><br>If it has a `Use this template` button or if, after the name of the repository located on the top side of your screen (in GitHub), it says `Template` or `Public template`, then it is a template.",
-          "video": "",
+          "video": "https://www.youtube.com/watch?v=3vADJs7N3NA",
           "source": "https://4geeks.com/lesson/how-to-start-a-project",
           "source-label": ""
         },

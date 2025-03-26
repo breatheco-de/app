@@ -47,6 +47,7 @@ import { BREATHECODE_HOST } from '../../../../../utils/variables';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
+import AlertMessage from '../../../../../common/components/AlertMessage';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
 import LiveEvent from '../../../../../common/components/LiveEvent';
@@ -79,6 +80,8 @@ function Dashboard() {
   const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [isAvailableToShowWarningModal, setIsAvailableToShowModalMessage] = useState(false);
   const [showMandatoryModal, setShowMandatoryModal] = useState(false);
+  const [deletionOrders, setDeletionOrders] = useState([]);
+  const [showDeletionOrdersModal, setShowDeletionOrdersModal] = useState(false);
   const { cohortProgram, taskTodo, setTaskTodo } = useModuleHandler();
   const {
     state, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
@@ -321,6 +324,18 @@ function Dashboard() {
       });
   }, []);
 
+  const fetchDeletionOrders = async () => {
+    try {
+      const resp = await bc.assignments({ status: 'transferring' }).getDeletionOrders();
+      const { data } = resp;
+      if (resp.status < 400) {
+        setDeletionOrders(data);
+      }
+    } catch (err) {
+      console.error('Error fetching deletion orders:', err);
+    }
+  };
+
   // Fetch cohort data with pathName structure
   useEffect(() => {
     if (user) {
@@ -344,6 +359,8 @@ function Dashboard() {
       }).finally(() => {
         setIsLoadingAssigments(false);
       });
+
+      fetchDeletionOrders();
     }
   }, [user]);
 
@@ -484,6 +501,77 @@ function Dashboard() {
 
   return (
     <>
+      {deletionOrders.length > 0 && (
+        <AlertMessage
+          full
+          type="warning"
+          style={{ borderRadius: '0px', justifyContent: 'center' }}
+        >
+          <Text
+            size="l"
+            color="black"
+            fontWeight="700"
+          >
+            {t('repository-deletion.description')}
+            {'  '}
+            <Button
+              variant="link"
+              color="black"
+              textDecoration="underline"
+              fontWeight="700"
+              fontSize="15px"
+              height="20px"
+              onClick={() => setShowDeletionOrdersModal(true)}
+              _active={{ color: 'black' }}
+            >
+              {t('repository-deletion.see-repositories')}
+            </Button>
+          </Text>
+        </AlertMessage>
+      )}
+      {getMandatoryProjects() && getMandatoryProjects().length > 0 && (
+        <AlertMessage
+          full
+          type="warning"
+          style={{ borderRadius: '0px', justifyContent: 'center' }}
+        >
+          <Text
+            size="l"
+            color="black"
+            fontWeight="700"
+          >
+            {t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
+            {'  '}
+            <Button
+              variant="link"
+              color="black"
+              textDecoration="underline"
+              fontWeight="700"
+              fontSize="15px"
+              height="20px"
+              onClick={() => setShowMandatoryModal(true)}
+              _active={{ color: 'black' }}
+            >
+              {t('deliverProject.see-mandatory-projects')}
+            </Button>
+          </Text>
+        </AlertMessage>
+      )}
+      {subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists && (
+        <AlertMessage
+          full
+          type="warning"
+          style={{ borderRadius: '0px', justifyContent: 'center' }}
+        >
+          <Text
+            size="l"
+            color="black"
+            dangerouslySetInnerHTML={{
+              __html: t('free-trial-msg', { link: '/profile/subscriptions' }),
+            }}
+          />
+        </AlertMessage>
+      )}
       <Container maxW="container.xl">
         <Box width="fit-content" marginTop="18px" marginBottom="48px">
           <NextChakraLink
@@ -978,6 +1066,63 @@ function Dashboard() {
                 variant="open-only"
               />
             ))}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      {/* Add Deletion Orders Modal */}
+      <Modal
+        isOpen={showDeletionOrdersModal}
+        size="md"
+        margin="0 10px"
+        onClose={() => {
+          setShowDeletionOrdersModal(false);
+        }}
+      >
+        <ModalOverlay />
+        <ModalContent style={{ margin: '3rem 0 0 0' }}>
+          <ModalHeader pb="0" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor}>
+            {t('repository-deletion.title')}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody padding={{ base: '15px 22px' }}>
+            <Box>
+              {deletionOrders.map((order) => {
+                let daysLeft;
+                if (order.starts_transferring_at) {
+                  const startDate = new Date(order.starts_transferring_at);
+                  const deletionDate = new Date(startDate.setMonth(startDate.getMonth() + 2));
+                  const today = new Date();
+                  daysLeft = Math.ceil((deletionDate - today) / (1000 * 60 * 60 * 24));
+                }
+
+                return (
+                  <Flex
+                    key={order.repository_name}
+                    fontSize="14px"
+                    padding="10px"
+                    borderBottom="1px solid"
+                    borderColor={commonBorderColor}
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <NextChakraLink
+                      href={`https://github.com/${order.repository_user}/${order.repository_name}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      color="blue.500"
+                      _hover={{ textDecoration: 'underline' }}
+                    >
+                      {order.repository_name}
+                    </NextChakraLink>
+                    {typeof daysLeft === 'number' && (
+                      <Text fontWeight="700">
+                        {daysLeft > 0 ? `${t('repository-deletion.days-left', { days: daysLeft })}` : t('repository-deletion.deletion-imminent')}
+                      </Text>
+                    )}
+                  </Flex>
+                );
+              })}
+            </Box>
           </ModalBody>
         </ModalContent>
       </Modal>
