@@ -242,8 +242,6 @@ function chooseProgram() {
       }).getMembers();
       const teacher = studentAndTeachers?.data?.filter((st) => st.role === 'TEACHER') || [];
       const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT') || [];
-      console.log('cohort slug', slug);
-      console.log('cohortsAssignments', cohortsAssignments);
       const { tasks, syllabus } = cohortsAssignments[slug];
       const assignmentData = await handlers.getAssignmentsCount({ data: syllabus, taskTodo: tasks, cohortId: cohort.id });
 
@@ -260,7 +258,6 @@ function chooseProgram() {
 
   useEffect(() => {
     if (cohorts.length > 0) {
-      console.log('calling getCohortsModules', cohorts);
       getCohortsModules(cohorts);
     }
   }, [cohorts]);
