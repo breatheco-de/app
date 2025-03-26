@@ -59,8 +59,10 @@ function MktEventCards({
       const userEvents = res?.data || [];
       const userEventsSorted = sortToNearestTodayDate(userEvents, hoursLimited, true);
       setCheckedInEvents(userEventsSorted);
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching checked-in events:', error);
+      setLoading(false);
     }
   };
 
@@ -98,18 +100,20 @@ function MktEventCards({
           const eventsWithTechnologies = transformEventsWithTechnologies(eventsFilteredByLang, sortPrioOneTechs);
 
           const eventsFilteredByTech = techFilter ? eventsWithTechnologies.filter((event) => event?.event_type?.technologies?.split(',').includes(techFilter.toLowerCase())) : eventsWithTechnologies;
-          if (showCheckedInEvents && user?.id && eventsFilteredByTech.length > 0) {
-            fetchCheckedInEvents();
-            return;
-          }
 
           setOriginalEvents(eventsFilteredByTech);
-          if (searchSensitive && !search) return;
           setFilteredEvents(eventsFilteredByTech);
+
+          if (showCheckedInEvents && user?.id) {
+            fetchCheckedInEvents();
+          } else {
+            setLoading(false);
+          }
+        } else {
+          setLoading(false);
         }
       } catch (error) {
         console.error('Error fetching events:', error);
-      } finally {
         setLoading(false);
       }
     };
@@ -117,29 +121,28 @@ function MktEventCards({
     fetchEvents();
   }, [externalEvents, techFilter, sortPrioOneTechs]);
 
+  console.log('original events', originalEvents);
+
   useEffect(() => {
     if (!searchSensitive || techFilter) return undefined;
 
-    if (searchSensitive && !search) {
-      setFilteredEvents([]);
-      setLoading(false);
-      return undefined;
+    if (search) {
+      setLoading(true);
+      const delay = setTimeout(() => {
+        const filteredBySearch = originalEvents.filter((event) => (
+          event?.title?.toLowerCase().includes(search.toLowerCase())
+          || event?.event_type?.technologies?.includes(search.toLowerCase())
+          || event?.event_type?.name?.toLowerCase().includes(search.toLowerCase())
+        ));
+        setFilteredEvents(filteredBySearch);
+        setLoading(false);
+      }, 300);
+      return () => clearTimeout(delay);
     }
 
-    if (!search) {
-      setFilteredEvents(originalEvents);
-      return undefined;
-    }
-
-    setLoading(true);
-
-    const delay = setTimeout(() => {
-      const filteredBySearch = originalEvents.filter((event) => event?.title?.toLowerCase().includes(search.toLowerCase()) || event?.event_type?.technologies?.includes(search.toLowerCase()));
-      setFilteredEvents(filteredBySearch);
-      setLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(delay);
+    setFilteredEvents(originalEvents);
+    setLoading(false);
+    return undefined;
   }, [search, searchSensitive, originalEvents]);
 
   const renderTitle = () => {
@@ -202,6 +205,7 @@ function MktEventCards({
                 <Flex gridGap="20px" width="max-content">
                   {eventsToDisplay.map((event) => (
                     <DynamicContentCard
+                      key={event.id}
                       type="workshop"
                       data={event}
                       technologies={event?.technologies}

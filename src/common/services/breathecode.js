@@ -397,6 +397,7 @@ const breathecode = {
       joinLiveClass2: (liveClassHash) => axios.get(`${host}/me/event/liveclass/join/${liveClassHash}${qs}`),
       applyEvent: (eventId, payload) => axios.post(`${url}/event/${eventId}/checkin${qs}`, payload),
       getUsers: (eventId) => axios.get(`${host}/events/event/${eventId}/checkin${qs}`),
+      getAllEventTypes: () => axios.get(`${host}/events/eventype${qs}`),
     };
   },
   rigobot: (query = {}) => {

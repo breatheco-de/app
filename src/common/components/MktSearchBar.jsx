@@ -1,16 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { Box, Input, Button, Flex, Text, useColorModeValue } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import Heading from './Heading';
 import useStyle from '../hooks/useStyle';
 
 function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches, background, popularSearchesTitle, ...rest }) {
   const [search, setSearch] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const timeoutRef = useRef(null);
   const { hexColor, fontColor } = useStyle();
   const router = useRouter();
+  const { t } = useTranslation('workshops');
 
   const updateQueryParams = (newParams) => {
     const currentQuery = new URLSearchParams(router.query);
@@ -26,13 +28,13 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
     router.replace(`${router.pathname}?${queryString}`, undefined, { shallow: true });
   };
 
-  const handleInputChange = (e) => {
-    setSearch(e.target.value);
-  };
-
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    updateQueryParams({ search });
+    if (search) {
+      updateQueryParams({ search });
+    } else {
+      updateQueryParams({ search: null });
+    }
   };
 
   const handlePopularSearchClick = (term) => {
@@ -40,21 +42,49 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
     updateQueryParams({ search: term });
   };
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(search);
-    }, 500); // 500ms delay
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [search]);
-
-  useEffect(() => {
-    if (debouncedSearch !== '') {
-      updateQueryParams({ search: debouncedSearch });
+  const clearSearch = () => {
+    // Clear any pending timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
-  }, [debouncedSearch]);
+    // Clear the input
+    setSearch('');
+    // Clear URL parameter
+    updateQueryParams({ search: null });
+  };
+
+  const handleInputChange = (e) => {
+    const { value } = e.target;
+    setSearch(value);
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    if (value === '') {
+      clearSearch();
+      return;
+    }
+    // Set a timeout to update the URL after typing stops
+    timeoutRef.current = setTimeout(() => {
+      updateQueryParams({ search: value });
+    }, 500);
+  };
+
+  // Sync search input with URL on mount and when URL changes
+  useEffect(() => {
+    const searchParam = router.query.search;
+    if (searchParam !== undefined && searchParam !== search) {
+      setSearch(searchParam || '');
+    }
+  }, [router.query.search]);
+
+  // Clean up timeouts on unmount
+  useEffect(() => () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+  }, []);
 
   return (
     <Box id={id} padding={{ base: '10px 0', md: '60px 80px' }} {...rest}>
@@ -76,17 +106,33 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
               alignItems="center"
               padding="2px 2px 2px 16px"
               gap={2}
+              position="relative"
             >
               <Icon icon="search" color={fontColor} boxSize={5} />
               <Input
                 value={search}
                 onChange={handleInputChange}
-                placeholder="Search workshops"
+                placeholder={t('search-workshops')}
                 variant="unstyled"
                 _placeholder={{ color: useColorModeValue('gray.600', 'white') }}
                 flex="1"
               />
-              <Button type="submit" borderRadius="4px" bg="blue.500" p={2} _hover={{ bg: 'blue.600' }}>
+              {search && (
+                <Button
+                  variant="ghost"
+                  p={1}
+                  minW="auto"
+                  onClick={clearSearch}
+                  position="absolute"
+                  right="60px"
+                  color="red.500"
+                  fontSize="sm"
+                  _hover={{ bg: 'transparent' }}
+                >
+                  {t('clear-search')}
+                </Button>
+              )}
+              <Button type="submit" borderRadius="4px" bg="blue.500" _hover={{ bg: 'blue.600' }}>
                 <Icon icon="longArrowRight" color="white" />
               </Button>
             </Flex>
