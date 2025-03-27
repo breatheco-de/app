@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, Button, Box,
   FormControl, FormLabel, Input, Flex, Grid, Avatar, Spinner,
-  useColorMode, ModalCloseButton,
+  ModalCloseButton,
 } from '@chakra-ui/react';
 import Text from '../../common/components/Text';
 import bc from '../../common/services/breathecode';
@@ -21,9 +21,8 @@ function StudentsModal({
   const [studentsCount, setStudentsCount] = useState(0);
   const [filterStudent, setFilterStudent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { colorMode } = useColorMode();
 
-  const { hexColor, lightColor, borderColor } = useStyle();
+  const { hexColor, lightColor, borderColor, modal } = useStyle();
 
   const loadStudents = async (offset, append = false, like) => {
     try {
@@ -59,7 +58,7 @@ function StudentsModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent maxWidth="-webkit-fit-content" borderRadius="17px" padding="10px" style={{ margin: '3rem 0 0 0' }} bg={colorMode === 'light' ? 'white' : 'featuredDark'}>
+      <ModalContent maxWidth="-webkit-fit-content" borderRadius="17px" padding="10px" style={{ margin: '3rem 0 0 0' }} bg={modal.background}>
         <ModalHeader fontSize="30px" paddingBottom={0}>
           {t('dashboard:students-modal.students-course')}
         </ModalHeader>
