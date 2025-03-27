@@ -44,15 +44,19 @@ const useStyle = () => {
   };
 
   const hexColor = {
+    blue3: useColorModeValue('#0097CF', '#ffffff'),
     blue2: useColorModeValue('#01455E', '#ffffff'),
     black: useColorModeValue('#000000', '#ffffff'),
+    black1: useColorModeValue('#2E2E38', '#ffffff'),
     disabledColor: useColorModeValue('#A4A4A4', '#CACACA'),
     fontColor3: useColorModeValue('#606060', '#EBEBEB'),
+    fontColor4: useColorModeValue('#4D4D5C', '#EBEBEB'),
     borderColor: useColorModeValue('#DADADA', '#4A5568'),
     backgroundColor: useColorModeValue('#ffffff', '#17202A'),
     featuredColor: useColorModeValue('#EEF9FE', '#283340'),
     featuredColor2: useColorModeValue('#F5F8FF', '#283340'),
     featuredColor3: useColorModeValue('#F3FAFE', '#19202a'),
+    featuredColor4: useColorModeValue('#F4F9FF', '#283340'),
     lightColor: useColorModeValue('#F5F5F5', '#4A5568'),
     lightColor2: useColorModeValue('#F5F5F5', '#283340'),
     lightColor3: useColorModeValue('#F5F5F5', '#17202A'),
