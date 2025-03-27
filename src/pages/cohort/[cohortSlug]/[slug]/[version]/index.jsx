@@ -27,8 +27,8 @@ import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
 import ModuleMap from '../../../../../js_modules/moduleMap/index';
-import Header from '../../../../../js_modules/Cohort/Header';
-import CohortModules from '../../../../../js_modules/Cohort/CohortModules';
+import CohortHeader from '../../../../../js_modules/Cohort/CohortHeader';
+import CohortPanel from '../../../../../js_modules/Cohort/CohortPanel';
 import CohortSideBar from '../../../../../common/components/CohortSideBar';
 import Icon from '../../../../../common/components/Icon';
 import SupportSidebar from '../../../../../common/components/SupportSidebar';
@@ -572,7 +572,7 @@ function Dashboard() {
           />
         </AlertMessage>
       )}
-      {isAvailableAsSaas && <Header />}
+      {isAvailableAsSaas && <CohortHeader />}
       <Container flex="1" background={isAvailableAsSaas && hexColor.lightColor4} maxW="none">
         <Box maxW="1280px" width="100%" margin="0 auto">
           <Box width="fit-content" paddingTop="18px" marginBottom="18px">
@@ -617,7 +617,7 @@ function Dashboard() {
                         ? cohorts.filter((cohort) => cohortSession.micro_cohorts.some((elem) => elem.slug === cohort.slug))
                           .sort(sortMicroCohorts)
                           .map((microCohort) => (
-                            <CohortModules
+                            <CohortPanel
                               key={microCohort.slug}
                               cohort={microCohort}
                               modules={cohortsAssignments[microCohort.slug]?.modules}
@@ -628,7 +628,7 @@ function Dashboard() {
                             />
                           ))
                         : (
-                          <CohortModules openByDefault cohort={cohortSession} modules={sortedAssignments} certificate={certificates.find((cert) => cert.cohort.id === cohortSession.id)} />
+                          <CohortPanel openByDefault cohort={cohortSession} modules={sortedAssignments} certificate={certificates.find((cert) => cert.cohort.id === cohortSession.id)} />
                         )}
                     </Box>
                   ) : (

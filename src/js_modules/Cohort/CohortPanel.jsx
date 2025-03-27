@@ -29,7 +29,7 @@ import { stages } from '../../common/components/ReviewModal';
 
 const locales = { es, en };
 
-function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault, tasks }) {
+function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, tasks }) {
   const containerRef = useRef(null);
   const [isExpanded, setIsExpanded] = useState(openByDefault);
   const { reward } = useReward(cohort.slug, 'confetti', {
@@ -515,9 +515,9 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
   );
 }
 
-export default CohortModules;
+export default CohortPanel;
 
-CohortModules.propTypes = {
+CohortPanel.propTypes = {
   cohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   modules: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   tasks: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
@@ -526,7 +526,7 @@ CohortModules.propTypes = {
   openByDefault: PropTypes.bool,
 };
 
-CohortModules.defaultProps = {
+CohortPanel.defaultProps = {
   mainCohort: null,
   modules: null,
   certificate: null,
