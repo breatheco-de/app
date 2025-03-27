@@ -462,7 +462,7 @@ function SyllabusContent() {
           const avoidReadmeRequest = assetTypeValues[lesson] === 'QUIZ' || (isExercise && isAvailableAsSaas);
 
           Promise.all([
-            avoidReadmeRequest ? false : axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
+            avoidReadmeRequest ? false : bc.lesson().getAssetReadme(currentTranslationSlug),
             bc.lesson({ asset_type: assetTypeValues[lesson] }).getAsset(currentTranslationSlug),
           ])
             .then(([respMarkdown, respData]) => {
