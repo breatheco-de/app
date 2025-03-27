@@ -10,7 +10,7 @@ import { useState, memo } from 'react';
 import Text from '../../common/components/Text';
 import validationSchema from '../../common/components/Forms/validationSchemas';
 import Icon from '../../common/components/Icon';
-import iconDict from '../../common/utils/iconDict.json';
+import iconDict from '../../iconDict.json';
 
 function ModalInfo({
   isOpen, onClose, actionHandler, closeActionHandler, rejectHandler, forceHandler, disableHandler, title, description,

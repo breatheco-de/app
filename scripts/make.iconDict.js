@@ -16,11 +16,11 @@ walk(`${__dirname}/../src/common/components/Icon/set`)
     }
     console.log('Stored icons:', slugs);
     fs.writeFile(
-      `${__dirname}/../src/common/utils/${fileName}.json`,
+      `${__dirname}/../src/${fileName}.json`,
       JSON.stringify(slugs),
       (err) => {
         if (err) return console.log(err);
-        return success(`\n${fileName} => /src/common/utils/${fileName}.json\n`);
+        return success(`\n${fileName} => /src/${fileName}.json\n`);
       },
     );
   })

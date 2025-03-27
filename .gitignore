@@ -28,6 +28,7 @@
 .DS_Store
 *.pem
 src/common/utils/iconDict.json
+src/iconDict.json
 
 # debug
 npm-debug.log*

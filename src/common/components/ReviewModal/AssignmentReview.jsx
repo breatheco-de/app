@@ -14,7 +14,7 @@ import Icon from '../Icon';
 import LoaderScreen from '../LoaderScreen';
 import PopoverTaskHandler from '../PopoverTaskHandler';
 import UndoApprovalModal from '../UndoApprovalModal';
-import iconDict from '../../utils/iconDict.json';
+import iconDict from '../../../iconDict.json';
 import { error } from '../../../utils/logging';
 import bc from '../../services/breathecode';
 
