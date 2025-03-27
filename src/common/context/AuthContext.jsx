@@ -198,7 +198,6 @@ function AuthProvider({ children, pageProps }) {
     return {
       ...cohort,
       selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
-      cohort_role: elem.role,
       cohort_user,
     };
   };

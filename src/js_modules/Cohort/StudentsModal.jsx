@@ -42,7 +42,7 @@ function StudentsModal({
   };
 
   useEffect(() => {
-    if (cohortSession?.cohort_role !== 'STUDENT' && students.length === 0) loadStudents();
+    if (cohortSession?.cohort_user?.role !== 'STUDENT' && students.length === 0) loadStudents();
   }, [cohortSession]);
 
   const handleFilterChange = (e) => {

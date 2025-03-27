@@ -231,10 +231,10 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    if (cohortSession?.available_as_saas === true && cohortSession.cohort_role === 'STUDENT') {
+    if (cohortSession?.available_as_saas === true && cohortSession.cohort_user.role === 'STUDENT') {
       checkNavigationAvailability();
     }
-    if (cohortSession?.cohort_role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
+    if (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
   }, [cohortSession, allSubscriptions]);
 
   useEffect(() => {
@@ -352,7 +352,7 @@ function Dashboard() {
 
   // Fetch cohort data with pathName structure
   useEffect(() => {
-    if (isRigoInitialized && cohortSession && cohortSession.cohort_role === 'STUDENT' && !isLoadingAssigments) {
+    if (isRigoInitialized && cohortSession && cohortSession.cohort_user?.role === 'STUDENT' && !isLoadingAssigments) {
       let context = '';
       if (hasMicroCohorts) {
         const modulesPerProgram = cohorts.filter((cohort) => cohortSession.micro_cohorts.some((microCohort) => microCohort.slug === cohort.slug))
@@ -723,17 +723,17 @@ function Dashboard() {
                         featureReadMoreUrl={t('common:live-event.readMoreUrl')}
                         mainClasses={liveClasses?.length > 0 ? liveClasses : []}
                         otherEvents={events}
-                        cohorts={cohortSession ? [{ role: cohortSession.cohort_role, cohort: cohortSession }] : []}
+                        cohorts={cohortSession ? [{ role: cohortSession.cohort_user.role, cohort: cohortSession }] : []}
                       />
 
                       {cohortSession?.kickoff_date && (
                       <CohortSideBar
-                        teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
+                        teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_user?.role)}
                         studentAndTeachers={studentAndTeachers}
                         width="100%"
                       />
                       )}
-                      {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
+                      {cohortSession?.cohort_user?.role?.toLowerCase() === 'student' && (
                       <SupportSidebar
                         allCohorts={[{
                           cohort: {
@@ -796,7 +796,7 @@ function Dashboard() {
                     />
                     )}
 
-                    {(!cohortSession?.intro_video || ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) || (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 3)) && (
+                    {(!cohortSession?.intro_video || ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_user?.role) || (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 3)) && (
                     <Box marginTop="36px">
                       <ProgressBar
                         cohortProgram={cohortProgram}
@@ -923,7 +923,7 @@ function Dashboard() {
                     <FinalProject
                       tasks={taskTodo}
                       studentAndTeachers={onlyStudentsActive}
-                      isStudent={!profesionalRoles.includes(cohortSession?.cohort_role)}
+                      isStudent={!profesionalRoles.includes(cohortSession?.cohort_user?.role)}
                     />
                     )}
                     {academyOwner?.white_labeled && (
@@ -958,12 +958,12 @@ function Dashboard() {
                     />
                     {cohortSession?.kickoff_date && (
                     <CohortSideBar
-                      teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
+                      teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_user?.role)}
                       studentAndTeachers={studentAndTeachers}
                       width="100%"
                     />
                     )}
-                    {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
+                    {cohortSession?.cohort_user?.role?.toLowerCase() === 'student' && (
                     <SupportSidebar
                       allCohorts={[{
                         cohort: {

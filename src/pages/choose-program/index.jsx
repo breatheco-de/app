@@ -268,8 +268,6 @@ function chooseProgram() {
     }
   }, [cohorts, cohortsAssignments]);
 
-  const userID = user?.id;
-
   useEffect(() => {
     bc.payment({ upcoming: true, limit: 20 }).events()
       .then(({ data }) => {
@@ -315,10 +313,10 @@ function chooseProgram() {
   }, [user]);
 
   useEffect(() => {
-    if (userID !== undefined) {
+    if (!user) {
       setCohortSession(null);
     }
-  }, [userID]);
+  }, [user]);
 
   const getPendingInvites = async () => {
     try {

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import axios from 'axios';
 import {
   Box, Flex, useDisclosure, Link, Avatar,
   useColorModeValue, Modal, ModalOverlay, useToast, Tooltip,
@@ -328,7 +327,7 @@ function SyllabusContent() {
   };
 
   useEffect(() => {
-    if (allSubscriptions && cohortSession && cohortSession.available_as_saas === true && cohortSession.cohort_role === 'STUDENT') {
+    if (allSubscriptions && cohortSession && cohortSession.available_as_saas === true && cohortSession.cohort_user.role === 'STUDENT') {
       const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
       const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
       const currentCohortSlug = cohortSubscriptions[0]?.selected_cohort_set?.slug;
@@ -361,7 +360,7 @@ function SyllabusContent() {
 
       setGrantAccess(true);
     }
-    if (cohortSession?.cohort_role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
+    if (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
   }, [cohortSession, allSubscriptions]);
 
   const toggleSettings = () => {
@@ -529,7 +528,7 @@ function SyllabusContent() {
     }
   }, [selectedSyllabus]);
 
-  const teacherActions = professionalRoles.includes(cohortSession?.cohort_role)
+  const teacherActions = professionalRoles.includes(cohortSession?.cohort_user?.role)
     ? [
       {
         icon: 'key',
@@ -864,7 +863,7 @@ function SyllabusContent() {
             setShowPendingTasks={setShowPendingTasks}
             isOpen={isOpen}
             onToggle={onToggle}
-            isStudent={!professionalRoles.includes(cohortSession?.cohort_role)}
+            isStudent={!professionalRoles.includes(cohortSession?.cohort_user?.role)}
             teacherInstructions={{
               existContentToShow: extendedInstructions !== null,
               actionHandler: () => {

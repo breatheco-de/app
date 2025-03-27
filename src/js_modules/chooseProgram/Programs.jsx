@@ -47,7 +47,6 @@ function Programs({ item, onOpenModal, setLateModalProps }) {
       axios.defaults.headers.common.Academy = cohort.academy.id;
       setCohortSession({
         ...cohort,
-        cohort_role: cohortUser?.role,
         cohort_user: cohortUser,
         selectedProgramSlug: `/cohort/${cohort?.slug}/${slug}/v${version}`,
       });

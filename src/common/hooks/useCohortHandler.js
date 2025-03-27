@@ -206,17 +206,6 @@ function useCohortHandler() {
     }
   };
 
-  const parseCohort = (elem) => {
-    const { cohort, ...cohort_user } = elem;
-    const { syllabus_version } = cohort;
-    return {
-      ...cohort,
-      selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
-      cohort_role: elem.role,
-      cohort_user,
-    };
-  };
-
   const getCohortData = async ({
     cohortSlug,
   }) => {
@@ -570,7 +559,6 @@ function useCohortHandler() {
     state,
     setCohortsAssingments,
     serializeModulesMap,
-    parseCohort,
     taskTodo,
     cohortProgram,
     addTasks,

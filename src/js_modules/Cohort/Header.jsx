@@ -65,7 +65,7 @@ function Header() {
   };
 
   useEffect(() => {
-    if (cohortSession && cohortSession.cohort_role === 'STUDENT') fetchServices();
+    if (cohortSession && cohortSession.cohort_user.role === 'STUDENT') fetchServices();
   }, [cohortSession]);
 
   const hasGithub = user?.github && user.github.username !== '';
@@ -107,7 +107,7 @@ function Header() {
             </Heading>
           </Box>
           <Flex gap="16px" flexDirection={{ base: 'column', sm: 'row' }} width={{ base: '100%', sm: 'auto' }}>
-            {cohortSession.cohort_role === 'STUDENT' ? (
+            {cohortSession.cohort_user.role === 'STUDENT' ? (
               <>
                 <CustomButton onClick={() => router.push('/workshops')}>
                   <Icon icon="live-event-opaque" width="42px" height="42px" />
@@ -165,7 +165,7 @@ function Header() {
           borderRadius="30px"
         />
       )}
-      {cohortSession && cohortSession.cohort_role !== 'STUDENT' && (
+      {cohortSession && cohortSession.cohort_user.role !== 'STUDENT' && (
         <StudentsModal isOpen={showStudentsModal} onClose={() => setShowStudentsModal(false)} />
       )}
     </Container>
