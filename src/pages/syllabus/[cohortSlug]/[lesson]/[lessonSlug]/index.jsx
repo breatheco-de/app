@@ -38,7 +38,6 @@ import ReactSelect from '../../../../../common/components/ReactSelect';
 import ConnectGithubRigobot from '../../../../../common/components/ConnectGithubRigobot';
 import useStyle from '../../../../../common/hooks/useStyle';
 import { ORIGIN_HOST, BREATHECODE_HOST } from '../../../../../utils/variables';
-import useSession from '../../../../../common/hooks/useSession';
 import { log } from '../../../../../utils/logging';
 import { parseQuerys } from '../../../../../utils/url';
 import completions from './completion-jobs.json';
@@ -64,7 +63,6 @@ function SyllabusContent() {
     setSubTasks,
     subTasks,
   } = useModuleHandler();
-  const { setUserSession } = useSession();
   const mainContainer = useRef(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [modalSettingsOpen, setModalSettingsOpen] = useState(false);
@@ -122,7 +120,7 @@ function SyllabusContent() {
   const lesson = router?.query?.lesson;
   const lessonSlug = router?.query?.lessonSlug;
 
-  const language = router?.locale === 'en' ? 'us' : router?.locale;
+  const language = router.locale === 'en' ? 'us' : router.locale;
 
   const isQuiz = lesson === 'answer';
   const isExercise = lesson === 'practice';
@@ -137,20 +135,16 @@ function SyllabusContent() {
 
   const currentModule = sortedAssignments[currentModuleIndex];
 
-  const userToken = getStorageItem('accessToken');
-  const learnpackDeployUrl = currentAsset?.learnpack_deploy_url;
-  const currentThemeValue = useColorModeValue('light', 'dark');
   const buildLearnpackUrl = () => {
+    const learnpackDeployUrl = currentAsset?.learnpack_deploy_url;
     if (!learnpackDeployUrl) return null;
 
-    const currentLang = lang === 'en' ? 'us' : lang;
-    const theme = currentThemeValue;
     const iframe = 'true';
-    const token = userToken;
+    const token = getStorageItem('accessToken');
 
-    return `${learnpackDeployUrl}#language=${currentLang}&lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
+    return `${learnpackDeployUrl}#language=${language}&lang=${language}&theme=${colorMode}&iframe=${iframe}&token=${token}`;
   };
-  const iframeURL = useMemo(() => buildLearnpackUrl(), [currentThemeValue, currentAsset, lang]);
+  const iframeURL = useMemo(() => buildLearnpackUrl(), [colorMode, currentAsset, lang]);
 
   const handleStartLearnpack = () => {
     setLearnpackStart(true);
@@ -418,13 +412,13 @@ function SyllabusContent() {
     cleanCurrentData();
   };
 
-  const EventIfNotFound = (task) => {
+  const handleNotFound = (task) => {
     if (task.target === 'blank' && task.task_type === 'LESSON') {
       setReadme({
         content: t('external-read', { link: task.url }),
       });
       setCurrentAsset({
-        title: task?.title || t('no-content-found'),
+        title: task.title || t('no-content-found'),
       });
       return;
     }
@@ -438,13 +432,13 @@ function SyllabusContent() {
 
   useEffect(() => {
     const currTask = sortedAssignments[currentModuleIndex]?.content?.find((l) => l.slug === lessonSlug);
-    const currentLanguageTaskUrl = currTask?.translations?.[lang === 'en' ? 'us' : lang]?.slug || lessonSlug;
+    const currentLanguageTaskSlug = currTask?.translations?.[language]?.slug || lessonSlug;
     if (cohortSession && sortedAssignments.length > 0) {
       if (currTask?.task_type === 'LESSON' && currTask?.target === 'blank') {
-        EventIfNotFound(currTask);
+        handleNotFound(currTask);
         return undefined;
       }
-      bc.lesson({ asset_type: assetTypeValues[lesson] }).getAsset(currentLanguageTaskUrl).then(({ data }) => {
+      bc.lesson({ asset_type: assetTypeValues[lesson] }).getAsset(currentLanguageTaskSlug).then(({ data }) => {
         const translations = data?.translations;
         const exensionName = getExtensionName(data.readme_url);
         const isIpynb = exensionName === 'ipynb';
@@ -455,7 +449,7 @@ function SyllabusContent() {
         const finalPathname = `${pathnameWithoutExtension}.${extension}`;
 
         setReadmeUrlPathname(finalPathname);
-        let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
+        let currentTranslationSlug = data?.lang === language ? data.slug : data.translations[language];
         if (isIpynb) {
           setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?plain=true`);
           setCurrentAsset(data);
@@ -469,7 +463,7 @@ function SyllabusContent() {
 
           Promise.all([
             avoidReadmeRequest ? false : axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
-            axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}?asset_type=${assetTypeValues[lesson]}`),
+            bc.lesson({ asset_type: assetTypeValues[lesson] }).getAsset(currentTranslationSlug),
           ])
             .then(([respMarkdown, respData]) => {
               const currData = respData.data;
@@ -499,14 +493,11 @@ function SyllabusContent() {
             });
         }
       }).catch(() => {
-        EventIfNotFound(currTask);
+        handleNotFound(currTask);
       });
     }
     return () => {
       cleanCurrentData();
-      setUserSession({
-        translations: [],
-      });
     };
   }, [router, lessonSlug, cohortSession, sortedAssignments.length]);
 
@@ -726,9 +717,9 @@ function SyllabusContent() {
   };
 
   const pathConnector = {
-    read: `${router.locale === 'en' ? '4geeks.com/lesson' : `4geeks.com/${router.locale}/lesson`}`,
-    practice: `${router.locale === 'en' ? '4geeks.com/interactive-exercise' : `4geeks.com/${router.locale}/interactive-exercise`}`,
-    project: `${router.locale === 'en' ? '4geeks.com/project' : `4geeks.com/${router.locale}/project`}`,
+    read: router.locale === 'en' ? '4geeks.com/lesson' : `4geeks.com/${router.locale}/lesson`,
+    practice: router.locale === 'en' ? '4geeks.com/interactive-exercise' : `4geeks.com/${router.locale}/interactive-exercise`,
+    project: router.locale === 'en' ? '4geeks.com/project' : `4geeks.com/${router.locale}/project`,
     answer: 'https://assessment.4geeks.com/quiz',
   };
   const shareLink = currentTask ? `${pathConnector[lesson]}/${currentTask.associated_slug}` : '';

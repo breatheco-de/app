@@ -390,7 +390,7 @@ function CohortSideBar({
               >
                 {cohort.ending_date
                   ? t('cohortSideBar.classmates', { studentsLength: activeStudents?.length || 0 })
-                  : t('cohortSideBar.active-geeks', { studentsLength: activeAndRecent?.length || 0 })}
+                  : t('cohortSideBar.active-geeks', { studentsLength: activeAndRecent.length || 0 })}
               </Tab>
             )}
             {alumniGeeksList?.count && (

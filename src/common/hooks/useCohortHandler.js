@@ -20,7 +20,6 @@ function useCohortHandler() {
     setCohortSession,
     setTaskCohortNull,
     setUserCapabilities,
-    setMyCohorts,
     setCohortsAssingments,
     setReviewModalState,
     state,
@@ -176,7 +175,6 @@ function useCohortHandler() {
       const academyId = cohort?.academy?.id;
       const currentAcademy = user.roles.find((role) => role.academy.id === academyId) || updatedUser?.roles.find((role) => role.academy.id === academyId);
       if (currentAcademy) {
-        // Fetch cohortProgram and TaskTodo then apply to moduleMap store
         try {
           const userRoles = await bc.auth().getRoles(currentAcademy?.role); // Roles
 
@@ -226,14 +224,16 @@ function useCohortHandler() {
       // Fetch cohort data with pathName structure
       if (cohortSlug && accessToken) {
         // find cohort with current slug
-        let currentCohort = myCohorts.find((c) => c.slug === cohortSlug);
+        let prefetchedCohorts = myCohorts;
+        let currentCohort = prefetchedCohorts.find((c) => c.slug === cohortSlug);
 
         //we make sure that we have already loaded the data of the cohort and its micro cohorts
-        if (!currentCohort || (currentCohort.micro_cohorts.length > 0 && currentCohort.micro_cohorts.every((cohort) => myCohorts.some(({ slug }) => cohort.slug === slug)))) {
-          const { cohorts } = await fetchUserAndCohorts();
-          setCohorts(cohorts);
+        if (!currentCohort || (currentCohort.micro_cohorts.length > 0 && !currentCohort.micro_cohorts.every((cohort) => myCohorts.some(({ slug }) => cohort.slug === slug)))) {
+          const { cohorts: fetchedCohorts } = await fetchUserAndCohorts();
+          setCohorts(fetchedCohorts);
+          prefetchedCohorts = fetchedCohorts;
 
-          currentCohort = cohorts.find((c) => c.slug === cohortSlug);
+          currentCohort = fetchedCohorts.find((c) => c.slug === cohortSlug);
         }
 
         if (!currentCohort) {
@@ -242,7 +242,7 @@ function useCohortHandler() {
           return router.push('/choose-program');
         }
 
-        const cohorts = currentCohort.micro_cohorts.length > 0 ? myCohorts.filter((c) => currentCohort.micro_cohorts.some((elem) => elem.slug === c.slug)) : [currentCohort];
+        const cohorts = currentCohort.micro_cohorts.length > 0 ? prefetchedCohorts.filter((c) => currentCohort.micro_cohorts.some((elem) => elem.slug === c.slug)) : [currentCohort];
 
         await getCohortsModules(cohorts);
 
@@ -560,7 +560,6 @@ function useCohortHandler() {
 
   return {
     setCohortSession,
-    setMyCohorts,
     getCohortUserCapabilities,
     getCohortData,
     getDailyModuleData,

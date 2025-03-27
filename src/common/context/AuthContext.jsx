@@ -17,7 +17,6 @@ import Text from '../components/Text';
 import { SILENT_CODE } from '../../lib/types';
 import { warn } from '../../utils/logging';
 import { generateUserContext } from '../../utils/rigobotContext';
-import useCohortAction from '../store/actions/cohortAction';
 
 const initialState = {
   isLoading: true,
@@ -148,7 +147,6 @@ export const AuthContext = createContext({
 
 function AuthProvider({ children, pageProps }) {
   const router = useRouter();
-  const { setMyCohorts } = useCohortAction();
   const { t, lang } = useTranslation('footer');
   const toast = useToast();
   const { rigo, isRigoInitialized } = useRigo();
@@ -194,7 +192,7 @@ function AuthProvider({ children, pageProps }) {
     }
   }, [state.isAuthenticated, router.pathname]);
 
-  const parseCohort = (elem) => {
+  const parseCohortUser = (elem) => {
     const { cohort, ...cohort_user } = elem;
     const { syllabus_version } = cohort;
     return {
@@ -209,7 +207,7 @@ function AuthProvider({ children, pageProps }) {
     try {
       const { data } = await bc.admissions().me();
       const { cohorts: cohortUsers, ...userData } = data;
-      const cohorts = cohortUsers.map(parseCohort);
+      const cohorts = cohortUsers.map(parseCohortUser);
 
       return { cohorts, userData };
     } catch (e) {
@@ -470,7 +468,6 @@ function AuthProvider({ children, pageProps }) {
     localStorage.removeItem('showGithubWarning');
     localStorage.removeItem('redirect');
     dispatch({ type: 'LOGOUT' });
-    setMyCohorts([]);
   };
 
   const updateProfile = async (payload) => {

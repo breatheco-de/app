@@ -16,7 +16,6 @@ import { reportDatalayer } from '../../utils/requests';
 import { getQueryString, getStorageItem, getBrowserInfo } from '../../utils';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import { getCohort } from '../../common/handlers/cohorts';
-import axiosInstance from '../../axios';
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
 import { SILENT_CODE } from '../../lib/types';
 import CardForm from './CardForm';
@@ -36,7 +35,7 @@ function PaymentInfo({ setShowPaymentDetails }) {
   const {
     checkoutData, selectedPlanCheckoutData, cohortPlans, paymentMethods, loader, isSubmittingPayment, paymentStatus,
   } = state;
-  const { cohortsAssignments, getCohortsModules, startDay, setCohortSession } = useCohortHandler();
+  const { cohortsAssignments, getCohortsModules, startDay } = useCohortHandler();
   const [readyToRedirect, setReadyToRedirect] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [updatedUser, setUpdatedUser] = useState(undefined);
@@ -64,8 +63,9 @@ function PaymentInfo({ setShowPaymentDetails }) {
 
     const modules = cohortsAssignments[cohortFound.slug]?.modules;
 
-    const firstAssigmentSlug = modules[0].content[0].slug;
-    const firstAssigmentType = modules[0].content[0].type.toLowerCase();
+    const firstAssigment = modules[0].content[0];
+    const firstAssigmentSlug = firstAssigment.slug;
+    const firstAssigmentType = firstAssigment.type.toLowerCase();
     const syllabusRedirectURL = `${langLink}/syllabus/${cohortFound?.slug}/${firstAssigmentType}/${firstAssigmentSlug}`;
 
     const updatedTasks = (modules[0].content || [])?.map((l) => ({
@@ -99,15 +99,8 @@ function PaymentInfo({ setShowPaymentDetails }) {
       return;
     }
     setIsRedirecting(true);
-    const langLink = lang !== 'en' ? `/${lang}` : '';
     const syllabusVersion = cohortFound?.syllabus_version;
-    axiosInstance.defaults.headers.common.Academy = cohortFound.academy.id;
-    const cohortDashboardLink = `${langLink}/cohort/${cohortFound?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
-
-    setCohortSession({
-      ...cohortFound,
-      selectedProgramSlug: cohortDashboardLink,
-    });
+    const cohortDashboardLink = `/cohort/${cohortFound?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
 
     if (cohortFound?.micro_cohorts?.length > 0 || !(cohortFound.slug in cohortsAssignments)) {
       router.push(cohortDashboardLink);
