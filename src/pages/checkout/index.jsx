@@ -192,7 +192,6 @@ function Checkout() {
   };
 
   const handleCoupon = (coup, actions) => {
-
     const alreadyAppliedCoupon = (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === discountCode) || (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === couponValue);
     if (alreadyAppliedCoupon) {
       createToast({
@@ -216,7 +215,7 @@ function Checkout() {
     }
 
     bc.payment({
-      coupons: [couponToApply],
+      coupons: [discountCode],
       plan: planFormated,
     }).verifyCoupon()
       .then((resp) => {
