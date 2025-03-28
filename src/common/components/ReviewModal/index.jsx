@@ -395,7 +395,12 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     if (stage === stages.deliver_assignment) {
       return t('deliver-assignment.title');
     }
-    return t('code-review.rigobot-code-review');
+    return (
+      <Flex alignItems="center" justifyContent="center">
+        <Icon icon="rigobot-avatar-tiny" width="24px" height="24px" mr="8px" />
+        {t('code-review.rigobot-code-review')}
+      </Flex>
+    );
   };
 
   const getAssetData = async ({ callback = () => { } } = {}) => {
