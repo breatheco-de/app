@@ -520,7 +520,7 @@ function useCohortHandler() {
   const handleOpenReviewModal = (options = {}) => {
     const {
       currentTask = null,
-      fileData = null,
+      externalFiles = null,
       defaultStage = undefined,
       cohortSlug = undefined,
       fixedStage = false,
@@ -529,7 +529,7 @@ function useCohortHandler() {
     setReviewModalState({
       isOpen: true,
       currentTask,
-      fileData,
+      externalFiles,
       defaultStage,
       cohortSlug,
       fixedStage,
@@ -540,7 +540,7 @@ function useCohortHandler() {
     setReviewModalState({
       isOpen: false,
       currentTask: null,
-      fileData: null,
+      externalFiles: null,
       defaultStage: undefined,
       cohortSlug: undefined,
       fixedStage: false,

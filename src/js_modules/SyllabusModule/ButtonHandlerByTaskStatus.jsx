@@ -1,20 +1,89 @@
+/* eslint-disable no-unused-vars */
 import {
-  Button, Tooltip,
+  Button, Tooltip, useToast,
 } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import useStyle from '../../common/hooks/useStyle';
 import Icon from '../../common/components/Icon';
 import PopoverTaskHandler, { IconByTaskStatus, textByTaskStatus } from '../../common/components/PopoverTaskHandler';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
+import bc from '../../common/services/breathecode';
 
 export function ButtonHandlerByTaskStatus({
-  onlyPopoverDialog, currentTask, sendProject, toggleSettings, closeSettings,
-  settingsOpen, allowText, onClickHandler, currentAssetData, fileData, handleOpen, isGuidedExperience,
-  hasPendingSubtasks, togglePendingSubtasks, setStage,
+  onlyPopoverDialog,
+  currentTask,
+  sendProject,
+  currentAssetData,
+  allowText,
+  onClickHandler,
+  isGuidedExperience,
+  hasPendingSubtasks,
+  togglePendingSubtasks,
+  setStage,
 }) {
+  const { t, lang } = useTranslation('dashboard');
   const { hexColor } = useStyle();
   const { updateTaskReadAt, handleOpenReviewModal, changeStatusAssignment } = useCohortHandler();
+  const toast = useToast();
+
+  const [currentAsset, setCurrentAsset] = useState(currentAssetData);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [fileData, setFileData] = useState(null);
+
+  const fetchAsset = async () => {
+    try {
+      const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
+      if (assetResp?.status >= 400) {
+        throw new Error('Error fetching asset');
+      }
+      let assetData = assetResp.data;
+      if (assetData?.translations?.[lang]) {
+        const localeResp = await bc.lesson().getAsset(assetResp.data.translations[lang]);
+        assetData = localeResp.data;
+      }
+      setCurrentAsset(assetData);
+      return assetData;
+    } catch (error) {
+      console.error(error);
+      toast({
+        position: 'top',
+        title: t('alert-message:something-went-wrong'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+      return null;
+    }
+  };
+
+  const togglePopover = async () => {
+    if (!currentAsset) {
+      await fetchAsset();
+    }
+    setIsPopoverOpen(!isPopoverOpen);
+  };
+
+  const handleOpen = async (onOpen = () => {}) => {
+    const taskIsApprovedOrRejected = currentTask?.revision_status === 'APPROVED' || currentTask?.revision_status === 'REJECTED';
+    if (currentTask && currentTask?.task_type === 'PROJECT' && (currentTask.task_status === 'DONE' || taskIsApprovedOrRejected)) {
+      let assetData = currentAsset;
+      if (!assetData) {
+        assetData = await fetchAsset();
+      }
+      if (typeof assetData?.delivery_formats === 'string' && !assetData?.delivery_formats.includes('url')) {
+        const fileResp = await bc.todo().getFile({ id: currentTask.id });
+        const respData = await fileResp.data;
+        setFileData(respData);
+      }
+      onOpen();
+    }
+  };
+
+  const closePopover = () => {
+    setIsPopoverOpen(false);
+  };
 
   const [loaders, setLoaders] = useState({
     isFetchingCommitFiles: false,
@@ -24,8 +93,8 @@ export function ButtonHandlerByTaskStatus({
   const taskIsApproved = allowText && currentTask?.revision_status === 'APPROVED';
   const taskIsApprovedOrRejected = currentTask?.revision_status === 'APPROVED' || currentTask?.revision_status === 'REJECTED';
 
-  const deliveryFormatExists = typeof currentAssetData?.delivery_formats === 'string';
-  const noDeliveryFormat = deliveryFormatExists && currentAssetData?.delivery_formats.includes('no_delivery');
+  const deliveryFormatExists = typeof currentAsset?.delivery_formats === 'string';
+  const noDeliveryFormat = deliveryFormatExists && currentAsset?.delivery_formats.includes('no_delivery');
   const isButtonDisabled = currentTask === null || taskIsApproved;
 
   const openAssignmentFeedbackModal = async () => {
@@ -40,7 +109,7 @@ export function ButtonHandlerByTaskStatus({
       }
       handleOpenReviewModal({
         currentTask,
-        fileData,
+        externalFiles: fileData,
         cohortSlug: currentTask.cohort?.slug,
         defaultStage: 'initial',
       });
@@ -59,7 +128,7 @@ export function ButtonHandlerByTaskStatus({
       }));
       changeStatusAssignment(event, currentTask)
         .finally(() => {
-          closeSettings();
+          closePopover();
           setLoaders((prevState) => ({
             ...prevState,
             isChangingTaskStatus: false,
@@ -160,14 +229,14 @@ export function ButtonHandlerByTaskStatus({
     return (
       <PopoverTaskHandler
         isGuidedExperience={isGuidedExperience}
-        currentAssetData={currentAssetData}
+        currentAssetData={currentAsset}
         currentTask={currentTask}
         sendProject={sendProject}
         onClickHandler={onClickHandler}
-        settingsOpen={settingsOpen}
         allowText={allowText}
-        closeSettings={closeSettings}
-        toggleSettings={toggleSettings}
+        settingsOpen={isPopoverOpen}
+        closeSettings={closePopover}
+        toggleSettings={togglePopover}
       />
     );
   }
@@ -224,15 +293,10 @@ export function ButtonHandlerByTaskStatus({
 ButtonHandlerByTaskStatus.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   sendProject: PropTypes.func.isRequired,
-  toggleSettings: PropTypes.func,
   togglePendingSubtasks: PropTypes.func,
-  closeSettings: PropTypes.func.isRequired,
-  settingsOpen: PropTypes.bool.isRequired,
   allowText: PropTypes.bool,
   onClickHandler: PropTypes.func,
-  handleOpen: PropTypes.func,
   currentAssetData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  fileData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   onlyPopoverDialog: PropTypes.bool,
   isGuidedExperience: PropTypes.bool,
   hasPendingSubtasks: PropTypes.bool,
@@ -243,10 +307,7 @@ ButtonHandlerByTaskStatus.defaultProps = {
   currentTask: null,
   allowText: false,
   onClickHandler: () => { },
-  currentAssetData: {},
-  fileData: {},
-  toggleSettings: () => { },
-  handleOpen: () => { },
+  currentAssetData: null,
   togglePendingSubtasks: () => { },
   onlyPopoverDialog: false,
   isGuidedExperience: false,

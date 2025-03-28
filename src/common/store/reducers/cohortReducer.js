@@ -14,7 +14,7 @@ const initialState = {
   reviewModalState: {
     isOpen: false,
     currentTask: null,
-    fileData: null,
+    externalFiles: null,
     defaultStage: undefined,
     cohortSlug: undefined,
   },

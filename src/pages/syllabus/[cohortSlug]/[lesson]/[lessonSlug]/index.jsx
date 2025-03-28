@@ -63,11 +63,9 @@ function SyllabusContent() {
     subTasks,
   } = useModuleHandler();
   const mainContainer = useRef(null);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [modalSettingsOpen, setModalSettingsOpen] = useState(false);
+  const [openNextPageModal, setOpenNextPageModal] = useState(false);
   const [modalIntroOpen, setModalIntroOpen] = useState(false);
   const [solutionVideoOpen, setSolutionVideoOpen] = useState(false);
-  const [openNextPageModal, setOpenNextPageModal] = useState(false);
   const [readme, setReadme] = useState(null);
   const [ipynbHtmlUrl, setIpynbHtmlUrl] = useState(null);
   const [extendedInstructions, setExtendedInstructions] = useState(null);
@@ -84,7 +82,6 @@ function SyllabusContent() {
   const [readmeUrlPathname, setReadmeUrlPathname] = useState(null);
   const [openTargetBlankModal, setOpenTargetBlankModal] = useState(null);
   const [currentBlankProps, setCurrentBlankProps] = useState(null);
-  const [fileData, setFileData] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
   const [currentAsset, setCurrentAsset] = useState(null);
   const [grantAccess, setGrantAccess] = useState(false);
@@ -295,11 +292,6 @@ function SyllabusContent() {
     }
   }, [currentAsset, isRigoInitialized]);
 
-  const closeSettings = () => {
-    setSettingsOpen(false);
-    setModalSettingsOpen(false);
-  };
-
   useEffect(() => {
     bc.payment({
       status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED,ERROR',
@@ -363,25 +355,6 @@ function SyllabusContent() {
     if (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
   }, [cohortSession, allSubscriptions]);
 
-  const toggleSettings = () => {
-    if (openNextPageModal) {
-      setModalSettingsOpen(!modalSettingsOpen);
-    } else {
-      setSettingsOpen(!settingsOpen);
-    }
-  };
-
-  const handleOpen = async (onOpen = () => { }) => {
-    if (currentTask && currentTask?.task_type === 'PROJECT' && currentTask.task_status === 'DONE') {
-      if (typeof currentAsset?.delivery_formats === 'string' && !currentAsset?.delivery_formats.includes('url')) {
-        const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
-        const respData = await fileResp.data;
-        setFileData(respData);
-      }
-      onOpen();
-    }
-  };
-
   const sendProject = async ({ task, githubUrl, taskStatus }) => {
     setShowModal(true);
     await updateAssignment({
@@ -397,7 +370,6 @@ function SyllabusContent() {
     setIpynbHtmlUrl(null);
     setCurrentBlankProps(null);
     setSubTasks([]);
-    setFileData([]);
   };
 
   const onClickAssignment = (e, item) => {
@@ -772,7 +744,7 @@ function SyllabusContent() {
     };
   };
 
-  const openAiChat = async () => {
+  const openRigobot = async () => {
     try {
       if (isAuthenticatedWithRigobot) {
         rigo.updateOptions({
@@ -1172,11 +1144,6 @@ function SyllabusContent() {
                                 currentTask={currentTask}
                                 sendProject={sendProject}
                                 currentAssetData={currentAsset}
-                                toggleSettings={toggleSettings}
-                                closeSettings={closeSettings}
-                                settingsOpen={settingsOpen}
-                                handleOpen={handleOpen}
-                                fileData={fileData}
                               />
                               {currentTask?.task_status === 'DONE' && showModal && (
                                 <ShareButton
@@ -1254,7 +1221,7 @@ function SyllabusContent() {
                                     padding="12px"
                                     borderRadius="full"
                                     variant="default"
-                                    onClick={openAiChat}
+                                    onClick={openRigobot}
                                     style={{ color: fontColor, textDecoration: 'none' }}
                                   >
                                     <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
@@ -1325,11 +1292,6 @@ function SyllabusContent() {
                                   currentTask={currentTask}
                                   sendProject={sendProject}
                                   currentAssetData={currentAsset}
-                                  toggleSettings={toggleSettings}
-                                  closeSettings={closeSettings}
-                                  settingsOpen={settingsOpen}
-                                  handleOpen={handleOpen}
-                                  fileData={fileData}
                                 />
                               )}
                               {currentTask?.task_status === 'DONE' && showModal && (
@@ -1423,12 +1385,7 @@ function SyllabusContent() {
                 hasPendingSubtasks={hasPendingSubtasks}
                 sendProject={sendProject}
                 togglePendingSubtasks={handleNavigateToLastPendingSubtask}
-                toggleSettings={toggleSettings}
-                closeSettings={closeSettings}
                 currentAssetData={currentAsset}
-                settingsOpen={modalSettingsOpen}
-                handleOpen={handleOpen}
-                fileData={fileData}
                 onClickHandler={() => {
                   setShowModal(false);
                   if (nextAssignment?.target === 'blank') {

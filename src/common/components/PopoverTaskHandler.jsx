@@ -483,7 +483,6 @@ function PopoverTaskHandler({
   toggleSettings,
   buttonChildren,
 }) {
-  const { hexColor } = useStyle();
   const taskIsApproved = allowText && currentTask?.revision_status === 'APPROVED';
   const isButtonDisabled = currentTask === null || taskIsApproved;
   const [acceptTC, setAcceptTC] = useState(false);

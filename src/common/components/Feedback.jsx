@@ -174,7 +174,7 @@ function Feedback({ storyConfig }) {
         </Flex>
         <Flex flexDirection="column" gridGap="10px" padding="12px 8px" maxHeight="17rem" overflow="auto">
           {codeRevisions?.length > 0 ? codeRevisions.map((revision) => (
-            <Flex cursor="pointer" gridGap="8px" onClick={() => handleOpen(revision)} _hover={{ background: featuredColor }} borderRadius="11px" alignItems="center" padding="8px" border="1px solid" borderColor={borderColor2}>
+            <Flex key={revision?.created_at} cursor="pointer" gridGap="8px" onClick={() => handleOpen(revision)} _hover={{ background: featuredColor }} borderRadius="11px" alignItems="center" padding="8px" border="1px solid" borderColor={borderColor2}>
               <Flex gridGap="16px" width="100%" alignItems="center">
                 <Icon icon="code-comment" color={hexColor.blueDefault} width="24px" height="24px" padding="12px" />
                 <Flex justifyContent="space-between" width="100%">

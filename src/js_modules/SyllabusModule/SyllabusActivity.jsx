@@ -19,7 +19,7 @@ function SyllabusActivity({
   data, currIndex, isDisabled, onDisabledClick, variant, showWarning, cohortSlug, setStage,
 }) {
   const { t, lang } = useTranslation('dashboard');
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const { taskTodo, state, updateAssignment } = useCohortHandler();
   const { cohortSession, cohortsAssignments } = state;
   const [currentAssetData, setCurrentAssetData] = useState(null);
@@ -76,10 +76,11 @@ function SyllabusActivity({
     },
   ];
 
-  const closeSettings = () => {
-    setSettingsOpen(false);
+  const closePopover = () => {
+    setIsPopoverOpen(false);
   };
-  const toggleSettings = async () => {
+
+  const togglePopover = async () => {
     const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
     if (assetResp?.status < 400) {
       const assetData = await assetResp.data;
@@ -94,7 +95,7 @@ function SyllabusActivity({
       } else {
         setCurrentAssetData(assetData);
       }
-      setSettingsOpen(!settingsOpen);
+      setIsPopoverOpen(!isPopoverOpen);
     } else {
       toast({
         position: 'top',
@@ -114,17 +115,13 @@ function SyllabusActivity({
         const assetData = await assetResp.data;
         setCurrentAssetData(assetData);
 
-        if (!assetData?.delivery_formats.includes('url')) {
+        if (typeof assetData?.delivery_formats === 'string' && !assetData?.delivery_formats.includes('url')) {
           const fileResp = await bc.todo().getFile({ id: currentTask.id });
           const respData = await fileResp.data;
           setFileData(respData);
-          onOpen();
-        } else {
-          onOpen();
         }
-      } else {
-        onOpen();
       }
+      onOpen();
     }
   };
 
@@ -193,9 +190,9 @@ function SyllabusActivity({
           <ButtonHandlerByTaskStatus
             currentTask={currentTask}
             sendProject={sendProject}
-            toggleSettings={toggleSettings}
-            closeSettings={closeSettings}
-            settingsOpen={settingsOpen}
+            toggleSettings={togglePopover}
+            closeSettings={closePopover}
+            settingsOpen={isPopoverOpen}
             handleOpen={handleOpen}
             currentAssetData={currentAssetData}
             fileData={fileData}
