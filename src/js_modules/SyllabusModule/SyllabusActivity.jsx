@@ -15,7 +15,7 @@ import bc from '../../common/services/breathecode';
 import ShareButton from '../../common/components/ShareButton';
 import Icon from '../../common/components/Icon';
 
-function Module({
+function SyllabusActivity({
   data, currIndex, isDisabled, onDisabledClick, variant, showWarning, cohortSlug, setStage,
 }) {
   const { t, lang } = useTranslation('dashboard');
@@ -227,7 +227,7 @@ function Module({
   );
 }
 
-Module.propTypes = {
+SyllabusActivity.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   currIndex: PropTypes.number,
   isDisabled: PropTypes.bool,
@@ -238,7 +238,7 @@ Module.propTypes = {
   setStage: PropTypes.func,
 };
 
-Module.defaultProps = {
+SyllabusActivity.defaultProps = {
   data: {},
   currIndex: 0,
   isDisabled: false,
@@ -249,4 +249,4 @@ Module.defaultProps = {
   setStage: null,
 };
 
-export default memo(Module);
+export default memo(SyllabusActivity);

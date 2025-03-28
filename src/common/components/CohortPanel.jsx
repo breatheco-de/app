@@ -18,14 +18,14 @@ import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import { es, en } from 'date-fns/locale';
 import { useReward } from 'react-rewards';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
-import useStyle from '../../common/hooks/useStyle';
-import Heading from '../../common/components/Heading';
-import ShareButton from '../../common/components/ShareButton';
-import Text from '../../common/components/Text';
-import Icon from '../../common/components/Icon';
-import Progress from '../../common/components/ProgressBar/Progress';
-import { stages } from '../../common/components/ReviewModal';
+import useCohortHandler from '../hooks/useCohortHandler';
+import useStyle from '../hooks/useStyle';
+import Heading from './Heading';
+import ShareButton from './ShareButton';
+import Text from './Text';
+import Icon from './Icon';
+import Progress from './ProgressBar/Progress';
+import { stages } from './ReviewModal';
 
 const locales = { es, en };
 

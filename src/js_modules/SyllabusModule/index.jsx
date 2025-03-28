@@ -7,11 +7,11 @@ import PropTypes from 'prop-types';
 import { reportDatalayer } from '../../utils/requests';
 import { languageFix, getBrowserInfo } from '../../utils';
 import Text from '../../common/components/Text';
-import Module from './module';
+import SyllabusActivity from './SyllabusActivity';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import Icon from '../../common/components/Icon';
 
-function ModuleMap({
+function SyllabusModule({
   index, slug, content, filteredContent,
   title, description, cohortData, filteredContentByPending,
   showPendingTasks, searchValue, existsActivities,
@@ -20,7 +20,7 @@ function ModuleMap({
   const { state, startDay } = useCohortHandler();
   const { taskCohortNull } = state;
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
-  const currentModules = showPendingTasks ? filteredContentByPending : filteredContent;
+  const currentTasks = showPendingTasks ? filteredContentByPending : filteredContent;
   const cohortId = cohortData?.id || cohortData?.cohort_id;
 
   const handleStartDay = () => {
@@ -117,13 +117,13 @@ function ModuleMap({
       )}
 
       {filteredContent.length >= 1
-        ? Array.isArray(currentModules) && currentModules.map((module, i) => {
+        ? Array.isArray(currentTasks) && currentTasks.map((task, i) => {
           const cheatedIndex = i;
           return (
-            <Module
-              key={`${module.title}-${cheatedIndex}`}
+            <SyllabusActivity
+              key={`${task.title}-${cheatedIndex}`}
               currIndex={i}
-              data={module}
+              data={task}
             />
           );
         }) : (
@@ -161,7 +161,7 @@ function ModuleMap({
   );
 }
 
-ModuleMap.propTypes = {
+SyllabusModule.propTypes = {
   index: PropTypes.number.isRequired,
   title: PropTypes.string,
   slug: PropTypes.string,
@@ -174,7 +174,7 @@ ModuleMap.propTypes = {
   searchValue: PropTypes.string,
   existsActivities: PropTypes.bool.isRequired,
 };
-ModuleMap.defaultProps = {
+SyllabusModule.defaultProps = {
   content: [],
   filteredContent: [],
   title: 'HTML/CSS/Bootstrap',
@@ -186,4 +186,4 @@ ModuleMap.defaultProps = {
   searchValue: '',
 };
 
-export default memo(ModuleMap);
+export default memo(SyllabusModule);

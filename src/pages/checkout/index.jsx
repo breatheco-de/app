@@ -34,7 +34,7 @@ import PaymentInfo from '../../js_modules/checkout/PaymentInfo';
 import useSignup from '../../common/store/actions/signupAction';
 import axiosInstance from '../../axios';
 import LoaderScreen from '../../common/components/LoaderScreen';
-import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import ModalInfo from '../../common/components/ModalInfo';
 import useStyle from '../../common/hooks/useStyle';
 import Stepper from '../../js_modules/checkout/Stepper';
 import ServiceSummary from '../../js_modules/checkout/ServiceSummary';

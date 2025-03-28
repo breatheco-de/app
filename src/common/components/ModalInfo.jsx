@@ -7,9 +7,9 @@ import useTranslation from 'next-translate/useTranslation';
 import { Formik, Form, Field } from 'formik';
 import PropTypes from 'prop-types';
 import { useState, memo } from 'react';
-import Text from '../../common/components/Text';
-import validationSchema from '../../common/components/Forms/validationSchemas';
-import Icon from '../../common/components/Icon';
+import Text from './Text';
+import validationSchema from './Forms/validationSchemas';
+import Icon from './Icon';
 import iconDict from '../../iconDict.json';
 
 function ModalInfo({

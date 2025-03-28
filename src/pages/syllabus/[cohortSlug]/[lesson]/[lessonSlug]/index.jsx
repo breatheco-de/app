@@ -11,7 +11,7 @@ import { isWindow, assetTypeValues, getExtensionName, getStorageItem, languageFi
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
-import { ButtonHandlerByTaskStatus } from '../../../../../js_modules/moduleMap/ButtonHandlerByTaskStatus';
+import { ButtonHandlerByTaskStatus } from '../../../../../js_modules/SyllabusModule/ButtonHandlerByTaskStatus';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkDownParser from '../../../../../common/components/MarkDownParser';
 import Text from '../../../../../common/components/Text';
@@ -21,7 +21,7 @@ import StickySideBar from '../../../../../common/components/StickySideBar';
 import Icon from '../../../../../common/components/Icon';
 import AlertMessage from '../../../../../common/components/AlertMessage';
 import ShareButton from '../../../../../common/components/ShareButton';
-import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
+import ModalInfo from '../../../../../common/components/ModalInfo';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import ScrollTop from '../../../../../common/components/scrollTop';
 import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar';

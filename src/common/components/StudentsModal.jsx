@@ -6,10 +6,10 @@ import {
   FormControl, FormLabel, Input, Flex, Grid, Avatar, Spinner,
   ModalCloseButton,
 } from '@chakra-ui/react';
-import Text from '../../common/components/Text';
-import bc from '../../common/services/breathecode';
-import useStyle from '../../common/hooks/useStyle';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
+import Text from './Text';
+import bc from '../services/breathecode';
+import useStyle from '../hooks/useStyle';
+import useCohortHandler from '../hooks/useCohortHandler';
 
 function StudentsModal({
   isOpen, onClose,

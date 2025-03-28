@@ -26,9 +26,9 @@ import {
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
-import ModuleMap from '../../../../../js_modules/moduleMap/index';
-import CohortHeader from '../../../../../js_modules/Cohort/CohortHeader';
-import CohortPanel from '../../../../../js_modules/Cohort/CohortPanel';
+import ModuleMap from '../../../../../js_modules/SyllabusModule/index';
+import CohortHeader from '../../../../../common/components/CohortHeader';
+import CohortPanel from '../../../../../common/components/CohortPanel';
 import CohortSideBar from '../../../../../common/components/CohortSideBar';
 import Icon from '../../../../../common/components/Icon';
 import SupportSidebar from '../../../../../common/components/SupportSidebar';
@@ -46,7 +46,7 @@ import axios from '../../../../../axios';
 
 import { reportDatalayer } from '../../../../../utils/requests';
 import { BREATHECODE_HOST } from '../../../../../utils/variables';
-import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
+import ModalInfo from '../../../../../common/components/ModalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
 import AlertMessage from '../../../../../common/components/AlertMessage';

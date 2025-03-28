@@ -5,17 +5,17 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import bc from '../../common/services/breathecode';
-import useAuth from '../../common/hooks/useAuth';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
-import useStyle from '../../common/hooks/useStyle';
-import useRigo from '../../common/hooks/useRigo';
-import { SimpleSkeleton } from '../../common/components/Skeleton';
-import Heading from '../../common/components/Heading';
-import Text from '../../common/components/Text';
-import Icon from '../../common/components/Icon';
+import bc from '../services/breathecode';
+import useAuth from '../hooks/useAuth';
+import useCohortHandler from '../hooks/useCohortHandler';
+import useStyle from '../hooks/useStyle';
+import useRigo from '../hooks/useRigo';
+import { SimpleSkeleton } from './Skeleton';
+import Heading from './Heading';
+import Text from './Text';
+import Icon from './Icon';
 import StudentsModal from './StudentsModal';
-import { ProfilesSection } from '../../common/components/SupportSidebar/MentoringConsumables';
+import { ProfilesSection } from './SupportSidebar/MentoringConsumables';
 import { BREATHECODE_HOST } from '../../utils/variables';
 import { getStorageItem } from '../../utils';
 

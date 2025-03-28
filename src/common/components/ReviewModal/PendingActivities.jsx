@@ -9,7 +9,7 @@ import Text from '../Text';
 import Heading from '../Heading';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useStyle from '../../hooks/useStyle';
-import Module from '../../../js_modules/moduleMap/module';
+import SyllabusActivity from '../../../js_modules/SyllabusModule/SyllabusActivity';
 
 function PendingActivities({ cohortSlug, setStage }) {
   const { t } = useTranslation('dashboard');
@@ -32,11 +32,11 @@ function PendingActivities({ cohortSlug, setStage }) {
           {t('mandatoryProjects.description')}
         </Text>
       </Box>
-      {mandatoryProjects.map((module, i) => (
-        <Module
-          key={`${module.title}-pending-modal`}
+      {mandatoryProjects.map((project, i) => (
+        <SyllabusActivity
+          key={`${project.title}-pending-modal`}
           currIndex={i}
-          data={module}
+          data={project}
           taskTodo={taskTodo}
           showWarning={false}
           cohortSlug={cohortSlug}

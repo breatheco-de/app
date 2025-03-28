@@ -8,7 +8,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Text from './Text';
 import Icon from './Icon';
 // import Link from './NextChakraLink';
-import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import ModalInfo from './ModalInfo';
 
 function Module({
   onClickHandler, data, containerStyle, leftContentStyle, containerPX, width, currIndex,

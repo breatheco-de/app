@@ -12,7 +12,7 @@ import { BREATHECODE_HOST, RIGOBOT_HOST } from '../../utils/variables';
 import axiosInstance, { cancelAllCurrentRequests } from '../../axios';
 import { usePersistentBySession } from '../hooks/usePersistent';
 import useRigo from '../hooks/useRigo';
-import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import ModalInfo from '../components/ModalInfo';
 import Text from '../components/Text';
 import { SILENT_CODE } from '../../lib/types';
 import { warn } from '../../utils/logging';
