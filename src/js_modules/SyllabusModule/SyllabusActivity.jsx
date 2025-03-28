@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  useToast,
   Link,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
@@ -11,7 +10,6 @@ import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
 import { ButtonHandlerByTaskStatus } from './ButtonHandlerByTaskStatus';
 import ModuleComponent from '../../common/components/Module';
-import bc from '../../common/services/breathecode';
 import ShareButton from '../../common/components/ShareButton';
 import Icon from '../../common/components/Icon';
 
@@ -19,14 +17,10 @@ function SyllabusActivity({
   data, currIndex, isDisabled, onDisabledClick, variant, showWarning, cohortSlug, setStage,
 }) {
   const { t, lang } = useTranslation('dashboard');
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const { taskTodo, state, updateAssignment } = useCohortHandler();
   const { cohortSession, cohortsAssignments } = state;
-  const [currentAssetData, setCurrentAssetData] = useState(null);
-  const [fileData, setFileData] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const { hexColor } = useStyle();
-  const toast = useToast();
 
   const currentSlug = data.slug || '';
   const tasks = cohortSlug ? cohortsAssignments[cohortSlug]?.tasks : taskTodo;
@@ -75,55 +69,6 @@ function SyllabusActivity({
       target: 'popup',
     },
   ];
-
-  const closePopover = () => {
-    setIsPopoverOpen(false);
-  };
-
-  const togglePopover = async () => {
-    const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
-    if (assetResp?.status < 400) {
-      const assetData = await assetResp.data;
-      if (assetData?.translations?.[lang]) {
-        const localeResp = await bc.lesson().getAsset(assetResp.data.translations[lang]);
-        const localeData = await localeResp.data;
-        if (localeResp?.status < 400) {
-          setCurrentAssetData(localeData);
-        } else {
-          setCurrentAssetData(assetData);
-        }
-      } else {
-        setCurrentAssetData(assetData);
-      }
-      setIsPopoverOpen(!isPopoverOpen);
-    } else {
-      toast({
-        position: 'top',
-        title: t('alert-message:something-went-wrong'),
-        status: 'error',
-        duration: 7000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const handleOpen = async (onOpen = () => {}) => {
-    const taskIsApprovedOrRejected = currentTask?.revision_status === 'APPROVED' || currentTask?.revision_status === 'REJECTED';
-    if (currentTask && currentTask?.task_type === 'PROJECT' && (currentTask.task_status === 'DONE' || taskIsApprovedOrRejected)) {
-      const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
-      if (assetResp?.status < 400) {
-        const assetData = await assetResp.data;
-        setCurrentAssetData(assetData);
-
-        if (typeof assetData?.delivery_formats === 'string' && !assetData?.delivery_formats.includes('url')) {
-          const fileResp = await bc.todo().getFile({ id: currentTask.id });
-          const respData = await fileResp.data;
-          setFileData(respData);
-        }
-      }
-      onOpen();
-    }
-  };
 
   const sendProject = async ({
     task, githubUrl, taskStatus,
@@ -190,12 +135,6 @@ function SyllabusActivity({
           <ButtonHandlerByTaskStatus
             currentTask={currentTask}
             sendProject={sendProject}
-            toggleSettings={togglePopover}
-            closeSettings={closePopover}
-            settingsOpen={isPopoverOpen}
-            handleOpen={handleOpen}
-            currentAssetData={currentAssetData}
-            fileData={fileData}
             setStage={setStage}
           />
         ) : (

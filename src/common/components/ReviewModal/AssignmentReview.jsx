@@ -44,7 +44,7 @@ function AssignmentReview({
   const { t } = useTranslation('assignments');
   const { lightColor, featuredColor } = useStyle();
   const [openUndoApproval, setOpenUndoApproval] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [currentAssetData, setCurrentAssetData] = useState(null);
   const [fileData, setFileData] = useState();
   const { isAuthenticatedWithRigobot } = useAuth();
@@ -138,23 +138,24 @@ function AssignmentReview({
         const respData = await fileResp.data;
         setFileData(respData);
       }
-      setSettingsOpen(!settingsOpen);
+      setIsPopoverOpen(!isPopoverOpen);
     }
   };
-  const toggleSettings = async () => {
+  const togglePopover = async () => {
     setLoaders((prevState) => ({
       ...prevState,
       isOpeningResubmitForm: true,
     }));
     getAssetData();
   };
-  const closeSettings = () => {
-    setSettingsOpen(false);
+  const closePopover = () => {
+    setIsPopoverOpen(false);
   };
   const sendProject = async ({ task, githubUrl, taskStatus: newTaskStatus }) => {
     await updateAssignment({
-      task, closeSettings, githubUrl, taskStatus: newTaskStatus,
+      task, githubUrl, taskStatus: newTaskStatus,
     });
+    closePopover();
   };
 
   useEffect(() => {
@@ -344,7 +345,7 @@ function AssignmentReview({
                     }));
                     changeStatusAssignment(event, currentTask, PENDING)
                       .finally(() => {
-                        closeSettings();
+                        closePopover();
                         setLoaders((prevState) => ({
                           ...prevState,
                           isRemovingDelivery: false,
@@ -363,9 +364,9 @@ function AssignmentReview({
                   currentAssetData={currentAssetData}
                   currentTask={currentTask}
                   sendProject={sendProject}
-                  settingsOpen={settingsOpen}
-                  closeSettings={closeSettings}
-                  toggleSettings={toggleSettings}
+                  isPopoverOpen={isPopoverOpen}
+                  closePopover={closePopover}
+                  togglePopover={togglePopover}
                   allowText
                   buttonChildren={t('code-review.resubmit-assignment')}
                 />

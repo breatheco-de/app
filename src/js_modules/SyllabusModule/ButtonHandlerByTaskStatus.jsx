@@ -234,9 +234,9 @@ export function ButtonHandlerByTaskStatus({
         sendProject={sendProject}
         onClickHandler={onClickHandler}
         allowText={allowText}
-        settingsOpen={isPopoverOpen}
-        closeSettings={closePopover}
-        toggleSettings={togglePopover}
+        isPopoverOpen={isPopoverOpen}
+        closePopover={closePopover}
+        togglePopover={togglePopover}
       />
     );
   }

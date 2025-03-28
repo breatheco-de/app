@@ -123,7 +123,7 @@ function PopoverCustomContent({
   currentTask,
   sendProject,
   onClickHandler,
-  closeSettings,
+  closePopover,
   acceptTC,
   handleAcceptTC,
 }) {
@@ -224,7 +224,7 @@ function PopoverCustomContent({
         duration: 4000,
         isClosable: true,
       });
-      closeSettings();
+      closePopover();
     } else {
       setIsUploading(false);
       toast({
@@ -238,7 +238,7 @@ function PopoverCustomContent({
   };
   const handleCloseFile = () => {
     handleAcceptTC(false);
-    closeSettings();
+    closePopover();
   };
 
   return (
@@ -477,10 +477,10 @@ function PopoverTaskHandler({
   currentTask,
   sendProject,
   onClickHandler,
-  settingsOpen,
   allowText,
-  closeSettings,
-  toggleSettings,
+  isPopoverOpen,
+  closePopover,
+  togglePopover,
   buttonChildren,
 }) {
   const taskIsApproved = allowText && currentTask?.revision_status === 'APPROVED';
@@ -489,7 +489,7 @@ function PopoverTaskHandler({
 
   const handleCloseFile = () => {
     setAcceptTC(false);
-    closeSettings();
+    closePopover();
   };
 
   const textAndIcon = textByTaskStatus(currentTask, isGuidedExperience);
@@ -498,7 +498,7 @@ function PopoverTaskHandler({
     return (
       <Popover
         id="task-status"
-        isOpen={settingsOpen}
+        isOpen={isPopoverOpen}
         onClose={handleCloseFile}
         trigger="click"
         placement="top-start"
@@ -516,7 +516,7 @@ function PopoverTaskHandler({
               borderRadius="full"
               variant="default"
               gridGap="12px"
-              onClick={() => toggleSettings()}
+              onClick={() => togglePopover()}
             >
               <Icon {...textAndIcon.icon} />
             </Button>
@@ -529,7 +529,7 @@ function PopoverTaskHandler({
           sendProject={sendProject}
           onClickHandler={onClickHandler}
           allowText={allowText}
-          closeSettings={closeSettings}
+          closePopover={closePopover}
           handleAcceptTC={setAcceptTC}
           acceptTC={acceptTC}
         />
@@ -540,7 +540,7 @@ function PopoverTaskHandler({
   return (
     <Popover
       id="task-status"
-      isOpen={settingsOpen}
+      isOpen={isPopoverOpen}
       onClose={handleCloseFile}
       trigger="click"
       placement="top-start"
@@ -561,7 +561,7 @@ function PopoverTaskHandler({
           borderRadius={allowText ? '3px' : '30px'}
           textTransform={allowText ? 'uppercase' : 'none'}
           gridGap={allowText ? '12px' : '0'}
-          onClick={() => toggleSettings()}
+          onClick={() => togglePopover()}
         >
           {buttonChildren && buttonChildren}
           {!buttonChildren && (
@@ -584,7 +584,7 @@ function PopoverTaskHandler({
         currentTask={currentTask}
         sendProject={sendProject}
         onClickHandler={onClickHandler}
-        closeSettings={closeSettings}
+        closePopover={closePopover}
         handleAcceptTC={setAcceptTC}
         acceptTC={acceptTC}
       />
@@ -598,10 +598,10 @@ PopoverTaskHandler.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   sendProject: PropTypes.func,
   onClickHandler: PropTypes.func,
-  closeSettings: PropTypes.func,
-  settingsOpen: PropTypes.bool,
+  closePopover: PropTypes.func,
+  isPopoverOpen: PropTypes.bool,
   allowText: PropTypes.bool,
-  toggleSettings: PropTypes.func,
+  togglePopover: PropTypes.func,
   buttonChildren: PropTypes.node,
   isGuidedExperience: PropTypes.bool,
 };
@@ -612,10 +612,10 @@ PopoverTaskHandler.defaultProps = {
   currentTask: {},
   sendProject: () => { },
   onClickHandler: () => { },
-  closeSettings: () => { },
-  settingsOpen: false,
+  closePopover: () => { },
+  isPopoverOpen: false,
   allowText: false,
-  toggleSettings: () => { },
+  togglePopover: () => { },
   buttonChildren: null,
   isGuidedExperience: false,
 };
