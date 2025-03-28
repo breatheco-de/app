@@ -130,15 +130,14 @@ function AssignmentReview({
         ...prevState,
         isOpeningResubmitForm: false,
       }));
-      const assetData = await assetResp.data;
+      const assetData = assetResp.data;
       setCurrentAssetData(assetData);
 
       if (typeof assetData?.delivery_formats === 'string' && !assetData?.delivery_formats.includes('url')) {
         const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
-        const respData = await fileResp.data;
+        const respData = fileResp.data;
         setFileData(respData);
       }
-      setIsPopoverOpen(!isPopoverOpen);
     }
   };
   const togglePopover = async () => {
@@ -146,7 +145,8 @@ function AssignmentReview({
       ...prevState,
       isOpeningResubmitForm: true,
     }));
-    getAssetData();
+    await getAssetData();
+    setIsPopoverOpen(!isPopoverOpen);
   };
   const closePopover = () => {
     setIsPopoverOpen(false);
@@ -155,7 +155,6 @@ function AssignmentReview({
     await updateAssignment({
       task, githubUrl, taskStatus: newTaskStatus,
     });
-    closePopover();
   };
 
   useEffect(() => {
@@ -345,7 +344,6 @@ function AssignmentReview({
                     }));
                     changeStatusAssignment(currentTask, PENDING)
                       .finally(() => {
-                        closePopover();
                         setLoaders((prevState) => ({
                           ...prevState,
                           isRemovingDelivery: false,

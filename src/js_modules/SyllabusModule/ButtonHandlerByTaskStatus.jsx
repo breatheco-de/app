@@ -65,18 +65,15 @@ export function ButtonHandlerByTaskStatus({
     setIsPopoverOpen(!isPopoverOpen);
   };
 
-  const handleOpen = async () => {
-    const taskIsApprovedOrRejected = currentTask?.revision_status === 'APPROVED' || currentTask?.revision_status === 'REJECTED';
-    if (currentTask && currentTask?.task_type === 'PROJECT' && (currentTask.task_status === 'DONE' || taskIsApprovedOrRejected)) {
-      let assetData = currentAsset;
-      if (!assetData) {
-        assetData = await fetchAsset();
-      }
-      if (typeof assetData?.delivery_formats === 'string' && !assetData?.delivery_formats.includes('url')) {
-        const fileResp = await bc.todo().getFile({ id: currentTask.id });
-        const respData = await fileResp.data;
-        setFileData(respData);
-      }
+  const fetchFileData = async () => {
+    let assetData = currentAsset;
+    if (!assetData) {
+      assetData = await fetchAsset();
+    }
+    if (typeof assetData?.delivery_formats === 'string' && !assetData?.delivery_formats.includes('url')) {
+      const fileResp = await bc.todo().getFile({ id: currentTask.id });
+      const respData = fileResp.data;
+      setFileData(respData);
     }
   };
 
@@ -119,7 +116,7 @@ export function ButtonHandlerByTaskStatus({
     }
   };
 
-  const handleTaskButton = (event) => {
+  const handleNonDeliverableTask = () => {
     if (currentTask) {
       setLoaders((prevState) => ({
         ...prevState,
@@ -127,7 +124,6 @@ export function ButtonHandlerByTaskStatus({
       }));
       changeStatusAssignment(currentTask)
         .finally(() => {
-          closePopover();
           setLoaders((prevState) => ({
             ...prevState,
             isChangingTaskStatus: false,
@@ -139,12 +135,12 @@ export function ButtonHandlerByTaskStatus({
 
   const textAndIcon = textByTaskStatus(currentTask, isGuidedExperience, hasPendingSubtasks);
 
-  const openTask = async () => {
+  const loadAndOpenReviewModal = async () => {
     setLoaders((prevState) => ({
       ...prevState,
       isOpeningReviewModal: true,
     }));
-    await handleOpen();
+    await fetchFileData();
     openAssignmentFeedbackModal();
   };
 
@@ -156,14 +152,14 @@ export function ButtonHandlerByTaskStatus({
           {currentTask?.description && (
             <Button
               variant="none"
-              onClick={openTask}
+              onClick={loadAndOpenReviewModal}
             >
               <Icon icon="comment" color={hexColor.blueDefault} />
             </Button>
           )}
           <Button
             isLoading={loaders.isOpeningReviewModal}
-            onClick={openTask}
+            onClick={loadAndOpenReviewModal}
             isDisabled={isButtonDisabled}
             display="flex"
             minWidth="26px"
@@ -238,7 +234,7 @@ export function ButtonHandlerByTaskStatus({
       <Tooltip label={textAndIcon.text} placement="top">
         <Button
           isLoading={loaders.isChangingTaskStatus}
-          onClick={handleTaskButton}
+          onClick={handleNonDeliverableTask}
           isDisabled={isButtonDisabled}
           width="40px"
           height="40px"
@@ -258,7 +254,7 @@ export function ButtonHandlerByTaskStatus({
     <Button
       display="flex"
       isLoading={loaders.isChangingTaskStatus}
-      onClick={handleTaskButton}
+      onClick={handleNonDeliverableTask}
       isDisabled={isButtonDisabled}
       minWidth="26px"
       minHeight="26px"

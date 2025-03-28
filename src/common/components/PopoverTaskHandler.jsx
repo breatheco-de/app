@@ -255,8 +255,9 @@ function PopoverCustomContent({
 
             <Button
               width="fit-content"
-              onClick={() => {
-                sendProject({ task: currentTask, taskStatus: 'DONE' });
+              onClick={async () => {
+                await sendProject({ task: currentTask, taskStatus: 'DONE' });
+                closePopover();
               }}
               colorScheme="blue"
               isLoading={isSubmitting}
@@ -270,12 +271,13 @@ function PopoverCustomContent({
             {typeof currentAssetData === 'object' && deliveryFormatIsUrl ? (
               <Formik
                 initialValues={{ githubUrl: currentTask?.github_url || '' }}
-                onSubmit={() => {
+                onSubmit={async () => {
                   setIsSubmitting(true);
                   if (githubUrl !== '') {
-                    sendProject({ task: currentTask, githubUrl, taskStatus: 'DONE' });
+                    await sendProject({ task: currentTask, githubUrl, taskStatus: 'DONE' });
                     setIsSubmitting(false);
                     onClickHandler();
+                    closePopover();
                   }
                 }}
                 validationSchema={regexUrlExists ? customUrlValidation : githubUrlValidation}
