@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {
   Box,
   useColorModeValue,
-  Button,
+  Button as ChakraButton,
   Flex,
   Progress,
   Image,
@@ -20,6 +20,7 @@ import { isNumber, isValidDate } from '../../utils';
 import useStyle from '../hooks/useStyle';
 import ProjectsSection from './ProjectsSection';
 import ButtonHandler from '../../js_modules/profile/Subscriptions/ButtonHandler';
+import Button from './Button';
 
 function FreeTagCapsule({ isExpired, freeTrialExpireDateValue, now, lang }) {
   const { t } = useTranslation('program-card');
@@ -298,7 +299,7 @@ function ProgramCard({
                 {programDescription}
                 {' '}
               </Text>
-              <Button variant="outline" marginTop="20px" color="blue.default" borderColor="currentcolor" w="full" fontSize="12px" letterSpacing="0.05em">
+              <Button variant="outline" marginTop="20px" borderColor="currentcolor" w="full" fontSize="12px" letterSpacing="0.05em">
                 Loading...
               </Button>
             </>
@@ -343,7 +344,7 @@ function ProgramCard({
                       {t('upgrade')}
                     </ButtonHandler>
                   ) : (
-                    <Button
+                    <ChakraButton
                       marginTop="20px"
                       borderRadius="3px"
                       width="100%"
@@ -354,10 +355,10 @@ function ProgramCard({
                       isLoading={isLoadingPageContent}
                     >
                       {t('start-course')}
-                    </Button>
+                    </ChakraButton>
                   )}
                   {haveFreeTrial && (
-                    <Button
+                    <ChakraButton
                       marginTop="15px"
                       borderRadius="3px"
                       width="100%"
@@ -368,7 +369,7 @@ function ProgramCard({
                       color="blue.default"
                     >
                       {t('free-trial')}
-                    </Button>
+                    </ChakraButton>
                   )}
                 </Box>
               ) : (
@@ -420,7 +421,7 @@ function ProgramCard({
                     {!isExpired && (
                       <>
                         {(courseProgress > 0 && !isCancelled) ? (
-                          <Button
+                          <ChakraButton
                             variant={isFinantialStatusLate ? 'danger' : 'link'}
                             onClick={handleChoose}
                             width="100%"
@@ -432,17 +433,16 @@ function ProgramCard({
                             {!isFinantialStatusLate && (isNumber(String(lessonNumber))
                               ? `${t('continue')} ${lessonNumber} →`
                               : `${t('continue-course')} →`)}
-                          </Button>
+                          </ChakraButton>
 
                         ) : (
                           <>
                             {(!isAvailableAsSaas || !isCancelled) && !isError && !expiredStatus && (
                             <Button
-                              borderRadius="3px"
                               width="100%"
                               padding="0"
                               whiteSpace="normal"
-                              variant={isFinantialStatusLate ? 'danger' : 'default'}
+                              variant={isFinantialStatusLate ? 'danger' : 'primary'}
                               mb={isAvailableAsSaas && !statusActive && '10px'}
                               onClick={handleChoose}
                               isLoading={isLoadingPageContent}
@@ -468,10 +468,8 @@ function ProgramCard({
                       width="100%"
                       padding="0"
                       whiteSpace="normal"
-                      variant="default"
+                      variant="outline"
                       alignItems="center"
-                      background="yellow.default"
-                      color="white"
                     >
                       <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
                       {t('upgrade')}
@@ -521,11 +519,10 @@ function ProgramCard({
                 </Flex>
               )}
               <Button
-                borderRadius="3px"
                 width="100%"
                 padding="0"
                 whiteSpace="normal"
-                variant="default"
+                variant="primary"
                 mt="20px"
                 onClick={handleChoose}
                 isLoading={isLoadingPageContent}

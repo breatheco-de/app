@@ -309,9 +309,18 @@ function PricingView() {
                         href={`/${lang}/bootcamp/${course?.slug}`}
                         textAlign="center"
                         width="100%"
-                        opacity="0.9"
-                        _hover={{ opacity: 1 }}
-                        _active={{ opacity: 1 }}
+                        // opacity="0.9"
+                        _hover={{
+                          background: hexColor?.blue5,
+                        }}
+                        _active={{
+                          background: hexColor?.blue4,
+                        }}
+                        _disabled={{
+                          background: hexColor?.blue6,
+                          cursor: 'not-allowed',
+                        }}
+                        // _active={{ opacity: 1 }}
                         display="flex"
                         justifyContent="center"
                         alignItems="center"
@@ -437,7 +446,7 @@ function PricingView() {
               {t('decided.description')}
             </Text>
             <Button
-              variant="default"
+              variant="primary"
               onClick={() => {
                 if (isWindow) {
                   const langPath = lang === 'en' ? '' : `/${lang}`;

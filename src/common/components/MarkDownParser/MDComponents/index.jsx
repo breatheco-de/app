@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import ReactDOMServer from 'react-dom/server';
+import Image from 'next/image';
 import BeforeAfterSlider from '../../BeforeAfterSlider';
 import Heading from '../../Heading';
 import OnlyFor from '../../OnlyFor';
@@ -128,7 +129,7 @@ function QuoteVersion1({ ...props }) {
           mr="3"
           padding="9px"
         >
-          <img src={quoteImg.src} alt="quoteImg" />
+          <Image src={quoteImg.src} alt="quoteImg" />
         </Box>
         <Box className="quote-content">
           <Box className="quote-paragraph">
@@ -166,7 +167,7 @@ function QuoteVersion2({ ...props }) {
           alignItems="center"
         >
           <Box className="quote-img" width="3.5%" mr="5" mb="3">
-            <img src={quoteImg.src} alt="quoteImg" />
+            <Image src={quoteImg.src} alt="quoteImg" />
           </Box>
           <hr
             style={{
@@ -210,7 +211,7 @@ function QuoteVersion3({ ...props }) {
         width="100%"
       >
         <Box className="quote-img" width="3.5%" mr="5" mb="3">
-          <img src={quoteImg.src} alt="quoteImg" />
+          <Image src={quoteImg.src} alt="quoteImg" />
         </Box>
         <Box className="quote-content">
           <Box className="quote-paragraph-container">
@@ -266,7 +267,7 @@ function QuoteVersion4({ ...props }) {
           mr="5"
           mb="2"
         >
-          <img src={whiteQuoteImg.src} alt="quoteImg" />
+          <Image src={whiteQuoteImg.src} alt="quoteImg" />
         </Box>
         <Box className="quote-content">
           <Box className="quote-paragraph">

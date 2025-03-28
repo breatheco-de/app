@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import {
   Box,
-  Button,
+  Button as ChakraButton,
   Divider,
   useColorModeValue,
   Flex,
@@ -35,6 +35,7 @@ import KPI from '../../../../../common/components/KPI';
 import Link from '../../../../../common/components/NextChakraLink';
 import { isWindow } from '../../../../../utils';
 import axiosInstance from '../../../../../axios';
+import Button from '../../../../../common/components/Button';
 
 const activitiesTemplate = {
   invite_created: {
@@ -754,8 +755,8 @@ function StudentReport() {
           <Flex justifyContent="space-between">
             <Heading color={hexColor.fontColor2} size="m">{t('activities-section.title')}</Heading>
             <Button
+              hasLoading={false}
               variant="ghost"
-              color={hexColor.blueDefault}
               leftIcon={<Icon icon="filter" width="20px" height="20px" />}
               onClick={() => setOpenFilter(true)}
             >
@@ -824,7 +825,7 @@ function StudentReport() {
             </Box>
           )}
           {activities.length > 0 && fetchMoreActivities && (
-            <Button
+            <ChakraButton
               width="100%"
               color={hexColor.blueDefault}
               onClick={() => {
@@ -836,7 +837,7 @@ function StudentReport() {
               }}
             >
               {t('common:load-more')}
-            </Button>
+            </ChakraButton>
           )}
         </Box>
       </Flex>
@@ -880,7 +881,6 @@ function StudentReport() {
 
           <ModalFooter justifyContent="space-between">
             <Button
-              color={hexColor.blueDefault}
               variant="ghost"
               mr={3}
               onClick={clearFilters}
@@ -888,7 +888,7 @@ function StudentReport() {
               {t('common:clear-all')}
             </Button>
             <Button
-              colorScheme="blue"
+              variant="primary"
               onClick={() => {
                 setParamsActivities({
                   page: 1,

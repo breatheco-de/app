@@ -1,7 +1,8 @@
-import { Button, Flex, Image } from '@chakra-ui/react';
+import { Flex, Image } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Heading from './Heading';
 import Icon from './Icon';
+import Button from './Button';
 
 function OneColumnWithIcon({ icon, color, background, title, children, buttonText, handleButton, buttonProps, titleStyles, ...rest }) {
   return (
@@ -19,7 +20,7 @@ function OneColumnWithIcon({ icon, color, background, title, children, buttonTex
         </Heading>
         {children}
       </Flex>
-      <Button variant="default" onClick={handleButton} mt="24px" {...buttonProps}>
+      <Button variant="primary" onClick={handleButton} mt="24px" {...buttonProps}>
         {buttonText}
       </Button>
     </Flex>

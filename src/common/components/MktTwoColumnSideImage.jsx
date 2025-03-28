@@ -276,18 +276,24 @@ function MktTwoColumnSideImage({
               <Link
                 variant={!linkButton && 'buttonDefault'}
                 color={linkButton ? hexColor?.blueDefault : buttonColors?.color}
-                background={linkButton ? 'transparent' : buttonColors?.background}
+                // color='green'
+                background={linkButton ? 'transparent' : hexColor?.blue3}
                 border="1px solid"
                 borderColor="transparent"
                 _hover={{
-                  background: linkButton ? 'transparent' : buttonColors?.background,
+                  background: linkButton ? 'transparent' : hexColor?.blue5,
                   borderColor: linkButton ? 'transparent' : buttonColors?.color,
+                  textDecoration: linkButton ? 'underline' : 'none',
                 }}
                 _active={{
-                  background: linkButton ? 'transparent' : buttonColors?.background,
+                  background: linkButton ? 'transparent' : hexColor?.blue4,
                   borderColor: linkButton ? 'transparent' : buttonColors?.color,
                 }}
-                textDecoration={linkButton && 'underline'}
+                _disabled={{
+                  background: linkButton ? 'transparent' : hexColor?.blue6,
+                  borderColor: linkButton ? 'transparent' : buttonColors?.color,
+                  cursor: 'not-allowed',
+                }}
                 fontSize={buttonLabelSize}
                 margin="8px 0 0 0"
                 href={buttonUrl || '#recommended-courses'}
@@ -297,7 +303,10 @@ function MktTwoColumnSideImage({
                 fontFamily="Lato"
               // fontSize={buttonLabelSize}
               >
+                {/* <Link color={hexColor.blueDefault} href={aricle_url || '#'} target="__blank" visibility={aricle_url ? 'visible' : 'hidden'}></Link> */}
                 {buttonLabel}
+                {'  '}
+                {linkButton && '→'}
               </Link>
             )}
           </Flex>

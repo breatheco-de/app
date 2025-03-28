@@ -1,5 +1,5 @@
 import {
-  Box, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton,
+  Box, Button as ChakraButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton,
   ModalBody, ModalFooter, useColorModeValue, FormControl, Input, FormErrorMessage,
   Link,
 } from '@chakra-ui/react';
@@ -11,13 +11,14 @@ import Text from '../../common/components/Text';
 import validationSchema from '../../common/components/Forms/validationSchemas';
 import Icon from '../../common/components/Icon';
 import iconDict from '../../common/utils/iconDict.json';
+import Button from '../../common/components/Button';
 
 function ModalInfo({
   isOpen, onClose, actionHandler, closeActionHandler, rejectHandler, forceHandler, disableHandler, title, description,
   teacherFeedback, linkInfo, linkText, link, handlerText, closeText, cancelColorButton,
-  handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
+  rejectData, sendProject, currentTask, type, closeButtonVariant,
   htmlDescription, attachment, disableInput, descriptionStyle, footerStyle,
-  closeButtonStyles, buttonHandlerStyles, headerStyles, disableCloseButton, childrenDescription,
+  closeButtonStyles, headerStyles, disableCloseButton, childrenDescription,
   maxWidth, forceHandlerAndClose, children, ...rest
 }) {
   const { t } = useTranslation('dashboard');
@@ -228,16 +229,16 @@ function ModalInfo({
             {type === 'taskHandler' ? (
               <Box width="100%" display="flex" justifyContent="space-between">
                 {!disableCloseButton && (
-                  <Button
+                  <ChakraButton
                     fontSize="13px"
                     variant={closeButtonVariant}
                     onClick={actionHandler}
                     textTransform="uppercase"
                   >
                     {closeText || t('common:close')}
-                  </Button>
+                  </ChakraButton>
                 )}
-                <Button
+                <ChakraButton
                   fontSize="13px"
                   isDisabled={(Array.isArray(attachment) && attachment.length > 0) || isSubmitting || disableHandler}
                   isLoading={isSubmitting}
@@ -247,12 +248,12 @@ function ModalInfo({
                   textTransform="uppercase"
                 >
                   {handlerText}
-                </Button>
+                </ChakraButton>
               </Box>
             ) : (
               <>
                 {!disableCloseButton && (
-                  <Button
+                  <ChakraButton
                     fontSize="13px"
                     variant={closeButtonVariant}
                     colorScheme={cancelColorButton}
@@ -262,15 +263,14 @@ function ModalInfo({
                     {...closeButtonStyles}
                   >
                     {closeText || t('common:close')}
-                  </Button>
+                  </ChakraButton>
                 )}
                 {!disableHandler && (
                   <Button
                     fontSize="13px"
                     onClick={actionHandler}
-                    colorScheme={handlerColorButton}
+                    variant="primary"
                     textTransform="uppercase"
-                    {...buttonHandlerStyles}
                   >
                     {handlerText}
                   </Button>
@@ -294,7 +294,7 @@ function ModalInfo({
               {rejectData.title}
             </ModalHeader>
             <ModalFooter>
-              <Button
+              <ChakraButton
                 fontSize="13px"
                 colorScheme="red"
                 mr={3}
@@ -302,9 +302,9 @@ function ModalInfo({
                 textTransform="uppercase"
               >
                 {rejectData.closeText}
-              </Button>
+              </ChakraButton>
               {(!disableHandler || forceHandler) && (
-                <Button
+                <ChakraButton
                   fontSize="13px"
                   colorScheme="blue"
                   onClick={() => {
@@ -315,7 +315,7 @@ function ModalInfo({
                 >
                   {rejectData.handlerText}
                   {/* confirm */}
-                </Button>
+                </ChakraButton>
               )}
             </ModalFooter>
           </ModalContent>
@@ -342,7 +342,6 @@ ModalInfo.propTypes = {
   link: PropTypes.string,
   handlerText: PropTypes.string,
   closeText: PropTypes.string,
-  handlerColorButton: PropTypes.string,
   cancelColorButton: PropTypes.string,
   rejectData: PropTypes.objectOf(PropTypes.string),
   sendProject: PropTypes.func,
@@ -354,7 +353,6 @@ ModalInfo.propTypes = {
   descriptionStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   footerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   closeButtonStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  buttonHandlerStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   headerStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   disableCloseButton: PropTypes.bool,
   childrenDescription: PropTypes.node,
@@ -379,7 +377,6 @@ ModalInfo.defaultProps = {
   link: '',
   handlerText: 'Remove delivery',
   closeText: '',
-  handlerColorButton: 'blue',
   cancelColorButton: 'red',
   rejectData: {},
   sendProject: () => {},
@@ -391,7 +388,6 @@ ModalInfo.defaultProps = {
   descriptionStyle: {},
   footerStyle: {},
   closeButtonStyles: {},
-  buttonHandlerStyles: {},
   headerStyles: {},
   disableCloseButton: false,
   childrenDescription: null,

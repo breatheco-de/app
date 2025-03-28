@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import {
-  Box, Button, Heading, useColorModeValue,
+  Box, Button as ChakraButton, Heading, useColorModeValue,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -11,6 +11,7 @@ import Module from './module';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import Icon from '../../common/components/Icon';
+import Button from '../../common/components/Button';
 
 function ModuleMap({
   index, slug, modules, filteredModules,
@@ -100,7 +101,7 @@ function ModuleMap({
           <Text color={useColorModeValue('black', 'black')} size="16px">
             {t('modules.newActivities.title', { tasksLength: (modules.length - filteredModules.length) })}
           </Text>
-          <Button
+          <ChakraButton
             variant="outline"
             color="blue.default"
             isDisabled={!cohortId}
@@ -113,7 +114,7 @@ function ModuleMap({
             <Text color="blue.default" size="15px">
               {t('modules.newActivities.handler-text')}
             </Text>
-          </Button>
+          </ChakraButton>
         </Box>
       )}
 
@@ -143,15 +144,12 @@ function ModuleMap({
             </Text>
             {existsActivities && (
               <Button
-                color="blue.default"
+                variant="primary"
                 textTransform="uppercase"
-                isDisabled={!cohortId}
                 onClick={() => handleStartDay()}
-                background="white"
-                border="1px solid #0097CD"
                 gridGap="8px"
               >
-                <Text color="blue.default" size="15px">
+                <Text size="15px">
                   {t('modules.start-module')}
                 </Text>
               </Button>

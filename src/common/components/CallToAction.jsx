@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Box, Heading, Button, Image,
+  Box, Heading, Button as ChakraButton, Image,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -12,6 +12,7 @@ import {
 import PropTypes from 'prop-types';
 import Text from './Text';
 import Icon from './Icon';
+import Button from './Button';
 
 function CallToAction({
   background, imageSrc, icon, href, styleContainer, isExternalLink, title, text,
@@ -87,7 +88,7 @@ function CallToAction({
           {...buttonsContainerStyles}
         >
           {buttonText && !buttonsData?.length > 0 && (
-            <Button width="max-content" isLoading={isLoading} whiteSpace="wrap" as="a" style={buttonStyle} href={href} target={isExternalLink ? '_blank' : '_self'} padding="0.5rem 1rem" height="auto" marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
+            <Button width="max-content" isLoading={isLoading} whiteSpace="wrap" as="a" border="1px solid" href={href} target={isExternalLink ? '_blank' : '_self'} padding="0.5rem 1rem" height="auto" marginY="auto" textTransform="uppercase" borderColor="white" variant="primary" onClick={onClick}>
               {buttonText}
             </Button>
           )}
@@ -97,7 +98,7 @@ function CallToAction({
 
             if (isButton) {
               return (
-                <Button
+                <ChakraButton
                   style={buttonStyle}
                   isLoading={isLoading}
                   target={element.isExternalLink ? '_blank' : '_self'}
@@ -111,7 +112,7 @@ function CallToAction({
                   width="max-content"
                 >
                   {element.text}
-                </Button>
+                </ChakraButton>
               );
             }
 
@@ -119,7 +120,7 @@ function CallToAction({
               return (
                 <Popover>
                   <PopoverTrigger>
-                    <Button width="max-content" variant="default" textTransform="uppercase" background="blue.400">{element?.text}</Button>
+                    <ChakraButton width="max-content" variant="default" textTransform="uppercase" background="blue.400">{element?.text}</ChakraButton>
                   </PopoverTrigger>
                   <PopoverContent width="min-content">
                     <PopoverArrow />
@@ -132,7 +133,7 @@ function CallToAction({
                         style={{ margin: 0 }}
                       />
                       {element?.links?.length > 0 && element.links.map((link) => (
-                        <Button
+                        <ChakraButton
                           key={link.text}
                           as="a"
                           display="flex"
@@ -154,7 +155,7 @@ function CallToAction({
                         >
                           {link.title}
                           <Icon color="currentColor" icon="longArrowRight" />
-                        </Button>
+                        </ChakraButton>
                       ))}
                     </PopoverBody>
                   </PopoverContent>
@@ -163,7 +164,7 @@ function CallToAction({
             }
 
             return (
-              <Button
+              <ChakraButton
                 style={buttonStyle}
                 key={element.text}
                 as="a"
@@ -179,7 +180,7 @@ function CallToAction({
                 variant="outline"
               >
                 {element.text}
-              </Button>
+              </ChakraButton>
             );
           })}
         </Box>

@@ -85,8 +85,18 @@ function PublicCourseCard({
         color="white !important"
         textDecoration="none !important"
         padding="7px 16px !important"
-        _hover={{ opacity: 0.7 }}
-        _active={{ opacity: 1 }}
+        // _hover={{ opacity: 0.7 }}
+        // _active={{ opacity: 1 }}
+        _hover={{
+          background: hexColor?.blue5,
+        }}
+        _active={{
+          background: hexColor?.blue4,
+        }}
+        _disabled={{
+          background: hexColor?.blue6,
+          cursor: 'not-allowed',
+        }}
       >
         {t('common:learn-more')}
       </Link>
