@@ -264,6 +264,8 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
       });
   };
 
+  console.log(selectedText);
+
   return (
     <>
       <Box flex={0.6} maxHeight="76vh" overflow="auto" onMouseUp={(isStudent || view !== views.initial) ? () => { } : handleSelectedText}>
@@ -280,7 +282,7 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
                 height: '100%',
                 minWidth: '100%',
               }}
-              showLineNumbers
+              showLineNumbers={false}
               wrapLines
             >
               {repoData.raw}
@@ -367,7 +369,7 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
                         {t('code-review.you-selected-the-code')}
                       </Text>
                       <SyntaxHighlighter
-                        language={commitData?.language}
+                        language={commitData?.language || repoData.extensionLanguage}
                         style={tomorrow}
                         customStyle={{
                           padding: '16px',
@@ -400,7 +402,7 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
 
                       <Box fontSize="13px" color="#fff" padding="6px 16px" borderRadius="6px" whiteSpace="pre-wrap" overflow="auto" background="rgb(45, 45, 45)">
                         <SyntaxHighlighter
-                          language={revisionContent?.language}
+                          language={revisionContent?.language || repoData.extensionLanguage}
                           style={tomorrow}
                           customStyle={{
                             padding: '16px',
