@@ -65,7 +65,7 @@ export function ButtonHandlerByTaskStatus({
     setIsPopoverOpen(!isPopoverOpen);
   };
 
-  const handleOpen = async (onOpen = () => {}) => {
+  const handleOpen = async () => {
     const taskIsApprovedOrRejected = currentTask?.revision_status === 'APPROVED' || currentTask?.revision_status === 'REJECTED';
     if (currentTask && currentTask?.task_type === 'PROJECT' && (currentTask.task_status === 'DONE' || taskIsApprovedOrRejected)) {
       let assetData = currentAsset;
@@ -77,7 +77,6 @@ export function ButtonHandlerByTaskStatus({
         const respData = await fileResp.data;
         setFileData(respData);
       }
-      onOpen();
     }
   };
 
@@ -140,6 +139,15 @@ export function ButtonHandlerByTaskStatus({
 
   const textAndIcon = textByTaskStatus(currentTask, isGuidedExperience, hasPendingSubtasks);
 
+  const openTask = async () => {
+    setLoaders((prevState) => ({
+      ...prevState,
+      isOpeningReviewModal: true,
+    }));
+    await handleOpen();
+    openAssignmentFeedbackModal();
+  };
+
   // PRROJECT CASE
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
     if ((currentTask.task_status === 'DONE' || taskIsApprovedOrRejected) && !onlyPopoverDialog && !isGuidedExperience) {
@@ -148,30 +156,14 @@ export function ButtonHandlerByTaskStatus({
           {currentTask?.description && (
             <Button
               variant="none"
-              onClick={() => {
-                if (currentTask) {
-                  setLoaders((prevState) => ({
-                    ...prevState,
-                    isOpeningReviewModal: true,
-                  }));
-                  handleOpen(() => openAssignmentFeedbackModal());
-                }
-              }}
+              onClick={openTask}
             >
               <Icon icon="comment" color={hexColor.blueDefault} />
             </Button>
           )}
           <Button
             isLoading={loaders.isOpeningReviewModal}
-            onClick={() => {
-              if (currentTask) {
-                setLoaders((prevState) => ({
-                  ...prevState,
-                  isOpeningReviewModal: true,
-                }));
-                handleOpen(() => openAssignmentFeedbackModal());
-              }
-            }}
+            onClick={openTask}
             isDisabled={isButtonDisabled}
             display="flex"
             minWidth="26px"

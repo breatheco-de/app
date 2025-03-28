@@ -10,7 +10,7 @@ import asPrivate from '../../common/context/PrivateRouteWrapper';
 import bc from '../../common/services/breathecode';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
-import Module from '../../common/components/Module';
+import TaskBar from '../../common/components/TaskBar';
 import { calculateDifferenceDays, getStorageItem, isPlural, isValidDate, removeStorageItem, setStorageItem, sortToNearestTodayDate, syncInterval, getBrowserInfo } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
 import Heading from '../../common/components/Heading';
@@ -559,7 +559,7 @@ function chooseProgram() {
               {showInvites && invites.map((item) => {
                 const { id, type } = item;
                 return (
-                  <Module
+                  <TaskBar
                     key={`invites-${id}`}
                     data={{
                       title: type === 'invite' ? item.cohort.name : item.academy.name,

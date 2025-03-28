@@ -9,7 +9,7 @@ import { useState, memo } from 'react';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
 import { ButtonHandlerByTaskStatus } from './ButtonHandlerByTaskStatus';
-import ModuleComponent from '../../common/components/Module';
+import TaskBar from '../../common/components/TaskBar';
 import ShareButton from '../../common/components/ShareButton';
 import Icon from '../../common/components/Icon';
 
@@ -49,16 +49,11 @@ function SyllabusActivity({
     return '';
   };
 
-  const shareSocialMessage = {
-    en: `I just finished coding ${currentTask?.title} at 4geeks.com`,
-    es: `Acabo de terminar de programar ${currentTask?.title} en 4geeks.com`,
-  };
-
   const socials = [
     {
       name: 'twitter',
       label: 'Twitter',
-      href: `https://twitter.com/share?url=&text=${encodeURIComponent(shareSocialMessage[lang])} %23100DaysOfCode%0A%0A${shareLink()}`,
+      href: `https://twitter.com/share?url=&text=${encodeURIComponent(t('share-message', { title: currentTask?.title }))} %23100DaysOfCode%0A%0A${shareLink()}`,
       color: '#1DA1F2',
     },
     {
@@ -73,10 +68,10 @@ function SyllabusActivity({
   const sendProject = async ({
     task, githubUrl, taskStatus,
   }) => {
-    setShowModal(true);
     await updateAssignment({
       task, githubUrl, taskStatus,
     });
+    setShowModal(true);
   };
 
   const isDone = currentTask?.task_status === 'DONE' || currentTask?.revision_status === 'APPROVED';
@@ -114,7 +109,7 @@ function SyllabusActivity({
 
   return (
     <>
-      <ModuleComponent
+      <TaskBar
         mandatory={isMandatoryTimeOut}
         currIndex={currIndex}
         textWithLink
