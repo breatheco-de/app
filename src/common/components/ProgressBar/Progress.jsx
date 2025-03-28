@@ -13,6 +13,7 @@ function Progress({
   baseColor,
   borderRadius,
   widthSize,
+  width,
 }) {
   const [barWidth, setBarWidth] = useState(0);
   const [initialized, setInitialized] = useState(false);
@@ -53,7 +54,7 @@ function Progress({
   const baseColorDefault = useColorModeValue('gray.100', 'whiteAlpha.300');
 
   return (
-    <Box className="progress-bar" width="100%" overflow="hidden" position="relative" borderRadius={borderRadius} height={barHeight} bg={baseColor || baseColorDefault}>
+    <Box className="progress-bar" width={width} overflow="hidden" position="relative" borderRadius={borderRadius} height={barHeight} bg={baseColor || baseColorDefault}>
       <MotionBox
         variants={variants}
         initial="enter"
@@ -80,6 +81,7 @@ Progress.propTypes = {
   baseColor: PropTypes.string,
   borderRadius: PropTypes.string,
   widthSize: PropTypes.oneOfType([PropTypes.number, PropTypes.any]),
+  width: PropTypes.string,
 };
 Progress.defaultProps = {
   percents: 0,
@@ -91,6 +93,7 @@ Progress.defaultProps = {
   baseColor: '',
   borderRadius: '2px',
   widthSize: null,
+  width: '100%',
 };
 
 export default Progress;

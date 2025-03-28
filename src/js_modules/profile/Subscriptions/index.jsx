@@ -27,7 +27,7 @@ import bc from '../../../common/services/breathecode';
 import SubscriptionCard from './SubscriptionCard';
 import ConsumableCard from './ConsumableCard';
 
-const ModalInfo = lazy(() => import('../../moduleMap/modalInfo'));
+const ModalInfo = lazy(() => import('../../../common/components/ModalInfo'));
 
 function Subscriptions({ cohorts }) {
   const { t } = useTranslation('profile');

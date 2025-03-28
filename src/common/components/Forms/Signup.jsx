@@ -24,7 +24,7 @@ import { SILENT_CODE } from '../../../lib/types';
 import { getStorageItem, setStorageItem, getQueryString, getBrowserInfo } from '../../../utils';
 import { reportDatalayer } from '../../../utils/requests';
 import useSignup from '../../store/actions/signupAction';
-import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
+import ModalInfo from '../ModalInfo';
 import bc from '../../services/breathecode';
 
 function SignupForm({

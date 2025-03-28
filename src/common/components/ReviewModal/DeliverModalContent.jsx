@@ -47,6 +47,7 @@ function DeliverModalContent({
   const fontColor = useColorModeValue('gra.dark', 'gray.250');
   const labelColor = useColorModeValue('gray.600', 'gray.200');
   const taskIsIgnored = currentTask?.revision_status === 'IGNORED';
+  const codeRevisions = contextData?.code_revisions || [];
 
   useEffect(() => {
     if (copied) {
@@ -124,9 +125,9 @@ function DeliverModalContent({
             <Flex alignItems="center" gridGap="10px">
               <Icon icon="code" width="18.5px" height="17px" color="currentColor" />
               <Text size="14px" fontWeight={700}>
-                {t('code-review.count-code-reviews', { count: contextData?.code_revisions?.length || 0 })}
+                {t('code-review.count-code-reviews', { count: codeRevisions.length || 0 })}
               </Text>
-              {!isStudent && contextData?.code_revisions?.length > 0 && (
+              {!isStudent && codeRevisions.length > 0 && (
                 <Button height="auto" width="fit-content" onClick={() => setStage('review_code_revision')} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
                   {t('code-review.read-code-reviews')}
                 </Button>

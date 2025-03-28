@@ -16,14 +16,11 @@ import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
 import { SILENT_CODE } from '../../lib/types';
 import axiosInstance from '../../axios';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
-import useModuleHandler from '../../common/hooks/useModuleHandler';
 import { getCohort } from '../../common/handlers/cohorts';
 
 function Summary() {
   const { t, lang } = useTranslation('signup');
-  const { state: cohortState, setCohortSession, getCohortAssignments, prepareTasks } = useCohortHandler();
-  const { sortedAssignments } = cohortState;
-  const { cohortProgram, taskTodo, startDay } = useModuleHandler();
+  const { cohortsAssignments, startDay, setCohortSession, getCohortsModules } = useCohortHandler();
   const [readyToRedirect, setReadyToRedirect] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [updatedUser, setUpdatedUser] = useState(undefined);
@@ -97,11 +94,14 @@ function Summary() {
 
   const openSyllabusAndRedirect = () => {
     const langLink = lang !== 'en' ? `/${lang}` : '';
-    const firstAssigmentSlug = sortedAssignments[0].modules[0].slug;
-    const firstAssigmentType = sortedAssignments[0].modules[0].type.toLowerCase();
+
+    const modules = cohortsAssignments[cohortFound.slug]?.modules;
+
+    const firstAssigmentSlug = modules[0].content[0].slug;
+    const firstAssigmentType = modules[0].content[0].type.toLowerCase();
     const syllabusRedirectURL = `${langLink}/syllabus/${cohortFound?.slug}/${firstAssigmentType}/${firstAssigmentSlug}`;
 
-    const updatedTasks = (sortedAssignments[0].modules || [])?.map((l) => ({
+    const updatedTasks = (modules[0].content || [])?.map((l) => ({
       ...l,
       title: l.title,
       associated_slug: l?.slug?.slug || l.slug,
@@ -118,6 +118,7 @@ function Summary() {
       },
     });
     startDay({
+      cohort: cohortFound,
       newTasks: updatedTasks,
     });
 
@@ -136,7 +137,7 @@ function Summary() {
       selectedProgramSlug: cohortDashboardLink,
     });
 
-    if (!sortedAssignments.length > 0) {
+    if (cohortFound?.micro_cohorts?.length > 0 || !(cohortFound.slug in cohortsAssignments)) {
       router.push(cohortDashboardLink);
       return;
     }
@@ -145,23 +146,19 @@ function Summary() {
   };
 
   useEffect(() => {
-    if (!(sortedAssignments.length > 0)) return undefined;
+    if (!cohortFound || (cohortFound.micro_cohorts.length === 0 && !(cohortFound.slug in cohortsAssignments))) return undefined;
 
     const timer = setTimeout(() => {
       setReadyToRedirect(true);
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [sortedAssignments]);
+  }, [cohortsAssignments, cohortFound]);
 
   useEffect(() => {
-    prepareTasks();
-  }, [taskTodo, cohortProgram]);
-
-  useEffect(() => {
-    getCohortAssignments(
-      { slug: cohortFound?.syllabus_version?.slug, cohort: cohortFound, updatedUser },
-    );
+    if (cohortFound?.micro_cohorts.length === 0) {
+      getCohortsModules([cohortFound]);
+    }
   }, [updatedUser]);
 
   useEffect(() => {

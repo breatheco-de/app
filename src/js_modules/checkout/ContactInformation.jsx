@@ -12,7 +12,7 @@ import { getStorageItem, setStorageItem, getBrowserInfo } from '../../utils';
 import { BREATHECODE_HOST } from '../../utils/variables';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
-import ModalInfo from '../moduleMap/modalInfo';
+import ModalInfo from '../../common/components/ModalInfo';
 import Text from '../../common/components/Text';
 import { reportDatalayer } from '../../utils/requests';
 

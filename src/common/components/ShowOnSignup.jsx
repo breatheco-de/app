@@ -9,7 +9,7 @@ import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 import { setStorageItem } from '../../utils';
 import { BREATHECODE_HOST } from '../../utils/variables';
-import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import ModalInfo from './ModalInfo';
 import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
 import useSignup from '../store/actions/signupAction';
 

@@ -51,11 +51,12 @@ function OnlyFor({
   const { userCapabilities: cohortCapabilities, cohortSession } = state;
 
   const currentCohort = cohort || cohortSession;
+  const role = currentCohort?.cohort_user?.role || currentCohort?.cohort_role;
 
   const profileCapabilities = user?.permissions?.map((l) => l.codename) || [];
   const userCapabilities = [...new Set([...cohortCapabilities, ...profileCapabilities])];
   const profileRole = user?.roles?.length > 0 && user.roles[0].role.toUpperCase();
-  const cohortRole = currentCohort?.cohort_role?.toUpperCase() || profileRole || 'NONE';
+  const cohortRole = role?.toUpperCase() || profileRole || 'NONE';
   const isCapableAcademy = currentCohort && currentCohort.academy?.id === academyNumber;
   const isMember = commonUser.includes(cohortRole);
   const isTeacher = teachers.includes(cohortRole);

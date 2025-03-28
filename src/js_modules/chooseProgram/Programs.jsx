@@ -1,17 +1,21 @@
+/* eslint-disable camelcase */
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { subMinutes } from 'date-fns';
 import { memo, useState } from 'react';
 import ProgramCard from '../../common/components/ProgramCard';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
+import useSubscriptionsHandler from '../../common/store/actions/subscriptionAction';
 import axios from '../../axios';
 import useProgramList from '../../common/store/actions/programListAction';
 
 function Programs({ item, onOpenModal, setLateModalProps }) {
   const { setCohortSession } = useCohortHandler();
+  const { state } = useSubscriptionsHandler();
+  const { isLoading } = state;
   const [isLoadingPageContent, setIsLoadingPageContent] = useState(false);
   const { programsList } = useProgramList();
-  const { cohort, ...cohortUser } = item;
+  const { cohort_user: cohortUser, ...cohort } = item;
   const signInDate = item.created_at;
   const { version, slug } = cohort.syllabus_version;
   const currentCohortProps = programsList[cohort.slug];
@@ -43,7 +47,6 @@ function Programs({ item, onOpenModal, setLateModalProps }) {
       axios.defaults.headers.common.Academy = cohort.academy.id;
       setCohortSession({
         ...cohort,
-        cohort_role: cohortUser?.role,
         cohort_user: cohortUser,
         selectedProgramSlug: `/cohort/${cohort?.slug}/${slug}/v${version}`,
       });
@@ -96,9 +99,9 @@ function Programs({ item, onOpenModal, setLateModalProps }) {
       // isBought={moduleStarted}
       // isBought={!isFreeTrial}
       isLoadingPageContent={isLoadingPageContent}
-      isLoading={currentCohortProps === undefined}
-      startsIn={item?.cohort?.kickoff_date}
-      endsAt={item?.cohort?.ending_date}
+      isLoading={currentCohortProps === undefined || isLoading}
+      startsIn={item?.kickoff_date}
+      endsAt={item?.ending_date}
       signInDate={signInDate}
       icon="coding"
       subscription={subscription || {}}

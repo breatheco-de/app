@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import PropTypes from 'prop-types';
 import { Box } from '@chakra-ui/react';
-import iconDic from '../../utils/iconDict.json';
+import iconDict from '../../../iconDict.json';
 
 function Icon({
   icon, width, size, height, style, color, secondColor, fill, className, props, full, text, ...rest
@@ -10,7 +10,7 @@ function Icon({
   const [isMounted, setIsMounted] = useState(false);
 
   if (typeof window === 'undefined' || !window) return '';
-  const iconExists = iconDic.includes(icon);
+  const iconExists = iconDict.includes(icon);
 
   const Comp = dynamic(() => import(`./set/${iconExists ? icon : 'info'}`));
 

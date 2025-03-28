@@ -1,40 +1,32 @@
 import {
-  SET_MY_COHORTS,
   SET_COHORT_SESSION,
-  SET_SORTED_ASSIGNMENTS,
   SET_TASK_COHORT_NULL,
   SET_USER_CAPABILITIES,
+  SET_COHORTS_ASSIGNMENTS,
+  SET_REVIEW_MODAL_STATE,
 } from '../types';
 
 const initialState = {
-  myCohorts: [],
-  cohortSession: {},
-  sortedAssignments: [],
+  cohortSession: null,
+  cohortsAssignments: {},
   taskCohortNull: [],
   userCapabilities: [],
+  reviewModalState: {
+    isOpen: false,
+    currentTask: null,
+    externalFiles: null,
+    defaultStage: undefined,
+    cohortSlug: undefined,
+  },
 };
 
 const cohortHandlerReducer = (state = initialState, action) => {
   switch (action.type) {
-    case SET_MY_COHORTS: {
-      const { myCohorts } = action.payload;
-      return {
-        ...state,
-        myCohorts,
-      };
-    }
     case SET_COHORT_SESSION: {
       const { cohortSession } = action.payload;
       return {
         ...state,
         cohortSession,
-      };
-    }
-    case SET_SORTED_ASSIGNMENTS: {
-      const { sortedAssignments } = action.payload;
-      return {
-        ...state,
-        sortedAssignments,
       };
     }
     case SET_TASK_COHORT_NULL: {
@@ -49,6 +41,20 @@ const cohortHandlerReducer = (state = initialState, action) => {
       return {
         ...state,
         userCapabilities,
+      };
+    }
+    case SET_COHORTS_ASSIGNMENTS: {
+      const { cohortsAssignments } = action.payload;
+      return {
+        ...state,
+        cohortsAssignments,
+      };
+    }
+    case SET_REVIEW_MODAL_STATE: {
+      const { reviewModalState } = action.payload;
+      return {
+        ...state,
+        reviewModalState,
       };
     }
     default: {

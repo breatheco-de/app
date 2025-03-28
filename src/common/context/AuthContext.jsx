@@ -12,7 +12,7 @@ import { BREATHECODE_HOST, RIGOBOT_HOST } from '../../utils/variables';
 import axiosInstance, { cancelAllCurrentRequests } from '../../axios';
 import { usePersistentBySession } from '../hooks/usePersistent';
 import useRigo from '../hooks/useRigo';
-import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import ModalInfo from '../components/ModalInfo';
 import Text from '../components/Text';
 import { SILENT_CODE } from '../../lib/types';
 import { warn } from '../../utils/logging';
@@ -82,6 +82,14 @@ const reducer = (state, action) => {
       return {
         ...state,
         cohorts: action.payload,
+      };
+    }
+    case 'SET_COHORTS_AND_USER': {
+      const { user, cohorts } = action.payload;
+      return {
+        ...state,
+        user,
+        cohorts,
       };
     }
     case 'LOADING': {
@@ -184,15 +192,44 @@ function AuthProvider({ children, pageProps }) {
     }
   }, [state.isAuthenticated, router.pathname]);
 
-  const parseCohort = (elem) => {
+  const parseCohortUser = (elem) => {
     const { cohort, ...cohort_user } = elem;
     const { syllabus_version } = cohort;
     return {
       ...cohort,
       selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
-      cohort_role: elem.role,
       cohort_user,
     };
+  };
+
+  const fetchUserAndCohorts = async () => {
+    try {
+      const { data } = await bc.admissions().me();
+      const { cohorts: cohortUsers, ...userData } = data;
+      const cohorts = cohortUsers.map(parseCohortUser);
+
+      return { cohorts, userData };
+    } catch (e) {
+      console.log(e);
+      return e;
+    }
+  };
+
+  const reSetUserAndCohorts = async () => {
+    const { cohorts, userData } = await fetchUserAndCohorts();
+    dispatch({
+      type: 'SET_COHORTS_AND_USER',
+      payload: { user: userData, cohorts },
+    });
+
+    return { cohorts, userData };
+  };
+
+  const setCohorts = (cohorts) => {
+    dispatch({
+      type: 'SET_COHORTS',
+      payload: cohorts,
+    });
   };
 
   const fetchBlockedServices = async () => {
@@ -238,9 +275,7 @@ function AuthProvider({ children, pageProps }) {
         try {
           // only fetch user info if it is null
           if (!user) {
-            const { data } = await bc.admissions().me();
-            const { cohorts: cohortUsers, ...userData } = data;
-            const cohorts = cohortUsers.map(parseCohort);
+            const { cohorts, userData } = await fetchUserAndCohorts();
 
             const [respRigobotAuth] = await Promise.all([
               bc.auth().verifyRigobotConnection(token),
@@ -253,24 +288,24 @@ function AuthProvider({ children, pageProps }) {
               type: 'INIT',
               payload: { user: userData, cohorts, isAuthenticated: true, isAuthenticatedWithRigobot, isLoading: false },
             });
-            const settingsLang = data?.settings.lang;
+            const settingsLang = userData?.settings.lang;
 
             reportDatalayer({
               dataLayer: {
                 event: 'session_load',
                 method: 'native',
-                user_id: data.id,
-                email: data.email,
-                is_academy_legacy: [...new Set(data.roles.map((role) => role.academy.id))].join(','),
-                is_available_as_saas: !data.roles.some((r) => r.academy.id !== 47),
-                first_name: data.first_name,
-                last_name: data.last_name,
-                avatar_url: data.profile?.avatar_url || data.github?.avatar_url,
-                language: data.profile?.settings?.lang === 'us' ? 'en' : data.profile?.settings?.lang,
+                user_id: userData.id,
+                email: userData.email,
+                is_academy_legacy: [...new Set(userData.roles.map((role) => role.academy.id))].join(', '),
+                is_available_as_saas: !userData.roles.some((r) => r.academy.id !== 47),
+                first_name: userData.first_name,
+                last_name: userData.last_name,
+                avatar_url: userData.profile?.avatar_url || userData.github?.avatar_url,
+                language: userData.profile?.settings?.lang === 'us' ? 'en' : userData.profile?.settings?.lang,
                 agent: getBrowserInfo(),
               },
             });
-            if (data.github) {
+            if (userData.github) {
               localStorage.setItem('showGithubWarning', 'closed');
             } else if (!localStorage.getItem('showGithubWarning') || localStorage.getItem('showGithubWarning') !== 'postponed') {
               localStorage.setItem('showGithubWarning', 'active');
@@ -452,6 +487,9 @@ function AuthProvider({ children, pageProps }) {
         register,
         updateProfile,
         conntectToRigobot,
+        setCohorts,
+        reSetUserAndCohorts,
+        fetchUserAndCohorts,
       }}
     >
       {children}

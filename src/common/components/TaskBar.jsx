@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-useless-fragment */
 import {
   Box, Heading, Stack, Flex, useColorModeValue, HStack, Tooltip, Link,
 } from '@chakra-ui/react';
@@ -7,10 +6,9 @@ import { useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import Text from './Text';
 import Icon from './Icon';
-// import Link from './NextChakraLink';
-import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import ModalInfo from './ModalInfo';
 
-function Module({
+function TaskBar({
   onClickHandler, data, containerStyle, leftContentStyle, containerPX, width, currIndex,
   isDone, rightItemHandler, link, textWithLink, mandatory, onDisabledClick,
 }) {
@@ -196,7 +194,7 @@ function Module({
   );
 }
 
-Module.propTypes = {
+TaskBar.propTypes = {
   onClickHandler: PropTypes.func,
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   containerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
@@ -211,7 +209,7 @@ Module.propTypes = {
   mandatory: PropTypes.bool,
   onDisabledClick: PropTypes.func,
 };
-Module.defaultProps = {
+TaskBar.defaultProps = {
   onClickHandler: () => {},
   data: {},
   containerStyle: {},
@@ -227,4 +225,4 @@ Module.defaultProps = {
   onDisabledClick: () => {},
 };
 
-export default Module;
+export default TaskBar;

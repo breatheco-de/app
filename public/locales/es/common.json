@@ -3,12 +3,19 @@
   "reviews": "Reseñas",
   "course-rating": "Calificación del curso",
   "connect-with-github": "Conéctate con Github",
+  "connect-with-rigobot": "Conéctate con Rigobot",
+  "get-help-rigobot": "Pide ayuda a Rigobot",
   "see-financing-options": "Ver opciones de pago",
   "your-tutors-in-this-cohort": "Tus tutores:",
   "main-instructor": "Instructor Principal",
   "teacher-assistant": "Asistente de Profesor",
   "hide": "Ocultar",
   "rigo": "Rigo",
+  "see-workshops": "Ver todos los workshops",
+  "schedule-mentoring": "Agenda una sesión de mentoria",
+  "rigobot-bubble": {
+    "greeting": "Hola!"
+  },
   "ai-tutor": "Tutor IA",
   "tooltip-ai-tutor": "Nunca vuelvas a quedar atascado, nuestro tutor IA te ayudará en todo, cada paso de la manera.",
   "clone-modal": {
@@ -521,6 +528,7 @@
   "student": "Alumno",
   "reviewer": "Revisor",
   "assistant": "Asistente",
+  "member": "Miembro",
   "upload": "Subir",
   "cancel": "Cancelar",
   "uploading": "Subiendo",

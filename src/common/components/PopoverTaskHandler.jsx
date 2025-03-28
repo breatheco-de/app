@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useRef, useState } from 'react';
 import bc from '../services/breathecode';
-import iconDict from '../utils/iconDict.json';
+import iconDict from '../../iconDict.json';
 import { isGithubUrl } from '../../utils/regex';
 import MarkDownParser from './MarkDownParser';
 import Icon from './Icon';
@@ -123,7 +123,7 @@ function PopoverCustomContent({
   currentTask,
   sendProject,
   onClickHandler,
-  closeSettings,
+  closePopover,
   acceptTC,
   handleAcceptTC,
 }) {
@@ -224,7 +224,7 @@ function PopoverCustomContent({
         duration: 4000,
         isClosable: true,
       });
-      closeSettings();
+      closePopover();
     } else {
       setIsUploading(false);
       toast({
@@ -238,7 +238,7 @@ function PopoverCustomContent({
   };
   const handleCloseFile = () => {
     handleAcceptTC(false);
-    closeSettings();
+    closePopover();
   };
 
   return (
@@ -255,8 +255,9 @@ function PopoverCustomContent({
 
             <Button
               width="fit-content"
-              onClick={() => {
-                sendProject({ task: currentTask, taskStatus: 'DONE' });
+              onClick={async () => {
+                await sendProject({ task: currentTask, taskStatus: 'DONE' });
+                closePopover();
               }}
               colorScheme="blue"
               isLoading={isSubmitting}
@@ -270,12 +271,13 @@ function PopoverCustomContent({
             {typeof currentAssetData === 'object' && deliveryFormatIsUrl ? (
               <Formik
                 initialValues={{ githubUrl: currentTask?.github_url || '' }}
-                onSubmit={() => {
+                onSubmit={async () => {
                   setIsSubmitting(true);
                   if (githubUrl !== '') {
-                    sendProject({ task: currentTask, githubUrl, taskStatus: 'DONE' });
+                    await sendProject({ task: currentTask, githubUrl, taskStatus: 'DONE' });
                     setIsSubmitting(false);
                     onClickHandler();
+                    closePopover();
                   }
                 }}
                 validationSchema={regexUrlExists ? customUrlValidation : githubUrlValidation}
@@ -477,21 +479,19 @@ function PopoverTaskHandler({
   currentTask,
   sendProject,
   onClickHandler,
-  settingsOpen,
   allowText,
-  closeSettings,
-  toggleSettings,
+  isPopoverOpen,
+  closePopover,
+  togglePopover,
   buttonChildren,
-  acceptTC,
-  handleAcceptTC,
 }) {
-  const { hexColor } = useStyle();
   const taskIsApproved = allowText && currentTask?.revision_status === 'APPROVED';
   const isButtonDisabled = currentTask === null || taskIsApproved;
+  const [acceptTC, setAcceptTC] = useState(false);
 
   const handleCloseFile = () => {
-    handleAcceptTC(false);
-    closeSettings();
+    setAcceptTC(false);
+    closePopover();
   };
 
   const textAndIcon = textByTaskStatus(currentTask, isGuidedExperience);
@@ -500,7 +500,7 @@ function PopoverTaskHandler({
     return (
       <Popover
         id="task-status"
-        isOpen={settingsOpen}
+        isOpen={isPopoverOpen}
         onClose={handleCloseFile}
         trigger="click"
         placement="top-start"
@@ -518,7 +518,7 @@ function PopoverTaskHandler({
               borderRadius="full"
               variant="default"
               gridGap="12px"
-              onClick={() => toggleSettings()}
+              onClick={() => togglePopover()}
             >
               <Icon {...textAndIcon.icon} />
             </Button>
@@ -531,8 +531,8 @@ function PopoverTaskHandler({
           sendProject={sendProject}
           onClickHandler={onClickHandler}
           allowText={allowText}
-          closeSettings={closeSettings}
-          handleAcceptTC={handleAcceptTC}
+          closePopover={closePopover}
+          handleAcceptTC={setAcceptTC}
           acceptTC={acceptTC}
         />
       </Popover>
@@ -542,7 +542,7 @@ function PopoverTaskHandler({
   return (
     <Popover
       id="task-status"
-      isOpen={settingsOpen}
+      isOpen={isPopoverOpen}
       onClose={handleCloseFile}
       trigger="click"
       placement="top-start"
@@ -563,7 +563,7 @@ function PopoverTaskHandler({
           borderRadius={allowText ? '3px' : '30px'}
           textTransform={allowText ? 'uppercase' : 'none'}
           gridGap={allowText ? '12px' : '0'}
-          onClick={() => toggleSettings()}
+          onClick={() => togglePopover()}
         >
           {buttonChildren && buttonChildren}
           {!buttonChildren && (
@@ -586,8 +586,8 @@ function PopoverTaskHandler({
         currentTask={currentTask}
         sendProject={sendProject}
         onClickHandler={onClickHandler}
-        closeSettings={closeSettings}
-        handleAcceptTC={handleAcceptTC}
+        closePopover={closePopover}
+        handleAcceptTC={setAcceptTC}
         acceptTC={acceptTC}
       />
     </Popover>
@@ -600,10 +600,10 @@ PopoverTaskHandler.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   sendProject: PropTypes.func,
   onClickHandler: PropTypes.func,
-  closeSettings: PropTypes.func,
-  settingsOpen: PropTypes.bool,
+  closePopover: PropTypes.func,
+  isPopoverOpen: PropTypes.bool,
   allowText: PropTypes.bool,
-  toggleSettings: PropTypes.func,
+  togglePopover: PropTypes.func,
   buttonChildren: PropTypes.node,
   isGuidedExperience: PropTypes.bool,
 };
@@ -614,10 +614,10 @@ PopoverTaskHandler.defaultProps = {
   currentTask: {},
   sendProject: () => { },
   onClickHandler: () => { },
-  closeSettings: () => { },
-  settingsOpen: false,
+  closePopover: () => { },
+  isPopoverOpen: false,
   allowText: false,
-  toggleSettings: () => { },
+  togglePopover: () => { },
   buttonChildren: null,
   isGuidedExperience: false,
 };
