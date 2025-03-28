@@ -1,4 +1,4 @@
-import { Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react';
+import { Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import useTranslation from 'next-translate/useTranslation';
@@ -12,6 +12,7 @@ import Heading from './Heading';
 import { setStorageItem, toCapitalize } from '../../utils';
 import { BREATHECODE_HOST } from '../../utils/variables';
 import { log } from '../../utils/logging';
+import useCustomToast from '../hooks/useCustomToast';
 
 function DirectAccessModal({ title, modalIsOpen }) {
   const { t } = useTranslation('profile');
@@ -22,7 +23,7 @@ function DirectAccessModal({ title, modalIsOpen }) {
   const router = useRouter();
   const locale = router?.locale;
   // const technology = router?.query?.technology || 'Python';
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'email-subscribed' });
 
   const [formProps, setFormProps] = useState({
     first_name: '',
@@ -62,7 +63,7 @@ function DirectAccessModal({ title, modalIsOpen }) {
       router.push('/thank-you');
     }
     if (resp.status >= 400) {
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:email-already-subscribed'),
         status: 'warning',

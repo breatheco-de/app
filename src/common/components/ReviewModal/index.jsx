@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import { Box, Button, Flex, Link, Textarea, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, Link, Textarea } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { format } from 'date-fns';
 import SimpleModal from '../SimpleModal';
@@ -9,7 +9,6 @@ import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
 import CodeReview from './CodeReview';
 import DeliverModalContent from './DeliverModalContent';
-import AlertMessage from '../AlertMessage';
 import Icon from '../Icon';
 import FileList from './FileList';
 import bc from '../../services/breathecode';
@@ -24,6 +23,7 @@ import useAuth from '../../hooks/useAuth';
 import { error } from '../../../utils/logging';
 import { reportDatalayer } from '../../../utils/requests';
 import { getBrowserInfo } from '../../../utils';
+import useCustomToast from '../../hooks/useCustomToast';
 
 export const stages = {
   initial: 'initial',
@@ -46,7 +46,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   projectLink, changeStatusAssignment, disableRate, disableLiking, acceptTC, handleAcceptTC, ...rest }) {
   const { t } = useTranslation('assignments');
   const { isAuthenticated, isAuthenticatedWithRigobot, user } = useAuth();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: ' review-status-code-revisions' });
   const [selectedText, setSelectedText] = useState('');
   const [loaders, setLoaders] = useState({
     isFetchingCommitFiles: false,
@@ -194,7 +194,6 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
         ? await bc.assignments().getPersonalCodeRevisionsByTask(currentTask.id)
         : await bc.assignments().getCodeRevisions(currentTask.id);
       const data = await response.json();
-
       if (response.ok) {
         const codeRevisionsSortedByDate = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         setContextData((prev) => ({
@@ -203,9 +202,10 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           my_revisions: data.filter((revision) => revision?.reviewer?.username === user?.email),
         }));
       } else {
-        toast({
+        createToast({
           title: t('alert-message:something-went-wrong'),
-          description: `Cannot get code revisions: ${data?.detail}`,
+          // description: `Cannot get code revisions: ${data?.detail}`,
+          description: `Error: ${data?.Error}. ${data?.solution || ''}`,
           status: 'error',
           duration: 5000,
           position: 'top',
@@ -307,7 +307,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           description: comment,
         })
         .then(() => {
-          toast({
+          createToast({
             position: 'top',
             title: alertStatus[reviewStatus],
             status: 'success',
@@ -326,7 +326,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           onClose();
         })
         .catch(() => {
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:review-assignment-error'),
             status: 'error',
@@ -459,6 +459,17 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     }
   };
 
+  useEffect(() => {
+    if (isOpen && true && !false) {
+      createToast({
+        position: 'top',
+        title: isStudent ? t('code-review.info-student') : t('code-review.info-teacher'),
+        status: isStudent ? 'info' : 'warning',
+        duration: 5000,
+      });
+    }
+  }, [isOpen]);
+
   return (
     <SimpleModal
       isOpen={isOpen}
@@ -515,18 +526,6 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
             </Box>
           ) : (
             <>
-              {hasFilesToReview && !isReadyToApprove && (
-                <AlertMessage
-                  type={isStudent ? 'info' : 'warning'}
-                  full
-                  message={isStudent
-                    ? t('code-review.info-student')
-                    : t('code-review.info-teacher')}
-                  borderRadius="4px"
-                  padding="8px"
-                  mb="24px"
-                />
-              )}
               <Flex flexDirection="column" gridGap="16px">
                 {!isStudent ? (
                   <Flex justifyContent="space-between">

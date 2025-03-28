@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-unsafe-optional-chaining */
 import { useSelector, useDispatch } from 'react-redux';
-import { useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import {
@@ -18,6 +17,7 @@ import useSession from '../../hooks/useSession';
 import useAuth from '../../hooks/useAuth';
 import { reportDatalayer } from '../../../utils/requests';
 import { generatePlan, getTranslations } from '../../handlers/subscriptions';
+import useCustomToast from '../../hooks/useCustomToast';
 
 const useSignup = () => {
   const { isAuthenticated } = useAuth();
@@ -25,7 +25,7 @@ const useSignup = () => {
   const state = useSelector((sl) => sl.signupReducer);
   const [, setSubscriptionProcess] = usePersistent('subscription-process', null);
   const { t } = useTranslation('signup');
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'error-payment-transaction' });
   const router = useRouter();
   const { locale } = router;
   const dispatch = useDispatch();
@@ -204,7 +204,7 @@ const useSignup = () => {
             }
           }
           if (transactionData === undefined || transactionData.status >= 400) {
-            toast({
+            createToast({
               position: 'top',
               title: t('alert-message:payment-error'),
               status: 'error',

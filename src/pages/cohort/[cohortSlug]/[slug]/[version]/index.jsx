@@ -1,8 +1,8 @@
 import {
-  useEffect, useState,
+  useEffect, useState, useRef,
 } from 'react';
 import {
-  Box, Flex, Container, useColorModeValue, Skeleton, useToast,
+  Box, Flex, Container, useColorModeValue, Skeleton,
   Checkbox, Input, InputGroup, InputRightElement, IconButton,
   keyframes, usePrefersReducedMotion, Avatar, useColorMode,
   Modal, ModalBody, ModalCloseButton, ModalContent,
@@ -47,17 +47,17 @@ import { BREATHECODE_HOST } from '../../../../../utils/variables';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
-import AlertMessage from '../../../../../common/components/AlertMessage';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
 import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
 import useStyle from '../../../../../common/hooks/useStyle';
 import Feedback from '../../../../../common/components/Feedback';
+import useCustomToast from '../../../../../common/hooks/useCustomToast';
 
 function Dashboard() {
   const { t, lang } = useTranslation('dashboard');
-  const toast = useToast();
+  const { createToast, closeToast } = useCustomToast({ toastId: 'fetching-teachers-students-nsync-cohort' });
   const router = useRouter();
   const { colorMode } = useColorMode();
   const [showWarningModal, setShowWarningModal] = useState(false);
@@ -92,6 +92,8 @@ function Dashboard() {
   const mainTechnologies = cohortProgram?.main_technologies
     ? cohortProgram?.main_technologies.split(',').map((el) => el.trim())
     : [];
+
+  const isSubscriptionFreeTrial = subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists;
 
   const academyOwner = cohortProgram?.academy_owner;
 
@@ -149,7 +151,7 @@ function Dashboard() {
       })
       .catch(() => {
         setModalIsOpen(false);
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:task-cant-sync-with-cohort'),
           // title: 'Some Tasks cannot synced with current cohort',
@@ -166,7 +168,7 @@ function Dashboard() {
       id: idsParsed,
     }).deleteBulk()
       .then(() => {
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:unsynced-tasks-removed'),
           status: 'success',
@@ -176,7 +178,7 @@ function Dashboard() {
         setModalIsOpen(false);
       })
       .catch(() => {
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:unsynced-tasks-cant-be-removed'),
           status: 'error',
@@ -192,7 +194,7 @@ function Dashboard() {
         plan: programSlug,
       });
       router.push(`/${lang}/checkout${querys}`);
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:access-denied'),
         status: 'error',
@@ -388,7 +390,7 @@ function Dashboard() {
         }
       }).catch((err) => {
         console.log(err);
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:error-fetching-students-and-teachers'),
           status: 'error',
@@ -401,12 +403,102 @@ function Dashboard() {
 
   useEffect(() => {
     getTasksWithoutCohort({ setModalIsOpen });
+    getMandatoryProjects();
   }, [sortedAssignments]);
 
   // Sort all data fetched in order of taskTodo
   useEffect(() => {
     prepareTasks();
+
+    return () => {
+      setSortedAssignments([]);
+    };
   }, [cohortProgram, taskTodo, router]);
+
+  const hasShownMandatoryToast = useRef(false);
+  const hasShownFreeTrialToast = useRef(false);
+  const hasShownDeletionToast = useRef(false);
+
+  const mandatoryProjectsCount = getMandatoryProjects().length;
+  useEffect(() => {
+    if (isSubscriptionFreeTrial && !hasShownFreeTrialToast.current) {
+      hasShownFreeTrialToast.current = true;
+      createToast({
+        position: 'top',
+        title: (
+          <span
+            dangerouslySetInnerHTML={{
+              __html: t('free-trial-msg', { link: '/profile/subscriptions' }),
+            }}
+          />
+        ),
+        status: 'warning',
+        duration: 5000,
+      });
+    }
+    if (mandatoryProjectsCount > 0 && !isSubscriptionFreeTrial && !hasShownMandatoryToast.current) {
+      hasShownMandatoryToast.current = true;
+      createToast({
+        position: 'top',
+        title: (
+          <span>
+            <span
+              dangerouslySetInnerHTML={{
+                __html: t('deliverProject.mandatory-message', { count: mandatoryProjectsCount }),
+              }}
+            />
+            .
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={() => {
+                closeToast();
+                setShowMandatoryModal(true);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  closeToast();
+                  setShowMandatoryModal(true);
+                }
+              }}
+              style={{ textDecoration: 'underline', cursor: 'pointer', color: 'black', fontWeight: '700' }}
+            >
+              {t('deliverProject.see-mandatory-projects')}
+            </span>
+          </span>
+        ),
+        status: 'warning',
+        duration: 5000,
+      });
+    }
+    if (deletionOrders.length > 0 && !hasShownDeletionToast.current) {
+      hasShownDeletionToast.current = true;
+      createToast({
+        position: 'top',
+        title: (
+          <span>
+            {t('repository-deletion.description')}
+            {' '}
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={() => setShowDeletionOrdersModal(true)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  setShowDeletionOrdersModal(true);
+                }
+              }}
+              style={{ textDecoration: 'underline', cursor: 'pointer', color: 'black', fontWeight: '700' }}
+            >
+              {t('repository-deletion.see-repositories')}
+            </span>
+          </span>
+        ),
+        status: 'warning',
+        duration: 5000,
+      });
+    }
+  }, [isSubscriptionFreeTrial, mandatoryProjectsCount, deletionOrders.length]);
 
   const dailyModuleData = getDailyModuleData() || '';
   const lastTaskDoneModuleData = getLastDoneTaskModuleData() || '';
@@ -436,77 +528,6 @@ function Dashboard() {
 
   return (
     <>
-      {deletionOrders.length > 0 && (
-        <AlertMessage
-          full
-          type="warning"
-          style={{ borderRadius: '0px', justifyContent: 'center' }}
-        >
-          <Text
-            size="l"
-            color="black"
-            fontWeight="700"
-          >
-            {t('repository-deletion.description')}
-            {'  '}
-            <Button
-              variant="link"
-              color="black"
-              textDecoration="underline"
-              fontWeight="700"
-              fontSize="15px"
-              height="20px"
-              onClick={() => setShowDeletionOrdersModal(true)}
-              _active={{ color: 'black' }}
-            >
-              {t('repository-deletion.see-repositories')}
-            </Button>
-          </Text>
-        </AlertMessage>
-      )}
-      {getMandatoryProjects() && getMandatoryProjects().length > 0 && (
-        <AlertMessage
-          full
-          type="warning"
-          style={{ borderRadius: '0px', justifyContent: 'center' }}
-        >
-          <Text
-            size="l"
-            color="black"
-            fontWeight="700"
-          >
-            {t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
-            {'  '}
-            <Button
-              variant="link"
-              color="black"
-              textDecoration="underline"
-              fontWeight="700"
-              fontSize="15px"
-              height="20px"
-              onClick={() => setShowMandatoryModal(true)}
-              _active={{ color: 'black' }}
-            >
-              {t('deliverProject.see-mandatory-projects')}
-            </Button>
-          </Text>
-        </AlertMessage>
-      )}
-      {subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists && (
-        <AlertMessage
-          full
-          type="warning"
-          style={{ borderRadius: '0px', justifyContent: 'center' }}
-        >
-          <Text
-            size="l"
-            color="black"
-            dangerouslySetInnerHTML={{
-              __html: t('free-trial-msg', { link: '/profile/subscriptions' }),
-            }}
-          />
-        </AlertMessage>
-      )}
       <Container maxW="container.xl">
         <Box width="fit-content" marginTop="18px" marginBottom="48px">
           <NextChakraLink

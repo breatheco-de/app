@@ -51,7 +51,7 @@
   "something-went-wrong-fetching-cohorts": "Algo salió mal al obtener las Cohortes disponibles",
   "review-url-error": "Algo salió mal al obtener el URL de tarea",
   "review-assignment-error": "Algo salió mal al modificar la tarea",
-  "review-assignment-approve": "La tarea ha sido aprovada con éxito",
+  "review-assignment-approve": "La tarea ha sido aprobada con éxito",
   "review-assignment-updated": "Tarea modificada exitosamente",
   "review-assignment-reject": "La tarea ha sido rechazada con éxito",
   "review-assignment-ignored-task": "Se ha ignorado la tarea con éxito",
