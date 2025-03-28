@@ -45,7 +45,7 @@ function ProgressCircle({
         {counter && (
           <Box
             position="absolute"
-            size={`${Math.round(0.25 * size)}px`}
+            fontSize={`${Math.round(0.25 * size)}px`}
             fontWeight="700"
           >
             {counterString || (

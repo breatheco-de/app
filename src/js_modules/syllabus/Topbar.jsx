@@ -69,7 +69,7 @@ function TopBar({ currentAsset, handleStartLearnpack, buttonsHandlerVariant, ...
         </Box>
         <Box display="flex" alignItems="center" gap="5px">
           {currentAsset?.asset_type === 'PROJECT' && (
-            <Box display={{ base: 'none', md: 'flex' }} gap="5px">
+            <Box display={{ base: 'none', md: 'flex' }} alignItems="center" gap="5px">
               <ProjectInstructions
                 currentAsset={currentAsset}
                 handleStartLearnpack={handleStartLearnpack}
