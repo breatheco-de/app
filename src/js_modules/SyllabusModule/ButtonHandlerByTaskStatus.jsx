@@ -125,7 +125,7 @@ export function ButtonHandlerByTaskStatus({
         ...prevState,
         isChangingTaskStatus: true,
       }));
-      changeStatusAssignment(event, currentTask)
+      changeStatusAssignment(currentTask)
         .finally(() => {
           closePopover();
           setLoaders((prevState) => ({

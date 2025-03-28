@@ -338,12 +338,12 @@ function AssignmentReview({
                   isLoading={loaders.isRemovingDelivery}
                   background={assignmentButtonColor.remove}
                   _hover={{ background: assignmentButtonColor.remove }}
-                  onClick={(event) => {
+                  onClick={() => {
                     setLoaders((prevState) => ({
                       ...prevState,
                       isRemovingDelivery: true,
                     }));
-                    changeStatusAssignment(event, currentTask, PENDING)
+                    changeStatusAssignment(currentTask, PENDING)
                       .finally(() => {
                         closePopover();
                         setLoaders((prevState) => ({

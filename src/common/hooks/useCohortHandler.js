@@ -410,9 +410,8 @@ function useCohortHandler() {
     }
   };
 
-  const changeStatusAssignment = async (event, task, taskStatus) => {
+  const changeStatusAssignment = async (task, taskStatus) => {
     if (task?.slug || task?.associated_slug) {
-      event.preventDefault();
       reportDatalayer({
         dataLayer: {
           event: 'assignment_status_updated',
