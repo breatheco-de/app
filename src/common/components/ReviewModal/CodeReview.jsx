@@ -1,6 +1,5 @@
 import { Box, Button, Divider, Flex, Link, Textarea, useToast } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -17,11 +16,6 @@ import tomorrow from '../MarkDownParser/syntaxHighlighter/tomorrow';
 import { reportDatalayer } from '../../../utils/requests';
 import { getBrowserInfo } from '../../../utils';
 import useAuth from '../../hooks/useAuth';
-
-const MarkdownEditor = dynamic(
-  () => import('@uiw/react-markdown-editor').then((mod) => mod.default),
-  { ssr: false },
-);
 
 const views = {
   initial: 'initial',
@@ -275,17 +269,22 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
       <Box flex={0.6} maxHeight="76vh" overflow="auto" onMouseUp={(isStudent || view !== views.initial) ? () => { } : handleSelectedText}>
         {!repoData?.raw
           ? 'Loading...' : (
-            <MarkdownEditor
-              readOnly
-              className="hide-preview"
-              value={repoData.raw}
-              width="100%"
-              style={{ height: 'auto', minWidth: '100%' }}
-              visible={false}
-              enableScroll
-              hideToolbar
-              toolbars={[]}
-            />
+            <SyntaxHighlighter
+              language={repoData.extensionLanguage}
+              style={tomorrow}
+              customStyle={{
+                margin: 0,
+                padding: '16px',
+                background: 'rgb(45, 45, 45)',
+                border: 'none',
+                height: '100%',
+                minWidth: '100%',
+              }}
+              showLineNumbers
+              wrapLines
+            >
+              {repoData.raw}
+            </SyntaxHighlighter>
           )}
       </Box>
       <Box>
@@ -368,7 +367,7 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
                         {t('code-review.you-selected-the-code')}
                       </Text>
                       <SyntaxHighlighter
-                        language={commitData?.file?.language || 'javascript'}
+                        language={commitData?.language}
                         style={tomorrow}
                         customStyle={{
                           padding: '16px',
@@ -401,7 +400,7 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
 
                       <Box fontSize="13px" color="#fff" padding="6px 16px" borderRadius="6px" whiteSpace="pre-wrap" overflow="auto" background="rgb(45, 45, 45)">
                         <SyntaxHighlighter
-                          language={revisionContent?.file?.language || 'javascript'}
+                          language={revisionContent?.language}
                           style={tomorrow}
                           customStyle={{
                             padding: '16px',
