@@ -280,6 +280,7 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       get: () => axios.get(`${url}/user/me/task`),
+      getDeletionOrders: () => axios.get(`${url}/me/deletion_order${qs}`),
       getCodeRevisions: (taskId) => breathecode.get(`${url}/academy/task/${taskId}/coderevision`),
       getFinalProjects: (cohortId) => axios.get(`${url}/academy/cohort/${cohortId}/final_project`),
       putFinalProject: (cohortId, projectId, data) => breathecode.put(`${url}/academy/cohort/${cohortId}/final_project/${projectId}`, data),
@@ -369,6 +370,7 @@ const breathecode = {
       getpaymentMethods: () => axios.get(`${url}/methods${qs}`),
       planOffer: () => axios.get(`${url}/planoffer${qs}`),
       getPlanProps: (id) => axios.get(`${url}/serviceitem?plan=${id}`),
+      getServiceInfo: (slug) => axios.get(`${url}/service/${slug}/items${qs}`),
       getCohortPlans: () => axios.get(`${url}/plan${qs}`),
       applyCoupon: (bagId) => axios.put(`${url}/bag/${bagId}/coupon${qs}`),
       verifyCoupon: () => axios.get(`${url}/coupon${qs}`),
@@ -382,6 +384,7 @@ const breathecode = {
       getAllEventTypeSets: () => axios.get(`${host}/payments/eventtypeset`),
       getEventTypeSet: (eventTypeSetId) => axios.get(`${url}/eventtypeset/${eventTypeSetId}`),
       events: () => axios.get(`${host}/events/me?online_event=true${parseQuerys(query, true)}`),
+      getBlockedServices: () => axios.get(`${url}/me/service/blocked${qs}`),
     };
   },
   events: (query = {}) => {

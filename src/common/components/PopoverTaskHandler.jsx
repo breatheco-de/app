@@ -503,6 +503,7 @@ function PopoverTaskHandler({
         isOpen={settingsOpen}
         onClose={handleCloseFile}
         trigger="click"
+        placement="top-start"
       >
         <PopoverTrigger>
           <Tooltip label={textAndIcon.text} placement="top">
@@ -544,6 +545,7 @@ function PopoverTaskHandler({
       isOpen={settingsOpen}
       onClose={handleCloseFile}
       trigger="click"
+      placement="top-start"
     >
 
       <PopoverTrigger>

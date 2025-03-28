@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Flex, Box, Text, Image, Badge } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 
 function CustomCarousel({ assignmentList }) {
+  const { t } = useTranslation();
   const { borderColorStrong, backgroundColor, lightColor, fontColor } = useStyle();
   const [currentSlide, setCurrentSlide] = useState(0);
   const totalSlides = assignmentList?.length;
@@ -68,7 +70,6 @@ function CustomCarousel({ assignmentList }) {
         <Flex
           flexDirection={{ base: 'column', md: 'row' }}
           width="100%"
-          border="1px solid"
           borderColor={borderColorStrong}
           borderRadius="10px"
           overflow="hidden"
@@ -82,7 +83,7 @@ function CustomCarousel({ assignmentList }) {
             minWidth="250px"
             maxWidth="400px"
             height="250px"
-            bg={/\.gif(\?|$)/i.test(assignmentList[currentSlide].preview) ? 'transparent' : 'black'}
+            bg={/\.gif(\?|$)/i.test(assignmentList[currentSlide]?.preview) ? 'transparent' : 'black'}
             display="flex"
             justifyContent="center"
             alignItems="center"
@@ -90,9 +91,9 @@ function CustomCarousel({ assignmentList }) {
             borderRadius="10px"
           >
             <Image
-              src={assignmentList[currentSlide].preview}
-              alt={assignmentList[currentSlide].title}
-              objectFit={/\.gif(\?|$)/i.test(assignmentList[currentSlide].preview) ? 'contain' : 'cover'}
+              src={assignmentList[currentSlide]?.preview}
+              alt={assignmentList[currentSlide]?.title}
+              objectFit={/\.gif(\?|$)/i.test(assignmentList[currentSlide]?.preview) ? 'contain' : 'cover'}
               borderRadius="10px"
               width="100%"
               height="100%"
@@ -101,53 +102,61 @@ function CustomCarousel({ assignmentList }) {
 
           <Flex flex="1" flexDirection="column" gridGap="10px" justifyContent="space-between">
             <Flex gridGap="8px" justifyContent="space-between" alignItems="flex-start">
-              <Flex gap="10px" flexWrap="wrap">
-                {assignmentList[currentSlide].technologies.map((tech) => (
-                  <Box>
-                    {tech.icon_url ? (
+              <Flex gap="5px" flexWrap="wrap" flexGrow="1" alignItems="center">
+                {assignmentList[currentSlide]?.technologies?.map((tech) => (
+                  <Box key={tech?.title}>
+                    {tech?.icon_url ? (
                       <Image src={tech.icon_url} width="18px" height="18px" />
                     ) : (
-                      <Badge borderRadius="10px" px="8px" colorScheme="blue">{tech.title}</Badge>
+                      <Badge borderRadius="10px" px="8px" colorScheme="blue">{tech?.title}</Badge>
                     )}
                   </Box>
                 ))}
               </Flex>
 
-              <Flex gridGap="16px" alignItems="center">
-                <Badge
-                  borderRadius="20px"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  <Icon icon="clock" width="14px" height="14px" color="black" />
-                  <Text fontSize="12px" ml="4px">
-                    {`${assignmentList[currentSlide].duration} hours`}
+              <Flex alignItems="center">
+                {assignmentList[currentSlide]?.duration && (
+                  <Badge
+                    borderRadius="20px"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Icon icon="clock" width="14px" height="14px" color="black" />
+                    <Text fontSize="12px" ml="4px">
+                      {`${assignmentList[currentSlide].duration} hours`}
+                    </Text>
+                  </Badge>
+                )}
+                {assignmentList[currentSlide]?.published_at && (
+                  <Text fontSize="12px" color="gray.500">
+                    {new Date(assignmentList[currentSlide]?.published_at)?.toLocaleDateString()}
                   </Text>
-                </Badge>
-                <Text fontSize="12px" color="gray.500">{new Date(assignmentList[currentSlide].published_at).toLocaleDateString()}</Text>
+                )}
               </Flex>
             </Flex>
 
             <Flex direction="column" mt="16px" gap="16px">
-              <Text fontSize="20px" fontWeight="bold">{assignmentList[currentSlide].title}</Text>
-              <Text fontSize="14px" color={lightColor}>{assignmentList[currentSlide].description}</Text>
+              <Text fontSize="20px" fontWeight="bold">{assignmentList[currentSlide]?.title}</Text>
+              <Text fontSize="14px" color={lightColor}>{assignmentList[currentSlide]?.description}</Text>
             </Flex>
 
             <Flex alignItems="flex-end" justifyContent="space-between" mt="auto">
               <Badge
-                colorScheme={difficultyLevel[assignmentList[currentSlide].difficulty]}
+                colorScheme={assignmentList[currentSlide]?.difficulty ? difficultyLevel[assignmentList[currentSlide]?.difficulty] : 'transparent'}
                 alignSelf="flex-start"
                 borderRadius="10px"
                 padding="3px 5px"
               >
-                {assignmentList[currentSlide].difficulty.charAt(0) + assignmentList[currentSlide].difficulty.slice(1).toLowerCase()}
+                {assignmentList[currentSlide]?.difficulty && (
+                  t(`common:${assignmentList[currentSlide]?.difficulty?.toLowerCase()}`)
+                )}
               </Badge>
               <Flex gap="10px">
                 <Icon icon="rigobot-avatar-tiny" width="18px" height="18px" />
-                {assignmentList[currentSlide].learnpack_deploy_url && <Icon icon="learnpack" width="18px" height="18px" />}
-                {assignmentList[currentSlide].template_url && <Icon icon="download" width="18px" height="18px" />}
-                {assignmentList[currentSlide].with_video && <Icon icon="video" width="18px" height="18px" />}
+                {assignmentList[currentSlide]?.learnpack_deploy_url && <Icon icon="learnpack" width="18px" height="18px" />}
+                {assignmentList[currentSlide]?.template_url && <Icon icon="download" width="18px" height="18px" />}
+                {assignmentList[currentSlide]?.with_video && <Icon icon="video" width="18px" height="18px" />}
               </Flex>
             </Flex>
           </Flex>

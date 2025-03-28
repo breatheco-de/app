@@ -46,6 +46,7 @@ import { getTranslations, processPlans } from '../../common/handlers/subscriptio
 import Icon from '../../common/components/Icon';
 import { usePersistentBySession } from '../../common/hooks/usePersistent';
 import AcordionList from '../../common/components/AcordionList';
+import { handlePriceTextWithCoupon } from '../../utils/getPriceWithDiscount';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -161,7 +162,7 @@ function Checkout() {
     return () => window.removeEventListener('resize', handleResize);
   }, [isOpenned]);
 
-  const saveCouponToBag = (coupons, bagId = '') => {
+  const saveCouponToBag = (coupons, bagId = '', specificCoupon = '') => {
     bc.payment({
       coupons,
       plan: planFormated,
@@ -169,7 +170,9 @@ function Checkout() {
       .then((resp) => {
         const couponsList = resp?.data?.coupons;
         if (couponsList?.length > 0) {
-          const couponData = couponsList.find(({ slug }) => slug === discountCode || slug === couponValue);
+          const couponToFind = specificCoupon || discountCode;
+          const couponData = couponsList.find(({ slug }) => slug === couponToFind);
+
           if (couponData) {
             setDiscountCoupon({
               ...couponData,
@@ -189,8 +192,11 @@ function Checkout() {
   };
 
   const handleCoupon = (coup, actions) => {
-    const alreadyAppliedCoupon = (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === discountCode) || (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === couponValue);
-    if (alreadyAppliedCoupon) {
+    const couponToApply = coup || discountCode;
+
+    const isCouponAlreadyApplied = allCoupons.some((existingCoupon) => existingCoupon?.slug === couponToApply);
+
+    if (isCouponAlreadyApplied) {
       toast({
         position: 'top',
         title: t('signup:alert-message.coupon-already-applied'),
@@ -204,15 +210,22 @@ function Checkout() {
       return;
     }
 
+    if (!coup && !discountCode) {
+      if (actions) {
+        actions.setSubmitting(false);
+      }
+      return;
+    }
+
     bc.payment({
-      coupons: [coup || discountCode],
+      coupons: [couponToApply],
       plan: planFormated,
     }).verifyCoupon()
       .then((resp) => {
-        const correctCoupon = resp.data.find((c) => c.slug === coup);
+        const correctCoupon = resp.data.find((c) => c.slug === couponToApply);
         if (correctCoupon) {
-          const couponsToString = resp?.data.map((item) => item?.slug);
-          saveCouponToBag(couponsToString, checkoutData?.id);
+          const allCouponsToApply = [...allCoupons.map((c) => c.slug), couponToApply];
+          saveCouponToBag(allCouponsToApply, checkoutData?.id, couponToApply);
         } else {
           setDiscountCoupon(null);
           setCouponError(true);
@@ -309,7 +322,6 @@ function Checkout() {
   }, [router.locale]);
 
   useEffect(() => {
-    // verify if coupon exists
     if (checkoutData?.id && !checkoutData?.isTrial) {
       if (couponValue) setDiscountCode(couponValue);
       handleCoupon(couponValue);
@@ -317,7 +329,6 @@ function Checkout() {
   }, [couponValue, checkoutData?.id]);
 
   useEffect(() => {
-    // Alert before leave the page if the user is in the payment process
     if (isWindow && stepIndex >= 2 && isAuthenticated && !isPaymentSuccess) {
       const handleBeforeUnload = (e) => {
         e.preventDefault();
@@ -341,12 +352,10 @@ function Checkout() {
       router.push('/pricing');
     }
     if (isAuthenticated && isAvailableToSelectPlan && queryServiceExists) {
-      // If exists plan to select show the select service plan view
       setReadyToSelectService(true);
       setShowChooseClass(false);
     }
 
-    // Prepare service data to get consumables
     if (!queryPlanExists && tokenExists && isAuthenticated && !isAvailableToSelectPlan) {
       setShowChooseClass(false);
       setLoader('plan', true);
@@ -550,7 +559,6 @@ function Checkout() {
 
   useEffect(() => {
     if (user?.id && !isLoading) {
-      // if queryString token exists clean it from the url
       if (router.query.token) {
         const cleanTokenQuery = isWindow && removeURLParameter(window.location.href, 'token');
         router.push(cleanTokenQuery);
@@ -842,7 +850,6 @@ function Checkout() {
         <Flex
           flexDirection="column"
           alignItems="center"
-          // flex={0.5}
           padding={{ base: '0 auto', md: '0 3rem' }}
           position="relative"
           flex={{ base: '1', md: '0.5' }}
@@ -864,14 +871,19 @@ function Checkout() {
                       <Flex flexDirection="column" gridGap="7px" justifyContent="center" width="100%" ref={flexRef}>
                         <Heading fontSize={showPriceInformation ? '38px' : '24px'} display="flex" alignItems="center" gap="10px">
                           {!showPriceInformation && <Icon icon="4Geeks-avatar" width="35px" height="35px" maxHeight="35px" borderRadius="50%" background="blue.default" />}
-                          {originalPlan?.title}
+                          {originalPlan?.title.split(' ').map((word) => {
+                            const firstLetter = word.match(/[a-zA-Z]/);
+                            if (!firstLetter) return word;
+                            const { index } = firstLetter;
+                            return word.slice(0, index) + word.charAt(index).toUpperCase() + word.slice(index + 1);
+                          }).join(' ')}
                         </Heading>
                         {originalPlan?.selectedPlan?.description && showPriceInformation && (
                           <Text fontSize="16px" py="10px">{originalPlan?.selectedPlan?.description}</Text>
                         )}
                         <Flex justifyContent="space-between" width="full" alignItems="center">
                           {showPaymentDetails && renderPlanDetails()}
-                          {!queryPlanId && originalPlan?.financingOptions.length > 0 && showPaymentDetails && (
+                          {!queryPlanId && (originalPlan?.financingOptions.length > 0 || originalPlan?.hasSubscriptionMethod) && showPaymentDetails && (
                             <Flex flexDirection="column" gap="4px">
                               <Heading as="h3" size="sm" width="100%" position="relative">
                                 <Menu>
@@ -912,62 +924,7 @@ function Checkout() {
                                       >
                                         <Flex justifyContent="space-between" alignItems="center" width="100%">
                                           <Text fontSize="md" flex="1" color={option.plan_id === selectedPlanCheckoutData?.plan_id ? useColorModeValue('#25BF6C', 'green') : 'auto'}>
-                                            {`${option?.price} / ${option?.title}`}
-                                          </Text>
-                                          {option.plan_id === selectedPlanCheckoutData?.plan_id
-                                            && (
-                                              <Icon icon="checked2" width="12px" height="12" color={useColorModeValue('#25BF6C', 'green')} />
-                                            )}
-                                        </Flex>
-                                      </MenuItem>
-                                    ))}
-                                  </MenuList>
-                                </Menu>
-                              </Heading>
-                            </Flex>
-                          )}
-                          {originalPlan?.hasSubscriptionMethod && showPaymentDetails && (
-                            <Flex flexDirection="column" gap="4px">
-                              <Heading as="h3" size="sm" width="100%" position="relative">
-                                <Menu>
-                                  <MenuButton
-                                    as={Button}
-                                    background={useColorModeValue('#eefaf8', 'blue.400')}
-                                    _hover={{ backgroundColor: useColorModeValue('blue.50', 'blue.1000') }}
-                                    _active="none"
-                                    padding="8px"
-                                    borderRadius="md"
-                                    display="flex"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    onClick={() => setIsOpenned(true)}
-                                  >
-                                    <Box as="span" display="flex" alignItems="center" flex="1" fontSize="16px" textAlign="left">
-                                      <Text size="md" color={useColorModeValue('blue.1000', '#eefaf8')}>{t('see-financing-opt')}</Text>
-                                      <Icon icon="arrowDown" color={useColorModeValue('', '#eefaf8')} />
-                                    </Box>
-                                  </MenuButton>
-                                  <MenuList
-                                    boxShadow="lg"
-                                    borderRadius="lg"
-                                    zIndex="10"
-                                    padding="0"
-                                    width={menuWidth}
-                                    border="none"
-                                  >
-                                    {originalPlan.plans.map((option) => (
-                                      <MenuItem
-                                        key={option.plan_id}
-                                        onClick={() => setUserSelectedPlan(option)}
-                                        fontSize="md"
-                                        color="auto"
-                                        background={option.plan_id === selectedPlanCheckoutData?.plan_id && useColorModeValue('green.50', 'green.200')}
-                                        _hover={option.plan_id === selectedPlanCheckoutData?.plan_id ? { backgrorund: useColorModeValue('green.50', 'green.200') } : { background: 'none' }}
-                                        padding="10px"
-                                      >
-                                        <Flex justifyContent="space-between" alignItems="center" width="100%">
-                                          <Text fontSize="md" flex="1" color={option.plan_id === selectedPlanCheckoutData?.plan_id ? useColorModeValue('#25BF6C', 'green') : 'auto'}>
-                                            {`${option?.price} / ${option?.title}${option?.pricePerMonthText ? `, (${option?.pricePerMonthText}${t('signup:info.per-month')})` : ''}`}
+                                            {originalPlan?.hasSubscriptionMethod ? `${handlePriceTextWithCoupon(option?.priceText, allCoupons, originalPlan?.plans)} / ${option?.title}${option?.pricePerMonthText ? `, (${handlePriceTextWithCoupon(option?.pricePerMonthText, allCoupons, originalPlan?.plans)}${t('signup:info.per-month')})` : ''}` : `${handlePriceTextWithCoupon(option?.priceText, allCoupons, originalPlan?.plans)} / ${option?.title}`}
                                           </Text>
                                           {option.plan_id === selectedPlanCheckoutData?.plan_id
                                             && (

@@ -20,7 +20,6 @@ import { isNumber, isValidDate } from '../../utils';
 import useStyle from '../hooks/useStyle';
 import ProjectsSection from './ProjectsSection';
 import ButtonHandler from '../../js_modules/profile/Subscriptions/ButtonHandler';
-import UpgradeModal from '../../js_modules/profile/Subscriptions/UpgradeModal';
 import Button from './Button';
 
 function FreeTagCapsule({ isExpired, freeTrialExpireDateValue, now, lang }) {
@@ -76,9 +75,7 @@ function ProgramCard({
 }) {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
-  const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
-  const [offerProps, setOfferProps] = useState({});
-  const [subscriptionProps, setSubscriptionProps] = useState({});
+  const [showAllBullets, setShowAllBullets] = useState(false);
 
   const freeTrialExpireDateValue = isValidDate(freeTrialExpireDate) ? new Date(freeTrialExpireDate) : new Date(subMinutes(new Date(), 1));
   const now = new Date();
@@ -141,11 +138,6 @@ function ProgramCard({
     cancelled: t('status.cancelled'),
     payment_issue: t('status.payment_issue'),
     error: t('status.error'),
-  };
-
-  const onOpenUpgrade = (data) => {
-    setOfferProps(data);
-    setUpgradeModalIsOpen(true);
   };
 
   return (
@@ -336,8 +328,6 @@ function ProgramCard({
                   {isFreeTrial && isExpired ? (
                     <ButtonHandler
                       subscription={subscription}
-                      onOpenUpgrade={onOpenUpgrade}
-                      setSubscriptionProps={setSubscriptionProps}
                       onOpenCancelSubscription={() => {}}
                       // ------------------
                       marginTop={!isCancelled && '20px'}
@@ -471,8 +461,6 @@ function ProgramCard({
                   {((isAvailableAsSaas && isFreeTrial) || (isAvailableAsSaas && !statusActive)) && (
                     <ButtonHandler
                       subscription={subscription}
-                      onOpenUpgrade={onOpenUpgrade}
-                      setSubscriptionProps={setSubscriptionProps}
                       onOpenCancelSubscription={() => {}}
                       // ------------------
                       marginTop={!isCancelled && !isExpired && courseProgress > 0 && '5px'}
@@ -507,12 +495,27 @@ function ProgramCard({
               </Box>
               {bullets?.length > 0 && (
                 <Flex flexDirection="column" gridGap="8px" background={backgroundColor} padding="10px 12px" borderRadius="4px">
-                  {bullets.map((l) => (
-                    <Box display="flex" fontWeight={700} fontSize="14px" gridGap="10px" alignItems="center">
+                  {bullets.slice(0, showAllBullets ? bullets.length : 4).map((l) => (
+                    <Box key={l.name} display="flex" fontWeight={700} fontSize="14px" gridGap="10px" alignItems="center">
                       <Icon icon="checked2" color={hexColor.green} width="14px" height="14px" />
                       {l.name}
                     </Box>
                   ))}
+                  {bullets.length > 4 && (
+                    <Button
+                      variant="link"
+                      onClick={() => setShowAllBullets(!showAllBullets)}
+                      color={hexColor.blueDefault}
+                      fontSize="14px"
+                      fontWeight={700}
+                      padding="4px 0"
+                      _hover={{ textDecoration: 'none' }}
+                      display="flex"
+                      alignItems="center"
+                    >
+                      {showAllBullets ? t('see-less') : t('see-more')}
+                    </Button>
+                  )}
                 </Flex>
               )}
               <Button
@@ -540,13 +543,6 @@ function ProgramCard({
         </>
 
       )}
-
-      <UpgradeModal
-        upgradeModalIsOpen={upgradeModalIsOpen}
-        setUpgradeModalIsOpen={setUpgradeModalIsOpen}
-        subscriptionProps={subscriptionProps}
-        offerProps={offerProps}
-      />
     </Box>
   );
 }

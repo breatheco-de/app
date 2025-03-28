@@ -233,8 +233,8 @@ function MarkDownParser({
   }, [content]);
 
   const preParsedContent = useMemo(() => {
-    const emptyCodeRegex = /```([a-zA-Z]+).*(runable=("true"|true|'true')|compare=("true"|true|'true')).*(\n{1,}|\s{1,}\n{1,})?```/gm;
-    const codeViewerRegex = /(```(?<language>[\w.]+).*(runable=("true"|'true'|true)|compare=("true"|'true'|true)).*(?<code>(?:.|\n)*?)```\n?)+/gm;
+    const emptyCodeRegex = /```([a-zA-Z]+).*(runable=("true"|true|'true')|runnable=("true"|true|'true')|compare=("true"|true|'true')).*(\n{1,}|\s{1,}\n{1,})?```/gm;
+    const codeViewerRegex = /(```(?<language>[\w.]+).*(runable=("true"|'true'|true)|runnable=("true"|'true'|true)|compare=("true"|'true'|true)).*(?<code>(?:.|\n)*?)```\n?)+/gm;
     const removedEmptyCodeViewers = content?.length > 0 ? content.replace(emptyCodeRegex, () => '') : '';
 
     const contentReplace = removedEmptyCodeViewers.replace(codeViewerRegex, (match) => `<pre><codeviewer>\n${match}</codeviewer></pre>\n`);

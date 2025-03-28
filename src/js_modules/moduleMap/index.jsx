@@ -46,6 +46,15 @@ function ModuleMap({
     startDay({
       newTasks: updatedTasks,
     });
+
+    if (modules && modules.length > 0) {
+      const firstModule = modules[0];
+      const langPrefix = lang !== 'en' ? `/${lang}` : '';
+      const moduleSlug = firstModule?.slug?.slug || firstModule.slug;
+      const moduleType = firstModule.task_type.toLowerCase();
+      const url = `${langPrefix}/syllabus/${cohortData.slug}/${moduleType}/${moduleSlug}`;
+      window.location.href = url;
+    }
   };
 
   const taskCohortNullExistsInModules = taskCohortNull.some((el) => {

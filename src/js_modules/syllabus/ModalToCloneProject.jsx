@@ -26,24 +26,68 @@ import MarkDownParser from '../../common/components/MarkDownParser';
 import useStyle from '../../common/hooks/useStyle';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import CustomBanner from '../../common/components/CustomBanner';
+import { reportDatalayer } from '../../utils/requests';
+import { getBrowserInfo } from '../../utils';
 
 function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID, currentAssetURL, selectedOption, osList, selectedOs,
-  setSelectedOs, resetOsSelector, resetOptionSelector, expanded, setExpanded, steps, onClose, isOnlyReadme,
+  setSelectedOs, resetOsSelector, resetOptionSelector, expanded, setExpanded, steps, onClose, isOnlyReadme, publicView, provisioningVendors, assetUrl,
+  userID,
 }) {
   const { t } = useTranslation('syllabus');
   const { featuredLight, hexColor, borderColor } = useStyle();
   const accessToken = localStorage.getItem('accessToken');
 
-  const provisioningLinks = [{
-    title: t('common:learnpack.new-exercise'),
-    link: `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${accessToken}&cohort=${cohortSessionID}&repo=${currentAssetURL}`,
-    isExternalLink: true,
-  },
-  {
-    title: t('common:learnpack.continue-exercise'),
-    link: `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${accessToken}&cohort=${cohortSessionID}&repo=${currentAssetURL}`,
-    isExternalLink: true,
-  }];
+  const handleOpenInPublicView = (vendor) => {
+    if (!vendor) return;
+    reportDatalayer({
+      dataLayer: {
+        event: 'open_interactive_exercise',
+        user_id: userID,
+        vendor: vendor?.vendor?.name?.toLowerCase(),
+        agent: getBrowserInfo(),
+      },
+    });
+
+    if (vendor?.vendor?.name?.toLowerCase() === 'gitpod' && typeof window !== 'undefined') window.open(`https://gitpod.io#${assetUrl}`, '_blank').focus();
+    if (vendor?.vendor?.name?.toLowerCase() === 'codespaces' && typeof window !== 'undefined') {
+      const url = assetUrl ? assetUrl.replace('https://github.com/', '') : '';
+      window.open(`https://github.com/codespaces/new/?repo=${url}`, '_blank').focus();
+    }
+  };
+
+  const generateProvisioningLinks = () => {
+    if (!publicView) {
+      return [{
+        title: t('common:learnpack.new-exercise'),
+        link: `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${accessToken}&cohort=${cohortSessionID}&repo=${currentAssetURL}`,
+        isExternalLink: true,
+      },
+      {
+        title: t('common:learnpack.continue-exercise'),
+        link: `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${accessToken}&cohort=${cohortSessionID}&repo=${currentAssetURL}`,
+        isExternalLink: true,
+      }];
+    }
+    return provisioningVendors.map(({ vendor }) => {
+      const vendorName = vendor.name.toLowerCase();
+      let url = '';
+
+      if (vendorName === 'gitpod') {
+        url = `https://gitpod.io#${assetUrl}`;
+      } else if (vendorName === 'codespaces') {
+        const repoUrl = assetUrl ? assetUrl.replace('https://github.com/', '') : '';
+        url = `https://github.com/codespaces/new/?repo=${repoUrl}`;
+      }
+
+      return {
+        title: t('common:learnpack.open-with-vendor', { vendor: vendor.name }),
+        link: url,
+        isExternalLink: true,
+      };
+    });
+  };
+
+  const provisioningLinks = generateProvisioningLinks();
 
   const scrollToMarkdown = () => {
     const markdownBody = document.getElementById('markdown-body');
@@ -167,10 +211,11 @@ function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID,
         <Box borderRadius="11px" width="100%" height="100%">
           {provisioningLinks.map((link) => (
             <Button
-              key={link.text}
+              key={link.title}
               as="a"
               display="flex"
               href={link.link}
+              onClick={publicView && handleOpenInPublicView(link)}
               target={link.isExternalLink ? '_blank' : '_self'}
               marginY="auto"
               margin="10px 0"
@@ -195,7 +240,7 @@ function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID,
   );
 }
 
-function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendors }) {
+function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendors, publicView, userID }) {
   const { t, lang } = useTranslation('syllabus');
   const { state } = useCohortHandler();
   const { cohortSession } = state;
@@ -206,12 +251,15 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const [availableOptions, setAvailableOptions] = useState([]);
   const [expanded, setExpanded] = useState(0);
 
+  //__In case of public view (interactive ex and rest...) manage open provisioning vendors with this:
+  const assetUrl = currentAsset?.readme_url || currentAsset?.url;
+
   //__first step to determine options and modal steps__
   const templateUrl = currentAsset?.template_url;
   const isInteractive = currentAsset?.interactive;
 
   const isForOpenLocaly = isInteractive || templateUrl;
-  const showProvisioningLinks = provisioningVendors?.length > 0 && currentAsset?.gitpod;
+  const showProvisioningLinks = (provisioningVendors?.length > 0) && currentAsset?.gitpod;
   const onlyReadme = !isForOpenLocaly && !showProvisioningLinks;
 
   //__info used in steps on open locally options__
@@ -325,6 +373,10 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
                 isInteractive={isInteractive}
                 currentAssetURL={currentAsset?.url}
                 cohortSessionID={cohortSession.id}
+                publicView={publicView}
+                provisioningVendors={provisioningVendors}
+                assetUrl={assetUrl}
+                userID={userID}
               />
             ) : (
               <Box>
@@ -408,6 +460,8 @@ ModalToCloneProject.propTypes = {
   onClose: PropTypes.func,
   currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   provisioningVendors: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  publicView: PropTypes.bool,
+  userID: PropTypes.number,
 };
 
 ModalToCloneProject.defaultProps = {
@@ -415,6 +469,8 @@ ModalToCloneProject.defaultProps = {
   onClose: () => { },
   currentAsset: null,
   provisioningVendors: [],
+  publicView: false,
+  userID: undefined,
 };
 
 ModalContentDisplay.propTypes = {
@@ -433,6 +489,15 @@ ModalContentDisplay.propTypes = {
   selectedOption: PropTypes.string.isRequired,
   cohortSessionID: PropTypes.string.isRequired,
   currentAssetURL: PropTypes.string.isRequired,
+  publicView: PropTypes.bool.isRequired,
+  provisioningVendors: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  assetUrl: PropTypes.string,
+  userID: PropTypes.number,
+};
+
+ModalContentDisplay.defaultProps = {
+  assetUrl: undefined,
+  userID: undefined,
 };
 
 export default ModalToCloneProject;
