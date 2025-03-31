@@ -5,13 +5,13 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import useStyle from '../../common/hooks/useStyle';
-import Icon from '../../common/components/Icon';
-import PopoverTaskHandler, { IconByTaskStatus, textByTaskStatus } from '../../common/components/PopoverTaskHandler';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
-import bc from '../../common/services/breathecode';
+import useStyle from '../../hooks/useStyle';
+import Icon from '../Icon';
+import ProjectSubmitButton, { IconByTaskStatus, textByTaskStatus } from '../ProjectSubmitButton';
+import useCohortHandler from '../../hooks/useCohortHandler';
+import bc from '../../services/breathecode';
 
-export function ButtonHandlerByTaskStatus({
+export function AssignmentButton({
   onlyPopoverDialog,
   currentTask,
   sendProject,
@@ -215,7 +215,7 @@ export function ButtonHandlerByTaskStatus({
       );
     }
     return (
-      <PopoverTaskHandler
+      <ProjectSubmitButton
         isGuidedExperience={isGuidedExperience}
         currentAssetData={currentAsset}
         currentTask={currentTask}
@@ -278,7 +278,7 @@ export function ButtonHandlerByTaskStatus({
   );
 }
 
-ButtonHandlerByTaskStatus.propTypes = {
+AssignmentButton.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   sendProject: PropTypes.func.isRequired,
   togglePendingSubtasks: PropTypes.func,
@@ -291,7 +291,7 @@ ButtonHandlerByTaskStatus.propTypes = {
   setStage: PropTypes.func,
 };
 
-ButtonHandlerByTaskStatus.defaultProps = {
+AssignmentButton.defaultProps = {
   currentTask: null,
   allowText: false,
   onClickHandler: () => { },

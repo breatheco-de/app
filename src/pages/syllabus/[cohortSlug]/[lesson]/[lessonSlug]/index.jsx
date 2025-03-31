@@ -11,7 +11,7 @@ import { isWindow, assetTypeValues, getExtensionName, getStorageItem, languageFi
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
-import { ButtonHandlerByTaskStatus } from '../../../../../js_modules/SyllabusModule/ButtonHandlerByTaskStatus';
+import { AssignmentButton } from '../../../../../common/components/SyllabusModule/AssignmentButton';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkDownParser from '../../../../../common/components/MarkDownParser';
 import Text from '../../../../../common/components/Text';
@@ -112,9 +112,7 @@ function SyllabusContent() {
   const firstTask = nextModule?.content[0];
   const lastPrevTask = prevModule?.content && prevModule.content[prevModule.content.length - 1];
 
-  const cohortSlug = router?.query?.cohortSlug;
-  const lesson = router?.query?.lesson;
-  const lessonSlug = router?.query?.lessonSlug;
+  const { cohortSlug, lesson, lessonSlug } = router.query;
 
   const language = router.locale === 'en' ? 'us' : router.locale;
 
@@ -1139,7 +1137,7 @@ function SyllabusContent() {
                             width="100%"
                           >
                             <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px">
-                              <ButtonHandlerByTaskStatus
+                              <AssignmentButton
                                 allowText
                                 currentTask={currentTask}
                                 sendProject={sendProject}
@@ -1285,7 +1283,7 @@ function SyllabusContent() {
                                 </Tooltip>
                               )}
                               {!isExercise && (
-                                <ButtonHandlerByTaskStatus
+                                <AssignmentButton
                                   allowText
                                   isGuidedExperience={isAvailableAsSaas}
                                   variant="rounded"
@@ -1379,7 +1377,7 @@ function SyllabusContent() {
               >
                 {t('mark-later')}
               </Button>
-              <ButtonHandlerByTaskStatus
+              <AssignmentButton
                 allowText
                 currentTask={currentTask}
                 hasPendingSubtasks={hasPendingSubtasks}

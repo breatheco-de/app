@@ -26,7 +26,7 @@ import {
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
-import ModuleMap from '../../../../../js_modules/SyllabusModule/index';
+import SyllabusModule from '../../../../../common/components/SyllabusModule';
 import CohortHeader from '../../../../../common/components/CohortHeader';
 import CohortPanel from '../../../../../common/components/CohortPanel';
 import CohortSideBar from '../../../../../common/components/CohortSideBar';
@@ -875,7 +875,7 @@ function Dashboard() {
 
                             const index = i;
                             return (
-                              <ModuleMap
+                              <SyllabusModule
                                 key={index}
                                 existsActivities={existsActivities}
                                 cohortData={cohortSession}

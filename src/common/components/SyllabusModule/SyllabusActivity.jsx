@@ -6,12 +6,12 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState, memo } from 'react';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
-import useStyle from '../../common/hooks/useStyle';
-import { ButtonHandlerByTaskStatus } from './ButtonHandlerByTaskStatus';
-import TaskBar from '../../common/components/TaskBar';
-import ShareButton from '../../common/components/ShareButton';
-import Icon from '../../common/components/Icon';
+import useCohortHandler from '../../hooks/useCohortHandler';
+import useStyle from '../../hooks/useStyle';
+import { AssignmentButton } from './AssignmentButton';
+import TaskBar from '../TaskBar';
+import ShareButton from '../ShareButton';
+import Icon from '../Icon';
 
 function SyllabusActivity({
   data, currIndex, isDisabled, onDisabledClick, variant, showWarning, cohortSlug, setStage,
@@ -127,7 +127,7 @@ function SyllabusActivity({
           url,
         }}
         rightItemHandler={!isDisabled ? (
-          <ButtonHandlerByTaskStatus
+          <AssignmentButton
             currentTask={currentTask}
             sendProject={sendProject}
             setStage={setStage}

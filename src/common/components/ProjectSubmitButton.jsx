@@ -472,7 +472,7 @@ function PopoverCustomContent({
   );
 }
 
-function PopoverTaskHandler({
+function ProjectSubmitButton({
   isGuidedExperience,
   isLoading,
   currentAssetData,
@@ -594,7 +594,7 @@ function PopoverTaskHandler({
   );
 }
 
-PopoverTaskHandler.propTypes = {
+ProjectSubmitButton.propTypes = {
   isLoading: PropTypes.bool,
   currentAssetData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
@@ -608,7 +608,7 @@ PopoverTaskHandler.propTypes = {
   isGuidedExperience: PropTypes.bool,
 };
 
-PopoverTaskHandler.defaultProps = {
+ProjectSubmitButton.defaultProps = {
   isLoading: false,
   currentAssetData: {},
   currentTask: {},
@@ -631,4 +631,4 @@ IconByTaskStatus.defaultProps = {
   noDeliveryFormat: false,
 };
 
-export default PopoverTaskHandler;
+export default ProjectSubmitButton;

@@ -12,7 +12,7 @@ import useCohortHandler from '../../hooks/useCohortHandler';
 import AlertMessage from '../AlertMessage';
 import Icon from '../Icon';
 import LoaderScreen from '../LoaderScreen';
-import PopoverTaskHandler from '../PopoverTaskHandler';
+import ProjectSubmitButton from '../ProjectSubmitButton';
 import UndoApprovalModal from '../UndoApprovalModal';
 import iconDict from '../../../iconDict.json';
 import { error } from '../../../utils/logging';
@@ -357,7 +357,7 @@ function AssignmentReview({
                 >
                   {assignmentButtonText.remove}
                 </Button>
-                <PopoverTaskHandler
+                <ProjectSubmitButton
                   isLoading={loaders.isOpeningResubmitForm}
                   currentAssetData={currentAssetData}
                   currentTask={currentTask}

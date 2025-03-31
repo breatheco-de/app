@@ -9,7 +9,7 @@ import Text from '../Text';
 import Heading from '../Heading';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useStyle from '../../hooks/useStyle';
-import SyllabusActivity from '../../../js_modules/SyllabusModule/SyllabusActivity';
+import SyllabusActivity from '../SyllabusModule/SyllabusActivity';
 
 function PendingActivities({ cohortSlug, setStage }) {
   const { t } = useTranslation('dashboard');
