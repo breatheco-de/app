@@ -42,7 +42,7 @@ const statusList = {
 const { APPROVED, PENDING, REJECTED } = statusList;
 const inputLimit = 450;
 
-function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalData, defaultStage, fixedStage, onClose, updpateAssignment, currentTask,
+function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalData, defaultStage, fixedStage, onClose, updpateAssignment, currentTask, currentAsset,
   projectLink, changeStatusAssignment, disableRate, disableLiking, acceptTC, handleAcceptTC, ...rest }) {
   const { t } = useTranslation('assignments');
   const { isAuthenticated, isAuthenticatedWithRigobot, user } = useAuth();
@@ -205,7 +205,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
       } else {
         toast({
           title: t('alert-message:something-went-wrong'),
-          description: `Cannot get code revisions: ${data?.detail}`,
+          description: `Cannot get code revisions: ${data.Error}`,
           status: 'error',
           duration: 5000,
           position: 'top',
@@ -213,7 +213,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
         });
       }
     } catch (errorMsg) {
-      error('Error fetching code revisions:', errorMsg);
+      console.log(errorMsg);
     } finally {
       setLoaders((prevState) => ({
         ...prevState,
@@ -579,7 +579,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                     {!isStudent ? t('code-review.project-delivered') : t('dashboard:modalInfo.link-info')}
                   </Text>
                   {currentTask?.github_url && (
-                    <Link variant="default" fontSize="14px" href={currentTask.github_url}>
+                    <Link variant="default" target="_blank" fontSize="14px" href={currentAsset?.delivery_formats !== 'url' ? currentAsset?.url : currentTask.github_url}>
                       {currentTask?.title}
                     </Link>
                   )}
