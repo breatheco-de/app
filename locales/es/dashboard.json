@@ -208,7 +208,8 @@
   },
   "repository-deletion": {
     "title": "Estos repositorios se eliminarán pronto",
-    "description": "Los siguientes repositorios están a punto de ser eliminados. Acepta la solicitud de transferencia que deberías haber recibido en tu email para evitar la eliminación.",
+    "warning": "Los siguientes repositorios están a punto de ser eliminados. Acepta la solicitud de transferencia que deberías haber recibido en tu email para evitar la eliminación.",
+    "description": "Los siguientes repositorios se eliminarán pronto si no aceptas la solicitud de transferencia. Deberías haber recibido un email solicitando la transferencia a tu usuario de Github, acepta la solicitud para evitar la eliminación.",
     "see-repositories": "Ver repositorios",
     "days-left": "{{days}} días restantes",
     "deletion-imminent": "Eliminación inminente"
