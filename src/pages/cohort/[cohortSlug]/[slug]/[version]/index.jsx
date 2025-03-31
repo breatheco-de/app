@@ -70,7 +70,7 @@ function Dashboard() {
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [events, setEvents] = useState(null);
   const [liveClasses, setLiveClasses] = useState([]);
-  const { featuredColor, hexColor, modal } = useStyle();
+  const { featuredColor, hexColor, modal, featuredLight, borderColor } = useStyle();
   const [isLoadingAssigments, setIsLoadingAssigments] = useState(true);
   const { user } = useAuth();
 
@@ -447,7 +447,7 @@ function Dashboard() {
             color="black"
             fontWeight="700"
           >
-            {t('repository-deletion.description')}
+            {t('repository-deletion.warning')}
             {'  '}
             <Button
               variant="link"
@@ -1021,6 +1021,11 @@ function Dashboard() {
           <ModalCloseButton />
           <ModalBody padding={{ base: '15px 22px' }}>
             <Box>
+              <Box marginBottom="15px" padding="10px" border="1px solid" borderColor={borderColor} borderRadius="8px" backgroundColor={featuredLight}>
+                <Text fontSize="14px" lineHeight="24px" fontWeight="400">
+                  {t('repository-deletion.description')}
+                </Text>
+              </Box>
               {deletionOrders.map((order) => {
                 let daysLeft;
                 if (order.starts_transferring_at) {
