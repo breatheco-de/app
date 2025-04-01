@@ -4,6 +4,10 @@
   },
   "title": "Your Programs",
   "welcome-back-user": "Welcome, {{name}}",
+  "hello-user": "Hello, {{name}}",
+  "rigo-chat": {
+    "welcome-message": "Hi {{firstName}}! I see you are on the course {{cohortName}}. Is there anything you would like to know about it?"
+  },
   "welcome": "Welcome",
   "your-active-programs": "Your active programs",
   "join-our-community": "Join our community",
@@ -12,6 +16,7 @@
   "available-programs": "Available programs",
   "read-to-start-learning": "Ready to start learning?",
   "whats-app-link": "https://chat.whatsapp.com/CBppI0ulMt8Dx4Fsw9AreG",
+  "welcome-video": "https://www.youtube.com/embed/ijEp5XHm7qo",
   "invite": {
     "notify": "Hey! There are {{cohortInvitationWord}} for you to accept.",
     "plural-word": "{{invitesLength}} new cohort invitations",

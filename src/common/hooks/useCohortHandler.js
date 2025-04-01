@@ -1,27 +1,34 @@
 /* eslint-disable camelcase */
+import { useMemo } from 'react';
 import axios from 'axios';
 import { useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useAuth from './useAuth';
-import { devLog, getStorageItem } from '../../utils';
+import { getStorageItem, getBrowserInfo } from '../../utils';
 import useCohortAction from '../store/actions/cohortAction';
-import useModuleHandler from './useModuleHandler';
 import { processRelatedAssignments } from '../handlers/cohorts';
+import { reportDatalayer } from '../../utils/requests';
 import bc from '../services/breathecode';
 import { BREATHECODE_HOST, DOMAIN_NAME } from '../../utils/variables';
 
 function useCohortHandler() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, cohorts: myCohorts, fetchUserAndCohorts, setCohorts } = useAuth();
   const { t, lang } = useTranslation('dashboard');
-  const { setCohortSession, setTaskCohortNull, setSortedAssignments, setUserCapabilities, setMyCohorts, state } = useCohortAction();
-  const { cohortProgram, taskTodo, setCohortProgram, setTaskTodo } = useModuleHandler();
+  const {
+    setCohortSession,
+    setTaskCohortNull,
+    setUserCapabilities,
+    setCohortsAssingments,
+    setReviewModalState,
+    state,
+  } = useCohortAction();
 
   const {
     cohortSession,
-    sortedAssignments,
     userCapabilities,
+    cohortsAssignments,
   } = state;
   const toast = useToast();
   const accessToken = getStorageItem('accessToken');
@@ -52,25 +59,126 @@ function useCohortHandler() {
     }
   };
 
-  const getCohortAssignments = async ({
-    slug, cohort, updatedUser = undefined,
+  const serializeModulesMap = (moduleData, tasks) => {
+    const assignmentsRecopilated = [];
+    moduleData.forEach((module) => {
+      const {
+        id, label, description, lessons, replits, assignments, quizzes,
+      } = module;
+      if (lessons && replits && assignments && quizzes) {
+        const nestedAssignments = processRelatedAssignments(module, tasks);
+
+        // this properties name's reassignment is done to keep compatibility with deprecated functions
+        const {
+          content,
+          filteredContent,
+          filteredContentByPending,
+        } = nestedAssignments;
+
+        // Data to be sent to [sortedAssignments] = state
+        const assignmentsStruct = {
+          id,
+          label,
+          description,
+          content,
+          exists_activities: content?.length > 0,
+          filteredContent,
+          filteredContentByPending: content?.length > 0 ? filteredContentByPending : null,
+          duration_in_days: module?.duration_in_days || null,
+          teacherInstructions: module.teacher_instructions,
+          extendedInstructions: module.extended_instructions || `${t('teacher-sidebar.no-instructions')}`,
+          keyConcepts: module['key-concepts'],
+        };
+
+        if (content.length > 0) {
+          // prevent duplicates when a new module has been started (added to sortedAssignments array)
+          const keyIndex = assignmentsRecopilated.findIndex((x) => x.id === id);
+          if (keyIndex > -1) {
+            assignmentsRecopilated.splice(keyIndex, 1, {
+              ...assignmentsStruct,
+            });
+          } else {
+            assignmentsRecopilated.push({
+              ...assignmentsStruct,
+            });
+          }
+        }
+      }
+    });
+
+    return assignmentsRecopilated;
+  };
+
+  const getCohortsModules = async (cohorts) => {
+    try {
+      const assignmentsMap = {};
+
+      const preFechedCohorts = cohorts.reduce((acum, curr) => {
+        if (curr.slug in cohortsAssignments) return [...acum, curr];
+        return acum;
+      }, []);
+
+      const cohortsToFetch = cohorts.filter((cohort) => !preFechedCohorts.some(({ slug }) => slug === cohort.slug));
+
+      const syllabusPromises = cohortsToFetch.map((cohort) => bc.syllabus().get(cohort.academy.id, cohort.syllabus_version.slug, cohort.syllabus_version.version).then((res) => ({ cohort: cohort.id, ...res })));
+      const tasksPromises = cohortsToFetch.map((cohort) => bc.todo({ cohort: cohort.id, limit: 1000 }).getTaskByStudent().then((res) => ({ cohort: cohort.id, ...res })));
+      const allResults = await Promise.all([
+        ...syllabusPromises,
+        ...tasksPromises,
+      ]);
+
+      preFechedCohorts.forEach(({ slug }) => {
+        assignmentsMap[slug] = { ...cohortsAssignments[slug] };
+      });
+
+      cohortsToFetch.forEach((cohort) => {
+        const cohortResults = allResults.filter((elem) => elem.cohort === cohort.id);
+
+        let syllabus = null;
+        let tasks = [];
+
+        cohortResults.forEach((elem) => {
+          const { data } = elem;
+          if ('json' in data) syllabus = data;
+          else tasks = data.results;
+        });
+        const cohortModules = serializeModulesMap(syllabus.json.days, tasks);
+
+        assignmentsMap[cohort.slug] = {
+          modules: cohortModules,
+          syllabus,
+          tasks,
+        };
+      });
+
+      setCohortsAssingments({ ...cohortsAssignments, ...assignmentsMap });
+
+      return assignmentsMap;
+    } catch (e) {
+      console.log(e);
+      toast({
+        position: 'top',
+        title: t('alert-message:error-fetching-syllabus'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+
+      return {};
+    }
+  };
+
+  const getCohortUserCapabilities = async ({
+    cohort, updatedUser = undefined,
   }) => {
     if (user) {
       const academyId = cohort?.academy?.id;
-      const version = cohort?.syllabus_version?.version;
-      const syllabusSlug = cohort?.syllabus_version?.slug || slug;
       const currentAcademy = user.roles.find((role) => role.academy.id === academyId) || updatedUser?.roles.find((role) => role.academy.id === academyId);
       if (currentAcademy) {
-        // Fetch cohortProgram and TaskTodo then apply to moduleMap store
         try {
-          const [taskTodoData, programData, userRoles] = await Promise.all([
-            bc.todo({ cohort: cohort.id, limit: 1000 }).getTaskByStudent(), // Tasks with cohort id
-            bc.syllabus().get(academyId, syllabusSlug, version), // cohortProgram
-            bc.auth().getRoles(currentAcademy?.role), // Roles
-          ]);
+          const userRoles = await bc.auth().getRoles(currentAcademy?.role); // Roles
+
           setUserCapabilities(userRoles.data.capabilities);
-          setTaskTodo(taskTodoData.data.results);
-          setCohortProgram(programData.data);
         } catch (err) {
           console.log(err);
           toast({
@@ -104,23 +212,18 @@ function useCohortHandler() {
     try {
       // Fetch cohort data with pathName structure
       if (cohortSlug && accessToken) {
-        const { data } = await bc.admissions().me();
-        if (!data) throw new Error('No data');
-        const { cohorts } = data;
-
-        const parsedCohorts = cohorts.map(((elem) => {
-          const { cohort, ...cohort_user } = elem;
-          const { syllabus_version } = cohort;
-          return {
-            ...cohort,
-            selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
-            cohort_role: elem.role,
-            cohort_user,
-          };
-        }));
-
         // find cohort with current slug
-        const currentCohort = parsedCohorts.find((c) => c.slug === cohortSlug);
+        let prefetchedCohorts = myCohorts;
+        let currentCohort = prefetchedCohorts.find((c) => c.slug === cohortSlug);
+
+        //we make sure that we have already loaded the data of the cohort and its micro cohorts
+        if (!currentCohort || (currentCohort.micro_cohorts.length > 0 && !currentCohort.micro_cohorts.every((cohort) => myCohorts.some(({ slug }) => cohort.slug === slug)))) {
+          const { cohorts: fetchedCohorts } = await fetchUserAndCohorts();
+          setCohorts(fetchedCohorts);
+          prefetchedCohorts = fetchedCohorts;
+
+          currentCohort = fetchedCohorts.find((c) => c.slug === cohortSlug);
+        }
 
         if (!currentCohort) {
           if (assetSlug) return handleRedirectToPublicPage();
@@ -128,8 +231,11 @@ function useCohortHandler() {
           return router.push('/choose-program');
         }
 
+        const cohorts = currentCohort.micro_cohorts.length > 0 ? prefetchedCohorts.filter((c) => currentCohort.micro_cohorts.some((elem) => elem.slug === c.slug)) : [currentCohort];
+
+        await getCohortsModules(cohorts);
+
         setCohortSession(currentCohort);
-        setMyCohorts(parsedCohorts);
         return currentCohort;
       }
 
@@ -147,71 +253,225 @@ function useCohortHandler() {
     }
   };
 
-  // Sort all data fetched in order of taskTodo
-  const prepareTasks = () => {
-    const moduleData = cohortProgram?.json?.days || cohortProgram?.json?.modules || [];
-    const assignmentsRecopilated = [];
-    devLog('json.days:', moduleData);
+  const taskTodo = useMemo(() => {
+    if (cohortSession && cohortSession.slug in cohortsAssignments) {
+      return cohortsAssignments[cohortSession.slug].tasks;
+    }
+    return [];
+  }, [cohortsAssignments, cohortSession]);
 
-    if (cohortProgram?.json && taskTodo) {
-      moduleData.forEach((assignment) => {
-        const {
-          id, label, description, lessons, replits, assignments, quizzes,
-        } = assignment;
-        if (lessons && replits && assignments && quizzes) {
-          const nestedAssignments = processRelatedAssignments(assignment, taskTodo);
+  const cohortProgram = useMemo(() => {
+    if (cohortSession && cohortSession.slug in cohortsAssignments) {
+      return cohortsAssignments[cohortSession.slug].syllabus;
+    }
+    return null;
+  }, [cohortsAssignments, cohortSession]);
 
-          // this properties name's reassignment is done to keep compatibility with deprecated functions
-          const {
-            content: modules,
-            filteredContent: filteredModules,
-            filteredContentByPending: filteredModulesByPending,
-          } = nestedAssignments;
+  const sortedAssignments = useMemo(() => {
+    if (cohortSession?.slug in cohortsAssignments) return cohortsAssignments[cohortSession.slug].modules;
+    return [];
+  }, [cohortsAssignments, cohortSession]);
 
-          // Data to be sent to [sortedAssignments] = state
-          const assignmentsStruct = {
-            id,
-            label,
-            description,
-            modules,
-            exists_activities: modules?.length > 0,
-            filteredModules,
-            filteredModulesByPending: modules?.length > 0 ? filteredModulesByPending : null,
-            duration_in_days: assignment?.duration_in_days || null,
-            teacherInstructions: assignment.teacher_instructions,
-            extendedInstructions: assignment.extended_instructions || `${t('teacher-sidebar.no-instructions')}`,
-            keyConcepts: assignment['key-concepts'],
-          };
+  const updateTask = (task, cohort) => {
+    const { id, name, slug } = cohort;
+    const cohortData = cohortsAssignments[slug];
 
-          // prevent duplicates when a new module has been started (added to sortedAssignments array)
-          const keyIndex = assignmentsRecopilated.findIndex((x) => x.id === id);
-          if (keyIndex > -1) {
-            assignmentsRecopilated.splice(keyIndex, 1, {
-              ...assignmentsStruct,
-            });
-          } else {
-            assignmentsRecopilated.push({
-              ...assignmentsStruct,
-            });
-          }
-        }
+    const keyIndex = cohortData.tasks.findIndex((x) => x.id === task.id);
+
+    const newTasks = [
+      ...cohortData.tasks.slice(0, keyIndex), // before keyIndex (inclusive)
+      { ...task, cohort: { id, name, slug } }, // key item (updated)
+      ...cohortData.tasks.slice(keyIndex + 1), // after keyIndex (exclusive)
+    ];
+
+    setCohortsAssingments({
+      ...cohortsAssignments,
+      [slug]: {
+        ...cohortData,
+        tasks: newTasks,
+        modules: serializeModulesMap(cohortData.syllabus.json.days, newTasks),
+      },
+    });
+  };
+
+  const updateTaskReadAt = async (task) => {
+    try {
+      const response = await bc.todo().update({
+        id: task.id,
+        read_at: new Date().toISOString(),
       });
-      const filterNotEmptyModules = assignmentsRecopilated.filter(
-        (l) => l.modules.length > 0,
-      );
-      setSortedAssignments(filterNotEmptyModules);
+
+      if (response.status < 400) {
+        updateTask(response.data, task.cohort);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error updating read_at:', error);
+      return false;
+    }
+  };
+
+  const addTasks = (tasks, cohort) => {
+    const { id, slug, name } = cohort;
+    const cohortData = cohortsAssignments[cohort.slug];
+
+    const newTasks = [
+      ...cohortData.tasks,
+      ...tasks.map((task) => ({ ...task, cohort: { id, slug, name } })),
+    ];
+
+    setCohortsAssingments({
+      ...cohortsAssignments,
+      [cohort.slug]: {
+        ...cohortData,
+        tasks: newTasks,
+        modules: serializeModulesMap(cohortData.syllabus.json.days, newTasks),
+      },
+    });
+  };
+
+  const updateAssignment = async ({
+    task, githubUrl, taskStatus,
+  }) => {
+    // Task case
+    const { cohort, ...taskData } = task;
+    const toggleStatus = (task.task_status === undefined || task.task_status === 'PENDING') ? 'DONE' : 'PENDING';
+    const isProject = task.task_type && task.task_type === 'PROJECT';
+
+    try {
+      const projectUrl = githubUrl || '';
+
+      const isDelivering = projectUrl !== '';
+
+      let taskToUpdate;
+
+      const toastMessage = () => {
+        if (!isProject) return t('alert-message:assignment-updated');
+        return isDelivering ? t('alert-message:delivery-success') : t('alert-message:delivery-removed');
+      };
+
+      if (isProject) {
+        taskToUpdate = {
+          ...taskData,
+          task_status: taskStatus || toggleStatus,
+          github_url: projectUrl,
+          revision_status: 'PENDING',
+          delivered_at: new Date().toISOString(),
+        };
+      } else {
+        taskToUpdate = {
+          ...taskData,
+          id: task.id,
+          task_status: toggleStatus,
+        };
+      }
+
+      const response = await bc.todo().update(taskToUpdate);
+      if (response.status < 400) {
+        updateTask(taskToUpdate, cohort);
+        reportDatalayer({
+          dataLayer: {
+            event: 'assignment_status_updated',
+            task_status: taskStatus,
+            task_id: task.id,
+            task_title: task.title,
+            task_associated_slug: task.associated_slug,
+            task_type: task.task_type,
+            task_revision_status: task.revision_status,
+            agent: getBrowserInfo(),
+          },
+        });
+        toast({
+          position: 'top',
+          title: toastMessage(),
+          status: 'success',
+          duration: 6000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          position: 'top',
+          title: isProject ? t('alert-message:delivery-error') : t('alert-message:assignment-update-error'),
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      toast({
+        position: 'top',
+        title: isProject ? t('alert-message:delivery-error') : t('alert-message:assignment-update-error'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const changeStatusAssignment = async (task, taskStatus) => {
+    if (task?.slug || task?.associated_slug) {
+      reportDatalayer({
+        dataLayer: {
+          event: 'assignment_status_updated',
+          task_status: taskStatus,
+          task_id: task.id,
+          task_title: task.title,
+          task_associated_slug: task.associated_slug,
+          task_type: task.task_type,
+          task_revision_status: task.revision_status,
+          agent: getBrowserInfo(),
+        },
+      });
+      await updateAssignment({
+        task, taskStatus,
+      });
+    }
+  };
+
+  const startDay = async ({
+    newTasks, cohort, label, customHandler = () => {}, updateContext = true,
+  }) => {
+    try {
+      const response = await bc.todo().add(newTasks);
+
+      if (response.status < 400) {
+        toast({
+          position: 'top',
+          title: label
+            ? t('alert-message:module-started', { title: label })
+            : t('alert-message:module-sync-success'),
+          status: 'success',
+          duration: 6000,
+          isClosable: true,
+        });
+        if (updateContext) {
+          addTasks(response.data, cohort);
+        }
+        customHandler(response.data);
+      }
+    } catch (err) {
+      console.log('error_ADD_TASK 🔴 ', err);
+      toast({
+        position: 'top',
+        title: t('alert-message:module-start-error'),
+        status: 'error',
+        duration: 6000,
+        isClosable: true,
+      });
     }
   };
 
   const getTasksWithoutCohort = ({ setModalIsOpen }) => {
     // Tasks with cohort null
-    if (router.asPath === cohortSession.selectedProgramSlug) {
+    if (router.asPath === cohortSession?.selectedProgramSlug) {
       bc.todo({ cohort: null }).getTaskByStudent()
         .then(({ data }) => {
           const filteredUnsyncedCohortTasks = sortedAssignments.flatMap(
-            (assignment) => data.filter(
-              (task) => assignment.modules.some(
-                (module) => task.associated_slug === module.slug,
+            (module) => data.filter(
+              (task) => module.content.some(
+                (assignment) => task.associated_slug === assignment.slug,
               ),
             ),
           );
@@ -233,18 +493,23 @@ function useCohortHandler() {
     let lastDoneTaskModule = null;
     sortedAssignments.forEach(
       (module) => {
-        if (module.modules.some((task) => task.task_status === 'DONE')) lastDoneTaskModule = module;
+        if (module.content.some((task) => task.task_status === 'DONE')) lastDoneTaskModule = module;
       },
     );
     return lastDoneTaskModule;
   };
 
-  const getMandatoryProjects = () => {
-    const mandatoryProjects = sortedAssignments.flatMap(
-      (assignment) => assignment.filteredModules.filter(
+  const getMandatoryProjects = (cohortSlug = null) => {
+    const assignments = cohortSlug ? cohortsAssignments[cohortSlug]?.modules : sortedAssignments;
+    if (!assignments) return [];
+
+    const mandatoryProjects = assignments.flatMap(
+      (module) => module.filteredContent.filter(
         (l) => {
-          const isMandatoryTimeOut = l.task_type === 'PROJECT' && l.task_status === 'PENDING'
-            && l.mandatory === true && l.daysDiff >= 14; // exceeds 2 weeks
+          const timeOutExceeded = l.daysDiff >= 14; // exceeds 2 weeks
+          const isPendingRevision = l.reviewed_at !== null && (l.reviewed_at > l.read_at || l.read_at === null);
+          const isMandatoryTimeOut = l.task_type === 'PROJECT' && (l.task_status === 'PENDING' || l.revision_status === 'REJECTED')
+            && ((l.mandatory === true && timeOutExceeded) || isPendingRevision);
 
           return isMandatoryTimeOut;
         },
@@ -253,19 +518,61 @@ function useCohortHandler() {
     return mandatoryProjects;
   };
 
+  const handleOpenReviewModal = (options = {}) => {
+    const {
+      currentTask = null,
+      externalFiles = null,
+      defaultStage = undefined,
+      cohortSlug = undefined,
+      fixedStage = false,
+    } = options;
+
+    setReviewModalState({
+      isOpen: true,
+      currentTask,
+      externalFiles,
+      defaultStage,
+      cohortSlug,
+      fixedStage,
+    });
+  };
+
+  const handleCloseReviewModal = () => {
+    setReviewModalState({
+      isOpen: false,
+      currentTask: null,
+      externalFiles: null,
+      defaultStage: undefined,
+      cohortSlug: undefined,
+      fixedStage: false,
+    });
+  };
+
   return {
     setCohortSession,
-    setSortedAssignments,
-    getCohortAssignments,
+    getCohortUserCapabilities,
     getCohortData,
-    prepareTasks,
     getDailyModuleData,
     getLastDoneTaskModuleData,
     getMandatoryProjects,
     getTasksWithoutCohort,
     userCapabilities,
     state,
-    setMyCohorts,
+    setCohortsAssingments,
+    serializeModulesMap,
+    taskTodo,
+    cohortProgram,
+    addTasks,
+    updateTask,
+    updateTaskReadAt,
+    updateAssignment,
+    startDay,
+    getCohortsModules,
+    sortedAssignments,
+    handleOpenReviewModal,
+    handleCloseReviewModal,
+    changeStatusAssignment,
+    ...state,
   };
 }
 

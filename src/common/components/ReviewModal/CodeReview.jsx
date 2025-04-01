@@ -50,6 +50,8 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
   const hasRevision = revisionContent !== undefined;
   const reviewRateStatus = reviewRateData?.status;
   const myRevisions = contextData?.my_revisions || [];
+  const codeRevisions = contextData?.code_revisions || [];
+  const translation = contextData?.translation || {};
   const reviewerName = revisionContent?.reviewer?.name || revisionContent?.reviewer?.username;
 
   const resetView = () => {
@@ -248,7 +250,7 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
           is_good: typeof respData?.is_good === 'string' ? respData?.is_good === 'True' : respData?.is_good,
           hasBeenReviewed: true,
         };
-        const updateCodeRevisions = contextData.code_revisions.map((revision) => {
+        const updateCodeRevisions = codeRevisions.map((revision) => {
           if (revision.id === revisionContent.id) {
             return updatedRevisionContent;
           }
@@ -507,7 +509,7 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
                     </Box>
                   )}
                   <Button variant="outline" borderColor="blue.default" color="blue.default" onClick={goBack} fontSize="17px" gridGap="15px">
-                    {isExternal ? (contextData?.translation?.common.close || t('common:close')) : t('code-review.back-to-comments')}
+                    {isExternal ? (translation?.common?.close || t('common:close')) : t('code-review.back-to-comments')}
                   </Button>
                 </Flex>
               )}

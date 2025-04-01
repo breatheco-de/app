@@ -8,7 +8,6 @@ import useTranslation from 'next-translate/useTranslation';
 import { LinkIcon } from '@chakra-ui/icons';
 import Icon from '../../common/components/Icon';
 import bc from '../../common/services/breathecode';
-// import iconDict from '../../common/utils/iconDict.json';
 import Text from '../../common/components/Text';
 import Link from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
@@ -116,9 +115,6 @@ function PopoverHandler({ task, githubUrl, haveGithubDomain }) {
                       <Box display="flex" flexDirection="column" gridGap="8px" maxHeight="135px" overflowY="auto">
                         {fileData.length > 0 && fileData?.map((file) => {
                           const extension = file.name.split('.').pop();
-                          // const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
-                          // const isImage = imageExtensions.includes(extension);
-                          // const icon = iconDict.includes(extension) ? extension : 'file';
                           return (
                             <Link
                               variant="default"
