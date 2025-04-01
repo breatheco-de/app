@@ -12,7 +12,6 @@ import {
   useMediaQuery,
   AvatarBadge,
   useColorModeValue,
-  // AvatarBadge,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -49,11 +48,9 @@ const AvatarUser = memo(({
     teacher: t('common:teacher'),
     assistant: t('common:assistant'),
     student: t('common:student'),
+    member: t('common:member'),
   };
-  const infoText = {
-    en: `${roles[data?.role?.toLowerCase()] || 'Member'} in this cohort since`,
-    es: `${roles[data?.role?.toLowerCase()] || 'Miembro'} en esta cohorte desde`,
-  };
+
   const placementCard = isBelowTablet ? 'auto' : 'left-end';
   const avatar = user?.profile?.avatar_url || user?.github?.avatar_url || avatarUrl;
 
@@ -82,7 +79,6 @@ const AvatarUser = memo(({
             {badge && isOnlineUser && (
               <AvatarBadge
                 boxSize="11px"
-                // bg={isOnlineUser ? 'success' : 'danger'}
                 bg="success"
                 top="-4px"
                 right={isWrapped ? '6px' : '4px'}
@@ -93,7 +89,7 @@ const AvatarUser = memo(({
           </Avatar>
         </WrapItem>
       </PopoverTrigger>
-      <PopoverContent minWidth={data?.role ? '320px' : ''} width={data?.role ? '100%' : 'auto'} pr={!data?.role && '20px'}>
+      <PopoverContent minWidth={{ base: 'none', md: data?.role ? '320px' : '' }} width={data?.role ? '100%' : 'auto'} pr={!data?.role && '20px'}>
         {data?.role && (
           <PopoverHeader>
             <Heading
@@ -121,12 +117,9 @@ const AvatarUser = memo(({
             <Heading size="15px">
               {fullNameLabel}
             </Heading>
-            {infoText[router?.locale] && roles[data?.role?.toLowerCase()] && (
-              <Text size="sm" fontWeight="400">
-                {`${infoText[router?.locale]} ${dateFormated[router?.locale]}`}
-              </Text>
-            )}
-
+            <Text size="sm" fontWeight="400">
+              {`${t('dashboard:member-since', { role: roles[data?.role?.toLowerCase()] || 'member' })} ${dateFormated[router?.locale]}`}
+            </Text>
           </Box>
         </PopoverBody>
       </PopoverContent>
@@ -153,7 +146,6 @@ const AvatarUser = memo(({
         {badge && isOnlineUser && (
           <AvatarBadge
             boxSize="11px"
-            // bg={isOnline ? 'success' : 'danger'}
             bg="success"
             top="-4px"
             right={isWrapped ? '6px' : '4px'}

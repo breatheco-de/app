@@ -14,7 +14,7 @@ import AcordionList from '../../common/components/AcordionList';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import { formatPrice, getStorageItem, getBrowserInfo } from '../../utils';
-import ModalInfo from '../moduleMap/modalInfo';
+import ModalInfo from '../../common/components/ModalInfo';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import CardForm from './CardForm';
 import { SILENT_CODE } from '../../lib/types';

@@ -17,8 +17,7 @@ function TimelineSidebar({
   isOpen, onToggle, isStudent, teacherInstructions,
 }) {
   const { t } = useTranslation('syllabus');
-  const { state } = useCohortHandler();
-  const { cohortSession, sortedAssignments } = state;
+  const { cohortSession, sortedAssignments } = useCohortHandler();
   const Open = !isOpen;
   const slide = getSlideProps(Open);
   const {
@@ -141,8 +140,8 @@ function TimelineSidebar({
             )}
             {sortedAssignments.length > 0 && sortedAssignments.map((section) => {
               const currentAssignments = showPendingTasks
-                ? section.filteredModulesByPending
-                : section.filteredModules;
+                ? section.filteredContentByPending
+                : section.filteredContent;
               return (
                 <Box
                   key={`${section.title}-${section.id}`}

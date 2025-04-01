@@ -17,7 +17,7 @@
   "open-google-collab": "Abrir en Colab",
   "teachers-feedback": "Comentario del profesor",
   "no-feedback": "Aún no tienes ningún comentario",
-  "notification": "Recibirás un email cuando tu profesor revise la asignación",
+  "task-notification": "Recibirás un email cuando tu profesor revise la asignación",
   "code-reviews": "Revisiones de código",
   "no-code-reviews": "No tienes revisiones aún",
   "rate-comment": "Califica este comentario",

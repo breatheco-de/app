@@ -1,7 +1,7 @@
 import { Box } from '@chakra-ui/layout';
 import React from 'react';
 import KPI from '../common/components/KPI';
-const iconDict = require('../common/utils/iconDict.json');
+const iconDict = require('../iconDict.json');
 
 export default {
   title: 'Components/KPI',

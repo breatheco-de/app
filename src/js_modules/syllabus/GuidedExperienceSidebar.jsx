@@ -9,6 +9,7 @@ import {
   Divider,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { languageFix } from '../../utils';
 import { Config, getSlideProps } from './config';
@@ -19,12 +20,15 @@ import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
+import useAuth from '../../common/hooks/useAuth';
 
 function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentModuleIndex, handleStartDay, grantSyllabusAccess }) {
+  const router = useRouter();
+  const { cohorts } = useAuth();
+  const { mainCohortSlug } = router.query;
   const { t, lang } = useTranslation('syllabus');
   const [moduleLoading, setModuleLoading] = useState(false);
-  const { state } = useCohortHandler();
-  const { cohortSession, sortedAssignments } = state;
+  const { cohortSession, sortedAssignments } = useCohortHandler();
   const { hexColor, backgroundColor, backgroundColor4, fontColor2 } = useStyle();
   const background = useColorModeValue('#E4E8EE', '#283340');
 
@@ -38,13 +42,13 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
 
   const openNextModule = async () => {
     try {
-      const nextAssignments = nextModule.filteredModules;
+      const nextAssignments = nextModule.filteredContent;
       if (nextAssignments.length === 0) {
         setModuleLoading(true);
         await handleStartDay(nextModule, true);
         setModuleLoading(false);
       }
-      const assignment = nextModule.modules[0];
+      const assignment = nextModule.content[0];
       onClickAssignment(null, assignment);
     } catch (e) {
       console.log(e);
@@ -53,8 +57,16 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
   };
 
   const openPrevModule = () => {
-    const assignment = prevModule.modules[0];
+    const assignment = prevModule.content[0];
     onClickAssignment(null, assignment);
+  };
+
+  const getCohortDashboardUrl = () => {
+    if (!mainCohortSlug) return cohortSession.selectedProgramSlug;
+
+    const mainCohort = cohorts.find(({ slug }) => slug === mainCohortSlug);
+
+    return mainCohort.selectedProgramSlug;
   };
 
   return (
@@ -74,8 +86,8 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
         <Box display="flex" flexDirection="column" gap="8px">
           {cohortSession?.syllabus_version && (
             <Box padding="16px" background={backgroundColor4} display="flex" flexDirection="column" gap="16px">
-              <NextChakraLink width="fit-content" variant="ghost" display="flex" gap="10px" href={cohortSession.selectedProgramSlug}>
-                <Icon icon="arrowLeft" width="19px" height="20px" />
+              <NextChakraLink width="fit-content" variant="ghost" display="flex" gap="10px" href={getCohortDashboardUrl()}>
+                <Icon icon="layout" width="19px" height="20px" />
                 <Heading display="inline" size="18px" fontWeight="400">
                   {t('back-to-program')}
                 </Heading>
@@ -157,7 +169,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
               )}
               <Timeline
                 variant="guided-experience"
-                assignments={currentModule.filteredModules}
+                assignments={currentModule.filteredContent}
                 technologies={currentModule.technologies || []}
                 onClickAssignment={onClickAssignment}
                 flex="1"

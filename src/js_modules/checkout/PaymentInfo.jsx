@@ -15,9 +15,7 @@ import useAuth from '../../common/hooks/useAuth';
 import { reportDatalayer } from '../../utils/requests';
 import { getQueryString, getStorageItem, getBrowserInfo } from '../../utils';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
-import useModuleHandler from '../../common/hooks/useModuleHandler';
 import { getCohort } from '../../common/handlers/cohorts';
-import axiosInstance from '../../axios';
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
 import { SILENT_CODE } from '../../lib/types';
 import CardForm from './CardForm';
@@ -29,7 +27,7 @@ import NextChakraLink from '../../common/components/NextChakraLink';
 
 function PaymentInfo({ setShowPaymentDetails }) {
   const { t, lang } = useTranslation('signup');
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, reSetUserAndCohorts } = useAuth();
 
   const {
     state, handlePayment, setSelectedPlanCheckoutData, setIsSubmittingCard, setIsSubmittingPayment, getPaymentMethods, setPaymentStatus, setPaymentInfo,
@@ -37,9 +35,7 @@ function PaymentInfo({ setShowPaymentDetails }) {
   const {
     checkoutData, selectedPlanCheckoutData, cohortPlans, paymentMethods, loader, isSubmittingPayment, paymentStatus,
   } = state;
-  const { state: cohortState, setCohortSession, getCohortAssignments, prepareTasks } = useCohortHandler();
-  const { sortedAssignments } = cohortState;
-  const { cohortProgram, taskTodo, startDay } = useModuleHandler();
+  const { cohortsAssignments, getCohortsModules, startDay } = useCohortHandler();
   const [readyToRedirect, setReadyToRedirect] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [updatedUser, setUpdatedUser] = useState(undefined);
@@ -64,11 +60,15 @@ function PaymentInfo({ setShowPaymentDetails }) {
 
   const openSyllabusAndRedirect = () => {
     const langLink = lang !== 'en' ? `/${lang}` : '';
-    const firstAssigmentSlug = sortedAssignments[0].modules[0].slug;
-    const firstAssigmentType = sortedAssignments[0].modules[0].type.toLowerCase();
+
+    const modules = cohortsAssignments[cohortFound.slug]?.modules;
+
+    const firstAssigment = modules[0].content[0];
+    const firstAssigmentSlug = firstAssigment.slug;
+    const firstAssigmentType = firstAssigment.type.toLowerCase();
     const syllabusRedirectURL = `${langLink}/syllabus/${cohortFound?.slug}/${firstAssigmentType}/${firstAssigmentSlug}`;
 
-    const updatedTasks = (sortedAssignments[0].modules || [])?.map((l) => ({
+    const updatedTasks = (modules[0].content || [])?.map((l) => ({
       ...l,
       title: l.title,
       associated_slug: l?.slug?.slug || l.slug,
@@ -85,6 +85,7 @@ function PaymentInfo({ setShowPaymentDetails }) {
       },
     });
     startDay({
+      cohort: cohortFound,
       newTasks: updatedTasks,
     });
 
@@ -98,17 +99,10 @@ function PaymentInfo({ setShowPaymentDetails }) {
       return;
     }
     setIsRedirecting(true);
-    const langLink = lang !== 'en' ? `/${lang}` : '';
     const syllabusVersion = cohortFound?.syllabus_version;
-    axiosInstance.defaults.headers.common.Academy = cohortFound.academy.id;
-    const cohortDashboardLink = `${langLink}/cohort/${cohortFound?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
+    const cohortDashboardLink = `/cohort/${cohortFound?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
 
-    setCohortSession({
-      ...cohortFound,
-      selectedProgramSlug: cohortDashboardLink,
-    });
-
-    if (!sortedAssignments.length > 0) {
+    if (cohortFound?.micro_cohorts?.length > 0 || !(cohortFound.slug in cohortsAssignments)) {
       router.push(cohortDashboardLink);
       return;
     }
@@ -117,32 +111,27 @@ function PaymentInfo({ setShowPaymentDetails }) {
   };
 
   useEffect(() => {
-    if (!(sortedAssignments.length > 0)) return undefined;
+    if (!cohortFound || (cohortFound.micro_cohorts.length === 0 && !(cohortFound.slug in cohortsAssignments))) return undefined;
 
     const timer = setTimeout(() => {
       setReadyToRedirect(true);
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [sortedAssignments]);
+  }, [cohortsAssignments, cohortFound]);
 
   useEffect(() => {
-    prepareTasks();
-  }, [taskTodo, cohortProgram]);
-
-  useEffect(() => {
-    getCohortAssignments(
-      { slug: cohortFound?.syllabus_version?.slug, cohort: cohortFound, updatedUser },
-    );
+    if (cohortFound?.micro_cohorts.length === 0) {
+      getCohortsModules([cohortFound]);
+    }
   }, [updatedUser]);
 
   useEffect(() => {
     const fetchMyCohorts = async () => {
       try {
-        const resp = await bc.admissions().me();
-        const data = resp?.data;
+        const { userData } = await reSetUserAndCohorts();
 
-        setUpdatedUser(data);
+        setUpdatedUser(userData);
       } catch (err) {
         console.error('Error fetching my cohorts:', err);
       }
@@ -150,38 +139,37 @@ function PaymentInfo({ setShowPaymentDetails }) {
     fetchMyCohorts();
   }, [cohortFound]);
 
-  const joinCohort = (cohort) => {
-    reportDatalayer({
-      dataLayer: {
-        event: 'join_cohort',
-        cohort_id: cohort?.id,
-        agent: getBrowserInfo(),
-      },
-    });
-    bc.cohort().join(cohort?.id)
-      .then(async (resp) => {
-        const dataRequested = await resp.json();
-        if (resp.status >= 400) {
-          toast({
-            position: 'top',
-            title: dataRequested?.detail,
-            status: 'info',
-            duration: 5000,
-            isClosable: true,
-          });
-          setReadyToRefetch(false);
-        }
-        if (dataRequested?.status === 'ACTIVE') {
-          setCohortFound(cohort);
-        }
-      })
-      .catch((error) => {
-        console.error('Error al unirse a la cohorte:', error);
-        setIsSubmittingPayment(false);
-        setTimeout(() => {
-          setReadyToRefetch(false);
-        }, 600);
+  const joinCohort = async (cohort) => {
+    try {
+      reportDatalayer({
+        dataLayer: {
+          event: 'join_cohort',
+          cohort_id: cohort?.id,
+          agent: getBrowserInfo(),
+        },
       });
+      const resp = await bc.cohort().join(cohort?.id);
+      const dataRequested = await resp.json();
+      if (resp.status >= 400) {
+        toast({
+          position: 'top',
+          title: dataRequested?.detail,
+          status: 'info',
+          duration: 5000,
+          isClosable: true,
+        });
+        setReadyToRefetch(false);
+      }
+      if (dataRequested?.status === 'ACTIVE') {
+        setCohortFound(cohort);
+      }
+    } catch (error) {
+      console.error('Error al unirse a la cohorte:', error);
+      setIsSubmittingPayment(false);
+      setTimeout(() => {
+        setReadyToRefetch(false);
+      }, 600);
+    }
   };
 
   useEffect(() => {
@@ -197,45 +185,41 @@ function PaymentInfo({ setShowPaymentDetails }) {
   useEffect(() => {
     let interval;
     if (readyToRefetch && timeElapsed < 10 && isPaymentSuccess) {
-      interval = setInterval(() => {
-        getAllMySubscriptions()
-          .then((subscriptions) => {
-            const currentSubscription = subscriptions?.find(
-              (subscription) => checkoutData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
-            );
-            const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
-              (subscription) => checkoutData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
-            );
-            const cohortsForSubscription = currentSubscription?.selected_cohort_set.cohorts;
-            const findedCohort = cohortsForSubscription?.length > 0 ? cohortsForSubscription.find(
-              (cohort) => cohort?.id === cohortId,
-            ) : {};
+      interval = setInterval(async () => {
+        try {
+          const subscriptions = await getAllMySubscriptions();
+          const currentSubscription = subscriptions?.find(
+            (subscription) => checkoutData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
+          );
+          const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
+            (subscription) => checkoutData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
+          );
+          const cohortsForSubscription = currentSubscription?.selected_cohort_set.cohorts;
+          const foundCohort = cohortsForSubscription?.find(
+            (cohort) => cohort?.id === cohortId,
+          );
 
-            if (isPurchasedPlanFound) {
-              if (findedCohort?.id) {
-                getCohort(findedCohort?.id)
-                  .then((cohort) => {
-                    joinCohort(cohort);
-                  })
-                  .finally(() => {
-                    clearInterval(interval);
-                  });
-                setReadyToRefetch(false);
+          if (isPurchasedPlanFound) {
+            if (foundCohort?.id) {
+              const cohort = await getCohort(foundCohort?.id);
+              joinCohort(cohort);
+
+              clearInterval(interval);
+              setReadyToRefetch(false);
+            } else {
+              clearInterval(interval);
+              if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
+                router.push(redirect || redirectedFrom);
+                localStorage.removeItem('redirect');
+                localStorage.removeItem('redirected-from');
               } else {
-                clearInterval(interval);
-                if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
-                  router.push(redirect || redirectedFrom);
-                  localStorage.removeItem('redirect');
-                  localStorage.removeItem('redirected-from');
-                } else {
-                  router.push('/choose-program');
-                }
+                router.push('/choose-program');
               }
             }
-          })
-          .finally(() => {
-            setTimeElapsed((prevTime) => prevTime + 1);
-          });
+          }
+        } finally {
+          setTimeElapsed((prevTime) => prevTime + 1);
+        }
       }, 2000);
     } else {
       clearInterval(interval);
