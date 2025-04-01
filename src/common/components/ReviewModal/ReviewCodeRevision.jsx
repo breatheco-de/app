@@ -25,7 +25,8 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage, dis
   const { t } = useTranslation('assignments');
 
   const reviewRateStatus = reviewRateData?.status;
-  const data = contextData?.commitFiles || {};
+  const commitFiles = contextData?.commitFiles || {};
+  const commitFile = contextData?.commitFile || {};
   const codeRevisions = contextData?.code_revisions || [];
   const revisionContent = contextData?.revision_content;
   const hasRevision = revisionContent !== undefined;
@@ -53,8 +54,8 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage, dis
   };
   const selectCodeRevision = (revision, resetReviewRate = true) => {
     const content = revision?.original_code;
-    const fileContent = data?.fileList?.length > 0
-      ? data?.fileList.find((l) => l.id === revision?.file?.id)
+    const fileContent = commitFiles?.fileList?.length > 0
+      ? commitFiles.fileList.find((l) => l.id === revision?.file?.id)
       : {};
     const decodedReviewCodeContent = atob(content);
     if (resetReviewRate) {
@@ -64,13 +65,13 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage, dis
       ...prevState,
       commitFile: {
         ...fileContent,
-        task: data?.task || {},
+        task: commitFiles?.task || {},
         code: fileContent?.content,
       },
       revision_content: {
         path: revision?.file?.name,
         ...revision,
-        task: data?.task || {},
+        task: commitFiles?.task || {},
         code: decodedReviewCodeContent,
       },
     }));
@@ -116,7 +117,7 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage, dis
           is_good: typeof respData?.is_good === 'string' ? respData?.is_good === 'True' : respData?.is_good,
           hasBeenReviewed: true,
         };
-        const updateCodeRevisions = contextData.code_revisions.map((revision) => {
+        const updateCodeRevisions = codeRevisions.map((revision) => {
           if (revision.id === revisionContent.id) {
             return updatedRevisionContent;
           }
@@ -143,14 +144,14 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage, dis
                 {t('code-review.select-file-to-review')}
               </Heading>
               <Heading size="18px" fontWeight={700}>
-                {data?.task?.title}
+                {commitFiles?.task?.title}
               </Heading>
             </Flex>
             <Flex my="10px" py="10px" px="10px" borderRadius="10px" background={featuredLight}>
               <Box fontSize="12px" flex={0.33}>{t('code-review.filename')}</Box>
               <Box fontSize="12px" flex={0.33} textAlign="center">{t('code-review.feedback-status')}</Box>
             </Flex>
-            <CodeRevisionsList codeRevisions={contextData?.code_revisions} revisionContent={contextData?.revision_content} selectCodeRevision={selectCodeRevision} />
+            <CodeRevisionsList codeRevisions={codeRevisions} revisionContent={revisionContent} selectCodeRevision={selectCodeRevision} />
           </Box>
           {revisionContent?.id && (
             <Flex flexDirection="column" overflow="auto" gridGap="12px" flex={0.35} width="100%" padding="8px" mt={!hasRevision && '3.4rem'}>
@@ -179,11 +180,11 @@ ${revisionContent?.code}
                           />
                         </Box>
                       </Flex>
-                      <Button isDisabled={!contextData.commitFile?.id} onClick={() => setStage(stages.code_review)} color={!contextData.commitFile?.id && 'white'} variant="link" fontSize="17px" gridGap="15px">
-                        {contextData.commitFile?.id && (
+                      <Button isDisabled={commitFile?.id} onClick={() => setStage(stages.code_review)} color={commitFile?.id && 'white'} variant="link" fontSize="17px" gridGap="15px">
+                        {commitFile?.id && (
                           <Icon icon="longArrowRight" width="20px" height="20px" color={hexColor.blueDefault} />
                         )}
-                        {contextData.commitFile?.id ? t('code-review.go-to-review') : 'No commit file found'}
+                        {commitFile?.id ? t('code-review.go-to-review') : 'No commit file found'}
                       </Button>
                       <Divider mt="-8px" />
                     </>

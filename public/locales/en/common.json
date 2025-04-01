@@ -3,6 +3,8 @@
   "reviews": "Ratings",
   "course-rating": "Course rating",
   "connect-with-github": "Connect with Github",
+  "connect-with-rigobot": "Connect with Rigobot",
+  "get-help-rigobot": "Get help from Rigobot",
   "see-financing-options": "See payment options",
   "your-tutors-in-this-cohort": "Your tutors:",
   "main-instructor": "Main Instructor",
@@ -11,6 +13,8 @@
   "rigo": "Rigo",
   "ai-tutor": "AI Tutor",
   "tooltip-ai-tutor": "Never be stuck again, our internally developed AI tutor will help you everywhere, every step of the way.",
+  "see-workshops": "See all workshops",
+  "schedule-mentoring": "Schedule a mentoring session",
   "rigobot-bubble": {
     "greeting": "Hi!"
   },
@@ -524,6 +528,7 @@
   "student": "Student",
   "reviewer": "Reviewer",
   "assistant": "Assistant",
+  "member": "Member",
   "upload": "Upload",
   "cancel": "Cancel",
   "uploading": "Uploading",

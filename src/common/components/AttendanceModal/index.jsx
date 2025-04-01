@@ -11,7 +11,7 @@ import {
 import Icon from '../Icon';
 import Text from '../Text';
 import bc from '../../services/breathecode';
-import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
+import ModalInfo from '../ModalInfo';
 import useStyle from '../../hooks/useStyle';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import handlers from '../../handlers';
@@ -20,8 +20,7 @@ function AttendanceModal({
   title, message, isOpen, onClose, students,
 }) {
   const { t } = useTranslation('dashboard');
-  const { state, setCohortSession } = useCohortHandler();
-  const { cohortSession, sortedAssignments } = state;
+  const { setCohortSession, cohortSession, sortedAssignments } = useCohortHandler();
   const [historyLog, setHistoryLog] = useState();
   const [day, setDay] = useState(cohortSession.current_day);
   const [attendanceTaken, setAttendanceTaken] = useState({});

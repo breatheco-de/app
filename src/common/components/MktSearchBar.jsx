@@ -118,7 +118,7 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
                   onClick={clearSearch}
                   position="absolute"
                   right="60px"
-                  color="red.500"
+                  color="gray.600"
                   fontSize="sm"
                   _hover={{ bg: 'transparent' }}
                 >
@@ -137,21 +137,31 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
                   {popularSearchesTitle}
                 </Text>
                 <Flex gap={2} flexWrap="wrap">
-                  {popularSearches.map((term) => (
-                    <Button
-                      key={term}
-                      variant="outline"
-                      border="1px solid #DADADA"
-                      fontSize="13px"
-                      height="26px"
-                      padding="5px 7px"
-                      borderRadius="full"
-                      color={useColorModeValue('gray.600', 'white')}
-                      onClick={() => handlePopularSearchClick(term)}
-                    >
-                      {term}
-                    </Button>
-                  ))}
+                  {popularSearches.map((term) => {
+                    const isSelected = search === term;
+                    return (
+                      <Button
+                        key={term}
+                        variant={isSelected ? 'solid' : 'outline'}
+                        bg={isSelected ? 'blue.100' : 'transparent'}
+                        color={isSelected ? 'blue.500' : useColorModeValue('gray.600', 'white')}
+                        borderColor={isSelected ? 'blue.100' : '#DADADA'}
+                        borderWidth="1px"
+                        fontSize="13px"
+                        height="26px"
+                        padding="5px 7px"
+                        borderRadius="full"
+                        onClick={() => handlePopularSearchClick(term)}
+                        _hover={isSelected ? {
+                          bg: 'blue.200',
+                        } : {
+                          bg: useColorModeValue('gray.100', 'gray.700'),
+                        }}
+                      >
+                        {term}
+                      </Button>
+                    );
+                  })}
                 </Flex>
               </>
             )}

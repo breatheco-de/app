@@ -11,7 +11,7 @@ import bc from '../services/breathecode';
 function WorkshopsLoggedLanding() {
   const { t, lang } = useTranslation('workshops');
   const [techs, setTechs] = useState([]);
-  const [popularSearchTerms, setPopularSearchTerms] = useState(['Python', 'HTML', 'Pandas']);
+  const [popularSearchTerms, setPopularSearchTerms] = useState([]);
 
   useEffect(() => {
     const fetchTechnologies = async () => {
@@ -33,13 +33,24 @@ function WorkshopsLoggedLanding() {
         const { data } = res;
 
         if (data && Array.isArray(data) && data.length > 0) {
-          const eventTypeNames = data.slice(0, 5).map((eventType) => eventType.name);
-          setPopularSearchTerms([
-            'Python',
-            'HTML',
-            'Pandas',
-            ...eventTypeNames.filter((name) => !['Python', 'HTML', 'Pandas'].includes(name)),
-          ]);
+          const priorityTerms = ['javascript', 'python', 'frontend'];
+
+          // Sort event types based on priority terms
+          const sortedEventTypes = [...data].sort((a, b) => {
+            const aNameLower = a.name.toLowerCase();
+            const bNameLower = b.name.toLowerCase();
+
+            const aIsPriority = priorityTerms.some((term) => aNameLower.includes(term));
+            const bIsPriority = priorityTerms.some((term) => bNameLower.includes(term));
+
+            if (aIsPriority && !bIsPriority) return -1;
+            if (!aIsPriority && bIsPriority) return 1;
+            return 0; // Keep original order for same priority
+          });
+
+          // Take the names of the top 5 sorted event types
+          const eventTypeNames = sortedEventTypes.slice(0, 5).map((eventType) => eventType.name);
+          setPopularSearchTerms(eventTypeNames);
         }
       } catch (err) {
         console.error('Error fetching event types:', err);

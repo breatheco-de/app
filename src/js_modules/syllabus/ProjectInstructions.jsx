@@ -177,8 +177,8 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   const NoSaasOnPublicView = cohorts.some((c) => c?.available_as_saas === false);
   const isInteractive = currentAsset?.interactive;
   const isExternalExercise = currentAsset?.external && currentAsset?.asset_type === 'EXERCISE';
-  const startWithLearnpack = currentAsset?.learnpack_deploy_url && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
-  const openWithLearnpackNoSaas = isExternalExercise && currentAsset?.learnpack_deploy_url && !cohortSession.available_as_saas;
+  const startWithLearnpack = currentAsset?.learnpack_deploy_url && cohortSession?.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
+  const openWithLearnpackNoSaas = isExternalExercise && currentAsset?.learnpack_deploy_url && !cohortSession?.available_as_saas;
 
   const renderModal = () => (
     <Suspense fallback={<Skeleton height="300px" width="100%" />}>
