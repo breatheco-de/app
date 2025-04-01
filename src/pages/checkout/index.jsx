@@ -162,7 +162,7 @@ function Checkout() {
     return () => window.removeEventListener('resize', handleResize);
   }, [isOpenned]);
 
-  const saveCouponToBag = (coupons, bagId = '') => {
+  const saveCouponToBag = (coupons, bagId = '', specificCoupon = '') => {
     bc.payment({
       coupons,
       plan: planFormated,
@@ -170,7 +170,9 @@ function Checkout() {
       .then((resp) => {
         const couponsList = resp?.data?.coupons;
         if (couponsList?.length > 0) {
-          const couponData = couponsList.find(({ slug }) => slug === discountCode || slug === couponValue);
+          const couponToFind = specificCoupon || discountCode;
+          const couponData = couponsList.find(({ slug }) => slug === couponToFind);
+
           if (couponData) {
             setDiscountCoupon({
               ...couponData,
@@ -190,8 +192,11 @@ function Checkout() {
   };
 
   const handleCoupon = (coup, actions) => {
-    const alreadyAppliedCoupon = (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === discountCode) || (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === couponValue);
-    if (alreadyAppliedCoupon) {
+    const couponToApply = coup || discountCode;
+
+    const isCouponAlreadyApplied = allCoupons.some((existingCoupon) => existingCoupon?.slug === couponToApply);
+
+    if (isCouponAlreadyApplied) {
       toast({
         position: 'top',
         title: t('signup:alert-message.coupon-already-applied'),
@@ -205,15 +210,22 @@ function Checkout() {
       return;
     }
 
+    if (!coup && !discountCode) {
+      if (actions) {
+        actions.setSubmitting(false);
+      }
+      return;
+    }
+
     bc.payment({
-      coupons: [coup || discountCode],
+      coupons: [couponToApply],
       plan: planFormated,
     }).verifyCoupon()
       .then((resp) => {
-        const correctCoupon = resp.data.find((c) => c.slug === coup);
+        const correctCoupon = resp.data.find((c) => c.slug === couponToApply);
         if (correctCoupon) {
-          const couponsToString = resp?.data.map((item) => item?.slug);
-          saveCouponToBag(couponsToString, checkoutData?.id);
+          const allCouponsToApply = [...allCoupons.map((c) => c.slug), couponToApply];
+          saveCouponToBag(allCouponsToApply, checkoutData?.id, couponToApply);
         } else {
           setDiscountCoupon(null);
           setCouponError(true);
@@ -310,7 +322,6 @@ function Checkout() {
   }, [router.locale]);
 
   useEffect(() => {
-    // verify if coupon exists
     if (checkoutData?.id && !checkoutData?.isTrial) {
       if (couponValue) setDiscountCode(couponValue);
       handleCoupon(couponValue);
@@ -318,7 +329,6 @@ function Checkout() {
   }, [couponValue, checkoutData?.id]);
 
   useEffect(() => {
-    // Alert before leave the page if the user is in the payment process
     if (isWindow && stepIndex >= 2 && isAuthenticated && !isPaymentSuccess) {
       const handleBeforeUnload = (e) => {
         e.preventDefault();
@@ -342,12 +352,10 @@ function Checkout() {
       router.push('/pricing');
     }
     if (isAuthenticated && isAvailableToSelectPlan && queryServiceExists) {
-      // If exists plan to select show the select service plan view
       setReadyToSelectService(true);
       setShowChooseClass(false);
     }
 
-    // Prepare service data to get consumables
     if (!queryPlanExists && tokenExists && isAuthenticated && !isAvailableToSelectPlan) {
       setShowChooseClass(false);
       setLoader('plan', true);
@@ -551,7 +559,6 @@ function Checkout() {
 
   useEffect(() => {
     if (user?.id && !isLoading) {
-      // if queryString token exists clean it from the url
       if (router.query.token) {
         const cleanTokenQuery = isWindow && removeURLParameter(window.location.href, 'token');
         router.push(cleanTokenQuery);
@@ -843,7 +850,6 @@ function Checkout() {
         <Flex
           flexDirection="column"
           alignItems="center"
-          // flex={0.5}
           padding={{ base: '0 auto', md: '0 3rem' }}
           position="relative"
           flex={{ base: '1', md: '0.5' }}

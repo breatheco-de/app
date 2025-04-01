@@ -92,7 +92,7 @@ function Dashboard() {
   const { cohortSession, taskCohortNull, cohortsAssignments, reviewModalState } = state;
 
   const {
-    featuredColor, hexColor, modal, disabledColor2, fontColor2, fontColor3, borderColor, lightColor, backgroundColor2, backgroundColor3,
+    featuredColor, hexColor, modal, featuredLight, borderColor, disabledColor2, fontColor2, fontColor3, lightColor, backgroundColor2, backgroundColor3,
   } = useStyle();
 
   const isAvailableAsSaas = cohortSession?.available_as_saas;
@@ -512,7 +512,7 @@ function Dashboard() {
             color="black"
             fontWeight="700"
           >
-            {t('repository-deletion.description')}
+            {t('repository-deletion.warning')}
             {'  '}
             <Button
               variant="link"
@@ -1104,6 +1104,11 @@ function Dashboard() {
           <ModalCloseButton />
           <ModalBody padding={{ base: '15px 22px' }}>
             <Box>
+              <Box marginBottom="15px" padding="10px" border="1px solid" borderColor={borderColor} borderRadius="8px" backgroundColor={featuredLight}>
+                <Text fontSize="14px" lineHeight="24px" fontWeight="400">
+                  {t('repository-deletion.description')}
+                </Text>
+              </Box>
               {deletionOrders.map((order) => {
                 let daysLeft;
                 if (order.starts_transferring_at) {

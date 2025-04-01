@@ -373,7 +373,13 @@ function ReviewModal({
     if (stage === stages.pending_activities) {
       return t('dashboard:mandatoryProjects.title');
     }
-    return t('code-review.rigobot-code-review');
+
+    return (
+      <Flex alignItems="center" justifyContent="center">
+        <Icon icon="rigobot-avatar-tiny" width="24px" height="24px" mr="8px" />
+        {t('code-review.rigobot-code-review')}
+      </Flex>
+    );
   };
 
   return (
