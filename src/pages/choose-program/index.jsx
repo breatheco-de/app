@@ -263,7 +263,8 @@ function chooseProgram() {
   }, [cohorts]);
 
   useEffect(() => {
-    if (cohorts.length > 0 && Object.keys(cohortsAssignments).length === cohorts.length) {
+    const cohortSlugs = Object.keys(cohortsAssignments);
+    if (cohorts.length > 0 && cohorts.every((cohort) => cohortSlugs.includes(cohort.slug))) {
       cohorts.map(processCohort);
     }
   }, [cohorts, cohortsAssignments]);
