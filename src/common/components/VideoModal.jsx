@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactPlayer from 'react-player/lazy';
 import PropTypes from 'prop-types';
-import { Box, IconButton, Flex, useBreakpointValue } from '@chakra-ui/react';
+import { Box, IconButton, Flex, useBreakpointValue, Text } from '@chakra-ui/react';
 import Icon from './Icon';
 
 function VideoModal({
@@ -9,6 +9,7 @@ function VideoModal({
   isOpen,
   onClose,
   positioningRef,
+  title,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [position, setPosition] = useState(null);
@@ -131,6 +132,10 @@ function VideoModal({
           <Box w="40px" />
         )}
 
+        <Text fontWeight="bold" fontSize="sm" color="gray.700" isTruncated>
+          {title}
+        </Text>
+
         <IconButton
           aria-label="Close video"
           icon={<Icon icon="close" width="15px" height="15px" />}
@@ -168,12 +173,15 @@ VideoModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   positioningRef: PropTypes.oneOfType([
     PropTypes.func,
-    PropTypes.shape({ current: PropTypes.objectOf(PropTypes.objectOf(PropTypes.any)) }),
+    // eslint-disable-next-line react/forbid-prop-types
+    PropTypes.shape({ current: PropTypes.any }),
   ]),
+  title: PropTypes.string,
 };
 
 VideoModal.defaultProps = {
   positioningRef: null,
+  title: 'Video',
 };
 
 export default VideoModal;

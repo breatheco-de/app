@@ -85,6 +85,7 @@ function SyllabusContent() {
   const [currentAsset, setCurrentAsset] = useState(null);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [currentVideoUrl, setCurrentVideoUrl] = useState('');
+  const [videoModalTitle, setVideoModalTitle] = useState('');
   const [grantAccess, setGrantAccess] = useState(false);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [learnpackStart, setLearnpackStart] = useState(false);
@@ -1269,6 +1270,7 @@ function SyllabusContent() {
                                     variant="default"
                                     onClick={() => {
                                       setCurrentVideoUrl(currentAsset?.intro_video_url);
+                                      setVideoModalTitle(currentAsset?.title || t('watch-intro'));
                                       setIsVideoModalOpen(true);
                                     }}
                                   >
@@ -1291,6 +1293,7 @@ function SyllabusContent() {
                                     variant="default"
                                     onClick={() => {
                                       setCurrentVideoUrl(currentAsset?.solution_video_url);
+                                      setVideoModalTitle(currentAsset?.title || t('solution-video'));
                                       setIsVideoModalOpen(true);
                                     }}
                                   >
@@ -1336,6 +1339,7 @@ function SyllabusContent() {
         onClose={() => setIsVideoModalOpen(false)}
         videoUrl={currentVideoUrl}
         positioningRef={controlsContainerRef}
+        title={videoModalTitle}
       />
       <SimpleModal
         size="md"
