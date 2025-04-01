@@ -506,8 +506,10 @@ function useCohortHandler() {
     const mandatoryProjects = assignments.flatMap(
       (module) => module.filteredContent.filter(
         (l) => {
+          const timeOutExceeded = l.daysDiff >= 14; // exceeds 2 weeks
+          const isPendingRevision = l.reviewed_at !== null && (l.reviewed_at > l.read_at || l.read_at === null);
           const isMandatoryTimeOut = l.task_type === 'PROJECT' && (l.task_status === 'PENDING' || l.revision_status === 'REJECTED')
-            && l.mandatory === true && l.daysDiff >= 14; // exceeds 2 weeks
+            && ((l.mandatory === true && timeOutExceeded) || isPendingRevision);
 
           return isMandatoryTimeOut;
         },

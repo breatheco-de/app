@@ -319,7 +319,7 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
                       {t('modules-count', { count: modules?.length })}
                     </Text>
                   </Box>
-                  {mandatoryProjects.length > 0 && (
+                  {(mandatoryProjects.length > 0 || hasPendingRevisions) && (
                     <Button maxHeight="28px" onClick={showFeedback} padding="5px 7px" borderRadius="27px" background="yellow.light" display="flex" gap="5px" alignItems="center" fontWeight="400">
                       <Icon icon="comment" width="14px" height="14px" color={hexColor.blueDefault} />
                       <Text as="span" color="black">
