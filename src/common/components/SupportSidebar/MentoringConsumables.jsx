@@ -13,7 +13,7 @@ import Link from '../NextChakraLink';
 import bc from '../../services/breathecode';
 import useAuth from '../../hooks/useAuth';
 import useOnline from '../../hooks/useOnline';
-import AvatarUser from '../../../js_modules/cohortSidebar/avatarUser';
+import AvatarUser from '../AvatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped, CardSkeleton } from '../Skeleton';
 import { validatePlanExistence } from '../../handlers/subscriptions';

@@ -9,7 +9,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { Fragment } from 'react';
 import CustomTheme from '../../../styles/theme';
-import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
+import AvatarUser from './AvatarUser';
 import Text from './Text';
 import Icon from './Icon';
 import { isNumber } from '../../utils';

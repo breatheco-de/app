@@ -18,10 +18,10 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import { es } from 'date-fns/locale';
 import { format } from 'date-fns';
-import Heading from '../../common/components/Heading';
-import Text from '../../common/components/Text';
-import useOnline from '../../common/hooks/useOnline';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
+import Heading from './Heading';
+import Text from './Text';
+import useOnline from '../hooks/useOnline';
+import useCohortHandler from '../hooks/useCohortHandler';
 
 const AvatarUser = memo(({
   data, fullName, isTeacherVersion, containerStyle, width, height, badge, customBadge, isWrapped, index, withoutPopover, avatarUrl,
