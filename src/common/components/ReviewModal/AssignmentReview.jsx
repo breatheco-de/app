@@ -12,7 +12,7 @@ import useCohortHandler from '../../hooks/useCohortHandler';
 import AlertMessage from '../AlertMessage';
 import Icon from '../Icon';
 import LoaderScreen from '../LoaderScreen';
-import ProjectSubmitButton from '../ProjectSubmitButton';
+import ProjectSubmitButton from '../AssignmentButton/ProjectSubmitButton';
 import UndoApprovalModal from '../UndoApprovalModal';
 import iconDict from '../../../iconDict.json';
 import { error } from '../../../utils/logging';

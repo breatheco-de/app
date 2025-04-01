@@ -1,122 +1,18 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
-import { Box, PopoverArrow, Text, Checkbox, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, Button, FormErrorMessage, FormControl, Input, useColorModeValue, useToast, Popover, PopoverTrigger, Tooltip, useFormControlStyles } from '@chakra-ui/react';
+import { Box, PopoverArrow, Text, Checkbox, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, Button, FormErrorMessage, FormControl, Input, useColorModeValue, useToast, Popover, PopoverTrigger } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Field, Form, Formik } from 'formik';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useRef, useState } from 'react';
-import bc from '../services/breathecode';
-import iconDict from '../../iconDict.json';
-import { isGithubUrl } from '../../utils/regex';
-import MarkDownParser from './MarkDownParser';
-import Icon from './Icon';
-import useStyle from '../hooks/useStyle';
-import useCohortHandler from '../hooks/useCohortHandler';
-import { formatBytes } from '../../utils';
-
-export function textByTaskStatus(currentTask, isGuidedExperience, hasPendingSubtask) {
-  const { t } = useTranslation('dashboard');
-  const { hexColor } = useStyle();
-  const taskIsApproved = currentTask?.revision_status === 'APPROVED';
-  // task project status
-  if (currentTask && currentTask.task_type === 'PROJECT') {
-    if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {
-      return {
-        icon: {
-          icon: 'checked',
-          color: '#FFB718',
-          width: '20px',
-          height: '20px',
-        },
-        text: t('common:taskStatus.update-project-delivery'),
-      };
-    }
-    if (currentTask.revision_status === 'APPROVED') {
-      return {
-        icon: {
-          icon: 'verified',
-          color: '#606060',
-          width: '20px',
-        },
-        text: t('common:taskStatus.project-approved'),
-      };
-    }
-    if (currentTask.revision_status === 'REJECTED') {
-      return {
-        icon: {
-          icon: 'checked',
-          color: '#FF4433',
-          width: '20px',
-        },
-        text: t('common:taskStatus.update-project-delivery'),
-      };
-    }
-    if (currentTask.task_status === 'PENDING' && hasPendingSubtask) {
-      return {
-        icon: {
-          icon: isGuidedExperience ? 'send-2' : 'longArrowRight',
-          color: isGuidedExperience ? hexColor.blueDefault : 'white',
-          width: '20px',
-        },
-        text: t('common:taskStatus.pending-subtasks'),
-      };
-    }
-    return {
-      icon: {
-        icon: isGuidedExperience ? 'send-2' : 'longArrowRight',
-        color: isGuidedExperience ? hexColor.blueDefault : 'white',
-        width: '20px',
-      },
-      text: t('common:taskStatus.send-project'),
-    };
-  }
-  // common task status
-  if (currentTask && currentTask.task_status === 'DONE') {
-    return {
-      icon: {
-        icon: 'close',
-        color: '#FFFFFF',
-        width: '12px',
-      },
-      text: t('common:taskStatus.mark-as-not-done'),
-    };
-  }
-
-  return {
-    icon: {
-      icon: 'checked2',
-      color: taskIsApproved ? '#606060' : '#FFFFFF',
-      width: '14px',
-    },
-    text: t('common:taskStatus.mark-as-done'),
-  };
-}
-
-export function IconByTaskStatus({ currentTask, noDeliveryFormat }) {
-  // task project status
-  const hasDeliveryFormat = !noDeliveryFormat;
-  if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
-    if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING' && hasDeliveryFormat) {
-      return <Icon icon="checked" color="#FFB718" width="27px" height="27px" />;
-    }
-    if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING' && !hasDeliveryFormat) {
-      return <Icon icon="verified" color="#25BF6C" width="27px" />;
-    }
-    if (currentTask.revision_status === 'APPROVED') {
-      return <Icon icon="verified" color="#25BF6C" width="27px" />;
-    }
-    if (currentTask.revision_status === 'REJECTED') {
-      return <Icon icon="checked" color="#FF4433" width="27px" />;
-    }
-    return <Icon icon="unchecked" color="#C4C4C4" width="27px" />;
-  }
-  // common task status
-  if (currentTask && currentTask.task_type !== 'PROJECT' && currentTask.task_status === 'DONE') {
-    return <Icon icon="verified" color="#25BF6C" width="27px" />;
-  }
-  return <Icon icon="unchecked" color="#C4C4C4" width="27px" />;
-}
+import bc from '../../services/breathecode';
+import iconDict from '../../../iconDict.json';
+import { isGithubUrl } from '../../../utils/regex';
+import MarkDownParser from '../MarkDownParser';
+import Icon from '../Icon';
+import useStyle from '../../hooks/useStyle';
+import useCohortHandler from '../../hooks/useCohortHandler';
+import { formatBytes } from '../../../utils';
+import ButtonVariants from './ButtonVariants';
 
 function ProjectSubmitButton({
   isGuidedExperience,
@@ -152,8 +48,6 @@ function ProjectSubmitButton({
     setAcceptTC(false);
     closePopover();
   };
-
-  const textAndIcon = textByTaskStatus(currentTask, isGuidedExperience);
 
   const deliveryFormatExists = typeof currentAssetData?.delivery_formats === 'string';
   const noDeliveryFormat = deliveryFormatExists && currentAssetData?.delivery_formats.includes('no_delivery');
@@ -262,52 +156,25 @@ function ProjectSubmitButton({
 
       <PopoverTrigger>
         {isGuidedExperience ? (
-          <Button
-            display="flex"
+          <ButtonVariants
             isLoading={isLoading}
             isDisabled={isButtonDisabled}
-            width="40px"
-            height="40px"
+            onClick={togglePopover}
+            currentTask={currentTask}
+            noDeliveryFormat={noDeliveryFormat}
+            withTooltip
             background="white"
-            padding="20px"
-            borderRadius="full"
-            variant="default"
-            gridGap="12px"
-            onClick={() => togglePopover()}
-          >
-            <Icon {...textAndIcon.icon} />
-          </Button>
+          />
         ) : (
-          <Button
-            display="flex"
+          <ButtonVariants
             isLoading={isLoading}
-            variant={allowText ? 'default' : 'none'}
             isDisabled={isButtonDisabled}
-            minWidth="26px"
-            minHeight="26px"
-            height="fit-content"
-            background={allowText ? 'blue.default' : 'none'}
-            lineHeight={allowText ? '15px' : '0'}
-            padding={allowText ? '12px 24px' : '0'}
-            borderRadius={allowText ? '3px' : '30px'}
-            textTransform={allowText ? 'uppercase' : 'none'}
-            gridGap={allowText ? '12px' : '0'}
-            onClick={() => togglePopover()}
-          >
-            {buttonChildren && buttonChildren}
-            {!buttonChildren && (
-              <>
-                {allowText ? (
-                  <>
-                    <Icon {...textAndIcon.icon} />
-                    {textAndIcon.text}
-                  </>
-                ) : (
-                  <IconByTaskStatus currentTask={currentTask} />
-                )}
-              </>
-            )}
-          </Button>
+            onClick={togglePopover}
+            allowText={allowText}
+            currentTask={currentTask}
+            noDeliveryFormat={noDeliveryFormat}
+            buttonChildren={buttonChildren}
+          />
         )}
       </PopoverTrigger>
 
@@ -568,15 +435,6 @@ ProjectSubmitButton.defaultProps = {
   togglePopover: () => { },
   buttonChildren: null,
   isGuidedExperience: false,
-};
-
-IconByTaskStatus.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  noDeliveryFormat: PropTypes.bool,
-};
-IconByTaskStatus.defaultProps = {
-  currentTask: {},
-  noDeliveryFormat: false,
 };
 
 export default ProjectSubmitButton;

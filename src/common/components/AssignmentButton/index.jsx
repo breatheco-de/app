@@ -1,18 +1,17 @@
-/* eslint-disable no-unused-vars */
 import {
-  Button, Tooltip, useToast,
+  Button, useToast,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
-import ProjectSubmitButton, { IconByTaskStatus, textByTaskStatus } from '../ProjectSubmitButton';
+import ProjectSubmitButton from './ProjectSubmitButton';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import bc from '../../services/breathecode';
+import ButtonVariants from './ButtonVariants';
 
-export function AssignmentButton({
-  onlyPopoverDialog,
+function AssignmentButton({
   currentTask,
   sendProject,
   currentAssetData,
@@ -31,6 +30,18 @@ export function AssignmentButton({
   const [currentAsset, setCurrentAsset] = useState(currentAssetData);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [fileData, setFileData] = useState(null);
+
+  const [loaders, setLoaders] = useState({
+    isFetchingCommitFiles: false,
+    isOpeningReviewModal: false,
+    isChangingTaskStatus: false,
+  });
+  const taskIsApproved = allowText && currentTask?.revision_status === 'APPROVED';
+  const taskIsApprovedOrRejected = currentTask?.revision_status === 'APPROVED' || currentTask?.revision_status === 'REJECTED';
+
+  const deliveryFormatExists = typeof currentAsset?.delivery_formats === 'string';
+  const noDeliveryFormat = deliveryFormatExists && currentAsset?.delivery_formats.includes('no_delivery');
+  const isButtonDisabled = currentTask === null || taskIsApproved;
 
   const fetchAsset = async () => {
     try {
@@ -81,18 +92,6 @@ export function AssignmentButton({
     setIsPopoverOpen(false);
   };
 
-  const [loaders, setLoaders] = useState({
-    isFetchingCommitFiles: false,
-    isOpeningReviewModal: false,
-    isChangingTaskStatus: false,
-  });
-  const taskIsApproved = allowText && currentTask?.revision_status === 'APPROVED';
-  const taskIsApprovedOrRejected = currentTask?.revision_status === 'APPROVED' || currentTask?.revision_status === 'REJECTED';
-
-  const deliveryFormatExists = typeof currentAsset?.delivery_formats === 'string';
-  const noDeliveryFormat = deliveryFormatExists && currentAsset?.delivery_formats.includes('no_delivery');
-  const isButtonDisabled = currentTask === null || taskIsApproved;
-
   const openAssignmentFeedbackModal = async () => {
     if (currentTask) {
       setLoaders((prevState) => ({
@@ -133,8 +132,6 @@ export function AssignmentButton({
     }
   };
 
-  const textAndIcon = textByTaskStatus(currentTask, isGuidedExperience, hasPendingSubtasks);
-
   const loadAndOpenReviewModal = async () => {
     setLoaders((prevState) => ({
       ...prevState,
@@ -145,8 +142,8 @@ export function AssignmentButton({
   };
 
   // PRROJECT CASE
-  if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
-    if ((currentTask.task_status === 'DONE' || taskIsApprovedOrRejected) && !onlyPopoverDialog && !isGuidedExperience) {
+  if (currentTask?.task_type === 'PROJECT') {
+    if ((currentTask.task_status === 'DONE' || taskIsApprovedOrRejected) && !isGuidedExperience) {
       return (
         <>
           {currentTask?.description && (
@@ -157,61 +154,29 @@ export function AssignmentButton({
               <Icon icon="comment" color={hexColor.blueDefault} />
             </Button>
           )}
-          <Button
+          <ButtonVariants
             isLoading={loaders.isOpeningReviewModal}
             onClick={loadAndOpenReviewModal}
             isDisabled={isButtonDisabled}
-            display="flex"
-            minWidth="26px"
-            minHeight="26px"
-            height="fit-content"
-            background={allowText ? 'blue.default' : 'none'}
-            lineHeight={allowText ? '15px' : '0'}
-            padding={allowText ? '12px 24px' : '0'}
-            borderRadius={allowText ? '3px' : '30px'}
-            variant={allowText ? 'default' : 'none'}
-            textTransform={allowText ? 'uppercase' : 'none'}
-            gridGap={allowText ? '12px' : '0'}
-          >
-            {allowText ? (
-              <>
-                <Icon {...textAndIcon.icon} />
-                {textAndIcon.text}
-              </>
-            ) : (
-              <IconByTaskStatus currentTask={currentTask} noDeliveryFormat={noDeliveryFormat} />
-            )}
-          </Button>
+            currentTask={currentTask}
+            hasPendingSubtasks={hasPendingSubtasks}
+            noDeliveryFormat={noDeliveryFormat}
+            allowText={allowText}
+          />
         </>
       );
     }
     if (hasPendingSubtasks && !taskIsApprovedOrRejected && currentTask.task_status === 'PENDING') {
       return (
-        <Button
+        <ButtonVariants
           isLoading={loaders.isOpeningReviewModal}
           onClick={togglePendingSubtasks}
           isDisabled={isButtonDisabled}
-          display="flex"
-          minWidth="26px"
-          minHeight="26px"
-          height="fit-content"
-          background={allowText ? 'blue.default' : 'none'}
-          lineHeight={allowText ? '15px' : '0'}
-          padding={allowText ? '12px 24px' : '0'}
-          borderRadius={allowText ? '3px' : '30px'}
-          variant={allowText ? 'default' : 'none'}
-          textTransform={allowText ? 'uppercase' : 'none'}
-          gridGap={allowText ? '12px' : '0'}
-        >
-          {allowText ? (
-            <>
-              <Icon {...textAndIcon.icon} />
-              {textAndIcon.text}
-            </>
-          ) : (
-            <IconByTaskStatus currentTask={currentTask} noDeliveryFormat={noDeliveryFormat} />
-          )}
-        </Button>
+          currentTask={currentTask}
+          hasPendingSubtasks={hasPendingSubtasks}
+          withTooltip={isGuidedExperience}
+          noDeliveryFormat={noDeliveryFormat}
+        />
       );
     }
     return (
@@ -229,54 +194,20 @@ export function AssignmentButton({
     );
   }
 
-  if (isGuidedExperience) {
-    return (
-      <Tooltip label={textAndIcon.text} placement="top">
-        <Button
-          isLoading={loaders.isChangingTaskStatus}
-          onClick={handleNonDeliverableTask}
-          isDisabled={isButtonDisabled}
-          width="40px"
-          height="40px"
-          background={hexColor.blueDefault}
-          padding="20px"
-          borderRadius="full"
-          variant="default"
-          gridGap="12px"
-        >
-          <Icon {...textAndIcon.icon} />
-        </Button>
-      </Tooltip>
-    );
-  }
-
   return (
-    <Button
-      display="flex"
+    <ButtonVariants
       isLoading={loaders.isChangingTaskStatus}
       onClick={handleNonDeliverableTask}
       isDisabled={isButtonDisabled}
-      minWidth="26px"
-      minHeight="26px"
-      background={allowText ? 'blue.default' : 'none'}
-      lineHeight={allowText ? '15px' : '0'}
-      padding={allowText ? '12px 24px' : '0'}
-      borderRadius={allowText ? '3px' : '30px'}
-      variant={allowText ? 'default' : 'none'}
-      textTransform={allowText ? 'uppercase' : 'none'}
-      gridGap={allowText ? '12px' : '0'}
-    >
-      {allowText ? (
-        <>
-          <Icon {...textAndIcon.icon} />
-          {textAndIcon.text}
-        </>
-      ) : (
-        <IconByTaskStatus currentTask={currentTask} />
-      )}
-    </Button>
+      withTooltip={isGuidedExperience}
+      currentTask={currentTask}
+      hasPendingSubtasks={hasPendingSubtasks}
+      allowText={allowText}
+    />
   );
 }
+
+export default AssignmentButton;
 
 AssignmentButton.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
@@ -285,7 +216,6 @@ AssignmentButton.propTypes = {
   allowText: PropTypes.bool,
   onClickHandler: PropTypes.func,
   currentAssetData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  onlyPopoverDialog: PropTypes.bool,
   isGuidedExperience: PropTypes.bool,
   hasPendingSubtasks: PropTypes.bool,
   setStage: PropTypes.func,
@@ -297,7 +227,6 @@ AssignmentButton.defaultProps = {
   onClickHandler: () => { },
   currentAssetData: null,
   togglePendingSubtasks: () => { },
-  onlyPopoverDialog: false,
   isGuidedExperience: false,
   hasPendingSubtasks: undefined,
   setStage: null,

@@ -11,7 +11,7 @@ import { isWindow, assetTypeValues, getExtensionName, getStorageItem, languageFi
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
-import { AssignmentButton } from '../../../../../common/components/SyllabusModule/AssignmentButton';
+import AssignmentButton from '../../../../../common/components/AssignmentButton';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkDownParser from '../../../../../common/components/MarkDownParser';
 import Text from '../../../../../common/components/Text';

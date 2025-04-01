@@ -357,7 +357,7 @@ function useCohortHandler() {
           task_status: taskStatus || toggleStatus,
           github_url: projectUrl,
           revision_status: 'PENDING',
-          delivered_at: new Date(),
+          delivered_at: new Date().toISOString(),
         };
       } else {
         taskToUpdate = {

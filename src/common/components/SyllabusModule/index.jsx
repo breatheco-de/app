@@ -147,7 +147,7 @@ function SyllabusModule({
                 isDisabled={!cohortId}
                 onClick={() => handleStartDay()}
                 background="white"
-                border="1px solid #0097CD"
+                border="1px solid blue.default"
                 gridGap="8px"
               >
                 <Text color="blue.default" size="15px">

@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { useState, memo } from 'react';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useStyle from '../../hooks/useStyle';
-import { AssignmentButton } from './AssignmentButton';
+import AssignmentButton from '../AssignmentButton';
 import TaskBar from '../TaskBar';
 import ShareButton from '../ShareButton';
 import Icon from '../Icon';
@@ -51,10 +51,10 @@ function SyllabusActivity({
 
   const socials = [
     {
-      name: 'twitter',
-      label: 'Twitter',
-      href: `https://twitter.com/share?url=&text=${encodeURIComponent(t('share-message', { title: currentTask?.title }))} %23100DaysOfCode%0A%0A${shareLink()}`,
-      color: '#1DA1F2',
+      name: 'x',
+      label: 'X',
+      href: `https://x.com/share?url=&text=${encodeURIComponent(t('share-message', { title: currentTask?.title }))} %23100DaysOfCode%0A%0A${shareLink()}`,
+      color: '#000',
     },
     {
       name: 'linkedin',
