@@ -155,27 +155,16 @@ function ProjectSubmitButton({
     >
 
       <PopoverTrigger>
-        {isGuidedExperience ? (
-          <ButtonVariants
-            isLoading={isLoading}
-            isDisabled={isButtonDisabled}
-            onClick={togglePopover}
-            currentTask={currentTask}
-            noDeliveryFormat={noDeliveryFormat}
-            withTooltip
-            background="white"
-          />
-        ) : (
-          <ButtonVariants
-            isLoading={isLoading}
-            isDisabled={isButtonDisabled}
-            onClick={togglePopover}
-            allowText={allowText}
-            currentTask={currentTask}
-            noDeliveryFormat={noDeliveryFormat}
-            buttonChildren={buttonChildren}
-          />
-        )}
+        <ButtonVariants
+          isLoading={isLoading}
+          isDisabled={isButtonDisabled}
+          onClick={togglePopover}
+          currentTask={currentTask}
+          noDeliveryFormat={noDeliveryFormat}
+          allowText={allowText}
+          buttonChildren={buttonChildren}
+          withTooltip={isGuidedExperience}
+        />
       </PopoverTrigger>
 
       <PopoverContent>
