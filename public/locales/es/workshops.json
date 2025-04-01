@@ -1,5 +1,7 @@
 {
   "no-event-found": "No hay eventos disponibles con esta URL 😕",
+  "clear-search": "Limpiar búsqueda",
+  "search-workshops": "Buscar workshops",
   "host-label-text": "Anfitrión para este evento",
   "workshop-asset-ended": "El siguiente proyecto fue realizado durante el workshop",
   "workshop-asset-upcoming": "Durante el workshop completaremos el siguiente proyecto",
@@ -23,7 +25,7 @@
   },
   "intro": {
     "top-title": "Bienvenido a los Workshops de 4Geeks",
-    "lower-title": "Aprende en vivo y sumergete en las nuevas tecnologías",
+    "lower-title": "Aprende en vivo y sumérgete en las nuevas tecnologías",
     "subtitle": "Descubre el futuro del aprendizaje tecnológico con sesiones en vivo. ¡Únete y potencia tus habilidades!"
   },
   "form": {
