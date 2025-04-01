@@ -50,10 +50,8 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
   const { backgroundColor, hexColor } = useStyle();
   const { colorMode } = useColorMode();
   const {
-    serializeModulesMap,
     startDay,
     cohortsAssignments,
-    setCohortsAssingments,
     handleOpenReviewModal,
     getMandatoryProjects,
   } = useCohortHandler();
@@ -67,6 +65,13 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
     return module.label[langDict[lang]];
   };
 
+  const isTaskApproved = (task) => {
+    if (task.task_type === 'PROJECT') {
+      return task.revision_status === 'APPROVED';
+    }
+    return task.task_status === 'DONE';
+  };
+
   const modulesProgress = useMemo(() => {
     if (!modules || !Array.isArray(modules)) return null;
 
@@ -76,18 +81,22 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
 
     modules.forEach((module) => {
       const assignmentsCount = module.content.reduce((acc, curr) => {
+        const isApproved = isTaskApproved(curr);
         if (!(curr.task_type in acc)) {
           // Check if any assignment in the module has a pending revision
           const pendingRevisionsCount = module.content.filter((assignment) => pendingRevisions.some((task) => task.associated_slug === assignment.slug && task.task_type === curr.task_type)).length;
+
           acc[curr.task_type] = {
             total: 1,
             icon: curr.icon,
             done: curr.task_status === 'DONE' ? 1 : 0,
             pendingRevision: pendingRevisionsCount,
+            approved: isApproved ? 1 : 0,
           };
         } else {
           acc[curr.task_type].total += 1;
           if (curr.task_status === 'DONE') acc[curr.task_type].done += 1;
+          if (isApproved) acc[curr.task_type].approved += 1;
         }
         return acc;
       }, {});
@@ -466,15 +475,29 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
                     </Box>
                     <Box display={{ base: 'none', sm: 'flex' }} alignItems="center" gap="16px">
                       {typesPerModule.map((taskType) => {
-                        const { icon, total, done, pendingRevision } = assignmentsCount[taskType];
+                        const { icon, total, done, pendingRevision, approved } = assignmentsCount[taskType];
                         return (
-                          <Box key={`${moduleLabel}-${taskType}`} background={colorVariations[colorMode].mode4} padding="4px 8px" borderRadius="18px" display="flex" gap="5px" alignItems="center" position="relative">
+                          <Box
+                            key={`${moduleLabel}-${taskType}`}
+                            background={colorVariations[colorMode].mode4}
+                            padding="4px 8px"
+                            borderRadius="18px"
+                            display="flex"
+                            gap="5px"
+                            alignItems="center"
+                            position="relative"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (pendingRevision > 0) handleOpenReviewModal({ defaultStage: stages.pending_activities, cohortSlug: cohort.slug, fixedStage: true });
+                              else redirectToModule(module);
+                            }}
+                          >
                             <Icon icon={icon} color={cohortColor} width="13px" height="13px" />
                             <Text>
                               {`${done}/`}
                               {total}
                             </Text>
-                            {done === total && <Icon icon="checked2" color={hexColor.green} />}
+                            {approved === total && <Icon icon="checked2" color={hexColor.green} />}
                             {pendingRevision > 0 && (
                               <Box
                                 position="absolute"
