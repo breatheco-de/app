@@ -127,9 +127,6 @@ function SyllabusContent() {
   const isProject = lesson === 'project';
   const isLesson = lesson === 'read';
 
-  console.log(isLesson);
-  console.log(currentAsset);
-
   const filteredCurrentAssignments = sortedAssignments.map((section) => (showPendingTasks
     ? section.filteredContentByPending
     : section.filteredContent));
