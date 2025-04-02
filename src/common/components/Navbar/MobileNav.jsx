@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Icon from '../Icon';
-import MobileItem from './MobileItem';
+import MobileNavItem from './MobileNavItem';
 import LanguageSelector from '../LanguageSelector';
 import NextChakraLink from '../NextChakraLink';
 import useStyle from '../../hooks/useStyle';
@@ -21,10 +21,9 @@ function MobileNav({
   const { colorMode, toggleColorMode } = useColorMode();
   const { t } = useTranslation('navbar');
   const router = useRouter();
-  const commonColors = useColorModeValue('white', 'gray.800');
   const prismicRef = process.env.PRISMIC_REF;
   const prismicApi = process.env.PRISMIC_API;
-  const { borderColor } = useStyle();
+  const { borderColor, navbarBackground } = useStyle();
 
   return (
     <Flex
@@ -33,7 +32,7 @@ function MobileNav({
       width="100%"
       zIndex="99"
       gridGap="8px"
-      bg={useColorModeValue('white', 'gray.800')}
+      bg={navbarBackground}
       p={4}
       borderBottom={1}
       borderStyle="solid"
@@ -49,7 +48,7 @@ function MobileNav({
         }
 
         return (
-          <MobileItem
+          <MobileNavItem
             key={label}
             with_popover={item?.with_popover}
             image={item?.image}
@@ -92,12 +91,12 @@ function MobileNav({
         <IconButton
           display="flex"
           _hover={{
-            background: commonColors,
+            background: navbarBackground,
           }}
           _active={{
-            background: commonColors,
+            background: navbarBackground,
           }}
-          background={commonColors}
+          background={navbarBackground}
           onClick={toggleColorMode}
           title="Toggle Color Mode"
           icon={

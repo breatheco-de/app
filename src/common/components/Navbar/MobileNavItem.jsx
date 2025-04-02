@@ -13,7 +13,6 @@ import {
   AccordionPanel,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-// import { useRouter } from 'next/router';
 import Image from 'next/image';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
@@ -24,17 +23,9 @@ function MobileItem({
   label, subMenu, href, onClickLink, description, icon, readSyllabus, with_popover: withPopover, image,
 }) {
   const { isOpen, onToggle } = useDisclosure();
-  const { hexColor } = useStyle();
-  const linkColor = useColorModeValue('gray.600', 'gray.200');
-  const bordercolor1 = useColorModeValue('gray.200', 'gray.700');
+  const { hexColor, lightColor, borderColor } = useStyle();
   const bordercolor2 = useColorModeValue('gray.200', 'gray.900');
 
-  // const getColorLink = (link) => {
-  //   if (router?.pathname === link || router.asPath === link || router?.pathname.includes(link)) {
-  //     return 'blue.default';
-  //   }
-  //   return linkColor;
-  // };
   const existsSubMenu = subMenu?.length > 0;
   const withPopoverActive = withPopover?.active;
   const existsItemWithPopover = existsSubMenu || withPopoverActive;
@@ -105,7 +96,7 @@ function MobileItem({
         <Stack
           pl={4}
           borderLeft="2px solid"
-          borderColor={bordercolor1}
+          borderColor={borderColor}
           align="start"
         >
           <Flex
@@ -116,7 +107,7 @@ function MobileItem({
             borderStyle="solid"
             borderColor={bordercolor2}
             alignItems="start"
-            color={linkColor}
+            color={lightColor}
           >
             <Box width="auto">
               {image ? (
@@ -129,7 +120,7 @@ function MobileItem({
               <Text size="xl" fontWeight={900}>
                 {label}
               </Text>
-              <Text color={linkColor} fontWeight={500}>
+              <Text color={lightColor} fontWeight={500}>
                 {description}
               </Text>
               {withPopoverActive && (
@@ -170,7 +161,6 @@ function MobileItem({
                           key={l.label}
                           onClick={onClickLink}
                           color="blue.default"
-                          // color={getColorLink(l.href)}
                           style={{ textDecoration: 'none' }}
                           href={l.href}
                         >
@@ -186,7 +176,6 @@ function MobileItem({
                 key={child.label}
                 onClick={onClickLink}
                 color="blue.default"
-                // color={getColorLink(child.href)}
                 style={{ textDecoration: 'none' }}
                 py={2}
                 href={child.href}

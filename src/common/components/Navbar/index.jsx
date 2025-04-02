@@ -15,7 +15,7 @@ import { es, en } from 'date-fns/locale';
 import { formatDistanceStrict } from 'date-fns';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
-import DesktopNav from './DesktopNav';
+import DesktopNavItem from './DesktopNavItem';
 import MobileNav from './MobileNav';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useSession from '../../hooks/useSession';
@@ -285,7 +285,11 @@ function Navbar({ translations, pageProps }) {
           </NextLink>
 
           <Flex display="flex" ml={10}>
-            <DesktopNav navbarItems={allNavbarItems} />
+            <Stack className="hideOverflowX__" direction="row" width="auto" spacing={4} alignItems="center">
+              {allNavbarItems.map((item) => (
+                <DesktopNavItem key={item.label} item={item} readSyllabus={[]} />
+              ))}
+            </Stack>
           </Flex>
         </Flex>
 

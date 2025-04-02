@@ -14,7 +14,6 @@ import {
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { memo } from 'react';
-import styled from 'styled-components';
 import Image from 'next/image';
 import Icon from '../Icon';
 import { isAbsoluteUrl, parseQuerys } from '../../../utils/url';
@@ -24,21 +23,10 @@ import useStyle from '../../hooks/useStyle';
 import { ArrowDown, ArrowRight } from '../Icon/components';
 import { getStorageItem } from '../../../utils';
 
-const StyledBox = styled(Box)`
-.custom-popover {
-  display: none;
-  top: 70px;
-}
-`;
-
-const Triangle = styled(Box)``;
-
-function DesktopItem({ item, readSyllabus }) {
+function DesktopNavItem({ item, readSyllabus }) {
   const router = useRouter();
-  const { borderColor, hexColor } = useStyle();
-  const popoverContentBgColor = useColorModeValue('white', 'gray.800');
+  const { borderColor, hexColor, navbarBackground, lightColor } = useStyle();
   const popoverBorderColor = useColorModeValue('gray.250', 'gray.dark');
-  const linkColor = useColorModeValue('gray.600', 'gray.200');
   const groupHoverColor = useColorModeValue('gray.900', 'featuredLight');
   const backgroundHoverLink = useColorModeValue('featuredLight', 'gray.900');
   const borderSize = useColorModeValue(1, 2);
@@ -50,7 +38,7 @@ function DesktopItem({ item, readSyllabus }) {
     if (router?.pathname === link || router.asPath === link || router?.pathname.includes(link)) {
       return 'blue.default';
     }
-    return linkColor;
+    return lightColor;
   };
 
   const getColorIcon = (link) => {
@@ -83,10 +71,9 @@ function DesktopItem({ item, readSyllabus }) {
   }
 
   return (
-    <StyledBox
+    <Box
       key={item.label}
       position="relative"
-      className="styled-box"
       role="group"
       _groupHover={{ display: 'block' }}
     >
@@ -102,7 +89,7 @@ function DesktopItem({ item, readSyllabus }) {
             height="65px"
             textTransform="uppercase"
             fontWeight={700}
-            color={linkColor}
+            color={lightColor}
             fontSize="0.875rem"
             _hover={{
               textDecoration: 'none',
@@ -121,7 +108,7 @@ function DesktopItem({ item, readSyllabus }) {
             )}
           </Button>
           <Box
-            bg={popoverContentBgColor}
+            bg={navbarBackground}
             rounded="md"
             maxW="40rem"
             position="absolute"
@@ -135,9 +122,8 @@ function DesktopItem({ item, readSyllabus }) {
             _groupHover={{ display: 'block' }}
           >
             <div style={{ width: '100%', position: 'absolute', top: '-10px' }}>
-              <Triangle
-                className="triangle"
-                background={popoverContentBgColor}
+              <Box
+                background={navbarBackground}
                 borderTop="1px solid"
                 borderLeft="1px solid"
                 borderColor={popoverBorderColor}
@@ -163,7 +149,7 @@ function DesktopItem({ item, readSyllabus }) {
                 borderStyle="solid"
                 borderColor={existsSubMenu ? borderColor : 'transparent'}
                 alignItems="center"
-                color={linkColor}
+                color={lightColor}
                 mb={withPopover ? '0px' : '10px'}
                 gridGap="20px"
               >
@@ -371,11 +357,11 @@ function DesktopItem({ item, readSyllabus }) {
           )}
         </NextChakraLink>
       )}
-    </StyledBox>
+    </Box>
   );
 }
 
-DesktopItem.propTypes = {
+DesktopNavItem.propTypes = {
   item: PropTypes.shape({
     id: PropTypes.string,
     label: PropTypes.string.isRequired,
@@ -390,8 +376,8 @@ DesktopItem.propTypes = {
   }),
   readSyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
-DesktopItem.defaultProps = {
+DesktopNavItem.defaultProps = {
   item: {},
 };
 
-export default memo(DesktopItem);
+export default memo(DesktopNavItem);
