@@ -16,6 +16,7 @@
   "in-person-confirm": "Este es un evento presencial que se llevará a cabo en {{address}}. ¿Aún quieres confirmar tu asistencia?",
   "confirm-attendance": "Si, si asistiré",
   "deny-attendance": "No, no asistiré",
+  "event-took-place": "Este evento se llevó a cabo el {{date}}",
   "denny-access": {
     "description": "Esto es un evento privado, solo estudiantes con acceso a",
     "button": "No tienes acceso a este evento.",
@@ -38,7 +39,9 @@
     "joined-description": "Ya te registraste para este evento. Podrás unirte una vez que comience.",
     "joined-description-in-person": "Ya te registraste para este evento ¡Te estaremos esperando!",
     "finished-title": "Este evento ha finalizado",
-    "finished-description": "¡Sigue buscando nuevas experiencias de aprendizaje y mantén viva tu pasión por el conocimiento!"
+    "finished-description": "¡Sigue buscando nuevas experiencias de aprendizaje y mantén viva tu pasión por el conocimiento!",
+    "finished-with-recording-title": "Ver grabación del evento",
+    "finished-with-recording-description": "Aunque este evento ya ha finalizado, hemos subido la grabación para que no te pierdas nada :)"
   },
   "search-your-fav-tech": "Busca tu teconología favorita",
   "upcoming-events": "Próximos eventos",

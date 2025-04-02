@@ -16,6 +16,7 @@
   "in-person-confirm": "This is an in-person event that will take place in {{address}}. Do you still want to confirm your attendance?",
   "confirm-attendance": "Yes, I will be there",
   "deny-attendance" : "No, I will not attend",
+  "event-took-place": "This event took place on {{date}}",
   "denny-access":{
     "description": "This is a private event, only students with access to",
     "button": "You don't have access to this event",
@@ -38,7 +39,9 @@
     "joined-description": "You have already signed up for this event. You will be able to join once it starts.",
     "joined-description-in-person": "You have already signed up for this event. We'll be waiting for you!",
     "finished-title": "This event has ended",
-    "finished-description": "Keep looking for new learning experiences and keep your passion for knowledge alive!"
+    "finished-description": "Keep looking for new learning experiences and keep your passion for knowledge alive!",
+    "finished-with-recording-title": "Watch event recording",
+    "finished-with-recording-description": "While this event has already ended, we have uploaded the recording so you wont miss anything! :)"
   },
   "search-your-fav-tech": "Search your favorite technology",
   "upcoming-events": "Upcoming events",

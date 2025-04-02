@@ -6,7 +6,7 @@ import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 
 function ReactPlayerV2({
-  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, containerStyle, autoPlay, loop, autoFullScreen, muted, volume, pictureInPicture, playerConfig, preview, previewDuration,
+  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, containerStyle, autoPlay, loop, autoFullScreen, muted, volume, pictureInPicture, playerConfig, preview, previewDuration, isPlayDisabled = false,
   ...rest
 }) {
   const isVideoFromDrive = useMemo(() => url && url.includes('drive.google.com'), [url]);
@@ -29,11 +29,15 @@ function ReactPlayerV2({
   const videoUrl = useMemo(() => getVideo(), [getVideo]);
 
   const handleButtonClick = useCallback(() => {
+    if (isPlayDisabled) {
+      return;
+    }
+
     if (previewPlayerRef.current) {
       previewPlayerRef.current.seekTo(0);
     }
     setShowVideo(true);
-  }, []);
+  }, [isPlayDisabled]);
 
   const handleContainerClose = useCallback(() => {
     if (closeOnOverlayClick) {
@@ -193,6 +197,7 @@ function ReactPlayerV2({
               />
             ))}
             <IconButton
+              id="play-video-button"
               aria-label="Play video"
               icon={<Icon icon="play2" width="40px" height="40px" borderRadius="6px" padding="4px" />}
               position="relative"
@@ -200,6 +205,12 @@ function ReactPlayerV2({
               backgroundColor="rgba(0, 0, 0, 0.5)"
               _hover={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
               transition="all 0.2s"
+              onClick={(e) => {
+                if (isPlayDisabled) {
+                  e.stopPropagation();
+                }
+              }}
+              isDisabled={isPlayDisabled}
             />
           </Flex>
 
@@ -345,6 +356,7 @@ ReactPlayerV2.propTypes = {
   playerConfig: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
   preview: PropTypes.bool,
   previewDuration: PropTypes.number,
+  isPlayDisabled: PropTypes.bool,
 };
 ReactPlayerV2.defaultProps = {
   url: '',
@@ -367,6 +379,7 @@ ReactPlayerV2.defaultProps = {
   playerConfig: {},
   preview: false,
   previewDuration: 10,
+  isPlayDisabled: false,
 };
 
 export default ReactPlayerV2;
