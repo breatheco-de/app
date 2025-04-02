@@ -9,35 +9,35 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import Icon from '../../common/components/Icon';
+import Icon from '../Icon';
 import MobileItem from './MobileItem';
-import LanguageSelector from '../../common/components/LanguageSelector';
-import NextChakraLink from '../../common/components/NextChakraLink';
-import useStyle from '../../common/hooks/useStyle';
-import { setStorageItem } from '../../utils';
+import LanguageSelector from '../LanguageSelector';
+import NextChakraLink from '../NextChakraLink';
+import useStyle from '../../hooks/useStyle';
+import useAuth from '../../hooks/useAuth';
+import { setStorageItem } from '../../../utils';
 
 function MobileNav({
-  // eslint-disable-next-line no-unused-vars
-  NAV_ITEMS, haveSession, translations, mktCourses, onClickLink, isAuthenticated, hasPaidSubscription,
+  navbarItems, translations, mktCourses, onClickLink,
 }) {
   const [privateItems, setPrivateItems] = useState([]);
   const { colorMode, toggleColorMode } = useColorMode();
+  const { isAuthenticated } = useAuth();
   const { t } = useTranslation('navbar');
   const router = useRouter();
   const commonColors = useColorModeValue('white', 'gray.800');
-  // const readSyllabus = JSON.parse(syllabusList);
   const prismicRef = process.env.PRISMIC_REF;
   const prismicApi = process.env.PRISMIC_API;
   const { borderColor } = useStyle();
 
   useEffect(() => {
-    const hasNavItems = NAV_ITEMS?.length > 0;
+    const hasNavItems = navbarItems?.length > 0;
 
-    if (haveSession && hasNavItems) {
-      setPrivateItems(NAV_ITEMS.filter((item) => item?.private));
+    if (isAuthenticated && hasNavItems) {
+      setPrivateItems(navbarItems.filter((item) => item?.private));
     }
-  }, [haveSession, NAV_ITEMS]);
-  const publicItems = NAV_ITEMS.filter((item) => !item.private) || [];
+  }, [isAuthenticated, navbarItems]);
+  const publicItems = navbarItems.filter((item) => !item.private) || [];
   const customPublicItems = [...publicItems];
   const allItems = [...privateItems, ...customPublicItems];
   const itemListAsc = allItems.sort((a, b) => a.position - b.position);
@@ -59,7 +59,6 @@ function MobileNav({
       gridGap="8px"
       bg={useColorModeValue('white', 'gray.800')}
       p={4}
-      // display={{ md: 'none' }}
       borderBottom={1}
       borderStyle="solid"
       borderColor={useColorModeValue('gray.200', 'gray.900')}
@@ -91,11 +90,6 @@ function MobileNav({
           />
         );
       })}
-      {/* {mktCourses?.length > 0 && (
-        <Box display={{ base: 'block', md: 'none' }}>
-          <UpgradeExperience data={mktCourses} />
-        </Box>
-      )} */}
 
       <Box display={{ base: 'flex', md: 'none' }} padding="0.5rem 0">
         <NextChakraLink
@@ -113,18 +107,6 @@ function MobileNav({
           {t('login')}
         </NextChakraLink>
       </Box>
-
-      {/* {isAuthenticated && !hasPaidSubscription && (
-        <Box
-          margin="0 0 1rem 0"
-          borderTop={1}
-          borderStyle="solid"
-          padding="1.45rem 0 0 0"
-          borderColor={borderColor}
-        >
-          <UpgradeExperience width="100%" display={{ base: 'flex', sm: 'none' }} />
-        </Box>
-      )} */}
       <Box
         borderTop={1}
         borderStyle="solid"
@@ -135,7 +117,6 @@ function MobileNav({
         gridGap="20px"
       >
         <IconButton
-          // style={{ margin: '14px auto 0 auto' }}
           display="flex"
           _hover={{
             background: commonColors,
@@ -161,17 +142,14 @@ function MobileNav({
 }
 
 MobileNav.propTypes = {
-  haveSession: PropTypes.bool.isRequired,
-  NAV_ITEMS: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  navbarItems: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   onClickLink: PropTypes.func.isRequired,
   mktCourses: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
-  isAuthenticated: PropTypes.bool.isRequired,
-  hasPaidSubscription: PropTypes.bool.isRequired,
 };
 
 MobileNav.defaultProps = {
-  NAV_ITEMS: [
+  navbarItems: [
     {
       href: '/',
       description: '',

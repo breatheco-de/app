@@ -12,7 +12,6 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import styles from '../../../styles/flags.module.css';
-import navbarTR from '../translations/navbar';
 import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import NextChakraLink from './NextChakraLink';
@@ -26,13 +25,13 @@ function LanguageSelector({ display, translations, ...rest }) {
   const locale = router.locale === 'default' ? 'en' : router.locale;
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
 
-  const { languagesTR } = navbarTR[locale];
+  const languages = t('navbar:languages', {}, { returnObjects: true });
   const [languagesOpen, setLanguagesOpen] = useState(false);
-  const currentLanguage = languagesTR.filter((l) => l.value === locale)[0];
+  const currentLanguage = languages.filter((l) => l.value === locale)[0];
   const externalTranslations = userSession?.translations || translations;
   const translationsPropsExists = externalTranslations?.length > 0;
   const currentTranslationLanguage = translationsPropsExists && externalTranslations?.find((l) => l.lang === locale);
-  const translationData = (translationsPropsExists && externalTranslations) || languagesTR;
+  const translationData = (translationsPropsExists && externalTranslations) || languages;
 
   const updateSettingsLang = async (lang) => {
     try {
@@ -96,7 +95,7 @@ function LanguageSelector({ display, translations, ...rest }) {
           padding="12px"
         >
           {translationData.map((l) => {
-            const currLang = languagesTR.filter((language) => language?.value === l?.lang)[0];
+            const currLang = languages.filter((language) => language?.value === l?.lang)[0];
             const value = translationsPropsExists ? currLang?.value : l.value;
             const label = translationsPropsExists ? currLang?.label : l.label;
             const path = translationsPropsExists ? l?.link : router.asPath;

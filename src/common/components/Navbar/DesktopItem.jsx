@@ -16,13 +16,13 @@ import { useRouter } from 'next/router';
 import { memo } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
-import Icon from '../../common/components/Icon';
-import { isAbsoluteUrl, parseQuerys } from '../../utils/url';
-import NextChakraLink from '../../common/components/NextChakraLink';
-import CustomText from '../../common/components/Text';
-import useStyle from '../../common/hooks/useStyle';
-import { ArrowDown, ArrowRight } from '../../common/components/Icon/components';
-import { getStorageItem } from '../../utils';
+import Icon from '../Icon';
+import { isAbsoluteUrl, parseQuerys } from '../../../utils/url';
+import NextChakraLink from '../NextChakraLink';
+import CustomText from '../Text';
+import useStyle from '../../hooks/useStyle';
+import { ArrowDown, ArrowRight } from '../Icon/components';
+import { getStorageItem } from '../../../utils';
 
 const StyledBox = styled(Box)`
 .custom-popover {
@@ -190,7 +190,7 @@ function DesktopItem({ item, readSyllabus }) {
                     >
                       {item?.with_popover?.title}
                       <span>
-                        <ArrowRight width="12px" height="12px" color="#0097CD" style={{ display: 'inline', marginLeft: '8px' }} />
+                        <ArrowRight width="12px" height="12px" color={hexColor.blueDefault} style={{ display: 'inline', marginLeft: '8px' }} />
                       </span>
                     </NextChakraLink>
                   )}
@@ -264,7 +264,6 @@ function DesktopItem({ item, readSyllabus }) {
                               <NextChakraLink
                                 href={`${l.href}${child.slug ? parseQuerys({ internal_cta_placement: `navbar-${child.slug}` }, l.href.includes('?')) : ''}`}
                                 key={l.href}
-                                // role="group"
                                 display="block"
                                 p={2}
                                 style={{ borderRadius: '5px' }}
@@ -273,7 +272,6 @@ function DesktopItem({ item, readSyllabus }) {
                                 <Stack direction="row" align="center">
                                   <Box>
                                     <Text
-                                      // transition="all .3s ease"
                                       color={getColorLink(l.href)}
                                       _groupHover={{ color: groupHoverColor }}
                                       fontWeight={500}
@@ -282,14 +280,13 @@ function DesktopItem({ item, readSyllabus }) {
                                     </Text>
                                   </Box>
                                   <Flex
-                                    // transition="all .3s ease"
                                     opacity={1}
                                     justify="flex-start"
                                     align="center"
                                     flex={1}
                                   >
                                     <ArrowRight
-                                      color="#0097CD"
+                                      color={hexColor.blueDefault}
                                       width="12px"
                                       height="12px"
                                     />
@@ -315,7 +312,6 @@ function DesktopItem({ item, readSyllabus }) {
                         <Stack direction="row" align="center">
                           <Box>
                             <Text
-                              // transition="all .3s ease"
                               color={getColorLink(child.href)}
                               _groupHover={{ color: groupHoverColor }}
                               fontWeight={500}
@@ -324,7 +320,6 @@ function DesktopItem({ item, readSyllabus }) {
                             </Text>
                           </Box>
                           <Flex
-                            // transition="all .3s ease"
                             opacity={1}
                             justify="flex-start"
                             align="center"
@@ -353,14 +348,12 @@ function DesktopItem({ item, readSyllabus }) {
           alignItems="center"
           p={2}
           href={`${item.href}${item.id ? parseQuerys({ internal_cta_placement: `navbar-${item.id}` }, item.href.includes('?')) : ''}` ?? '#'}
-          // locale={router.locale}
           target={isAbsoluteUrl(item.href) ? '_blank' : undefined}
           rel={isAbsoluteUrl(item.href) ? 'noopener noreferrer' : undefined}
           fontSize="sm"
           textTransform="uppercase"
           fontWeight={700}
           color={getColorLink(item.href || item.asPath)}
-          // color={linkColor}
           _hover={{
             textDecoration: 'none',
             color: 'blue.default',

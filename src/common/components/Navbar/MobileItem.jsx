@@ -15,10 +15,10 @@ import {
 import PropTypes from 'prop-types';
 // import { useRouter } from 'next/router';
 import Image from 'next/image';
-import NextChakraLink from '../../common/components/NextChakraLink';
-import Icon from '../../common/components/Icon';
-import { isAbsoluteUrl } from '../../utils/url';
-import useStyle from '../../common/hooks/useStyle';
+import NextChakraLink from '../NextChakraLink';
+import Icon from '../Icon';
+import { isAbsoluteUrl } from '../../../utils/url';
+import useStyle from '../../hooks/useStyle';
 
 function MobileItem({
   label, subMenu, href, onClickLink, description, icon, readSyllabus, with_popover: withPopover, image,

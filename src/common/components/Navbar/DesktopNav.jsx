@@ -2,19 +2,21 @@ import { Stack } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { memo, useEffect, useState } from 'react';
 import DesktopItem from './DesktopItem';
+import useAuth from '../../hooks/useAuth';
 
-function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
+function DesktopNav({ navbarItems, extraContent }) {
   const [privateItems, setPrivateItems] = useState([]);
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    const hasNavItems = NAV_ITEMS?.length > 0;
+    const hasNavItems = navbarItems?.length > 0;
 
-    if (haveSession && hasNavItems) {
-      setPrivateItems(NAV_ITEMS.filter((item) => item.private === true));
+    if (isAuthenticated && hasNavItems) {
+      setPrivateItems(navbarItems.filter((item) => item.private === true));
     }
-  }, [haveSession, NAV_ITEMS]);
+  }, [isAuthenticated, navbarItems]);
 
-  const publicItems = NAV_ITEMS?.filter((item) => !item.private) || [];
+  const publicItems = navbarItems?.filter((item) => !item.private) || [];
   const allItems = [...privateItems, ...publicItems].sort((a, b) => a.position - b.position);
 
   const prepareSubMenuData = (item) => {
@@ -44,8 +46,7 @@ function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
 }
 
 DesktopNav.propTypes = {
-  haveSession: PropTypes.bool.isRequired,
-  NAV_ITEMS: PropTypes.arrayOf(
+  navbarItems: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string.isRequired,
       description: PropTypes.string,
@@ -65,7 +66,7 @@ DesktopNav.propTypes = {
 };
 
 DesktopNav.defaultProps = {
-  NAV_ITEMS: [
+  navbarItems: [
     {
       href: '/',
       description: '',
