@@ -17,7 +17,6 @@ import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
 import DesktopNav from './DesktopNav';
 import MobileNav from './MobileNav';
-import { usePersistent } from '../../hooks/usePersistent';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useSession from '../../hooks/useSession';
 import Heading from '../Heading';
@@ -43,7 +42,7 @@ function Navbar({ translations, pageProps }) {
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const [hasPaidSubscription, setHasPaidSubscription] = usePersistent('hasPaidSubscription', false);
+  const [hasPaidSubscription, setHasPaidSubscription] = useState(false);
 
   const { t } = useTranslation('navbar');
   const router = useRouter();
@@ -104,7 +103,6 @@ function Navbar({ translations, pageProps }) {
   };
 
   useEffect(() => {
-    // verify if accessToken exists
     if (!isLoading && isAuthenticated) {
       verifyIfHasPaidSubscription();
     }
@@ -145,8 +143,6 @@ function Navbar({ translations, pageProps }) {
     fetchMktCourses();
   }, [locale]);
 
-  const coursesList = mktCourses?.length > 0 ? mktCourses : [];
-
   useEffect(() => {
     if (pageProps?.existsWhiteLabel) {
       setNavbarItems(whiteLabelitems);
@@ -181,6 +177,30 @@ function Navbar({ translations, pageProps }) {
   };
 
   if (pageProps?.previewMode) return null;
+
+  // manage submenus in level 1
+  const prepareSubMenuData = (item) => {
+    if (item.id === 'bootcamps') {
+      return mktCourses;
+    }
+    return item?.subMenu;
+  };
+
+  const allItems = navbarItems?.length > 0 ? navbarItems : preDefinedItems;
+
+  const privateItems = allItems?.filter((item) => (isAuthenticated ? item.private : false)) || [];
+  const publicItems = allItems?.filter((item) => !item.private) || [];
+  const allNavbarItems = [...privateItems, ...publicItems]
+    .map((item) => {
+      const submenuData = prepareSubMenuData(item);
+      const subMenuLength = item.subMenu?.length;
+
+      return ({
+        ...item,
+        subMenu: subMenuLength > 1 ? item.subMenu : submenuData,
+      });
+    })
+    .sort((a, b) => a.position - b.position);
 
   return (
     <Box position="relative" zIndex={100}>
@@ -265,10 +285,7 @@ function Navbar({ translations, pageProps }) {
           </NextLink>
 
           <Flex display="flex" ml={10}>
-            <DesktopNav
-              navbarItems={navbarItems?.length > 0 ? navbarItems : preDefinedItems}
-              extraContent={coursesList}
-            />
+            <DesktopNav navbarItems={allNavbarItems} />
           </Flex>
         </Flex>
 
@@ -524,12 +541,10 @@ function Navbar({ translations, pageProps }) {
 
       <Collapse display={{ lg: 'block' }} in={isOpen} animateOpacity>
         <MobileNav
-          mktCourses={coursesList}
-          navbarItems={navbarItems?.length > 0 ? navbarItems : preDefinedItems}
+          navbarItems={allNavbarItems}
           translations={translations}
           onClickLink={onToggle}
         />
-
       </Collapse>
     </Box>
   );

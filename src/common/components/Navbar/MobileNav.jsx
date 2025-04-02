@@ -6,7 +6,6 @@ import {
   Flex,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Icon from '../Icon';
@@ -14,41 +13,18 @@ import MobileItem from './MobileItem';
 import LanguageSelector from '../LanguageSelector';
 import NextChakraLink from '../NextChakraLink';
 import useStyle from '../../hooks/useStyle';
-import useAuth from '../../hooks/useAuth';
 import { setStorageItem } from '../../../utils';
 
 function MobileNav({
-  navbarItems, translations, mktCourses, onClickLink,
+  navbarItems, translations, onClickLink,
 }) {
-  const [privateItems, setPrivateItems] = useState([]);
   const { colorMode, toggleColorMode } = useColorMode();
-  const { isAuthenticated } = useAuth();
   const { t } = useTranslation('navbar');
   const router = useRouter();
   const commonColors = useColorModeValue('white', 'gray.800');
   const prismicRef = process.env.PRISMIC_REF;
   const prismicApi = process.env.PRISMIC_API;
   const { borderColor } = useStyle();
-
-  useEffect(() => {
-    const hasNavItems = navbarItems?.length > 0;
-
-    if (isAuthenticated && hasNavItems) {
-      setPrivateItems(navbarItems.filter((item) => item?.private));
-    }
-  }, [isAuthenticated, navbarItems]);
-  const publicItems = navbarItems.filter((item) => !item.private) || [];
-  const customPublicItems = [...publicItems];
-  const allItems = [...privateItems, ...customPublicItems];
-  const itemListAsc = allItems.sort((a, b) => a.position - b.position);
-
-  // manage submenus in level 1
-  const prepareSubMenuData = (item) => {
-    if (item.id === 'bootcamps') {
-      return mktCourses;
-    }
-    return item?.subMenu;
-  };
 
   return (
     <Flex
@@ -63,11 +39,10 @@ function MobileNav({
       borderStyle="solid"
       borderColor={useColorModeValue('gray.200', 'gray.900')}
     >
-      {itemListAsc?.length > 0 && itemListAsc.map((item) => {
+      {navbarItems.map((item) => {
         const {
-          label, href, description, icon,
+          label, href, description, icon, subMenu,
         } = item;
-        const submenuData = prepareSubMenuData(item);
 
         if (item.slug === 'courses' && !prismicRef && !prismicApi) {
           return null;
@@ -81,9 +56,7 @@ function MobileNav({
             description={description}
             icon={icon}
             label={label}
-            subMenu={item?.subMenu?.length > 1
-              ? item?.subMenu
-              : submenuData}
+            subMenu={subMenu}
             href={href}
             onClickLink={onClickLink}
             readSyllabus={[]}
@@ -145,7 +118,6 @@ MobileNav.propTypes = {
   navbarItems: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   onClickLink: PropTypes.func.isRequired,
-  mktCourses: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
 };
 
 MobileNav.defaultProps = {
@@ -160,7 +132,6 @@ MobileNav.defaultProps = {
     },
   ],
   translations: undefined,
-  mktCourses: [],
 };
 
 export default MobileNav;
