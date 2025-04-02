@@ -81,8 +81,6 @@ function LanguageSelector({ display, translations, ...rest }) {
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        // border={0}
-        // boxShadow="dark-lg"
         bg={popoverContentBgColor}
         rounded="md"
         width={{ base: '100%', md: 'auto' }}
@@ -138,11 +136,12 @@ function LanguageSelector({ display, translations, ...rest }) {
 
 LanguageSelector.propTypes = {
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
-  display: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
+  display: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 };
 
 LanguageSelector.defaultProps = {
   translations: {},
+  display: 'block',
 };
 
 export default LanguageSelector;

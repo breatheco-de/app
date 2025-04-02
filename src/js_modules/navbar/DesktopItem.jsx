@@ -55,7 +55,7 @@ function DesktopItem({ item, readSyllabus }) {
 
   const getColorIcon = (link) => {
     if (router?.pathname === link || router?.asPath === link || router?.pathname.includes(link)) {
-      return '#0097CD';
+      return hexColor.blueDefault;
     }
     return 'gray';
   };
@@ -123,7 +123,6 @@ function DesktopItem({ item, readSyllabus }) {
           <Box
             bg={popoverContentBgColor}
             rounded="md"
-            // minW="lg"
             maxW="40rem"
             position="absolute"
             className="custom-popover"
@@ -182,8 +181,6 @@ function DesktopItem({ item, readSyllabus }) {
                   <Text fontWeight={500}>{item.description}</Text>
                   {withPopover && (
                     <NextChakraLink
-                      //href={item?.with_popover.link}
-                      //href={`${item.with_popover.link}?token=${token}`}
                       href={`${item.with_popover.link}?token=${token}${item.slug ? parseQuerys({ internal_cta_placement: `navbar-${item.slug}` }, true) : ''}`}
                       key={item?.with_popover.link}
                       display="block"
@@ -205,7 +202,6 @@ function DesktopItem({ item, readSyllabus }) {
                     defaultIndex={0}
                     display="flex"
                     flexDirection={{ base: 'column', md: 'row' }}
-                    // gridGap="8px"
                     variant="unstyled"
                   >
                     <TabList display="flex" gridGap="12px" flexDirection={{ base: 'row', md: 'column' }} width={{ base: '100%', md: 'auto' }}>
@@ -222,26 +218,21 @@ function DesktopItem({ item, readSyllabus }) {
                               key={`${label}-${href}`}
                               borderLeft="4px solid transparent"
                               _selected={{ borderLeft: '4px solid', borderColor: 'blue.default', opacity: 1 }}
-                              // my="2px"
                               opacity={0.7}
                               _hover={{ borderLeft: '4px solid', borderColor: 'blue.default', opacity: 1 }}
                               borderRadius="2px"
                               justifyContent="flex-start"
                               style={{
-                                // transition: 'all 0.15s ease-in-out',
                                 padding: '0.5rem 0.8rem',
                               }}
                               gridGap="14px"
-                              // p={2}
                               textAlign="left"
                             >
                               {icon && (isUrl ? (
                                 <Image src={icon} width={33} height={33} alt={label} style={{ minWidth: '33px', minHeight: '33px' }} />
                               ) : <Icon icon={icon} width="33px" height="30px" color={hexColor.blueDefault} />)}
                               <Text
-                                // width="100%"
                                 minWidth="130px"
-                                // transition="all .3s ease"
                                 color={getColorLink(href)}
                                 _groupHover={{ color: groupHoverColor }}
                                 fontWeight={500}

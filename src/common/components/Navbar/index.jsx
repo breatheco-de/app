@@ -5,7 +5,7 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import {
-  useState, memo, useEffect, Fragment,
+  useState, memo, useEffect,
 } from 'react';
 import Image from 'next/image';
 import useTranslation from 'next-translate/useTranslation';
@@ -33,7 +33,7 @@ import { parseQuerys } from '../../../utils/url';
 import useStyle from '../../hooks/useStyle';
 import { getAllMySubscriptions } from '../../handlers/subscriptions';
 
-function NavbarWithSubNavigation({ translations, pageProps }) {
+function Navbar({ translations, pageProps }) {
   const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
 
   const [uniqueLanguages, setUniqueLanguages] = useState([]);
@@ -131,6 +131,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   useEffect(() => {
     const filteredLanguages = [...new Map(((translationsPropsExists && translations) || languagesTR)
       .map((lang) => [lang.value, lang])).values()];
+    console.log('filteredLanguages', filteredLanguages);
     setUniqueLanguages(filteredLanguages);
   }, [router.asPath]);
 
@@ -400,7 +401,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                           const getLangName = value === 'en' ? 'Eng' : 'Esp';
 
                           return (
-                            <>
+                            <Box display="flex" flexDirection="row" key={value}>
                               <Link
                                 _hover={{
                                   textDecoration: 'none',
@@ -408,7 +409,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                                 }}
                                 color={locale === lang ? 'blue.default' : lightColor}
                                 fontWeight={locale === lang ? '700' : '400'}
-                                key={value}
                                 href={link}
                                 display="flex"
                                 alignItems="center"
@@ -422,7 +422,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                               {i < langs.length - 1 && (
                                 <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
                               )}
-                            </>
+                            </Box>
                           );
                         })}
                       </Box>
@@ -433,7 +433,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                   <Box p="1rem 1.5rem 0 1.5rem">
                     <Stack flexDirection="row" gridGap="10px" pb="15px">
                       <Avatar
-                        // name={user?.first_name}
                         width="62px"
                         marginY="auto"
                         height="62px"
@@ -555,13 +554,13 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   );
 }
 
-NavbarWithSubNavigation.propTypes = {
+Navbar.propTypes = {
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   pageProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array, PropTypes.bool])),
 };
-NavbarWithSubNavigation.defaultProps = {
+Navbar.defaultProps = {
   translations: undefined,
   pageProps: undefined,
 };
 
-export default memo(NavbarWithSubNavigation);
+export default memo(Navbar);

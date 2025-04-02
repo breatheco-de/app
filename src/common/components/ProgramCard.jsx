@@ -553,8 +553,8 @@ function ProgramCard({
 ProgramCard.propTypes = {
   programName: PropTypes.string.isRequired,
   programDescription: PropTypes.string,
-  startsIn: PropTypes.instanceOf(Date),
-  endsAt: PropTypes.instanceOf(Date),
+  startsIn: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]),
+  endsAt: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]),
   signInDate: PropTypes.instanceOf(Date),
   freeTrialExpireDate: PropTypes.instanceOf(Date),
   haveFreeTrial: PropTypes.bool,

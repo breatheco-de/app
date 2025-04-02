@@ -8,7 +8,6 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { Fragment } from 'react';
-import CustomTheme from '../../../styles/theme';
 import AvatarUser from './AvatarUser';
 import Text from './Text';
 import Icon from './Icon';
@@ -35,7 +34,7 @@ function ProjectsSection({
   };
   const hasStarted = statusTimeString(new Date(startsIn)) === 'started';
 
-  const syllabusArray = () => {
+  const getSyllabusArray = () => {
     const contentArray = [];
     if (syllabusContent?.totalLessons) {
       contentArray.push({
@@ -75,22 +74,24 @@ function ProjectsSection({
   const existsMentors = assistants?.length > 0 || isNumber(teacher?.id);
   const countOfMentors = assistants?.length + (teacher?.id ? 1 : 0);
 
-  return (syllabusArray()?.length > 0 || assistants?.length > 0) && (
+  const syllabusArray = getSyllabusArray();
+
+  return (syllabusArray?.length > 0 || assistants?.length > 0) && (
     <Flex justifyContent="space-between" alignItems="center" marginTop="10px" padding="10px" borderRadius="5px" background={bgColor}>
-      {syllabusArray()?.length > 0 && (
+      {syllabusArray?.length > 0 && (
         <Box display="flex" flexDirection="column" gridGap="8px">
-          {syllabusArray().map((elem) => (
-            <Text
+          {syllabusArray.map((elem) => (
+            <Flex
+              key={elem?.name}
               fontSize="xs"
               lineHeight="14px"
               fontWeight="700"
               color={textColor}
-              key={elem?.name}
               display="flex"
             >
               <Icon
-                width={elem?.icon === 'laptop' ? '14px' : '14px'}
-                height={elem?.icon === 'laptop' ? '14px' : '14px'}
+                width="14px"
+                height="14px"
                 mr="7px"
                 color={hexColor.blueDefault}
                 icon={elem?.icon || 'book'}
@@ -98,13 +99,13 @@ function ProjectsSection({
               <Box>
                 {((isAvailableAsSaas === false || statusActive || isFreeTrial) && (hasStarted || courseProgress > 0)) && (
                   <>
-                    <span style={{ color: CustomTheme.colors.blue.default2 }}>{elem.completed || 0}</span>
+                    <Text as="span" color="blue.default2">{elem.completed || 0}</Text>
                     /
                   </>
                 )}
                 {`${elem.total} ${t(elem.name)}`}
               </Box>
-            </Text>
+            </Flex>
           ))}
         </Box>
       )}
@@ -169,7 +170,7 @@ function ProjectsSection({
 }
 
 ProjectsSection.propTypes = {
-  startsIn: PropTypes.instanceOf(Date),
+  startsIn: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]),
   syllabusContent: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   courseProgress: PropTypes.number,
   usersConnected: PropTypes.arrayOf(PropTypes.number),

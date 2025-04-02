@@ -85,7 +85,7 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
           >
             {activeCohorts.map((item) => (
               <Programs
-                key={item?.cohort?.slug}
+                key={item?.slug}
                 item={item}
                 handleChoose={handleChoose}
                 onOpenModal={() => setUpgradeModalIsOpen(true)}
@@ -116,6 +116,7 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
           >
             {marketingCourses.filter(filterForNonSaasStudents).map((item) => (
               <ProgramCard
+                key={item.slug}
                 isMarketingCourse
                 icon="coding"
                 iconLink={item?.icon_url}
@@ -182,7 +183,7 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
           >
             {showFinished && finishedCohorts.map((item) => (
               <Programs
-                key={item?.cohort?.slug}
+                key={item?.slug}
                 item={item}
                 handleChoose={handleChoose}
                 onOpenModal={() => setUpgradeModalIsOpen(true)}
