@@ -4,19 +4,19 @@ import { Box, Button, Flex, useColorModeValue, useToast } from '@chakra-ui/react
 import useTranslation from 'next-translate/useTranslation';
 import { Fragment, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Heading from '../../common/components/Heading';
-import Icon from '../../common/components/Icon';
-import Text from '../../common/components/Text';
-import useStyle from '../../common/hooks/useStyle';
-import useSignup from '../../common/store/actions/signupAction';
-import bc from '../../common/services/breathecode';
-import { reportDatalayer } from '../../utils/requests';
-import { getQueryString, getStorageItem, toCapitalize, unSlugify, getBrowserInfo } from '../../utils';
-import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
-import { SILENT_CODE } from '../../lib/types';
-import axiosInstance from '../../axios';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
-import { getCohort } from '../../common/handlers/cohorts';
+import Heading from '../Heading';
+import Icon from '../Icon';
+import Text from '../Text';
+import useStyle from '../../hooks/useStyle';
+import useSignup from '../../store/actions/signupAction';
+import bc from '../../services/breathecode';
+import { reportDatalayer } from '../../../utils/requests';
+import { getQueryString, getStorageItem, toCapitalize, unSlugify, getBrowserInfo } from '../../../utils';
+import { getAllMySubscriptions } from '../../handlers/subscriptions';
+import { SILENT_CODE } from '../../../lib/types';
+import axiosInstance from '../../../axios';
+import useCohortHandler from '../../hooks/useCohortHandler';
+import { getCohort } from '../../handlers/cohorts';
 
 function Summary() {
   const { t, lang } = useTranslation('signup');

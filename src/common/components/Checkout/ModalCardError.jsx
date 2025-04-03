@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { Button, Flex, Text } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import SimpleModal from '../../common/components/SimpleModal';
+import SimpleModal from '../SimpleModal';
 
 function ModalCardError({
   openDeclinedModal, isSubmitting, setOpenDeclinedModal, declinedModalProps, handleTryAgain, disableTryAgain, disableClose,

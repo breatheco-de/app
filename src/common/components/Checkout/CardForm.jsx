@@ -7,13 +7,13 @@ import {
   Box, Button, Divider, Flex, Image, Input, useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import FieldForm from '../../common/components/Forms/FieldForm';
-import useSignup from '../../common/store/actions/signupAction';
+import FieldForm from '../Forms/FieldForm';
+import useSignup from '../../store/actions/signupAction';
 import 'react-datepicker/dist/react-datepicker.css';
-import useStyle from '../../common/hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import ModalCardError from './ModalCardError';
-import Icon from '../../common/components/Icon';
-import Text from '../../common/components/Text';
+import Icon from '../Icon';
+import Text from '../Text';
 
 const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
   const { t } = useTranslation('signup');
