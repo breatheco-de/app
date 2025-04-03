@@ -7,11 +7,11 @@ import {
 } from '@chakra-ui/react';
 import { PrismicRichText } from '@prismicio/react';
 import Image from 'next/image';
-import { MotionBox } from '../../common/components/Animated';
-import Heading from '../../common/components/Heading';
-import Icon from '../../common/components/Icon';
-import Button from '../../common/components/Button';
-import PrismicTextComponent from '../../common/components/PrismicTextComponent';
+import { MotionBox } from './Animated';
+import Heading from './Heading';
+import Icon from './Icon';
+import Button from './Button';
+import PrismicTextComponent from './PrismicTextComponent';
 
 function IntroductionSection({
   data, slice, fitContent, fontFamily, ...rest
