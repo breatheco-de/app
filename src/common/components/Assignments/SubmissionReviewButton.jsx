@@ -5,15 +5,15 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { LinkIcon } from '@chakra-ui/icons';
-import Icon from '../../common/components/Icon';
-import bc from '../../common/services/breathecode';
-import Text from '../../common/components/Text';
-import Link from '../../common/components/NextChakraLink';
-import useStyle from '../../common/hooks/useStyle';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
+import Icon from '../Icon';
+import bc from '../../services/breathecode';
+import Text from '../Text';
+import Link from '../NextChakraLink';
+import useStyle from '../../hooks/useStyle';
+import useCohortHandler from '../../hooks/useCohortHandler';
 
-function PopoverHandler({ task, githubUrl, haveGithubDomain }) {
-  const [settingsOpen, setSettingsOpen] = useState(false);
+function SubmissionReviewButton({ task, githubUrl, haveGithubDomain }) {
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [assetData, setAssetData] = useState(null);
   const { state } = useCohortHandler();
@@ -41,7 +41,7 @@ function PopoverHandler({ task, githubUrl, haveGithubDomain }) {
           if (fileResp && fileResp.status < 400) {
             const respData = await fileResp.data;
             setFileData(respData);
-            setSettingsOpen(true);
+            setIsPopoverOpen(true);
           } else {
             toast({
               position: 'top',
@@ -52,7 +52,7 @@ function PopoverHandler({ task, githubUrl, haveGithubDomain }) {
             });
           }
         } else {
-          setSettingsOpen(true);
+          setIsPopoverOpen(true);
         }
       }
     }
@@ -64,8 +64,8 @@ function PopoverHandler({ task, githubUrl, haveGithubDomain }) {
 
         <Popover
           id="Avatar-Hover"
-          isOpen={settingsOpen}
-          onClose={() => setSettingsOpen(false)}
+          isOpen={isPopoverOpen}
+          onClose={() => setIsPopoverOpen(false)}
           trigger="click"
         >
           <PopoverTrigger>
@@ -149,14 +149,14 @@ function PopoverHandler({ task, githubUrl, haveGithubDomain }) {
   );
 }
 
-PopoverHandler.propTypes = {
+SubmissionReviewButton.propTypes = {
   task: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   githubUrl: PropTypes.string.isRequired,
   haveGithubDomain: PropTypes.bool,
 };
-PopoverHandler.defaultProps = {
+SubmissionReviewButton.defaultProps = {
   task: {},
   haveGithubDomain: false,
 };
 
-export default PopoverHandler;
+export default SubmissionReviewButton;
