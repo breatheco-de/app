@@ -11,7 +11,7 @@
     {
       "label": "Dashboard",
       "private": true,
-      "href": "{{selectedProgramSlug}}"
+      "href": "/choose-program"
     },
     {
       "id": "bootcamps",
@@ -127,7 +127,7 @@
     {
       "label": "Dashboard",
       "private": true,
-      "href": "{{selectedProgramSlug}}"
+      "href": "/choose-program"
     },
     {
       "label": "Más formas de aprender",

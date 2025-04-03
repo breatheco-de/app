@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-useless-fragment */
 import {
   Box, Button, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, useToast,
 } from '@chakra-ui/react';
