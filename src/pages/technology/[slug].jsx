@@ -131,7 +131,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   else contentPerPage = 10;
 
   const response = await bc.lesson({ sort_priority: 1, visibility: 'PUBLIC', is_deprecated: false }).techsBySort();
-  const technologiesFetched = response.data || [];
+  const technologiesFetched = response?.data || [];
 
   const isSortPriorityOne = technologiesFetched.some((tech) => tech.slug === slug);
   if (!isSortPriorityOne) contentPerPage = 20;
