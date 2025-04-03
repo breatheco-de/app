@@ -372,7 +372,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
                 selectedOption={selectedOption}
                 isInteractive={isInteractive}
                 currentAssetURL={currentAsset?.url}
-                cohortSessionID={cohortSession.id}
+                cohortSessionID={cohortSession?.id}
                 publicView={publicView}
                 provisioningVendors={provisioningVendors}
                 assetUrl={assetUrl}

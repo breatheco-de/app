@@ -7,10 +7,10 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import Heading from '../../common/components/Heading';
-import useStyle from '../../common/hooks/useStyle';
-import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
-import CouponTopBar from '../../common/components/CouponTopBar';
+import Heading from '../Heading';
+import useStyle from '../../hooks/useStyle';
+import ReactPlayerV2 from '../ReactPlayerV2';
+import CouponTopBar from '../CouponTopBar';
 
 function StickyBottomCta({
   asset,

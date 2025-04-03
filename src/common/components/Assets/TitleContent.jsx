@@ -1,7 +1,7 @@
 import { Flex, Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import Heading from '../../common/components/Heading';
-import Icon from '../../common/components/Icon';
+import Heading from '../Heading';
+import Icon from '../Icon';
 
 function TitleContent({
   title, icon, color, ...rest

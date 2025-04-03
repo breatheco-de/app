@@ -6,18 +6,18 @@ import {
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import { getStorageItem } from '../../utils';
-import noLearnpackAssets from '../../../public/no-learnpack-in-cloud.json';
-import useAuth from '../../common/hooks/useAuth';
-import Heading from '../../common/components/Heading';
-import Text from '../../common/components/Text';
-import Icon from '../../common/components/Icon';
+import { getStorageItem } from '../../../utils';
+import noLearnpackAssets from '../../../../public/no-learnpack-in-cloud.json';
+import useAuth from '../../hooks/useAuth';
+import Heading from '../Heading';
+import Text from '../Text';
+import Icon from '../Icon';
 import SimpleTable from './SimpleTable';
-import ModalToCloneProject from '../syllabus/ModalToCloneProject';
-import ShowOnSignUp from '../../common/components/ShowOnSignup';
-import useStyle from '../../common/hooks/useStyle';
-import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
-import ProjectInstructions from '../syllabus/ProjectInstructions';
+import ModalToCloneProject from '../../../js_modules/syllabus/ModalToCloneProject';
+import ShowOnSignUp from '../ShowOnSignup';
+import useStyle from '../../hooks/useStyle';
+import ReactPlayerV2 from '../ReactPlayerV2';
+import ProjectInstructions from '../../../js_modules/syllabus/ProjectInstructions';
 
 const TabletWithForm = React.forwardRef(({
   asset,

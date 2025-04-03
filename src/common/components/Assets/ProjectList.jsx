@@ -5,9 +5,9 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import Masonry from 'react-masonry-css';
 import { forwardRef } from 'react';
-import Text from '../../common/components/Text';
-import LoaderScreen from '../../common/components/LoaderScreen';
-import DynamicContentCard from '../../common/components/DynamicContentCard';
+import Text from '../Text';
+import LoaderScreen from '../LoaderScreen';
+import DynamicContentCard from '../DynamicContentCard';
 
 export const getDifficultyColors = (currDifficulty) => {
   const background = {

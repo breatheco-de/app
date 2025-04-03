@@ -20,7 +20,7 @@ import { getCohort } from '../../handlers/cohorts';
 
 function Summary() {
   const { t, lang } = useTranslation('signup');
-  const { cohortsAssignments, startDay, setCohortSession, getCohortsModules } = useCohortHandler();
+  const { cohortsAssignments, startDay, getCohortsModules } = useCohortHandler();
   const [readyToRedirect, setReadyToRedirect] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [updatedUser, setUpdatedUser] = useState(undefined);
@@ -131,11 +131,6 @@ function Summary() {
     const syllabusVersion = cohortFound?.syllabus_version;
     axiosInstance.defaults.headers.common.Academy = cohortFound.academy.id;
     const cohortDashboardLink = `${langLink}/cohort/${cohortFound?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
-
-    setCohortSession({
-      ...cohortFound,
-      selectedProgramSlug: cohortDashboardLink,
-    });
 
     if (cohortFound?.micro_cohorts?.length > 0 || !(cohortFound.slug in cohortsAssignments)) {
       router.push(cohortDashboardLink);

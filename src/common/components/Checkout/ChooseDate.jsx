@@ -6,9 +6,9 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
-import Text from '../../common/components/Text';
-import useSignup from '../../common/store/actions/signupAction';
-import bc from '../../common/services/breathecode';
+import Text from '../Text';
+import useSignup from '../../store/actions/signupAction';
+import bc from '../../services/breathecode';
 
 function ChooseDate({ cohort, ...rest }) {
   const [isLoading, setIsLoading] = useState(false);

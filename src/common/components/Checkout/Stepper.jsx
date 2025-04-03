@@ -1,10 +1,10 @@
 import { Box, Divider, Flex } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import Heading from '../../common/components/Heading';
-import Icon from '../../common/components/Icon';
-import Text from '../../common/components/Text';
-import useStyle from '../../common/hooks/useStyle';
+import Heading from '../Heading';
+import Icon from '../Icon';
+import Text from '../Text';
+import useStyle from '../../hooks/useStyle';
 
 function Stepper({ stepIndex, selectedPlanCheckoutData, isFreeTier, hideIndexList, isFirstStep, isSecondStep, isThirdStep, isFourthStep, handleGoBack }) {
   const { t } = useTranslation('signup');

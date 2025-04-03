@@ -6,15 +6,15 @@ import {
   Box, Flex,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
-import Heading from '../../common/components/Heading';
-import Signup from '../../common/components/Forms/Signup';
-import { getStorageItem, setStorageItem, getBrowserInfo } from '../../utils';
-import { BREATHECODE_HOST } from '../../utils/variables';
-import NextChakraLink from '../../common/components/NextChakraLink';
-import useStyle from '../../common/hooks/useStyle';
-import ModalInfo from '../../common/components/ModalInfo';
-import Text from '../../common/components/Text';
-import { reportDatalayer } from '../../utils/requests';
+import Heading from '../Heading';
+import Signup from '../Forms/Signup';
+import { getStorageItem, setStorageItem, getBrowserInfo } from '../../../utils';
+import { BREATHECODE_HOST } from '../../../utils/variables';
+import NextChakraLink from '../NextChakraLink';
+import useStyle from '../../hooks/useStyle';
+import ModalInfo from '../ModalInfo';
+import Text from '../Text';
+import { reportDatalayer } from '../../../utils/requests';
 
 function ContactInformation({
   courseChoosed, setVerifyEmailProps,

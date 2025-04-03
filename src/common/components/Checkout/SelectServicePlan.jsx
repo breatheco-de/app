@@ -3,15 +3,15 @@ import { Avatar, Box, Button, ListItem, UnorderedList, useColorModeValue } from 
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import Heading from '../../common/components/Heading';
-import useStyle from '../../common/hooks/useStyle';
-import bc from '../../common/services/breathecode';
-import { getQueryString, toCapitalize, unSlugify } from '../../utils';
-import { BREATHECODE_HOST } from '../../utils/variables';
-import LoaderScreen from '../../common/components/LoaderScreen';
-import Text from '../../common/components/Text';
-import { parseQuerys } from '../../utils/url';
-import Icon from '../../common/components/Icon';
+import Heading from '../Heading';
+import useStyle from '../../hooks/useStyle';
+import bc from '../../services/breathecode';
+import { getQueryString, toCapitalize, unSlugify } from '../../../utils';
+import { BREATHECODE_HOST } from '../../../utils/variables';
+import LoaderScreen from '../LoaderScreen';
+import Text from '../Text';
+import { parseQuerys } from '../../../utils/url';
+import Icon from '../Icon';
 
 function SelectServicePlan() {
   const { t, lang } = useTranslation('signup');

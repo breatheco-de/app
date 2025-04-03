@@ -4,16 +4,16 @@ import {
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useRef, useState } from 'react';
-import Heading from '../../common/components/Heading';
-import bc from '../../common/services/breathecode';
-import AlertMessage from '../../common/components/AlertMessage';
-import { getQueryString, getTimeProps, getBrowserInfo } from '../../utils';
-import useGoogleMaps from '../../common/hooks/useGoogleMaps';
-import useSignup from '../../common/store/actions/signupAction';
+import Heading from '../Heading';
+import bc from '../../services/breathecode';
+import AlertMessage from '../AlertMessage';
+import { getQueryString, getTimeProps, getBrowserInfo } from '../../../utils';
+import useGoogleMaps from '../../hooks/useGoogleMaps';
+import useSignup from '../../store/actions/signupAction';
 import ChooseDate from './ChooseDate';
-import useStyle from '../../common/hooks/useStyle';
-import { reportDatalayer } from '../../utils/requests';
-import { CardSkeleton } from '../../common/components/Skeleton';
+import useStyle from '../../hooks/useStyle';
+import { reportDatalayer } from '../../../utils/requests';
+import { CardSkeleton } from '../Skeleton';
 
 function LoaderContent({ cohortIsLoading }) {
   const { t } = useTranslation('signup');
