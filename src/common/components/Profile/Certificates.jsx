@@ -4,11 +4,11 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { es } from 'date-fns/locale';
 import Head from 'next/head';
-import Icon from '../../common/components/Icon';
-import Text from '../../common/components/Text';
-import ShareButton from '../../common/components/ShareButton';
-import useStyle from '../../common/hooks/useStyle';
-import { location } from '../../utils';
+import Icon from '../Icon';
+import Text from '../Text';
+import ShareButton from '../ShareButton';
+import useStyle from '../../hooks/useStyle';
+import { location } from '../../../utils';
 
 function Certificates({ certificates }) {
   const { t, lang } = useTranslation('profile');

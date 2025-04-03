@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { Box, Flex, Text } from '@chakra-ui/react';
-import Icon from '../../../common/components/Icon';
-import useStyle from '../../../common/hooks/useStyle';
+import Icon from '../../Icon';
+import useStyle from '../../../hooks/useStyle';
 import profileHandlers from './handlers';
-import { toCapitalize, unSlugify } from '../../../utils';
+import { toCapitalize, unSlugify } from '../../../../utils';
 import ButtonHandler from './ButtonHandler';
 
 function SubscriptionInfo({ subscription }) {

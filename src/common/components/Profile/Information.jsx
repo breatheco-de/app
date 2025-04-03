@@ -3,15 +3,15 @@ import useTranslation from 'next-translate/useTranslation';
 import Head from 'next/head';
 import { useCallback, useEffect, useState } from 'react';
 import Cropper from 'react-easy-crop';
-import ProfileForm from '../../common/components/ProfileForm';
-import Text from '../../common/components/Text';
-import useAuth from '../../common/hooks/useAuth';
-import useStyle from '../../common/hooks/useStyle';
-import bc from '../../common/services/breathecode';
-import { location } from '../../utils';
-import getCroppedImg from '../../utils/cropImage';
-import Icon from '../../common/components/Icon';
-import useUploadFileInChunks from '../../common/hooks/useUploadFileInChunks';
+import ProfileForm from '../ProfileForm';
+import Text from '../Text';
+import useAuth from '../../hooks/useAuth';
+import useStyle from '../../hooks/useStyle';
+import bc from '../../services/breathecode';
+import { location } from '../../../utils';
+import getCroppedImg from '../../../utils/cropImage';
+import Icon from '../Icon';
+import useUploadFileInChunks from '../../hooks/useUploadFileInChunks';
 
 function Information() {
   const { t } = useTranslation('profile');

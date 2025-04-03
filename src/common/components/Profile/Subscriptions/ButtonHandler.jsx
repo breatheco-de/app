@@ -5,8 +5,8 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import profileHandlers from './handlers';
-import { reportDatalayer } from '../../../utils/requests';
-import { getBrowserInfo } from '../../../utils';
+import { reportDatalayer } from '../../../../utils/requests';
+import { getBrowserInfo } from '../../../../utils';
 
 function ButtonHandler({
   subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, allSubscriptions, ...restStyles

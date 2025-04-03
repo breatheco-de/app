@@ -5,11 +5,11 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import { enUS, es } from 'date-fns/locale';
-import useStyle from '../../../common/hooks/useStyle';
-import bc from '../../../common/services/breathecode';
-import useSignup from '../../../common/store/actions/signupAction';
-import { toCapitalize, unSlugify } from '../../../utils';
-import { currenciesSymbols } from '../../../utils/variables';
+import useStyle from '../../../hooks/useStyle';
+import bc from '../../../services/breathecode';
+import useSignup from '../../../store/actions/signupAction';
+import { toCapitalize, unSlugify } from '../../../../utils';
+import { currenciesSymbols } from '../../../../utils/variables';
 
 function profileHandlers() {
   const { t, lang } = useTranslation('profile');

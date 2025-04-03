@@ -19,7 +19,7 @@ import Icon from './Icon';
 import { isNumber, isValidDate } from '../../utils';
 import useStyle from '../hooks/useStyle';
 import ProjectsSection from './ProjectsSection';
-import ButtonHandler from '../../js_modules/profile/Subscriptions/ButtonHandler';
+import ButtonHandler from '../../js_modules/Profile/Subscriptions/ButtonHandler';
 
 function FreeTagCapsule({ isExpired, freeTrialExpireDateValue, now, lang }) {
   const { t } = useTranslation('program-card');

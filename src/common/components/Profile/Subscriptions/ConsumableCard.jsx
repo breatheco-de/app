@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { Box, Button, Text } from '@chakra-ui/react';
-import Icon from '../../../common/components/Icon';
-import useStyle from '../../../common/hooks/useStyle';
+import Icon from '../../Icon';
+import useStyle from '../../../hooks/useStyle';
 
 function ConsumableCard({ title, icon, totalAvailable, onClick }) {
   const { featuredLight, hexColor } = useStyle();

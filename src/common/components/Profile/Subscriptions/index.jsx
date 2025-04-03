@@ -16,18 +16,18 @@ import { useEffect, useState, lazy, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import Image from 'next/image';
-import Icon from '../../../common/components/Icon';
-import Heading from '../../../common/components/Heading';
-import Text from '../../../common/components/Text';
-import useStyle from '../../../common/hooks/useStyle';
-import { location, slugToTitle, unSlugify } from '../../../utils';
-import useSubscriptionsHandler from '../../../common/store/actions/subscriptionAction';
-import { CardSkeleton, SimpleSkeleton } from '../../../common/components/Skeleton';
-import bc from '../../../common/services/breathecode';
+import Icon from '../../Icon';
+import Heading from '../../Heading';
+import Text from '../../Text';
+import useStyle from '../../../hooks/useStyle';
+import { location, slugToTitle, unSlugify } from '../../../../utils';
+import useSubscriptionsHandler from '../../../store/actions/subscriptionAction';
+import { CardSkeleton, SimpleSkeleton } from '../../Skeleton';
+import bc from '../../../services/breathecode';
 import SubscriptionCard from './SubscriptionCard';
 import ConsumableCard from './ConsumableCard';
 
-const ModalInfo = lazy(() => import('../../../common/components/ModalInfo'));
+const ModalInfo = lazy(() => import('../../ModalInfo'));
 
 function Subscriptions({ cohorts }) {
   const { t } = useTranslation('profile');
