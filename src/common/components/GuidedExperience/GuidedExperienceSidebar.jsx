@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import {
   Box,
@@ -11,16 +10,16 @@ import {
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import { languageFix } from '../../utils';
-import { Config, getSlideProps } from './config';
-import Heading from '../../common/components/Heading';
-import Timeline from '../../common/components/Timeline';
-import NextChakraLink from '../../common/components/NextChakraLink';
-import Text from '../../common/components/Text';
-import Icon from '../../common/components/Icon';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
-import useStyle from '../../common/hooks/useStyle';
-import useAuth from '../../common/hooks/useAuth';
+import { languageFix } from '../../../utils';
+import { getSlideProps } from './config';
+import Heading from '../Heading';
+import Timeline from '../Timeline';
+import NextChakraLink from '../NextChakraLink';
+import Text from '../Text';
+import Icon from '../Icon';
+import useCohortHandler from '../../hooks/useCohortHandler';
+import useStyle from '../../hooks/useStyle';
+import useAuth from '../../hooks/useAuth';
 
 function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentModuleIndex, handleStartDay, grantSyllabusAccess }) {
   const router = useRouter();
@@ -29,12 +28,11 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
   const { t, lang } = useTranslation('syllabus');
   const [moduleLoading, setModuleLoading] = useState(false);
   const { cohortSession, sortedAssignments } = useCohortHandler();
-  const { hexColor, backgroundColor, backgroundColor4, fontColor2 } = useStyle();
+  const { hexColor, colorMode, backgroundColor, backgroundColor4, fontColor2 } = useStyle();
   const background = useColorModeValue('#E4E8EE', '#283340');
 
   const Open = !isOpen;
-  const { height, display, position, zIndex, ...slideStyles } = getSlideProps(Open);
-  const { currentThemeValue } = Config();
+  const { display, zIndex, ...slideStyles } = getSlideProps(Open);
 
   const currentModule = sortedAssignments[currentModuleIndex];
   const nextModule = sortedAssignments[currentModuleIndex + 1];
@@ -149,7 +147,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
         </Box>
 
         <Box
-          className={`horizontal-sroll ${currentThemeValue}`}
+          className={`horizontal-sroll ${colorMode}`}
           style={{
             overflowX: 'hidden',
             overflowY: 'auto',

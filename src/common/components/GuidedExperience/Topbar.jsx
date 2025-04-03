@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import { Box, Button } from '@chakra-ui/react';
 import StatusPill from './StatusPill';
 import SubtasksPill from './SubtasksPill';
-import useStyle from '../../common/hooks/useStyle';
-import Heading from '../../common/components/Heading';
-import Icon from '../../common/components/Icon';
+import useStyle from '../../hooks/useStyle';
+import Heading from '../Heading';
+import Icon from '../Icon';
 import ProjectInstructions from './ProjectInstructions';
 
 function TopBar({ currentAsset, handleStartLearnpack, buttonsHandlerVariant, ...rest }) {

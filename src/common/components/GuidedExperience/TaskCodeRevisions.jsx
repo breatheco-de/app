@@ -1,16 +1,16 @@
 import { Box, Button, Divider, Flex, Textarea, useToast } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
-import useAuth from '../../common/hooks/useAuth';
-import useModuleHandler from '../../common/hooks/useModuleHandler';
-import useStyle from '../../common/hooks/useStyle';
-import bc from '../../common/services/breathecode';
-import CodeRevisionsList from '../../common/components/ReviewModal/CodeRevisionsList';
-import Icon from '../../common/components/Icon';
-import Heading from '../../common/components/Heading';
-import Text from '../../common/components/Text';
-import MarkDownParser from '../../common/components/MarkDownParser';
-import { error } from '../../utils/logging';
+import useAuth from '../../hooks/useAuth';
+import useModuleHandler from '../../hooks/useModuleHandler';
+import useStyle from '../../hooks/useStyle';
+import bc from '../../services/breathecode';
+import CodeRevisionsList from '../ReviewModal/CodeRevisionsList';
+import Icon from '../Icon';
+import Heading from '../Heading';
+import Text from '../Text';
+import MarkDownParser from '../MarkDownParser';
+import { error } from '../../../utils/logging';
 
 const inputReviewRateCommentLimit = 100;
 const defaultReviewRateData = {

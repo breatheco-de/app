@@ -1,6 +1,6 @@
 import React from 'react';
-import useModuleHandler from '../../common/hooks/useModuleHandler';
-import ProgressCircle from '../../common/components/ProgressCircle';
+import useModuleHandler from '../../hooks/useModuleHandler';
+import ProgressCircle from '../ProgressCircle';
 
 function SubtasksPill() {
   const { subTasks } = useModuleHandler();

@@ -3,14 +3,14 @@ import { Box, Button, Flex } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { intervalToDuration } from 'date-fns';
-import { intervalToHours, getBrowserInfo } from '../../utils';
+import { intervalToHours, getBrowserInfo } from '../../../utils';
 import ProjectInstructions from './ProjectInstructions';
-import useStyle from '../../common/hooks/useStyle';
-import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
-import KPI from '../../common/components/KPI';
-import Heading from '../../common/components/Heading';
-import Text from '../../common/components/Text';
-import { reportDatalayer } from '../../utils/requests';
+import useStyle from '../../hooks/useStyle';
+import ReactPlayerV2 from '../ReactPlayerV2';
+import KPI from '../KPI';
+import Heading from '../Heading';
+import Text from '../Text';
+import { reportDatalayer } from '../../../utils/requests';
 
 function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnpack, iframeURL, learnpackStart, setLearnpackStart }) {
   const { t } = useTranslation('syllabus');

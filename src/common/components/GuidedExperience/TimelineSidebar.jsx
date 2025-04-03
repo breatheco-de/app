@@ -4,13 +4,13 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import Heading from '../../common/components/Heading';
-import { Config, getSlideProps } from './config';
-import Timeline from '../../common/components/Timeline';
-import Icon from '../../common/components/Icon';
-import Text from '../../common/components/Text';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
-import useStyle from '../../common/hooks/useStyle';
+import Heading from '../Heading';
+import { getSlideProps } from './config';
+import Timeline from '../Timeline';
+import Icon from '../Icon';
+import Text from '../Text';
+import useCohortHandler from '../../hooks/useCohortHandler';
+import useStyle from '../../hooks/useStyle';
 
 function TimelineSidebar({
   onClickAssignment, showPendingTasks, setShowPendingTasks,
@@ -20,10 +20,8 @@ function TimelineSidebar({
   const { cohortSession, sortedAssignments } = useCohortHandler();
   const Open = !isOpen;
   const slide = getSlideProps(Open);
-  const {
-    themeColor, commonBorderColor, currentThemeValue, colorLight,
-  } = Config();
-  const { fontColor3, featuredCard } = useStyle();
+
+  const { fontColor3, featuredCard, colorMode, backgroundColor, lightColor, borderColor } = useStyle();
   const { existContentToShow = false } = teacherInstructions;
 
   return (
@@ -49,24 +47,29 @@ function TimelineSidebar({
         )}
       />
       <Box position={{ base: 'fixed', lg: Open ? 'initial' : 'fixed' }} display={Open ? 'initial' : 'none'} flex="0 0 auto" minWidth="290px" width={{ base: '74.6vw', md: '46.6vw', lg: '26.6vw' }} zIndex={{ base: 100, lg: Open ? 10 : 0 }}>
-        <Box style={slide}>
+        <Box
+          style={slide}
+          background={backgroundColor}
+          position={{ base: 'inherit', lg: 'sticky' }}
+          height={{ base: '100%', md: '100vh' }}
+          {...slide}
+        >
           <Box
             padding="1.5rem"
-            // position="sticky"
             display="flex"
             flexDirection="column"
             gridGap="6px"
             top={0}
             zIndex={200}
-            bg={themeColor}
+            bg={backgroundColor}
             borderBottom={1}
             borderStyle="solid"
-            borderColor={commonBorderColor}
+            borderColor={borderColor}
           >
             {cohortSession?.syllabus_version && (
               <Heading size="xsm">{cohortSession?.syllabus_version?.name}</Heading>
             )}
-            <Checkbox mb="-14px" onChange={(e) => setShowPendingTasks(e.target.checked)} color={colorLight}>
+            <Checkbox mb="-14px" onChange={(e) => setShowPendingTasks(e.target.checked)} color={lightColor}>
               {t('dashboard:modules.show-pending-tasks')}
             </Checkbox>
           </Box>
@@ -97,7 +100,7 @@ function TimelineSidebar({
           />
 
           <Box
-            className={`horizontal-sroll ${currentThemeValue}`}
+            className={`horizontal-sroll ${colorMode}`}
             height="100%"
             style={{
               overflowX: 'hidden',
@@ -148,7 +151,7 @@ function TimelineSidebar({
                   padding={{ base: '1rem', md: '1.5rem' }}
                   borderBottom={1}
                   borderStyle="solid"
-                  borderColor={commonBorderColor}
+                  borderColor={borderColor}
                 >
                   <Timeline
                     key={section.id}

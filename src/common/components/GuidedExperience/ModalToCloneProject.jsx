@@ -16,18 +16,18 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import Icon from '../../common/components/Icon';
-import { BREATHECODE_HOST } from '../../utils/variables';
-import Heading from '../../common/components/Heading';
-import Text from '../../common/components/Text';
-import NextChakraLink from '../../common/components/NextChakraLink';
-import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
-import MarkDownParser from '../../common/components/MarkDownParser';
-import useStyle from '../../common/hooks/useStyle';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
-import CustomBanner from '../../common/components/CustomBanner';
-import { reportDatalayer } from '../../utils/requests';
-import { getBrowserInfo } from '../../utils';
+import Icon from '../Icon';
+import { BREATHECODE_HOST } from '../../../utils/variables';
+import Heading from '../Heading';
+import Text from '../Text';
+import NextChakraLink from '../NextChakraLink';
+import ReactPlayerV2 from '../ReactPlayerV2';
+import MarkDownParser from '../MarkDownParser';
+import useStyle from '../../hooks/useStyle';
+import useCohortHandler from '../../hooks/useCohortHandler';
+import CustomBanner from '../CustomBanner';
+import { reportDatalayer } from '../../../utils/requests';
+import { getBrowserInfo } from '../../../utils';
 
 function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID, currentAssetURL, selectedOption, osList, selectedOs,
   setSelectedOs, resetOsSelector, resetOptionSelector, expanded, setExpanded, steps, onClose, isOnlyReadme, publicView, provisioningVendors, assetUrl,

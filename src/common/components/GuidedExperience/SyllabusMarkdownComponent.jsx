@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import useTranslation from 'next-translate/useTranslation';
-import ArticleMarkdown from '../../common/components/MarkDownParser/ArticleMarkdown';
-import { MDSkeleton } from '../../common/components/Skeleton';
+import ArticleMarkdown from '../MarkDownParser/ArticleMarkdown';
+import { MDSkeleton } from '../Skeleton';
 
 function SyllabusMarkdownComponent({
   ipynbHtmlUrl, readme, currentBlankProps, currentData, lesson,

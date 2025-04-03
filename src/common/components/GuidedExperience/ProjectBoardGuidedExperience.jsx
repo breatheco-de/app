@@ -8,12 +8,12 @@ import StatusPill from './StatusPill';
 import Topbar from './Topbar';
 import TaskCodeRevisions from './TaskCodeRevisions';
 import ProjectInstructions from './ProjectInstructions';
-import useModuleHandler from '../../common/hooks/useModuleHandler';
-import useStyle from '../../common/hooks/useStyle';
-import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
-import Heading from '../../common/components/Heading';
-import Text from '../../common/components/Text';
-import Icon from '../../common/components/Icon';
+import useModuleHandler from '../../hooks/useModuleHandler';
+import useStyle from '../../hooks/useStyle';
+import ReactPlayerV2 from '../ReactPlayerV2';
+import Heading from '../Heading';
+import Text from '../Text';
+import Icon from '../Icon';
 
 function ProjectHeading({ currentAsset, isDelivered, handleStartLearnpack }) {
   const { backgroundColor4, hexColor } = useStyle();

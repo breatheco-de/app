@@ -13,11 +13,11 @@ import Heading from '../Heading';
 import Text from '../Text';
 import Icon from '../Icon';
 import SimpleTable from './SimpleTable';
-import ModalToCloneProject from '../../../js_modules/syllabus/ModalToCloneProject';
+import ModalToCloneProject from '../GuidedExperience/ModalToCloneProject';
 import ShowOnSignUp from '../ShowOnSignup';
 import useStyle from '../../hooks/useStyle';
 import ReactPlayerV2 from '../ReactPlayerV2';
-import ProjectInstructions from '../../../js_modules/syllabus/ProjectInstructions';
+import ProjectInstructions from '../GuidedExperience/ProjectInstructions';
 
 const TabletWithForm = React.forwardRef(({
   asset,

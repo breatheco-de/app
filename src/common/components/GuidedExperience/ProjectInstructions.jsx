@@ -15,14 +15,14 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import noLearnpackAssets from '../../../public/no-learnpack-in-cloud.json';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
-import useModuleHandler from '../../common/hooks/useModuleHandler';
-import bc from '../../common/services/breathecode';
-import Heading from '../../common/components/Heading';
-import Text from '../../common/components/Text';
-import Icon from '../../common/components/Icon';
-import useAuth from '../../common/hooks/useAuth';
+import noLearnpackAssets from '../../../../public/no-learnpack-in-cloud.json';
+import useCohortHandler from '../../hooks/useCohortHandler';
+import useModuleHandler from '../../hooks/useModuleHandler';
+import bc from '../../services/breathecode';
+import Heading from '../Heading';
+import Text from '../Text';
+import Icon from '../Icon';
+import useAuth from '../../hooks/useAuth';
 
 const ModalToCloneProject = lazy(() => import('./ModalToCloneProject'));
 
