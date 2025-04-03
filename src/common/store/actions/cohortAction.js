@@ -6,11 +6,9 @@ import {
   SET_COHORTS_ASSIGNMENTS,
   SET_REVIEW_MODAL_STATE,
 } from '../types';
-import { usePersistent } from '../../hooks/usePersistent';
 
 const useCohortAction = () => {
   const dispatch = useDispatch();
-  const [, persistCohortSession] = usePersistent('cohortSession', {});
   const state = useSelector((reducerState) => reducerState.cohortReducer);
 
   const setCohortSession = (payload) => {
@@ -20,7 +18,6 @@ const useCohortAction = () => {
         cohortSession: payload,
       },
     });
-    if (payload !== undefined && payload !== null) persistCohortSession(payload);
   };
 
   const setTaskCohortNull = (payload) => {

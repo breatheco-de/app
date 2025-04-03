@@ -23,7 +23,7 @@ import useStyle from '../../hooks/useStyle';
 import { ArrowDown, ArrowRight } from '../Icon/components';
 import { getStorageItem } from '../../../utils';
 
-function DesktopNavItem({ item, readSyllabus }) {
+function DesktopNavItem({ item }) {
   const router = useRouter();
   const { borderColor, hexColor, navbarBackground, lightColor } = useStyle();
   const popoverBorderColor = useColorModeValue('gray.250', 'gray.dark');
@@ -58,7 +58,7 @@ function DesktopNavItem({ item, readSyllabus }) {
     if (isLessons) {
       return ({
         ...l,
-        subMenu: [...readSyllabus, ...l.subMenuContent],
+        subMenu: [...l.subMenuContent],
       });
     }
     return l;
@@ -374,7 +374,6 @@ DesktopNavItem.propTypes = {
     slug: PropTypes.string,
     with_popover: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   }),
-  readSyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 DesktopNavItem.defaultProps = {
   item: {},

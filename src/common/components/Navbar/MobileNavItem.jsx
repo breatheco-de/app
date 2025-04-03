@@ -20,7 +20,7 @@ import { isAbsoluteUrl } from '../../../utils/url';
 import useStyle from '../../hooks/useStyle';
 
 function MobileItem({
-  label, subMenu, href, onClickLink, description, icon, readSyllabus, with_popover: withPopover, image,
+  label, subMenu, href, onClickLink, description, icon, with_popover: withPopover, image,
 }) {
   const { isOpen, onToggle } = useDisclosure();
   const { hexColor, lightColor, borderColor } = useStyle();
@@ -35,7 +35,7 @@ function MobileItem({
     if (isLessons) {
       return ({
         ...l,
-        subMenu: [...readSyllabus, ...l.subMenuContent],
+        subMenu: [...l.subMenuContent],
       });
     }
     return l;
@@ -204,7 +204,6 @@ MobileItem.propTypes = {
   with_popover: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   image: PropTypes.string,
   onClickLink: PropTypes.func.isRequired,
-  readSyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 MobileItem.defaultProps = {

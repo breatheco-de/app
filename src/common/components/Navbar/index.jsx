@@ -287,7 +287,7 @@ function Navbar({ translations, pageProps }) {
           <Flex display="flex" ml={10}>
             <Stack className="hideOverflowX__" direction="row" width="auto" spacing={4} alignItems="center">
               {allNavbarItems.map((item) => (
-                <DesktopNavItem key={item.label} item={item} readSyllabus={[]} />
+                <DesktopNavItem key={item.label} item={item} />
               ))}
             </Stack>
           </Flex>

@@ -131,12 +131,12 @@ function MktInfoCards({
       >
         <Box display="flex" gap="24px" flexDirection="column">
           {cards.slice(0, 2).map((card) => (card.title || card.description) && (
-            <Card {...card} />
+            <Card key={card.title} {...card} />
           ))}
         </Box>
         <Box display="flex" gap="24px" flexDirection="column" marginTop={{ base: '0', lg: '24px' }}>
           {cards.slice(2).map((card) => (card.title || card.description) && (
-            <Card {...card} />
+            <Card key={card.title} {...card} />
           ))}
         </Box>
       </Box>

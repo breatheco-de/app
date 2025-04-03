@@ -58,7 +58,6 @@ function MobileNav({
             subMenu={subMenu}
             href={href}
             onClickLink={onClickLink}
-            readSyllabus={[]}
           />
         );
       })}
