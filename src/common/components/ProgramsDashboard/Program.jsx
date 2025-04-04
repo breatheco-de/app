@@ -9,7 +9,7 @@ import useSubscriptionsHandler from '../../store/actions/subscriptionAction';
 import axios from '../../../axios';
 import useProgramList from '../../store/actions/programListAction';
 
-function Programs({ cohort, onOpenModal, setLateModalProps }) {
+function Program({ cohort, onOpenModal, setLateModalProps }) {
   const { setCohortSession, cohortsAssignments } = useCohortHandler();
   const { state } = useSubscriptionsHandler();
   const { isLoading } = state;
@@ -109,16 +109,16 @@ function Programs({ cohort, onOpenModal, setLateModalProps }) {
   );
 }
 
-Programs.propTypes = {
+Program.propTypes = {
   cohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   onOpenModal: PropTypes.func,
   setLateModalProps: PropTypes.func,
 };
 
-Programs.defaultProps = {
+Program.defaultProps = {
   cohort: {},
   onOpenModal: () => {},
   setLateModalProps: () => {},
 };
 
-export default memo(Programs);
+export default memo(Program);
