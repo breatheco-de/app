@@ -211,45 +211,8 @@ const handlers = {
 
     return show;
   }),
-  handleTasks: ({ tasks = [], cohortInfo, onlyExistent = false }) => {
-    const allLessons = tasks.filter((l) => l.task_type === 'LESSON');
-    const allExercises = tasks.filter((e) => e.task_type === 'EXERCISE');
-    const allProjects = tasks.filter((p) => p.task_type === 'PROJECT');
-    const allQuiz = tasks.filter((q) => q.task_type === 'QUIZ');
-    const taskCount = cohortInfo?.allTasks?.length > 0 ? cohortInfo.allTasks : tasks;
-
-    const allTasks = [
-      {
-        title: 'Lesson',
-        icon: 'book',
-        task_type: 'LESSON',
-        taskLength: taskCount.find((t) => t?.task_type === 'LESSON')?.taskLength,
-        completed: allLessons.filter((l) => l.task_status === 'DONE').length,
-      },
-      {
-        title: 'Exercise',
-        icon: 'strength',
-        task_type: 'EXERCISE',
-        taskLength: taskCount.find((t) => t?.task_type === 'EXERCISE')?.taskLength,
-        completed: allExercises.filter((e) => e.task_status === 'DONE').length,
-      },
-      {
-        title: 'Project',
-        icon: 'code',
-        task_type: 'PROJECT',
-        taskLength: taskCount.find((t) => t?.task_type === 'PROJECT')?.taskLength,
-        completed: allProjects.filter((p) => p.task_status === 'DONE').length,
-      },
-      {
-        title: 'Quiz',
-        icon: 'answer',
-        task_type: 'QUIZ',
-        taskLength: taskCount.find((t) => t?.task_type === 'QUIZ')?.taskLength,
-        completed: allQuiz.filter((q) => q.task_status === 'DONE').length,
-      },
-    ];
-
-    const allExistentTasks = onlyExistent ? allTasks.filter((t) => t.taskLength > 0) : allTasks;
+  handleTasks: ({ assignmentsProgress, onlyExistent = false }) => {
+    const allExistentTasks = onlyExistent ? assignmentsProgress.filter((t) => t.taskLength > 0) : assignmentsProgress;
 
     const calculateTaskPercentage = () => {
       let sumTaskCompleted = 0;
@@ -263,14 +226,14 @@ const handlers = {
     const percentage = calculateTaskPercentage() || 0;
     const percentageLimited = percentage > 100 ? 100 : percentage;
     return {
-      allTasks: allExistentTasks,
+      assignmentsProgress: allExistentTasks,
       percentage: percentageLimited,
     };
   },
 
   getAssignmentsCount: ({
-    data, taskTodo, cohortId,
-  }) => new Promise((resolve) => {
+    data, taskTodo,
+  }) => {
     const modules = data?.json?.days || data?.json?.modules || data;
     const assignmentsRecopilated = [];
     const assetsCompleted = {
@@ -281,7 +244,7 @@ const handlers = {
     };
 
     if (Array.isArray(modules)) {
-      modules?.forEach((module) => {
+      modules.forEach((module) => {
         const {
           assignments = [],
           lessons = [],
@@ -313,7 +276,7 @@ const handlers = {
       });
     }
 
-    const assignmentsRecopilatedObj = {
+    const assignmentsCount = {
       exercise: 0,
       lesson: 0,
       project: 0,
@@ -321,17 +284,17 @@ const handlers = {
     };
 
     assignmentsRecopilated.forEach((assignment) => {
-      assignmentsRecopilatedObj.exercise += assignment.exercisesCount;
-      assignmentsRecopilatedObj.lesson += assignment.lessonsCount;
-      assignmentsRecopilatedObj.project += assignment.projectCount;
-      assignmentsRecopilatedObj.quiz += assignment.quizzesCount;
+      assignmentsCount.exercise += assignment.exercisesCount;
+      assignmentsCount.lesson += assignment.lessonsCount;
+      assignmentsCount.project += assignment.projectCount;
+      assignmentsCount.quiz += assignment.quizzesCount;
     });
 
-    const arrayOfObjects = Object.keys(assignmentsRecopilatedObj).map((key) => {
-      const taskLength = assignmentsRecopilatedObj[key];
-      const taskCompleted = assetsCompleted[key];
+    const assignmentsProgress = Object.keys(assignmentsCount).map((key) => {
+      const taskLength = assignmentsCount[key];
+      const tasksCompleted = assetsCompleted[key];
       const taskType = key.toUpperCase();
-      const completed = taskCompleted?.length;
+      const completed = tasksCompleted?.length;
       const icon = taskIcons[taskType];
 
       return {
@@ -342,17 +305,16 @@ const handlers = {
         title: toCapitalize(taskType),
       };
     });
-    const totalCompletedTasks = arrayOfObjects.reduce((acc, task) => acc + task.completed, 0);
-    const totalTasks = arrayOfObjects.reduce((acc, task) => acc + task.taskLength, 0);
+    const totalCompletedTasks = assignmentsProgress.reduce((acc, task) => acc + task.completed, 0);
+    const totalTasks = assignmentsProgress.reduce((acc, task) => acc + task.taskLength, 0);
     const completedTasksPercentage = Math.trunc((totalCompletedTasks / totalTasks) * 100) || 0;
     const percentageLimited = completedTasksPercentage > 100 ? 100 : completedTasksPercentage;
 
-    resolve({
-      allTasks: arrayOfObjects,
-      cohortId,
+    return {
+      assignmentsProgress,
       percentage: percentageLimited,
-    });
-  }),
+    };
+  },
   getAssetData: (slug) => new Promise((resolve, reject) => {
     bc.lesson().getAsset(slug)
       .then(({ data }) => {

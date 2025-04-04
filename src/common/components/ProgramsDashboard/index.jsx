@@ -3,23 +3,21 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { Box } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import axiosInstance from '../../axios';
-import Icon from '../../common/components/Icon';
-import { isPlural } from '../../utils';
-import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
-import Text from '../../common/components/Text';
-import bc from '../../common/services/breathecode';
-import handlers from '../../common/handlers';
-import Programs from './Programs';
-import UpgradeAccessModal from '../../common/components/UpgradeAccessModal';
-import useProgramList from '../../common/store/actions/programListAction';
-import ProgramCard from '../../common/components/ProgramCard';
-import Heading from '../../common/components/Heading';
-import useStyle from '../../common/hooks/useStyle';
+import axiosInstance from '../../../axios';
+import Icon from '../Icon';
+import { isPlural } from '../../../utils';
+import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
+import Text from '../Text';
+import bc from '../../services/breathecode';
+import handlers from '../../handlers';
+import Program from './Program';
+import UpgradeAccessModal from '../UpgradeAccessModal';
+import ProgramCard from '../ProgramCard';
+import Heading from '../Heading';
+import useStyle from '../../hooks/useStyle';
 
-function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
+function ProgramsDashboard({ cohorts, setLateModalProps }) {
   const { t } = useTranslation('choose-program');
-  const { programsList } = useProgramList();
   const [marketingCursesList, setMarketingCursesList] = useState([]);
   const [showFinished, setShowFinished] = useState(false);
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
@@ -27,22 +25,10 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
   const router = useRouter();
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
 
-  const finishedCohorts = handlers.getCohortsFinished(chooseList);
-  const activeCohorts = handlers.getActiveCohorts(chooseList).map((cohort) => {
-    const { cohort_user: cohortUser } = cohort;
-    const currentCohortProps = programsList[cohort.slug];
-    return ({
-      ...cohort,
-      available_as_saas: cohortUser?.role === 'TEACHER' ? false : cohort.available_as_saas,
-      cohort_user: { ...cohortUser },
-      subscription: currentCohortProps?.subscription,
-      plan_financing: currentCohortProps?.plan_financing,
-      all_subscriptions: currentCohortProps?.all_subscriptions,
-      subscription_exists: currentCohortProps?.subscription !== null || currentCohortProps?.plan_financing !== null,
-    });
-  });
+  const finishedCohorts = handlers.getCohortsFinished(cohorts);
+  const activeCohorts = handlers.getActiveCohorts(cohorts);
 
-  const hasNonSaasCourse = chooseList.some((cohort) => !cohort.available_as_saas);
+  const hasNonSaasCourse = cohorts.some((cohort) => !cohort.available_as_saas || cohort.cohort_user.role === 'TEACHER');
 
   const marketingCourses = marketingCursesList.filter(
     (item) => !activeCohorts.some(
@@ -83,11 +69,10 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
             height="auto"
             gridGap="4rem"
           >
-            {activeCohorts.map((item) => (
-              <Programs
-                key={item?.slug}
-                item={item}
-                handleChoose={handleChoose}
+            {activeCohorts.map((cohort) => (
+              <Program
+                key={cohort?.slug}
+                cohort={cohort}
                 onOpenModal={() => setUpgradeModalIsOpen(true)}
                 setLateModalProps={setLateModalProps}
               />
@@ -181,11 +166,10 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
             gridRowGap="3rem"
             height="auto"
           >
-            {showFinished && finishedCohorts.map((item) => (
-              <Programs
-                key={item?.slug}
-                item={item}
-                handleChoose={handleChoose}
+            {showFinished && finishedCohorts.map((cohort) => (
+              <Program
+                key={cohort?.slug}
+                cohort={cohort}
                 onOpenModal={() => setUpgradeModalIsOpen(true)}
               />
             ))}
@@ -196,15 +180,13 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
   );
 }
 
-ChooseProgram.propTypes = {
-  chooseList: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
-  handleChoose: PropTypes.func,
+ProgramsDashboard.propTypes = {
+  cohorts: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   setLateModalProps: PropTypes.func,
 };
-ChooseProgram.defaultProps = {
-  chooseList: [],
-  handleChoose: () => {},
+ProgramsDashboard.defaultProps = {
+  cohorts: [],
   setLateModalProps: () => {},
 };
 
-export default ChooseProgram;
+export default ProgramsDashboard;

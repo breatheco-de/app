@@ -4,7 +4,7 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
-import ChooseProgram from '../../js_modules/chooseProgram';
+import ProgramsDashboard from '../../common/components/ProgramsDashboard';
 import Text from '../../common/components/Text';
 import asPrivate from '../../common/context/PrivateRouteWrapper';
 import bc from '../../common/services/breathecode';
@@ -20,7 +20,6 @@ import LiveEvent from '../../common/components/LiveEvent';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import { SimpleSkeleton } from '../../common/components/Skeleton';
 import useProgramList from '../../common/store/actions/programListAction';
-import handlers from '../../common/handlers';
 import useSubscriptionsHandler from '../../common/store/actions/subscriptionAction';
 import { PREPARING_FOR_COHORT } from '../../common/store/types';
 import SimpleModal from '../../common/components/SimpleModal';
@@ -58,10 +57,10 @@ function chooseProgram() {
   const [events, setEvents] = useState(null);
   const [liveClasses, setLiveClasses] = useState([]);
   const [loadingInvite, setLoadingInvite] = useState(null);
-  const { state, programsList, updateProgramList } = useProgramList();
+  const { updateProgramList } = useProgramList();
   const { fetchSubscriptions, state: subscriptionsState } = useSubscriptionsHandler();
   const { isLoading: subscriptionLoading, subscriptions } = subscriptionsState;
-  const [cohortTasks, setCohortTasks] = useState({});
+  const [cohortMembers, setCohortMembers] = useState({});
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
   const [lateModalProps, setLateModalProps] = useState({
@@ -210,12 +209,10 @@ function chooseProgram() {
   // .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
 
   useEffect(() => {
-    if (subscriptionLoading === false && cohorts.length > 0 && Object.values(cohortTasks)?.length > 0) {
-      updateProgramList(cohorts?.reduce((acc, value) => {
+    if (subscriptionLoading === false && cohorts.length > 0 && Object.values(cohortMembers)?.length > 0) {
+      const programList = cohorts?.reduce((acc, value) => {
         acc[value.slug] = {
-          ...state[value.slug],
-          ...programsList[value.slug],
-          ...cohortTasks[value.slug],
+          ...cohortMembers[value.slug],
           name: value.name,
           plan_financing: subscriptions?.plan_financings?.find(
             (sub) => sub?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === value.slug),
@@ -227,9 +224,10 @@ function chooseProgram() {
           slug: value.slug,
         };
         return acc;
-      }, {}));
+      }, {});
+      updateProgramList(programList);
     }
-  }, [cohorts, cohortTasks, subscriptionLoading]);
+  }, [cohorts, cohortMembers, subscriptionLoading]);
 
   const processCohort = async (cohort) => {
     if (cohort?.slug) {
@@ -242,13 +240,10 @@ function chooseProgram() {
       }).getMembers();
       const teacher = studentAndTeachers?.data?.filter((st) => st.role === 'TEACHER') || [];
       const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT') || [];
-      const { tasks, syllabus } = cohortsAssignments[slug];
-      const assignmentData = await handlers.getAssignmentsCount({ data: syllabus, taskTodo: tasks, cohortId: cohort.id });
 
-      setCohortTasks((prev) => ({
+      setCohortMembers((prev) => ({
         ...prev,
         [slug]: {
-          ...assignmentData,
           teacher,
           assistant,
         },
@@ -263,8 +258,9 @@ function chooseProgram() {
   }, [cohorts]);
 
   useEffect(() => {
-    const cohortSlugs = Object.keys(cohortsAssignments);
-    if (cohorts.length > 0 && cohorts.every((cohort) => cohortSlugs.includes(cohort.slug))) {
+    // const cohortSlugs = Object.keys(cohortsAssignments);
+    // if (cohorts.length > 0 && cohorts.every((cohort) => cohortSlugs.includes(cohort.slug))) {
+    if (cohorts.length > 0) {
       cohorts.map(processCohort);
     }
   }, [cohorts, cohortsAssignments]);
@@ -593,7 +589,7 @@ function chooseProgram() {
 
           <Box>
             {!isLoading && (
-              <ChooseProgram chooseList={cohorts.filter(isMainCohort)} setLateModalProps={setLateModalProps} />
+              <ProgramsDashboard cohorts={cohorts.filter(isMainCohort)} setLateModalProps={setLateModalProps} />
             )}
           </Box>
           {isRevalidating && (
