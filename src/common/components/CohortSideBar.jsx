@@ -1,8 +1,4 @@
-/* eslint-disable react/jsx-no-useless-fragment */
-/* eslint-disable no-nested-ternary */
-/* eslint-disable brace-style */
 import { memo, useState, useEffect } from 'react';
-// import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import {
   Box, Heading, Divider, Grid, Tabs,
   TabList, Tab, TabPanels, TabPanel, useToast, AvatarGroup, useMediaQuery, Flex,
@@ -16,7 +12,7 @@ import bc from '../services/breathecode';
 import axios from '../../axios';
 import Icon from './Icon';
 import Text from './Text';
-import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
+import AvatarUser from './AvatarUser';
 import { AvatarSkeleton } from './Skeleton';
 import useOnline from '../hooks/useOnline';
 import useStyle from '../hooks/useStyle';
@@ -40,6 +36,40 @@ function ProfilesSection({
   const teacherfullName = `${teacherData?.user?.first_name} ${teacherData?.user.last_name}`;
 
   const alumniGeeksContainer = isWindow && document.querySelector('.alumni-geeks-container');
+
+  const getButtonText = () => {
+    if (paginationProps.next) return t('common:load-more');
+    return showMoreStudents ? t('cohortSideBar.show-less') : t('cohortSideBar.show-more');
+  };
+
+  const getTransformValue = () => {
+    if (paginationProps.next) return 'rotate(-90deg)';
+    return showMoreStudents ? 'rotate(90deg)' : 'rotate(-90deg)';
+  };
+
+  const handleLoadMore = () => {
+    if (paginationProps.next) {
+      setShowMoreStudents(true);
+      axios.get(paginationProps.next)
+        .then(({ data }) => {
+          const cleanedData = [...profiles, ...data.results];
+          setAlumniGeeksList({
+            ...data,
+            results: cleanedData.sort(
+              (a, b) => a.user.first_name.localeCompare(b.user.first_name),
+            ),
+          });
+          setTimeout(() => {
+            alumniGeeksContainer?.scrollTo({
+              top: alumniGeeksContainer?.scrollHeight,
+              behavior: 'smooth',
+            });
+          }, [600]);
+        });
+    } else {
+      setShowMoreStudents(!showMoreStudents);
+    }
+  };
 
   return (
     <Box display="block">
@@ -132,35 +162,13 @@ function ProfilesSection({
             justifyContent="center"
             padding="14px 0 0 0"
             fontWeight="700"
-            onClick={() => {
-              if (paginationProps.next) {
-                setShowMoreStudents(true);
-                axios.get(paginationProps.next)
-                  .then(({ data }) => {
-                    const cleanedData = [...profiles, ...data.results];
-                    setAlumniGeeksList({
-                      ...data,
-                      results: cleanedData.sort(
-                        (a, b) => a.user.first_name.localeCompare(b.user.first_name),
-                      ),
-                    });
-                    setTimeout(() => {
-                      alumniGeeksContainer?.scrollTo({
-                        top: alumniGeeksContainer?.scrollHeight,
-                        behavior: 'smooth',
-                      });
-                    }, [600]);
-                  });
-              } else {
-                setShowMoreStudents(!showMoreStudents);
-              }
-            }}
+            onClick={handleLoadMore}
           >
-            {paginationProps.next ? t('common:load-more') : showMoreStudents ? t('cohortSideBar.show-less') : t('cohortSideBar.show-more')}
+            {getButtonText()}
             <Box
               as="span"
               display="block"
-              transform={paginationProps.next ? 'rotate(-90deg)' : (showMoreStudents ? 'rotate(90deg)' : 'rotate(-90deg)')}
+              transform={getTransformValue()}
             >
               <Icon icon="arrowLeft2" width="18px" height="10px" />
             </Box>

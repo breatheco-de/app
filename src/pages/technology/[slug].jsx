@@ -13,7 +13,7 @@ import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import { toCapitalize, languageFix } from '../../utils';
 import Heading from '../../common/components/Heading';
-import ProjectList from '../../js_modules/projects/ProjectList';
+import ProjectList from '../../common/components/Assets/ProjectList';
 import DraggableContainer from '../../common/components/DraggableContainer';
 import GridContainer from '../../common/components/GridContainer';
 import MktEventCards from '../../common/components/MktEventCards';

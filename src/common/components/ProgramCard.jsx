@@ -19,7 +19,7 @@ import Icon from './Icon';
 import { isNumber, isValidDate } from '../../utils';
 import useStyle from '../hooks/useStyle';
 import ProjectsSection from './ProjectsSection';
-import ButtonHandler from '../../js_modules/profile/Subscriptions/ButtonHandler';
+import ButtonHandler from './Profile/Subscriptions/ButtonHandler';
 
 function FreeTagCapsule({ isExpired, freeTrialExpireDateValue, now, lang }) {
   const { t } = useTranslation('program-card');
@@ -553,8 +553,8 @@ function ProgramCard({
 ProgramCard.propTypes = {
   programName: PropTypes.string.isRequired,
   programDescription: PropTypes.string,
-  startsIn: PropTypes.instanceOf(Date),
-  endsAt: PropTypes.instanceOf(Date),
+  startsIn: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]),
+  endsAt: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.string]),
   signInDate: PropTypes.instanceOf(Date),
   freeTrialExpireDate: PropTypes.instanceOf(Date),
   haveFreeTrial: PropTypes.bool,

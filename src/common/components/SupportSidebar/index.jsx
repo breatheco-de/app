@@ -5,7 +5,6 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import bc from '../../services/breathecode';
-// import { usePersistent } from '../../hooks/usePersistent';
 import Mentoring from './Mentoring';
 
 function SupportSidebar({ allCohorts, allSyllabus, services, subscriptions, subscriptionData }) {

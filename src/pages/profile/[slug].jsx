@@ -13,9 +13,9 @@ import bc from '../../common/services/breathecode';
 import { cleanQueryStrings } from '../../utils';
 import AlertMessage from '../../common/components/AlertMessage';
 import GridContainer from '../../common/components/GridContainer';
-import Subscriptions from '../../js_modules/profile/Subscriptions';
-import Certificates from '../../js_modules/profile/Certificates';
-import Information from '../../js_modules/profile/Information';
+import Subscriptions from '../../common/components/Profile/Subscriptions';
+import Certificates from '../../common/components/Profile/Certificates';
+import Information from '../../common/components/Profile/Information';
 
 function Profile() {
   const { t } = useTranslation('profile');

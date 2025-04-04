@@ -11,9 +11,9 @@ import Icon from '../components/Icon';
 import Text from '../components/Text';
 import TaskLabel from '../components/taskLabel';
 import { isGithubUrl } from '../../utils/regex';
-import ButtonHandler from '../../js_modules/assignmentHandler/index';
+import ButtonHandler from '../components/Assignments/index';
 import useAssignments from '../store/actions/assignmentsAction';
-import PopoverHandler from '../../js_modules/assignmentHandler/PopoverHandler';
+import SubmissionReviewButton from '../components/Assignments/SubmissionReviewButton';
 import LoaderScreen from '../components/LoaderScreen';
 import InfiniteScroll from '../components/InfiniteScroll';
 import { ORIGIN_HOST } from '../../utils/variables';
@@ -95,7 +95,7 @@ const ProjectsRows = forwardRef(({
                 </Link>
               </Box>
 
-              <PopoverHandler
+              <SubmissionReviewButton
                 task={task}
                 haveGithubDomain={haveGithubDomain}
                 githubUrl={githubUrl}

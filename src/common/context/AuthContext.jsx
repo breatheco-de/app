@@ -120,11 +120,8 @@ const setTokenSession = (token) => {
     removeStorageItem('programServices');
     removeStorageItem('cohortSession');
     removeStorageItem('accessToken');
-    removeStorageItem('taskTodo');
-    removeStorageItem('sortedAssignments');
     removeStorageItem('days_history_log');
     removeStorageItem('queryCache');
-    removeStorageItem('hasPaidSubscription');
     removeStorageItem('programsList');
     removeStorageItem('isClosedLateModal');
     delete axiosInstance.defaults.headers.common.Authorization;
