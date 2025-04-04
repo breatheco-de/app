@@ -52,27 +52,27 @@ function Program({ cohort, onOpenModal, setLateModalProps }) {
   };
 
   const syllabusContent = assignmentsData?.assignmentsProgress?.length > 0 ? assignmentsData?.assignmentsProgress.map((task) => {
-    if (task?.task_type === 'LESSON') {
+    if (task?.taskType === 'LESSON') {
       return {
-        totalLessons: task?.taskLength,
+        totalLessons: task?.total,
         completedLessons: task?.completed,
       };
     }
-    if (task?.task_type === 'EXERCISE') {
+    if (task?.taskType === 'EXERCISE') {
       return {
-        totalExercises: task?.taskLength,
+        totalExercises: task?.total,
         completedExercises: task?.completed,
       };
     }
-    if (task?.task_type === 'PROJECT') {
+    if (task?.taskType === 'PROJECT') {
       return {
-        totalProjects: task?.taskLength,
+        totalProjects: task?.total,
         completedProjects: task?.completed,
       };
     }
-    if (task?.task_type === 'QUIZ') {
+    if (task?.taskType === 'QUIZ') {
       return {
-        totalQuizzes: task?.taskLength,
+        totalQuizzes: task?.total,
         completedQuizzes: task?.completed,
       };
     }

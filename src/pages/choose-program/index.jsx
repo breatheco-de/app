@@ -92,16 +92,14 @@ function chooseProgram() {
     return members;
   };
 
-  const getAllSyllabus = () => {
+  const allSyllabus = useMemo(() => {
     const syllabus = [];
 
     cohorts.forEach(({ syllabus_version: syllabusVersion }) => {
       if (!syllabus.includes(syllabusVersion.slug)) syllabus.push(syllabusVersion.slug);
     });
     return syllabus;
-  };
-
-  const allSyllabus = useMemo(getAllSyllabus, [cohorts]);
+  }, [cohorts]);
 
   const getServices = async (userRoles) => {
     if (userRoles?.length > 0) {
@@ -139,7 +137,6 @@ function chooseProgram() {
 
       getServices(user.roles);
       const cohortIsReady = cohorts?.length > 0 && cohorts?.some((cohort) => {
-        // const cohort = item?.cohort;
         const academy = cohort?.academy;
         if (cohort?.id === subscriptionProcess?.id
         && cohort?.slug === subscriptionProcess?.slug
@@ -148,7 +145,7 @@ function chooseProgram() {
         return false;
       });
       if (cohorts?.length > 0) {
-        const hasAvailableAsSaas = cohorts.some((elem) => elem.available_as_saas === true);
+        const hasAvailableAsSaas = cohorts.some((elem) => elem.available_as_saas);
         const cohortsSlugs = cohorts.map((elem) => elem.slug).join(',');
         const cohortsAcademies = cohorts.map((elem) => elem.academy.slug).join(',');
         const cohortWithFinantialStatusLate = cohorts.filter((elem) => elem.cohort_user.finantial_status === 'LATE' || elem.educational_status === 'SUSPENDED');

@@ -211,31 +211,12 @@ const handlers = {
 
     return show;
   }),
-  handleTasks: ({ assignmentsProgress, onlyExistent = false }) => {
-    const allExistentTasks = onlyExistent ? assignmentsProgress.filter((t) => t.taskLength > 0) : assignmentsProgress;
-
-    const calculateTaskPercentage = () => {
-      let sumTaskCompleted = 0;
-      let sumTaskLength = 0;
-      for (let i = 0; i < allExistentTasks.length; i += 1) {
-        sumTaskCompleted += allExistentTasks[i].completed;
-        sumTaskLength += allExistentTasks[i].taskLength;
-      }
-      return Math.trunc((sumTaskCompleted / sumTaskLength) * 100);
-    };
-    const percentage = calculateTaskPercentage() || 0;
-    const percentageLimited = percentage > 100 ? 100 : percentage;
-    return {
-      assignmentsProgress: allExistentTasks,
-      percentage: percentageLimited,
-    };
-  },
 
   getAssignmentsCount: ({
     data, taskTodo,
   }) => {
     const modules = data?.json?.days || data?.json?.modules || data;
-    const assignmentsRecopilated = [];
+    const modulesAssignments = [];
     const assetsCompleted = {
       exercise: [],
       lesson: [],
@@ -252,27 +233,28 @@ const handlers = {
           quizzes = [],
         } = module;
 
-        const exercisesCount = replits.length;
-        const lessonsCount = lessons.length;
         const projectCount = assignments.length;
+        const lessonsCount = lessons.length;
         const quizzesCount = quizzes.length;
+        const exercisesCount = replits.length;
 
-        const assignmentsRecopilatedObj = {
+        const assignmentsCount = {
           exercisesCount,
           lessonsCount,
           projectCount,
           quizzesCount,
         };
-        const replitsCompletedFromTask = getCompletedTasksFromModule(replits, taskTodo);
-        const quizzesCompletedFromTask = getCompletedTasksFromModule(quizzes, taskTodo);
-        const lessonsCompletedFromTask = getCompletedTasksFromModule(lessons, taskTodo);
-        const assignmentsCompletedFromTask = getCompletedTasksFromModule(assignments, taskTodo);
-        assetsCompleted.exercise.push(...replitsCompletedFromTask);
-        assetsCompleted.lesson.push(...lessonsCompletedFromTask);
-        assetsCompleted.project.push(...assignmentsCompletedFromTask);
-        assetsCompleted.quiz.push(...quizzesCompletedFromTask);
 
-        assignmentsRecopilated.push(assignmentsRecopilatedObj);
+        modulesAssignments.push(assignmentsCount);
+
+        const replitsCompleted = getCompletedTasksFromModule(replits, taskTodo);
+        const lessonsCompleted = getCompletedTasksFromModule(lessons, taskTodo);
+        const assignmentsCompleted = getCompletedTasksFromModule(assignments, taskTodo);
+        const quizzesCompleted = getCompletedTasksFromModule(quizzes, taskTodo);
+        assetsCompleted.exercise.push(...replitsCompleted);
+        assetsCompleted.lesson.push(...lessonsCompleted);
+        assetsCompleted.project.push(...assignmentsCompleted);
+        assetsCompleted.quiz.push(...quizzesCompleted);
       });
     }
 
@@ -283,15 +265,15 @@ const handlers = {
       quiz: 0,
     };
 
-    assignmentsRecopilated.forEach((assignment) => {
-      assignmentsCount.exercise += assignment.exercisesCount;
-      assignmentsCount.lesson += assignment.lessonsCount;
-      assignmentsCount.project += assignment.projectCount;
-      assignmentsCount.quiz += assignment.quizzesCount;
+    modulesAssignments.forEach((module) => {
+      assignmentsCount.exercise += module.exercisesCount;
+      assignmentsCount.lesson += module.lessonsCount;
+      assignmentsCount.project += module.projectCount;
+      assignmentsCount.quiz += module.quizzesCount;
     });
 
     const assignmentsProgress = Object.keys(assignmentsCount).map((key) => {
-      const taskLength = assignmentsCount[key];
+      const total = assignmentsCount[key];
       const tasksCompleted = assetsCompleted[key];
       const taskType = key.toUpperCase();
       const completed = tasksCompleted?.length;
@@ -299,14 +281,14 @@ const handlers = {
 
       return {
         icon,
-        taskLength,
+        total,
         completed,
-        task_type: taskType,
+        taskType,
         title: toCapitalize(taskType),
       };
     });
     const totalCompletedTasks = assignmentsProgress.reduce((acc, task) => acc + task.completed, 0);
-    const totalTasks = assignmentsProgress.reduce((acc, task) => acc + task.taskLength, 0);
+    const totalTasks = assignmentsProgress.reduce((acc, task) => acc + task.total, 0);
     const completedTasksPercentage = Math.trunc((totalCompletedTasks / totalTasks) * 100) || 0;
     const percentageLimited = completedTasksPercentage > 100 ? 100 : completedTasksPercentage;
 

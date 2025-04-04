@@ -13,24 +13,20 @@ function ProgressBar({
   progressText, cohortProgram, taskTodo, width,
 }) {
   const { fontColor } = useStyle();
-  const assignmentData = handlers.getAssignmentsCount({ data: cohortProgram, taskTodo });
-
-  const { assignmentsProgress, percentage } = handlers.handleTasks({ tasks: taskTodo, assignmentsProgress: assignmentData?.assignmentsProgress });
-  const percentageLimited = percentage > 100 ? 100 : percentage;
-  const taskPercentageLimited = assignmentData?.percentage > 100 ? 100 : assignmentData?.percentage;
+  const { assignmentsProgress, percentage } = handlers.getAssignmentsCount({ data: cohortProgram, taskTodo });
 
   return (
     <Box width={width || '100%'}>
       <Flex marginBottom="15px" gridGap="10px" align="center">
         <Heading fontSize="22px" marginY="0">
-          <Counter valueTo={percentageLimited || taskPercentageLimited} totalDuration={2} />
+          <Counter valueTo={percentage} totalDuration={2} />
           %
         </Heading>
         <Text size="l" marginY="0">
           {progressText}
         </Text>
       </Flex>
-      <Progress percents={percentageLimited} />
+      <Progress percents={percentage} />
       <Flex justifyContent="space-around" marginTop="18px" flexWrap="wrap" gridGap="6px">
         {assignmentsProgress?.length > 0 && assignmentsProgress.map((program) => (
           <Box key={program.title} display="flex">
@@ -42,7 +38,7 @@ function ProgressBar({
               style={{ marginTop: '2px' }}
             />
             <Text marginLeft="11px" size="l" marginY="0">
-              {`${program.title}: ${program.completed}/${program.taskLength}`}
+              {`${program.title}: ${program.completed}/${program.total}`}
             </Text>
           </Box>
         ))}
