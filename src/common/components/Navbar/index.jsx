@@ -56,10 +56,6 @@ function Navbar({ translations, pageProps }) {
   const locale = router.locale === 'default' ? 'en' : router.locale;
 
   const imageFilter = useColorModeValue('none', 'brightness(0) invert(1)');
-  const mktQueryString = parseQuerys({
-    featured: true,
-    academy: WHITE_LABEL_ACADEMY,
-  });
 
   const translationsPropsExists = translations?.length > 0;
 
@@ -116,6 +112,10 @@ function Navbar({ translations, pageProps }) {
 
   const fetchMktCourses = async () => {
     try {
+      const mktQueryString = {
+        featured: true,
+        academy: WHITE_LABEL_ACADEMY,
+      };
       const response = await bc.marketing(mktQueryString).courses();
       const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null && item?.visibility !== 'UNLISTED');
       const coursesStruct = filterByTranslations?.map((item) => ({
