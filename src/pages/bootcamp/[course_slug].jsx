@@ -24,7 +24,7 @@ import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import Instructors from '../../common/components/Instructors';
 import Faq from '../../common/components/Faq';
-import FixedBottomCta from '../../js_modules/projects/FixedBottomCta';
+import FixedBottomCta from '../../common/components/Assets/FixedBottomCta';
 import TagCapsule from '../../common/components/TagCapsule';
 import MktTrustCards from '../../common/components/MktTrustCards';
 import MktShowPrices from '../../common/components/MktShowPrices';

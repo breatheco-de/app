@@ -13,7 +13,7 @@ import DottedTimeline from '../components/DottedTimeline';
 import NextChakraLink from '../components/NextChakraLink';
 import useStyle from '../hooks/useStyle';
 import useFormatTimeString from '../hooks/useFormatTimeString';
-import { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../js_modules/assignmentHandler/index';
+import { ReviewModal, NoInfoModal, DeliverModal } from '../components/Assignments/index';
 import LoaderScreen from '../components/LoaderScreen';
 import InfiniteScroll from '../components/InfiniteScroll';
 import { ORIGIN_HOST } from '../../utils/variables';

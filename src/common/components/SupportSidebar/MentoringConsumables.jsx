@@ -13,7 +13,7 @@ import Link from '../NextChakraLink';
 import bc from '../../services/breathecode';
 import useAuth from '../../hooks/useAuth';
 import useOnline from '../../hooks/useOnline';
-import AvatarUser from '../../../js_modules/cohortSidebar/avatarUser';
+import AvatarUser from '../AvatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped, CardSkeleton } from '../Skeleton';
 import { validatePlanExistence } from '../../handlers/subscriptions';
@@ -65,7 +65,7 @@ function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mento
 }
 
 function ProfilesSection({
-  profiles,
+  profiles, size,
 }) {
   const { usersConnected } = useOnline();
 
@@ -77,8 +77,8 @@ function ProfilesSection({
         const isOnline = usersConnected?.includes(c.user.id);
         return (
           <AvatarUser
-            width="48px"
-            height="48px"
+            width={size || '48px'}
+            height={size || '48px'}
             index={i}
             key={`${c.id} - ${c.user.first_name}`}
             isWrapped
@@ -101,11 +101,10 @@ function MentoringConsumables({
 }) {
   const { t } = useTranslation('dashboard');
   const { user } = useAuth();
-  const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   const [open, setOpen] = useState(false);
   const accessToken = getStorageItem('accessToken');
   const [existsMentors, setExistsMentors] = useState(true);
-  const { borderColor, lightColor, hexColor } = useStyle();
+  const { borderColor, lightColor, hexColor, backgroundColor2 } = useStyle();
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
   const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
   const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
@@ -427,7 +426,7 @@ function MentoringConsumables({
         && (
           <>
             {mentoryProps?.service && (
-              <Box display="flex" alignItems="center" justifyContent="flex-start" gridGap="10px" background={commonBackground} px="20px" pt="15px" textAlign="center" w="100%" borderTopRadius="0.375rem">
+              <Box display="flex" alignItems="center" justifyContent="flex-start" gridGap="10px" background={backgroundColor2} px="20px" pt="15px" textAlign="center" w="100%" borderTopRadius="0.375rem">
                 <Box>
                   <Icon icon="checked2" width="15px" height="15px" color={hexColor.greenLight} />
                 </Box>
@@ -442,7 +441,7 @@ function MentoringConsumables({
                 <InputGroup mt="15px">
                   <Input
                     onChange={(e) => setSearchProps({ ...searchProps, serviceSearch: e.target.value?.toLocaleLowerCase() })}
-                    background={commonBackground}
+                    background={backgroundColor2}
                     borderBottomRadius="0"
                     border="0"
                     placeholder={t('supportSideBar.select-type')}
@@ -470,7 +469,7 @@ function MentoringConsumables({
                               onClick={() => handleService(service)}
                               borderColor={borderColor}
                               py="14px"
-                              background={commonBackground}
+                              background={backgroundColor2}
                               width="100%"
                               px="22px"
                               _hover={{ background: useColorModeValue('featuredLight', 'gray.700') }}
@@ -485,7 +484,7 @@ function MentoringConsumables({
                           borderTop="1px solid"
                           borderColor={borderColor}
                           py="14px"
-                          background={commonBackground}
+                          background={backgroundColor2}
                           width="100%"
                           px="22px"
                         >
@@ -505,12 +504,12 @@ function MentoringConsumables({
               >
                 <>
                   <InputGroup mt="15px" borderBottom="1px solid" borderColor={borderColor}>
-                    <Input onChange={(e) => setSearchProps({ ...searchProps, mentorSearch: e.target.value?.toLowerCase() })} background={commonBackground} borderBottomRadius="0" border="0" placeholder={t('supportSideBar.search-mentor')} />
+                    <Input onChange={(e) => setSearchProps({ ...searchProps, mentorSearch: e.target.value?.toLowerCase() })} background={backgroundColor2} borderBottomRadius="0" border="0" placeholder={t('supportSideBar.search-mentor')} />
                     <InputRightElement>
                       <Icon icon="arrowDown" color="#606060" width="35px" height="30px" ml="10px" />
                     </InputRightElement>
                   </InputGroup>
-                  <Box maxHeight="18rem" width="100%" background={commonBackground} overflow="auto" borderBottomRadius="0.375rem">
+                  <Box maxHeight="18rem" width="100%" background={backgroundColor2} overflow="auto" borderBottomRadius="0.375rem">
                     {mentorsFiltered.length > 0 ? mentorsFiltered.map((mentor, i) => (
                       <Fragment key={mentor?.user?.id}>
                         {i !== 0 && (
@@ -553,7 +552,7 @@ function MentoringConsumables({
                         </Box>
                       </Fragment>
                     )) : (
-                      <Box borderTop="1px solid" borderColor={borderColor} py="14px" background={commonBackground} width="100%" px="22px">
+                      <Box borderTop="1px solid" borderColor={borderColor} py="14px" background={backgroundColor2} width="100%" px="22px">
                         {t('supportSideBar.no-mentors')}
                       </Box>
                     )}
@@ -609,3 +608,5 @@ MentoringConsumables.defaultProps = {
 };
 
 export default MentoringConsumables;
+
+export { ProfilesSection };

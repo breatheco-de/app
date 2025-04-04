@@ -1,26 +1,15 @@
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  SET_MY_COHORTS,
   SET_COHORT_SESSION,
-  SET_SORTED_ASSIGNMENTS,
   SET_TASK_COHORT_NULL,
   SET_USER_CAPABILITIES,
+  SET_COHORTS_ASSIGNMENTS,
+  SET_REVIEW_MODAL_STATE,
 } from '../types';
-import { usePersistent } from '../../hooks/usePersistent';
 
 const useCohortAction = () => {
   const dispatch = useDispatch();
-  const [, persistCohortSession] = usePersistent('cohortSession', {});
   const state = useSelector((reducerState) => reducerState.cohortReducer);
-
-  const setMyCohorts = (payload) => {
-    dispatch({
-      type: SET_MY_COHORTS,
-      payload: {
-        myCohorts: payload,
-      },
-    });
-  };
 
   const setCohortSession = (payload) => {
     dispatch({
@@ -29,7 +18,6 @@ const useCohortAction = () => {
         cohortSession: payload,
       },
     });
-    if (payload !== undefined && payload !== null) persistCohortSession(payload);
   };
 
   const setTaskCohortNull = (payload) => {
@@ -37,15 +25,6 @@ const useCohortAction = () => {
       type: SET_TASK_COHORT_NULL,
       payload: {
         taskCohortNull: payload,
-      },
-    });
-  };
-
-  const setSortedAssignments = (payload) => {
-    dispatch({
-      type: SET_SORTED_ASSIGNMENTS,
-      payload: {
-        sortedAssignments: payload,
       },
     });
   };
@@ -59,13 +38,31 @@ const useCohortAction = () => {
     });
   };
 
+  const setCohortsAssingments = (paylaod) => {
+    dispatch({
+      type: SET_COHORTS_ASSIGNMENTS,
+      payload: {
+        cohortsAssignments: paylaod,
+      },
+    });
+  };
+
+  const setReviewModalState = (payload) => {
+    dispatch({
+      type: SET_REVIEW_MODAL_STATE,
+      payload: {
+        reviewModalState: payload,
+      },
+    });
+  };
+
   return {
     state,
-    setMyCohorts,
     setCohortSession,
     setTaskCohortNull,
-    setSortedAssignments,
     setUserCapabilities,
+    setCohortsAssingments,
+    setReviewModalState,
   };
 };
 

@@ -1,4 +1,5 @@
 import { useColorModeValue } from '@chakra-ui/react';
+import theme from '../../../styles/theme';
 
 const useStyle = () => {
   const navbarBackground = useColorModeValue('white', 'gray.800');
@@ -57,6 +58,7 @@ const useStyle = () => {
     lightColor2: useColorModeValue('#F5F5F5', '#283340'),
     lightColor3: useColorModeValue('#F5F5F5', '#17202A'),
     lightColor4: useColorModeValue('#F0F2F5', '#4A5568'),
+    white: '#FFFFFF',
     white2: useColorModeValue('#ffffff', '#283340'),
     danger: useColorModeValue('#CD0000', '#e26161'),
     blueDefault: '#0097CD',
@@ -70,6 +72,9 @@ const useStyle = () => {
     greenLight4: '#F2FFF6',
     fontColor2: useColorModeValue('#3A3A3A', '#EBEBEB'),
     successLight: useColorModeValue('#e9ffef', '#A4FFBD'),
+    gray: {
+      ...theme.colors.gray,
+    },
   };
   const input = {
     borderColor: useColorModeValue('gray.default', '#CACACA'),

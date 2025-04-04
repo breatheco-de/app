@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@chakra-ui/icons": "2.0.19",
-    "@chakra-ui/next-js": "^2.1.5",
+    "@chakra-ui/next-js": "2.1.5",
     "@chakra-ui/react": "2.6.1",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "11.11.0",
@@ -108,6 +108,7 @@
     "react-player": "^2.12.0",
     "react-plx": "^2.1.2",
     "react-redux": "8.0.5",
+    "react-rewards": "^2.0.4",
     "react-select": "^5.7.3",
     "react-syntax-highlighter": "15.5.0",
     "react-tagsinput": "^3.20.1",

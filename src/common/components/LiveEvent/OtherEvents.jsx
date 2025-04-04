@@ -61,31 +61,6 @@ const OtherEvents = ({ events, dateTextObj, isLiveOrStarting, isLive, subLabel }
               locale="en"
               fontFamily="Lato, Sans-serif"
               title={event?.title}
-            // onClick={(e) => {
-            //   e?.preventDefault();
-
-            //   bc.payment({ academy: event?.academy }).getEvent(event.id)
-            //     .then(({ data }) => {
-            //       if (data?.live_stream_url) {
-            //         window.open(data?.live_stream_url);
-            //       } else {
-            //         toast({
-            //           title: t('inactive-event'),
-            //           status: 'info',
-            //           duration: 5000,
-            //           isClosable: true,
-            //         });
-            //       }
-            //     })
-            //     .catch(() => {
-            //       toast({
-            //         title: t('no-access'),
-            //         status: 'error',
-            //         duration: 5000,
-            //         isClosable: true,
-            //       });
-            //     });
-            // }}
             >
               {truncatedText}
             </Link>

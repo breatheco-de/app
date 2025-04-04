@@ -20,7 +20,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { format } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
-import { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../../../../js_modules/assignmentHandler/index';
+import { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../../../../common/components/Assignments/index';
 import useStyle from '../../../../../common/hooks/useStyle';
 import bc from '../../../../../common/services/breathecode';
 import ReactSelect from '../../../../../common/components/ReactSelect';

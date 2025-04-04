@@ -2,7 +2,6 @@ import { useEffect, memo, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import bc from '../../services/breathecode';
-// import { usePersistent } from '../../hooks/usePersistent';
 import Mentoring from './Mentoring';
 import useCustomToast from '../../hooks/useCustomToast';
 
@@ -17,7 +16,7 @@ function SupportSidebar({ allCohorts, allSyllabus, services, subscriptions, subs
   const filterByFinantialStatus = (list) => list.filter((service) => {
     if (allCohorts.length > 0) {
       return allCohorts.some((elem) => {
-        if (elem?.cohort?.academy?.id === service?.academy?.id && (elem?.finantial_status === 'LATE' || elem?.educational_status === 'SUSPENDED')) {
+        if (elem?.academy?.id === service?.academy?.id && (elem?.cohort_user.finantial_status === 'LATE' || elem?.cohort_user.educational_status === 'SUSPENDED')) {
           return false;
         }
         return true;

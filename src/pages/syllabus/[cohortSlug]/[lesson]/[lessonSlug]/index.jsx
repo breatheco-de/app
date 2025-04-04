@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import axios from 'axios';
 import {
   Box, Flex, useDisclosure, Link, Avatar,
   useColorModeValue, Modal, ModalOverlay, Tooltip,
@@ -12,7 +11,7 @@ import { isWindow, assetTypeValues, getExtensionName, getStorageItem, languageFi
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
-import { ButtonHandlerByTaskStatus } from '../../../../../js_modules/moduleMap/ButtonHandlerByTaskStatus';
+import AssignmentButton from '../../../../../common/components/AssignmentButton';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkDownParser from '../../../../../common/components/MarkDownParser';
 import Text from '../../../../../common/components/Text';
@@ -22,15 +21,15 @@ import StickySideBar from '../../../../../common/components/StickySideBar';
 import Icon from '../../../../../common/components/Icon';
 import AlertMessage from '../../../../../common/components/AlertMessage';
 import ShareButton from '../../../../../common/components/ShareButton';
-import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
+import ModalInfo from '../../../../../common/components/ModalInfo';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import ScrollTop from '../../../../../common/components/scrollTop';
-import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar';
-import GuidedExperienceSidebar from '../../../../../js_modules/syllabus/GuidedExperienceSidebar';
-import ExerciseGuidedExperience from '../../../../../js_modules/syllabus/ExerciseGuidedExperience';
-import ProjectBoardGuidedExperience from '../../../../../js_modules/syllabus/ProjectBoardGuidedExperience';
-import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/SyllabusMarkdownComponent';
-import Topbar from '../../../../../js_modules/syllabus/Topbar';
+import TimelineSidebar from '../../../../../common/components/GuidedExperience/TimelineSidebar';
+import GuidedExperienceSidebar from '../../../../../common/components/GuidedExperience/GuidedExperienceSidebar';
+import ExerciseGuidedExperience from '../../../../../common/components/GuidedExperience/ExerciseGuidedExperience';
+import ProjectBoardGuidedExperience from '../../../../../common/components/GuidedExperience/ProjectBoardGuidedExperience';
+import SyllabusMarkdownComponent from '../../../../../common/components/GuidedExperience/SyllabusMarkdownComponent';
+import Topbar from '../../../../../common/components/GuidedExperience/Topbar';
 import bc from '../../../../../common/services/breathecode';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
 import SimpleModal from '../../../../../common/components/SimpleModal';
@@ -38,13 +37,13 @@ import ReactSelect from '../../../../../common/components/ReactSelect';
 import ConnectGithubRigobot from '../../../../../common/components/ConnectGithubRigobot';
 import useStyle from '../../../../../common/hooks/useStyle';
 import { ORIGIN_HOST, BREATHECODE_HOST } from '../../../../../utils/variables';
-import useSession from '../../../../../common/hooks/useSession';
 import { log } from '../../../../../utils/logging';
 import { parseQuerys } from '../../../../../utils/url';
 import completions from './completion-jobs.json';
 import { generateUserContext } from '../../../../../utils/rigobotContext';
 import SubTasks from '../../../../../common/components/MarkDownParser/SubTasks';
 import useCustomToast from '../../../../../common/hooks/useCustomToast';
+import ReviewModal from '../../../../../common/components/ReviewModal';
 
 function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
@@ -55,11 +54,6 @@ function SyllabusContent() {
   const { user, isLoading, isAuthenticatedWithRigobot } = useAuth();
   const { rigo, isRigoInitialized } = useRigo();
   const {
-    taskTodo,
-    cohortProgram,
-    setTaskTodo,
-    startDay,
-    updateAssignment,
     setCurrentTask,
     currentTask,
     nextModule,
@@ -69,13 +63,10 @@ function SyllabusContent() {
     setSubTasks,
     subTasks,
   } = useModuleHandler();
-  const { setUserSession } = useSession();
   const mainContainer = useRef(null);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [modalSettingsOpen, setModalSettingsOpen] = useState(false);
+  const [openNextPageModal, setOpenNextPageModal] = useState(false);
   const [modalIntroOpen, setModalIntroOpen] = useState(false);
   const [solutionVideoOpen, setSolutionVideoOpen] = useState(false);
-  const [openNextPageModal, setOpenNextPageModal] = useState(false);
   const [readme, setReadme] = useState(null);
   const [ipynbHtmlUrl, setIpynbHtmlUrl] = useState(null);
   const [extendedInstructions, setExtendedInstructions] = useState(null);
@@ -92,7 +83,6 @@ function SyllabusContent() {
   const [readmeUrlPathname, setReadmeUrlPathname] = useState(null);
   const [openTargetBlankModal, setOpenTargetBlankModal] = useState(null);
   const [currentBlankProps, setCurrentBlankProps] = useState(null);
-  const [fileData, setFileData] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
   const [currentAsset, setCurrentAsset] = useState(null);
   const [grantAccess, setGrantAccess] = useState(false);
@@ -100,9 +90,9 @@ function SyllabusContent() {
   const [learnpackStart, setLearnpackStart] = useState(false);
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
-    getCohortAssignments, getCohortData, prepareTasks, state,
+    getCohortUserCapabilities, getCohortData, cohortSession, sortedAssignments, setCohortSession, taskTodo,
+    updateAssignment, startDay, updateTask, reviewModalState, handleCloseReviewModal,
   } = useCohortHandler();
-  const { cohortSession, sortedAssignments } = state;
   // const isAvailableAsSaas = false;
   const isAvailableAsSaas = cohortSession?.available_as_saas;
 
@@ -120,14 +110,12 @@ function SyllabusContent() {
   const Open = !isOpen;
   const { label, teacherInstructions, keyConcepts } = selectedSyllabus;
 
-  const firstTask = nextModule?.modules[0];
-  const lastPrevTask = prevModule?.modules && prevModule.modules[prevModule.modules.length - 1];
+  const firstTask = nextModule?.content[0];
+  const lastPrevTask = prevModule?.content && prevModule.content[prevModule.content.length - 1];
 
-  const cohortSlug = router?.query?.cohortSlug;
-  const lesson = router?.query?.lesson;
-  const lessonSlug = router?.query?.lessonSlug;
+  const { cohortSlug, lesson, lessonSlug } = router.query;
 
-  const language = router?.locale === 'en' ? 'us' : router?.locale;
+  const language = router.locale === 'en' ? 'us' : router.locale;
 
   const isQuiz = lesson === 'answer';
   const isExercise = lesson === 'practice';
@@ -135,27 +123,23 @@ function SyllabusContent() {
   const isLesson = lesson === 'read';
 
   const filteredCurrentAssignments = sortedAssignments.map((section) => (showPendingTasks
-    ? section.filteredModulesByPending
-    : section.filteredModules));
+    ? section.filteredContentByPending
+    : section.filteredContent));
 
   const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug || l.translations?.[language]?.slug === lessonSlug || (currentAsset?.id && l.translations?.[language]?.slug === currentAsset.slug)));
 
   const currentModule = sortedAssignments[currentModuleIndex];
 
-  const userToken = getStorageItem('accessToken');
-  const learnpackDeployUrl = currentAsset?.learnpack_deploy_url;
-  const currentThemeValue = useColorModeValue('light', 'dark');
   const buildLearnpackUrl = () => {
+    const learnpackDeployUrl = currentAsset?.learnpack_deploy_url;
     if (!learnpackDeployUrl) return null;
 
-    const currentLang = lang === 'en' ? 'us' : lang;
-    const theme = currentThemeValue;
     const iframe = 'true';
-    const token = userToken;
+    const token = getStorageItem('accessToken');
 
-    return `${learnpackDeployUrl}#language=${currentLang}&lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
+    return `${learnpackDeployUrl}#language=${language}&lang=${language}&theme=${colorMode}&iframe=${iframe}&token=${token}`;
   };
-  const iframeURL = useMemo(() => buildLearnpackUrl(), [currentThemeValue, currentAsset, lang]);
+  const iframeURL = useMemo(() => buildLearnpackUrl(), [colorMode, currentAsset, lang]);
 
   const handleStartLearnpack = () => {
     setLearnpackStart(true);
@@ -180,7 +164,7 @@ function SyllabusContent() {
   };
 
   const handleStartDay = async (module = null, avoidRedirect = false) => {
-    const moduleToUpdate = module?.modules || nextModule.modules;
+    const moduleToUpdate = module?.content || nextModule.content;
     const updatedTasks = moduleToUpdate?.map((l) => ({
       ...l,
       associated_slug: l.slug,
@@ -193,6 +177,7 @@ function SyllabusContent() {
     };
     if (user?.id) {
       await startDay({
+        cohort: cohortSession,
         newTasks: updatedTasks,
         customHandler,
       });
@@ -203,7 +188,7 @@ function SyllabusContent() {
     const cohort = await getCohortData({
       cohortSlug,
     });
-    getCohortAssignments({
+    getCohortUserCapabilities({
       cohort,
     });
   };
@@ -220,8 +205,11 @@ function SyllabusContent() {
       if (result.data) {
         const updateTasks = taskTodo.map((task) => ({ ...task }));
         const index = updateTasks.findIndex((el) => el.task_type === assetTypeValues[lesson] && el.associated_slug === lessonSlug);
-        updateTasks[index].opened_at = result.data.opened_at;
-        setTaskTodo([...updateTasks]);
+        const updatedTask = {
+          ...updateTasks[index],
+          opened_at: result.data.opened_at,
+        };
+        updateTask(updatedTask, cohortSession);
       }
     } catch (e) {
       log('update_task_error:', e);
@@ -276,6 +264,13 @@ function SyllabusContent() {
     }
   }, [currentTask]);
 
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => {
+      setCohortSession(null);
+    };
+  }, []);
+
   useEffect(() => {
     const translations = currentAsset?.translations
       ? Object.values(currentAsset.translations)
@@ -295,11 +290,6 @@ function SyllabusContent() {
       getAssetContext();
     }
   }, [currentAsset, isRigoInitialized]);
-
-  const closeSettings = () => {
-    setSettingsOpen(false);
-    setModalSettingsOpen(false);
-  };
 
   useEffect(() => {
     bc.payment({
@@ -328,7 +318,7 @@ function SyllabusContent() {
   };
 
   useEffect(() => {
-    if (allSubscriptions && cohortSession && cohortSession.available_as_saas === true && cohortSession.cohort_role === 'STUDENT') {
+    if (allSubscriptions && cohortSession && cohortSession.available_as_saas === true && cohortSession.cohort_user.role === 'STUDENT') {
       const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
       const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
       const currentCohortSlug = cohortSubscriptions[0]?.selected_cohort_set?.slug;
@@ -361,39 +351,13 @@ function SyllabusContent() {
 
       setGrantAccess(true);
     }
-    if (Object.keys(cohortSession).length > 0 && (cohortSession.cohort_role !== 'STUDENT' || cohortSession.available_as_saas === false)) setGrantAccess(true);
+    if (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
   }, [cohortSession, allSubscriptions]);
-
-  const toggleSettings = () => {
-    if (openNextPageModal) {
-      setModalSettingsOpen(!modalSettingsOpen);
-    } else {
-      setSettingsOpen(!settingsOpen);
-    }
-  };
-
-  const handleOpen = async (onOpen = () => { }) => {
-    if (currentTask && currentTask?.task_type === 'PROJECT' && currentTask.task_status === 'DONE') {
-      if (typeof currentAsset?.delivery_formats === 'string' && !currentAsset?.delivery_formats.includes('url')) {
-        const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
-        const respData = await fileResp.data;
-        setFileData(respData);
-      }
-      onOpen();
-    }
-  };
-
-  const changeStatusAssignment = async (event, task, taskStatus) => {
-    event.preventDefault();
-    await updateAssignment({
-      task, taskStatus, closeSettings,
-    });
-  };
 
   const sendProject = async ({ task, githubUrl, taskStatus }) => {
     setShowModal(true);
     await updateAssignment({
-      task, closeSettings, githubUrl, taskStatus,
+      task, githubUrl, taskStatus,
     });
   };
 
@@ -405,23 +369,26 @@ function SyllabusContent() {
     setIpynbHtmlUrl(null);
     setCurrentBlankProps(null);
     setSubTasks([]);
-    setFileData([]);
   };
 
   const onClickAssignment = (e, item) => {
-    const link = `/syllabus/${cohortSlug}/${item.type?.toLowerCase()}/${item.slug}`;
-
-    router.push(link);
+    router.push({
+      query: {
+        ...router.query,
+        lesson: item.type?.toLowerCase(),
+        lessonSlug: item?.slug,
+      },
+    });
     cleanCurrentData();
   };
 
-  const EventIfNotFound = (task) => {
+  const handleNotFound = (task) => {
     if (task.target === 'blank' && task.task_type === 'LESSON') {
       setReadme({
         content: t('external-read', { link: task.url }),
       });
       setCurrentAsset({
-        title: task?.title || t('no-content-found'),
+        title: task.title || t('no-content-found'),
       });
       return;
     }
@@ -434,14 +401,14 @@ function SyllabusContent() {
   };
 
   useEffect(() => {
-    const currTask = sortedAssignments[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
-    const currentLanguageTaskUrl = currTask?.translations?.[lang === 'en' ? 'us' : lang]?.slug || lessonSlug;
-    if (Object.keys(cohortSession).length > 0 && sortedAssignments.length > 0) {
+    const currTask = sortedAssignments[currentModuleIndex]?.content?.find((l) => l.slug === lessonSlug);
+    const currentLanguageTaskSlug = currTask?.translations?.[language]?.slug || lessonSlug;
+    if (cohortSession && sortedAssignments.length > 0) {
       if (currTask?.task_type === 'LESSON' && currTask?.target === 'blank') {
-        EventIfNotFound(currTask);
+        handleNotFound(currTask);
         return undefined;
       }
-      bc.lesson({ asset_type: assetTypeValues[lesson] }).getAsset(currentLanguageTaskUrl).then(({ data }) => {
+      bc.lesson({ asset_type: assetTypeValues[lesson] }).getAsset(currentLanguageTaskSlug).then(({ data }) => {
         const translations = data?.translations;
         const exensionName = getExtensionName(data.readme_url);
         const isIpynb = exensionName === 'ipynb';
@@ -452,7 +419,7 @@ function SyllabusContent() {
         const finalPathname = `${pathnameWithoutExtension}.${extension}`;
 
         setReadmeUrlPathname(finalPathname);
-        let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
+        let currentTranslationSlug = data?.lang === language ? data.slug : data.translations[language];
         if (isIpynb) {
           setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?plain=true`);
           setCurrentAsset(data);
@@ -465,8 +432,8 @@ function SyllabusContent() {
           const avoidReadmeRequest = assetTypeValues[lesson] === 'QUIZ' || (isExercise && isAvailableAsSaas);
 
           Promise.all([
-            avoidReadmeRequest ? false : axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
-            axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}?asset_type=${assetTypeValues[lesson]}`),
+            avoidReadmeRequest ? false : bc.lesson().getAssetReadme(currentTranslationSlug),
+            bc.lesson({ asset_type: assetTypeValues[lesson] }).getAsset(currentTranslationSlug),
           ])
             .then(([respMarkdown, respData]) => {
               const currData = respData.data;
@@ -496,27 +463,24 @@ function SyllabusContent() {
             });
         }
       }).catch(() => {
-        EventIfNotFound(currTask);
+        handleNotFound(currTask);
       });
     }
     return () => {
       cleanCurrentData();
-      setUserSession({
-        translations: [],
-      });
     };
   }, [router, lessonSlug, cohortSession, sortedAssignments.length]);
 
   useEffect(() => {
     const currentSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
     const currModuleIndex = sortedAssignments.findIndex(
-      (l) => l.modules.some((m) => m.slug === lessonSlug),
+      (l) => l.content.some((m) => m.slug === lessonSlug),
     );
     const nextModuleData = sortedAssignments[currModuleIndex + 1];
     const prevModuleData = sortedAssignments[currModuleIndex - 1];
 
     const defaultSyllabus = sortedAssignments.find(
-      (l) => l.modules.find((m) => m.slug === lessonSlug),
+      (l) => l.content.find((m) => m.slug === lessonSlug),
     );
 
     if (defaultSyllabus) {
@@ -535,11 +499,7 @@ function SyllabusContent() {
     }
   }, [selectedSyllabus]);
 
-  useEffect(() => {
-    prepareTasks();
-  }, [cohortProgram, taskTodo, router]);
-
-  const teacherActions = professionalRoles.includes(cohortSession.cohort_role)
+  const teacherActions = professionalRoles.includes(cohortSession?.cohort_user?.role)
     ? [
       {
         icon: 'key',
@@ -588,6 +548,7 @@ function SyllabusContent() {
         setCurrentBlankProps(nextAssignment);
         router.push({
           query: {
+            ...router.query,
             cohortSlug,
             lesson: nextAssignment?.type?.toLowerCase(),
             lessonSlug: nextAssignment?.slug,
@@ -597,6 +558,7 @@ function SyllabusContent() {
         setCurrentBlankProps(null);
         router.push({
           query: {
+            ...router.query,
             cohortSlug,
             lesson: nextAssignment?.type?.toLowerCase(),
             lessonSlug: nextAssignment?.slug,
@@ -605,9 +567,10 @@ function SyllabusContent() {
       }
     } else if (nextModule) {
       if (firstTask.target !== 'blank') {
-        if (cohortSlug && !!firstTask && nextModule?.filteredModules[0]) {
+        if (cohortSlug && !!firstTask && nextModule?.filteredContent[0]) {
           router.push({
             query: {
+              ...router.query,
               cohortSlug,
               lesson: firstTask?.type?.toLowerCase(),
               lessonSlug: firstTask?.slug,
@@ -619,6 +582,7 @@ function SyllabusContent() {
       } else {
         router.push({
           query: {
+            ...router.query,
             cohortSlug,
             lesson: firstTask?.type?.toLowerCase(),
             lessonSlug: firstTask?.slug,
@@ -632,12 +596,12 @@ function SyllabusContent() {
   const handlePrevPage = () => {
     cleanCurrentData();
     scrollMainContainerTop();
-    console.log('HEY!!');
     if (previousAssignment !== null) {
       if (previousAssignment?.target === 'blank') {
         setCurrentBlankProps(previousAssignment);
         router.push({
           query: {
+            ...router.query,
             cohortSlug,
             lesson: previousAssignment?.type?.toLowerCase(),
             lessonSlug: previousAssignment?.slug,
@@ -647,6 +611,7 @@ function SyllabusContent() {
         setCurrentBlankProps(null);
         router.push({
           query: {
+            ...router.query,
             cohortSlug,
             lesson: previousAssignment?.type?.toLowerCase(),
             lessonSlug: previousAssignment?.slug,
@@ -658,6 +623,7 @@ function SyllabusContent() {
         if (cohortSlug && !!lastPrevTask) {
           router.push({
             query: {
+              ...router.query,
               cohortSlug,
               lesson: lastPrevTask?.type?.toLowerCase(),
               lessonSlug: lastPrevTask?.slug,
@@ -669,6 +635,7 @@ function SyllabusContent() {
         setCurrentAsset(lastPrevTask);
         router.push({
           query: {
+            ...router.query,
             cohortSlug,
             lesson: lastPrevTask?.type?.toLowerCase(),
             lessonSlug: lastPrevTask?.slug,
@@ -684,6 +651,7 @@ function SyllabusContent() {
       setCurrentBlankProps(previousAssignment);
       router.push({
         query: {
+          ...router.query,
           cohortSlug,
           lesson: previousAssignment?.type?.toLowerCase(),
           lessonSlug: previousAssignment?.slug,
@@ -703,6 +671,7 @@ function SyllabusContent() {
         setCurrentBlankProps(nextAssignment);
         router.push({
           query: {
+            ...router.query,
             cohortSlug,
             lesson: nextAssignment?.type?.toLowerCase(),
             lessonSlug: nextAssignment?.slug,
@@ -718,9 +687,9 @@ function SyllabusContent() {
   };
 
   const pathConnector = {
-    read: `${router.locale === 'en' ? '4geeks.com/lesson' : `4geeks.com/${router.locale}/lesson`}`,
-    practice: `${router.locale === 'en' ? '4geeks.com/interactive-exercise' : `4geeks.com/${router.locale}/interactive-exercise`}`,
-    project: `${router.locale === 'en' ? '4geeks.com/project' : `4geeks.com/${router.locale}/project`}`,
+    read: router.locale === 'en' ? '4geeks.com/lesson' : `4geeks.com/${router.locale}/lesson`,
+    practice: router.locale === 'en' ? '4geeks.com/interactive-exercise' : `4geeks.com/${router.locale}/interactive-exercise`,
+    project: router.locale === 'en' ? '4geeks.com/project' : `4geeks.com/${router.locale}/project`,
     answer: 'https://assessment.4geeks.com/quiz',
   };
   const shareLink = currentTask ? `${pathConnector[lesson]}/${currentTask.associated_slug}` : '';
@@ -774,7 +743,7 @@ function SyllabusContent() {
     };
   };
 
-  const openAiChat = async () => {
+  const openRigobot = async () => {
     try {
       if (isAuthenticatedWithRigobot) {
         rigo.updateOptions({
@@ -865,7 +834,7 @@ function SyllabusContent() {
             setShowPendingTasks={setShowPendingTasks}
             isOpen={isOpen}
             onToggle={onToggle}
-            isStudent={!professionalRoles.includes(cohortSession.cohort_role)}
+            isStudent={!professionalRoles.includes(cohortSession?.cohort_user?.role)}
             teacherInstructions={{
               existContentToShow: extendedInstructions !== null,
               actionHandler: () => {
@@ -1169,17 +1138,11 @@ function SyllabusContent() {
                             width="100%"
                           >
                             <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px">
-                              <ButtonHandlerByTaskStatus
+                              <AssignmentButton
                                 allowText
                                 currentTask={currentTask}
                                 sendProject={sendProject}
-                                changeStatusAssignment={changeStatusAssignment}
                                 currentAssetData={currentAsset}
-                                toggleSettings={toggleSettings}
-                                closeSettings={closeSettings}
-                                settingsOpen={settingsOpen}
-                                handleOpen={handleOpen}
-                                fileData={fileData}
                               />
                               {currentTask?.task_status === 'DONE' && showModal && (
                                 <ShareButton
@@ -1257,7 +1220,7 @@ function SyllabusContent() {
                                     padding="12px"
                                     borderRadius="full"
                                     variant="default"
-                                    onClick={openAiChat}
+                                    onClick={openRigobot}
                                     style={{ color: fontColor, textDecoration: 'none' }}
                                   >
                                     <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
@@ -1321,19 +1284,13 @@ function SyllabusContent() {
                                 </Tooltip>
                               )}
                               {!isExercise && (
-                                <ButtonHandlerByTaskStatus
+                                <AssignmentButton
                                   allowText
                                   isGuidedExperience={isAvailableAsSaas}
                                   variant="rounded"
                                   currentTask={currentTask}
                                   sendProject={sendProject}
-                                  changeStatusAssignment={changeStatusAssignment}
                                   currentAssetData={currentAsset}
-                                  toggleSettings={toggleSettings}
-                                  closeSettings={closeSettings}
-                                  settingsOpen={settingsOpen}
-                                  handleOpen={handleOpen}
-                                  fileData={fileData}
                                 />
                               )}
                               {currentTask?.task_status === 'DONE' && showModal && (
@@ -1421,19 +1378,13 @@ function SyllabusContent() {
               >
                 {t('mark-later')}
               </Button>
-              <ButtonHandlerByTaskStatus
+              <AssignmentButton
                 allowText
                 currentTask={currentTask}
                 hasPendingSubtasks={hasPendingSubtasks}
                 sendProject={sendProject}
-                changeStatusAssignment={changeStatusAssignment}
                 togglePendingSubtasks={handleNavigateToLastPendingSubtask}
-                toggleSettings={toggleSettings}
-                closeSettings={closeSettings}
                 currentAssetData={currentAsset}
-                settingsOpen={modalSettingsOpen}
-                handleOpen={handleOpen}
-                fileData={fileData}
                 onClickHandler={() => {
                   setShowModal(false);
                   if (nextAssignment?.target === 'blank') {
@@ -1574,6 +1525,13 @@ function SyllabusContent() {
           <MarkDownParser content={extendedInstructions?.content || ''} />
         </SimpleModal>
       )}
+      <ReviewModal
+        isOpen={reviewModalState.isOpen}
+        onClose={handleCloseReviewModal}
+        currentTask={reviewModalState.currentTask}
+        fileData={reviewModalState.fileData}
+        isStudent
+      />
     </>
   );
 }

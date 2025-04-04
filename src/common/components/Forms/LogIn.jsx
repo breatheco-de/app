@@ -17,8 +17,8 @@ import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import { getBrowserInfo, isValidEmail, isWindow } from '../../../utils';
-import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import useCustomToast from '../../hooks/useCustomToast';
+import ModalInfo from '../ModalInfo';
 
 function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const { t, lang } = useTranslation('login');
