@@ -77,21 +77,6 @@ function chooseProgram() {
   const TwelveHoursInMinutes = 720;
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
 
-  const getStudentAndTeachers = async (item) => {
-    const users = await bc.cohort({
-      role: 'TEACHER,ASSISTANT',
-      cohorts: item?.slug,
-      academy: item?.academy?.id,
-    }).getMembers();
-
-    return users || [];
-  };
-
-  const getMembers = async (cohortSubscription) => {
-    const members = await getStudentAndTeachers(cohortSubscription);
-    return members;
-  };
-
   const allSyllabus = useMemo(() => {
     const syllabus = [];
 
@@ -132,9 +117,6 @@ function chooseProgram() {
   useEffect(() => {
     let revalidate;
     if (user) {
-      const cohortSubscription = cohorts?.find((item) => item?.slug === subscriptionProcess?.slug);
-      const members = cohortSubscription ? getMembers(cohortSubscription) : [];
-
       getServices(user.roles);
       const cohortIsReady = cohorts?.length > 0 && cohorts?.some((cohort) => {
         const academy = cohort?.academy;
@@ -167,7 +149,7 @@ function chooseProgram() {
       revalidate = setTimeout(async () => {
         if (subscriptionProcess?.status === PREPARING_FOR_COHORT && subscriptionProcess?.id) {
           setIsRevalidating(true);
-          if (!cohortIsReady && members.length === 0) {
+          if (!cohortIsReady) {
             const { cohorts: myCohorts } = await fetchUserAndCohorts();
             setCohorts(myCohorts);
             console.log('revalidated on:', new Date().toLocaleString());
