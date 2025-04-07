@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import React, { useState, useCallback, useEffect } from 'react';
-import ProjectList from '../../js_modules/projects/ProjectList';
+import ProjectList from './Assets/ProjectList';
 import { isWindow } from '../../utils';
 import InfiniteScroll from './InfiniteScroll';
 import { ORIGIN_HOST } from '../../utils/variables';
