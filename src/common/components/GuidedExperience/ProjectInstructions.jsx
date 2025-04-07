@@ -23,11 +23,12 @@ import Heading from '../Heading';
 import Text from '../Text';
 import Icon from '../Icon';
 import useAuth from '../../hooks/useAuth';
+import { addQueryToURL } from '../../../utils';
 
 const ModalToCloneProject = lazy(() => import('./ModalToCloneProject'));
 
 export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, learnpackUrlFromPublicView, startWithLearnpack, openWithLearnpackNoSaas, variant, isStarted, publicView, ...rest }) {
-  const { t } = useTranslation('common');
+  const { t, lang } = useTranslation('common');
   const { cohorts } = useAuth();
 
   const isExternalExercise = currentAsset.external && currentAsset.asset_type === 'EXERCISE';
@@ -65,7 +66,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
       <Button
         cursor="pointer"
         as="a"
-        href={openWithLearnpackNoSaas ? currentAsset?.learnpack_deploy_url : currentAsset.url}
+        href={openWithLearnpackNoSaas ? currentAsset?.learnpack_deploy_url : addQueryToURL(currentAsset.url, { lang })}
         target="_blank"
         size="sm"
         padding="4px 8px"

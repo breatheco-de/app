@@ -7,12 +7,13 @@ import useTranslation from 'next-translate/useTranslation';
 import Text from './Text';
 import Icon from './Icon';
 import ModalInfo from './ModalInfo';
+import { addQueryToURL } from '../../utils';
 
 function TaskBar({
   onClickHandler, data, containerStyle, leftContentStyle, containerPX, width, currIndex,
   isDone, rightItemHandler, link, textWithLink, mandatory, onDisabledClick,
 }) {
-  const { t } = useTranslation('dashboard');
+  const { t, lang } = useTranslation('dashboard');
   const containerBackground = isDone ? useColorModeValue('featuredLight', 'featuredDark') : useColorModeValue('white', 'primary');
   const commonFontColor = useColorModeValue('gray.600', 'gray.200');
   const [openModal, setOpenModal] = useState(false);
@@ -47,7 +48,7 @@ function TaskBar({
         title={t('modules.target-blank-title')}
         isReadonly
         description={t('modules.target-blank-msg', { title: data.title })}
-        link={data.url}
+        link={addQueryToURL(data.url, { lang })}
         handlerText={t('common:open')}
         closeText={t('common:close')}
         closeButtonVariant="outline"
