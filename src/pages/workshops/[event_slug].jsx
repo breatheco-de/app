@@ -18,8 +18,8 @@ import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isVal
 import useStyle from '../../common/hooks/useStyle';
 import Icon from '../../common/components/Icon';
 import PublicProfile from '../../common/components/PublicProfile';
-import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
-import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import AvatarUser from '../../common/components/AvatarUser';
+import ModalInfo from '../../common/components/ModalInfo';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import useAuth from '../../common/hooks/useAuth';
 import Timer from '../../common/components/Timer';

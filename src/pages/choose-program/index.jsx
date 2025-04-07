@@ -1,26 +1,25 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import {
-  Flex, Box, Button, useToast, Skeleton, useColorModeValue,
+  Flex, Box, Button, useToast,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
-import ChooseProgram from '../../js_modules/chooseProgram';
+import ProgramsDashboard from '../../common/components/ProgramsDashboard';
 import Text from '../../common/components/Text';
 import asPrivate from '../../common/context/PrivateRouteWrapper';
 import bc from '../../common/services/breathecode';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
-import Module from '../../common/components/Module';
+import TaskBar from '../../common/components/TaskBar';
 import { calculateDifferenceDays, getStorageItem, isPlural, isValidDate, removeStorageItem, setStorageItem, sortToNearestTodayDate, syncInterval, getBrowserInfo } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
-import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
 import LiveEvent from '../../common/components/LiveEvent';
 import NextChakraLink from '../../common/components/NextChakraLink';
+import { SimpleSkeleton } from '../../common/components/Skeleton';
 import useProgramList from '../../common/store/actions/programListAction';
-import handlers from '../../common/handlers';
 import useSubscriptionsHandler from '../../common/store/actions/subscriptionAction';
 import { PREPARING_FOR_COHORT } from '../../common/store/types';
 import SimpleModal from '../../common/components/SimpleModal';
@@ -49,19 +48,19 @@ export const getStaticProps = async ({ locale, locales }) => {
 };
 
 function chooseProgram() {
-  const { t, lang } = useTranslation('choose-program');
-  const { setCohortSession } = useCohortHandler();
+  const { t } = useTranslation('choose-program');
+  const { setCohortSession, getCohortsModules, cohortsAssignments } = useCohortHandler();
+  const { user, cohorts, isLoading, reSetUserAndCohorts, fetchUserAndCohorts, setCohorts } = useAuth();
   const [subscriptionProcess] = usePersistent('subscription-process', null);
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
   const [events, setEvents] = useState(null);
-  const [subscriptionData, setSubscriptionData] = useState([]);
   const [liveClasses, setLiveClasses] = useState([]);
   const [loadingInvite, setLoadingInvite] = useState(null);
-  const { state, programsList, updateProgramList } = useProgramList();
-  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
-  const { fetchSubscriptions } = useSubscriptionsHandler();
-  const [cohortTasks, setCohortTasks] = useState({});
+  const { updateProgramList } = useProgramList();
+  const { fetchSubscriptions, state: subscriptionsState } = useSubscriptionsHandler();
+  const { isLoading: subscriptionLoading, subscriptions } = subscriptionsState;
+  const [cohortMembers, setCohortMembers] = useState({});
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
   const [lateModalProps, setLateModalProps] = useState({
@@ -72,54 +71,20 @@ function chooseProgram() {
     isLoading: true,
     data: [],
   });
-  const { isAuthenticated, user, updateProfile } = useAuth();
   const toast = useToast();
-  const commonStartColor = useColorModeValue('gray.300', 'gray.light');
-  const commonEndColor = useColorModeValue('gray.400', 'gray.400');
   const { hexColor } = useStyle();
   const isClosedLateModal = getStorageItem('isClosedLateModal');
   const TwelveHoursInMinutes = 720;
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
-  const welcomeVideoLinks = {
-    es: 'https://www.youtube.com/embed/TgkIpTZ75NM',
-    en: 'https://www.youtube.com/embed/ijEp5XHm7qo',
-  };
 
-  const fetchAdmissions = () => bc.admissions().me();
-
-  const options = {
-    cacheTime: 1000 * 60 * 60, // cache 1 hour
-    refetchOnWindowFocus: false,
-  };
-
-  const getStudentAndTeachers = async (item) => {
-    const users = await bc.cohort({
-      role: 'TEACHER,ASSISTANT',
-      cohorts: item?.cohort?.slug,
-      academy: item?.cohort?.academy?.id,
-    }).getMembers();
-
-    return users || [];
-  };
-
-  const { isLoading, data: dataQuery, setData: setDataQuery, refetch } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options });
-
-  const getMembers = async (cohortSubscription) => {
-    const members = await getStudentAndTeachers(cohortSubscription);
-    return members;
-  };
-
-  const getAllSyllabus = () => {
+  const allSyllabus = useMemo(() => {
     const syllabus = [];
-    const allCohorts = dataQuery?.cohorts || [];
 
-    allCohorts.forEach(({ cohort }) => {
-      if (!syllabus.includes(cohort.syllabus_version.slug)) syllabus.push(cohort.syllabus_version.slug);
+    cohorts.forEach(({ syllabus_version: syllabusVersion }) => {
+      if (!syllabus.includes(syllabusVersion.slug)) syllabus.push(syllabusVersion.slug);
     });
     return syllabus;
-  };
-
-  const allSyllabus = useMemo(getAllSyllabus, [dataQuery]);
+  }, [cohorts]);
 
   const getServices = async (userRoles) => {
     if (userRoles?.length > 0) {
@@ -150,63 +115,60 @@ function chooseProgram() {
   };
 
   useEffect(() => {
-    const cohorts = dataQuery?.cohorts;
-    const cohortSubscription = cohorts?.find((item) => item?.cohort?.slug === subscriptionProcess?.slug);
-    const members = cohortSubscription?.cohort?.slug ? getMembers(cohortSubscription) : [];
-
-    getServices(dataQuery?.roles);
-    const cohortIsReady = cohorts?.length > 0 && cohorts?.some((item) => {
-      const cohort = item?.cohort;
-      const academy = cohort?.academy;
-      if (cohort?.id === subscriptionProcess?.id
+    let revalidate;
+    if (user) {
+      getServices(user.roles);
+      const cohortIsReady = cohorts?.length > 0 && cohorts?.some((cohort) => {
+        const academy = cohort?.academy;
+        if (cohort?.id === subscriptionProcess?.id
         && cohort?.slug === subscriptionProcess?.slug
         && academy?.id === subscriptionProcess?.academy_info?.id) return true;
 
-      return false;
-    });
-    if (cohorts?.length > 0) {
-      const hasAvailableAsSaas = cohorts.some((elem) => elem.cohort.available_as_saas === true);
-      const cohortsSlugs = cohorts.map((elem) => elem.cohort.slug).join(',');
-      const cohortsAcademies = cohorts.map((elem) => elem.cohort.academy.slug).join(',');
-      const cohortWithFinantialStatusLate = cohorts.filter((elem) => elem.finantial_status === 'LATE' || elem.educational_status === 'SUSPENDED');
-      setLateModalProps({
-        isOpen: cohortWithFinantialStatusLate?.length > 0 && !isClosedLateModal,
-        data: cohortWithFinantialStatusLate,
+        return false;
       });
+      if (cohorts?.length > 0) {
+        const hasAvailableAsSaas = cohorts.some((elem) => elem.available_as_saas);
+        const cohortsSlugs = cohorts.map((elem) => elem.slug).join(',');
+        const cohortsAcademies = cohorts.map((elem) => elem.academy.slug).join(',');
+        const cohortWithFinantialStatusLate = cohorts.filter((elem) => elem.cohort_user.finantial_status === 'LATE' || elem.educational_status === 'SUSPENDED');
+        setLateModalProps({
+          isOpen: cohortWithFinantialStatusLate?.length > 0 && !isClosedLateModal,
+          data: cohortWithFinantialStatusLate,
+        });
 
-      reportDatalayer({
-        dataLayer: {
-          available_as_saas: hasAvailableAsSaas,
-          cohorts: cohortsSlugs,
-          academies: cohortsAcademies,
-          agent: getBrowserInfo(),
-        },
-      });
+        reportDatalayer({
+          dataLayer: {
+            available_as_saas: hasAvailableAsSaas,
+            cohorts: cohortsSlugs,
+            academies: cohortsAcademies,
+            agent: getBrowserInfo(),
+          },
+        });
+      }
+
+      revalidate = setTimeout(async () => {
+        if (subscriptionProcess?.status === PREPARING_FOR_COHORT && subscriptionProcess?.id) {
+          setIsRevalidating(true);
+          if (!cohortIsReady) {
+            const { cohorts: myCohorts } = await fetchUserAndCohorts();
+            setCohorts(myCohorts);
+            console.log('revalidated on:', new Date().toLocaleString());
+            setIsRevalidating(false);
+          } else {
+            setIsRevalidating(false);
+            console.log('Start learning!');
+            removeStorageItem('subscription-process');
+          }
+        }
+      }, 2000);
     }
 
-    const revalidate = setTimeout(() => {
-      if (subscriptionProcess?.status === PREPARING_FOR_COHORT) {
-        setIsRevalidating(true);
-        if (!cohortIsReady && members.length === 0) {
-          refetch();
-          console.log('revalidated on:', new Date().toLocaleString());
-          setIsRevalidating(false);
-        } else {
-          setIsRevalidating(false);
-          console.log('Start learning!');
-          removeStorageItem('subscription-process');
-        }
-      }
-    }, 2000);
-
     return () => clearTimeout(revalidate);
-  }, [isAuthenticated, dataQuery?.cohorts, dataQuery?.roles]);
+  }, [user, cohorts]);
 
   useEffect(() => {
-    setSubscriptionLoading(true);
     fetchSubscriptions()
       .then((data) => {
-        setSubscriptionData(data);
         reportDatalayer({
           dataLayer: {
             event: 'subscriptions_load',
@@ -216,57 +178,51 @@ function chooseProgram() {
             agent: getBrowserInfo(),
           },
         });
-      })
-      .finally(() => setSubscriptionLoading(false));
+      });
   }, []);
 
   const allSubscriptions = [
-    ...subscriptionData?.subscriptions || [],
-    ...subscriptionData?.plan_financings || [],
+    ...subscriptions?.subscriptions || [],
+    ...subscriptions?.plan_financings || [],
   ];
   // .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
 
   useEffect(() => {
-    if (subscriptionLoading === false && dataQuery && Object.values(cohortTasks)?.length > 0) {
-      updateProgramList(dataQuery?.cohorts?.reduce((acc, value) => {
-        acc[value.cohort.slug] = {
-          ...state[value.cohort.slug],
-          ...programsList[value.cohort.slug],
-          ...cohortTasks[value.cohort.slug],
-          name: value.cohort.name,
-          plan_financing: subscriptionData?.plan_financings?.find(
-            (sub) => sub?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === value.cohort.slug),
+    if (subscriptionLoading === false && cohorts.length > 0 && Object.values(cohortMembers)?.length > 0) {
+      const programList = cohorts?.reduce((acc, value) => {
+        acc[value.slug] = {
+          ...cohortMembers[value.slug],
+          name: value.name,
+          plan_financing: subscriptions?.plan_financings?.find(
+            (sub) => sub?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === value.slug),
           ) || null,
-          subscription: subscriptionData?.subscriptions?.find(
-            (sub) => sub?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === value.cohort.slug),
+          subscription: subscriptions?.subscriptions?.find(
+            (sub) => sub?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === value.slug),
           ) || null,
           all_subscriptions: allSubscriptions,
-          slug: value.cohort.slug,
+          slug: value.slug,
         };
         return acc;
-      }, {}));
+      }, {});
+      updateProgramList(programList);
     }
-  }, [dataQuery, cohortTasks, subscriptionLoading]);
+  }, [cohorts, cohortMembers, subscriptionLoading]);
 
-  const processCohort = async (item) => {
-    if (item?.cohort?.slug) {
-      const isFinantialStatusLate = item?.finantial_status === 'LATE' || item?.educational_status === 'SUSPENDED';
-      const { academy, syllabus_version: syllabusVersion } = item.cohort;
-      const tasks = await bc.todo({ cohort: item?.cohort?.id }).getTaskByStudent();
+  const processCohort = async (cohort) => {
+    if (cohort?.slug) {
+      const isFinantialStatusLate = cohort.cohort_user.finantial_status === 'LATE' || cohort.cohort_user.educational_status === 'SUSPENDED';
+      const { slug } = cohort;
       const studentAndTeachers = isFinantialStatusLate ? {} : await bc.cohort({
         role: 'TEACHER,ASSISTANT',
-        cohorts: item?.cohort?.slug,
-        academy: item?.cohort?.academy?.id,
+        cohorts: slug,
+        academy: cohort.academy?.id,
       }).getMembers();
       const teacher = studentAndTeachers?.data?.filter((st) => st.role === 'TEACHER') || [];
       const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT') || [];
-      const syllabus = await bc.syllabus().get(academy.id, syllabusVersion.slug, syllabusVersion.version);
-      const assignmentData = await handlers.getAssignmentsCount({ data: syllabus?.data, taskTodo: tasks?.data, cohortId: item?.cohort?.id });
 
-      setCohortTasks((prev) => ({
+      setCohortMembers((prev) => ({
         ...prev,
-        [item?.cohort.slug]: {
-          ...assignmentData,
+        [slug]: {
           teacher,
           assistant,
         },
@@ -275,12 +231,18 @@ function chooseProgram() {
   };
 
   useEffect(() => {
-    if (dataQuery?.id && dataQuery?.cohorts?.length > 0) {
-      dataQuery.cohorts.map(processCohort);
+    if (cohorts.length > 0) {
+      getCohortsModules(cohorts);
     }
-  }, [dataQuery?.id, isLoading]);
+  }, [cohorts]);
 
-  const userID = user?.id;
+  useEffect(() => {
+    // const cohortSlugs = Object.keys(cohortsAssignments);
+    // if (cohorts.length > 0 && cohorts.every((cohort) => cohortSlugs.includes(cohort.slug))) {
+    if (cohorts.length > 0) {
+      cohorts.map(processCohort);
+    }
+  }, [cohorts, cohortsAssignments]);
 
   useEffect(() => {
     bc.payment({ upcoming: true, limit: 20 }).events()
@@ -318,20 +280,19 @@ function chooseProgram() {
   }, []);
 
   useEffect(() => {
-    if (dataQuery?.date_joined) {
-      const cohortUserDaysCalculated = calculateDifferenceDays(dataQuery?.date_joined);
+    if (user?.date_joined) {
+      const cohortUserDaysCalculated = calculateDifferenceDays(user?.date_joined);
       if (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result <= 2) {
         setIsWelcomeModalOpen(true);
       }
     }
-  }, [dataQuery]);
+  }, [user]);
+
   useEffect(() => {
-    if (userID !== undefined) {
-      setCohortSession({
-        selectedProgramSlug: '/choose-program',
-      });
+    if (!user) {
+      setCohortSession(null);
     }
-  }, [userID]);
+  }, [user]);
 
   const getPendingInvites = async () => {
     try {
@@ -371,9 +332,7 @@ function chooseProgram() {
         const inv = invites[invitationIndex];
         const { name: cohortName } = inv.cohort;
 
-        const { data: refetchData } = await refetch();
-
-        setDataQuery(refetchData.data);
+        await reSetUserAndCohorts();
 
         const invList = [...invites];
         invList.splice(invitationIndex, 1);
@@ -414,16 +373,7 @@ function chooseProgram() {
       if (status >= 200 && status < 400) {
         const invitationIndex = invites.findIndex((invite) => invite.id === id);
 
-        const [meRefetch, admissionsRefetch] = await Promise.all([
-          bc.auth().me(),
-          refetch(),
-        ]);
-
-        const { data: userData } = meRefetch;
-        updateProfile(userData);
-
-        const { data: refetchData } = admissionsRefetch;
-        setDataQuery(refetchData.data);
+        await reSetUserAndCohorts();
 
         const invList = [...invites];
         invList.splice(invitationIndex, 1);
@@ -463,6 +413,8 @@ function chooseProgram() {
     return t('invite.singular-word', { invitesLength: invites?.length });
   };
 
+  const isMainCohort = (cohort) => !cohorts.some((elem) => elem.micro_cohorts.some((micro) => micro.slug === cohort.slug));
+
   return (
     <Flex alignItems="center" flexDirection="row" mt="40px">
       <SimpleModal
@@ -497,7 +449,7 @@ function chooseProgram() {
         </Box>
         <Box padding="0 15px 15px">
           <ReactPlayerV2
-            url={welcomeVideoLinks?.[lang] || welcomeVideoLinks?.en}
+            url={t('welcome-video')}
             width="100%"
             height="100%"
             iframeStyle={{ borderRadius: '3px 3px 13px 13px' }}
@@ -583,7 +535,7 @@ function chooseProgram() {
               {showInvites && invites.map((item) => {
                 const { id, type } = item;
                 return (
-                  <Module
+                  <TaskBar
                     key={`invites-${id}`}
                     data={{
                       title: type === 'invite' ? item.cohort.name : item.academy.name,
@@ -616,7 +568,7 @@ function chooseProgram() {
 
           <Box>
             {!isLoading && (
-              <ChooseProgram chooseList={dataQuery?.cohorts} setLateModalProps={setLateModalProps} />
+              <ProgramsDashboard cohorts={cohorts.filter(isMainCohort)} setLateModalProps={setLateModalProps} />
             )}
           </Box>
           {isRevalidating && (
@@ -629,11 +581,9 @@ function chooseProgram() {
               height="auto"
             >
               {Array(1).fill(0).map((_, i) => (
-                <Skeleton
+                <SimpleSkeleton
                   // eslint-disable-next-line react/no-array-index-key
-                  key={i}
-                  startColor={commonStartColor}
-                  endColor={commonEndColor}
+                  key={`${i}-skeleton-revalidating`}
                   width="100%"
                   height="286px"
                   color="white"
@@ -642,7 +592,7 @@ function chooseProgram() {
               ))}
             </Box>
           )}
-          {isLoading && dataQuery?.cohorts?.length > 0 && (
+          {isLoading && (
             <Box
               display="grid"
               mt="1rem"
@@ -652,11 +602,9 @@ function chooseProgram() {
               height="auto"
             >
               {Array(3).fill(0).map((_, i) => (
-                <Skeleton
+                <SimpleSkeleton
                   // eslint-disable-next-line react/no-array-index-key
-                  key={i}
-                  startColor={commonStartColor}
-                  endColor={commonEndColor}
+                  key={`${i}-skeleton-loading`}
                   width="100%"
                   height="286px"
                   color="white"
@@ -674,13 +622,13 @@ function chooseProgram() {
               mainClasses={liveClasses?.length > 0 ? liveClasses : []}
               otherEvents={events}
               margin="0 auto"
-              cohorts={dataQuery?.cohorts || []}
+              cohorts={cohorts}
             />
           </Box>
           <Box zIndex={10}>
             {!mentorshipServices.isLoading && mentorshipServices?.data?.length > 0 && (
               <SupportSidebar
-                allCohorts={dataQuery?.cohorts}
+                allCohorts={cohorts}
                 allSyllabus={allSyllabus}
                 services={mentorshipServices.data}
                 subscriptions={allSubscriptions}
@@ -689,7 +637,7 @@ function chooseProgram() {
           </Box>
           <Feedback />
 
-          {dataQuery?.cohorts?.every((elem) => elem.cohort.available_as_saas) && (
+          {cohorts.every((elem) => elem.available_as_saas) && (
             <NextChakraLink
               href={t('whats-app-link')}
               aria-label="4Geeks Academy community"

@@ -56,71 +56,82 @@ export const processRelatedAssignments = (syllabusData = {}, taskTodo = []) => {
   const answer = syllabusData?.quizzes || [];
 
   try {
-    const getTaskProps = (slug) => taskTodo.find(
+    const getTask = (slug) => taskTodo.find(
       (task) => task?.associated_slug === slug,
     );
     const currentDate = new Date();
 
-    const updatedRead = read?.map((el) => ({
-      ...el,
-      id,
-      label,
-      task_status: getTaskProps(el.slug)?.task_status || '',
-      revision_status: getTaskProps(el.slug)?.revision_status || '',
-      created_at: getTaskProps(el.slug)?.created_at || '',
-      position: el?.position || 0,
-      type: 'Read',
-      icon: 'book',
-      task_type: 'LESSON',
-    })).sort((a, b) => b.position - a.position);
+    const parsedLessons = read?.map((el) => {
+      const task = getTask(el.slug);
+      return ({
+        ...el,
+        id,
+        label,
+        task_status: task?.task_status || '',
+        revision_status: task?.revision_status || '',
+        created_at: task?.created_at || '',
+        position: el?.position || 0,
+        type: 'Read',
+        icon: 'book',
+        task_type: 'LESSON',
+      });
+    }).sort((a, b) => b.position - a.position);
 
-    const updatedPractice = practice?.map((el) => ({
-      ...el,
-      id,
-      label,
-      task_status: getTaskProps(el.slug)?.task_status || '',
-      revision_status: getTaskProps(el.slug)?.revision_status || '',
-      created_at: getTaskProps(el.slug)?.created_at || '',
-      position: el?.position || 0,
-      type: 'Practice',
-      icon: 'strength',
-      task_type: 'EXERCISE',
-    })).sort((a, b) => b.position - a.position);
+    const parsedExercises = practice?.map((el) => {
+      const task = getTask(el.slug);
+      return ({
+        ...el,
+        id,
+        label,
+        task_status: task?.task_status || '',
+        revision_status: task?.revision_status || '',
+        created_at: task?.created_at || '',
+        position: el?.position || 0,
+        type: 'Practice',
+        icon: 'strength',
+        task_type: 'EXERCISE',
+      });
+    }).sort((a, b) => b.position - a.position);
 
-    const updatedProject = project?.map((el) => {
-      const taskProps = getTaskProps(el?.slug?.slug || el?.slug);
+    const parsedProjects = project?.map((el) => {
+      const task = getTask(el?.slug?.slug || el?.slug);
 
       return ({
         ...el,
         id,
         label,
         slug: el?.slug?.slug || el?.slug,
-        task_status: taskProps?.task_status || '',
-        revision_status: taskProps?.revision_status || '',
-        created_at: taskProps?.created_at || '',
-        daysDiff: taskProps?.created_at ? differenceInDays(currentDate, new Date(taskProps?.created_at)) : '',
+        task_status: task?.task_status || '',
+        revision_status: task?.revision_status || '',
+        created_at: task?.created_at || '',
+        daysDiff: task?.created_at ? differenceInDays(currentDate, new Date(task.created_at)) : '',
         position: el?.position || 0,
         mandatory: el?.mandatory || false,
+        read_at: task?.read_at,
+        reviewed_at: task?.reviewed_at,
         type: 'Project',
         icon: 'code',
         task_type: 'PROJECT',
       });
     }).sort((a, b) => b.position - a.position);
 
-    const updatedAnswer = answer?.map((el) => ({
-      ...el,
-      id,
-      label,
-      task_status: getTaskProps(el.slug)?.task_status || '',
-      revision_status: getTaskProps(el.slug)?.revision_status || '',
-      created_at: getTaskProps(el.slug)?.created_at || '',
-      position: el?.position || 0,
-      type: 'Answer',
-      icon: 'answer',
-      task_type: 'QUIZ',
-    })).sort((a, b) => b.position - a.position);
+    const parsedQuizzes = answer?.map((el) => {
+      const task = getTask(el?.slug);
+      return ({
+        ...el,
+        id,
+        label,
+        task_status: task?.task_status || '',
+        revision_status: task?.revision_status || '',
+        created_at: task?.created_at || '',
+        position: el?.position || 0,
+        type: 'Answer',
+        icon: 'answer',
+        task_type: 'QUIZ',
+      });
+    }).sort((a, b) => b.position - a.position);
 
-    const content = [...updatedRead, ...updatedPractice, ...updatedProject, ...updatedAnswer];
+    const content = [...parsedLessons, ...parsedExercises, ...parsedProjects, ...parsedQuizzes];
 
     const includesDailyTask = (module) => taskTodo.some((task) => task.associated_slug === module.slug);
 

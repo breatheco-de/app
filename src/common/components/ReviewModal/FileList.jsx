@@ -13,9 +13,9 @@ function FileList({ isStudent, currentTask, contextData, updpateAssignment, setC
   const { t } = useTranslation('assignments');
   const [openUndoApproval, setOpenUndoApproval] = useState(false);
   const { fontColor, borderColor, lightColor, hexColor, featuredLight } = useStyle();
-  const data = contextData?.commitFiles || {};
+  const commitFiles = contextData?.commitFiles || {};
   const codeRevisions = contextData?.code_revisions || [];
-  const fileList = data?.fileList || [];
+  const fileList = commitFiles?.fileList || [];
   const revisionStatus = currentTask?.revision_status;
   const hasBeenApproved = revisionStatus === 'APPROVED';
 
@@ -36,7 +36,7 @@ function FileList({ isStudent, currentTask, contextData, updpateAssignment, setC
       commitFile: {
         path: commitData?.name,
         ...commitData,
-        task: data?.task || {},
+        task: commitFiles?.task || {},
         code: content,
       },
     }));
@@ -55,7 +55,7 @@ function FileList({ isStudent, currentTask, contextData, updpateAssignment, setC
               {t('code-review.select-file-to-review')}
             </Heading>
             <Heading size="18px" fontWeight={700}>
-              {data?.task?.title}
+              {commitFiles?.task?.title}
             </Heading>
           </Flex>
           <Flex my="10px" py="10px" px="10px" borderRadius="10px" background={featuredLight}>

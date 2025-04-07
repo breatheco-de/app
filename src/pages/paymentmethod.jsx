@@ -4,7 +4,7 @@ import { Box, Text, useToast, Flex, Button } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import useAuth from '../common/hooks/useAuth';
 import bc from '../common/services/breathecode';
-import CardForm from '../js_modules/checkout/CardForm';
+import CardForm from '../common/components/Checkout/CardForm';
 import asPrivate from '../common/context/PrivateRouteWrapper';
 import Icon from '../common/components/Icon';
 

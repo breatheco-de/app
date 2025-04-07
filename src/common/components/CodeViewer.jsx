@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 import Editor, { DiffEditor } from '@monaco-editor/react';
 import { setStorageItem, getStorageItem, isWindow } from '../../utils';
 import { RIGOBOT_HOST, BREATHECODE_HOST } from '../../utils/variables';
-import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import ModalInfo from './ModalInfo';
 import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';

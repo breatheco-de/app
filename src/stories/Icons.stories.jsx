@@ -2,7 +2,7 @@ import { Box } from '@chakra-ui/layout';
 import React from 'react';
 import Icon from '../common/components/Icon';
 
-const iconDict = require('../common/utils/iconDict.json');
+const iconDict = require('../iconDict.json');
 
 export default {
   title: 'Components/Icons',
