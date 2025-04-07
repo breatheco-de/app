@@ -84,43 +84,6 @@ function ProgramsDashboard({ cohorts, setLateModalProps }) {
         isOpen={upgradeModalIsOpen}
         onClose={() => setUpgradeModalIsOpen(false)}
       />
-<<<<<<< HEAD:src/common/components/ProgramsDashboard/index.jsx
-
-      {marketingCourses?.length > 0 && (
-        <>
-          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
-            <Heading size="sm" width="fit-content" whiteSpace="nowrap">
-              {t('available-programs')}
-            </Heading>
-            <Box as="hr" width="100%" margin="0.5rem 0 0 0" />
-          </Box>
-          <Box
-            display="grid"
-            gridTemplateColumns={cardColumnSize}
-            height="auto"
-            gridGap="4rem"
-          >
-            {marketingCourses.filter(filterForNonSaasStudents).map((item) => (
-              <ProgramCard
-                key={item.slug}
-                isMarketingCourse
-                icon="coding"
-                iconLink={item?.icon_url}
-                iconBackground="blue.default"
-                handleChoose={() => router.push(item?.course_translation?.landing_url)}
-                programName={item?.course_translation.title}
-                programDescription={item?.course_translation?.description}
-                bullets={item?.course_translation?.course_modules}
-                width="100%"
-                background={featuredColor}
-              />
-            ))}
-          </Box>
-        </>
-      )}
-
-=======
->>>>>>> 4089c3d4e3c24896a5b9ec9e6b98c39018acf25f:src/js_modules/chooseProgram/index.jsx
       {finishedCohorts.length > 0 && (
         <>
           <Box
