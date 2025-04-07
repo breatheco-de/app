@@ -75,7 +75,7 @@ export const getStaticPaths = async ({ locales }) => {
 
 export const getStaticProps = async ({ params, locale }) => {
   const { event_slug: slug } = params;
-  const resp = await bc.public().singleEvent(slug).catch(() => ({
+  const resp = await bc.public({ context: 'true' }).singleEvent(slug).catch(() => ({
     statusText: 'not-found',
   }));
   const data = resp?.data;
@@ -175,6 +175,7 @@ function Workshop({ eventData, asset }) {
   const { isAuthenticated, user, cohorts } = useAuth();
   const { featuredColor, hexColor } = useStyle();
   const endDate = event?.ended_at || event?.ending_at;
+  const eventRecap = event?.recap;
 
   const getDefaultData = async () => {
     const resp = await bc.public().singleEvent(eventData?.slug || eventSlug).catch(() => ({
@@ -400,14 +401,12 @@ function Workshop({ eventData, asset }) {
     else setDenyAccessToEvent(false);
   }, [subscriptionsForCurrentEvent]);
 
-  console.log('recordingUrl', event);
-
   const dynamicFormInfo = () => {
     if (!isAuth) {
       if (finishedEvent && recordingUrl) {
         return ({
           title: t('form.watch-workshop-recording-no-auth-title'),
-          description: t('form.watch-workshop-recording-no-auth-description'),
+          description: eventRecap || t('form.watch-workshop-recording-no-auth-description'),
           childrenDescription: (
             <Box>
               <Box mb="10px" display="flex" gridGap="5px" justifyContent="center">
@@ -1047,7 +1046,7 @@ function Workshop({ eventData, asset }) {
                         {formInfo?.title}
                       </Heading>
                       <Text>
-                        {formInfo?.description}
+                        {eventRecap || formInfo?.description}
                       </Text>
                     </Box>
                   </>
