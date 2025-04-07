@@ -23,7 +23,13 @@ function Page({ page }) {
     if (!prismicRef && !prismicApi) {
       router.push('/login');
     }
+    const userLang = navigator?.language || navigator?.userLanguage;
+    const isSpanish = userLang?.startsWith('es');
+    if (isSpanish && router.locale !== 'es') {
+      router.push('/es');
+    }
   }, []);
+
   return prismicRef && prismicApi && (
     <Box className="prismic-body" pt="3rem">
       <SliceZone slices={page?.data?.slices} components={components} />

@@ -1,15 +1,23 @@
 {
   "change-language": "Change language",
+  "reviews": "Ratings",
+  "course-rating": "Course rating",
   "connect-with-github": "Connect with Github",
-  "see-financing-options": "See financing options",
+  "connect-with-rigobot": "Connect with Rigobot",
+  "get-help-rigobot": "Get help from Rigobot",
+  "see-financing-options": "See payment options",
   "your-tutors-in-this-cohort": "Your tutors:",
   "main-instructor": "Main Instructor",
   "teacher-assistant": "Teacher Assistant",
+  "hide": "Hide",
   "rigo": "Rigo",
+  "see-workshops": "See all workshops",
+  "schedule-mentoring": "Schedule a mentoring session",
   "rigobot-bubble": {
     "greeting": "Hi!"
   },
   "ai-tutor": "AI Tutor",
+  "tooltip-ai-tutor": "Never be stuck again, our internally developed AI tutor will help you everywhere, every step of the way.",
   "clone-modal": {
     "title": "How to clone a project?"
   },
@@ -37,10 +45,16 @@
     "months": "months",
     "years": "years"
   },
-  "timer":{
+  "timer": {
     "min": "min",
     "mins": "mins",
     "sec": "seg"
+  },
+  "back-to-asset": {
+    "lesson": "Back to Lessons",
+    "interactive-coding-tutorial": "Back to Projects",
+    "interactive-exercise": "Back to Exercises",
+    "how-to": "Back to How to's"
   },
   "no-translation-available": "No translation available",
   "read-next": "Read next",
@@ -71,8 +85,10 @@
   "confirm": "Confirm",
   "submit": "Submit",
   "enroll": "Enroll now",
+  "get-plan": "Get plan",
   "enroll-totally-free": "Enroll totally free",
   "enroll-for-connector": "Enroll for",
+  "start-tutorial": "Start tutorial",
   "learn-more": "Learn more",
   "more-technologies": "More technologies",
   "continue-learning": "Continue learning about:",
@@ -96,6 +112,7 @@
   "email": "Email",
   "confirm-email": "Confirm email",
   "phone": "Phone",
+  "popular-searches": "Popular searches",
   "password": "Password",
   "confirm-password": "Confirm password",
   "difficulty": "Difficulty",
@@ -130,6 +147,7 @@
   "remaining": "Remaining",
   "show-more": "Show more",
   "show-less": "Show less",
+  "repository-information": "repository's information section",
   "seach-technology": "Search technology",
   "remove-difficulty": "Remove difficulty",
   "read-lesson": "Read lesson",
@@ -150,9 +168,9 @@
     "mark-as-done": "Mark as done",
     "mark-as-not-done": "Mark as not done"
   },
-  "external":{
+  "external": {
     "title": "This is an external exercise",
-    "description": "<strong>\"{{projectName}}\"</strong> is an external exercise you will redirected to a new tab to do it; choose one of the following options to start working on the project:"
+    "description": "<strong>\"{{projectName}}\"</strong> is an external exercise you will be redirected to a new tab to do it; choose one of the following options to start working on the project:"
   },
   "learnpack": {
     "title": "This is a Learnpack interactive exercise",
@@ -161,19 +179,59 @@
     "description2": "This practice will reroute your browser to LearnPack - an interactive learning tool that runs integrated with VSCode.",
     "new-exercise": "Start from the beginning",
     "continue-exercise": "Continue from a previous session",
+    "open-with-vendor": "Open with {{vendor}}",
     "open-locally": "Open locally on your computer",
-    "start-asset": "Start interactive {{asset_type}}",
+    "start-interactive-asset": "Start interactive {{asset_type}}",
+    "start-asset": "Start {{asset_type}}",
+    "continue-asset": "Continue this {{asset_type}}",
     "asset_types": {
       "project": "project",
       "exercise": "exercise"
     },
+    "dependencies": {
+      "node-js": "Node JS",
+      "python": "Python",
+      "javascript": "Javascript"
+    },
     "start-exercise": "Start exercise",
     "recommended": "Recommended",
+    "install-specific-version": "Install {{name}} with version {{version}} in your computer",
+    "banner-description": "It's crucial to install the version specified, otherwise the project may not run correctly. Install version {{version}}",
     "open-in-learnpack-button": {
       "text": "Open in the cloud",
       "title": "Open in the cloud",
-      "description": "We take care of <a class=\"link\" href=\"https://4geeks.com/click-and-learn\">setup and installations</a> for all the required technologies to run this exercise or project.",
-      "type": "dropdown"
+      "description": "We take care of <a class=\"link\" target=\"_blank\" href=\"https://4geeks.com/click-and-learn\">setup and installations</a> for all the required technologies to run this exercise or project.",
+      "type": "dropdown",
+      "steps": [
+        {
+          "label": "Verify if the repository is a template",
+          "description": "Check if the repository is a GitHub template before proceeding.<br><br>You can find out if it is a template by looking at the {{repoUrl}}.<br><br>If it has a `Use this template` button or if, after the name of the repository located on the top side of your screen (in GitHub), it says `Template` or `Public template`, then it is a template.",
+          "video": "https://www.youtube.com/watch?v=3vADJs7N3NA",
+          "source": "https://4geeks.com/lesson/how-to-start-a-project",
+          "source-label": ""
+        },
+        {
+          "label": "If it is not a template",
+          "description": "If the repository is not a template:\n1. Go to the GitHub repository and click on the `Fork` button.\n2. Set the owner to 4Geeks if you want free Codespaces hours, or use your own user account.\n3. After forking is completed, you will have a copy of the repository under your account (the fork), which you can now modify and work on.\n\nContinue with step 4.",
+          "video": "",
+          "source": "https://4geeks.com/lesson/how-to-start-a-project",
+          "source-label": ""
+        },
+        {
+          "label": "If it is a template",
+          "description": "If the repository is a template:\n1. Click `Use this template` and select `Create a new repository`.\n2. Choose an owner (select 4Geeks if you're a student for free Codespaces hours).\n3. Name your repository (e.g., `username-project-name`) and make it public.\n4. Click `Create repository from template`.\n5. Star the repository to find it easily later.",
+          "video": "",
+          "source": "https://4geeks.com/lesson/how-to-start-a-project",
+          "source-label": ""
+        },
+        {
+          "label": "Open the repository",
+          "description": "Follow one of these options to open the repository:\n- **Open in Github Codespaces**: Click the `Code` button and open the project in Codespaces.\n- **Open in Gitpod**: Install the Gitpod extension and use the Gitpod button to open the project.",
+          "video": "",
+          "source": "https://4geeks.com/lesson/how-to-start-a-project",
+          "source-label": ""
+        }
+      ]
     },
     "clone-title": "How to clone a project?",
     "clone-modal": {
@@ -181,9 +239,18 @@
       "need-help": "Need help? Schedule a mentoring session",
       "description": "This exercise can be downloaded and run locally on your computer by following these steps:",
       "select-os": "Select your operating system",
+      "intro": {
+        "slug": "intro",
+        "label": "Introduction",
+        "description": "This guide will walk you through the process of running your project on your computer. Follow these simple steps to set up everything you need and get your project up and running in no time. Let's get started!",
+        "video": "https://www.youtube.com/watch?v=P0C0ZXZKLqU",
+        "source-label": "",
+        "source": ""
+      },
       "agent-vs-code": {
         "label": "Open the project in VS Code",
-        "description": "Make sure you have the <a href=\"https://learnpack.co\" target=\"_blank\">LearnPack extension</a> installed, open the folder in VSCode and type <span class=\"highlight-command\">learnpack start</span> on your vscode terminal."
+        "video": "https://www.youtube.com/watch?v=NgfV30FmhS4",
+        "description": "Make sure you have the <a href=\"https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode\" target=\"_blank\">LearnPack extension</a> installed, open the folder in VSCode and type <span class=\"highlight-command\">learnpack start</span> on your vscode terminal."
       },
       "agent-os": {
         "label": "Open the project without VSCode",
@@ -191,6 +258,7 @@
       },
       "project-readme": {
         "label": "Read the README.md inside the project",
+        "video": "https://www.youtube.com/watch?v=bphlMjXZpLg",
         "description": "Once you open the project in your editor you will find a README.md file containing more instructions on how to run the project"
       },
       "os-list": [
@@ -214,42 +282,62 @@
               "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
               "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
               "source-label": "How to install NVM on MacOS?"
+            },
+            {
+              "name": "javascript",
+              "label": "Install Node JS in your computer",
+              "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
+              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
+              "source-label": "How to install NVM on MacOS?"
             }
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
-              "video": "",
+              "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-install-vscode-.mp4",
               "source-label": "Go to VSCode Download page",
               "source": "https://code.visualstudio.com/download"
             },
             {
+              "slug": "create-folders",
               "label": "Create a folder to store your exercises",
               "description": "If you already created a folder to store a previous exercise, we recommend you using it. Otherwise, create a new folder wherever you feel best (inside Documents for example) and open that new folder in your code editor (VSCode or other). From here open the terminal to follow the next steps.",
-              "video": "https://www.youtube.com/watch?v=eZAT6fwMVgY",
+              "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-organize-your-files.mp4",
               "source": ""
             },
             {
               "label": "Install node.js on your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
-              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
+              "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-install-nvm.mp4",
               "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
               "source-label": "Go to how to install nvm on MacOS"
             },
             {
               "label": "Install LearnPack on your computer",
               "description": "You must install LearnPack to run these exercises interactively on your computer, you should run this command on the terminal: `npm install @learnpack/learnpack -g`. Click the link below to read more about LearnPack",
-              "video": "https://www.youtube.com/watch?v=noKAD-d_z3c",
+              "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-install-learnpack.mp4",
               "source": "https://4geeks.com/docs/learnpack/what-is-learnpack"
             },
             {
               "slug": "clone",
               "label": "Clone the project into your computer",
               "description": "On MacOS, you can clone the project into your computer by simply running this command in the terminal: `git clone {{repoUrl}}`. You can check this link if you need a more detailed explanation.",
-              "video": "https://www.youtube.com/watch?v=EhxPBMQFCaI",
+              "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-cloning-a-project.mp4",
               "source": "https://4geeks.com/how-to/github-clone-repository",
               "source-label": "Go to how to clone a GitHub repository"
+            }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Read the content of the readme",
+              "description": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It’s like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
+              "video": "",
+              "source": "#markdown-body",
+              "source-label": "Take me to the readme!"
             }
           ]
         },
@@ -273,10 +361,19 @@
               "video": "https://www.youtube.com/watch?v=z6Tta9ZbbGg",
               "source": "https://4geeks.com/how-to/install-nvm-linux",
               "source-label": "How to install NVM on MacOS?"
+            },
+            {
+              "name": "javascript",
+              "label": "Install Node JS in your computer",
+              "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
+              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
+              "source-label": "How to install NVM on MacOS?"
             }
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
               "video": "",
@@ -310,6 +407,16 @@
               "source": "https://4geeks.com/how-to/github-clone-repository",
               "source-label": "Go to how to clone a GitHub repository"
             }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Read the content of the readme",
+              "description": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It’s like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
+              "video": "",
+              "source": "#markdown-body",
+              "source-label": "Take me to the readme!"
+            }
           ]
         },
         {
@@ -321,7 +428,7 @@
               "name": "python",
               "label": "Install Python in your computer",
               "description": "You must install Python on your computer to run this project locally. Click on the link below to follow a step-by-step about how to install it.",
-              "video": "https://www.youtube.com/watch?v=yivyNCtVVDk",
+              "video": "https://www.youtube.com/watch?v=VdafZF-RiXw",
               "source": "https://4geeks.com/how-to/how-to-install-python",
               "source-label": "How to install Python?"
             },
@@ -329,29 +436,38 @@
               "name": "node-js",
               "label": "Install Node JS in your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
-              "video": "https://www.youtube.com/watch?v=E6k6R4PnLV0&t=4s",
+              "video": "https://www.youtube.com/watch?v=wF_1lNGUK88",
               "source": "https://4geeks.com/how-to/nvm-install-windows",
+              "source-label": "How to install NVM on MacOS?"
+            },
+            {
+              "name": "javascript",
+              "label": "Install Node JS in your computer",
+              "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
+              "video": "https://www.youtube.com/watch?v=wF_1lNGUK88",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
               "source-label": "How to install NVM on MacOS?"
             }
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
-              "video": "",
+              "video": "https://www.youtube.com/watch?v=KVYDKAelhSQ",
               "source-label": "Go to VSCode Download page",
               "source": "https://code.visualstudio.com/download"
             },
             {
               "label": "Create a folder to store your exercises",
               "description": "If you already created a folder to store a previous exercise, we recommend you using it. Otherwise, create a new folder wherever you feel best (inside Documents for example) and open that new folder in your code editor (VSCode or other). From here open the terminal to follow the next steps.",
-              "video": "https://www.youtube.com/watch?v=eZAT6fwMVgY",
+              "video": "https://www.youtube.com/watch?v=SinR6Q2k0U8",
               "source": ""
             },
             {
               "label": "Install node.js on your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on Windows.",
-              "video": "https://www.youtube.com/watch?v=E6k6R4PnLV0&t=4s",
+              "video": "https://www.youtube.com/watch?v=wF_1lNGUK88",
               "source": "https://4geeks.com/how-to/nvm-install-windows",
               "source-label": "Go to how to install nvm on Windows"
             },
@@ -364,16 +480,26 @@
             {
               "label": "Install GIT on your computer",
               "description": "You must install GIT to clone a GitHub repository locally. You must follow the instructions given in the following link.",
-              "video": "https://www.youtube.com/watch?v=iYkLrXobBbA",
+              "video": "https://www.youtube.com/watch?v=BSQB-vxFtX0",
               "source": "https://git-scm.com/downloads/win"
             },
             {
               "slug": "clone",
               "label": "Clone the project into your computer",
               "description": "You can clone the project into your computer by simply running this command in the terminal: `git clone {{repoUrl}}`. You can check this link if you need a more detailed explanation.",
-              "video": "https://www.youtube.com/watch?v=EhxPBMQFCaI",
+              "video": "https://www.youtube.com/watch?v=NgfV30FmhS4",
               "source": "https://4geeks.com/how-to/github-clone-repository",
               "source-label": "Go to how to clone a GitHub repository"
+            }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Read the content of the readme",
+              "description": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It’s like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
+              "video": "https://www.youtube.com/watch?v=bphlMjXZpLg",
+              "source": "#markdown-body",
+              "source-label": "Take me to the readme!"
             }
           ]
         }
@@ -402,6 +528,7 @@
   "student": "Student",
   "reviewer": "Reviewer",
   "assistant": "Assistant",
+  "member": "Member",
   "upload": "Upload",
   "cancel": "Cancel",
   "uploading": "Uploading",
@@ -409,6 +536,8 @@
   "junior": "Junior",
   "mid-level": "Mid level",
   "senior": "Senior",
+  "money-back-guarantee": "Get a full refund within 30 days if it's not what you expected",
+  "money-back-guarantee-short": "100% Money back guarantee",
   "start-free-trial": "Start free trial",
   "proceed-to-payment": "Proceed to payment",
   "select-cohort": "Select a cohort",
@@ -422,9 +551,16 @@
   },
   "upgrade": "Upgrade",
   "go-back": "Go back",
+  "go-back-option": "Select other option",
+  "go-back-os": "Select other operating system",
   "modal-tech-title": "{{technology}}",
   "modal-tech-description": "By entering your data you will unlock the interactive content of \"{{title}}\" and many more",
   "coming-soon": "Coming soon",
+  "option-open-locally": "Open locally on your computer",
+  "option-provisioning-vendors": "Open on the cloud (recommended)",
+  "option-readme": "Readme only",
+  "choose-one-option": "Choose one of these options",
+  "choose-one-description": "You can choose one of the following options to start your project.",
   "validators": {
     "owner_name-required": "Owner name is required",
     "owner_name-min": "Owner name is too short",
@@ -569,5 +705,6 @@
       }
     ]
   },
-  "hrs-average": "{{number}}hrs average"
+  "hrs-average": "{{number}}hrs average",
+  "service-blocked": "You were blocked from accessing this service. Send an email to support@4geeks.com or talk to your teacher to get access."
 }

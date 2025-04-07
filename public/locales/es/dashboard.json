@@ -4,8 +4,30 @@
   },
   "title": "Tus noticias",
   "moduleMap": "Mapa de módulos",
+  "module": "Módulo",
+  "modules-count": "{{count}} Módulos",
+  "pending-activities": "Actividades pendientes",
+  "feedback-pending": "Feedback pendiente para revisión",
+  "path-to-claim": "Vía para reclamar tu certificado",
+  "open": "Abrir",
+  "completed": "¡Completed!",
+  "hours-worked": "{{hours}} Horas trabajadas",
+  "issued-on": "Emitido en {{date}}",
+  "share": "Compartir",
+  "hide-content": "Ocultar contenido",
+  "show-content": "Mostrar contenido",
+  "start-course": "Empezar el curso",
   "backToChooseProgram": "Volver a elegir programa",
   "progressText": "Progreso en el programa",
+  "member-since": "{{role}} en esta cohorte desde",
+  "share-message": "Acabo de terminar de programar {{title}} en 4geeks.com",
+  "students-modal": {
+    "students-course": "Estudiantes en este curso",
+    "select-student": "Selecciona un estudiante para ver el reporte de su progreso",
+    "filter-by-name": "Filtrar por nombre o email",
+    "student": "Estudiante",
+    "no-students": "No se encontraron estudiantes"
+  },
   "whiteLabeledText": "Este curso es traído a ti gracias a nuestra alianza con esta universidad.",
   "free-trial-msg": "Actualmente se encuentra en una prueba gratuita, algunas funciones pueden ser limitadas. ¡<a class='black-link' href='{{link}}'>Actualiza tu plan</a> para tener acceso ilimitado!",
   "intro-video-title": "Bienvenido!",
@@ -135,6 +157,7 @@
   },
   "mandatoryProjects": {
     "title": "Proyectos obligatorios pendientes",
+    "showing-comments": "Mostrando comentarios",
     "description": "Tienes asignaturas obligatorias pendientes, tienes que terminarlas para poder completar el curso."
   },
   "modalInfo": {
@@ -199,11 +222,20 @@
     "take-attendancy": "Tomar asistencia",
     "review-attendancy": "Revisar asistencia",
     "assignments": "Tareas",
+    "student-progress": "Progreso del Estudiante",
     "teacher-tutorial": "Tutorial de profesor",
     "no-instructions": ">:warning: No se encontró instrucción disponible para este módulo"
   },
   "welcome-modal": {
     "title": "Bienvenido a 4Geeks!",
     "description": "Mira este breve video que explica cómo aprovechar al máximo 4Geeks y mejorar tu experiencia de aprendizaje"
+  },
+  "repository-deletion": {
+    "title": "Estos repositorios se eliminarán pronto",
+    "warning": "Los siguientes repositorios están a punto de ser eliminados. Acepta la solicitud de transferencia que deberías haber recibido en tu email para evitar la eliminación.",
+    "description": "Los siguientes repositorios se eliminarán pronto si no aceptas la solicitud de transferencia. Deberías haber recibido un email solicitando la transferencia a tu usuario de Github, acepta la solicitud para evitar la eliminación.",
+    "see-repositories": "Ver repositorios",
+    "days-left": "{{days}} días restantes",
+    "deletion-imminent": "Eliminación inminente"
   }
 }

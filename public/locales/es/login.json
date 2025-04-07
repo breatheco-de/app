@@ -5,8 +5,22 @@
     "keywords": ["inicia sesion en 4Geeks", "inicio de sesion", "registrar", "crear cuenta"]
   },
   "login-with-github": "Iniciar sesión con Github",
+  "login-with-google": "Iniciar sesión con Google",
   "or": "o",
   "forgot-password": "¿Has olvidado tu contraseña?",
+  "welcome": "¡Bienvenido de vuelta {{email}}!",
+  "next": "Siguiente",
+  "not-you": "¿No eres tu?",
+  "email-not-found": "No pudimos encontrar una cuenta con este email",
+  "email-not-validated": "Debes validar tu email primero,",
+  "validation-link": "reenviar email de invitación",
+  "invitation-message": "El email de validación se ha enviado a su correo electrónico, siga las instrucciones que se indican en el email. Si no lo encuentra, revise la carpeta de correo no deseado.",
+  "invitation-sended": "¡La invitación fue reenviada! Revisa tu bandeja de entrada",
+  "invitation-error": "Hubo un error enviando la invitación",
   "login": "Ingresar",
-  "register": "Registrarse"
+  "register": "Registrarse",
+  "google-error": {
+    "title": "Cuenta No Encontrada",
+    "description": "No se encontró una cuenta con este email. Debes registrar una cuenta primero."
+  }
 }

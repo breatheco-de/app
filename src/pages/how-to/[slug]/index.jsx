@@ -24,6 +24,8 @@ import useAuth from '../../../common/hooks/useAuth';
 import useStyle from '../../../common/hooks/useStyle';
 import RelatedContent from '../../../common/components/RelatedContent';
 import MktEventCards from '../../../common/components/MktEventCards';
+import AssetsBreadcrumbs from '../../../common/components/AssetsBreadcrumbs';
+import { getMarkdownFromCache } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -65,13 +67,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     }
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
 
-    if (!data.readme?.decoded) {
+    const markdown = await getMarkdownFromCache(slug, data);
+
+    if (!data || !markdown) {
       return {
         notFound: true,
       };
     }
-
-    const markdown = data.readme.decoded;
 
     const {
       title, description, translations, preview,
@@ -151,7 +153,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 };
 
 export default function HowToSlug({ data, markdown }) {
-  const { t, lang } = useTranslation('how-to');
+  const { t } = useTranslation('how-to');
   const { isAuthenticated } = useAuth();
   const [neverLoaded, setNeverLoaded] = useState(false);
   const title = data?.title || '';
@@ -159,10 +161,8 @@ export default function HowToSlug({ data, markdown }) {
   const { fontColor, featuredLight } = useStyle();
   const router = useRouter();
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
-  const linkColor = useColorModeValue('blue.default', 'blue.300');
 
   const isHowTo = data?.category?.slug === 'how-to' || data?.category?.slug === 'como';
-  const langPrefix = lang === 'en' ? '' : `/${lang}`;
 
   useEffect(() => {
     if (!isHowTo) {
@@ -197,19 +197,9 @@ export default function HowToSlug({ data, markdown }) {
           borderBottom={1}
           borderStyle="solid"
           borderColor={useColorModeValue('gray.200', 'gray.900')}
+          margin="3rem 0"
         >
-          <Link
-            href={`${langPrefix}/how-to`}
-            margin="3rem 0 2.375rem 0"
-            gridColumn="2 / span 12"
-            color={linkColor}
-            display="inline-block"
-            letterSpacing="0.05em"
-            fontWeight="700"
-            width="fit-content"
-          >
-            {`← ${t('back-to')}`}
-          </Link>
+          <AssetsBreadcrumbs />
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="10px" justifyContent="space-between" mb="12px">
             <TagCapsule
               variant="rounded"

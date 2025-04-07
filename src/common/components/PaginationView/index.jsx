@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Box } from '@chakra-ui/react';
-import ProjectList from '../../../js_modules/projects/ProjectList';
+import ProjectList from '../Assets/ProjectList';
 import PageIndexes from './PageIndexes';
 import { getQueryString, isNumber } from '../../../utils';
 import { CardSkeleton } from '../Skeleton';

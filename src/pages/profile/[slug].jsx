@@ -13,19 +13,18 @@ import bc from '../../common/services/breathecode';
 import { cleanQueryStrings } from '../../utils';
 import AlertMessage from '../../common/components/AlertMessage';
 import GridContainer from '../../common/components/GridContainer';
-import Subscriptions from '../../js_modules/profile/Subscriptions';
-import Certificates from '../../js_modules/profile/Certificates';
-import Information from '../../js_modules/profile/Information';
+import Subscriptions from '../../common/components/Profile/Subscriptions';
+import Certificates from '../../common/components/Profile/Certificates';
+import Information from '../../common/components/Profile/Information';
 
 function Profile() {
   const { t } = useTranslation('profile');
   // const toast = useToast();
-  const { user, isAuthenticated } = useAuth();
+  const { user, cohorts } = useAuth();
   const router = useRouter();
   const { asPath } = router;
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [certificates, setCertificates] = useState([]);
-  const [myCohorts, setMyCohorts] = useState([]);
   const [isAvailableToShowModalMessage, setIsAvailableToShowModalMessage] = useState([]);
   const tabListMenu = t('tabList', {}, { returnObjects: true });
 
@@ -51,19 +50,11 @@ function Profile() {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      bc.admissions().me()
-        .then((resp) => {
-          const data = resp?.data;
-          const cohorts = data?.cohorts;
-          setMyCohorts(cohorts);
-          const isToShowGithubMessage = cohorts?.some(
-            (l) => l?.educational_status === 'ACTIVE' && l.cohort.available_as_saas === false,
-          );
-          setIsAvailableToShowModalMessage(isToShowGithubMessage);
-        });
-    }
-  }, [isAuthenticated]);
+    const isToShowGithubMessage = cohorts?.some(
+      (l) => l?.educational_status === 'ACTIVE' && l.cohort.available_as_saas === false,
+    );
+    setIsAvailableToShowModalMessage(isToShowGithubMessage);
+  }, [cohorts]);
 
   return (
     <>
@@ -118,7 +109,7 @@ function Profile() {
               <Certificates certificates={certificates} />
             </TabPanel>
             <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
-              <Subscriptions cohorts={myCohorts} />
+              <Subscriptions cohorts={cohorts} />
             </TabPanel>
           </TabPanels>
         </Tabs>

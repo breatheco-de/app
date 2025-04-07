@@ -52,6 +52,12 @@ const breathecode = {
         }),
       }),
       verifyRigobotConnection: (token) => breathecode.get(`${rigoHostV1}/auth/me/token?breathecode_token=${token}`),
+      verifyEmail: (email, lang) => breathecode.get(`${url}/emailverification/${email}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept-Language': lang,
+        },
+      }),
       resendConfirmationEmail: (inviteId) => axios.put(`${url}/invite/resend/${inviteId}`),
       me: () => axios.get(`${url}/user/me`),
       updateProfile: (arg) => axios.put(`${url}/user/me`, { ...arg }),
@@ -274,6 +280,7 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       get: () => axios.get(`${url}/user/me/task`),
+      getDeletionOrders: () => axios.get(`${url}/me/deletion_order${qs}`),
       getCodeRevisions: (taskId) => breathecode.get(`${url}/academy/task/${taskId}/coderevision`),
       getFinalProjects: (cohortId) => axios.get(`${url}/academy/cohort/${cohortId}/final_project`),
       putFinalProject: (cohortId, projectId, data) => breathecode.put(`${url}/academy/cohort/${cohortId}/final_project/${projectId}`, data),
@@ -323,6 +330,7 @@ const breathecode = {
     return {
       get: () => axios.get(`${url}/asset${qs}`),
       getAsset: (slug) => axios.get(`${url}/asset/${slug}${qs}`),
+      getAssetReadme: (slug) => axios.get(`${url}/asset/${slug}.md`),
       getAssetContext: (id) => axios.get(`${url}/asset/${id}/context`),
       techs: () => axios.get(`${url}/academy/technology${qs}`),
       techsBySort: () => axios.get(`${url}/technology${qs}`),
@@ -363,6 +371,7 @@ const breathecode = {
       getpaymentMethods: () => axios.get(`${url}/methods${qs}`),
       planOffer: () => axios.get(`${url}/planoffer${qs}`),
       getPlanProps: (id) => axios.get(`${url}/serviceitem?plan=${id}`),
+      getServiceInfo: (slug) => axios.get(`${url}/service/${slug}/items${qs}`),
       getCohortPlans: () => axios.get(`${url}/plan${qs}`),
       applyCoupon: (bagId) => axios.put(`${url}/bag/${bagId}/coupon${qs}`),
       verifyCoupon: () => axios.get(`${url}/coupon${qs}`),
@@ -376,6 +385,7 @@ const breathecode = {
       getAllEventTypeSets: () => axios.get(`${host}/payments/eventtypeset`),
       getEventTypeSet: (eventTypeSetId) => axios.get(`${url}/eventtypeset/${eventTypeSetId}`),
       events: () => axios.get(`${host}/events/me?online_event=true${parseQuerys(query, true)}`),
+      getBlockedServices: () => axios.get(`${url}/me/service/blocked${qs}`),
     };
   },
   events: (query = {}) => {
@@ -383,6 +393,7 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       // get: () => axios.get(`${url}/event${qs}`),
+      meCheckin: () => axios.get(`${url}/event/checkin${qs}`),
       liveClass: () => axios.get(`${url}/event/liveclass${qs}`),
       joinLiveClass: (liveClassHash) => axios.get(`${url}/event/liveclass/join/${liveClassHash}${qs}`),
       joinLiveClass2: (liveClassHash) => axios.get(`${host}/me/event/liveclass/join/${liveClassHash}${qs}`),

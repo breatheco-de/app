@@ -1,8 +1,4 @@
-/* eslint-disable react/jsx-no-useless-fragment */
-/* eslint-disable no-nested-ternary */
-/* eslint-disable brace-style */
 import { memo, useState, useEffect } from 'react';
-// import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import {
   Box, Heading, Divider, Grid, Tabs,
   TabList, Tab, TabPanels, TabPanel, useToast, AvatarGroup, useMediaQuery, Flex,
@@ -16,7 +12,7 @@ import bc from '../services/breathecode';
 import axios from '../../axios';
 import Icon from './Icon';
 import Text from './Text';
-import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
+import AvatarUser from './AvatarUser';
 import { AvatarSkeleton } from './Skeleton';
 import useOnline from '../hooks/useOnline';
 import useStyle from '../hooks/useStyle';
@@ -31,6 +27,7 @@ function ProfilesSection({
   const [showMoreStudents, setShowMoreStudents] = useState(false);
   const { usersConnected } = useOnline();
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
+  const { hexColor } = useStyle();
 
   const assistantMaxLimit = isBelowTablet ? 3 : 4;
 
@@ -39,6 +36,40 @@ function ProfilesSection({
   const teacherfullName = `${teacherData?.user?.first_name} ${teacherData?.user.last_name}`;
 
   const alumniGeeksContainer = isWindow && document.querySelector('.alumni-geeks-container');
+
+  const getButtonText = () => {
+    if (paginationProps.next) return t('common:load-more');
+    return showMoreStudents ? t('cohortSideBar.show-less') : t('cohortSideBar.show-more');
+  };
+
+  const getTransformValue = () => {
+    if (paginationProps.next) return 'rotate(-90deg)';
+    return showMoreStudents ? 'rotate(90deg)' : 'rotate(-90deg)';
+  };
+
+  const handleLoadMore = () => {
+    if (paginationProps.next) {
+      setShowMoreStudents(true);
+      axios.get(paginationProps.next)
+        .then(({ data }) => {
+          const cleanedData = [...profiles, ...data.results];
+          setAlumniGeeksList({
+            ...data,
+            results: cleanedData.sort(
+              (a, b) => a.user.first_name.localeCompare(b.user.first_name),
+            ),
+          });
+          setTimeout(() => {
+            alumniGeeksContainer?.scrollTo({
+              top: alumniGeeksContainer?.scrollHeight,
+              behavior: 'smooth',
+            });
+          }, [600]);
+        });
+    } else {
+      setShowMoreStudents(!showMoreStudents);
+    }
+  };
 
   return (
     <Box display="block">
@@ -49,23 +80,6 @@ function ProfilesSection({
       )}
       {wrapped ? (
         <Box display="flex" justifyContent="space-between">
-          {/* {teacher.map((d) => {
-            const fullName = `${d.user.first_name} ${d.user.last_name}`;
-            return (
-              <AvatarUser
-                width="48px"
-                height="48px"
-                key={`${d.id} - ${d.user.first_name}`}
-                fullName={fullName}
-                data={d}
-                badge={(
-                  <Box position="absolute" bottom="-6px" right="-8px" background="blue.default" borderRadius="50px" p="5px" border="2px solid white">
-                    <Icon icon="teacher1" width="12px" height="12px" color="#FFFFFF" />
-                  </Box>
-                )}
-              />
-            );
-          })} */}
           {!!teacherData && (
             <AvatarUser
               width="48px"
@@ -148,35 +162,13 @@ function ProfilesSection({
             justifyContent="center"
             padding="14px 0 0 0"
             fontWeight="700"
-            onClick={() => {
-              if (paginationProps.next) {
-                setShowMoreStudents(true);
-                axios.get(paginationProps.next)
-                  .then(({ data }) => {
-                    const cleanedData = [...profiles, ...data.results];
-                    setAlumniGeeksList({
-                      ...data,
-                      results: cleanedData.sort(
-                        (a, b) => a.user.first_name.localeCompare(b.user.first_name),
-                      ),
-                    });
-                    setTimeout(() => {
-                      alumniGeeksContainer?.scrollTo({
-                        top: alumniGeeksContainer?.scrollHeight,
-                        behavior: 'smooth',
-                      });
-                    }, [600]);
-                  });
-              } else {
-                setShowMoreStudents(!showMoreStudents);
-              }
-            }}
+            onClick={handleLoadMore}
           >
-            {paginationProps.next ? t('common:load-more') : showMoreStudents ? t('cohortSideBar.show-less') : t('cohortSideBar.show-more')}
+            {getButtonText()}
             <Box
               as="span"
               display="block"
-              transform={paginationProps.next ? 'rotate(-90deg)' : (showMoreStudents ? 'rotate(90deg)' : 'rotate(-90deg)')}
+              transform={getTransformValue()}
             >
               <Icon icon="arrowLeft2" width="18px" height="10px" />
             </Box>
@@ -207,7 +199,7 @@ function ProfilesSection({
             transition="all .25s ease-in-out"
             transform={showMoreStudents ? 'rotate(-90deg)' : 'rotate(90deg)'}
           >
-            <Icon icon="arrowRight" color="#0097CD" width="12px" height="12px" />
+            <Icon icon="arrowRight" color={hexColor.blueDefault} width="12px" height="12px" />
           </Box>
         </Text>
       )}
@@ -261,16 +253,6 @@ function CohortSideBar({
         distinct: true,
       }).getFilterStudents()
         .then(({ data }) => {
-          // const uniqueIds = new Set();
-          // const cleanedData = data.results.filter((l) => {
-          //   const isDuplicate = uniqueIds.has(l.id);
-          //   uniqueIds.add(l.id);
-          //   if (!isDuplicate) {
-          //     return true;
-          //   }
-          //   return false;
-          // });
-
           setAlumniGeeksList({
             ...data,
             results: data.results.sort(
@@ -402,8 +384,8 @@ function CohortSideBar({
                 fontSize="13px"
                 letterSpacing="0.05em"
                 width="100%"
-                borderBottom="4px solid #C4C4C4"
-                // height="100%"
+                borderBottom="4px solid"
+                borderColor="gray.350"
                 _selected={{
                   color: 'blue.default',
                   borderBottom: '4px solid',
@@ -416,7 +398,7 @@ function CohortSideBar({
               >
                 {cohort.ending_date
                   ? t('cohortSideBar.classmates', { studentsLength: activeStudents?.length || 0 })
-                  : t('cohortSideBar.active-geeks', { studentsLength: activeAndRecent?.length || 0 })}
+                  : t('cohortSideBar.active-geeks', { studentsLength: activeAndRecent.length || 0 })}
               </Tab>
             )}
             {alumniGeeksList?.count && (
@@ -424,14 +406,14 @@ function CohortSideBar({
                 p="0 14px 14px 14px"
                 display="block"
                 textAlign="center"
-                isDisabled={alumniGeeksList?.count === 0 || alumniGeeksList?.count === undefined}
+                isDisabled={alumniGeeksList.count === 0}
                 textTransform="uppercase"
                 fontWeight="900"
                 fontSize="13px"
                 letterSpacing="0.05em"
                 width="100%"
-                borderBottom="4px solid #C4C4C4"
-                // height="100%"
+                borderBottom="4px solid"
+                borderColor="gray.350"
                 _selected={{
                   color: 'blue.default',
                   borderBottom: '4px solid',
@@ -442,7 +424,7 @@ function CohortSideBar({
                   cursor: 'not-allowed',
                 }}
               >
-                {t('cohortSideBar.alumni-geeks', { studentsLength: alumniGeeksList?.count || 0 })}
+                {t('cohortSideBar.alumni-geeks', { studentsLength: alumniGeeksList.count || 0 })}
               </Tab>
             )}
           </TabList>
@@ -455,7 +437,6 @@ function CohortSideBar({
                       showButton
                       isTeacherVersion={teacherVersionActive}
                       profiles={activeAndRecent}
-                      // withoutPopover={activeAndRecent?.length >= 16}
                     />
                   ) : (
                     <>
@@ -474,7 +455,6 @@ function CohortSideBar({
                     isTeacherVersion={teacherVersionActive}
                     setAlumniGeeksList={setAlumniGeeksList}
                     paginationProps={alumniGeeksList}
-                    // withoutPopover={studentsJoined?.length >= 16}
                   />
                 ) : (
                   <>

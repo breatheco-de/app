@@ -18,16 +18,16 @@ import {
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import Editor from '@monaco-editor/react';
+import Editor, { DiffEditor } from '@monaco-editor/react';
 import { setStorageItem, getStorageItem, isWindow } from '../../utils';
 import { RIGOBOT_HOST, BREATHECODE_HOST } from '../../utils/variables';
-import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import ModalInfo from './ModalInfo';
 import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Icon from './Icon';
 
-const notExecutables = ['css', 'shell', 'windows', 'mac', 'linux'];
+const notExecutables = ['css', 'shell', 'windows', 'macos', 'mac', 'linux'];
 
 export const languagesLabels = {
   jsx: 'JS',
@@ -60,7 +60,70 @@ export const languagesNames = {
   linux: 'shell',
 };
 
-function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
+function CodeDiff({ languages }) {
+  const [code1, code2] = [languages[0]?.code, languages[1]?.code];
+
+  const handleEditorDidMount = (editor, monaco) => {
+    monaco.editor.defineTheme('my-theme', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [],
+      colors: {
+        'editor.background': '#00041A',
+        'diffEditor.insertedTextBackground': languages[0].color || '#1f2823',
+        'diffEditor.removedTextBackground': languages[1].color || '#6b0b00',
+        'diffEditor.insertedLineBackground': '#00041A',
+        'diffEditor.removedLineBackground': '#00041A',
+      },
+    });
+  };
+
+  return (
+    <>
+      <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} width="100%" height="100%" gap="10px">
+        <Tabs position="relative" variant="unstyled" flexGrow={1}>
+          <Box borderRadius="4px 4px 0 0" alignItems="center" padding="0 6px" background="#00041A" display="flex" justifyContent="space-between">
+            <TabList width="fit-content">
+              <Tab color="blue.500">{languages[0]?.label || 'Code 1'}</Tab>
+            </TabList>
+            <TabIndicator
+              mt="30px"
+              height="2px"
+              bg="blue.500"
+              borderRadius="1px"
+            />
+          </Box>
+          <TabPanels>
+            <TabPanel padding="0">
+              <DiffEditor
+                theme="my-theme"
+                height="300px"
+                originalLanguage={languages[0]?.language}
+                modifiedLanguage={languages[1]?.language}
+                original={code1}
+                modified={code2}
+                options={{
+                  scrollBeyondLastLine: false,
+                  borderRadius: '4px',
+                  scrollbar: {
+                    alwaysConsumeMouseWheel: false,
+                  },
+                  minimap: {
+                    enabled: false,
+                  },
+                  cursorStyle: 'line',
+                }}
+                onMount={handleEditorDidMount}
+              />
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </Box>
+    </>
+  );
+}
+
+function CodeViewer({ languagesData, allowNotLogged, fileContext, compareMode, ...rest }) {
   const editorContainerRef = useRef();
   const router = useRouter();
   const { hexColor } = useStyle();
@@ -218,152 +281,164 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
   if (languagesData === null || languagesData === undefined || languagesData.length === 0) return null;
 
   return (
-    <Box overflowX="hidden" width="100%" {...rest}>
-      <Tabs position="relative" onChange={(index) => setTabIndex(index)} variant="unstyled">
-        <Box borderRadius="4px 4px 0 0" alignItems="center" padding="0 6px" background="#00041A" display="flex" justifyContent="space-between">
-          <TabList width="fit-content">
-            {languages.map(({ label }, i) => (
-              <Tab key={label} color={i === tabIndex ? 'blue.500' : 'white'}>{label}</Tab>
-            ))}
-          </TabList>
-          <TabIndicator
-            mt="30px"
-            height="2px"
-            bg="blue.500"
-            borderRadius="1px"
-          />
-          {(!isNotExecutable || (languages[tabIndex]?.language === 'css' && isCodeForPreview)) && languages[tabIndex]?.code.trim() !== '' && (
-            <>
-              {languages[tabIndex]?.running ? (
-                <CircularProgress isIndeterminate color={hexColor.blueDefault} size="32px" />
-              ) : (
-                <Button _hover={{ bg: '#ffffff29' }} onClick={run} variant="ghost" size="sm" color="white">
-                  <Icon icon="play" width="14px" height="14px" style={{ marginRight: '5px' }} color="white" />
-                  {isCodeForPreview ? t('preview') : t('run')}
-                </Button>
+    <>
+      {compareMode ? (
+        <CodeDiff languages={languages} />
+      ) : (
+        <Box overflowX="hidden" width="100%" {...rest}>
+          <Tabs position="relative" onChange={(index) => setTabIndex(index)} variant="unstyled">
+            <Box borderRadius="4px 4px 0 0" alignItems="center" padding="0 6px" background="#00041A" display="flex" justifyContent="space-between">
+              <TabList width="fit-content">
+                {languages.map(({ label }, i) => (
+                  <Tab key={label} color={i === tabIndex ? 'blue.500' : 'white'}>{label}</Tab>
+                ))}
+              </TabList>
+              <TabIndicator
+                mt="30px"
+                height="2px"
+                bg="blue.500"
+                borderRadius="1px"
+              />
+              {(!isNotExecutable || (languages[tabIndex]?.language === 'css' && isCodeForPreview)) && languages[tabIndex]?.code.trim() !== '' && (
+                <>
+                  {languages[tabIndex]?.running ? (
+                    <CircularProgress isIndeterminate color={hexColor.blueDefault} size="32px" />
+                  ) : (
+                    <Button _hover={{ bg: '#ffffff29' }} onClick={run} variant="ghost" size="sm" color="white">
+                      <Icon icon="play" width="14px" height="14px" style={{ marginRight: '5px' }} color="white" />
+                      {isCodeForPreview ? t('preview') : t('run')}
+                    </Button>
+                  )}
+                </>
               )}
-            </>
-          )}
-        </Box>
-        <TabPanels>
-          {languages.map(({ code, language, output, running }, i) => (
-            <TabPanel padding="0">
-              <Box
-                ref={editorContainerRef}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                height="290px"
-                borderRadius={!output && '0 0 4px 4px'}
-                overflow="hidden"
-              >
-                <Editor
-                  theme="my-theme"
-                  value={code}
-                  onChange={(value) => {
-                    const currLanguage = { ...languages[i], code: value };
-                    setLanguages([
-                      ...languages.slice(0, i),
-                      currLanguage,
-                      ...languages.slice(i + 1),
-                    ]);
-                  }}
-                  defaultLanguage={language}
-                  height="290px"
-                  options={{
-                    scrollBeyondLastLine: false,
-                    borderRadius: '4px',
-                    scrollbar: {
-                      alwaysConsumeMouseWheel: false,
-                    },
-                    minimap: {
-                      enabled: false,
-                    },
-                    cursorStyle: 'line',
-                  }}
-                  onMount={handleEditorDidMount}
-                />
-              </Box>
-              <Collapse in={running || (output !== null && output !== undefined)} offsetY="20px">
-                {isCodeForPreview ? (
-                  <Box borderTop="1px solid #4A5568" borderRadius="0 0 4px 4px">
-                    <iframe
-                      title="Live Preview"
-                      srcDoc={output} // Dynamically inject content
-                      style={{
-                        width: '100%',
-                        height: '300px',
-                        border: '1px solid #4A5568',
-                        borderRadius: '0 0 4px 4px',
+            </Box>
+            <TabPanels>
+              {languages.map(({ code, language, output, running }, i) => (
+                <TabPanel padding="0">
+                  <Box
+                    ref={editorContainerRef}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    height="290px"
+                    borderRadius={!output && '0 0 4px 4px'}
+                    overflow="hidden"
+                  >
+                    <Editor
+                      theme="my-theme"
+                      value={code}
+                      onChange={(value) => {
+                        const currLanguage = { ...languages[i], code: value };
+                        setLanguages([
+                          ...languages.slice(0, i),
+                          currLanguage,
+                          ...languages.slice(i + 1),
+                        ]);
                       }}
+                      defaultLanguage={language}
+                      height="290px"
+                      options={{
+                        scrollBeyondLastLine: false,
+                        borderRadius: '4px',
+                        scrollbar: {
+                          alwaysConsumeMouseWheel: false,
+                        },
+                        minimap: {
+                          enabled: false,
+                        },
+                        cursorStyle: 'line',
+                      }}
+                      onMount={handleEditorDidMount}
                     />
                   </Box>
-                ) : (
-                  <Box borderTop="1px solid #4A5568" color="white" padding="20px" background="#00041A" borderRadius="0 0 4px 4px">
-                    <Text display="flex" alignItems="center" gap="5px" fontWeight="700" fontSize="14px" marginBottom="16px" width="fit-content" borderBottom="2px solid white">
-                      {t('terminal')}
-                      <Tooltip
-                        label={t('loading-output')}
-                        placement="right"
-                        hasArrow
-                      >
-                        <Box>
-                          <Icon icon="info" width="14px" height="14px" color={hexColor.blueDefault} />
-                        </Box>
-                      </Tooltip>
-                    </Text>
-                    <Text whiteSpace="pre-line" fontFamily="monospace" padding="8px">
-                      {output}
-                    </Text>
-                  </Box>
-                )}
-              </Collapse>
-            </TabPanel>
-          ))}
-        </TabPanels>
-      </Tabs>
-      <ModalInfo
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        headerStyles={{ textAlign: 'center' }}
-        title={t('log-in-modal.title')}
-        childrenDescription={(
-          <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
-            <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
-            <Text
-              size="14px"
-              textAlign="center"
-            >
-              {t('log-in-modal.text')}
-            </Text>
-          </Box>
-        )}
-        closeText={t('log-in-modal.login')}
-        closeButtonVariant="outline"
-        closeButtonStyles={{ borderRadius: '3px', color: hexColor.blueDefault, borderColor: hexColor.blueDefault }}
-        buttonHandlerStyles={{ variant: 'default' }}
-        closeActionHandler={() => {
-          setStorageItem('redirect', router?.asPath);
-          router.push('/login');
-        }}
-        actionHandler={() => {
-          setStorageItem('redirect', router?.asPath);
-          router.push(`/checkout?internal_cta_placement=codeviewer&plan=${defaultPlan}`);
-        }}
-        handlerText={t('log-in-modal.signup')}
-      />
-    </Box>
+                  <Collapse in={running || (output !== null && output !== undefined)} offsetY="20px">
+                    {isCodeForPreview ? (
+                      <Box borderTop="1px solid #4A5568" borderRadius="0 0 4px 4px">
+                        <iframe
+                          title="Live Preview"
+                          srcDoc={output} // Dynamically inject content
+                          style={{
+                            width: '100%',
+                            height: '300px',
+                            border: '1px solid #4A5568',
+                            borderRadius: '0 0 4px 4px',
+                          }}
+                        />
+                      </Box>
+                    ) : (
+                      <Box borderTop="1px solid #4A5568" color="white" padding="20px" background="#00041A" borderRadius="0 0 4px 4px">
+                        <Text display="flex" alignItems="center" gap="5px" fontWeight="700" fontSize="14px" marginBottom="16px" width="fit-content" borderBottom="2px solid white">
+                          {t('terminal')}
+                          <Tooltip
+                            label={t('loading-output')}
+                            placement="right"
+                            hasArrow
+                          >
+                            <Box>
+                              <Icon icon="info" width="14px" height="14px" color={hexColor.blueDefault} />
+                            </Box>
+                          </Tooltip>
+                        </Text>
+                        <Text whiteSpace="pre-line" fontFamily="monospace" padding="8px">
+                          {output}
+                        </Text>
+                      </Box>
+                    )}
+                  </Collapse>
+                </TabPanel>
+              ))}
+            </TabPanels>
+          </Tabs>
+          <ModalInfo
+            isOpen={showModal}
+            onClose={() => setShowModal(false)}
+            headerStyles={{ textAlign: 'center' }}
+            title={t('log-in-modal.title')}
+            childrenDescription={(
+              <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+                <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+                <Text
+                  size="14px"
+                  textAlign="center"
+                >
+                  {t('log-in-modal.text')}
+                </Text>
+              </Box>
+            )}
+            closeText={t('log-in-modal.login')}
+            closeButtonVariant="outline"
+            closeButtonStyles={{ borderRadius: '3px', color: hexColor.blueDefault, borderColor: hexColor.blueDefault }}
+            buttonHandlerStyles={{ variant: 'default' }}
+            closeActionHandler={() => {
+              setStorageItem('redirect', router?.asPath);
+              router.push('/login');
+            }}
+            actionHandler={() => {
+              setStorageItem('redirect', router?.asPath);
+              router.push(`/checkout?internal_cta_placement=codeviewer&plan=${defaultPlan}`);
+            }}
+            handlerText={t('log-in-modal.signup')}
+          />
+        </Box>
+      )}
+    </>
   );
 }
+
+CodeDiff.propTypes = {
+  languages: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+};
 
 CodeViewer.propTypes = {
   languagesData: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   allowNotLogged: PropTypes.bool,
   fileContext: PropTypes.string,
+  compareMode: PropTypes.bool,
 };
 
 CodeViewer.defaultProps = {
   allowNotLogged: false,
   fileContext: '',
+  compareMode: false,
 };
 
 export default CodeViewer;

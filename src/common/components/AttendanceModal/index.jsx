@@ -11,7 +11,7 @@ import {
 import Icon from '../Icon';
 import Text from '../Text';
 import bc from '../../services/breathecode';
-import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
+import ModalInfo from '../ModalInfo';
 import useStyle from '../../hooks/useStyle';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import handlers from '../../handlers';
@@ -19,9 +19,9 @@ import handlers from '../../handlers';
 function AttendanceModal({
   title, message, isOpen, onClose, students,
 }) {
-  const { t } = useTranslation('dashboard');
-  const { state, setCohortSession } = useCohortHandler();
-  const { cohortSession, sortedAssignments } = state;
+  const { t, lang } = useTranslation('dashboard');
+  const { state, setCohortSession, sortedAssignments } = useCohortHandler();
+  const { cohortSession } = state;
   const [historyLog, setHistoryLog] = useState();
   const [day, setDay] = useState(cohortSession.current_day);
   const [attendanceTaken, setAttendanceTaken] = useState({});
@@ -91,6 +91,7 @@ function AttendanceModal({
       const prevDailyModule = sortedAssignments.find(
         (assignment) => assignment.id === (currentModule - 1),
       );
+
       return {
         dailyModule,
         prevDailyModule,
@@ -260,11 +261,17 @@ function AttendanceModal({
                   id="module"
                   placeholder="Select module"
                 >
-                  {sortedAssignments.map((module) => (
-                    <option key={module.id} value={module.id}>
-                      {`#${module.id} - ${module.label}`}
-                    </option>
-                  ))}
+                  {sortedAssignments.map((module) => {
+                    // Use 'us' if lang is 'en', otherwise use lang
+                    const labelLang = lang === 'en' ? 'us' : lang;
+                    // If the label doesn't exist for the language, use the label directly
+                    const moduleLabel = module.label[labelLang] || module.label;
+                    return (
+                      <option key={module.id} value={module.id}>
+                        {`#${module.id} - ${moduleLabel}`}
+                      </option>
+                    );
+                  })}
                 </Select>
               )}
             </FormControl>

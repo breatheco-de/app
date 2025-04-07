@@ -9,8 +9,9 @@ import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 import { setStorageItem } from '../../utils';
 import { BREATHECODE_HOST } from '../../utils/variables';
-import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import ModalInfo from './ModalInfo';
 import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
+import useSignup from '../store/actions/signupAction';
 
 function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, footerContent, submitText, padding, isLive,
@@ -30,6 +31,7 @@ function ShowOnSignUp({
   const isLogged = alreadyLogged || isAuthenticated;
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
   const defaultPlan = process.env.BASE_PLAN || 'basic';
+  const { setSelectedPlanCheckoutData } = useSignup();
 
   useEffect(() => {
     let intervalId;
@@ -131,6 +133,12 @@ function ShowOnSignUp({
                       setIsReadyToRefetch(true);
                       setAlreadyLogged(true);
                       refetchAfterSuccess();
+                      setSelectedPlanCheckoutData({
+                        plan_slug: defaultPlan,
+                        price: respData.data?.price || 0,
+                        period_label: respData.data?.period_label || 'one-time',
+                        ...respData.data,
+                      });
                     }
                   });
               }}

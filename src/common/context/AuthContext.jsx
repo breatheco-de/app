@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { createContext, useEffect, useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -11,7 +12,7 @@ import { BREATHECODE_HOST, RIGOBOT_HOST } from '../../utils/variables';
 import axiosInstance, { cancelAllCurrentRequests } from '../../axios';
 import { usePersistentBySession } from '../hooks/usePersistent';
 import useRigo from '../hooks/useRigo';
-import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import ModalInfo from '../components/ModalInfo';
 import Text from '../components/Text';
 import { SILENT_CODE } from '../../lib/types';
 import { warn } from '../../utils/logging';
@@ -22,6 +23,8 @@ const initialState = {
   isAuthenticated: false,
   isAuthenticatedWithRigobot: false,
   user: null,
+  cohorts: [],
+  blockedServices: null,
 };
 
 const langHelper = {
@@ -33,13 +36,14 @@ const langHelper = {
 const reducer = (state, action) => {
   switch (action.type) {
     case 'INIT': {
-      const { isLoading, isAuthenticated, isAuthenticatedWithRigobot, user } = action.payload;
+      const { isLoading, isAuthenticated, isAuthenticatedWithRigobot, user, cohorts } = action.payload;
       return {
         ...state,
         isLoading,
         isAuthenticated,
         isAuthenticatedWithRigobot,
         user,
+        cohorts,
       };
     }
     case 'LOGIN': {
@@ -74,10 +78,30 @@ const reducer = (state, action) => {
         user: action.payload,
       };
     }
+    case 'SET_COHORTS': {
+      return {
+        ...state,
+        cohorts: action.payload,
+      };
+    }
+    case 'SET_COHORTS_AND_USER': {
+      const { user, cohorts } = action.payload;
+      return {
+        ...state,
+        user,
+        cohorts,
+      };
+    }
     case 'LOADING': {
       return {
         ...state,
         isLoading: action.payload,
+      };
+    }
+    case 'SET_BLOCKED_SERVICES': {
+      return {
+        ...state,
+        blockedServices: action.payload,
       };
     }
     default: {
@@ -96,11 +120,8 @@ const setTokenSession = (token) => {
     removeStorageItem('programServices');
     removeStorageItem('cohortSession');
     removeStorageItem('accessToken');
-    removeStorageItem('taskTodo');
-    removeStorageItem('sortedAssignments');
     removeStorageItem('days_history_log');
     removeStorageItem('queryCache');
-    removeStorageItem('hasPaidSubscription');
     removeStorageItem('programsList');
     removeStorageItem('isClosedLateModal');
     delete axiosInstance.defaults.headers.common.Authorization;
@@ -162,12 +183,72 @@ function AuthProvider({ children, pageProps }) {
     window.location.href = inviteUrl;
   };
 
+  useEffect(() => {
+    if (state.isAuthenticated && (router.pathname === '/' || router.pathname === '')) {
+      router.push('/choose-program');
+    }
+  }, [state.isAuthenticated, router.pathname]);
+
+  const parseCohortUser = (elem) => {
+    const { cohort, ...cohort_user } = elem;
+    const { syllabus_version } = cohort;
+    return {
+      ...cohort,
+      selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
+      cohort_user,
+    };
+  };
+
+  const fetchUserAndCohorts = async () => {
+    try {
+      const { data } = await bc.admissions().me();
+      const { cohorts: cohortUsers, ...userData } = data;
+      const cohorts = cohortUsers.map(parseCohortUser);
+
+      return { cohorts, userData };
+    } catch (e) {
+      console.log(e);
+      return e;
+    }
+  };
+
+  const reSetUserAndCohorts = async () => {
+    const { cohorts, userData } = await fetchUserAndCohorts();
+    dispatch({
+      type: 'SET_COHORTS_AND_USER',
+      payload: { user: userData, cohorts },
+    });
+
+    return { cohorts, userData };
+  };
+
+  const setCohorts = (cohorts) => {
+    dispatch({
+      type: 'SET_COHORTS',
+      payload: cohorts,
+    });
+  };
+
+  const fetchBlockedServices = async () => {
+    try {
+      const { data } = await bc.payment().getBlockedServices();
+      dispatch({
+        type: 'SET_BLOCKED_SERVICES',
+        payload: data,
+      });
+    } catch (err) {
+      warn('Error fetching blocked services:', err);
+      dispatch({
+        type: 'SET_BLOCKED_SERVICES',
+        payload: null,
+      });
+    }
+  };
+
   const authHandler = async () => {
     const token = getToken();
 
     if (token !== undefined && token !== null) {
-      const respRigobotAuth = await bc.auth().verifyRigobotConnection(token);
-      const isAuthenticatedWithRigobot = respRigobotAuth && respRigobotAuth?.status === 200;
       const requestToken = await fetch(`${BREATHECODE_HOST}/v1/auth/token/${token}`, {
         method: 'GET',
         headers: {
@@ -184,34 +265,44 @@ function AuthProvider({ children, pageProps }) {
         }
         dispatch({
           type: 'INIT',
-          payload: { user: null, isAuthenticated: false, isLoading: false },
+          payload: { user: null, isAuthenticated: false, isLoading: false, cohorts: [] },
         });
       } else {
         handleSession(token);
-        bc.auth().me()
-          .then(({ data }) => {
+        try {
+          // only fetch user info if it is null
+          if (!user) {
+            const { cohorts, userData } = await fetchUserAndCohorts();
+
+            const [respRigobotAuth] = await Promise.all([
+              bc.auth().verifyRigobotConnection(token),
+              fetchBlockedServices(),
+            ]);
+
+            const isAuthenticatedWithRigobot = respRigobotAuth && respRigobotAuth?.status === 200;
+
             dispatch({
               type: 'INIT',
-              payload: { user: data, isAuthenticated: true, isAuthenticatedWithRigobot, isLoading: false },
+              payload: { user: userData, cohorts, isAuthenticated: true, isAuthenticatedWithRigobot, isLoading: false },
             });
-            const settingsLang = data?.settings.lang;
+            const settingsLang = userData?.settings.lang;
 
             reportDatalayer({
               dataLayer: {
                 event: 'session_load',
                 method: 'native',
-                user_id: data.id,
-                email: data.email,
-                is_academy_legacy: data.roles.some((r) => r.academy.id === 6),
-                is_available_as_saas: !data.roles.some((r) => r.academy.id !== 47),
-                first_name: data.first_name,
-                last_name: data.last_name,
-                avatar_url: data.profile?.avatar_url || data.github?.avatar_url,
-                language: data.profile?.settings?.lang === 'us' ? 'en' : data.profile?.settings?.lang,
+                user_id: userData.id,
+                email: userData.email,
+                is_academy_legacy: [...new Set(userData.roles.map((role) => role.academy.id))].join(', '),
+                is_available_as_saas: !userData.roles.some((r) => r.academy.id !== 47),
+                first_name: userData.first_name,
+                last_name: userData.last_name,
+                avatar_url: userData.profile?.avatar_url || userData.github?.avatar_url,
+                language: userData.profile?.settings?.lang === 'us' ? 'en' : userData.profile?.settings?.lang,
                 agent: getBrowserInfo(),
               },
             });
-            if (data.github) {
+            if (userData.github) {
               localStorage.setItem('showGithubWarning', 'closed');
             } else if (!localStorage.getItem('showGithubWarning') || localStorage.getItem('showGithubWarning') !== 'postponed') {
               localStorage.setItem('showGithubWarning', 'active');
@@ -219,10 +310,10 @@ function AuthProvider({ children, pageProps }) {
             if (!pageProps.disableLangSwitcher && langHelper[router?.locale] !== settingsLang) {
               updateSettingsLang();
             }
-          })
-          .catch(() => {
-            handleSession(null);
-          });
+          }
+        } catch (e) {
+          handleSession(null);
+        }
       }
     } else {
       dispatch({
@@ -393,6 +484,9 @@ function AuthProvider({ children, pageProps }) {
         register,
         updateProfile,
         conntectToRigobot,
+        setCohorts,
+        reSetUserAndCohorts,
+        fetchUserAndCohorts,
       }}
     >
       {children}

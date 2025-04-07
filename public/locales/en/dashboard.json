@@ -4,8 +4,30 @@
   },
   "title": "Your News",
   "moduleMap": "Module map",
+  "module": "Module",
+  "modules-count": "{{count}} Modules",
+  "pending-activities": "Pending activities",
+  "feedback-pending": "Feedback pending for review",
+  "path-to-claim": "Path to claim your certificate",
+  "open": "Open",
+  "completed": "Completed!",
+  "hours-worked": "{{hours}} Hours worked",
+  "issued-on": "Issued on {{date}}",
+  "share": "Share",
+  "hide-content": "Hide content",
+  "show-content": "Show content",
+  "start-course": "Start course",
   "backToChooseProgram": "Back to choose program",
   "progressText": "progress in the program",
+  "member-since": "{{role}} in this cohort since",
+  "share-message": "I just finished coding {{title}} at 4geeks.com",
+  "students-modal": {
+    "students-course": "Students in this course",
+    "select-student": "Select a student to see their full report",
+    "filter-by-name": "Filter by name or email",
+    "student": "Student",
+    "no-students": "No students found"
+  },
   "whiteLabeledText": "This course is brought to you thanks to our parnership with this university",
   "free-trial-msg": "You are currently on a free trial, some features might be limited. <a class='black-link' href='{{link}}'>Upgrade your plan</a> to have unlimited access!",
   "intro-video-title": "Welcome!",
@@ -134,6 +156,7 @@
   },
   "mandatoryProjects": {
     "title": "Pending mandatory projects",
+    "showing-comments": "Showing comments",
     "description": "You have pending mandatory subjects, you have to finish them in order to complete the course."
   },
   "modalInfo": {
@@ -198,11 +221,20 @@
     "take-attendancy": "Take attendance",
     "review-attendancy": "Review attendance",
     "assignments": "Assignments",
+    "student-progress": "Student Progress",
     "teacher-tutorial": "Teacher tutorial",
     "no-instructions": ">:warning: No available instruction found for this module"
   },
   "welcome-modal": {
     "title": "Welcome to 4Geeks!",
     "description": "Watch this short video that explains how to get the most out of 4Geeks and enhance your learning experience"
+  },
+  "repository-deletion": {
+    "title": "These repositories will be deleted soon",
+    "warning": "The following repositories are about to be deleted. Accept the transfer request that you should've received on your email to avoid the deletion.",
+    "description": "The following repositories will be deleted soon if you don't accept the transfer request. You should've received an email requesting the transfer to your github user, accept it to avoid deletion",
+    "see-repositories": "See repositories",
+    "days-left": "{{days}} days left",
+    "deletion-imminent": "Deletion imminent"
   }
 }

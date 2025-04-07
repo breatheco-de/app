@@ -20,7 +20,7 @@ import PropTypes from 'prop-types';
 import validationSchema from './validationSchemas';
 import { getStorageItem, setStorageItem } from '../../../utils';
 import NextChakraLink from '../NextChakraLink';
-import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
+import ModalInfo from '../ModalInfo';
 import Text from '../Text';
 import { SILENT_CODE } from '../../../lib/types';
 import bc from '../../services/breathecode';
@@ -73,7 +73,7 @@ function Register({ setIsLoggedFromRegister }) {
             router.push({
               pathname: '/checkout',
               query: {
-                plan: 'basic',
+                plan: BASE_PLAN || '4geeks-basic',
               },
             });
           } else {
@@ -153,7 +153,7 @@ function Register({ setIsLoggedFromRegister }) {
             },
             body: JSON.stringify({
               ...values,
-              plan: '4geeks-standard',
+              plan: BASE_PLAN || '4geeks-basic',
               conversion_info: {
                 ...userSession,
               },

@@ -13,7 +13,7 @@ import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import { toCapitalize, languageFix } from '../../utils';
 import Heading from '../../common/components/Heading';
-import ProjectList from '../../js_modules/projects/ProjectList';
+import ProjectList from '../../common/components/Assets/ProjectList';
 import DraggableContainer from '../../common/components/DraggableContainer';
 import GridContainer from '../../common/components/GridContainer';
 import MktEventCards from '../../common/components/MktEventCards';
@@ -131,7 +131,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   else contentPerPage = 10;
 
   const response = await bc.lesson({ sort_priority: 1, visibility: 'PUBLIC', is_deprecated: false }).techsBySort();
-  const technologiesFetched = response.data || [];
+  const technologiesFetched = response?.data || [];
 
   const isSortPriorityOne = technologiesFetched.some((tech) => tech.slug === slug);
   if (!isSortPriorityOne) contentPerPage = 20;

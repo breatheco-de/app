@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { useEffect, useState } from 'react';
 import { Box, Button, Flex, Link, Avatar } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
@@ -35,25 +36,28 @@ function Feedback({ storyConfig }) {
   };
 
   const handleOpen = (data) => {
-    const isFileCodeBase64 = base64regex.test(data?.file?.content);
-    const isReviewCodeBase64 = base64regex.test(data?.original_code);
-    const fileContent = isFileCodeBase64 ? decodeBase64(data?.file?.content) : data?.file?.content;
-    const originalCode = isReviewCodeBase64 ? decodeBase64(data.original_code) : data.original_code;
-    setSelectedData({
-      code_revisions: codeRevisions,
-      commitFile: {
-        ...data?.file,
-        path: data?.file?.name,
-        url: data?.file?.file_url,
-        name: data?.file?.name,
-        code: fileContent,
-      },
-      revision_content: {
-        ...data,
-        code: originalCode,
-      },
-    });
-    setIsOpen(true);
+    if (data) {
+      const { file, original_code } = data;
+      const isFileCodeBase64 = base64regex.test(file?.content);
+      const isReviewCodeBase64 = base64regex.test(original_code);
+      const fileContent = isFileCodeBase64 ? decodeBase64(file?.content) : file?.content;
+      const originalCode = isReviewCodeBase64 ? decodeBase64(original_code) : original_code;
+      setSelectedData({
+        code_revisions: codeRevisions,
+        commitFile: {
+          ...file,
+          path: file?.name,
+          url: file?.file_url,
+          name: file?.name,
+          code: fileContent,
+        },
+        revision_content: {
+          ...data,
+          code: originalCode,
+        },
+      });
+      setIsOpen(true);
+    }
   };
 
   const getCodeRevisions = async () => {
@@ -170,7 +174,7 @@ function Feedback({ storyConfig }) {
         </Flex>
         <Flex flexDirection="column" gridGap="10px" padding="12px 8px" maxHeight="17rem" overflow="auto">
           {codeRevisions?.length > 0 ? codeRevisions.map((revision) => (
-            <Flex cursor="pointer" gridGap="8px" onClick={() => handleOpen(revision)} _hover={{ background: featuredColor }} borderRadius="11px" alignItems="center" padding="8px" border="1px solid" borderColor={borderColor2}>
+            <Flex key={revision?.created_at} cursor="pointer" gridGap="8px" onClick={() => handleOpen(revision)} _hover={{ background: featuredColor }} borderRadius="11px" alignItems="center" padding="8px" border="1px solid" borderColor={borderColor2}>
               <Flex gridGap="16px" width="100%" alignItems="center">
                 <Icon icon="code-comment" color={hexColor.blueDefault} width="24px" height="24px" padding="12px" />
                 <Flex justifyContent="space-between" width="100%">

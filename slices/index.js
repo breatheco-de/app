@@ -4,10 +4,13 @@ import dynamic from "next/dynamic";
 
 export const components = {
   event_cards: dynamic(() => import("./EventCards")),
+  faqs: dynamic(() => import("./Faqs")),
   info_cards: dynamic(() => import("./InfoCards")),
   markdown: dynamic(() => import("./Markdown")),
+  multiple_column_card: dynamic(() => import("./MultipleColumnCard")),
   one_column: dynamic(() => import("./OneColumn")),
   partners: dynamic(() => import("./Partners")),
+  pricing_cards: dynamic(() => import("./PricingCards")),
   recommended_courses: dynamic(() => import("./RecommendedCourses")),
   road_map: dynamic(() => import("./RoadMap")),
   show_prices: dynamic(() => import("./ShowPrices")),

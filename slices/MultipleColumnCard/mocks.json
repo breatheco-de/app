@@ -1,0 +1,103 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "appropriate",
+				"type": "Text"
+			},
+			"id_key": {
+				"__TYPE__": "FieldContent",
+				"value": "familiar",
+				"type": "Text"
+			},
+			"font_family_title": {
+				"__TYPE__": "FieldContent",
+				"value": "Space Grotesk Variable",
+				"type": "Select"
+			},
+			"margin_bottom": {
+				"__TYPE__": "FieldContent",
+				"value": "palace",
+				"type": "Text"
+			},
+			"margin_top": {
+				"__TYPE__": "FieldContent",
+				"value": "becoming",
+				"type": "Text"
+			},
+			"max_width": {
+				"__TYPE__": "FieldContent",
+				"value": "leaving",
+				"type": "Text"
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": [
+					[
+						"column_title",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "wish",
+							"type": "Text"
+						}
+					],
+					[
+						"column_description",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "class",
+							"type": "Text"
+						}
+					],
+					[
+						"font_family_column",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "Lato",
+							"type": "Select"
+						}
+					],
+					[
+						"image",
+						{
+							"origin": {
+								"id": "main",
+								"url": "https://images.unsplash.com/photo-1596195689404-24d8a8d1c6ea",
+								"width": 5000,
+								"height": 4613
+							},
+							"url": "https://images.unsplash.com/photo-1596195689404-24d8a8d1c6ea",
+							"width": 5000,
+							"height": 4613,
+							"edit": {
+								"zoom": 1,
+								"crop": {
+									"x": 0,
+									"y": 0
+								},
+								"background": "transparent"
+							},
+							"credits": null,
+							"alt": null,
+							"__TYPE__": "ImageContent",
+							"thumbnails": {}
+						}
+					],
+					[
+						"flex_direction",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "column",
+							"type": "Select"
+						}
+					]
+				]
+			}
+		]
+	}
+]

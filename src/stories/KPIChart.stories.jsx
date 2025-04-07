@@ -1,8 +1,6 @@
-// import { Box } from '@chakra-ui/layout';
 import React from 'react';
 import KPI from '../common/components/KPI';
 import Sparkline from '../common/components/Sparkline';
-// const iconDict = require('../common/utils/iconDict.json');
 
 export default {
   title: 'Components/KPIChart',
