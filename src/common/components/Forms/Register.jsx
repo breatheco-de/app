@@ -73,7 +73,7 @@ function Register({ setIsLoggedFromRegister }) {
             router.push({
               pathname: '/checkout',
               query: {
-                plan: 'basic',
+                plan: BASE_PLAN || '4geeks-basic',
               },
             });
           } else {
@@ -153,7 +153,7 @@ function Register({ setIsLoggedFromRegister }) {
             },
             body: JSON.stringify({
               ...values,
-              plan: '4geeks-standard',
+              plan: BASE_PLAN || '4geeks-basic',
               conversion_info: {
                 ...userSession,
               },

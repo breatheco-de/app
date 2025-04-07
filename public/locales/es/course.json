@@ -96,7 +96,7 @@
     "title": "Conoce a Rigobot, nuestra IA interna diseñada para quienes aprenden solos",
     "description": "4Geeks.com es la primera plataforma diseñada para maximizar el aprendizaje a tu propio ritmo. Únete a sesiones en vivo cuando tu puedas, obtén ayuda de forma inmediata con IA y pide mentorías uno a uno. Todo nuestro contenido es totalmente interactivo y con videos.",
     "button": "Ver demo",
-    "video_url": "https://www.youtube.com/watch?v=3PMP26t62To",
+    "video_url": "https://www.youtube.com/watch?v=cOFm_deKj6Q",
     "link": "https://codespaces.new/breatheco-de/exercise-postcard",
     "message": "¿Hay algo que quieras saber sobre el programa {{title}}?",
     "payment-methods": "- Tarjeta de crédito. - Contacta a soporte para mas opciones"
@@ -189,7 +189,7 @@
   },
   "featured-bullets": [
     {
-      "title": "En tan solo 30 minutos podrás alcanzar la maestría en Python en 2 meses."
+      "title": "En tan solo 30 minutos cada día podrás alcanzar el dominio en meses."
     },
     {
       "title": "Construye tu portafolio con proyectos del mundo real y desafíos en la nube (sin necesidad de configuración)."
