@@ -35,7 +35,6 @@ function WorkshopsLoggedLanding() {
         if (data && Array.isArray(data) && data.length > 0) {
           const priorityTerms = ['javascript', 'python', 'frontend'];
 
-          // Sort event types based on priority terms
           const sortedEventTypes = [...data].sort((a, b) => {
             const aNameLower = a.name.toLowerCase();
             const bNameLower = b.name.toLowerCase();
@@ -45,10 +44,9 @@ function WorkshopsLoggedLanding() {
 
             if (aIsPriority && !bIsPriority) return -1;
             if (!aIsPriority && bIsPriority) return 1;
-            return 0; // Keep original order for same priority
+            return 0;
           });
 
-          // Take the names of the top 5 sorted event types
           const eventTypeNames = sortedEventTypes.slice(0, 5).map((eventType) => eventType.name);
           setPopularSearchTerms(eventTypeNames);
         }
@@ -57,7 +55,7 @@ function WorkshopsLoggedLanding() {
       }
     };
     fetchEventTypes();
-  }, []);
+  }, [lang]);
 
   return (
     <>
