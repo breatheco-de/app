@@ -240,7 +240,7 @@ function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID,
   );
 }
 
-function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendors, publicView, userID }) {
+function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendors, publicView, userID, repoPath }) {
   const { t, lang } = useTranslation('syllabus');
   const { state } = useCohortHandler();
   const { cohortSession } = state;
@@ -259,15 +259,18 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const isInteractive = currentAsset?.interactive;
 
   const isForOpenLocaly = isInteractive || templateUrl;
-  const showProvisioningLinks = (provisioningVendors?.length > 0) && currentAsset?.gitpod;
+  const showProvisioningLinks = ((provisioningVendors?.length > 0) && currentAsset?.gitpod) || repoPath;
   const onlyReadme = !isForOpenLocaly && !showProvisioningLinks;
 
   //__info used in steps on open locally options__
   const assetDependencies = currentAsset?.dependencies;
-  const urlToClone = currentAsset?.url || currentAsset?.readme_url.split('/blob')?.[0];
+  const urlToClone = currentAsset?.url || currentAsset?.readme_url.split('/blob')?.[0] || repoPath;
   const repoName = urlToClone.split('/').pop();
 
   function getFinalUrl() {
+    if (repoPath) {
+      return repoPath;
+    }
     if (isInteractive) {
       return urlToClone;
     }
@@ -334,8 +337,8 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   //__manage the available options based on asset data obtained before__
   useEffect(() => {
     const options = [
-      showProvisioningLinks && { key: 'provisioning_vendors', label: t('common:option-provisioning-vendors') },
-      isForOpenLocaly && { key: 'open_locally', label: t('common:option-open-locally') },
+      (showProvisioningLinks) && { key: 'provisioning_vendors', label: t('common:option-provisioning-vendors') },
+      (isForOpenLocaly) && { key: 'open_locally', label: t('common:option-open-locally') },
       onlyReadme && { key: 'open_locally', label: t('common:option-open-locally') },
     ].filter(Boolean);
 
@@ -372,7 +375,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
                 selectedOption={selectedOption}
                 isInteractive={isInteractive}
                 currentAssetURL={currentAsset?.url}
-                cohortSessionID={cohortSession.id}
+                cohortSessionID={cohortSession?.id}
                 publicView={publicView}
                 provisioningVendors={provisioningVendors}
                 assetUrl={assetUrl}
@@ -462,6 +465,7 @@ ModalToCloneProject.propTypes = {
   provisioningVendors: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   publicView: PropTypes.bool,
   userID: PropTypes.number,
+  repoPath: PropTypes.string,
 };
 
 ModalToCloneProject.defaultProps = {
@@ -471,6 +475,7 @@ ModalToCloneProject.defaultProps = {
   provisioningVendors: [],
   publicView: false,
   userID: undefined,
+  repoPath: undefined,
 };
 
 ModalContentDisplay.propTypes = {
