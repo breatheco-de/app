@@ -14,7 +14,7 @@ const getProjectStatusConfig = (currentTask, isGuidedExperience, hasPendingSubta
       PENDING: {
         icon: {
           icon: isGuidedExperience ? 'send-2' : 'longArrowRight',
-          color: isGuidedExperience ? hexColor.blueDefault : 'white',
+          color: 'white',
           width: '20px',
         },
         text: hasPendingSubtasks

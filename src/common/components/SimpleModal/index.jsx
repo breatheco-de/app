@@ -50,7 +50,7 @@ SimpleModal.propTypes = {
   size: PropTypes.string,
   children: PropTypes.node.isRequired,
   onClose: PropTypes.func,
-  bodyStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+  bodyStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   forceHandler: PropTypes.bool,
   hideCloseButton: PropTypes.bool,
   headerStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),

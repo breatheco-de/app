@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   Box, Flex, useDisclosure, Link, Avatar,
-  useColorModeValue, Modal, ModalOverlay, useToast, Tooltip,
+  useColorModeValue, Modal, ModalOverlay, Tooltip,
   ModalContent, ModalCloseButton, ModalBody, Button,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
@@ -19,17 +19,16 @@ import useAuth from '../../../../../common/hooks/useAuth';
 import useRigo from '../../../../../common/hooks/useRigo';
 import StickySideBar from '../../../../../common/components/StickySideBar';
 import Icon from '../../../../../common/components/Icon';
-import AlertMessage from '../../../../../common/components/AlertMessage';
 import ShareButton from '../../../../../common/components/ShareButton';
 import ModalInfo from '../../../../../common/components/ModalInfo';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import ScrollTop from '../../../../../common/components/scrollTop';
-import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar';
-import GuidedExperienceSidebar from '../../../../../js_modules/syllabus/GuidedExperienceSidebar';
-import ExerciseGuidedExperience from '../../../../../js_modules/syllabus/ExerciseGuidedExperience';
-import ProjectBoardGuidedExperience from '../../../../../js_modules/syllabus/ProjectBoardGuidedExperience';
-import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/SyllabusMarkdownComponent';
-import Topbar from '../../../../../js_modules/syllabus/Topbar';
+import TimelineSidebar from '../../../../../common/components/GuidedExperience/TimelineSidebar';
+import GuidedExperienceSidebar from '../../../../../common/components/GuidedExperience/GuidedExperienceSidebar';
+import ExerciseGuidedExperience from '../../../../../common/components/GuidedExperience/ExerciseGuidedExperience';
+import ProjectBoardGuidedExperience from '../../../../../common/components/GuidedExperience/ProjectBoardGuidedExperience';
+import SyllabusMarkdownComponent from '../../../../../common/components/GuidedExperience/SyllabusMarkdownComponent';
+import Topbar from '../../../../../common/components/GuidedExperience/Topbar';
 import bc from '../../../../../common/services/breathecode';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
 import SimpleModal from '../../../../../common/components/SimpleModal';
@@ -42,12 +41,13 @@ import { parseQuerys } from '../../../../../utils/url';
 import completions from './completion-jobs.json';
 import { generateUserContext } from '../../../../../utils/rigobotContext';
 import SubTasks from '../../../../../common/components/MarkDownParser/SubTasks';
+import useCustomToast from '../../../../../common/hooks/useCustomToast';
 import ReviewModal from '../../../../../common/components/ReviewModal';
 
 function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
   const router = useRouter();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'ai-chat-access-error' });
 
   const { isOpen, onToggle } = useDisclosure();
   const { user, isLoading, isAuthenticatedWithRigobot } = useAuth();
@@ -95,7 +95,7 @@ function SyllabusContent() {
   // const isAvailableAsSaas = false;
   const isAvailableAsSaas = cohortSession?.available_as_saas;
 
-  const { featuredLight, fontColor, borderColor, featuredCard, backgroundColor, hexColor, featuredColor, colorMode } = useStyle();
+  const { featuredLight, fontColor, borderColor, backgroundColor, hexColor, featuredColor, colorMode } = useStyle();
 
   const hasSubtasks = subTasks?.length > 0;
   const hasPendingSubtasks = hasSubtasks && subTasks.some((subtask) => subtask.status === 'PENDING');
@@ -147,6 +147,41 @@ function SyllabusContent() {
 
   useEffect(() => {
     setLearnpackStart(false);
+    if (currentAsset?.solution_url) {
+      createToast({
+        title: t('solution-title'),
+        description: (
+          <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
+            {t('solution-message')}
+            {' '}
+            <Link fontSize="15px" textDecoration="underline" href={currentAsset.solution_url} target="_blank">
+              You can see it here
+            </Link>
+          </Text>
+        ),
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+
+    if (currentAsset?.superseded_by?.slug) {
+      createToast({
+        title: t('superseded-message'),
+        description: (
+          <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
+            {t('superseded-message')}
+            {' '}
+            <Link fontSize="15px" textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentAsset.superseded_by.slug}`}>
+              {currentAsset.superseded_by.title}
+            </Link>
+          </Text>
+        ),
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   }, [currentAsset]);
 
   const scrollTop = () => {
@@ -307,7 +342,7 @@ function SyllabusContent() {
       plan: programSlug,
     });
     router.push(`/${lang}/checkout${querys}`);
-    toast({
+    createToast({
       position: 'top',
       title: t('alert-message:access-denied'),
       status: 'error',
@@ -695,10 +730,10 @@ function SyllabusContent() {
 
   const socials = [
     {
-      name: 'twitter',
-      label: 'Twitter',
-      href: `https://twitter.com/share?url=&text=${encodeURIComponent(t('share-social-message', { title: currentTask?.title }))} %23100DaysOfCode%0A%0A${shareLink}`,
-      color: '#1DA1F2',
+      name: 'x',
+      label: 'X',
+      href: `https://x.com/share?url=&text=${encodeURIComponent(t('share-social-message', { title: currentTask?.title }))} %23100DaysOfCode%0A%0A${shareLink}`,
+      color: '#000',
     },
     {
       name: 'linkedin',
@@ -756,7 +791,7 @@ function SyllabusContent() {
       } else setShowRigobotModal(true);
     } catch (e) {
       console.log(e);
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:error-ai-chat'),
         status: 'error',
@@ -797,6 +832,29 @@ function SyllabusContent() {
     highestElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
     setOpenNextPageModal(false);
   };
+
+  useEffect(() => {
+    if (selectedSyllabus && cohortModule && cohortModule.id !== selectedSyllabus.id) {
+      createToast({
+        title: t('teacherSidebar.no-need-to-teach-today.title'),
+        description: t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule.id} - ${cohortModule.label}` }),
+        status: 'info',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [selectedSyllabus, cohortModule]);
+
+  useEffect(() => {
+    if (selectedSyllabus && defaultSelectedSyllabus?.id !== selectedSyllabus.id) {
+      createToast({
+        title: t('teacherSidebar.alert-updated-module-instructions'),
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [selectedSyllabus, defaultSelectedSyllabus]);
 
   return (
     <>
@@ -1073,54 +1131,6 @@ function SyllabusContent() {
                             currentTask={currentTask}
                             isGuidedExperience={isAvailableAsSaas}
                             grantSyllabusAccess={grantAccess}
-                            alerMessage={(
-                              <>
-                                {currentAsset?.solution_url && (
-                                  <AlertMessage
-                                    type="warning"
-                                    zIndex={99}
-                                    full
-                                    borderRadius="8px"
-                                    backgroundColor={featuredCard.yellow.featured}
-                                    margin="1rem 0"
-                                    style={{
-                                      width: '100%',
-                                      height: 'auto',
-                                    }}
-                                  >
-                                    <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
-                                      {t('solution-message')}
-                                      {' '}
-                                      <Link fontSize="15px" textDecoration="underline" href={currentAsset?.solution_url} target="_blank">
-                                        You can see it here
-                                      </Link>
-                                    </Text>
-                                  </AlertMessage>
-                                )}
-                                {currentAsset?.superseded_by?.slug && (
-                                  <AlertMessage
-                                    type="warning"
-                                    zIndex={99}
-                                    full
-                                    borderRadius="8px"
-                                    backgroundColor={featuredCard.yellow.featured}
-                                    margin="1rem 0"
-                                    style={{
-                                      width: '100%',
-                                      height: 'auto',
-                                    }}
-                                  >
-                                    <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
-                                      {t('superseded-message')}
-                                      {' '}
-                                      <Link fontSize="15px" textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentAsset?.superseded_by?.slug}`}>
-                                        {currentAsset?.superseded_by?.title}
-                                      </Link>
-                                    </Text>
-                                  </AlertMessage>
-                                )}
-                              </>
-                            )}
                           />
                         )}
                         {!isQuiz && !isAvailableAsSaas && (
@@ -1476,8 +1486,8 @@ function SyllabusContent() {
                   value: selectedSyllabus?.id || defaultSelectedSyllabus?.id,
                   slug: selectedSyllabus?.slug || defaultSelectedSyllabus?.slug,
                   label: selectedSyllabus?.id
-                    ? `#${selectedSyllabus?.id} - ${selectedSyllabus?.label}`
-                    : `#${defaultSelectedSyllabus?.id} - ${defaultSelectedSyllabus?.label}`,
+                    ? `#${selectedSyllabus?.id} - ${selectedSyllabus?.label[lang === 'en' ? 'us' : lang] || selectedSyllabus?.label}`
+                    : `#${defaultSelectedSyllabus?.id} - ${defaultSelectedSyllabus?.label[lang === 'en' ? 'us' : lang] || defaultSelectedSyllabus?.label}`,
                 }}
                 onChange={({ value }) => {
                   setCurrentSelectedModule(parseInt(value, 10));
@@ -1485,36 +1495,15 @@ function SyllabusContent() {
                 options={sortedAssignments.map((module) => ({
                   value: module?.id,
                   slug: module.slug,
-                  label: `#${module?.id} - ${module?.label}`,
+                  label: `#${module?.id} - ${module?.label[lang === 'en' ? 'us' : lang] || module?.label}`,
                 }))}
               />
             )}
           </Box>
 
-          {selectedSyllabus && cohortModule?.id && cohortModule?.id !== selectedSyllabus?.id && (
-            <AlertMessage
-              type="info"
-              style={{
-                margin: '20px 0 18px 0',
-              }}
-              dangerouslySetInnerHTML
-              title={t('teacherSidebar.no-need-to-teach-today.title')}
-              message={t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule?.id} - ${cohortModule?.label}` })}
-            />
-          )}
-          {selectedSyllabus && defaultSelectedSyllabus?.id !== selectedSyllabus?.id && (
-            <AlertMessage
-              type="warning"
-              style={{
-                margin: '20px 0 18px 0',
-              }}
-              message={t('teacherSidebar.alert-updated-module-instructions')}
-            />
-          )}
-
           <Box display="flex" flexDirection="column" background={featuredColor} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
             <Heading as="h2" size="sm" style={{ margin: '0' }}>
-              {`${label} - `}
+              {`${label[lang === 'en' ? 'us' : lang] || label} - `}
               {t('teacherSidebar.module-duration', { duration: selectedSyllabus?.duration_in_days || currentModule?.duration_in_days || 1 })}
             </Heading>
             <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>

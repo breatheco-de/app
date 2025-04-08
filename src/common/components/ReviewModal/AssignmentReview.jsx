@@ -9,7 +9,7 @@ import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
 import useAuth from '../../hooks/useAuth';
 import useCohortHandler from '../../hooks/useCohortHandler';
-import AlertMessage from '../AlertMessage';
+import useCustomToast from '../../hooks/useCustomToast';
 import Icon from '../Icon';
 import LoaderScreen from '../LoaderScreen';
 import ProjectSubmitButton from '../AssignmentButton/ProjectSubmitButton';
@@ -42,6 +42,7 @@ function AssignmentReview({
   externalFiles,
 }) {
   const { t } = useTranslation('assignments');
+  const { createToast } = useCustomToast({ toastId: ' review-status-code-revisions' });
   const { lightColor, featuredColor } = useStyle();
   const [openUndoApproval, setOpenUndoApproval] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -163,6 +164,17 @@ function AssignmentReview({
     }
   }, [currentTask, externalFiles]);
 
+  useEffect(() => {
+    if (hasFilesToReview && !isReadyToApprove) {
+      createToast({
+        position: 'top',
+        title: isStudent ? t('code-review.info-student') : t('code-review.info-teacher'),
+        status: isStudent ? 'info' : 'warning',
+        duration: 5000,
+      });
+    }
+  }, [hasFilesToReview, isReadyToApprove]);
+
   return (
     <Box width="100%" maxWidth="500px" margin="0 auto" mb="8px" position="relative">
       {loaders.isFetchingCodeReviews ? (
@@ -171,18 +183,6 @@ function AssignmentReview({
         </Box>
       ) : (
         <>
-          {hasFilesToReview && !isReadyToApprove && (
-            <AlertMessage
-              type={isStudent ? 'info' : 'warning'}
-              full
-              message={isStudent
-                ? t('code-review.info-student')
-                : t('code-review.info-teacher')}
-              borderRadius="4px"
-              padding="8px"
-              mb="24px"
-            />
-          )}
           <Flex flexDirection="column" gridGap="16px">
             {!isStudent ? (
               <Flex justifyContent="space-between">

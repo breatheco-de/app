@@ -5,48 +5,44 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import {
-  useState, memo, useEffect, Fragment,
+  useState, memo, useEffect,
 } from 'react';
 import Image from 'next/image';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import { es } from 'date-fns/locale';
+import { es, en } from 'date-fns/locale';
 import { formatDistanceStrict } from 'date-fns';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
-import DesktopNav from '../../../js_modules/navbar/DesktopNav';
-import MobileNav from '../../../js_modules/navbar/MobileNav';
-import { usePersistent } from '../../hooks/usePersistent';
+import DesktopNavItem from './DesktopNavItem';
+import MobileNav from './MobileNav';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useSession from '../../hooks/useSession';
 import Heading from '../Heading';
 import Text from '../Text';
 import useAuth from '../../hooks/useAuth';
-import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
-import { isWindow, setStorageItem } from '../../../utils';
-import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../../utils/variables';
+import { setStorageItem } from '../../../utils';
+import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 import axios from '../../../axios';
+import bc from '../../services/breathecode';
 import logoData from '../../../../public/logo.json';
 import { parseQuerys } from '../../../utils/url';
 import useStyle from '../../hooks/useStyle';
 import { getAllMySubscriptions } from '../../handlers/subscriptions';
 
-function NavbarWithSubNavigation({ translations, pageProps }) {
-  const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
-
+function Navbar({ translations, pageProps }) {
   const [uniqueLanguages, setUniqueLanguages] = useState([]);
-  const [haveSession, setHaveSession] = useState(HAVE_SESSION);
   const { userSession, location } = useSession();
   const isUtmMediumAcademy = userSession?.utm_medium === 'academy';
   const { isAuthenticated, isLoading, user, logout, cohorts } = useAuth();
-  const [ITEMS, setITEMS] = useState([]);
+  const [navbarItems, setNavbarItems] = useState([]);
   const [mktCourses, setMktCourses] = useState([]);
   const { state } = useCohortHandler();
   const { cohortSession } = state;
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [hasPaidSubscription, setHasPaidSubscription] = usePersistent('hasPaidSubscription', false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [hasPaidSubscription, setHasPaidSubscription] = useState(false);
 
   const { t } = useTranslation('navbar');
   const router = useRouter();
@@ -59,46 +55,28 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const langs = ['en', 'es'];
   const locale = router.locale === 'default' ? 'en' : router.locale;
 
-  const query = isWindow && new URLSearchParams(window.location.search || '');
-  const queryToken = isWindow && query.get('token')?.split('?')[0];
-  const queryTokenExists = isWindow && queryToken !== undefined && queryToken;
-  const sessionExists = haveSession || queryTokenExists;
   const imageFilter = useColorModeValue('none', 'brightness(0) invert(1)');
-  const mktQueryString = parseQuerys({
-    featured: true,
-    academy: WHITE_LABEL_ACADEMY,
-  });
 
-  const {
-    languagesTR,
-  } = navbarTR[locale];
   const translationsPropsExists = translations?.length > 0;
 
-  const programSlug = '/choose-program';
-
-  const whiteLabelitems = t('white-label-version-items', {
-    selectedProgramSlug: '/choose-program',
-  }, { returnObjects: true });
-
-  const items = t('ITEMS', { selectedProgramSlug: '/choose-program' }, { returnObjects: true });
+  const whiteLabelitems = t('white-label-version-items', {}, { returnObjects: true });
+  const preDefinedItems = t('items', {}, { returnObjects: true });
+  const languages = t('languages', {}, { returnObjects: true });
 
   axios.defaults.headers.common['Accept-Language'] = locale;
 
-  // Verify if teacher acces is with current cohort role
   const parsedDateJoined = user?.date_joined || new Date();
 
-  const dateJoined = {
-    en: `Member since ${formatDistanceStrict(
-      new Date(parsedDateJoined),
-      new Date(),
-      { addSuffix: true },
-    )}`,
-    es: `Miembro desde ${formatDistanceStrict(
-      new Date(parsedDateJoined),
-      new Date(),
-      { addSuffix: true, locale: es },
-    )}`,
+  const locales = {
+    en,
+    es,
   };
+
+  const formattedDateJoined = formatDistanceStrict(
+    new Date(parsedDateJoined),
+    new Date(),
+    { addSuffix: true, locale: locales[locale] },
+  );
 
   const handleGetStartedButton = (e) => {
     e.preventDefault();
@@ -121,81 +99,108 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   };
 
   useEffect(() => {
-    // verify if accessToken exists
     if (!isLoading && isAuthenticated) {
-      setHaveSession(true);
       verifyIfHasPaidSubscription();
     }
   }, [isLoading, isAuthenticated]);
 
   useEffect(() => {
-    const filteredLanguages = [...new Map(((translationsPropsExists && translations) || languagesTR)
+    const filteredLanguages = [...new Map(((translationsPropsExists && translations) || languages)
       .map((lang) => [lang.value, lang])).values()];
     setUniqueLanguages(filteredLanguages);
   }, [router.asPath]);
 
+  const fetchMktCourses = async () => {
+    try {
+      const mktQueryString = {
+        featured: true,
+        academy: WHITE_LABEL_ACADEMY,
+      };
+      const response = await bc.marketing(mktQueryString).courses();
+      const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null && item?.visibility !== 'UNLISTED');
+      const coursesStruct = filterByTranslations?.map((item) => ({
+        ...item,
+        slug: item?.slug,
+        label: item?.course_translation?.title,
+        asPath: `/course/${item?.slug}`,
+        icon: item?.icon_url,
+        description: item?.course_translation?.description,
+        subMenu: [
+          {
+            href: `/bootcamp/${item?.slug}`,
+            label: t('course-details'),
+          },
+        ],
+      }));
+
+      setMktCourses(coursesStruct || []);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQueryString}`)
-      .then((response) => {
-        const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null && item?.visibility !== 'UNLISTED');
-        const coursesStruct = filterByTranslations?.map((item) => ({
-          ...item,
-          slug: item?.slug,
-          label: item?.course_translation?.title,
-          asPath: `/course/${item?.slug}`,
-          icon: item?.icon_url,
-          description: item?.course_translation?.description,
-          subMenu: [
-            {
-              href: `/bootcamp/${item?.slug}`,
-              label: t('course-details'),
-            },
-          ],
-        }));
-
-        setMktCourses(coursesStruct || []);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    fetchMktCourses();
   }, [locale]);
-
-  const coursesList = mktCourses?.length > 0 ? mktCourses : [];
 
   useEffect(() => {
     if (pageProps?.existsWhiteLabel) {
-      setITEMS(whiteLabelitems);
+      setNavbarItems(whiteLabelitems);
     } else {
-      const preFilteredItems = items.filter(
+      const preFilteredItems = preDefinedItems.filter(
         (item) => (isUtmMediumAcademy ? item.id !== 'bootcamps' : true) && (item.id === 'bootcamps' ? location?.countryShort !== 'ES' : true),
       );
       if (!isLoading && user?.id) {
         const isBootcampStudent = cohorts.some((cohort) => !cohort.available_as_saas);
-        setITEMS(
+        setNavbarItems(
           preFilteredItems
             .filter((item) => (item.disabled !== true && item.hide_on_auth !== true)
               && (item.id !== 'bootcamps' || !isBootcampStudent)),
         );
       } else {
-        setITEMS(preFilteredItems.filter((item) => item.disabled !== true));
+        setNavbarItems(preFilteredItems.filter((item) => item.disabled !== true));
       }
     }
   }, [user, cohorts, isLoading, cohortSession, mktCourses, router.locale, location]);
 
   const closeSettings = () => {
-    setSettingsOpen(false);
+    setIsPopoverOpen(false);
   };
 
   const userImg = user?.profile?.avatar_url || user?.github?.avatar_url;
 
   const getName = () => {
-    if (user && user?.first_name) {
-      return `${user?.first_name} ${user?.last_name}`;
+    if (user?.first_name) {
+      return `${user.first_name} ${user.last_name}`;
     }
     return user?.github?.name;
   };
 
   if (pageProps?.previewMode) return null;
+
+  // manage submenus in level 1
+  const prepareSubMenuData = (item) => {
+    if (item.id === 'bootcamps') {
+      return mktCourses;
+    }
+    return item?.subMenu;
+  };
+
+  const allItems = navbarItems?.length > 0 ? navbarItems : preDefinedItems;
+
+  const privateItems = allItems?.filter((item) => (isAuthenticated ? item.private : false)) || [];
+  const publicItems = allItems?.filter((item) => !item.private) || [];
+  const allNavbarItems = [...privateItems, ...publicItems]
+    .map((item) => {
+      const submenuData = prepareSubMenuData(item);
+      const subMenuLength = item.subMenu?.length;
+
+      return ({
+        ...item,
+        subMenu: subMenuLength > 1 ? item.subMenu : submenuData,
+      });
+    })
+    .sort((a, b) => a.position - b.position);
 
   return (
     <Box position="relative" zIndex={100}>
@@ -240,7 +245,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
             height="auto"
             aria-label="Toggle Navigation"
           />
-          <NextLink href={sessionExists ? programSlug : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
+          <NextLink href={isAuthenticated ? '/choose-program' : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
             {pageProps?.existsWhiteLabel && logoData?.logo_url ? (
               <Image
                 src={logoData.logo_url}
@@ -262,7 +267,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           display={{ base: 'none', lg: 'flex' }}
           justify={{ base: 'center', xl: 'start' }}
         >
-          <NextLink href={sessionExists ? programSlug : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
+          <NextLink href={isAuthenticated ? '/choose-program' : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
             {pageProps?.existsWhiteLabel && logoData?.logo_url ? (
               <Image
                 src={logoData.logo_url}
@@ -280,7 +285,11 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           </NextLink>
 
           <Flex display="flex" ml={10}>
-            <DesktopNav NAV_ITEMS={ITEMS?.length > 0 ? ITEMS : items} extraContent={coursesList} haveSession={sessionExists} />
+            <Stack className="hideOverflowX__" direction="row" width="auto" spacing={4} alignItems="center">
+              {allNavbarItems.map((item) => (
+                <DesktopNavItem key={item.label} item={item} />
+              ))}
+            </Stack>
           </Flex>
         </Flex>
 
@@ -324,10 +333,10 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               <Icon icon="crown" width="20px" height="26px" color="" />
             </Box>
           )}
-          {sessionExists ? (
+          {isAuthenticated || isLoading ? (
             <Popover
               id="Avatar-Hover"
-              isOpen={settingsOpen}
+              isOpen={isPopoverOpen}
               onClose={closeSettings}
               placement="bottom-start"
               trigger="click"
@@ -342,7 +351,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                   maxWidth="20px"
                   height="30px"
                   borderRadius="30px"
-                  onClick={() => setSettingsOpen(!settingsOpen)}
+                  onClick={() => setIsPopoverOpen(!isPopoverOpen)}
                   title="Profile"
                   position="relative"
                   style={{ margin: 0 }}
@@ -388,7 +397,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                     {disableLangSwitcher !== true && (
                       <Box display="flex" flexDirection="row">
                         {uniqueLanguages.map((l, i) => {
-                          const lang = languagesTR.find((language) => language?.value === l?.lang);
+                          const lang = languages.find((language) => language?.value === l?.lang);
                           const value = translationsPropsExists ? lang?.value : l.value;
                           const path = translationsPropsExists ? l?.link : router.asPath;
 
@@ -400,7 +409,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                           const getLangName = value === 'en' ? 'Eng' : 'Esp';
 
                           return (
-                            <>
+                            <Box display="flex" flexDirection="row" key={value}>
                               <Link
                                 _hover={{
                                   textDecoration: 'none',
@@ -408,7 +417,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                                 }}
                                 color={locale === lang ? 'blue.default' : lightColor}
                                 fontWeight={locale === lang ? '700' : '400'}
-                                key={value}
                                 href={link}
                                 display="flex"
                                 alignItems="center"
@@ -422,7 +430,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                               {i < langs.length - 1 && (
                                 <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
                               )}
-                            </>
+                            </Box>
                           );
                         })}
                       </Box>
@@ -433,7 +441,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                   <Box p="1rem 1.5rem 0 1.5rem">
                     <Stack flexDirection="row" gridGap="10px" pb="15px">
                       <Avatar
-                        // name={user?.first_name}
                         width="62px"
                         marginY="auto"
                         height="62px"
@@ -445,7 +452,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                         </Heading>
                         {user?.date_joined && (
                           <Heading as="p" size="16px" maxWidth="300px" textTransform="initial" fontWeight="400">
-                            {dateJoined[locale]}
+                            {t('member-since', { date: formattedDateJoined })}
                           </Heading>
                         )}
                       </Flex>
@@ -455,7 +462,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                       borderTop={2}
                       borderStyle="solid"
                       borderColor={borderColor}
-                      // padding="20px 0"
                       alignItems="center"
                       padding="1rem 0rem"
                     >
@@ -465,7 +471,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                         color={fontColor}
                         fontSize="14px"
                         textDecoration="none"
-                        // cursor="pointer"
                         _hover={{
                           textDecoration: 'none',
                         }}
@@ -478,7 +483,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                       borderTop={2}
                       borderStyle="solid"
                       borderColor={borderColor}
-                      // padding="20px 0"
                       alignItems="center"
                       padding="1rem 0rem"
                     >
@@ -489,7 +493,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                         display="flex"
                         gridGap="10px"
                         onClick={() => {
-                          setSettingsOpen(false);
+                          setIsPopoverOpen(false);
                           setTimeout(() => {
                             logout();
                           }, 150);
@@ -541,27 +545,22 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
 
       <Collapse display={{ lg: 'block' }} in={isOpen} animateOpacity>
         <MobileNav
-          mktCourses={coursesList}
-          NAV_ITEMS={ITEMS?.length > 0 ? ITEMS : items}
-          haveSession={sessionExists}
+          navbarItems={allNavbarItems}
           translations={translations}
           onClickLink={onToggle}
-          isAuthenticated={isAuthenticated}
-          hasPaidSubscription={hasPaidSubscription}
         />
-
       </Collapse>
     </Box>
   );
 }
 
-NavbarWithSubNavigation.propTypes = {
+Navbar.propTypes = {
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   pageProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array, PropTypes.bool])),
 };
-NavbarWithSubNavigation.defaultProps = {
+Navbar.defaultProps = {
   translations: undefined,
   pageProps: undefined,
 };
 
-export default memo(NavbarWithSubNavigation);
+export default memo(Navbar);

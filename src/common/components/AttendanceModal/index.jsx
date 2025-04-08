@@ -6,7 +6,7 @@ import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, Button, Box,
   NumberInput, NumberInputStepper, NumberDecrementStepper, NumberIncrementStepper, NumberInputField,
   FormControl, FormLabel, Flex, Grid, useCheckbox, useCheckboxGroup, Avatar,
-  useColorMode, useToast, Select, ModalCloseButton,
+  useColorMode, Select, ModalCloseButton,
 } from '@chakra-ui/react';
 import Icon from '../Icon';
 import Text from '../Text';
@@ -15,11 +15,12 @@ import ModalInfo from '../ModalInfo';
 import useStyle from '../../hooks/useStyle';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import handlers from '../../handlers';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function AttendanceModal({
   title, message, isOpen, onClose, students,
 }) {
-  const { t } = useTranslation('dashboard');
+  const { t, lang } = useTranslation('dashboard');
   const { setCohortSession, cohortSession, sortedAssignments } = useCohortHandler();
   const [historyLog, setHistoryLog] = useState();
   const [day, setDay] = useState(cohortSession.current_day);
@@ -37,7 +38,7 @@ function AttendanceModal({
   const [openAttendanceTakenWarn, setOpenAttendanceTakenWarn] = useState(false);
   const [attendanceList, setAttendanceList] = useState({});
   const { colorMode } = useColorMode();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'attendance-report-apply-modules ' });
 
   const { lightColor, borderColor } = useStyle();
 
@@ -57,7 +58,7 @@ function AttendanceModal({
         setAttendanceList(data);
       })
       .catch(() => {
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:error-getting-previous-attendance'),
           status: 'error',
@@ -90,6 +91,7 @@ function AttendanceModal({
       const prevDailyModule = sortedAssignments.find(
         (assignment) => assignment.id === (currentModule - 1),
       );
+
       return {
         dailyModule,
         prevDailyModule,
@@ -120,20 +122,20 @@ function AttendanceModal({
     handlers.saveCohortAttendancy({ cohortSlug: cohortSession.slug, students, checked, currentModule })
       .then((data) => {
         setAttendanceList(data);
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:attendancy-reported'),
           status: 'success',
-          duration: 9000,
+          duration: 5000,
           isClosable: true,
         });
       })
       .catch(() => {
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:attendancy-report-error'),
           status: 'error',
-          duration: 9000,
+          duration: 5000,
           isClosable: true,
         });
       })
@@ -155,7 +157,7 @@ function AttendanceModal({
           });
         })
         .catch(() => {
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:error-updating-day-and-modules'),
             status: 'error',
@@ -167,7 +169,7 @@ function AttendanceModal({
         })
         .finally(() => setIsLoading(false));
     } else {
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:error-updating-day-and-modules'),
         status: 'error',
@@ -259,11 +261,17 @@ function AttendanceModal({
                   id="module"
                   placeholder="Select module"
                 >
-                  {sortedAssignments.map((module) => (
-                    <option key={module.id} value={module.id}>
-                      {`#${module.id} - ${module.label}`}
-                    </option>
-                  ))}
+                  {sortedAssignments.map((module) => {
+                    // Use 'us' if lang is 'en', otherwise use lang
+                    const labelLang = lang === 'en' ? 'us' : lang;
+                    // If the label doesn't exist for the language, use the label directly
+                    const moduleLabel = module.label[labelLang] || module.label;
+                    return (
+                      <option key={module.id} value={module.id}>
+                        {`#${module.id} - ${moduleLabel}`}
+                      </option>
+                    );
+                  })}
                 </Select>
               )}
             </FormControl>

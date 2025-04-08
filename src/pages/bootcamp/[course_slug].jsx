@@ -7,7 +7,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { parseQuerys } from '../../utils/url';
-import { BREATHECODE_HOST, ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { BREATHECODE_HOST, ORIGIN_HOST, WHITE_LABEL_ACADEMY, BASE_COURSE } from '../../utils/variables';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import GridContainer from '../../common/components/GridContainer';
@@ -24,7 +24,7 @@ import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import Instructors from '../../common/components/Instructors';
 import Faq from '../../common/components/Faq';
-import FixedBottomCta from '../../js_modules/projects/FixedBottomCta';
+import FixedBottomCta from '../../common/components/Assets/FixedBottomCta';
 import TagCapsule from '../../common/components/TagCapsule';
 import MktTrustCards from '../../common/components/MktTrustCards';
 import MktShowPrices from '../../common/components/MktShowPrices';
@@ -43,6 +43,7 @@ import completions from './completion-jobs.json';
 import Rating from '../../common/components/Rating';
 import SimpleModal from '../../common/components/SimpleModal';
 import CustomCarousel from '../../common/components/CustomCarousel';
+import useCustomToast from '../../common/hooks/useCustomToast';
 import { usePlanPrice } from '../../utils/getPriceWithDiscount';
 
 export async function getStaticPaths({ locales }) {
@@ -122,7 +123,7 @@ function CoursePage({ data, syllabus }) {
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor, backgroundColor7, backgroundColor8 } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'choose-program-pricing-detail' });
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
@@ -281,7 +282,7 @@ function CoursePage({ data, syllabus }) {
             setReadyToRefetch(true);
           }
           if (dataRequested?.status_code === 400) {
-            toast({
+            createToast({
               position: 'top',
               title: dataRequested?.detail,
               status: 'info',
@@ -293,7 +294,7 @@ function CoursePage({ data, syllabus }) {
             }, 600);
           }
           if (dataRequested?.status_code > 400) {
-            toast({
+            createToast({
               position: 'top',
               title: dataRequested?.detail,
               status: 'error',
@@ -332,10 +333,10 @@ function CoursePage({ data, syllabus }) {
 
       setIsFetching(false);
       if (withAlert) {
-        toast({
+        createToast({
           position: 'top',
           title: t('dashboard:already-have-this-cohort'),
-          status: 'info',
+          status: 'success',
           duration: 5000,
         });
       }
@@ -663,7 +664,7 @@ function CoursePage({ data, syllabus }) {
               alignSelf="center"
               maxWidth="396px"
               description={isAuthenticated ? getAlternativeTranslation('join-cohort-description') : getAlternativeTranslation('sign-up-to-plus-description')}
-              borderColor={data.color || 'green.400'}
+              borderColor="green.400"
               textAlign="center"
               gridGap="11px"
               padding={data?.course_translation?.video_url ? '0 10px' : '24px 10px 0 10px'}
@@ -979,7 +980,7 @@ function CoursePage({ data, syllabus }) {
           />
         )}
 
-        {freePlan && (
+        {featuredPlanToEnroll?.type !== 'FREE' && (
           <MktTwoColumnSideImage
             mt="6.25rem"
             imageUrl={getAlternativeTranslation('havent-decided.image')}
@@ -987,7 +988,7 @@ function CoursePage({ data, syllabus }) {
             title={getAlternativeTranslation('havent-decided.title')}
             description={getAlternativeTranslation('havent-decided.description')}
             informationSize="Medium"
-            buttonUrl={getAlternativeTranslation('havent-decided.button-link')}
+            buttonUrl={BASE_COURSE ? `/${lang}/bootcamp/${BASE_COURSE}` : `/${lang}/bootcamp/coding-introduction`}
             buttonLabel={getAlternativeTranslation('havent-decided.button')}
             background="transparent"
             textBackgroundColor="#E1F5FF"

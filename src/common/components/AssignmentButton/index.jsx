@@ -1,5 +1,5 @@
 import {
-  Button, useToast,
+  Button,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -10,6 +10,7 @@ import ProjectSubmitButton from './ProjectSubmitButton';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import bc from '../../services/breathecode';
 import ButtonVariants from './ButtonVariants';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function AssignmentButton({
   currentTask,
@@ -25,7 +26,7 @@ function AssignmentButton({
   const { t, lang } = useTranslation('dashboard');
   const { hexColor } = useStyle();
   const { updateTaskReadAt, handleOpenReviewModal, changeStatusAssignment } = useCohortHandler();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'submit-assignment-error' });
 
   const [currentAsset, setCurrentAsset] = useState(currentAssetData);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -58,7 +59,7 @@ function AssignmentButton({
       return assetData;
     } catch (error) {
       console.error(error);
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:something-went-wrong'),
         status: 'error',
