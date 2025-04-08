@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unstable-nested-components */
 import {
-  Box, Button, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useToast, useColorModeValue, useDisclosure,
+  Box, Button, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useColorModeValue, useDisclosure,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -17,6 +17,7 @@ import useStyle from '../../hooks/useStyle';
 import { ORIGIN_HOST } from '../../../utils/variables';
 import ReviewModalComponent from '../ReviewModal';
 import UndoApprovalModal from '../UndoApprovalModal';
+import useCustomToast from '../../hooks/useCustomToast';
 
 export function DetailsModal({
   currentTask, projectLink, updpateAssignment, isOpen, onClose, readOnly,
@@ -148,7 +149,7 @@ function DeliverHandler({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
   const [deliveryUrl, setDeliveryUrl] = useState('');
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'index-review-error' });
   const [copied, setCopied] = useState(false);
   const router = useRouter();
   const { academy } = router.query;
@@ -179,7 +180,7 @@ function DeliverHandler({
             })
             .catch((e) => {
               console.log(e);
-              toast({
+              createToast({
                 position: 'top',
                 title: t('alert-message:review-url-error'),
                 status: 'error',
@@ -208,7 +209,7 @@ function DeliverHandler({
 
 export function NoInfoModal({ isOpen, onClose, selectedCohort }) {
   const { t } = useTranslation('assignments');
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'success-msg-error' });
   const [isSyncOpen, setIsSyncOpen] = useState(false);
   const { hexColor } = useStyle();
   const borderColor2 = useColorModeValue('gray.250', 'gray.500');
@@ -220,7 +221,7 @@ export function NoInfoModal({ isOpen, onClose, selectedCohort }) {
 
       const { message } = resp.data;
 
-      toast({
+      createToast({
         position: 'top',
         title: 'Success',
         description: message,
@@ -229,7 +230,7 @@ export function NoInfoModal({ isOpen, onClose, selectedCohort }) {
       });
     } catch (e) {
       console.log(e);
-      toast({
+      createToast({
         position: 'top',
         title: t('error-msg'),
         status: 'error',

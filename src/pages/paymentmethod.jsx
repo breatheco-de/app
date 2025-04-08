@@ -1,16 +1,17 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Box, Text, useToast, Flex, Button } from '@chakra-ui/react';
+import { Box, Text, Flex, Button } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import useAuth from '../common/hooks/useAuth';
 import bc from '../common/services/breathecode';
 import CardForm from '../common/components/Checkout/CardForm';
 import asPrivate from '../common/context/PrivateRouteWrapper';
 import Icon from '../common/components/Icon';
+import useCustomToast from '../common/hooks/useCustomToast';
 
 function ChangeCardPage() {
   const router = useRouter();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'err-message-card-toast' });
 
   const { t } = useTranslation('payment');
   const { user } = useAuth();
@@ -30,7 +31,7 @@ function ChangeCardPage() {
     } catch (err) {
       console.error('Error updating card:', err);
 
-      toast({
+      createToast({
         position: 'top',
         title: t('card decline'),
         description: err.message,
@@ -44,7 +45,7 @@ function ChangeCardPage() {
   useEffect(() => {
     if (user) return;
 
-    toast({
+    createToast({
       position: 'top',
       title: 'You need to be logged in to access this page',
       status: 'error',

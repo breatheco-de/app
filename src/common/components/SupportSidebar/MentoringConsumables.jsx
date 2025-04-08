@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Avatar, AvatarGroup, Box, Button, Input, InputGroup, InputRightElement, useColorModeValue, useToast } from '@chakra-ui/react';
+import { Avatar, AvatarGroup, Box, Button, Input, InputGroup, InputRightElement, useColorModeValue } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -22,6 +22,7 @@ import { reportDatalayer } from '../../../utils/requests';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import CanAccess from '../CanAccess';
 import useCanAccess from '../../hooks/useCanAccess';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mentoryProps, subscriptionData, disableBackButton = false, ...rest }) {
   return (
@@ -115,7 +116,7 @@ function MentoringConsumables({
   const [shouldHandleService, setShouldHandleService] = useState(true);
   const router = useRouter();
   const { slug } = router.query;
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'finding-mentor-error-service' });
   const mentorshipBalance = consumableOfService?.balance?.unit;
   const currentBalance = Number(mentorshipBalance && mentorshipBalance);
   const checkAccess = useCanAccess();
@@ -182,7 +183,7 @@ function MentoringConsumables({
     });
 
     if (!serviceAccess.hasAccess) {
-      toast({
+      createToast({
         position: 'top',
         title: t('common:service-blocked'),
         status: 'error',
@@ -206,7 +207,7 @@ function MentoringConsumables({
         manageMentorsData(service, res.data);
       }
     } catch (e) {
-      toast({
+      createToast({
         position: 'top',
         title: 'Error',
         description: t('alert-message:error-finding-mentors'),
@@ -222,7 +223,7 @@ function MentoringConsumables({
     const getServicesWithMentor = (mentor) => servicesFiltered.filter((service) => mentor.services.some((mentServ) => mentServ.slug === service.slug));
 
     const showErrorToast = () => {
-      toast({
+      createToast({
         position: 'top',
         title: 'Error',
         description: `${t('supportSideBar.mentor-not-found')} "${queryMentor}"`,
@@ -263,7 +264,7 @@ function MentoringConsumables({
       const serviceFound = servicesWithMentorsAvailable.find((service) => service.slug === queryService);
 
       if (!serviceFound && notifyError) {
-        toast({
+        createToast({
           position: 'top',
           title: 'Error',
           description: `${t('supportSideBar.service-not-found')} "${queryService}" ${queryMentor ? `${t('common:word-connector.for')} "${queryMentor}"` : ''}`,

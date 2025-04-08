@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect, useRef } from 'react';
-import { Box, Flex, Container, Image, Button, useToast, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, Container, Image, Button, useColorModeValue } from '@chakra-ui/react';
 import Link from 'next/link';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -19,6 +19,7 @@ import GridContainer from '../../common/components/GridContainer';
 import MktEventCards from '../../common/components/MktEventCards';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
 let contentPerPage = 10;
 
@@ -209,7 +210,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
   const [isAtEnd, setIsAtEnd] = useState(false);
   const [isAtStart, setIsAtStart] = useState(true);
   const router = useRouter();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'errors-no-data-error' });
   const scrollRef = useRef();
   const marketingInfoExist = Object.keys(marketingInfo).length > 0;
   const exercises = assetData?.filter((asset) => asset?.asset_type === 'EXERCISE');
@@ -285,7 +286,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
 
   useEffect(() => {
     if ((!technologyData?.slug || assetData?.length === 0)) {
-      toast({
+      createToast({
         position: 'top',
         title: t('errors.no-data'),
         status: 'error',

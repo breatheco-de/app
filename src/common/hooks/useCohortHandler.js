@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 import { useMemo } from 'react';
 import axios from 'axios';
-import { useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useAuth from './useAuth';
@@ -11,6 +10,7 @@ import { processRelatedAssignments } from '../handlers/cohorts';
 import { reportDatalayer } from '../../utils/requests';
 import bc from '../services/breathecode';
 import { BREATHECODE_HOST, DOMAIN_NAME } from '../../utils/variables';
+import useCustomToast from './useCustomToast';
 
 function useCohortHandler() {
   const router = useRouter();
@@ -30,7 +30,7 @@ function useCohortHandler() {
     userCapabilities,
     cohortsAssignments,
   } = state;
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'fetching-role-cohort-error' });
   const accessToken = getStorageItem('accessToken');
   const assetSlug = router?.query?.lessonSlug;
   const assetType = router?.query?.lesson;
@@ -156,7 +156,7 @@ function useCohortHandler() {
       return assignmentsMap;
     } catch (e) {
       console.log(e);
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:error-fetching-syllabus'),
         status: 'error',
@@ -181,7 +181,7 @@ function useCohortHandler() {
           setUserCapabilities(userRoles.data.capabilities);
         } catch (err) {
           console.log(err);
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:error-fetching-role', { role: currentAcademy?.role }),
             description: err.message,
@@ -242,7 +242,7 @@ function useCohortHandler() {
       return handleRedirectToPublicPage();
     } catch (error) {
       handleRedirectToPublicPage();
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:invalid-cohort-slug'),
         status: 'error',
@@ -382,7 +382,7 @@ function useCohortHandler() {
             agent: getBrowserInfo(),
           },
         });
-        toast({
+        createToast({
           position: 'top',
           title: toastMessage(),
           status: 'success',
@@ -390,7 +390,7 @@ function useCohortHandler() {
           isClosable: true,
         });
       } else {
-        toast({
+        createToast({
           position: 'top',
           title: isProject ? t('alert-message:delivery-error') : t('alert-message:assignment-update-error'),
           status: 'error',
@@ -400,7 +400,7 @@ function useCohortHandler() {
       }
     } catch (error) {
       console.log(error);
-      toast({
+      createToast({
         position: 'top',
         title: isProject ? t('alert-message:delivery-error') : t('alert-message:assignment-update-error'),
         status: 'error',
@@ -437,7 +437,7 @@ function useCohortHandler() {
       const response = await bc.todo().add(newTasks);
 
       if (response.status < 400) {
-        toast({
+        createToast({
           position: 'top',
           title: label
             ? t('alert-message:module-started', { title: label })
@@ -453,7 +453,7 @@ function useCohortHandler() {
       }
     } catch (err) {
       console.log('error_ADD_TASK 🔴 ', err);
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:module-start-error'),
         status: 'error',

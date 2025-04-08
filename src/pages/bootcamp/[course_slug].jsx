@@ -43,6 +43,7 @@ import completions from './completion-jobs.json';
 import Rating from '../../common/components/Rating';
 import SimpleModal from '../../common/components/SimpleModal';
 import CustomCarousel from '../../common/components/CustomCarousel';
+import useCustomToast from '../../common/hooks/useCustomToast';
 import { usePlanPrice } from '../../utils/getPriceWithDiscount';
 
 export async function getStaticPaths({ locales }) {
@@ -122,7 +123,7 @@ function CoursePage({ data, syllabus }) {
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor, backgroundColor7, backgroundColor8 } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'choose-program-pricing-detail' });
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
@@ -281,7 +282,7 @@ function CoursePage({ data, syllabus }) {
             setReadyToRefetch(true);
           }
           if (dataRequested?.status_code === 400) {
-            toast({
+            createToast({
               position: 'top',
               title: dataRequested?.detail,
               status: 'info',
@@ -293,7 +294,7 @@ function CoursePage({ data, syllabus }) {
             }, 600);
           }
           if (dataRequested?.status_code > 400) {
-            toast({
+            createToast({
               position: 'top',
               title: dataRequested?.detail,
               status: 'error',
@@ -332,10 +333,10 @@ function CoursePage({ data, syllabus }) {
 
       setIsFetching(false);
       if (withAlert) {
-        toast({
+        createToast({
           position: 'top',
           title: t('dashboard:already-have-this-cohort'),
-          status: 'info',
+          status: 'success',
           duration: 5000,
         });
       }

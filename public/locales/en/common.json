@@ -11,13 +11,13 @@
   "teacher-assistant": "Teacher Assistant",
   "hide": "Hide",
   "rigo": "Rigo",
+  "ai-tutor": "AI Tutor",
+  "tooltip-ai-tutor": "Never be stuck again, our internally developed AI tutor will help you everywhere, every step of the way.",
   "see-workshops": "See all workshops",
   "schedule-mentoring": "Schedule a mentoring session",
   "rigobot-bubble": {
     "greeting": "Hi!"
   },
-  "ai-tutor": "AI Tutor",
-  "tooltip-ai-tutor": "Never be stuck again, our internally developed AI tutor will help you everywhere, every step of the way.",
   "clone-modal": {
     "title": "How to clone a project?"
   },

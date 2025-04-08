@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Flex, Link, Textarea, useToast } from '@chakra-ui/react';
+import { Box, Button, Divider, Flex, Link, Textarea } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -16,6 +16,7 @@ import tomorrow from '../MarkDownParser/syntaxHighlighter/tomorrow';
 import { reportDatalayer } from '../../../utils/requests';
 import { getBrowserInfo } from '../../../utils';
 import useAuth from '../../hooks/useAuth';
+import useCustomToast from '../../hooks/useCustomToast';
 
 const views = {
   initial: 'initial',
@@ -35,7 +36,7 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
     comment: '',
     isSubmitting: false,
   });
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'code-review-error' });
   const { hexColor } = useStyle();
   const [reviewRateData, setReviewRateData] = useState({
     status: null,
@@ -165,7 +166,7 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
           }
         })
         .catch((error) => {
-          toast({
+          createToast({
             title: t('alert-message:error-creating-code-review'),
             description: error?.message,
             status: 'error',
