@@ -1,9 +1,10 @@
-import { Box, Button, Divider, Flex, Textarea, useToast } from '@chakra-ui/react';
+import { Box, Button, Divider, Flex, Textarea } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import useAuth from '../../hooks/useAuth';
 import useModuleHandler from '../../hooks/useModuleHandler';
 import useStyle from '../../hooks/useStyle';
+import useCustomToast from '../../hooks/useCustomToast';
 import bc from '../../services/breathecode';
 import CodeRevisionsList from '../ReviewModal/CodeRevisionsList';
 import Icon from '../Icon';
@@ -24,7 +25,7 @@ function TaskCodeRevisions() {
   const { currentTask } = useModuleHandler();
   const { featuredLight, hexColor, backgroundColor, backgroundColor4 } = useStyle();
   const { isAuthenticatedWithRigobot } = useAuth();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'something-went-wrong-error-task' });
   const [contextData, setContextData] = useState({
     code_revisions: [],
     revision_content: {},
@@ -72,7 +73,6 @@ function TaskCodeRevisions() {
       if (!isAuthenticatedWithRigobot || !currentTask.github_url) return;
       const response = await bc.assignments().getPersonalCodeRevisionsByTask(currentTask.id);
       const data = await response.json();
-
       if (response.ok) {
         const codeRevisionsSortedByDate = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         setContextData((prev) => ({
@@ -80,9 +80,10 @@ function TaskCodeRevisions() {
           code_revisions: codeRevisionsSortedByDate,
         }));
       } else {
-        toast({
+        createToast({
           title: t('alert-message:something-went-wrong'),
-          description: `Cannot get code revisions: ${data?.detail}`,
+          // description: `Cannot get code revisions: ${data?.detail}`,
+          description: `Error: ${data?.Error}. ${data?.solution || ''}`,
           status: 'error',
           duration: 5000,
           position: 'top',

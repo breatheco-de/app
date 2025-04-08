@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, Button, Flex, useToast,
+  Box, Button, Flex,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -24,6 +24,7 @@ import Text from '../Text';
 import AcordionList from '../AcordionList';
 import LoaderScreen from '../LoaderScreen';
 import NextChakraLink from '../NextChakraLink';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function PaymentInfo({ setShowPaymentDetails }) {
   const { t, lang } = useTranslation('signup');
@@ -48,7 +49,7 @@ function PaymentInfo({ setShowPaymentDetails }) {
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [cohortFound, setCohortFound] = useState(undefined);
   const [timeElapsed, setTimeElapsed] = useState(0);
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'payment-info-data-detail' });
   const redirect = getStorageItem('redirect');
   const redirectedFrom = getStorageItem('redirected-from');
   const router = useRouter();
@@ -151,7 +152,7 @@ function PaymentInfo({ setShowPaymentDetails }) {
       const resp = await bc.cohort().join(cohort?.id);
       const dataRequested = await resp.json();
       if (resp.status >= 400) {
-        toast({
+        createToast({
           position: 'top',
           title: dataRequested?.detail,
           status: 'info',

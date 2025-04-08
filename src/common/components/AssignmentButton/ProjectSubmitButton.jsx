@@ -1,4 +1,20 @@
-import { Box, PopoverArrow, Text, Checkbox, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, Button, FormErrorMessage, FormControl, Input, useColorModeValue, useToast, Popover, PopoverTrigger } from '@chakra-ui/react';
+import {
+  Box,
+  PopoverArrow,
+  Text,
+  Checkbox,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  Button,
+  FormErrorMessage,
+  FormControl,
+  Input,
+  useColorModeValue,
+  Popover,
+  PopoverTrigger,
+} from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Field, Form, Formik } from 'formik';
 import PropTypes from 'prop-types';
@@ -11,6 +27,7 @@ import MarkDownParser from '../MarkDownParser';
 import Icon from '../Icon';
 import useStyle from '../../hooks/useStyle';
 import useCohortHandler from '../../hooks/useCohortHandler';
+import useCustomToast from '../../hooks/useCustomToast';
 import { formatBytes } from '../../../utils';
 import ButtonVariants from './ButtonVariants';
 
@@ -42,7 +59,7 @@ function ProjectSubmitButton({
   const fileInputRef = useRef();
   const fileContainerRef = useRef(null);
   const commonInputActiveColor = useColorModeValue('gray.800', 'gray.350');
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'submit-project-error' });
 
   const handleCloseFile = () => {
     setAcceptTC(false);
@@ -125,7 +142,7 @@ function ProjectSubmitButton({
         githubUrl: respData?.url,
         taskStatus: 'DONE',
       });
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:files-uploaded'),
         status: 'success',
@@ -135,7 +152,7 @@ function ProjectSubmitButton({
       closePopover();
     } else {
       setIsUploading(false);
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:something-went-wrong-with', { property: 'Files' }),
         status: 'error',
