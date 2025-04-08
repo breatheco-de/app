@@ -8,7 +8,6 @@ import {
   FormErrorMessage,
   Box,
   Avatar,
-  useToast,
   Checkbox,
   // InputRightElement,
 } from '@chakra-ui/react';
@@ -20,13 +19,14 @@ import PropTypes from 'prop-types';
 import validationSchema from './validationSchemas';
 import { getStorageItem, setStorageItem } from '../../../utils';
 import NextChakraLink from '../NextChakraLink';
-import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
+import ModalInfo from '../ModalInfo';
 import Text from '../Text';
 import { SILENT_CODE } from '../../../lib/types';
 import bc from '../../services/breathecode';
 import useSession from '../../hooks/useSession';
 import useSubscribeToPlan from '../../hooks/useSubscribeToPlan';
 import { BASE_PLAN, BREATHECODE_HOST } from '../../../utils/variables';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function Register({ setIsLoggedFromRegister }) {
   const { userSession } = useSession();
@@ -36,7 +36,7 @@ function Register({ setIsLoggedFromRegister }) {
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [isChecked, setIsChecked] = useState(false);
   const accessToken = getStorageItem('accessToken');
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'email-alert-message-sent-to' });
   // const [showPSW, setShowPSW] = useState(false);
   // const [showRepeatPSW, setShowRepeatPSW] = useState(false);
 
@@ -73,7 +73,7 @@ function Register({ setIsLoggedFromRegister }) {
             router.push({
               pathname: '/checkout',
               query: {
-                plan: 'basic',
+                plan: BASE_PLAN || '4geeks-basic',
               },
             });
           } else {
@@ -107,7 +107,7 @@ function Register({ setIsLoggedFromRegister }) {
             .then((resp) => {
               const data = resp?.data;
               if (data === undefined) {
-                toast({
+                createToast({
                   position: 'top',
                   status: 'info',
                   title: t('signup:alert-message.email-already-sent'),
@@ -115,7 +115,7 @@ function Register({ setIsLoggedFromRegister }) {
                   duration: 6000,
                 });
               } else {
-                toast({
+                createToast({
                   position: 'top',
                   status: 'success',
                   title: t('signup:alert-message.email-sent-to', { email: data?.email }),
@@ -153,7 +153,7 @@ function Register({ setIsLoggedFromRegister }) {
             },
             body: JSON.stringify({
               ...values,
-              plan: '4geeks-standard',
+              plan: BASE_PLAN || '4geeks-basic',
               conversion_info: {
                 ...userSession,
               },
@@ -165,7 +165,7 @@ function Register({ setIsLoggedFromRegister }) {
             setShowAlreadyMember(true);
           }
           if (resp?.status >= 400) {
-            toast({
+            createToast({
               position: 'top',
               title: data?.detail,
               status: 'error',

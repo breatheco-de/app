@@ -14,7 +14,6 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  useToast,
   useColorModeValue,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
@@ -22,6 +21,7 @@ import PropTypes from 'prop-types';
 import bc from '../../services/breathecode';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function DeliverModalContent({
   isStudent,
@@ -40,13 +40,14 @@ function DeliverModalContent({
   const { t } = useTranslation('assignments');
   const { modal, borderColor2, featuredColor, hexColor } = useStyle();
   const [openIgnoreTask, setOpenIgnoreTask] = useState(false);
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: ' review-assignment-task-error' });
   const [copied, setCopied] = useState(false);
   const textAreaRef = useRef(null);
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
   const fontColor = useColorModeValue('gra.dark', 'gray.250');
   const labelColor = useColorModeValue('gray.600', 'gray.200');
   const taskIsIgnored = currentTask?.revision_status === 'IGNORED';
+  const codeRevisions = contextData?.code_revisions || [];
 
   useEffect(() => {
     if (copied) {
@@ -124,9 +125,9 @@ function DeliverModalContent({
             <Flex alignItems="center" gridGap="10px">
               <Icon icon="code" width="18.5px" height="17px" color="currentColor" />
               <Text size="14px" fontWeight={700}>
-                {t('code-review.count-code-reviews', { count: contextData?.code_revisions?.length || 0 })}
+                {t('code-review.count-code-reviews', { count: codeRevisions.length || 0 })}
               </Text>
-              {!isStudent && contextData?.code_revisions?.length > 0 && (
+              {!isStudent && codeRevisions.length > 0 && (
                 <Button height="auto" width="fit-content" onClick={() => setStage('review_code_revision')} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
                   {t('code-review.read-code-reviews')}
                 </Button>
@@ -174,7 +175,7 @@ function DeliverModalContent({
                   revision_status: taskIsIgnored ? 'PENDING' : 'IGNORED',
                 })
                   .then(() => {
-                    toast({
+                    createToast({
                       position: 'top',
                       title: t('alert-message:review-assignment-ignored-task'),
                       status: 'success',
@@ -191,7 +192,7 @@ function DeliverModalContent({
                   })
                   .catch((e) => {
                     console.log(e);
-                    toast({
+                    createToast({
                       position: 'top',
                       title: t('alert-message:review-assignment-error'),
                       status: 'error',

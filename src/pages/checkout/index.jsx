@@ -10,7 +10,6 @@ import {
   InputGroup,
   InputRightElement,
   Skeleton,
-  useToast,
   Menu,
   MenuButton,
   MenuList,
@@ -26,26 +25,27 @@ import { getDataContentProps } from '../../utils/file';
 import bc from '../../common/services/breathecode';
 import useAuth from '../../common/hooks/useAuth';
 import useSession from '../../common/hooks/useSession';
-import ContactInformation from '../../js_modules/checkout/ContactInformation';
-import ChooseYourClass from '../../js_modules/checkout/ChooseYourClass';
+import ContactInformation from '../../common/components/Checkout/ContactInformation';
+import ChooseYourClass from '../../common/components/Checkout/ChooseYourClass';
 import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem, getBrowserInfo } from '../../utils';
-import Summary from '../../js_modules/checkout/Summary';
-import PaymentInfo from '../../js_modules/checkout/PaymentInfo';
+import Summary from '../../common/components/Checkout/Summary';
+import PaymentInfo from '../../common/components/Checkout/PaymentInfo';
 import useSignup from '../../common/store/actions/signupAction';
 import axiosInstance from '../../axios';
 import LoaderScreen from '../../common/components/LoaderScreen';
-import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import ModalInfo from '../../common/components/ModalInfo';
 import useStyle from '../../common/hooks/useStyle';
-import Stepper from '../../js_modules/checkout/Stepper';
-import ServiceSummary from '../../js_modules/checkout/ServiceSummary';
+import Stepper from '../../common/components/Checkout/Stepper';
+import ServiceSummary from '../../common/components/Checkout/ServiceSummary';
 import Text from '../../common/components/Text';
-import SelectServicePlan from '../../js_modules/checkout/SelectServicePlan';
+import SelectServicePlan from '../../common/components/Checkout/SelectServicePlan';
 import { BASE_PLAN, ORIGIN_HOST, BREATHECODE_HOST, currenciesSymbols } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
 import { getTranslations, processPlans } from '../../common/handlers/subscriptions';
 import Icon from '../../common/components/Icon';
 import { usePersistentBySession } from '../../common/hooks/usePersistent';
 import AcordionList from '../../common/components/AcordionList';
+import useCustomToast from '../../common/hooks/useCustomToast';
 import { handlePriceTextWithCoupon } from '../../utils/getPriceWithDiscount';
 
 export const getStaticProps = async ({ locale, locales }) => {
@@ -114,7 +114,7 @@ function Checkout() {
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { user, isAuthenticated, isLoading } = useAuth();
   const { userSession } = useSession();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'coupon-plan-email-detail' });
   const plan = getQueryString('plan');
   const queryPlans = getQueryString('plans');
   const queryPlanId = getQueryString('plan_id');
@@ -197,7 +197,7 @@ function Checkout() {
     const isCouponAlreadyApplied = allCoupons.some((existingCoupon) => existingCoupon?.slug === couponToApply);
 
     if (isCouponAlreadyApplied) {
-      toast({
+      createToast({
         position: 'top',
         title: t('signup:alert-message.coupon-already-applied'),
         status: 'info',
@@ -229,7 +229,7 @@ function Checkout() {
         } else {
           setDiscountCoupon(null);
           setCouponError(true);
-          toast({
+          createToast({
             position: 'top',
             title: t('signup:coupon-error'),
             status: 'error',
@@ -300,7 +300,7 @@ function Checkout() {
     })
       .catch((err) => {
         if (err) {
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:no-plan-configuration'),
             status: 'info',
@@ -398,7 +398,7 @@ function Checkout() {
                 const respData = await resp.json();
                 if (resp.status > 400) {
                   setShowChooseClass(true);
-                  toast({
+                  createToast({
                     title: respData.detail,
                     status: 'error',
                     duration: 6000,
@@ -434,7 +434,7 @@ function Checkout() {
           if (!resp) {
             setLoader('plan', false);
             router.push('/pricing');
-            toast({
+            createToast({
               position: 'top',
               title: t('alert-message:no-plan-configuration'),
               status: 'error',
@@ -451,7 +451,7 @@ function Checkout() {
 
             if ((resp && resp?.status >= 400) || resp?.data.length === 0) {
               setShowChooseClass(true);
-              toast({
+              createToast({
                 position: 'top',
                 title: t('alert-message:no-plan-configuration'),
                 status: 'info',
@@ -527,7 +527,7 @@ function Checkout() {
         })
         .catch(() => {
           setLoader('plan', false);
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:no-plan-configuration'),
             status: 'info',
@@ -656,6 +656,11 @@ function Checkout() {
         }
       }
 
+      if (originalPlan?.selectedPlan?.type === 'FREE') {
+        financingText = t('free_plan');
+        return <Text size="16px" color="green.400">{financingText}</Text>;
+      }
+
       if (financingOptions.length === 0) {
         if (monthlyPayment) {
           const finalMonthlyPrice = applyDiscounts(monthlyPayment, discountValues);
@@ -740,7 +745,7 @@ function Checkout() {
             .then((resp) => {
               const data = resp?.data;
               if (data === undefined) {
-                toast({
+                createToast({
                   position: 'top',
                   status: 'info',
                   title: t('signup:alert-message.email-already-sent'),
@@ -748,7 +753,7 @@ function Checkout() {
                   duration: 6000,
                 });
               } else {
-                toast({
+                createToast({
                   position: 'top',
                   status: 'success',
                   title: t('signup:alert-message.email-sent-to', { email: data?.email }),
@@ -883,7 +888,7 @@ function Checkout() {
                         )}
                         <Flex justifyContent="space-between" width="full" alignItems="center">
                           {showPaymentDetails && renderPlanDetails()}
-                          {!queryPlanId && (originalPlan?.financingOptions.length > 0 || originalPlan?.hasSubscriptionMethod) && showPaymentDetails && (
+                          {!queryPlanId && originalPlan?.selectedPlan?.type !== 'FREE' && (originalPlan?.financingOptions.length > 0 || originalPlan?.hasSubscriptionMethod) && showPaymentDetails && (
                             <Flex flexDirection="column" gap="4px">
                               <Heading as="h3" size="sm" width="100%" position="relative">
                                 <Menu>

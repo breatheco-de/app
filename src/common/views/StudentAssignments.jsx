@@ -6,7 +6,6 @@ import {
   Box,
   Avatar,
   Flex,
-  useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import bc from '../services/breathecode';
@@ -14,10 +13,11 @@ import DottedTimeline from '../components/DottedTimeline';
 import NextChakraLink from '../components/NextChakraLink';
 import useStyle from '../hooks/useStyle';
 import useFormatTimeString from '../hooks/useFormatTimeString';
-import { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../js_modules/assignmentHandler/index';
+import { ReviewModal, NoInfoModal, DeliverModal } from '../components/Assignments/index';
 import LoaderScreen from '../components/LoaderScreen';
 import InfiniteScroll from '../components/InfiniteScroll';
 import { ORIGIN_HOST } from '../../utils/variables';
+import useCustomToast from '../hooks/useCustomToast';
 
 const StudentsRows = forwardRef(({ currentStudentList, syllabusData, selectedCohort, setCurrentTask, setDeliveryUrl }, ref) => {
   const { t } = useTranslation('assignments');
@@ -25,7 +25,7 @@ const StudentsRows = forwardRef(({ currentStudentList, syllabusData, selectedCoh
   const { query } = router;
   const { academy, cohortSlug } = query;
   const { formatTimeString } = useFormatTimeString();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'student-assignment-review-error' });
   const { hexColor } = useStyle();
 
   const getStatus = (task) => {
@@ -60,7 +60,7 @@ const StudentsRows = forwardRef(({ currentStudentList, syllabusData, selectedCoh
       }
       setCurrentTask({ ...task, status, file });
     } catch (e) {
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:review-url-error'),
         status: 'error',

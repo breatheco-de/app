@@ -2,7 +2,6 @@
 import {
   Box,
   Flex,
-  useToast,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import getT from 'next-translate/getT';
@@ -11,16 +10,17 @@ import { getDataContentProps } from '../../../utils/file';
 import bc from '../../../common/services/breathecode';
 import useAuth from '../../../common/hooks/useAuth';
 import { isWindow, removeURLParameter, getQueryString, getStorageItem } from '../../../utils';
-import PaymentInfo from '../../../js_modules/checkout/PaymentInfo';
+import PaymentInfo from '../../../common/components/Checkout/PaymentInfo';
 import useSignup from '../../../common/store/actions/signupAction';
 import axiosInstance from '../../../axios';
 import asPrivate from '../../../common/context/PrivateRouteWrapper';
 import LoaderScreen from '../../../common/components/LoaderScreen';
 import useStyle from '../../../common/hooks/useStyle';
-import ServiceSummary from '../../../js_modules/checkout/ServiceSummary';
-import SelectServicePlan from '../../../js_modules/checkout/SelectServicePlan';
+import ServiceSummary from '../../../common/components/Checkout/ServiceSummary';
+import SelectServicePlan from '../../../common/components/Checkout/SelectServicePlan';
 import { ORIGIN_HOST } from '../../../utils/variables';
 import { usePersistentBySession } from '../../../common/hooks/usePersistent';
+import useCustomToast from '../../../common/hooks/useCustomToast';
 
 export const getStaticPaths = async ({ locales }) => {
   const res = await bc.mentorship().getMentorshipServiceSets();
@@ -87,7 +87,7 @@ function ServiceSlug() {
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { user, isAuthenticated, isLoading } = useAuth();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'mentorship-error' });
   const mentorshipServiceSetSlug = mentorship_service_slug;
 
   const accessToken = getStorageItem('accessToken');
@@ -208,7 +208,7 @@ function ServiceSlug() {
               .then(async (resp) => {
                 const respData = await resp.json();
                 if (resp.status > 400) {
-                  toast({
+                  createToast({
                     title: respData.detail,
                     status: 'error',
                     duration: 6000,

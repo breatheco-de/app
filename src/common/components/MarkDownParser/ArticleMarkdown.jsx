@@ -5,11 +5,11 @@ import Toc from './toc';
 import ContentHeading from './ContentHeading';
 import SubTasks from './SubTasks';
 import MarkDownParser from './index';
-import ProjectInstructions from '../../../js_modules/syllabus/ProjectInstructions';
+import ProjectInstructions from '../GuidedExperience/ProjectInstructions';
 
 function ArticleMarkdown({
   content, withToc, frontMatter, titleRightSide, currentTask, currentData,
-  showLineNumbers, showInlineLineNumbers, assetData, alerMessage, isGuidedExperience,
+  showLineNumbers, showInlineLineNumbers, assetData, isGuidedExperience,
 }) {
   const { subTasks } = useModuleHandler();
 
@@ -30,8 +30,6 @@ function ArticleMarkdown({
       {withToc && (
         <Toc content={content} />
       )}
-
-      {alerMessage && alerMessage}
 
       {Array.isArray(subTasks) && subTasks?.length > 0 && (
         <SubTasks subTasks={subTasks} assetType={assetType} />
@@ -58,7 +56,6 @@ ArticleMarkdown.propTypes = {
   showLineNumbers: PropTypes.bool,
   showInlineLineNumbers: PropTypes.bool,
   assetData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object])),
-  alerMessage: PropTypes.node,
   isGuidedExperience: PropTypes.bool,
 };
 ArticleMarkdown.defaultProps = {
@@ -71,7 +68,6 @@ ArticleMarkdown.defaultProps = {
   showLineNumbers: true,
   showInlineLineNumbers: true,
   assetData: null,
-  alerMessage: null,
   isGuidedExperience: false,
 };
 

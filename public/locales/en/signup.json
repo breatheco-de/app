@@ -19,7 +19,7 @@
   "free_trial_multiple_payments": "{{description}} and then {{numPayments}} payments of {{currency}}{{firstPrice}} or {{currency}}{{oneTimePrice}} one time",
   "free_trial_monthly_payment": "{{description}} and then {{currency}}{{monthlyPrice}}/mo",
   "free_trial_yearly_payment": "{{description}} and then {{currency}}{{yearlyPrice}}/year",
-  "free_plan": "Free plan",
+  "free_plan": "Totally free",
   "limited_time_offer": "(limited time offer)",
   "added-features-title": "+ You can also add",
   "fixed-price-disclaimer": "Fixed price discounts will only be applied to the first month when financed for more than one month. Percentage discounts will be applied to all months.",

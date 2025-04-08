@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import Text from '../../../common/components/Text';
 import { toCapitalize } from '../../../utils';
 import Heading from '../../../common/components/Heading';
-import ProjectList from '../../../js_modules/projects/ProjectList';
+import ProjectList from '../../../common/components/Assets/ProjectList';
 import { parseQuerys } from '../../../utils/url';
 import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 

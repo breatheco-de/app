@@ -11,22 +11,21 @@ import useAuth from '../../common/hooks/useAuth';
 import asPrivate from '../../common/context/PrivateRouteWrapper';
 import bc from '../../common/services/breathecode';
 import { cleanQueryStrings } from '../../utils';
-import AlertMessage from '../../common/components/AlertMessage';
 import GridContainer from '../../common/components/GridContainer';
-import Subscriptions from '../../js_modules/profile/Subscriptions';
-import Certificates from '../../js_modules/profile/Certificates';
-import Information from '../../js_modules/profile/Information';
+import Subscriptions from '../../common/components/Profile/Subscriptions';
+import Certificates from '../../common/components/Profile/Certificates';
+import Information from '../../common/components/Profile/Information';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
 function Profile() {
   const { t } = useTranslation('profile');
-  // const toast = useToast();
   const { user, cohorts } = useAuth();
   const router = useRouter();
   const { asPath } = router;
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [certificates, setCertificates] = useState([]);
-  const [isAvailableToShowModalMessage, setIsAvailableToShowModalMessage] = useState([]);
   const tabListMenu = t('tabList', {}, { returnObjects: true });
+  const { createToast, closeToast } = useCustomToast({ toastId: 'user-available-github' });
 
   const tabPosition = {
     '/profile/info': 0,
@@ -51,21 +50,27 @@ function Profile() {
 
   useEffect(() => {
     const isToShowGithubMessage = cohorts?.some(
-      (l) => l?.educational_status === 'ACTIVE' && l.cohort.available_as_saas === false,
+      (l) => l?.cohort_user?.educational_status === 'ACTIVE' && l?.available_as_saas === false,
     );
-    setIsAvailableToShowModalMessage(isToShowGithubMessage);
+    closeToast();
+    if (user && !user.github) {
+      createToast({
+        position: 'top',
+        title: (
+          <span
+            dangerouslySetInnerHTML={{
+              __html: t(isToShowGithubMessage ? 'common:github-warning' : 'common:github-not-connected'),
+            }}
+          />
+        ),
+        status: 'info',
+        duration: 5000,
+      });
+    }
   }, [cohorts]);
 
   return (
     <>
-      {user && !user.github && (
-        <AlertMessage
-          full
-          type="warning"
-          message={isAvailableToShowModalMessage ? t('common:github-warning') : t('common:github-not-connected')}
-          style={{ borderRadius: '0px', justifyContent: 'center' }}
-        />
-      )}
       <GridContainer withContainer gridColumn="1 / span 10" maxWidth="1280px" minH="480px" childrenStyle={{ display: 'block' }} padding="0 24px">
         <Heading as="h1" size="m" margin="45px 0">{t('navbar:my-profile')}</Heading>
         <Tabs index={currentTabIndex} display="flex" flexDirection={{ base: 'column', md: 'row' }} variant="unstyled" gridGap="40px">

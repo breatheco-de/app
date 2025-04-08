@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { ChakraProvider } from '@chakra-ui/react';
 import { PrismicProvider } from '@prismicio/react';
 import { PrismicPreview } from '@prismicio/next';
+import { useRouter } from 'next/router';
 import { repositoryName } from '../../prismicio';
 import wrapper from '../store';
 import theme from '../../styles/theme';
@@ -21,6 +22,7 @@ import ConnectionProvider from '../common/context/ConnectionContext';
 import Footer from '../common/components/Footer';
 import Helmet from '../common/components/Helmet';
 import InterceptionLoader from '../common/components/InterceptionLoader';
+import { customColorModeManager, updateThemeFromUrlParam } from '../../modifyTheme';
 
 import '../../styles/globals.css';
 import '../../styles/react-tags-input.css';
@@ -36,7 +38,7 @@ import '@fontsource/lato/700.css';
 import '@fontsource/lato/900.css';
 import '@fontsource-variable/space-grotesk';
 import { BREATHECODE_HOST } from '../utils/variables';
-import AlertMessage from '../common/components/AlertMessage';
+import useCustomToast from '../common/hooks/useCustomToast';
 
 function InternalLinkComponent(props) {
   return <Link {...props} />;
@@ -45,6 +47,7 @@ function InternalLinkComponent(props) {
 function App({ Component, pageProps }) {
   const domainName = process.env.DOMAIN_NAME;
   const existsWhiteLabel = typeof domainName === 'string' && domainName !== 'https://4geeks.com';
+  const { createToast } = useCustomToast({ toastId: 'env-warning' });
 
   const pagePropsData = {
     ...pageProps,
@@ -55,10 +58,26 @@ function App({ Component, pageProps }) {
     && BREATHECODE_HOST !== process.env.BREATHECODE_HOST;
 
   const queryClient = new QueryClient();
+  const router = useRouter();
 
   useEffect(() => {
     TagManager.initialize({ gtmId: process.env.TAG_MANAGER_KEY });
-  }, []);
+    // Actualizar el tema si hay un parámetro en la URL
+    if (router.query.theme) {
+      updateThemeFromUrlParam(router.query.theme);
+    }
+  }, [router.query.theme]);
+
+  useEffect(() => {
+    if (isEnvModified) {
+      createToast({
+        position: 'top',
+        title: `You are not on the test environment, you are on "${BREATHECODE_HOST}"`,
+        status: 'warning',
+        duration: 5000,
+      });
+    }
+  }, [isEnvModified]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -69,20 +88,12 @@ function App({ Component, pageProps }) {
         <ChakraProvider
           resetCSS
           theme={theme}
+          colorModeManager={customColorModeManager}
         >
           <AuthProvider pageProps={pageProps}>
             <SessionProvider>
               <ConnectionProvider>
                 <Navbar pageProps={pageProps} translations={pageProps?.translations} />
-                {isEnvModified && (
-                <AlertMessage
-                  full
-                  type="warning"
-                  message={`You not on the test environment, you are on "${BREATHECODE_HOST}"`}
-                  borderRadius="0px"
-                  justifyContent="center"
-                />
-                )}
                 <InterceptionLoader />
 
                 <PrismicProvider internalLinkComponent={InternalLinkComponent}>

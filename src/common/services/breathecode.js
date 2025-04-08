@@ -330,6 +330,7 @@ const breathecode = {
     return {
       get: () => axios.get(`${url}/asset${qs}`),
       getAsset: (slug) => axios.get(`${url}/asset/${slug}${qs}`),
+      getAssetReadme: (slug) => axios.get(`${url}/asset/${slug}.md`),
       getAssetContext: (id) => axios.get(`${url}/asset/${id}/context`),
       techs: () => axios.get(`${url}/academy/technology${qs}`),
       techsBySort: () => axios.get(`${url}/technology${qs}`),
@@ -398,6 +399,7 @@ const breathecode = {
       joinLiveClass2: (liveClassHash) => axios.get(`${host}/me/event/liveclass/join/${liveClassHash}${qs}`),
       applyEvent: (eventId, payload) => axios.post(`${url}/event/${eventId}/checkin${qs}`, payload),
       getUsers: (eventId) => axios.get(`${host}/events/event/${eventId}/checkin${qs}`),
+      getAllEventTypes: () => axios.get(`${host}/events/eventype${qs}`),
     };
   },
   rigobot: (query = {}) => {

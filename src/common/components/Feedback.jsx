@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { useEffect, useState } from 'react';
 import { Box, Button, Flex, Link, Avatar } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
@@ -9,12 +10,12 @@ import ReviewModal from './ReviewModal';
 import Icon from './Icon';
 import Text from './Text';
 import Heading from './Heading';
-import AlertMessage from './AlertMessage';
 import useStyle from '../hooks/useStyle';
 import useAuth from '../hooks/useAuth';
 import { error } from '../../utils/logging';
 import { BREATHECODE_HOST } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
+import useCustomToast from '../hooks/useCustomToast';
 
 const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
 
@@ -28,6 +29,7 @@ function Feedback({ storyConfig }) {
   const [isOpen, setIsOpen] = useState(false);
   const isStorybookView = storyConfig?.externalCodeRevisions;
   const isConnectedWithGithub = user?.github?.username;
+  const { createToast } = useCustomToast({ toastId: 'rigobot-connected-with-rigo' });
 
   const learnWhyLink = {
     en: 'https://4geeks.com/mastering-technical-knowledge#feedback-quality-and-frequency',
@@ -35,25 +37,28 @@ function Feedback({ storyConfig }) {
   };
 
   const handleOpen = (data) => {
-    const isFileCodeBase64 = base64regex.test(data?.file?.content);
-    const isReviewCodeBase64 = base64regex.test(data?.original_code);
-    const fileContent = isFileCodeBase64 ? decodeBase64(data?.file?.content) : data?.file?.content;
-    const originalCode = isReviewCodeBase64 ? decodeBase64(data.original_code) : data.original_code;
-    setSelectedData({
-      code_revisions: codeRevisions,
-      commitFile: {
-        ...data?.file,
-        path: data?.file?.name,
-        url: data?.file?.file_url,
-        name: data?.file?.name,
-        code: fileContent,
-      },
-      revision_content: {
-        ...data,
-        code: originalCode,
-      },
-    });
-    setIsOpen(true);
+    if (data) {
+      const { file, original_code } = data;
+      const isFileCodeBase64 = base64regex.test(file?.content);
+      const isReviewCodeBase64 = base64regex.test(original_code);
+      const fileContent = isFileCodeBase64 ? decodeBase64(file?.content) : file?.content;
+      const originalCode = isReviewCodeBase64 ? decodeBase64(original_code) : original_code;
+      setSelectedData({
+        code_revisions: codeRevisions,
+        commitFile: {
+          ...file,
+          path: file?.name,
+          url: file?.file_url,
+          name: file?.name,
+          code: fileContent,
+        },
+        revision_content: {
+          ...data,
+          code: originalCode,
+        },
+      });
+      setIsOpen(true);
+    }
   };
 
   const getCodeRevisions = async () => {
@@ -93,6 +98,53 @@ function Feedback({ storyConfig }) {
     }
   }, [isAuthenticated, isAuthenticatedWithRigobot, isStorybookView]);
 
+  useEffect(() => {
+    if (!(storyConfig?.isAuthenticatedWithRigobot || isAuthenticatedWithRigobot)) {
+      createToast({
+        title: isConnectedWithGithub
+          ? t('feedback.connect-rigobot-text')
+          : t('feedback.connect-github-connector'),
+        description: isConnectedWithGithub ? (
+          <Button
+            variant="link"
+            height="auto"
+            as="span"
+            textAlign="start"
+            color="currentColor"
+            cursor="pointer"
+            textDecoration="underline"
+            fontSize="12px"
+            fontWeight="700"
+            onClick={conntectToRigobot}
+          >
+            {t('feedback.connect-rigobot')}
+          </Button>
+        ) : (
+          <Button
+            variant="link"
+            height="auto"
+            as="span"
+            textAlign="start"
+            color="currentColor"
+            fontWeight="normal"
+            cursor="pointer"
+            textDecoration="underline"
+            fontSize="12px"
+            onClick={(e) => {
+              e.preventDefault();
+              window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
+            }}
+          >
+            {t('common:connect-with-github')}
+          </Button>
+        ),
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [storyConfig, isAuthenticatedWithRigobot, isConnectedWithGithub, accessToken]);
+
   return (isAuthenticated || isStorybookView) && (
     <Box width="100%" maxWidth="400px" zIndex={10} borderRadius="17px" padding="0 2px 2px 2px" background={featuredColor}>
       <Heading size="16px" textAlign="center" p="12px 8px" width="100%" background={featuredColor} borderTopLeftRadius="13px" borderTopRightRadius="13px">
@@ -100,65 +152,6 @@ function Feedback({ storyConfig }) {
       </Heading>
       <Flex flexDirection="column" background={backgroundColor} padding="0 8px" borderRadius="0 0 17px 17px">
         <Flex flexDirection="column" my="6px" gridGap="6px">
-          {!(storyConfig?.isAuthenticatedWithRigobot || isAuthenticatedWithRigobot) && (
-            <AlertMessage
-              type="warning"
-              background="yellow.light"
-              border="0px"
-              color="black"
-              full
-              fontSize="12px"
-              borderRadius="4px"
-              textAlign="left"
-              padding="8px"
-              gridGap="10px"
-              secondColor="transparent"
-            >
-              {isConnectedWithGithub ? (
-                <Text size="12px" textAlign="start" fontWeight="700">
-                  {t('feedback.connect-rigobot-text')}
-                  {' '}
-                  <Button
-                    variant="link"
-                    height="auto"
-                    as="span"
-                    textAlign="start"
-                    color="currentColor"
-                    cursor="pointer"
-                    textDecoration="underline"
-                    fontSize="12px"
-                    fontWeight="700"
-                    onClick={conntectToRigobot}
-                  >
-                    {t('feedback.connect-rigobot')}
-                  </Button>
-                  .
-                </Text>
-              ) : (
-                <Text size="12px" textAlign="start" fontWeight="700">
-                  <Button
-                    variant="link"
-                    height="auto"
-                    as="span"
-                    textAlign="start"
-                    color="currentColor"
-                    fontWeight="normal"
-                    cursor="pointer"
-                    textDecoration="underline"
-                    fontSize="12px"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
-                    }}
-                  >
-                    {t('common:connect-with-github')}
-                  </Button>
-                  {' '}
-                  {t('feedback.connect-github-connector')}
-                </Text>
-              )}
-            </AlertMessage>
-          )}
           <Text size="12px" textAlign="center" color={hexColor.fontColor3}>
             {t('feedback.why-feedback-text')}
             {' '}
@@ -170,7 +163,7 @@ function Feedback({ storyConfig }) {
         </Flex>
         <Flex flexDirection="column" gridGap="10px" padding="12px 8px" maxHeight="17rem" overflow="auto">
           {codeRevisions?.length > 0 ? codeRevisions.map((revision) => (
-            <Flex cursor="pointer" gridGap="8px" onClick={() => handleOpen(revision)} _hover={{ background: featuredColor }} borderRadius="11px" alignItems="center" padding="8px" border="1px solid" borderColor={borderColor2}>
+            <Flex key={revision?.created_at} cursor="pointer" gridGap="8px" onClick={() => handleOpen(revision)} _hover={{ background: featuredColor }} borderRadius="11px" alignItems="center" padding="8px" border="1px solid" borderColor={borderColor2}>
               <Flex gridGap="16px" width="100%" alignItems="center">
                 <Icon icon="code-comment" color={hexColor.blueDefault} width="24px" height="24px" padding="12px" />
                 <Flex justifyContent="space-between" width="100%">

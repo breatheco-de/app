@@ -1,72 +1,106 @@
 import PropTypes from 'prop-types';
 import ReactPlayer from 'react-player';
-import useTranslation from 'next-translate/useTranslation';
 import { Box, Flex, Heading, IconButton, Image, Skeleton, Portal } from '@chakra-ui/react';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 
 function ReactPlayerV2({
-  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, containerStyle, autoPlay, loop, autoFullScreen, muted, volume, pictureInPicture, playerConfig, preview, previewDuration,
+  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, containerStyle, autoPlay, loop, autoFullScreen, muted, volume, pictureInPicture, playerConfig, preview, previewDuration, isPlayDisabled = false,
   ...rest
 }) {
-  const { lang } = useTranslation('exercises');
-  const isVideoFromDrive = url && url.includes('drive.google.com');
-  const isLoomVideo = url && url.includes('loom.com');
+  const isVideoFromDrive = useMemo(() => url && url.includes('drive.google.com'), [url]);
+  const isLoomVideo = useMemo(() => url && url.includes('loom.com'), [url]);
   const [showVideo, setShowVideo] = useState(false);
   const [videoThumbnail, setVideoThumbnail] = useState('');
   const [isPreviewReady, setIsPreviewReady] = useState(false);
   const { backgroundColor, hexColor, featuredColor } = useStyle();
-  const isExternalVideoProvider = isVideoFromDrive || isLoomVideo;
-  const existsThumbnail = thumbnail && thumbnail.length > 0;
+  const isExternalVideoProvider = useMemo(() => isVideoFromDrive || isLoomVideo, [isVideoFromDrive, isLoomVideo]);
+  const existsThumbnail = useMemo(() => thumbnail && thumbnail.length > 0, [thumbnail]);
   const previewPlayerRef = useRef(null);
 
-  const getVideo = () => {
+  const getVideo = useCallback(() => {
     if (isLoomVideo) {
       return url.replace('/share/', '/embed/');
     }
     return url;
-  };
-  const videoUrl = getVideo();
+  }, [url, isLoomVideo]);
 
-  const handleButtonClick = () => {
-    // Reset preview player progress before showing modal
+  const videoUrl = useMemo(() => getVideo(), [getVideo]);
+
+  const handleButtonClick = useCallback(() => {
+    if (isPlayDisabled) {
+      return;
+    }
+
     if (previewPlayerRef.current) {
       previewPlayerRef.current.seekTo(0);
     }
     setShowVideo(true);
-  };
+  }, [isPlayDisabled]);
 
-  const handleContainerClose = () => {
+  const handleContainerClose = useCallback(() => {
     if (closeOnOverlayClick) {
       setShowVideo(false);
     }
-  };
+  }, [closeOnOverlayClick]);
 
-  const handlePreviewProgress = ({ playedSeconds }) => {
+  const handlePreviewProgress = useCallback(({ playedSeconds }) => {
     if (preview && previewDuration && playedSeconds >= previewDuration) {
       if (previewPlayerRef.current) {
         previewPlayerRef.current.seekTo(0);
       }
     }
-  };
+  }, [preview, previewDuration]);
 
-  const handlePreviewReady = () => {
+  const handlePreviewReady = useCallback(() => {
     setIsPreviewReady(true);
-  };
+  }, []);
 
-  const getThumbnail = async () => {
-    if (url) {
-      const resp = await fetch(`https://noembed.com/embed?url=${url}`);
+  const getThumbnail = useCallback(async () => {
+    if (!url) return;
+
+    try {
+      const cacheKey = `video_thumbnail_${url}`;
+      const cachedThumbnail = sessionStorage.getItem(cacheKey);
+
+      if (cachedThumbnail) {
+        setVideoThumbnail(cachedThumbnail);
+        return;
+      }
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+      const resp = await fetch(`https://noembed.com/embed?url=${url}`, {
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!resp.ok) return;
+
       const data = await resp.json();
-      setVideoThumbnail(data.thumbnail_url);
+      if (data.thumbnail_url) {
+        setVideoThumbnail(data.thumbnail_url);
+        try {
+          sessionStorage.setItem(cacheKey, data.thumbnail_url);
+        } catch (e) {
+          // Ignorar errores de cuota de sessionStorage
+        }
+      }
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        console.error('Error fetching thumbnail:', error);
+      }
     }
-  };
+  }, [url]);
 
-  // The lang triggers this to change the thumbnail when the page is translated
   useEffect(() => {
-    getThumbnail();
-  }, [lang]);
+    if (url) {
+      getThumbnail();
+    }
+  }, [url, getThumbnail]);
 
   return videoUrl?.length > 0 && (
     <>
@@ -163,6 +197,7 @@ function ReactPlayerV2({
               />
             ))}
             <IconButton
+              id="play-video-button"
               aria-label="Play video"
               icon={<Icon icon="play2" width="40px" height="40px" borderRadius="6px" padding="4px" />}
               position="relative"
@@ -170,6 +205,12 @@ function ReactPlayerV2({
               backgroundColor="rgba(0, 0, 0, 0.5)"
               _hover={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
               transition="all 0.2s"
+              onClick={(e) => {
+                if (isPlayDisabled) {
+                  e.stopPropagation();
+                }
+              }}
+              isDisabled={isPlayDisabled}
             />
           </Flex>
 
@@ -315,6 +356,7 @@ ReactPlayerV2.propTypes = {
   playerConfig: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
   preview: PropTypes.bool,
   previewDuration: PropTypes.number,
+  isPlayDisabled: PropTypes.bool,
 };
 ReactPlayerV2.defaultProps = {
   url: '',
@@ -337,6 +379,7 @@ ReactPlayerV2.defaultProps = {
   playerConfig: {},
   preview: false,
   previewDuration: 10,
+  isPlayDisabled: false,
 };
 
 export default ReactPlayerV2;
