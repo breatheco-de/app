@@ -2,6 +2,7 @@
 import { addDays, format, isAfter } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { email as emailRegex } from './regex';
+import { parseQuerys } from './url';
 
 const isWindow = typeof window !== 'undefined';
 
@@ -22,6 +23,14 @@ const assetTypeValues = {
   practice: 'EXERCISE',
   project: 'PROJECT',
   answer: 'QUIZ',
+};
+
+const addQueryToURL = (url, params = {}) => {
+  const urlObj = new URL(url, window.location.origin);
+  const querys = parseQuerys(params);
+
+  if (Array.from(urlObj.searchParams).length > 0) return `${url}&${querys.slice(1)}`;
+  return `${url}${querys}`;
 };
 
 const slugify = (str) => (typeof str === 'string' ? str
@@ -471,5 +480,5 @@ export {
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, intervalToHours, capitalizeFirstLetter,
   adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle, decodeBase64,
-  removeSessionStorageItem, languageFix, getBrowserInfo, isValidEmail,
+  removeSessionStorageItem, languageFix, getBrowserInfo, isValidEmail, addQueryToURL,
 };
