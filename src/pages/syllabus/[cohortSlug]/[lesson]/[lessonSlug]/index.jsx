@@ -96,7 +96,7 @@ function SyllabusContent() {
   // const isAvailableAsSaas = false;
   const isAvailableAsSaas = cohortSession?.available_as_saas;
 
-  const { featuredLight, fontColor, borderColor, featuredCard, backgroundColor, hexColor, featuredColor, colorMode } = useStyle();
+  const { featuredLight, fontColor, borderColor, backgroundColor, hexColor, featuredColor, colorMode } = useStyle();
 
   const hasSubtasks = subTasks?.length > 0;
   const hasPendingSubtasks = hasSubtasks && subTasks.some((subtask) => subtask.status === 'PENDING');
@@ -148,6 +148,41 @@ function SyllabusContent() {
 
   useEffect(() => {
     setLearnpackStart(false);
+    if (currentAsset?.solution_url) {
+      createToast({
+        title: t('solution-title'),
+        description: (
+          <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
+            {t('solution-message')}
+            {' '}
+            <Link fontSize="15px" textDecoration="underline" href={currentAsset.solution_url} target="_blank">
+              You can see it here
+            </Link>
+          </Text>
+        ),
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+
+    if (currentAsset?.superseded_by?.slug) {
+      createToast({
+        title: t('superseded-message'),
+        description: (
+          <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
+            {t('superseded-message')}
+            {' '}
+            <Link fontSize="15px" textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentAsset.superseded_by.slug}`}>
+              {currentAsset.superseded_by.title}
+            </Link>
+          </Text>
+        ),
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   }, [currentAsset]);
 
   const scrollTop = () => {
@@ -1074,54 +1109,6 @@ function SyllabusContent() {
                             currentTask={currentTask}
                             isGuidedExperience={isAvailableAsSaas}
                             grantSyllabusAccess={grantAccess}
-                            alerMessage={(
-                              <>
-                                {currentAsset?.solution_url && (
-                                  <AlertMessage
-                                    type="warning"
-                                    zIndex={99}
-                                    full
-                                    borderRadius="8px"
-                                    backgroundColor={featuredCard.yellow.featured}
-                                    margin="1rem 0"
-                                    style={{
-                                      width: '100%',
-                                      height: 'auto',
-                                    }}
-                                  >
-                                    <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
-                                      {t('solution-message')}
-                                      {' '}
-                                      <Link fontSize="15px" textDecoration="underline" href={currentAsset?.solution_url} target="_blank">
-                                        You can see it here
-                                      </Link>
-                                    </Text>
-                                  </AlertMessage>
-                                )}
-                                {currentAsset?.superseded_by?.slug && (
-                                  <AlertMessage
-                                    type="warning"
-                                    zIndex={99}
-                                    full
-                                    borderRadius="8px"
-                                    backgroundColor={featuredCard.yellow.featured}
-                                    margin="1rem 0"
-                                    style={{
-                                      width: '100%',
-                                      height: 'auto',
-                                    }}
-                                  >
-                                    <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
-                                      {t('superseded-message')}
-                                      {' '}
-                                      <Link fontSize="15px" textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentAsset?.superseded_by?.slug}`}>
-                                        {currentAsset?.superseded_by?.title}
-                                      </Link>
-                                    </Text>
-                                  </AlertMessage>
-                                )}
-                              </>
-                            )}
                           />
                         )}
                         {!isQuiz && !isAvailableAsSaas && (
