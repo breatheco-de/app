@@ -19,7 +19,6 @@ import useAuth from '../../../../../common/hooks/useAuth';
 import useRigo from '../../../../../common/hooks/useRigo';
 import StickySideBar from '../../../../../common/components/StickySideBar';
 import Icon from '../../../../../common/components/Icon';
-import AlertMessage from '../../../../../common/components/AlertMessage';
 import ShareButton from '../../../../../common/components/ShareButton';
 import ModalInfo from '../../../../../common/components/ModalInfo';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
@@ -731,10 +730,10 @@ function SyllabusContent() {
 
   const socials = [
     {
-      name: 'twitter',
-      label: 'Twitter',
-      href: `https://twitter.com/share?url=&text=${encodeURIComponent(t('share-social-message', { title: currentTask?.title }))} %23100DaysOfCode%0A%0A${shareLink}`,
-      color: '#1DA1F2',
+      name: 'x',
+      label: 'X',
+      href: `https://x.com/share?url=&text=${encodeURIComponent(t('share-social-message', { title: currentTask?.title }))} %23100DaysOfCode%0A%0A${shareLink}`,
+      color: '#000',
     },
     {
       name: 'linkedin',
@@ -833,6 +832,29 @@ function SyllabusContent() {
     highestElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
     setOpenNextPageModal(false);
   };
+
+  useEffect(() => {
+    if (selectedSyllabus && cohortModule && cohortModule.id !== selectedSyllabus.id) {
+      createToast({
+        title: t('teacherSidebar.no-need-to-teach-today.title'),
+        description: t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule.id} - ${cohortModule.label}` }),
+        status: 'info',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [selectedSyllabus, cohortModule]);
+
+  useEffect(() => {
+    if (selectedSyllabus && defaultSelectedSyllabus?.id !== selectedSyllabus.id) {
+      createToast({
+        title: t('teacherSidebar.alert-updated-module-instructions'),
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [selectedSyllabus, defaultSelectedSyllabus]);
 
   return (
     <>
@@ -1478,27 +1500,6 @@ function SyllabusContent() {
               />
             )}
           </Box>
-
-          {selectedSyllabus && cohortModule?.id && cohortModule?.id !== selectedSyllabus?.id && (
-            <AlertMessage
-              type="info"
-              style={{
-                margin: '20px 0 18px 0',
-              }}
-              dangerouslySetInnerHTML
-              title={t('teacherSidebar.no-need-to-teach-today.title')}
-              message={t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule?.id} - ${cohortModule?.label}` })}
-            />
-          )}
-          {selectedSyllabus && defaultSelectedSyllabus?.id !== selectedSyllabus?.id && (
-            <AlertMessage
-              type="warning"
-              style={{
-                margin: '20px 0 18px 0',
-              }}
-              message={t('teacherSidebar.alert-updated-module-instructions')}
-            />
-          )}
 
           <Box display="flex" flexDirection="column" background={featuredColor} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
             <Heading as="h2" size="sm" style={{ margin: '0' }}>
