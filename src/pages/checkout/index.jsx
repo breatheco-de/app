@@ -653,6 +653,11 @@ function Checkout() {
         }
       }
 
+      if (originalPlan?.selectedPlan?.type === 'FREE') {
+        financingText = t('free_plan');
+        return <Text size="16px" color="green.400">{financingText}</Text>;
+      }
+
       if (financingOptions.length === 0) {
         if (monthlyPayment) {
           const finalMonthlyPrice = applyDiscounts(monthlyPayment, discountValues);
@@ -880,7 +885,7 @@ function Checkout() {
                         )}
                         <Flex justifyContent="space-between" width="full" alignItems="center">
                           {showPaymentDetails && renderPlanDetails()}
-                          {!queryPlanId && (originalPlan?.financingOptions.length > 0 || originalPlan?.hasSubscriptionMethod) && showPaymentDetails && (
+                          {!queryPlanId && originalPlan?.selectedPlan?.type !== 'FREE' && (originalPlan?.financingOptions.length > 0 || originalPlan?.hasSubscriptionMethod) && showPaymentDetails && (
                             <Flex flexDirection="column" gap="4px">
                               <Heading as="h3" size="sm" width="100%" position="relative">
                                 <Menu>

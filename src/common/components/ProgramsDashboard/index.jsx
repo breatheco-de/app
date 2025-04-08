@@ -84,40 +84,6 @@ function ProgramsDashboard({ cohorts, setLateModalProps }) {
         isOpen={upgradeModalIsOpen}
         onClose={() => setUpgradeModalIsOpen(false)}
       />
-
-      {marketingCourses?.length > 0 && (
-        <>
-          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
-            <Heading size="sm" width="fit-content" whiteSpace="nowrap">
-              {t('available-programs')}
-            </Heading>
-            <Box as="hr" width="100%" margin="0.5rem 0 0 0" />
-          </Box>
-          <Box
-            display="grid"
-            gridTemplateColumns={cardColumnSize}
-            height="auto"
-            gridGap="4rem"
-          >
-            {marketingCourses.filter(filterForNonSaasStudents).map((item) => (
-              <ProgramCard
-                key={item.slug}
-                isMarketingCourse
-                icon="coding"
-                iconLink={item?.icon_url}
-                iconBackground="blue.default"
-                handleChoose={() => router.push(item?.course_translation?.landing_url)}
-                programName={item?.course_translation.title}
-                programDescription={item?.course_translation?.description}
-                bullets={item?.course_translation?.course_modules}
-                width="100%"
-                background={featuredColor}
-              />
-            ))}
-          </Box>
-        </>
-      )}
-
       {finishedCohorts.length > 0 && (
         <>
           <Box
@@ -171,6 +137,37 @@ function ProgramsDashboard({ cohorts, setLateModalProps }) {
                 key={cohort?.slug}
                 cohort={cohort}
                 onOpenModal={() => setUpgradeModalIsOpen(true)}
+              />
+            ))}
+          </Box>
+        </>
+      )}
+      {marketingCourses?.length > 0 && (
+        <>
+          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
+            <Heading size="sm" width="fit-content" whiteSpace="nowrap">
+              {t('available-programs')}
+            </Heading>
+            <Box as="hr" width="100%" margin="0.5rem 0 0 0" />
+          </Box>
+          <Box
+            display="grid"
+            gridTemplateColumns={cardColumnSize}
+            height="auto"
+            gridGap="4rem"
+          >
+            {marketingCourses.filter(filterForNonSaasStudents).map((item) => (
+              <ProgramCard
+                isMarketingCourse
+                icon="coding"
+                iconLink={item?.icon_url}
+                iconBackground="blue.default"
+                handleChoose={() => router.push(item?.course_translation?.landing_url)}
+                programName={item?.course_translation.title}
+                programDescription={item?.course_translation?.description}
+                bullets={item?.course_translation?.course_modules}
+                width="100%"
+                background={featuredColor}
               />
             ))}
           </Box>

@@ -20,7 +20,7 @@ import useCustomToast from '../../hooks/useCustomToast';
 function AttendanceModal({
   title, message, isOpen, onClose, students,
 }) {
-  const { t } = useTranslation('dashboard');
+  const { t, lang } = useTranslation('dashboard');
   const { setCohortSession, cohortSession, sortedAssignments } = useCohortHandler();
   const [historyLog, setHistoryLog] = useState();
   const [day, setDay] = useState(cohortSession.current_day);
@@ -91,6 +91,7 @@ function AttendanceModal({
       const prevDailyModule = sortedAssignments.find(
         (assignment) => assignment.id === (currentModule - 1),
       );
+
       return {
         dailyModule,
         prevDailyModule,
@@ -260,11 +261,17 @@ function AttendanceModal({
                   id="module"
                   placeholder="Select module"
                 >
-                  {sortedAssignments.map((module) => (
-                    <option key={module.id} value={module.id}>
-                      {`#${module.id} - ${module.label}`}
-                    </option>
-                  ))}
+                  {sortedAssignments.map((module) => {
+                    // Use 'us' if lang is 'en', otherwise use lang
+                    const labelLang = lang === 'en' ? 'us' : lang;
+                    // If the label doesn't exist for the language, use the label directly
+                    const moduleLabel = module.label[labelLang] || module.label;
+                    return (
+                      <option key={module.id} value={module.id}>
+                        {`#${module.id} - ${moduleLabel}`}
+                      </option>
+                    );
+                  })}
                 </Select>
               )}
             </FormControl>

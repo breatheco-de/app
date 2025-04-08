@@ -7,7 +7,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { parseQuerys } from '../../utils/url';
-import { BREATHECODE_HOST, ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { BREATHECODE_HOST, ORIGIN_HOST, WHITE_LABEL_ACADEMY, BASE_COURSE } from '../../utils/variables';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import GridContainer from '../../common/components/GridContainer';
@@ -664,7 +664,7 @@ function CoursePage({ data, syllabus }) {
               alignSelf="center"
               maxWidth="396px"
               description={isAuthenticated ? getAlternativeTranslation('join-cohort-description') : getAlternativeTranslation('sign-up-to-plus-description')}
-              borderColor={data.color || 'green.400'}
+              borderColor="green.400"
               textAlign="center"
               gridGap="11px"
               padding={data?.course_translation?.video_url ? '0 10px' : '24px 10px 0 10px'}
@@ -980,7 +980,7 @@ function CoursePage({ data, syllabus }) {
           />
         )}
 
-        {freePlan && (
+        {featuredPlanToEnroll?.type !== 'FREE' && (
           <MktTwoColumnSideImage
             mt="6.25rem"
             imageUrl={getAlternativeTranslation('havent-decided.image')}
@@ -988,7 +988,7 @@ function CoursePage({ data, syllabus }) {
             title={getAlternativeTranslation('havent-decided.title')}
             description={getAlternativeTranslation('havent-decided.description')}
             informationSize="Medium"
-            buttonUrl={getAlternativeTranslation('havent-decided.button-link')}
+            buttonUrl={BASE_COURSE ? `/${lang}/bootcamp/${BASE_COURSE}` : `/${lang}/bootcamp/coding-introduction`}
             buttonLabel={getAlternativeTranslation('havent-decided.button')}
             background="transparent"
             textBackgroundColor="#E1F5FF"
