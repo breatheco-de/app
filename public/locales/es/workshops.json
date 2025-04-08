@@ -1,5 +1,7 @@
 {
   "no-event-found": "No hay eventos disponibles con esta URL 😕",
+  "clear-search": "Limpiar búsqueda",
+  "search-workshops": "Buscar workshops",
   "host-label-text": "Anfitrión para este evento",
   "workshop-asset-ended": "El siguiente proyecto fue realizado durante el workshop",
   "workshop-asset-upcoming": "Durante el workshop completaremos el siguiente proyecto",
@@ -7,17 +9,24 @@
   "suggest-join-event": "Haga clic a continuación para confirmar su participación y guardar su lugar para este evento",
   "suggest-join-in-person-event": "Este es un evento presencial en vivo, puedes reservar tu lugar aquí",
   "reserv-button-text": "Reservar lugar",
+  "watch-workshop-recording": "Ver grabación del workshop",
+  "workshop-video-soon": "Video del taller pronto",
   "duration-hours": "{{hours}}hr de duración",
   "greetings": "Hola {{name}} 👋",
   "starts-in": "El evento empieza en:",
   "in-person": "Evento en persona",
   "in-person-confirm": "Este es un evento presencial que se llevará a cabo en {{address}}. ¿Aún quieres confirmar tu asistencia?",
   "confirm-attendance": "Si, si asistiré",
-  "deny-attendance" : "No, no asistiré",
-  "denny-access":{
+  "deny-attendance": "No, no asistiré",
+  "denny-access": {
     "description": "Esto es un evento privado, solo estudiantes con acceso a",
     "button": "No tienes acceso a este evento.",
     "can-join": "pueden entrar"
+  },
+  "intro": {
+    "top-title": "Bienvenido a los Workshops de 4Geeks",
+    "lower-title": "Aprende en vivo y sumérgete en las nuevas tecnologías",
+    "subtitle": "Descubre el futuro del aprendizaje tecnológico con sesiones en vivo. ¡Únete y potencia tus habilidades!"
   },
   "form": {
     "title": "Únete a este evento",
@@ -25,14 +34,23 @@
     "ready-to-join-title": "¡En vivo ahora!",
     "ready-to-join-description": "Este evento está sucediendo ahora mismo. Regístrese ahora para unirse al evento.",
     "ready-to-join-description-logged": "Este evento está sucediendo ahora mismo. Haga clic a continuación para unirse al evento.",
+    "watch-workshop-recording-no-auth-title": "Ve la grabación de este evento",
+    "watch-workshop-recording-no-auth-description": "Inicia sesión para ver la grabación de este evento y poder unirte a los próximos para resolver desafíos técnicos o profesionales en vivo",
     "joined-title": "Este evento comenzará pronto",
     "joined-description": "Ya te registraste para este evento. Podrás unirte una vez que comience.",
     "joined-description-in-person": "Ya te registraste para este evento ¡Te estaremos esperando!",
     "finished-title": "Este evento ha finalizado",
     "finished-description": "¡Sigue buscando nuevas experiencias de aprendizaje y mantén viva tu pasión por el conocimiento!"
   },
+  "search-your-fav-tech": "Busca tu teconología favorita",
+  "upcoming-events": "Próximos eventos",
+  "events-joined": "Eventos a los que te has unido",
+  "tech-event": "Eventos de {{tech}}",
+  "searching-for": "Buscando eventos de '{{search}}'",
+  "search-not-found": "No se encontraron eventos de \"{{search}}\"",
+  "search-found": "Eventos encontrados de '{{search}}'",
   "users-registered-count": "{{count}} personas ya se han registrado a este evento. Quedan disponibles {{spot_count}} cupos más.",
-  "join-workshop": "Regístrarse al taller",
+  "join-workshop": "Regístrarse al workshop",
   "join": "Unirse ahora",
   "event-finished": "Evento finalizado",
   "checkin-modal": {
@@ -48,7 +66,7 @@
     "conversation-link": "https://chat.whatsapp.com/K39ELB5TIK63r4INTBd7SG"
   },
   "no-consumables": {
-    "description": "Te has quedado sin talleres, pero no te preocupes, puedes conseguir más con unos pocos clics.",
+    "description": "Te has quedado sin acceso a workshops, pero no te preocupes, puedes conseguir más con unos pocos clics.",
     "link-text": "Aprende más.",
     "link": "",
     "get-more-workshops": "Obten más workshops"

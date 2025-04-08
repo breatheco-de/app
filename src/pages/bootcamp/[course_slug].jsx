@@ -1,13 +1,13 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Box, Button, Flex, Image, Link, SkeletonText, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, Link, SkeletonText, useFormControlStyles, useToast } from '@chakra-ui/react';
 import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { parseQuerys } from '../../utils/url';
-import { BREATHECODE_HOST, ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { BREATHECODE_HOST, ORIGIN_HOST, WHITE_LABEL_ACADEMY, BASE_COURSE } from '../../utils/variables';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import GridContainer from '../../common/components/GridContainer';
@@ -15,17 +15,16 @@ import Heading from '../../common/components/Heading';
 import { error } from '../../utils/logging';
 import bc from '../../common/services/breathecode';
 import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
-import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow, getBrowserInfo } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow, getBrowserInfo, getQueryString } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import useRigo from '../../common/hooks/useRigo';
-import Timer from '../../common/components/Timer';
 import OneColumnWithIcon from '../../common/components/OneColumnWithIcon';
 import CourseContent from '../../common/components/CourseContent';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import Instructors from '../../common/components/Instructors';
 import Faq from '../../common/components/Faq';
-import FixedBottomCta from '../../js_modules/projects/FixedBottomCta';
+import FixedBottomCta from '../../common/components/Assets/FixedBottomCta';
 import TagCapsule from '../../common/components/TagCapsule';
 import MktTrustCards from '../../common/components/MktTrustCards';
 import MktShowPrices from '../../common/components/MktShowPrices';
@@ -38,8 +37,14 @@ import useCohortHandler from '../../common/hooks/useCohortHandler';
 import { reportDatalayer } from '../../utils/requests';
 import MktTwoColumnSideImage from '../../common/components/MktTwoColumnSideImage';
 import { AvatarSkeletonWrapped } from '../../common/components/Skeleton';
+import { usePersistentBySession } from '../../common/hooks/usePersistent';
 import CouponTopBar from '../../common/components/CouponTopBar';
 import completions from './completion-jobs.json';
+import Rating from '../../common/components/Rating';
+import SimpleModal from '../../common/components/SimpleModal';
+import CustomCarousel from '../../common/components/CustomCarousel';
+import useCustomToast from '../../common/hooks/useCustomToast';
+import { usePlanPrice } from '../../utils/getPriceWithDiscount';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -109,14 +114,16 @@ export async function getStaticProps({ locale, locales, params }) {
 
 function CoursePage({ data, syllabus }) {
   const { state, getPriceWithDiscount, getSelfAppliedCoupon, applyDiscountCouponsToPlans } = useSignup();
+  const [coupon] = usePersistentBySession('coupon', '');
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);
-  const [isCtaVisible, setIsCtaVisible] = useState(true);
+  const [isCtaVisible, setIsCtaVisible] = useState(false);
+  const [allDiscounts, setAllDiscounts] = useState([]);
   const { isAuthenticated, user, logout, cohorts } = useAuth();
-  const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
+  const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor, backgroundColor7, backgroundColor8 } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'choose-program-pricing-detail' });
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
@@ -128,12 +135,14 @@ function CoursePage({ data, syllabus }) {
   const [cohortData, setCohortData] = useState({});
   const [planData, setPlanData] = useState({});
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const { t, lang } = useTranslation('course');
   const router = useRouter();
   const translationsObj = getTranslations(t);
   const limitViewStudents = 3;
   const cohortId = data?.cohort?.id;
   const isVisibilityPublic = data.visibility === 'PUBLIC';
+  const courseColor = data?.color;
 
   const structuredData = data?.course_translation ? {
     '@context': 'https://schema.org',
@@ -162,46 +171,18 @@ function CoursePage({ data, syllabus }) {
   const featuredPlanToEnroll = freePlan?.plan_slug ? freePlan : payableList?.[0];
   const pathname = router.asPath.split('#')[0];
 
+  const reviewsData = t('course:reviews', {}, { returnObjects: true });
+  const reviewsForCurrentCourse = reviewsData[data?.slug] || reviewsData[data?.plan_slug];
+
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
     plan: featuredPlanToEnroll?.plan_slug,
-    plan_id: featuredPlanToEnroll?.plan_id,
     has_available_cohorts: planData?.has_available_cohorts,
     cohort: cohortId,
+    coupon: getQueryString('coupon'),
   }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
 
-  const getPlanPrice = () => {
-    if (featuredPlanToEnroll?.plan_slug) {
-      if (featuredPlanToEnroll.period === 'MONTH') {
-        return `${t('signup:info.monthly')} ${featuredPlanToEnroll.priceText}`;
-      }
-      if (featuredPlanToEnroll.period === 'YEAR') {
-        return `${featuredPlanToEnroll.priceText} ${t('signup:info.monthly')}`;
-      }
-      if (featuredPlanToEnroll.period === 'ONE_TIME') {
-        return `${featuredPlanToEnroll.priceText}, ${t('signup:info.one-time-payment')}`;
-      }
-      if (featuredPlanToEnroll.period === 'FINANCING') {
-        return `${featuredPlanToEnroll.priceText} ${t('signup:info.installments')}`;
-      }
-      if (featuredPlanToEnroll?.type === 'TRIAL') {
-        return t('common:start-free-trial');
-      }
-      if (featuredPlanToEnroll?.type === 'FREE') {
-        return t('common:enroll-totally-free');
-      }
-    }
-    if (!featuredPlanToEnroll?.plan_slug && planList[0]?.isFreeTier) {
-      if (planList[0]?.type === 'FREE') {
-        return t('common:enroll-totally-free');
-      }
-      if (planList[0]?.type === 'TRIAL') {
-        return t('common:start-free-trial');
-      }
-    }
-    return t('common:enroll');
-  };
-
-  const featurePrice = getPlanPrice().toLocaleLowerCase();
+  const planPriceFormatter = usePlanPrice();
+  const featurePrice = planPriceFormatter(featuredPlanToEnroll, planList, allDiscounts).toLocaleLowerCase();
 
   const getAlternativeTranslation = (slug, params = {}, options = {}) => {
     const keys = slug.split('.');
@@ -264,22 +245,25 @@ function CoursePage({ data, syllabus }) {
   };
 
   useEffect(() => {
-    if (isWindow) {
-      const handleScroll = () => {
-        if (showBottomCTA.current) {
-          const { scrollY } = window;
-          const top = getElementTopOffset(showBottomCTA.current);
-          setIsCtaVisible(top - scrollY > 700);
-        }
-      };
-      window.addEventListener('scroll', handleScroll);
-      return () => {
-        window.removeEventListener('scroll', handleScroll);
-      };
-    }
+    const checkCtaVisibility = () => {
+      if (showBottomCTA.current) {
+        const { scrollY } = window;
+        const top = getElementTopOffset(showBottomCTA.current);
+        setIsCtaVisible(top - scrollY > 700);
+      }
+    };
 
-    return undefined;
-  }, [isWindow]);
+    checkCtaVisibility();
+
+    const handleScroll = () => {
+      checkCtaVisibility();
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const joinCohort = () => {
     if (isAuthenticated && existsRelatedSubscription) {
@@ -298,7 +282,7 @@ function CoursePage({ data, syllabus }) {
             setReadyToRefetch(true);
           }
           if (dataRequested?.status_code === 400) {
-            toast({
+            createToast({
               position: 'top',
               title: dataRequested?.detail,
               status: 'info',
@@ -310,7 +294,7 @@ function CoursePage({ data, syllabus }) {
             }, 600);
           }
           if (dataRequested?.status_code > 400) {
-            toast({
+            createToast({
               position: 'top',
               title: dataRequested?.detail,
               status: 'error',
@@ -349,10 +333,10 @@ function CoursePage({ data, syllabus }) {
 
       setIsFetching(false);
       if (withAlert) {
-        toast({
+        createToast({
           position: 'top',
           title: t('dashboard:already-have-this-cohort'),
-          status: 'info',
+          status: 'success',
           duration: 5000,
         });
       }
@@ -362,55 +346,65 @@ function CoursePage({ data, syllabus }) {
 
   const assetCount = cohortData?.modulesInfo?.count;
   const assignmentList = cohortData?.modulesInfo?.assignmentList;
+  const studentsImages = t(`students-course-images.${data?.slug}`, {}, { returnObjects: true });
+  const benefitsBullets = t('course-default-bullets', {}, { returnObjects: true });
 
   const getInitialData = async () => {
     setInitialDataIsFetching(true);
     const cohortSyllabus = await generateCohortSyllabusModules(cohortId);
+
     const getModulesInfo = async () => {
       try {
-        const assetTypeCount = {
-          lesson: 0,
-          project: 0,
-          quiz: 0,
-          exercise: 0,
-        };
+        const assetTypeCount = { lesson: 0, project: 0, quiz: 0, exercise: 0 };
         const projects = [];
         const exercises = [];
-        if (cohortSyllabus?.syllabus?.modules?.length > 0) {
-          cohortSyllabus.syllabus?.modules?.forEach((module) => {
-            module?.content.forEach((task) => {
-              if (task?.task_type) {
-                const taskType = task?.task_type?.toLowerCase();
-                assetTypeCount[taskType] += 1;
-              }
-              if (task?.task_type === 'PROJECT') {
-                projects.push(task);
-              }
-              if (task?.task_type === 'EXERCISE') {
-                exercises.push(task);
-              }
-            });
-          });
-        }
-        const lastProjects = projects?.length > 0 ? projects.slice(-3) : [];
-        const lastExercises = exercises?.length > 0 ? exercises.slice(-3) : [];
-        const relatedAssetsToShow = [...lastProjects, ...lastExercises].slice(0, 3);
+        const featuredAssetSlugs = data?.course_translation?.featured_assets?.split(',') || [];
         const language = lang === 'en' ? 'us' : lang;
-        const assignmentsFetch = relatedAssetsToShow?.length > 0 ? await Promise.all(relatedAssetsToShow.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[language]?.slug || item?.slug}`)
-          .then((assignmentResp) => assignmentResp.json())
-          .then((respData) => respData)
-          .catch(() => []))) : [];
+
+        cohortSyllabus?.syllabus?.modules?.forEach((module) => {
+          module?.content.forEach((task) => {
+            if (task?.task_type) {
+              const taskType = task.task_type.toLowerCase();
+              assetTypeCount[taskType] += 1;
+              if (taskType === 'project') projects.push(task);
+              if (taskType === 'exercise') exercises.push(task);
+            }
+          });
+        });
+
+        const filterAssets = (assets, isFeatured) => assets.filter((asset) => {
+          const assetSlug = asset?.translations?.[language]?.slug || asset?.slug;
+          return isFeatured ? featuredAssetSlugs.includes(assetSlug) : !featuredAssetSlugs.includes(assetSlug);
+        });
+
+        let combinedFeaturedAssets = [
+          ...filterAssets(projects, true),
+          ...filterAssets(exercises, true),
+        ];
+
+        if (combinedFeaturedAssets.length < 3) {
+          const remainingNeeded = 3 - combinedFeaturedAssets.length;
+          const additionalItems = [
+            ...filterAssets(projects, false),
+            ...filterAssets(exercises, false),
+          ].slice(-remainingNeeded);
+
+          combinedFeaturedAssets = [...combinedFeaturedAssets, ...additionalItems];
+        }
+
+        const assignmentsFetch = await Promise.all(
+          combinedFeaturedAssets.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[language]?.slug || item?.slug}`)
+            .then((assignmentResp) => assignmentResp.json())
+            .catch(() => [])),
+        );
 
         return {
-          count: assetTypeCount || {},
-          assignmentList: assignmentsFetch || [],
+          count: assetTypeCount,
+          assignmentList: assignmentsFetch.filter(Boolean),
         };
       } catch (errorMsg) {
         error('Error fetching module info:', errorMsg);
-        return {
-          count: {},
-          assignmentList: [],
-        };
+        return { count: {}, assignmentList: [] };
       }
     };
     const formatedPlanData = await fetchSuggestedPlan(data?.plan_slug, translationsObj, 'mkt_plans').then((finalData) => finalData);
@@ -436,7 +430,10 @@ function CoursePage({ data, syllabus }) {
       l.user.id === instructor.user.id
     )) === index) : [];
 
-    await getSelfAppliedCoupon(formatedPlanData.plans?.suggested_plan?.slug);
+    await getSelfAppliedCoupon(formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug);
+    const couponOnQuery = await getQueryString('coupon');
+    const { data: allCouponsApplied } = await bc.payment({ coupons: [couponOnQuery || coupon], plan: formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug }).verifyCoupon();
+    setAllDiscounts(allCouponsApplied);
 
     setCohortData({
       cohortSyllabus,
@@ -496,6 +493,11 @@ function CoursePage({ data, syllabus }) {
 
   const courseContentList = data?.course_translation?.course_modules?.length > 0
     ? data?.course_translation?.course_modules.map((module) => ({
+      certificate: module.certificate,
+      time: module.time,
+      exercises: module.exercises,
+      projects: module.projects,
+      readings: module.readings,
       title: module.name,
       description: module.description,
     })) : [];
@@ -519,6 +521,25 @@ function CoursePage({ data, syllabus }) {
     });
   };
 
+  const adjustFontSizeForMobile = (html) => {
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+      return html?.replace(/font-size:\s*\d+px;?/gi, 'font-size: 36px;');
+    }
+    return html;
+  };
+
+  const imageSource = Array.isArray(studentsImages) && studentsImages.length > 0
+    ? studentsImages.slice(0, limitViewStudents)
+    : students.slice(0, limitViewStudents).map((student) => {
+      const existsAvatar = student.user.profile?.avatar_url;
+      const avatarNumber = adjustNumberBeetwenMinMax({
+        number: student.user?.id,
+        min: 1,
+        max: 20,
+      });
+      return existsAvatar || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`;
+    });
+
   return (
     <>
       {cleanedStructuredData?.name && (
@@ -531,17 +552,20 @@ function CoursePage({ data, syllabus }) {
         </Head>
       )}
       <FixedBottomCta
+        isFetching={initialDataIsFetching}
         isCtaVisible={isCtaVisible}
         financingAvailable={planData?.financingOptions?.length > 0}
         videoUrl={data?.course_translation?.video_url}
         onClick={goToFinancingOptions}
         course={data}
+        paymentOptions={planData?.paymentOptions}
         couponApplied={selfAppliedCoupon}
         width="calc(100vw - 15px)"
         left="7.5px"
+        zIndex={1100}
       />
-      <CouponTopBar />
-      <Flex flexDirection="column" mt="2rem">
+      <CouponTopBar display={{ base: 'none', md: 'block' }} />
+      <Flex flexDirection="column" background={backgroundColor7}>
         <GridContainer maxWidth="1280px" gridTemplateColumns="repeat(12, 1fr)" gridGap="36px" padding="8px 10px 50px 10px" mt="17px">
           <Flex flexDirection="column" gridColumn="1 / span 8" gridGap="24px">
             {/* Title */}
@@ -549,63 +573,64 @@ function CoursePage({ data, syllabus }) {
               <Flex as="h1" gridGap="8px" flexDirection="column" alignItems="start">
                 {
                   data?.course_translation?.heading ? (
-                    <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal" dangerouslySetInnerHTML={{ __html: data?.course_translation?.heading }} />
+                    <>
+                      <Heading as="span" size={{ base: '33px', md: '45px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal" dangerouslySetInnerHTML={{ __html: adjustFontSizeForMobile(data?.course_translation?.heading) }} />
+                    </>
                   ) : (
                     <>
-                      <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
+                      <Heading as="span" size={{ base: '38px', md: '40px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
                         {!isVisibilityPublic ? getAlternativeTranslation('title-connectors.learning') : getAlternativeTranslation('title-connectors.start')}
                       </Heading>
-                      <Heading as="span" color="blue.default" width="100%" size={{ base: '42px', md: '64px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
+                      <Heading as="span" color="blue.default2" width="100%" size={{ base: '42px', md: '45px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
                         {data?.course_translation?.title}
                       </Heading>
-                      <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
+                      <Heading as="span" size={{ base: '38px', md: '40px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
                         {!isVisibilityPublic ? getAlternativeTranslation('title-connectors.own-pace') : getAlternativeTranslation('title-connectors.end')}
                       </Heading>
                     </>
                   )
                 }
               </Flex>
+
+              {/* Course description */}
+              <Flex flexDirection="column" gridGap="16px">
+                {data?.course_translation?.short_description && (
+                  <Text size="18px" fontWeight={500} color="currentColor" lineHeight="normal">
+                    {data?.course_translation?.short_description}
+                  </Text>
+                )}
+              </Flex>
             </Flex>
 
             {/* Students count */}
             <Flex alignItems="center" gridGap="16px">
               <Flex>
-                {initialDataIsFetching
-                  ? (
-                    <AvatarSkeletonWrapped
-                      quantity={3}
-                      max={3}
-                      margin="0 -21px 0 0 !important"
-                      size="40px"
+                {initialDataIsFetching ? (
+                  <AvatarSkeletonWrapped
+                    quantity={3}
+                    max={3}
+                    margin="0 -21px 0 0 !important"
+                    size={{ base: '30px', md: '40px' }}
+                  />
+                ) : (
+                  imageSource.map((imageUrl, index) => (
+                    <Image
+                      margin={index < limitViewStudents - 1 ? '0 -21px 0 0' : '0'}
+                      src={imageUrl}
+                      width={{ base: '30px', md: '40px' }}
+                      height={{ base: '30px', md: '40px' }}
+                      borderRadius="50%"
+                      objectFit="cover"
+                      alt={`Student image ${index + 1}`}
                     />
-                  )
-                  : students.slice(0, limitViewStudents).map((student, index) => {
-                    const existsAvatar = student.user.profile?.avatar_url;
-                    const avatarNumber = adjustNumberBeetwenMinMax({
-                      number: student.user?.id,
-                      min: 1,
-                      max: 20,
-                    });
-                    return (
-                      <Image
-                        key={student.user?.profile?.full_name}
-                        margin={index < (limitViewStudents - 1) ? '0 -21px 0 0' : '0'}
-                        src={existsAvatar || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`}
-                        width="40px"
-                        height="40px"
-                        borderRadius="50%"
-                        objectFit="cover"
-                        alt={`Picture of ${student?.user?.first_name}`}
-                      />
-                    );
-                  })}
+                  ))
+                )}
               </Flex>
               {initialDataIsFetching
                 ? <SkeletonText margin="0 0 0 21px" width="10rem" noOfLines={1} />
                 : (
-
-                  <Text size="16px" color="currentColor" fontWeight={400}>
-                    {students.length > limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : ''}
+                  <Text size={{ base: '14', md: '16px' }} color="currentColor" fontWeight={400}>
+                    {students?.length > limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : t('students-enrolled')}
                   </Text>
                 )}
             </Flex>
@@ -616,7 +641,7 @@ function CoursePage({ data, syllabus }) {
                   <Flex key={item.title} gridGap="9px" alignItems="center">
                     <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
                     <Text
-                      size="16px"
+                      size={{ base: '14', md: '16px' }}
                       fontWeight={400}
                       color="currentColor"
                       lineHeight="normal"
@@ -626,27 +651,20 @@ function CoursePage({ data, syllabus }) {
                 ))}
               </Flex>
 
-              <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => tryRigobot('#ai-tutor')} />
+              {reviewsForCurrentCourse && (
+                <Rating variant="inline" totalRatings={reviewsForCurrentCourse.total_ratings} rating={reviewsForCurrentCourse.rating} link="#rating-commnets" />
+              )}
+              <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => setShowModal(true)} />
 
-              {/* Course description */}
-              <Flex flexDirection="column" gridGap="16px">
-                {data?.course_translation?.short_description && (
-                  <Text size="18px" fontWeight={700} color="currentColor" lineHeight="normal">
-                    {data?.course_translation?.short_description}
-                  </Text>
-                )}
-                <Text size="16px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal">
-                  {data?.course_translation?.description}
-                </Text>
-              </Flex>
             </Flex>
           </Flex>
           <Flex flexDirection="column" gridColumn="9 / span 4" mt={{ base: '2rem', md: '0' }} ref={showBottomCTA}>
             <ShowOnSignUp
-              title={getAlternativeTranslation('join-cohort')}
+              title={getAlternativeTranslation('sign-up-to-plus')}
+              alignSelf="center"
               maxWidth="396px"
-              description={isAuthenticated ? getAlternativeTranslation('join-cohort-description') : getAlternativeTranslation('create-account-text')}
-              borderColor={data.color || 'green.400'}
+              description={isAuthenticated ? getAlternativeTranslation('join-cohort-description') : getAlternativeTranslation('sign-up-to-plus-description')}
+              borderColor="green.400"
               textAlign="center"
               gridGap="11px"
               padding={data?.course_translation?.video_url ? '0 10px' : '24px 10px 0 10px'}
@@ -664,11 +682,12 @@ function CoursePage({ data, syllabus }) {
               invertHandlerPosition
               headContent={data?.course_translation?.video_url && (
                 <Flex flexDirection="column" position="relative">
-                  {/* <Image src={data?.icon_url} top="-1.5rem" left="-1.5rem" width="64px" height="64px" objectFit="cover" position="absolute" /> */}
                   <ReactPlayerV2
                     url={data?.course_translation?.video_url}
                     withThumbnail
                     withModal
+                    preview
+                    previewDuration={10}
                     thumbnailStyle={{
                       borderRadius: '17px 17px 0 0',
                     }}
@@ -691,29 +710,35 @@ function CoursePage({ data, syllabus }) {
                     ) : (
                       <>
                         <Button
+                          height="auto"
+                          id="bootcamp-enroll-button"
                           variant="default"
                           isLoading={initialDataIsFetching || (planList?.length === 0 && !featuredPlanToEnroll?.price)}
-                          background="green.400"
+                          background={courseColor || 'green.500'}
+                          display="flex"
+                          flexDirection="column"
                           color="white"
-                          onClick={() => {
-                            router.push(`/checkout${enrollQuerys}`);
-                          }}
+                          width="100%"
+                          whiteSpace="normal"
+                          wordWrap="break-word"
+                          padding="10px"
+                          onClick={() => { router.push(`/checkout${enrollQuerys}`); }}
                         >
-                          {!featuredPlanToEnroll?.isFreeTier
-                            ? `${getAlternativeTranslation('common:enroll-for-connector')} ${featurePrice}`
-                            : capitalizeFirstLetter(featurePrice)}
+                          <Flex flexDirection="column" alignItems="center">
+                            <Text fontSize={!featuredPlanToEnroll?.isFreeTier ? '16px' : '14px'}>
+                              {allDiscounts.length > 0 && '🔥'}
+                              {capitalizeFirstLetter(featurePrice)}
+                            </Text>
+                            {!featuredPlanToEnroll?.isFreeTier && (
+                              <Flex alignItems="center" marginTop="5px" gap="5px" justifyContent="center">
+                                <Icon icon="shield" color="#ffffff" secondColor={courseColor || '#00b765'} width="23px" />
+                                <Text fontSize="13px" fontWeight="medium" paddingTop="2px">
+                                  {t('common:money-back-guarantee-short')}
+                                </Text>
+                              </Flex>
+                            )}
+                          </Flex>
                         </Button>
-                        {payableList?.length > 0 && (
-                          <Button
-                            variant="outline"
-                            color="green.400"
-                            isLoading={initialDataIsFetching}
-                            borderColor="currentColor"
-                            onClick={goToFinancingOptions}
-                          >
-                            {t('common:see-financing-options')}
-                          </Button>
-                        )}
                         {isAuthenticated ? (
                           <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                             {t('signup:switch-user-connector', { name: user?.first_name })}
@@ -771,11 +796,14 @@ function CoursePage({ data, syllabus }) {
             <OneColumnWithIcon
               title={getAlternativeTranslation('rigobot.title')}
               icon=""
-              handleButton={() => tryRigobot('#try-rigobot')}
+              handleButton={() => setShowModal(true)}
               buttonText={getAlternativeTranslation('rigobot.button')}
               buttonProps={{ id: 'try-rigobot' }}
+              titleStyles={{
+                fontSize: '34px',
+              }}
             >
-              <Text size="14px" color="currentColor">
+              <Text size={{ base: '14px', md: '18px' }} color="currentColor">
                 {getAlternativeTranslation('rigobot.description')}
               </Text>
             </OneColumnWithIcon>
@@ -784,47 +812,33 @@ function CoursePage({ data, syllabus }) {
             <Flex flexDirection="column" gridColumn="2 / span 12">
               {/* CourseContent comopnent */}
               {cohortData?.cohortSyllabus?.syllabus && (
-                <CourseContent data={courseContentList} assetCount={assetCount} />
+                <CourseContent
+                  data={courseContentList}
+                  assetCount={assetCount}
+                  backgroundColor={backgroundColor}
+                  titleStyle={{ textTransform: 'capitalize', fontSize: '18px', fontWeight: 'bold', fontFamily: 'Space Grotesk Variable' }}
+                  featuresStyle={{ background: backgroundColor8, padding: '4px', borderRadius: '4px' }}
+                  border="none"
+                  expanderText={t('navbar:course-details')}
+                  allowToggle
+                />
               )}
             </Flex>
           )}
           <Flex flexDirection="column" gridGap="16px">
-            <Heading size="24px" lineHeight="normal" textAlign="center">
+            <Heading size={{ base: '24px', md: '34px' }} lineHeight="normal" textAlign="center">
               {getAlternativeTranslation('build-connector.what-you-will')}
               {' '}
-              <Box as="span" color="blue.default">
+              <Box as="span" color="blue.default2">
                 {getAlternativeTranslation('build-connector.build')}
               </Box>
             </Heading>
             <Text size="18px" textAlign="center">
               {getAlternativeTranslation('build-connector.description')}
             </Text>
-            <Flex flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '10px', md: '32px' }} mt="16px">
-              {assignmentList?.length > 0 && assignmentList.slice(0, 3).map((item) => {
-                const taskTranslations = lang === 'en' ? item?.translations?.us : (item?.translations?.[lang] || {});
-                const pathConnector = {
-                  project: `${lang === 'en' ? '/interactive-coding-tutorial' : `/${lang}/interactive-coding-tutorial`}`,
-                  exercise: `${lang === 'en' ? '/interactive-exercise' : `/${lang}/interactive-exercise`}`,
-                };
-                const link = `${pathConnector[item?.asset_type?.toLowerCase()]}/${taskTranslations}`;
-
-                return (
-                  <Flex key={item?.title} flexDirection="column" gridGap="17px" padding="16px" minHeight="128px" flex={{ base: 1, md: 0.33 }} borderRadius="10px" border="1px solid" borderColor={borderColor}>
-                    <Flex alignItems="center" justifyContent="space-between">
-                      {item?.technologies?.length > 0 && (
-                        <TagCapsule tags={item?.technologies.slice(0, 3)} marginY={0} />
-                      )}
-                    </Flex>
-                    <Link href={link} display="flex" fontSize="18px" fontWeight={700} lineHeight="normal" color="currentColor" alignItems="center" gridGap="20px" justifyContent="space-between">
-                      {(lang === 'en' && item?.translations?.us?.title)
-                        || item?.translations?.[lang]?.title
-                        || item?.title}
-                      <Icon icon="arrowRight" width="10px" height="16px" color="currentColor" />
-                    </Link>
-                  </Flex>
-                );
-              })}
-            </Flex>
+            {assignmentList?.length > 0 && (
+              <CustomCarousel assignmentList={assignmentList} />
+            )}
           </Flex>
         </GridContainer>
         {/* Features section */}
@@ -837,10 +851,10 @@ function CoursePage({ data, syllabus }) {
             <Flex padding="40px 10px" gridColumn="1 / span 12" flexDirection="column" gridGap="64px">
               <Flex flexDirection="column" gridGap="4rem">
                 <Flex flexDirection="column" gridGap="1rem">
-                  <Heading size="24px" textAlign="center">
+                  <Heading size={{ base: '24px', md: '34px' }} textAlign="center">
                     {getAlternativeTranslation('why-learn-4geeks-connector.why-learn-with')}
                     {' '}
-                    <Box as="span" color="blue.default">4Geeks</Box>
+                    <Box as="span" color="blue.default2">4Geeks</Box>
                     ?
                   </Heading>
                   <Text size="18px" margin={{ base: 'auto', md: '0 8vw' }} textAlign="center" style={{ textWrap: 'balance' }}>
@@ -869,11 +883,13 @@ function CoursePage({ data, syllabus }) {
                 background="transparent"
                 imagePosition="right"
                 imageUrl="/static/images/github-repo-preview.png"
+                videoUrl="https://storage.googleapis.com/breathecode/videos/landing-pages/learnpack-demo.mp4"
                 title={features?.['what-is-learnpack']?.title}
                 description={features?.['what-is-learnpack']?.description}
                 informationSize="Medium"
                 buttonUrl={features?.['what-is-learnpack']?.link}
                 buttonLabel={features?.['what-is-learnpack']?.button}
+                customTitleSize={{ base: '24px', md: '34px' }}
                 textSideProps={{
                   padding: '24px 0px',
                 }}
@@ -899,6 +915,8 @@ function CoursePage({ data, syllabus }) {
           informationSize="Medium"
           buttonUrl={getAlternativeTranslation('certificate.button-link')}
           buttonLabel={getAlternativeTranslation('certificate.button')}
+          background="transparent"
+          customTitleSize={{ base: '24px', md: '34px' }}
           containerProps={{
             padding: '0px',
             marginTop: '0px',
@@ -907,8 +925,19 @@ function CoursePage({ data, syllabus }) {
           }}
         />
 
+        <GridContainer padding="0 10px" maxWidth="1280px" width="100%" mt="6.25rem" withContainer childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} gridTemplateColumns="repeat(12, 1fr)" gridColumn="1 / 12 span">
+          <MktTrustCards
+            title={getAlternativeTranslation('why-learn-with-4geeks.title')}
+            description={getAlternativeTranslation('why-learn-with-4geeks.description')}
+            cardStyles={{
+              border: 'none',
+            }}
+          />
+        </GridContainer>
+
         <MktTwoColumnSideImage
           mt="6.25rem"
+          customTitleSize={{ base: '24px', md: '34px' }}
           imageUrl={getAlternativeTranslation('job-section.image')}
           title={getAlternativeTranslation('job-section.title')}
           subTitle={getAlternativeTranslation('job-section.subtitle')}
@@ -917,9 +946,9 @@ function CoursePage({ data, syllabus }) {
           buttonUrl={getAlternativeTranslation('job-section.button-link')}
           buttonLabel={getAlternativeTranslation('job-section.button')}
           imagePosition="right"
-          textBackgroundColor="#EEF9FE"
           titleColor="#0097CF"
           subtitleColor="#01455E"
+          background="transparent"
           containerProps={{
             padding: '0px',
             marginTop: '0px',
@@ -938,39 +967,76 @@ function CoursePage({ data, syllabus }) {
         {data?.plan_slug && (
           <MktShowPrices
             id="pricing"
-            mt="6.25rem"
             externalPlanProps={planData}
             externalSelection={financeSelected}
-            gridTemplateColumns="repeat(12, 1fr)"
-            gridColumn1="1 / span 7"
-            gridColumn2="8 / span 5"
-            gridGap="3rem"
             title={getAlternativeTranslation('show-prices.title')}
             description={getAlternativeTranslation('show-prices.description')}
             plan={data?.plan_slug}
             cohortId={cohortId}
+            pricingMktInfo={benefitsBullets}
+            padding={{ base: '10px', md: '0px' }}
+            margin="0px auto"
+            mt="50px"
           />
         )}
 
-        <GridContainer padding="0 10px" maxWidth="1280px" width="100%" mt="6.25rem" withContainer childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} gridTemplateColumns="repeat(12, 1fr)" gridColumn="1 / 12 span">
-          <MktTrustCards
-            title={getAlternativeTranslation('why-learn-with-4geeks.title')}
-            description={getAlternativeTranslation('why-learn-with-4geeks.description')}
+        {featuredPlanToEnroll?.type !== 'FREE' && (
+          <MktTwoColumnSideImage
+            mt="6.25rem"
+            imageUrl={getAlternativeTranslation('havent-decided.image')}
+            miniTitle={getAlternativeTranslation('havent-decided.mini-title')}
+            title={getAlternativeTranslation('havent-decided.title')}
+            description={getAlternativeTranslation('havent-decided.description')}
+            informationSize="Medium"
+            buttonUrl={BASE_COURSE ? `/${lang}/bootcamp/${BASE_COURSE}` : `/${lang}/bootcamp/coding-introduction`}
+            buttonLabel={getAlternativeTranslation('havent-decided.button')}
+            background="transparent"
+            textBackgroundColor="#E1F5FF"
+            imagePosition="right"
+            titleColor="blue.default2"
+            textSideProps={{
+              flex: 2,
+            }}
+            imageSideProps={{
+              width: '273px',
+              margin: '0',
+            }}
+            containerProps={{
+              padding: '0px',
+              marginTop: '0px',
+              gridGap: '32px',
+              alignItems: 'start',
+            }}
           />
-        </GridContainer>
+        )}
+        {reviewsForCurrentCourse && (
+          <GridContainer padding="0 10px" maxWidth="1280px" width="100%" gridTemplateColumns="repeat(1, 1fr)">
+            <Rating
+              totalRatings={reviewsForCurrentCourse.total_ratings}
+              totalReviews={reviewsForCurrentCourse.reviews_numbers}
+              rating={reviewsForCurrentCourse.rating}
+              id="rating-commnets"
+              marginTop="40px"
+              reviews={reviewsForCurrentCourse.reviews}
+              cardStyles={{
+                border: 'none',
+              }}
+            />
+          </GridContainer>
+        )}
         {/* FAQ section */}
-        <Box mt="6.25rem" background={hexColor.lightColor}>
+        <Box mt="6.25rem">
           <GridContainer padding="0 10px" maxWidth="1280px" width="100%" gridTemplateColumns="repeat(12, 1fr)">
             {Array.isArray(faqList) && faqList?.length > 0 && (
               <Faq
+                width="100%"
                 gridColumn="1 / span 12"
-                background="transparent"
                 headingStyle={{
                   margin: '0px',
                   fontSize: '38px',
                   padding: '0 0 24px',
                 }}
-                padding="1.5rem 0"
+                padding="1.5rem"
                 highlightColor={complementaryBlue}
                 acordionContainerStyle={{
                   background: hexColor.white2,
@@ -986,6 +1052,27 @@ function CoursePage({ data, syllabus }) {
           </GridContainer>
         </Box>
       </Flex>
+      <SimpleModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        style={{ marginTop: '10vh' }}
+        maxWidth="45rem"
+        borderRadius="13px"
+        headerStyles={{ textAlign: 'center' }}
+        title={t('rigobot.title')}
+        bodyStyles={{ padding: 0 }}
+        closeOnOverlayClick={false}
+      >
+        <Box padding="0 15px 15px">
+          <ReactPlayerV2
+            url={getAlternativeTranslation('rigobot.video_url')}
+            width="100%"
+            height="100%"
+            iframeStyle={{ borderRadius: '3px 3px 13px 13px' }}
+            autoPlay
+          />
+        </Box>
+      </SimpleModal>
     </>
   );
 }

@@ -9,9 +9,9 @@ import { useRouter } from 'next/router';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import FilterModal from '../../common/components/FilterModal';
-import TitleContent from '../../js_modules/projects/TitleContent';
+import TitleContent from '../../common/components/Assets/TitleContent';
 import useFilter from '../../common/store/actions/filterAction';
-import Search from '../../js_modules/projects/Search';
+import Search from '../../common/components/Assets/Search';
 import GridContainer from '../../common/components/GridContainer';
 import PaginatedView from '../../common/components/PaginationView';
 import { getQueryString, isWindow } from '../../utils';
@@ -71,8 +71,6 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
     },
   );
   const technologies = await technologiesResponse.json();
-  console.log('technologies');
-  console.log(technologies);
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
     log(`SUCCESS: ${technologies.results.length} Technologies fetched for /lessons`);

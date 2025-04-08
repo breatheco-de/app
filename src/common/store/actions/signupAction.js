@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-unsafe-optional-chaining */
 import { useSelector, useDispatch } from 'react-redux';
-import { useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import {
@@ -18,15 +17,15 @@ import useSession from '../../hooks/useSession';
 import useAuth from '../../hooks/useAuth';
 import { reportDatalayer } from '../../../utils/requests';
 import { generatePlan, getTranslations } from '../../handlers/subscriptions';
+import useCustomToast from '../../hooks/useCustomToast';
 
-// eslint-disable-next-line no-unused-vars
 const useSignup = () => {
   const { isAuthenticated } = useAuth();
   const { userSession } = useSession();
   const state = useSelector((sl) => sl.signupReducer);
   const [, setSubscriptionProcess] = usePersistent('subscription-process', null);
   const { t } = useTranslation('signup');
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'error-payment-transaction' });
   const router = useRouter();
   const { locale } = router;
   const dispatch = useDispatch();
@@ -35,6 +34,7 @@ const useSignup = () => {
   const redirectedFrom = getStorageItem('redirected-from');
   const couponsQuery = getQueryString('coupons');
   const planTranslationsObj = getTranslations(t);
+  const defaultPlan = process.env.BASE_PLAN || 'basic';
 
   const { syllabus, academy } = router.query;
   const nextMonthText = getNextDateInMonths(1).translation[locale];
@@ -184,14 +184,15 @@ const useSignup = () => {
               return { plan: { ...restOfPlan } };
             });
           }
+          console.log('selectedPlanCheckoutData', selectedPlanCheckoutData);
           reportDatalayer({
             dataLayer: {
               event: 'purchase',
-              value: selectedPlanCheckoutData?.price,
+              value: selectedPlanCheckoutData?.price || 0,
               currency,
               payment_type: 'Credit card',
-              plan: selectedPlanCheckoutData?.plan_slug,
-              period_label: selectedPlanCheckoutData?.period_label,
+              plan: selectedPlanCheckoutData?.plan_slug || transactionData?.plan?.slug || defaultPlan,
+              period_label: selectedPlanCheckoutData?.period_label || 'one-time',
               items: simplePlans,
               agent: getBrowserInfo(),
             },
@@ -207,7 +208,7 @@ const useSignup = () => {
             }
           }
           if (transactionData === undefined || transactionData.status >= 400) {
-            toast({
+            createToast({
               position: 'top',
               title: t('alert-message:payment-error'),
               status: 'error',
@@ -258,10 +259,12 @@ const useSignup = () => {
           setCheckoutData({
             ...data,
             ...finalData,
+            id: data.id,
           });
           resolve({
             ...data,
             ...finalData,
+            id: data.id,
           });
         }
         if (response.status >= 400) {

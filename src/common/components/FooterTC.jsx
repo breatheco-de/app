@@ -21,6 +21,7 @@ function FooterTC({ pageProps }) {
   const noFooterRoutes = [
     '/cohort/[cohortSlug]/[slug]/[version]',
     '/syllabus/[cohortSlug]/[lesson]/[lessonSlug]',
+    '/main-cohort/[mainCohortSlug]/syllabus/[cohortSlug]/[lesson]/[lessonSlug]',
     '/mentorship/schedule',
   ];
 
@@ -44,6 +45,9 @@ function FooterTC({ pageProps }) {
           justifyContent={['center', 'center', 'space-between', 'space-between']}
           width={['100%', '100%', '35%', '25%']}
         >
+          <NextChakraLink href={t('code-of-conduct.href')}>
+            <Text fontSize="sm">{t('code-of-conduct.label')}</Text>
+          </NextChakraLink>
           <NextChakraLink href={t('terms.href')}>
             <Text fontSize="sm">{t('terms.label')}</Text>
           </NextChakraLink>

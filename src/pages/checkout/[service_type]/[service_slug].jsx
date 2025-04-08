@@ -2,21 +2,21 @@
 import {
   Box,
   Flex,
-  useToast,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import bc from '../../../common/services/breathecode';
 import useAuth from '../../../common/hooks/useAuth';
 import { isWindow } from '../../../utils';
-import PaymentInfo from '../../../js_modules/checkout/PaymentInfo';
+import PaymentInfo from '../../../common/components/Checkout/PaymentInfo';
+import ServiceSummary from '../../../common/components/Checkout/ServiceSummary';
+import SelectServicePlan from '../../../common/components/Checkout/SelectServicePlan';
 import useSignup from '../../../common/store/actions/signupAction';
 import axiosInstance from '../../../axios';
 import asPrivate from '../../../common/context/PrivateRouteWrapper';
 import LoaderScreen from '../../../common/components/LoaderScreen';
 import useStyle from '../../../common/hooks/useStyle';
-import ServiceSummary from '../../../js_modules/checkout/ServiceSummary';
-import SelectServicePlan from '../../../js_modules/checkout/SelectServicePlan';
+import useCustomToast from '../../../common/hooks/useCustomToast';
 
 function ServiceSlug() {
   const router = useRouter();
@@ -31,7 +31,7 @@ function ServiceSlug() {
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { isAuthenticated } = useAuth();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'checkout-error-string' });
 
   const isPaymentSuccess = selectedPlanCheckoutData?.payment_success;
 
@@ -111,7 +111,7 @@ function ServiceSlug() {
         }
 
         if (resp.status > 400) {
-          toast({
+          createToast({
             title: respData.detail,
             status: 'error',
             duration: 6000,

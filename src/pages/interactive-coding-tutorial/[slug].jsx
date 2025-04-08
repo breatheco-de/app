@@ -12,9 +12,9 @@ import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import useAuth from '../../common/hooks/useAuth';
 import useStyle from '../../common/hooks/useStyle';
-import FixedBottomCta from '../../js_modules/projects/FixedBottomCta';
-import SimpleTable from '../../js_modules/projects/SimpleTable';
-import TabletWithForm from '../../js_modules/projects/TabletWithForm';
+import FixedBottomCta from '../../common/components/Assets/FixedBottomCta';
+import SimpleTable from '../../common/components/Assets/SimpleTable';
+import TabletWithForm from '../../common/components/Assets/TabletWithForm';
 import ArticleMarkdown from '../../common/components/MarkDownParser/ArticleMarkdown';
 import { MDSkeleton } from '../../common/components/Skeleton';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
@@ -27,6 +27,8 @@ import RelatedContent from '../../common/components/RelatedContent';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import MktEventCards from '../../common/components/MktEventCards';
 import SupplementaryMaterial from '../../common/components/SupplementaryMaterial';
+import AssetsBreadcrumbs from '../../common/components/AssetsBreadcrumbs';
+import { getMarkdownFromCache } from '../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../lib/asset-list.json');
@@ -75,13 +77,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       };
     }
 
-    if (!result.readme?.decoded) {
+    const markdown = await getMarkdownFromCache(slug, result);
+
+    if (!result || !markdown) {
       return {
         notFound: true,
       };
     }
-
-    const markdown = result.readme.decoded;
 
     const {
       title, description, translations, preview,
@@ -242,7 +244,7 @@ function ProjectSlug({ project, markdown }) {
         </Head>
       )}
       <FixedBottomCta
-        isCtaVisible={isCtaVisible && !isAuthenticated}
+        isCtaVisible={isCtaVisible}
         asset={project}
         videoUrl={project.intro_video_url}
         onClick={() => tabletWithFormRef.current?.scrollIntoView()}
@@ -261,18 +263,8 @@ function ProjectSlug({ project, markdown }) {
       >
         <Flex display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '2 / span 10', lg: '2 / span 7' }} height="100%" gridGap="26px">
           <Box width="-webkit-fill-available">
-            <Box display={{ base: 'block', md: 'flex' }} justifyContent="space-between" alignItems="center">
-              <Link
-                margin="3rem 0 32px 0"
-                href="/interactive-coding-tutorials"
-                color={useColorModeValue('blue.default', 'blue.300')}
-                display="inline-block"
-                letterSpacing="0.05em"
-                width="fit-content"
-                fontWeight="700"
-              >
-                {`← ${t('projects:backToProjects')}`}
-              </Link>
+            <Box margin="20px 0 10px 0" display={{ base: 'block', md: 'flex' }} justifyContent="space-between" alignItems="center">
+              <AssetsBreadcrumbs />
               {isAuthenticated && project?.readme_url && (
                 <Box height="fit-content" width="172px" background={featuredLight} borderRadius="4px">
                   <Link display="flex" target="_blank" rel="noopener noreferrer" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={project.readme_url} textDecoration="none" _hover={{ opacity: 0.7 }} color={fontColor}>

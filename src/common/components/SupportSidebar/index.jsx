@@ -1,16 +1,13 @@
 import { useEffect, memo, useState } from 'react';
-import {
-  useToast,
-} from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import bc from '../../services/breathecode';
-// import { usePersistent } from '../../hooks/usePersistent';
 import Mentoring from './Mentoring';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function SupportSidebar({ allCohorts, allSyllabus, services, subscriptions, subscriptionData }) {
   const { t } = useTranslation();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'mentorship-error' });
   const [programServices, setProgramServices] = useState({
     list: [],
     isFetching: true,
@@ -19,7 +16,7 @@ function SupportSidebar({ allCohorts, allSyllabus, services, subscriptions, subs
   const filterByFinantialStatus = (list) => list.filter((service) => {
     if (allCohorts.length > 0) {
       return allCohorts.some((elem) => {
-        if (elem?.cohort?.academy?.id === service?.academy?.id && (elem?.finantial_status === 'LATE' || elem?.educational_status === 'SUSPENDED')) {
+        if (elem?.academy?.id === service?.academy?.id && (elem?.cohort_user.finantial_status === 'LATE' || elem?.cohort_user.educational_status === 'SUSPENDED')) {
           return false;
         }
         return true;
@@ -39,7 +36,7 @@ function SupportSidebar({ allCohorts, allSyllabus, services, subscriptions, subs
           });
         }
       }).catch(() => {
-        toast({
+        createToast({
           position: 'top',
           title: 'Error',
           description: t('alert-message:error-mentorship-service'),

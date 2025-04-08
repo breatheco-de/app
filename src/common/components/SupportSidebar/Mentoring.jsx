@@ -4,7 +4,6 @@ import {
 } from 'react';
 import {
   Box,
-  // useToast,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -17,7 +16,6 @@ import useCohortHandler from '../../hooks/useCohortHandler';
 function Mentoring({
   width, allCohorts, allSyllabus, programServices, subscriptions, subscriptionData,
 }) {
-  // const toast = useToast();
   const { t } = useTranslation('dashboard');
   const router = useRouter();
   const { isLoading, user } = useAuth();

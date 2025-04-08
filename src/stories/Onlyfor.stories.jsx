@@ -1,7 +1,6 @@
 import { Box } from '@chakra-ui/layout';
 import React from 'react';
 import OnlyFor from '../common/components/OnlyFor';
-// const iconDict = require('../common/utils/iconDict.json');
 
 export default {
   title: 'Components/OnlyFor',

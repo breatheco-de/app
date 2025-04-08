@@ -13,30 +13,37 @@
       "primary": {
         "id_key": {
           "type": "Text",
-          "config": {
-            "label": "Id key",
-            "placeholder": ""
-          }
+          "config": { "label": "Id key", "placeholder": "" }
         },
         "title": {
           "type": "Text",
-          "config": {
-            "label": "Title",
-            "placeholder": ""
-          }
+          "config": { "label": "Title", "placeholder": "" }
         },
         "endpoint": {
           "type": "Text",
-          "config": {
-            "label": "Endpoint",
-            "placeholder": ""
-          }
+          "config": { "label": "Endpoint", "placeholder": "" }
         },
         "margin": {
           "type": "Text",
           "config": {
             "label": "Margin",
             "placeholder": "top, right, bottom, left"
+          }
+        },
+        "tech_filtered": {
+          "type": "Text",
+          "config": {
+            "label": "Tech Filtered",
+            "placeholder": "Auto filter the events by a technology"
+          }
+        },
+        "show_checked_in_events": {
+          "type": "Boolean",
+          "config": {
+            "label": "Show checked in events",
+            "default_value": false,
+            "placeholder_true": "true",
+            "placeholder_false": "false"
           }
         }
       },

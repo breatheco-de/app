@@ -3,7 +3,7 @@ import useTranslation from 'next-translate/useTranslation';
 import {
   Box, Button, Heading,
   InputGroup, InputLeftAddon, Modal, ModalBody, ModalCloseButton, ModalContent,
-  ModalHeader, ModalOverlay, Stack, Text, Tooltip, useToast,
+  ModalHeader, ModalOverlay, Stack, Text, Tooltip,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
@@ -13,12 +13,13 @@ import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
+import useCustomToast from '../hooks/useCustomToast';
 
 function ConnectGithubRigobot({ ...rest }) {
   const { t } = useTranslation('profile');
   const { user, isAuthenticatedWithRigobot, conntectToRigobot } = useAuth();
 
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'github-account-removed-error' });
   const router = useRouter();
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -165,7 +166,7 @@ function ConnectGithubRigobot({ ...rest }) {
                       setTimeout(() => {
                         router.reload();
                       }, 1000);
-                      toast({
+                      createToast({
                         position: 'top',
                         title: t('alert-message:any-removed', { any: 'GitHub' }),
                         description: t('alert-message:github-account-removed'),
@@ -175,7 +176,7 @@ function ConnectGithubRigobot({ ...rest }) {
                       });
                     })
                     .catch(() => {
-                      toast({
+                      createToast({
                         position: 'top',
                         title: t('alert-message:something-went-wrong'),
                         description: t('alert-message:error-removing-github'),

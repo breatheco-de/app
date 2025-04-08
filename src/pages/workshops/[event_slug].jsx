@@ -1,5 +1,5 @@
 import {
-  Box, Button, Grid, useColorModeValue, useToast, Image, Avatar, Skeleton, Flex,
+  Box, Button, Grid, useColorModeValue, Image, Avatar, Skeleton, Flex,
 } from '@chakra-ui/react';
 import { useEffect, useState, useContext } from 'react';
 import { intervalToDuration, format } from 'date-fns';
@@ -18,8 +18,8 @@ import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isVal
 import useStyle from '../../common/hooks/useStyle';
 import Icon from '../../common/components/Icon';
 import PublicProfile from '../../common/components/PublicProfile';
-import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
-import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import AvatarUser from '../../common/components/AvatarUser';
+import ModalInfo from '../../common/components/ModalInfo';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import useAuth from '../../common/hooks/useAuth';
 import Timer from '../../common/components/Timer';
@@ -34,6 +34,7 @@ import SmallCardsCarousel from '../../common/components/SmallCardsCarousel';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import DynamicContentCard from '../../common/components/DynamicContentCard';
 import { SessionContext } from '../../common/context/SessionContext';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -169,7 +170,7 @@ function Workshop({ eventData, asset }) {
   const router = useRouter();
   const { locale } = router;
   const eventSlug = router?.query?.event_slug;
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'event-and-access-reservation' });
   const { isAuthenticated, user, cohorts } = useAuth();
   const { featuredColor, hexColor } = useStyle();
   const endDate = event?.ended_at || event?.ending_at;
@@ -269,8 +270,21 @@ function Workshop({ eventData, asset }) {
 
   const eventNotExists = !event?.slug;
   const isAuth = isAuthenticated && user?.id;
-
+  const recordingUrl = event?.recording_url;
   const alreadyApplied = users.some((l) => l?.attendee?.id === user?.id) || applied;
+
+  const getWording = () => {
+    if (!finishedEvent && (alreadyApplied || readyToJoinEvent)) {
+      return t('join');
+    }
+    if (finishedEvent && !recordingUrl) {
+      return t('workshop-video-soon');
+    }
+    if (finishedEvent && recordingUrl) {
+      return t('watch-workshop-recording');
+    }
+    return t('reserv-button-text');
+  };
 
   const handleOnReadyToStart = () => {
     setReadyToJoinEvent(true);
@@ -323,7 +337,7 @@ function Workshop({ eventData, asset }) {
   const allUsersJoinedLength = allUsersJoined?.length || 0;
   const spotsRemain = (capacity - allUsersJoinedLength);
 
-  const buttonEnabled = !finishedEvent && (readyToJoinEvent || !alreadyApplied);
+  const buttonEnabled = ((finishedEvent && recordingUrl) || !finishedEvent) && (readyToJoinEvent || !alreadyApplied);
 
   const handleGetMoreEventConsumables = () => {
     setIsFetchingDataForModal(true);
@@ -387,6 +401,37 @@ function Workshop({ eventData, asset }) {
   }, [subscriptionsForCurrentEvent]);
 
   const dynamicFormInfo = () => {
+    if (!isAuth) {
+      if (finishedEvent && recordingUrl) {
+        return ({
+          title: t('form.watch-workshop-recording-no-auth-title'),
+          description: t('form.watch-workshop-recording-no-auth-description'),
+          childrenDescription: (
+            <Box>
+              <Box mb="10px" display="flex" gridGap="5px" justifyContent="center">
+                <Text color={hexColor.fontColor3} size="14px" fontWeight={700} width="fit-content">
+                  {event?.venue?.street_address}
+                </Text>
+              </Box>
+            </Box>
+          ),
+        });
+      } if (finishedEvent && !recordingUrl) {
+        return ({
+          title: t('form.finished-title'),
+          description: t('form.watch-workshop-recording-no-auth-description'),
+          childrenDescription: (
+            <Box>
+              <Box mb="10px" display="flex" gridGap="5px" justifyContent="center">
+                <Text color={hexColor.fontColor3} size="14px" fontWeight={700} width="fit-content">
+                  {event?.venue?.street_address}
+                </Text>
+              </Box>
+            </Box>
+          ),
+        });
+      }
+    }
     if (finishedEvent) {
       return ({
         title: t('form.finished-title'),
@@ -522,7 +567,7 @@ function Workshop({ eventData, asset }) {
             if (resp !== undefined) {
               setApplied(true);
               setIsCheckinModalOpen(true);
-              toast({
+              createToast({
                 position: 'top',
                 status: 'success',
                 title: t('alert-message:success-event-reservation'),
@@ -544,7 +589,7 @@ function Workshop({ eventData, asset }) {
                 },
               });
             } else {
-              toast({
+              createToast({
                 position: 'top',
                 status: 'info',
                 title: t('alert-message:event-access-error'),
@@ -879,7 +924,7 @@ function Workshop({ eventData, asset }) {
                           background="white"
                           width="100%"
                           display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
-                          isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || eventNotExists)}
+                          isDisabled={((finishedEvent && !recordingUrl) || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                           _disabled={{
                             background: buttonEnabled ? '' : 'gray.350',
                             cursor: buttonEnabled ? 'pointer' : 'not-allowed',
@@ -893,12 +938,13 @@ function Workshop({ eventData, asset }) {
                             cursor: buttonEnabled ? 'pointer' : 'not-allowed',
                           }}
                           onClick={() => {
-                            if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
+                            if (finishedEvent && recordingUrl) {
+                              window.open(recordingUrl, '_blank');
+                            } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
                             else handleJoin();
                           }}
                         >
-                          {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
-                          {finishedEvent && t('event-finished')}
+                          {getWording()}
                         </Button>
                         {readyToJoinEvent && (
                           <Box display="flex" gap="10px" alignItems="center" height="40px" fontWeight="700" color="gray.dark" textTransform="uppercase" background="red.light" borderRadius="4px" padding="10px">
@@ -970,7 +1016,7 @@ function Workshop({ eventData, asset }) {
               <Box display={{ base: isAuth ? 'none' : 'block', md: 'block' }}>
                 <ShowOnSignUp
                   showVerifyEmail={false}
-                  hideForm={finishedEvent}
+                  hideForm={isAuth}
                   existsConsumables={existsConsumables}
                   hideSwitchUser={!isFreeForConsumables && (noConsumablesFound && !existsConsumables)}
                   isLive={readyToJoinEvent && !finishedEvent}
@@ -1021,7 +1067,7 @@ function Workshop({ eventData, asset }) {
                       className={readyToJoinEvent && !finishedEvent ? 'pulse-blue' : ''}
                       background={buttonEnabled ? hexColor.greenLight : 'gray.350'}
                       textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
-                      isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
+                      isDisabled={((finishedEvent && !recordingUrl) || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                       _disabled={{
                         background: buttonEnabled ? '' : 'gray.350',
                         cursor: buttonEnabled ? 'pointer' : 'not-allowed',
@@ -1035,12 +1081,13 @@ function Workshop({ eventData, asset }) {
                         cursor: buttonEnabled ? 'pointer' : 'not-allowed',
                       }}
                       onClick={() => {
-                        if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
+                        if (finishedEvent && recordingUrl) {
+                          window.open(recordingUrl, '_blank');
+                        } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
                         else handleJoin();
                       }}
                     >
-                      {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
-                      {finishedEvent && t('event-finished')}
+                      {getWording()}
                     </Button>
                   ) : (
                     <>

@@ -14,6 +14,7 @@ import { slugify } from '../../../../utils';
 import Text from '../../Text';
 import quoteImg from '../../../img/quote.png';
 import whiteQuoteImg from '../../../img/white-quote.png';
+import Image from '../../Image';
 
 export function generateId(children) {
   const text = children ? children
@@ -97,12 +98,13 @@ export function Code({ inline, showLineNumbers, showInlineLineNumbers, className
         padding: showLineNumbers ? '1em 0px' : '16px',
       }}
       language={match[1]}
+      codeTagProps={{ className: '' }}
       PreTag="div"
     >
       {String(children).replace(/\n$/, '')}
     </SyntaxHighlighter>
   ) : (
-    <code className={`${className ?? ''} highlight`}>
+    <code className="highlight">
       {children}
     </code>
   );
@@ -127,7 +129,7 @@ function QuoteVersion1({ ...props }) {
           mr="3"
           padding="9px"
         >
-          <img src={quoteImg.src} alt="quoteImg" />
+          <Image src={quoteImg.src} alt="quoteImg" />
         </Box>
         <Box className="quote-content">
           <Box className="quote-paragraph">
@@ -165,7 +167,7 @@ function QuoteVersion2({ ...props }) {
           alignItems="center"
         >
           <Box className="quote-img" width="3.5%" mr="5" mb="3">
-            <img src={quoteImg.src} alt="quoteImg" />
+            <Image src={quoteImg.src} alt="quoteImg" />
           </Box>
           <hr
             style={{
@@ -209,7 +211,7 @@ function QuoteVersion3({ ...props }) {
         width="100%"
       >
         <Box className="quote-img" width="3.5%" mr="5" mb="3">
-          <img src={quoteImg.src} alt="quoteImg" />
+          <Image src={quoteImg.src} alt="quoteImg" />
         </Box>
         <Box className="quote-content">
           <Box className="quote-paragraph-container">
@@ -265,7 +267,7 @@ function QuoteVersion4({ ...props }) {
           mr="5"
           mb="2"
         >
-          <img src={whiteQuoteImg.src} alt="quoteImg" />
+          <Image src={whiteQuoteImg.src} alt="quoteImg" />
         </Box>
         <Box className="quote-content">
           <Box className="quote-paragraph">
