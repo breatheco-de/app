@@ -21,7 +21,6 @@ import PublicProfile from '../../common/components/PublicProfile';
 import AvatarUser from '../../common/components/AvatarUser';
 import ModalInfo from '../../common/components/ModalInfo';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
-import useAuth from '../../common/hooks/useAuth';
 import Timer from '../../common/components/Timer';
 import Link from '../../common/components/NextChakraLink';
 import { categoriesFor, BREATHECODE_HOST } from '../../utils/variables';
@@ -31,7 +30,9 @@ import MktEventCards from '../../common/components/MktEventCards';
 import { validatePlanExistence } from '../../common/handlers/subscriptions';
 import ModalToGetAccess, { stageType } from '../../common/components/ModalToGetAccess';
 import SmallCardsCarousel from '../../common/components/SmallCardsCarousel';
+import { SessionContext } from '../../common/context/SessionContext';
 import LoaderScreen from '../../common/components/LoaderScreen';
+import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import DynamicContentCard from '../../common/components/DynamicContentCard';
 import { SessionContext } from '../../common/context/SessionContext';
 import useCustomToast from '../../common/hooks/useCustomToast';
@@ -75,7 +76,7 @@ export const getStaticPaths = async ({ locales }) => {
 
 export const getStaticProps = async ({ params, locale }) => {
   const { event_slug: slug } = params;
-  const resp = await bc.public().singleEvent(slug).catch(() => ({
+  const resp = await bc.public({ context: 'true' }).singleEvent(slug).catch(() => ({
     statusText: 'not-found',
   }));
   const data = resp?.data;
@@ -166,6 +167,7 @@ function Workshop({ eventData, asset }) {
   const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
   const [noConsumablesFound, setNoConsumablesFound] = useState(false);
   const [denyAccessToEvent, setDenyAccessToEvent] = useState(false);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   const router = useRouter();
   const { locale } = router;
@@ -174,6 +176,7 @@ function Workshop({ eventData, asset }) {
   const { isAuthenticated, user, cohorts } = useAuth();
   const { featuredColor, hexColor } = useStyle();
   const endDate = event?.ended_at || event?.ending_at;
+  const eventRecap = event?.recap;
 
   const getDefaultData = async () => {
     const resp = await bc.public().singleEvent(eventData?.slug || eventSlug).catch(() => ({
@@ -404,7 +407,7 @@ function Workshop({ eventData, asset }) {
       if (finishedEvent && recordingUrl) {
         return ({
           title: t('form.watch-workshop-recording-no-auth-title'),
-          description: t('form.watch-workshop-recording-no-auth-description'),
+          description: eventRecap || t('form.watch-workshop-recording-no-auth-description'),
           childrenDescription: (
             <Box>
               <Box mb="10px" display="flex" gridGap="5px" justifyContent="center">
@@ -430,6 +433,12 @@ function Workshop({ eventData, asset }) {
           ),
         });
       }
+    }
+    if (finishedEvent && recordingUrl) {
+      return ({
+        title: t('form.finished-with-recording-title'),
+        description: t('form.finished-with-recording-description'),
+      });
     }
     if (finishedEvent) {
       return ({
@@ -665,6 +674,52 @@ function Workshop({ eventData, asset }) {
 
       </SimpleModal>
 
+      {isVideoModalOpen && (
+        <Portal>
+          <Box
+            position="fixed"
+            top="0"
+            left="0"
+            width="100%"
+            height="100%"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            background="rgba(0, 0, 0, 0.7)"
+            zIndex="9999"
+            className="video-overlay"
+          >
+            <Box
+              className="video-container"
+              position="relative"
+              onClick={(e) => e.stopPropagation()}
+              background={featuredColor}
+              padding="25px 25px"
+              borderRadius="12px"
+            >
+              <IconButton
+                position="absolute"
+                top={4}
+                right={5}
+                borderColor="blue.default"
+                color="blue.default"
+                onClick={() => setIsVideoModalOpen(false)}
+                zIndex="1"
+                icon={<Icon icon="close" color={hexColor.black} width="25px" height="25px" />}
+              />
+              <ReactPlayerV2
+                url={event?.recording_url}
+                autoPlay
+                controls
+                width="100%"
+                height="auto"
+                aspectRatio="16/9"
+              />
+            </Box>
+          </Box>
+        </Portal>
+      )}
+
       <Head>
         <script
           type="application/ld+json"
@@ -783,11 +838,18 @@ function Workshop({ eventData, asset }) {
                 </Box>
               )}
               {formatedDate[locale] && (
+
                 <Box display="flex" gridGap="10px">
                   <Icon icon="calendar" width="20px" height="20px" color={hexColor.blueDefault} />
-                  <Text withTooltip size="14px" label={capitalizeFirstLetter(countryOfDate)} fontWeight={700} width="fit-content">
-                    {capitalizeFirstLetter(formatedDate[locale])}
-                  </Text>
+                  {finishedEvent ? (
+                    <Text size="14px" fontWeight={700}>
+                      {t('event-took-place', { date: capitalizeFirstLetter(formatedDate[locale]) })}
+                    </Text>
+                  ) : (
+                    <Text withTooltip size="14px" label={capitalizeFirstLetter(countryOfDate)} fontWeight={700} width="fit-content">
+                      {capitalizeFirstLetter(formatedDate[locale])}
+                    </Text>
+                  )}
                 </Box>
               )}
               {duration?.hours > 0 && (
@@ -938,7 +1000,7 @@ function Workshop({ eventData, asset }) {
                           }}
                           onClick={() => {
                             if (finishedEvent && recordingUrl) {
-                              window.open(recordingUrl, '_blank');
+                              setIsVideoModalOpen(true);
                             } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
                             else handleJoin();
                           }}
@@ -985,7 +1047,7 @@ function Workshop({ eventData, asset }) {
                         {formInfo?.title}
                       </Heading>
                       <Text>
-                        {formInfo?.description}
+                        {eventRecap || formInfo?.description}
                       </Text>
                     </Box>
                   </>
@@ -1032,7 +1094,22 @@ function Workshop({ eventData, asset }) {
                   }}
                   headContent={readyToJoinEvent ? (
                     <Box position="relative" zIndex={1} width="100%" height={177}>
-                      <Image src={randomImage} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" alt="head banner" />
+                      {recordingUrl ? (
+                        <ReactPlayerV2
+                          url={recordingUrl}
+                          withThumbnail
+                          withModal
+                          preview
+                          isPlayDisabled={!isAuthenticated}
+                          previewDuration={10}
+                          thumbnailStyle={{
+                            borderRadius: '17px 17px 0 0',
+                          }}
+                          margin="0 0 12px 0"
+                        />
+                      ) : (
+                        <Image src={randomImage} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" alt="head banner" />
+                      )}
                     </Box>
                   ) : (
                     <Timer
@@ -1081,7 +1158,7 @@ function Workshop({ eventData, asset }) {
                       }}
                       onClick={() => {
                         if (finishedEvent && recordingUrl) {
-                          window.open(recordingUrl, '_blank');
+                          setIsVideoModalOpen(true);
                         } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
                         else handleJoin();
                       }}
