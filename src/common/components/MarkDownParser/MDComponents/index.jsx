@@ -12,8 +12,6 @@ import OnlyFor from '../../OnlyFor';
 import tomorrow from '../syntaxHighlighter/tomorrow';
 import { slugify } from '../../../../utils';
 import Text from '../../Text';
-import quoteImg from '../../../img/quote.png';
-import whiteQuoteImg from '../../../img/white-quote.png';
 import Image from '../../Image';
 
 export function generateId(children) {
@@ -129,7 +127,7 @@ function QuoteVersion1({ ...props }) {
           mr="3"
           padding="9px"
         >
-          <Image src={quoteImg.src} alt="quoteImg" />
+          <Image src="/static/images/quote.png" alt="quoteImg" />
         </Box>
         <Box className="quote-content">
           <Box className="quote-paragraph">
@@ -167,7 +165,7 @@ function QuoteVersion2({ ...props }) {
           alignItems="center"
         >
           <Box className="quote-img" width="3.5%" mr="5" mb="3">
-            <Image src={quoteImg.src} alt="quoteImg" />
+            <Image src="/static/images/quote.png" alt="quoteImg" />
           </Box>
           <hr
             style={{
@@ -211,7 +209,7 @@ function QuoteVersion3({ ...props }) {
         width="100%"
       >
         <Box className="quote-img" width="3.5%" mr="5" mb="3">
-          <Image src={quoteImg.src} alt="quoteImg" />
+          <Image src="/static/images/quote.png" alt="quoteImg" />
         </Box>
         <Box className="quote-content">
           <Box className="quote-paragraph-container">
@@ -267,7 +265,7 @@ function QuoteVersion4({ ...props }) {
           mr="5"
           mb="2"
         >
-          <Image src={whiteQuoteImg.src} alt="quoteImg" />
+          <Image src="/static/images/white-quote.png" alt="quoteImg" />
         </Box>
         <Box className="quote-content">
           <Box className="quote-paragraph">

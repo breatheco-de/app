@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { Box } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import styles from '../../styles/Home.module.css';
-import { H1 } from '../common/styledComponents/Head';
+import Heading from '../common/components/Heading';
 import { BREATHECODE_HOST } from '../utils/variables';
 
 export const getStaticProps = () => ({
@@ -35,24 +34,28 @@ export default function Thmbnail() {
   const randomImgNumber = Math.floor(Math.random() * 10) + 1;
   const whiteColor = [1, 3, 5, 10];
 
-  const Div = styled.div`
-    background: url("/static/images/thumbnail/${randomImgNumber}.png");
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    color: ${whiteColor.includes(randomImgNumber) ? 'white' : 'black'};
-  `;
-
   if (!asset) return null;
 
   return (
-    <Div>
-      <H1 type="h1" className={styles.title}>
+    <Box
+      background={`url("/static/images/thumbnail/${randomImgNumber}.png")`}
+      backgroundRepeat="no-repeat"
+      backgroundSize="cover"
+      height="100vh"
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      color={whiteColor.includes(randomImgNumber) ? 'white' : 'black'}
+    >
+      <Heading
+        type="h1"
+        margin="0"
+        lineHeight="1.15"
+        fontSize="4rem"
+        textAlign="center"
+      >
         {asset.title}
-      </H1>
-    </Div>
+      </Heading>
+    </Box>
   );
 }

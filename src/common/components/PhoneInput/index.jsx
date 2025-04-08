@@ -6,16 +6,12 @@
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 import React, { useState, useRef } from 'react';
 import InputMask from 'react-input-mask';
-import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { Box, FormControl, FormErrorMessage } from '@chakra-ui/react';
 import { Field } from 'formik';
 import countriesList from './countriesList.json';
-// import { Colors } from '../../Styling';
 
 function PhoneInput({
-  defaultMask,
-  phoneFormValues,
   prefix,
   containerStyle,
   required,
@@ -332,8 +328,6 @@ function PhoneInput({
 }
 
 PhoneInput.propTypes = {
-  defaultMask: PropTypes.string,
-  phoneFormValues: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   prefix: PropTypes.string,
   containerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   formData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
@@ -358,8 +352,6 @@ PhoneInput.propTypes = {
   required: PropTypes.bool,
 };
 PhoneInput.defaultProps = {
-  defaultMask: '',
-  phoneFormValues: {},
   prefix: '+',
   containerStyle: {},
   formData: {},
