@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Slider, SliderFilledTrack, SliderThumb, SliderTrack, useMediaQuery, useToast } from '@chakra-ui/react';
+import { Avatar, Box, Button, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger, Slider, SliderFilledTrack, SliderThumb, SliderTrack, useMediaQuery } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import Head from 'next/head';
 import { useCallback, useEffect, useState } from 'react';
@@ -12,11 +12,12 @@ import { location } from '../../../utils';
 import getCroppedImg from '../../../utils/cropImage';
 import Icon from '../Icon';
 import useUploadFileInChunks from '../../hooks/useUploadFileInChunks';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function Information() {
   const { t } = useTranslation('profile');
   const { user, updateProfile } = useAuth();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'information-picture-submitting' });
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -37,11 +38,11 @@ function Information() {
 
     // Validar que el archivo sea de tipo imagen
     if (file && !fileTypes.includes(file.type)) {
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:file-type-error', { type: file.type.split('/')[1] }),
         status: 'warning',
-        duration: 3000,
+        duration: 5000,
       });
     }
     return setImages([...e.target.files]);
@@ -103,7 +104,7 @@ function Information() {
       } else {
         throw new Error('Error uploading profile picture');
       }
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:submitting-picture-success'),
         status: 'success',
@@ -112,7 +113,7 @@ function Information() {
     } catch (e) {
       console.error(e);
       setIsLoading(false);
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:error-submitting-picture'),
         status: 'error',

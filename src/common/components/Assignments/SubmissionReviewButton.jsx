@@ -1,5 +1,5 @@
 import {
-  Box, Button, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, useToast,
+  Box, Button, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
@@ -11,6 +11,7 @@ import Text from '../Text';
 import Link from '../NextChakraLink';
 import useStyle from '../../hooks/useStyle';
 import useCohortHandler from '../../hooks/useCohortHandler';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function SubmissionReviewButton({ task, githubUrl, haveGithubDomain }) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -21,7 +22,7 @@ function SubmissionReviewButton({ task, githubUrl, haveGithubDomain }) {
   const [fileData, setFileData] = useState([]);
   const { t } = useTranslation('assignments');
   const { backgroundColor, hexColor } = useStyle();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'current-task-no-files-error' });
 
   const isUrl = assetData?.delivery_formats.includes('url');
   const noDeliveryFormat = assetData?.delivery_formats.includes('no_delivery');
@@ -43,7 +44,7 @@ function SubmissionReviewButton({ task, githubUrl, haveGithubDomain }) {
             setFileData(respData);
             setIsPopoverOpen(true);
           } else {
-            toast({
+            createToast({
               position: 'top',
               title: t('alert-message:current-task-no-files'),
               status: 'error',

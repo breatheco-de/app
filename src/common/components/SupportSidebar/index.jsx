@@ -1,15 +1,13 @@
 import { useEffect, memo, useState } from 'react';
-import {
-  useToast,
-} from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import bc from '../../services/breathecode';
 import Mentoring from './Mentoring';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function SupportSidebar({ allCohorts, allSyllabus, services, subscriptions, subscriptionData }) {
   const { t } = useTranslation();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'mentorship-error' });
   const [programServices, setProgramServices] = useState({
     list: [],
     isFetching: true,
@@ -38,7 +36,7 @@ function SupportSidebar({ allCohorts, allSyllabus, services, subscriptions, subs
           });
         }
       }).catch(() => {
-        toast({
+        createToast({
           position: 'top',
           title: 'Error',
           description: t('alert-message:error-mentorship-service'),

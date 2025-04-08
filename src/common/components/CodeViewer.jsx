@@ -12,7 +12,6 @@ import {
   TabIndicator,
   Collapse,
   Tooltip,
-  useToast,
   CircularProgress,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
@@ -26,6 +25,7 @@ import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Icon from './Icon';
+import useCustomToast from '../hooks/useCustomToast';
 
 const notExecutables = ['css', 'shell', 'windows', 'macos', 'mac', 'linux'];
 
@@ -129,7 +129,7 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, compareMode, .
   const { hexColor } = useStyle();
   const { t } = useTranslation('code-viewer');
   const { isAuthenticated } = useAuth();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'code-viewer-error-string' });
   const [initialTouchY, setInitialTouchY] = useState(null);
   const [tabIndex, setTabIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
@@ -253,7 +253,7 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, compareMode, .
           currLanguage,
           ...languages.slice(tabIndex + 1),
         ]);
-        toast({
+        createToast({
           position: 'top',
           title: typeof e === 'string' ? e : t('error'),
           status: 'error',

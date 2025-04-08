@@ -555,6 +555,13 @@ body.chakra-ui-dark .anchorjs-link {
 .md-editor, .cm-theme, .md-editor-content-editor {
   height: 100% !important;
 }
+
+/* Esto elimina el max-width de las clases generadas por Chakra UI */
+.chakra-toast__inner {
+  width: 100vw;
+  max-width: 100vw !important;
+}
+
 /* body {
 	overflow: auto !important;
 }

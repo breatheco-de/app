@@ -2,7 +2,6 @@
 import {
   Box,
   Flex,
-  useToast,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import getT from 'next-translate/getT';
@@ -21,6 +20,7 @@ import ServiceSummary from '../../../common/components/Checkout/ServiceSummary';
 import SelectServicePlan from '../../../common/components/Checkout/SelectServicePlan';
 import { ORIGIN_HOST } from '../../../utils/variables';
 import { usePersistentBySession } from '../../../common/hooks/usePersistent';
+import useCustomToast from '../../../common/hooks/useCustomToast';
 
 export const getStaticPaths = async ({ locales }) => {
   const res = await bc.mentorship().getMentorshipServiceSets();
@@ -87,7 +87,7 @@ function ServiceSlug() {
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { user, isAuthenticated, isLoading } = useAuth();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'mentorship-error' });
   const mentorshipServiceSetSlug = mentorship_service_slug;
 
   const accessToken = getStorageItem('accessToken');
@@ -208,7 +208,7 @@ function ServiceSlug() {
               .then(async (resp) => {
                 const respData = await resp.json();
                 if (resp.status > 400) {
-                  toast({
+                  createToast({
                     title: respData.detail,
                     status: 'error',
                     duration: 6000,
