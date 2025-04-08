@@ -192,8 +192,11 @@ function Checkout() {
   };
 
   const handleCoupon = (coup, actions) => {
-    const alreadyAppliedCoupon = (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === discountCode) || (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === couponValue);
-    if (alreadyAppliedCoupon) {
+    const couponToApply = coup || discountCode;
+
+    const isCouponAlreadyApplied = allCoupons.some((existingCoupon) => existingCoupon?.slug === couponToApply);
+
+    if (isCouponAlreadyApplied) {
       createToast({
         position: 'top',
         title: t('signup:alert-message.coupon-already-applied'),
@@ -215,7 +218,7 @@ function Checkout() {
     }
 
     bc.payment({
-      coupons: [discountCode],
+      coupons: [couponToApply],
       plan: planFormated,
     }).verifyCoupon()
       .then((resp) => {
