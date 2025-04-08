@@ -36,7 +36,6 @@ import TeacherSidebar from '../../../../../common/components/TeacherSidebar';
 import CallToAction from '../../../../../common/components/CallToAction';
 import ProgressBar from '../../../../../common/components/ProgressBar';
 import Heading from '../../../../../common/components/Heading';
-import AlertMessage from '../../../../../common/components/AlertMessage';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import useAuth from '../../../../../common/hooks/useAuth';
 import useRigo from '../../../../../common/hooks/useRigo';
@@ -463,14 +462,14 @@ function Dashboard() {
 
   useEffect(() => {
     getTasksWithoutCohort({ setModalIsOpen });
-    getMandatoryProjects();
   }, [sortedAssignments]);
 
   const hasShownMandatoryToast = useRef(false);
   const hasShownFreeTrialToast = useRef(false);
   const hasShownDeletionToast = useRef(false);
 
-  const mandatoryProjectsCount = getMandatoryProjects().length;
+  const mandatoryProjects = getMandatoryProjects();
+  const mandatoryProjectsCount = mandatoryProjects.length;
   useEffect(() => {
     if (isSubscriptionFreeTrial && !hasShownFreeTrialToast.current) {
       hasShownFreeTrialToast.current = true;
@@ -577,8 +576,6 @@ function Dashboard() {
     return filtered.length !== 0;
   }) : sortedAssignments;
 
-  const mandatoryProjects = getMandatoryProjects();
-
   const cohortsOrder = cohortSession?.cohorts_order?.split(',');
 
   const sortMicroCohorts = (a, b) => {
@@ -590,77 +587,6 @@ function Dashboard() {
 
   return (
     <Container minHeight="93vh" display="flex" flexDirection="column" maxW="none" padding="0">
-      {deletionOrders.length > 0 && (
-        <AlertMessage
-          full
-          type="warning"
-          style={{ borderRadius: '0px', justifyContent: 'center' }}
-        >
-          <Text
-            size="l"
-            color="black"
-            fontWeight="700"
-          >
-            {t('repository-deletion.warning')}
-            {'  '}
-            <Button
-              variant="link"
-              color="black"
-              textDecoration="underline"
-              fontWeight="700"
-              fontSize="15px"
-              height="20px"
-              onClick={() => setShowDeletionOrdersModal(true)}
-              _active={{ color: 'black' }}
-            >
-              {t('repository-deletion.see-repositories')}
-            </Button>
-          </Text>
-        </AlertMessage>
-      )}
-      {cohortSession && !isAvailableAsSaas && mandatoryProjects && mandatoryProjects.length > 0 && (
-        <AlertMessage
-          full
-          type="warning"
-          style={{ borderRadius: '0px', justifyContent: 'center' }}
-        >
-          <Text
-            size="l"
-            color="black"
-            fontWeight="700"
-          >
-            {t('deliverProject.mandatory-message', { count: mandatoryProjects.length })}
-            {'  '}
-            <Button
-              variant="link"
-              color="black"
-              textDecoration="underline"
-              fontWeight="700"
-              fontSize="15px"
-              height="20px"
-              onClick={() => handleOpenReviewModal({ defaultStage: stages.pending_activities, fixedStage: true })}
-              _active={{ color: 'black' }}
-            >
-              {t('deliverProject.see-mandatory-projects')}
-            </Button>
-          </Text>
-        </AlertMessage>
-      )}
-      {subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists && (
-        <AlertMessage
-          full
-          type="warning"
-          style={{ borderRadius: '0px', justifyContent: 'center' }}
-        >
-          <Text
-            size="l"
-            color="black"
-            dangerouslySetInnerHTML={{
-              __html: t('free-trial-msg', { link: '/profile/subscriptions' }),
-            }}
-          />
-        </AlertMessage>
-      )}
       {isAvailableAsSaas && <CohortHeader />}
       <Container flex="1" background={isAvailableAsSaas && hexColor.lightColor4} maxW="none">
         <Box maxW="1280px" width="100%" margin="0 auto">

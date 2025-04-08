@@ -19,7 +19,6 @@ import RigoProvider from '../common/context/RigoContext';
 import AuthProvider from '../common/context/AuthContext';
 import SessionProvider from '../common/context/SessionContext';
 import ConnectionProvider from '../common/context/ConnectionContext';
-import AlertMessage from '../common/components/AlertMessage';
 import Footer from '../common/components/Footer';
 import Helmet from '../common/components/Helmet';
 import InterceptionLoader from '../common/components/InterceptionLoader';
@@ -95,15 +94,6 @@ function App({ Component, pageProps }) {
             <SessionProvider>
               <ConnectionProvider>
                 <Navbar pageProps={pageProps} translations={pageProps?.translations} />
-                {isEnvModified && (
-                  <AlertMessage
-                    full
-                    type="warning"
-                    message={`You not on the test environment, you are on "${BREATHECODE_HOST}"`}
-                    borderRadius="0px"
-                    justifyContent="center"
-                  />
-                )}
                 <InterceptionLoader />
 
                 <PrismicProvider internalLinkComponent={InternalLinkComponent}>

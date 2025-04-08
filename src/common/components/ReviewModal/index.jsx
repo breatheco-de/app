@@ -175,7 +175,6 @@ function ReviewModal({
       } else {
         createToast({
           title: t('alert-message:something-went-wrong'),
-          // description: `Cannot get code revisions: ${data?.detail}`,
           description: `Error: ${data?.Error}. ${data?.solution || ''}`,
           status: 'error',
           duration: 5000,
@@ -382,17 +381,6 @@ function ReviewModal({
       </Flex>
     );
   };
-
-  useEffect(() => {
-    if (isOpen && true && !false) {
-      createToast({
-        position: 'top',
-        title: isStudent ? t('code-review.info-student') : t('code-review.info-teacher'),
-        status: isStudent ? 'info' : 'warning',
-        duration: 5000,
-      });
-    }
-  }, [isOpen]);
 
   return (
     <SimpleModal
