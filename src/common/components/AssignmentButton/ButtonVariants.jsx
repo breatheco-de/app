@@ -14,7 +14,7 @@ const getProjectStatusConfig = (currentTask, isGuidedExperience, hasPendingSubta
       PENDING: {
         icon: {
           icon: isGuidedExperience ? 'send-2' : 'longArrowRight',
-          color: 'white',
+          color: hexColor.blueDefault,
           width: '20px',
         },
         text: hasPendingSubtasks
@@ -135,7 +135,7 @@ const ButtonVariants = forwardRef(({
   buttonChildren,
   ...rest
 }, ref) => {
-  const { hexColor } = useStyle();
+  const { backgroundColor } = useStyle();
 
   const textAndIcon = textByTaskStatus(currentTask, withTooltip, hasPendingSubtasks);
 
@@ -147,7 +147,7 @@ const ButtonVariants = forwardRef(({
           ref={ref}
           width="40px"
           height="40px"
-          background={hexColor.blueDefault}
+          background={backgroundColor}
           padding="20px"
           borderRadius="full"
           variant="default"
