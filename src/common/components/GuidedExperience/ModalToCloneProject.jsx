@@ -169,7 +169,7 @@ function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID,
             </Button>
           )}
           <Accordion index={expanded} onChange={(val) => setExpanded(val)} allowToggle display="flex" flexDirection="column" gap="10px">
-            {steps.map((step, i) => (
+            {steps && steps.map((step, i) => (
               <AccordionItem display="flex" flexDirection="column" key={step.title} border="1px solid" borderColor={expanded === i ? 'blue.default' : borderColor} borderRadius="8px">
                 <Heading position="relative" as="h3">
                   <Checkbox top="10px" left="16px" position="absolute" />
@@ -182,7 +182,7 @@ function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID,
                     <AccordionIcon />
                   </AccordionButton>
                 </Heading>
-                <AccordionPanel className="markdown-body">
+                <AccordionPanel>
                   <MarkDownParser
                     content={step.description}
                     showLineNumbers={false}
@@ -240,7 +240,7 @@ function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID,
   );
 }
 
-function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendors, publicView, userID, repoPath }) {
+function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendors, publicView, userID }) {
   const { t, lang } = useTranslation('syllabus');
   const { state } = useCohortHandler();
   const { cohortSession } = state;
@@ -249,7 +249,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const [selectedOs, setSelectedOs] = useState(null);
   const [selectedOption, setSelectedOption] = useState(null);
   const [availableOptions, setAvailableOptions] = useState([]);
-  const [expanded, setExpanded] = useState(0);
+  const [expanded, setExpanded] = useState(null);
 
   //__In case of public view (interactive ex and rest...) manage open provisioning vendors with this:
   const assetUrl = currentAsset?.readme_url || currentAsset?.url;
@@ -259,18 +259,15 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const isInteractive = currentAsset?.interactive;
 
   const isForOpenLocaly = isInteractive || templateUrl;
-  const showProvisioningLinks = ((provisioningVendors?.length > 0) && currentAsset?.gitpod) || repoPath;
+  const showProvisioningLinks = ((provisioningVendors?.length > 0) && currentAsset?.gitpod);
   const onlyReadme = !isForOpenLocaly && !showProvisioningLinks;
 
   //__info used in steps on open locally options__
   const assetDependencies = currentAsset?.dependencies;
-  const urlToClone = currentAsset?.url || currentAsset?.readme_url.split('/blob')?.[0] || repoPath;
+  const urlToClone = currentAsset?.url || currentAsset?.readme_url.split('/blob')?.[0];
   const repoName = urlToClone.split('/').pop();
 
   function getFinalUrl() {
-    if (repoPath) {
-      return repoPath;
-    }
     if (isInteractive) {
       return urlToClone;
     }
@@ -316,7 +313,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
 
   //__based on selected option and data previously obtained, get the steps__
   const parseSteps = () => {
-    if (showProvisioningLinks && selectedOption === 'provisioning_vendors') return openInLearnpackAction.steps;
+    if (showProvisioningLinks && selectedOption === 'provisioning_vendors' && !isInteractive) return openInLearnpackAction.steps;
     if (isInteractive) return selectedOs?.steps.concat([finalStep]);
     if (onlyReadme) return selectedOs?.readme_steps;
     return selectedOs?.steps.filter((step) => step.slug === 'download-ide' || step.slug === 'clone' || step.slug === 'create-folders').concat([...dependenciesStepsWithVersions, projectReadme]);
@@ -326,7 +323,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
 
   const resetOsSelector = () => {
     setSelectedOs(null);
-    setExpanded(0);
+    setExpanded(null);
   };
 
   const resetOptionSelector = () => {
@@ -346,11 +343,25 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
 
     if (options.length === 1) {
       setSelectedOption(options[0].key);
-      return;
+    } else {
+      setSelectedOption(null);
+    }
+  }, [isForOpenLocaly, showProvisioningLinks, onlyReadme, lang, t]);
+
+  useEffect(() => {
+    let timer;
+    const shouldShowAccordion = selectedOs || (selectedOption === 'provisioning_vendors' && !isInteractive);
+
+    if (isOpen && shouldShowAccordion) {
+      timer = setTimeout(() => {
+        setExpanded(0);
+      }, 100);
+    } else {
+      setExpanded(null);
     }
 
-    setSelectedOption(null);
-  }, [isForOpenLocaly, showProvisioningLinks, onlyReadme, lang]);
+    return () => clearTimeout(timer);
+  }, [isOpen, selectedOption, selectedOs, isInteractive]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={(selectedOption === 'provisioning_vendors' && isInteractive) || !selectedOption ? 'lg' : '5xl'}>
@@ -465,7 +476,6 @@ ModalToCloneProject.propTypes = {
   provisioningVendors: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   publicView: PropTypes.bool,
   userID: PropTypes.number,
-  repoPath: PropTypes.string,
 };
 
 ModalToCloneProject.defaultProps = {
@@ -475,7 +485,6 @@ ModalToCloneProject.defaultProps = {
   provisioningVendors: [],
   publicView: false,
   userID: undefined,
-  repoPath: undefined,
 };
 
 ModalContentDisplay.propTypes = {

@@ -706,5 +706,9 @@
     ]
   },
   "hrs-average": "{{number}}hrs promedio",
-  "service-blocked": "Fuiste bloqueado de acceder a este servicio. Envía un correo a support@4geeks.com o habla con tu profesor para obtener acceso."
+  "service-blocked": "Fuiste bloqueado de acceder a este servicio. Envía un correo a support@4geeks.com o habla con tu profesor para obtener acceso.",
+  "start-placeholder": "Ingresa el slug del proyecto (e.g., node-api-tutorial)",
+  "search": "Buscar",
+  "start-working-project": "Empieza a trabajar en tu proyecto",
+  "status": "Estado"
 }

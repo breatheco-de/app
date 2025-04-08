@@ -1,29 +1,30 @@
 import {
-  Box, Input, Button, Container, Text, InputGroup, InputRightElement,
-  Link as ChakraLink, useColorModeValue, Skeleton, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton,
+  Box, Input, Button, Container, Text, InputGroup, InputRightElement, useColorModeValue, Skeleton,
 } from '@chakra-ui/react';
 import { useState, useEffect, lazy, Suspense, useCallback } from 'react';
 import { useRouter } from 'next/router';
-import Head from 'next/head';
+import useTranslation from 'next-translate/useTranslation';
 import Icon from '../../common/components/Icon';
 import useStyle from '../../common/hooks/useStyle';
 import bc from '../../common/services/breathecode';
 import useAuth from '../../common/hooks/useAuth';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
-const ModalToCloneProject = lazy(() => import('../../js_modules/syllabus/ModalToCloneProject'));
+const ModalToCloneProject = lazy(() => import('../../common/components/GuidedExperience/ModalToCloneProject'));
 
 export default function StartPage() {
+  const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState('');
   const [assetData, setAssetData] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [provisioningVendors, setProvisioningVendors] = useState([]);
-  const [error, setError] = useState(null);
 
   const router = useRouter();
-  const { asset, repo } = router.query;
+  const { asset } = router.query;
   const { hexColor } = useStyle();
   const { user, isAuthenticated, cohorts } = useAuth();
+  const { createToast } = useCustomToast({ toastId: 'start-page-toast' });
 
   const fetchVendorsForUser = useCallback(async () => {
     if (!isAuthenticated || !cohorts || cohorts.length === 0) {
@@ -36,13 +37,15 @@ export default function StartPage() {
       if (found || foundVendors.length > 0) return;
       if (cohort.academy?.id) {
         try {
-          const { data } = await bc.provisioning().vendors({ academy: cohort.academy.id });
+          const academyId = cohort.academy.id;
+          const { data } = await bc.provisioning().academyVendors(academyId);
+          console.log('data', data);
           if (data && data.length > 0) {
             foundVendors = data;
             found = true;
           }
         } catch (e) {
-          console.error(`Error fetching vendors for academy ${cohort.academy.id}:`, e);
+          console.error('Error fetching asset data:', e);
         }
       }
     }, Promise.resolve());
@@ -51,15 +54,14 @@ export default function StartPage() {
 
   const fetchAssetAndVendors = useCallback(async (assetSlug) => {
     setIsLoading(true);
-    setError(null);
     setAssetData(null);
     setProvisioningVendors([]);
     setShowModal(false);
     try {
       const assetResp = await bc.lesson().getAsset(assetSlug);
       const fetchedAsset = assetResp?.data;
-      if (!fetchedAsset) {
-        throw new Error(`Asset '${assetSlug}' not found.`);
+      if (fetchedAsset?.status_code >= 400 || !fetchedAsset) {
+        throw new Error(`Project slug '${assetSlug}' not found or is invalid.`);
       }
       setAssetData(fetchedAsset);
       const vendors = await fetchVendorsForUser();
@@ -67,7 +69,11 @@ export default function StartPage() {
       setShowModal(true);
     } catch (err) {
       console.error('Error fetching asset data:', err);
-      setError(err.message || 'Failed to load asset data.');
+      createToast({
+        status: 'error',
+        title: 'Error Loading Project',
+        description: err.message || 'Failed to load project data.',
+      });
     } finally {
       setIsLoading(false);
     }
@@ -75,37 +81,29 @@ export default function StartPage() {
 
   useEffect(() => {
     setIsLoading(false);
-    setError(null);
     setShowModal(false);
     setAssetData(null);
     setProvisioningVendors([]);
 
     if (asset) {
-      setSearchInput(asset);
-      fetchAssetAndVendors(asset);
-    } else if (repo) {
-      setSearchInput(repo);
-      setShowModal(true);
+      const assetSlug = Array.isArray(asset) ? asset[0] : asset;
+      setSearchInput(assetSlug);
+      fetchAssetAndVendors(assetSlug);
     } else {
       setSearchInput('');
     }
-  }, [asset, repo, fetchAssetAndVendors]);
+  }, [asset, fetchAssetAndVendors]);
 
   const handleSearch = (e) => {
     e.preventDefault();
     const input = searchInput.trim();
     if (!input) return;
 
-    setError(null);
     setIsLoading(false);
     setShowModal(false);
     setAssetData(null);
 
-    if (input.includes('github.com') || (input.includes('/') && input.split('/').length === 2)) {
-      router.push(`/start?repo=${encodeURIComponent(input)}`);
-    } else {
-      router.push(`/start?asset=${encodeURIComponent(input)}`);
-    }
+    router.push(`/start?asset=${encodeURIComponent(input)}`);
   };
 
   const handleCloseModal = () => {
@@ -115,14 +113,10 @@ export default function StartPage() {
 
   const headingColor = useColorModeValue('black', 'white');
 
-  const shouldRenderModal = showModal && !isLoading && !error && (assetData || repo);
+  const shouldRenderModal = showModal && !isLoading && assetData;
 
   return (
     <Box minHeight="100vh" display="flex" flexDirection="column">
-      <Head>
-        <title>Start Coding Project | 4Geeks</title>
-      </Head>
-
       <Container maxW="container.md" py={10} flex="1" display="flex" flexDirection="column" alignItems="center">
 
         <Box width="100%" display="flex" flexDirection="column" alignItems="center" mb={8}>
@@ -140,7 +134,7 @@ export default function StartPage() {
           <Box as="form" onSubmit={handleSearch} width="100%" maxW="600px">
             <InputGroup size="lg">
               <Input
-                placeholder="Enter asset slug or repository URL/path"
+                placeholder={t('common:start-placeholder')}
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 borderColor={hexColor.borderColor}
@@ -160,7 +154,7 @@ export default function StartPage() {
                   mr={1}
                   isLoading={isLoading}
                 >
-                  Search
+                  {t('common:search')}
                 </Button>
               </InputRightElement>
             </InputGroup>
@@ -175,36 +169,10 @@ export default function StartPage() {
           </Box>
         )}
 
-        {error && !isLoading && (
-          <Alert
-            status="error"
-            variant="subtle"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            textAlign="center"
-            height="200px"
-            mt={4}
-            borderRadius="md"
-            width="100%"
-            maxW="600px"
-          >
-            <AlertIcon boxSize="40px" mr={0} />
-            <AlertTitle mt={4} mb={1} fontSize="lg">
-              Error
-            </AlertTitle>
-            <AlertDescription maxWidth="sm">
-              {error}
-            </AlertDescription>
-            <CloseButton alignSelf="flex-start" position="relative" right={-1} top={-1} onClick={() => { setError(null); router.push('/start', undefined, { shallow: true }); }} />
-          </Alert>
-        )}
-
         {shouldRenderModal && (
-          <Suspense fallback={<Box mt={4}>Loading Modal...</Box>}>
+          <Suspense fallback={<Skeleton height="400px" width="100%" mt={4} borderRadius="md" />}>
             <ModalToCloneProject
-              {...(asset ? { currentAsset: assetData } : {})}
-              {...(repo ? { repoPath: repo } : {})}
+              currentAsset={assetData}
               isOpen={showModal}
               onClose={handleCloseModal}
               provisioningVendors={assetData ? provisioningVendors : []}
@@ -215,21 +183,6 @@ export default function StartPage() {
         )}
 
       </Container>
-
-      <Box as="footer" width="100%" py={4} textAlign="center" borderTopWidth="1px" borderColor={hexColor.borderColor}>
-        <Text fontSize="sm" color={hexColor.fontColor3}>
-          Have a question?
-          {' '}
-          <ChakraLink href="mailto:info@4geeks.com" color={hexColor.blueDefault}>
-            info@4geeks.com
-          </ChakraLink>
-        </Text>
-        <Text fontSize="xs" color={hexColor.fontColor3} mt={1}>
-          All rights reserved 4Geeks LLC
-          {' '}
-          {new Date().getFullYear()}
-        </Text>
-      </Box>
     </Box>
   );
 }
