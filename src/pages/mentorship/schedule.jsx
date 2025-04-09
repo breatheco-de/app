@@ -8,7 +8,7 @@ import useSubscriptionsHandler from '../../common/store/actions/subscriptionActi
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Link from '../../common/components/NextChakraLink';
-import bc from '../../common/services/breathecode';
+import bc from '../../services/breathecode';
 import MentoringConsumables from '../../common/components/SupportSidebar/MentoringConsumables';
 
 function MentorshipSchedule() {
