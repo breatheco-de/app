@@ -1,5 +1,5 @@
 import {
-  Box, Button, Grid, useColorModeValue, Image, Avatar, Skeleton, Flex,
+  Box, Button, Grid, useColorModeValue, Image, Avatar, Skeleton, Flex, Portal, IconButton,
 } from '@chakra-ui/react';
 import { useEffect, useState, useContext } from 'react';
 import { intervalToDuration, format } from 'date-fns';
@@ -34,7 +34,7 @@ import { SessionContext } from '../../common/context/SessionContext';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import DynamicContentCard from '../../common/components/DynamicContentCard';
-import { SessionContext } from '../../common/context/SessionContext';
+import useAuth from '../../common/hooks/useAuth';
 import useCustomToast from '../../common/hooks/useCustomToast';
 
 const arrayOfImages = [
