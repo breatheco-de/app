@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import FieldForm from '../Forms/FieldForm';
-import useSignup from '../../store/actions/signupAction';
+import useSignup from '../../../store/actions/signupAction';
 import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../hooks/useStyle';
 import ModalCardError from './ModalCardError';

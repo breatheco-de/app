@@ -1,6 +1,6 @@
 import { Button, Heading, Stack } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import useCounter from '../store/actions/counterAction';
+import useCounter from '../../store/actions/counterAction';
 
 function Counter() {
   const { t } = useTranslation(['counter']);

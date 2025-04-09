@@ -11,7 +11,7 @@ import Heading from '../Heading';
 import AddMember from './AddMember';
 import useStyle from '../../hooks/useStyle';
 import { isNumber } from '../../../utils';
-import useFinalProjectProps from '../../store/actions/finalProjectAction';
+import useFinalProjectProps from '../../../store/actions/finalProjectAction';
 import Icon from '../Icon';
 import useCustomToast from '../../hooks/useCustomToast';
 

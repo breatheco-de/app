@@ -8,7 +8,7 @@ import Heading from '../Heading';
 import Icon from '../Icon';
 import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
-import useSignup from '../../store/actions/signupAction';
+import useSignup from '../../../store/actions/signupAction';
 import bc from '../../../services/breathecode';
 import { reportDatalayer } from '../../../utils/requests';
 import { getQueryString, getStorageItem, toCapitalize, unSlugify, getBrowserInfo } from '../../../utils';

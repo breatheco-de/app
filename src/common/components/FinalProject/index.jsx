@@ -13,7 +13,7 @@ import FinalProjectModal from './Modal';
 import bc from '../../../services/breathecode';
 import FinalProjectForm from './Form';
 import useStyle from '../../hooks/useStyle';
-import useFinalProjectProps from '../../store/actions/finalProjectAction';
+import useFinalProjectProps from '../../../store/actions/finalProjectAction';
 
 function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {
   const { t } = useTranslation('final-project');

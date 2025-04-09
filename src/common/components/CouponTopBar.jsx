@@ -3,7 +3,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Text from './Text';
 import Timer from './Timer';
 import useStyle from '../hooks/useStyle';
-import useSignup from '../store/actions/signupAction';
+import useSignup from '../../store/actions/signupAction';
 import NextChakraLink from './NextChakraLink';
 
 function CouponTopBar({ ...rest }) {

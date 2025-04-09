@@ -17,7 +17,7 @@ import { AvatarSkeleton } from './Skeleton';
 import useOnline from '../hooks/useOnline';
 import useStyle from '../hooks/useStyle';
 import useCohortHandler from '../hooks/useCohortHandler';
-import useProgramList from '../store/actions/programListAction';
+import useProgramList from '../../store/actions/programListAction';
 import { isWindow } from '../../utils';
 import useCustomToast from '../hooks/useCustomToast';
 

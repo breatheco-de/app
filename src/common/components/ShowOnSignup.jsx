@@ -11,7 +11,7 @@ import { setStorageItem } from '../../utils';
 import { BREATHECODE_HOST } from '../../utils/variables';
 import ModalInfo from './ModalInfo';
 import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
-import useSignup from '../store/actions/signupAction';
+import useSignup from '../../store/actions/signupAction';
 
 function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, footerContent, submitText, padding, isLive,

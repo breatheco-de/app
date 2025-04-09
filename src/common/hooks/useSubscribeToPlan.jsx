@@ -3,7 +3,7 @@ import { Box, ListItem, UnorderedList, Button, Image } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import SimpleModal from '../components/SimpleModal';
-import useSignup from '../store/actions/signupAction';
+import useSignup from '../../store/actions/signupAction';
 import axiosInstance from '../../axios';
 import useStyle from './useStyle';
 import Heading from '../components/Heading';
