@@ -12,7 +12,7 @@ import { PrismicProvider } from '@prismicio/react';
 import { PrismicPreview } from '@prismicio/next';
 import { useRouter } from 'next/router';
 import { repositoryName } from '../../prismicio';
-import wrapper from '../store';
+import wrapper from '../common/store';
 import theme from '../../styles/theme';
 import Navbar from '../common/components/Navbar';
 import RigoProvider from '../common/context/RigoContext';

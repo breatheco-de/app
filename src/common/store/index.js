@@ -1,15 +1,15 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { HYDRATE, createWrapper } from 'next-redux-wrapper';
-import counterReducer from './common/store/reducers/counterReducer';
-import todosReducer from './common/store/reducers/todoReducer';
-import moduleMapReducer from './common/store/reducers/moduleMapReducer';
-import filterReducer from './common/store/reducers/filterReducer';
-import assignmentsReducer from './common/store/reducers/assignmentsReducer';
-import programListReducer from './common/store/reducers/programListReducer';
-import signupReducer from './common/store/reducers/signupReducer';
-import finalProjectReducer from './common/store/reducers/finalProjectReducer';
-import subscriptionsReducer from './common/store/reducers/subscriptionsReducer';
-import cohortReducer from './common/store/reducers/cohortReducer';
+import counterReducer from './reducers/counterReducer';
+import todosReducer from './reducers/todoReducer';
+import moduleMapReducer from './reducers/moduleMapReducer';
+import filterReducer from './reducers/filterReducer';
+import assignmentsReducer from './reducers/assignmentsReducer';
+import programListReducer from './reducers/programListReducer';
+import signupReducer from './reducers/signupReducer';
+import finalProjectReducer from './reducers/finalProjectReducer';
+import subscriptionsReducer from './reducers/subscriptionsReducer';
+import cohortReducer from './reducers/cohortReducer';
 
 const combinedReducer = combineReducers({
   counterReducer,

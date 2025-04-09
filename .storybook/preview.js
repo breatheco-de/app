@@ -4,7 +4,7 @@ import {ChakraProvider} from '@chakra-ui/react';
 import { Provider } from 'react-redux';
 import I18nProvider from 'next-translate/I18nProvider'
 import { useGlobals } from '@storybook/client-api';
-import { initStore } from '../src/store';
+import { initStore } from '../src/common/store';
 import CustomTheme from '../styles/theme';
 import '../styles/globals.css';
 import '../styles/markdown.css';
