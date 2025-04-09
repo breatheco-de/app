@@ -108,7 +108,7 @@ const StartPage: FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [fetchVendorsForUser, createToast]);
+  }, [fetchVendorsForUser]);
 
   useEffect(() => {
     setIsLoading(false);
