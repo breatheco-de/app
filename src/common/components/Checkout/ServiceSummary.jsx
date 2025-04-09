@@ -17,9 +17,8 @@ import useAuth from '../../hooks/useAuth';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useCustomToast from '../../hooks/useCustomToast';
 import CardForm from './CardForm';
-import { SILENT_CODE } from '../../../lib/types';
 import { reportDatalayer } from '../../../utils/requests';
-import { BREATHECODE_HOST } from '../../../utils/variables';
+import { BREATHECODE_HOST, SILENT_CODE } from '../../../utils/variables';
 import { formatPrice, getStorageItem, getBrowserInfo } from '../../../utils';
 
 function ServiceSummary({ service }) {

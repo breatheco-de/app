@@ -13,7 +13,7 @@ import bc from '../../services/breathecode';
 import { reportDatalayer } from '../../../utils/requests';
 import { getQueryString, getStorageItem, toCapitalize, unSlugify, getBrowserInfo } from '../../../utils';
 import { getAllMySubscriptions } from '../../handlers/subscriptions';
-import { SILENT_CODE } from '../../../lib/types';
+import { SILENT_CODE } from '../../../utils/variables';
 import axiosInstance from '../../../axios';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import { getCohort } from '../../handlers/cohorts';

@@ -17,7 +17,7 @@ import { getQueryString, getStorageItem, getBrowserInfo } from '../../../utils';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import { getCohort } from '../../handlers/cohorts';
 import { getAllMySubscriptions } from '../../handlers/subscriptions';
-import { SILENT_CODE } from '../../../lib/types';
+import { SILENT_CODE } from '../../../utils/variables';
 import CardForm from './CardForm';
 import Icon from '../Icon';
 import Text from '../Text';

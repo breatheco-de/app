@@ -21,11 +21,10 @@ import { getStorageItem, setStorageItem } from '../../../utils';
 import NextChakraLink from '../NextChakraLink';
 import ModalInfo from '../ModalInfo';
 import Text from '../Text';
-import { SILENT_CODE } from '../../../lib/types';
 import bc from '../../services/breathecode';
 import useSession from '../../hooks/useSession';
 import useSubscribeToPlan from '../../hooks/useSubscribeToPlan';
-import { BASE_PLAN, BREATHECODE_HOST } from '../../../utils/variables';
+import { BASE_PLAN, BREATHECODE_HOST, SILENT_CODE } from '../../../utils/variables';
 import useCustomToast from '../../hooks/useCustomToast';
 
 function Register({ setIsLoggedFromRegister }) {
