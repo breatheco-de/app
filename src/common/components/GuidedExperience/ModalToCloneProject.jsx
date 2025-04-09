@@ -182,7 +182,7 @@ function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID,
                     <AccordionIcon />
                   </AccordionButton>
                 </Heading>
-                <AccordionPanel>
+                <AccordionPanel className="markdown-body">
                   <MarkDownParser
                     content={step.description}
                     showLineNumbers={false}
