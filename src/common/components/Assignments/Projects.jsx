@@ -5,18 +5,18 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import Link from '../components/NextChakraLink';
-import useStyle from '../hooks/useStyle';
-import Icon from '../components/Icon';
-import Text from '../components/Text';
-import TaskLabel from '../components/taskLabel';
-import { isGithubUrl } from '../../utils/regex';
-import ButtonHandler from '../components/Assignments/index';
-import useAssignments from '../store/actions/assignmentsAction';
-import SubmissionReviewButton from '../components/Assignments/SubmissionReviewButton';
-import LoaderScreen from '../components/LoaderScreen';
-import InfiniteScroll from '../components/InfiniteScroll';
-import { ORIGIN_HOST } from '../../utils/variables';
+import Link from '../NextChakraLink';
+import useStyle from '../../hooks/useStyle';
+import Icon from '../Icon';
+import Text from '../Text';
+import TaskLabel from '../taskLabel';
+import { isGithubUrl } from '../../../utils/regex';
+import ButtonHandler from './index';
+import useAssignments from '../../store/actions/assignmentsAction';
+import SubmissionReviewButton from './SubmissionReviewButton';
+import LoaderScreen from '../LoaderScreen';
+import InfiniteScroll from '../InfiniteScroll';
+import { ORIGIN_HOST } from '../../../utils/variables';
 
 const ProjectsRows = forwardRef(({
   updpateAssignment,

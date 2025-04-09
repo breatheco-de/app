@@ -8,16 +8,16 @@ import {
   Flex,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import bc from '../services/breathecode';
-import DottedTimeline from '../components/DottedTimeline';
-import NextChakraLink from '../components/NextChakraLink';
-import useStyle from '../hooks/useStyle';
-import useFormatTimeString from '../hooks/useFormatTimeString';
-import { ReviewModal, NoInfoModal, DeliverModal } from '../components/Assignments/index';
-import LoaderScreen from '../components/LoaderScreen';
-import InfiniteScroll from '../components/InfiniteScroll';
-import { ORIGIN_HOST } from '../../utils/variables';
-import useCustomToast from '../hooks/useCustomToast';
+import bc from '../../services/breathecode';
+import DottedTimeline from '../DottedTimeline';
+import NextChakraLink from '../NextChakraLink';
+import useStyle from '../../hooks/useStyle';
+import useFormatTimeString from '../../hooks/useFormatTimeString';
+import { ReviewModal, NoInfoModal, DeliverModal } from './index';
+import LoaderScreen from '../LoaderScreen';
+import InfiniteScroll from '../InfiniteScroll';
+import { ORIGIN_HOST } from '../../../utils/variables';
+import useCustomToast from '../../hooks/useCustomToast';
 
 const StudentsRows = forwardRef(({ currentStudentList, syllabusData, selectedCohort, setCurrentTask, setDeliveryUrl }, ref) => {
   const { t } = useTranslation('assignments');

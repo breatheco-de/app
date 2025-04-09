@@ -19,14 +19,14 @@ import {
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
-import bc from '../services/breathecode';
-import NextChakraLink from '../components/NextChakraLink';
-import useStyle from '../hooks/useStyle';
-import ReactSelect from '../components/ReactSelect';
-import LoaderScreen from '../components/LoaderScreen';
-import Heading from '../components/Heading';
-import Text from '../components/Text';
-import Icon from '../components/Icon';
+import bc from '../../services/breathecode';
+import NextChakraLink from '../NextChakraLink';
+import useStyle from '../../hooks/useStyle';
+import ReactSelect from '../ReactSelect';
+import LoaderScreen from '../LoaderScreen';
+import Heading from '../Heading';
+import Text from '../Text';
+import Icon from '../Icon';
 
 function ProjectCard({ project, updpateProject }) {
   const [isExpanded, setIsExpanded] = useState(false);

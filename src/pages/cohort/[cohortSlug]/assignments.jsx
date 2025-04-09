@@ -33,9 +33,9 @@ import useStyle from '../../../common/hooks/useStyle';
 import useAuth from '../../../common/hooks/useAuth';
 import useCohortHandler from '../../../common/hooks/useCohortHandler';
 import useAssignments from '../../../common/store/actions/assignmentsAction';
-import Projects from '../../../common/views/Projects';
-import FinalProjects from '../../../common/views/FinalProjects';
-import StudentAssignments from '../../../common/views/StudentAssignments';
+import Projects from '../../../common/components/Assignments/Projects';
+import FinalProjects from '../../../common/components/Assignments/FinalProjects';
+import StudentAssignments from '../../../common/components/Assignments/StudentAssignments';
 import axiosInstance from '../../../axios';
 import useCustomToast from '../../../common/hooks/useCustomToast';
 
