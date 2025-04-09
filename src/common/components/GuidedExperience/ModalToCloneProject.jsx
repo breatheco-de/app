@@ -288,6 +288,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const openInLearnpackAction = t('common:learnpack.open-in-learnpack-button', { repoUrl: getFinalUrl() ? `<a href='${getFinalUrl()}'>${t('common:repository-information')}</a>` : t('common:repository-information') }, { returnObjects: true });
 
   const finalStep = currentAsset?.agent === 'vscode' ? agentVsCode : agentOS;
+  console.log(currentAsset);
 
   const formatDependencies = (input) => {
     if (!input) return [];
@@ -343,10 +344,10 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
 
     if (options.length === 1) {
       setSelectedOption(options[0].key);
-    } else {
-      setSelectedOption(null);
+      return;
     }
-  }, [isForOpenLocaly, showProvisioningLinks, onlyReadme, lang, t]);
+    setSelectedOption(null);
+  }, [isForOpenLocaly, showProvisioningLinks, onlyReadme, lang]);
 
   useEffect(() => {
     let timer;

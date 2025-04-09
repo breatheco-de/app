@@ -1,7 +1,7 @@
 import {
   Box, Input, Button, Container, Text, InputGroup, InputRightElement, useColorModeValue, Skeleton,
 } from '@chakra-ui/react';
-import React, { useState, useEffect, lazy, Suspense, useCallback, FC, ChangeEvent, FormEvent } from 'react';
+import React, { useState, useEffect, lazy, Suspense, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Icon from '../../common/components/Icon';
@@ -10,67 +10,40 @@ import bc from '../../common/services/breathecode';
 import useAuth from '../../common/hooks/useAuth';
 import useCustomToast from '../../common/hooks/useCustomToast';
 
-interface Asset {
-  status_code?: number;
-  [key: string]: any;
-}
-
-interface Vendor {
-  name?: string;
-  [key: string]: any;
-}
-
-interface ProvisioningVendor {
-  vendor?: Vendor;
-  [key: string]: any;
-}
-
-interface Cohort {
-  academy?: { id?: number };
-  [key: string]: any;
-}
-
-interface User {
-  id?: number;
-  [key: string]: any;
-}
-
 const ModalToCloneProject = lazy(() => import('../../common/components/GuidedExperience/ModalToCloneProject'));
 
-const StartPage: FC = () => {
+export default function StartPage() {
   const { t } = useTranslation();
-  const [searchInput, setSearchInput] = useState<string>('');
-  const [assetData, setAssetData] = useState<Asset | null>(null);
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [provisioningVendors, setProvisioningVendors] = useState<ProvisioningVendor[]>([]);
+  const [searchInput, setSearchInput] = useState('');
+  const [assetData, setAssetData] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [provisioningVendors, setProvisioningVendors] = useState([]);
 
   const router = useRouter();
-  const { asset } = router.query; // asset can be string | string[] | undefined
+  const { asset } = router.query;
   const { hexColor } = useStyle();
-  const { user, isAuthenticated, cohorts } = useAuth() as any;
+  const { user, isAuthenticated, cohorts } = useAuth();
   const { createToast } = useCustomToast({ toastId: 'start-page-toast' });
 
-  const fetchVendorsForUser = useCallback(async (): Promise<ProvisioningVendor[]> => {
+  const fetchVendorsForUser = useCallback(async () => {
     if (!isAuthenticated || !cohorts || cohorts.length === 0) {
       return [];
     }
-    let foundVendors: ProvisioningVendor[] = [];
+    let foundVendors = [];
     let found = false;
-
-    await (cohorts as Cohort[]).reduce(async (previousPromise, cohort: Cohort) => {
+    await cohorts.reduce(async (previousPromise, cohort) => {
       await previousPromise;
       if (found || foundVendors.length > 0) return;
       if (cohort.academy?.id) {
         try {
           const academyId = cohort.academy.id;
           const { data } = await bc.provisioning().academyVendors(academyId);
-          console.log('data', data);
           if (data && data.length > 0) {
-            foundVendors = data as ProvisioningVendor[];
+            foundVendors = data;
             found = true;
           }
-        } catch (e: unknown) {
+        } catch (e) {
           console.error('Error fetching vendor data:', e);
         }
       }
@@ -78,19 +51,19 @@ const StartPage: FC = () => {
     return foundVendors;
   }, [isAuthenticated, cohorts]);
 
-  const fetchAssetAndVendors = useCallback(async (assetSlug: string) => {
+  const fetchAssetAndVendors = useCallback(async (assetSlug) => {
     setIsLoading(true);
     setAssetData(null);
     setProvisioningVendors([]);
     setShowModal(false);
     try {
       const assetResp = await bc.lesson().getAsset(assetSlug);
-      const fetchedAsset: Asset | undefined = assetResp?.data;
+      const fetchedAsset = assetResp?.data;
 
       if (!fetchedAsset) {
         throw new Error(`Project slug '${assetSlug}' not found or is invalid (no data).`);
       }
-      if (typeof fetchedAsset.status_code === 'number' && fetchedAsset.status_code >= 400) {
+      if (fetchedAsset.status_code && fetchedAsset.status_code >= 400) {
         throw new Error(`Project slug '${assetSlug}' returned status ${fetchedAsset.status_code}.`);
       }
 
@@ -98,7 +71,7 @@ const StartPage: FC = () => {
       const vendors = await fetchVendorsForUser();
       setProvisioningVendors(vendors);
       setShowModal(true);
-    } catch (err: unknown) {
+    } catch (err) {
       console.error('Error fetching asset data:', err);
       const message = err instanceof Error ? err.message : 'Failed to load project data.';
       createToast({
@@ -126,12 +99,11 @@ const StartPage: FC = () => {
     }
   }, [asset, fetchAssetAndVendors]);
 
-  const handleSearch = (e: FormEvent) => {
+  const handleSearch = (e) => {
     e.preventDefault();
     const input = searchInput.trim();
     if (!input) return;
 
-    setIsLoading(true);
     setShowModal(false);
     setAssetData(null);
 
@@ -168,7 +140,7 @@ const StartPage: FC = () => {
               <Input
                 placeholder={t('common:start-placeholder')}
                 value={searchInput}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value)}
+                onChange={(e) => setSearchInput(e.target.value)}
                 borderColor={hexColor.borderColor}
                 _hover={{ borderColor: hexColor.blueDefault }}
                 _focus={{ borderColor: hexColor.blueDefault, boxShadow: `0 0 0 1px ${hexColor.blueDefault}` }}
@@ -217,6 +189,4 @@ const StartPage: FC = () => {
       </Container>
     </Box>
   );
-};
-
-export default StartPage; 
+}
