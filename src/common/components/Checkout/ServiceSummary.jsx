@@ -15,6 +15,7 @@ import ModalInfo from '../ModalInfo';
 import useStyle from '../../hooks/useStyle';
 import useAuth from '../../hooks/useAuth';
 import useCohortHandler from '../../hooks/useCohortHandler';
+import useCustomToast from '../../hooks/useCustomToast';
 import CardForm from './CardForm';
 import { SILENT_CODE } from '../../../lib/types';
 import { reportDatalayer } from '../../../utils/requests';
@@ -22,6 +23,7 @@ import { BREATHECODE_HOST } from '../../../utils/variables';
 import { formatPrice, getStorageItem, getBrowserInfo } from '../../../utils';
 
 function ServiceSummary({ service }) {
+  const { createToast } = useCustomToast({ toastId: 'service-summary' });
   const { isAuthenticated } = useAuth();
   const { t } = useTranslation('signup');
   const {
@@ -41,6 +43,24 @@ function ServiceSummary({ service }) {
   const redirectedFrom = getStorageItem('redirected-from');
   const isPaymentSuccess = paymentStatus === 'success';
 
+  const serviceTypes = {
+    mentorship: {
+      name: t('consumables.sessions'),
+      quantityOfConsumables: (item) => t('consumables.qty-mentorship-sessions', { qty: item.qty }),
+      pricePerUnit: (item) => t('consumables.price-mentorship-per-qty', { price: formatPrice(item.pricePerUnit, true) }),
+    },
+    event: {
+      name: t('consumables.events'),
+      quantityOfConsumables: (item) => t('consumables.qty-events-sessions', { qty: item.qty }),
+      pricePerUnit: (item) => t('consumables.price-event-per-qty', { price: formatPrice(item.pricePerUnit, true) }),
+    },
+    compilation: {
+      name: t('consumables.compilations'),
+      quantityOfConsumables: (item) => t('consumables.qty-compilations-to-consume', { qty: item.qty }),
+      pricePerUnit: (item) => t('consumables.price-compilation-per-qty', { price: formatPrice(item.pricePerUnit, true) }),
+    },
+  };
+
   const dataToAssign = {
     service: service?.service?.slug,
     academy: service?.academy?.id,
@@ -49,41 +69,20 @@ function ServiceSummary({ service }) {
     event_type_set: service.serviceInfo.type === 'event' ? service.serviceInfo.id : undefined,
   };
 
-  const handlePayConsumable = () => {
-    bc.payment().service().payConsumable(dataToAssign)
-      .then((res) => {
-        if (res && res?.status < 400) {
-          reportDatalayer({
-            dataLayer: {
-              event: 'purchase',
-              ecommerce: {
-              // transaction_id: '12345',
-                affiliation: '4Geeks',
-                value: selectedService.priceDiscounted,
-                currency: 'USD',
-                items: [{
-                  item_name: selectedService.title,
-                  item_id: selectedService?.id,
-                  price: selectedService.priceDiscounted,
-                  item_brand: '4Geeks',
-                  item_category: service.serviceInfo.type,
-                  quantity: 1,
-                }],
-              },
-              agent: getBrowserInfo(),
-            } });
-          setPaymentStatus('success');
-          setConfirmationOpen(false);
-        }
-      })
-      .catch(() => {});
-  };
-
   const handlePaymentErrors = (data, actions = {}, callback = () => {}) => {
     const silentCode = data?.silent_code;
     setIsSubmittingPayment(false);
-    actions?.setSubmitting(false);
+    if ('setSubmitting' in actions) actions.setSubmitting(false);
     callback();
+    if (!silentCode) {
+      createToast({
+        position: 'top',
+        title: t('payment-not-processed'),
+        status: 'error',
+        isClosable: true,
+        duration: 6000,
+      });
+    }
     if (silentCode === SILENT_CODE.CARD_ERROR) {
       setOpenDeclinedModal(true);
       setDeclinedModalProps({
@@ -104,6 +103,43 @@ function ServiceSummary({ service }) {
         title: t('transaction-denied'),
         description: t('payment-error'),
       });
+    }
+  };
+
+  const handlePayConsumable = async () => {
+    try {
+      const res = await bc.payment().service().payConsumable(dataToAssign);
+      const data = await res.json();
+      if (res?.status < 400) {
+        reportDatalayer({
+          dataLayer: {
+            event: 'purchase',
+            ecommerce: {
+            // transaction_id: '12345',
+              affiliation: '4Geeks',
+              value: selectedService.priceDiscounted,
+              currency: 'USD',
+              items: [{
+                item_name: selectedService.title,
+                item_id: selectedService?.id,
+                price: selectedService.priceDiscounted,
+                item_brand: '4Geeks',
+                item_category: service.serviceInfo.type,
+                quantity: 1,
+              }],
+            },
+            agent: getBrowserInfo(),
+          } });
+        setPaymentStatus('success');
+        setConfirmationOpen(false);
+      } else {
+        setConfirmationOpen(false);
+        handlePaymentErrors(data, {
+          setSubmiting: setIsSubmittingPayment,
+        });
+      }
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -239,7 +275,7 @@ function ServiceSummary({ service }) {
             <Box display="flex" flexDirection="column" justifyContent="center" gridGap="0px" fontWeight={700} lineHeight="32px" background="blue.default" alignItems="center" padding="10px 15px" borderRadius="11px" color="white">
               <Box fontSize="38px">{selectedService?.qty}</Box>
               <Box fontSize="28px">
-                {service.serviceInfo.type === 'mentorship' ? 'sessions' : 'events'}
+                {serviceTypes[service.serviceInfo.type].name}
               </Box>
             </Box>
           </Box>
@@ -332,14 +368,10 @@ function ServiceSummary({ service }) {
                             fontWeight="400"
                           >
                             <Box fontSize={{ base: '16px', md: '18px' }} fontWeight="700">
-                              {service.serviceInfo.type === 'mentorship'
-                                ? t('consumables.qty-mentorship-sessions', { qty: item.qty })
-                                : t('consumables.qty-events-to-consume', { qty: item.qty })}
+                              {serviceTypes[service.serviceInfo.type].quantityOfConsumables(item)}
                             </Box>
                             <Text fontSize="14px" color={isSelected ? 'blue.default' : lightColor} fontWeight={isSelected ? 700 : 400}>
-                              {service.serviceInfo.type === 'mentorship'
-                                ? t('consumables.price-mentorship-per-qty', { price: formatPrice(item.pricePerUnit, true) })
-                                : t('consumables.price-event-per-qty', { price: formatPrice(item.pricePerUnit, true) })}
+                              {serviceTypes[service.serviceInfo.type].pricePerUnit(item)}
                             </Text>
                           </Box>
                           <Box position="relative" display="flex" alignItems="center" height="fit-content" gridGap="10px">
@@ -379,11 +411,9 @@ function ServiceSummary({ service }) {
                         flexDirection="row"
                         width="100%"
                         justifyContent="space-between"
-                        // p={selectedIndex === i ? '22px 18px' : '26px 22px'}
                         p={{ base: '14px', sm: '22px 18px' }}
                         gridGap={{ base: '12px', md: '20px' }}
                         cursor="pointer"
-                        // background={selectedIndex !== i && featuredColor}
                         border="2px solid #0097CD"
                         alignItems="center"
                         borderRadius="13px"
@@ -392,17 +422,14 @@ function ServiceSummary({ service }) {
                           display="flex"
                           flexDirection="column"
                           gridGap={{ base: '0', md: '4px' }}
-                          // minWidth={{ base: 'auto', md: '228px' }}
                           height="fit-content"
                           fontWeight="400"
                         >
-                          <Box fontSize="18px" fontWeight="700">
-                            {selectedService?.title}
-                          </Box>
+                          <Text fontSize="18px" fontWeight="700">
+                            {serviceTypes[service.serviceInfo.type].quantityOfConsumables(selectedService)}
+                          </Text>
                           <Text fontSize="14px" color="blue.default" fontWeight={700}>
-                            {service.serviceInfo.type === 'mentorship'
-                              ? t('consumables.price-mentorship-per-qty', { price: formatPrice(selectedService.pricePerUnit, true) })
-                              : t('consumables.price-event-per-qty', { price: formatPrice(selectedService.pricePerUnit, true) })}
+                            {serviceTypes[service.serviceInfo.type].pricePerUnit(selectedService)}
                           </Text>
                         </Box>
                         <Box position="relative" display="flex" height="fit-content" alignItems="center" gridGap="10px">
@@ -543,7 +570,7 @@ function ServiceSummary({ service }) {
                     <Box display="flex" flexDirection="column" borderRadius="11px" gridGap="0px" fontWeight={700} lineHeight="32px" background={backgroundColor3} alignItems="center" padding="10px 15px">
                       <Box fontSize="38px">{selectedService?.qty}</Box>
                       <Box fontSize="28px">
-                        {service.serviceInfo.type === 'mentorship' ? t('consumables.sessions') : t('consumables.events')}
+                        {serviceTypes[service.serviceInfo.type].name}
                       </Box>
                     </Box>
                   </Box>

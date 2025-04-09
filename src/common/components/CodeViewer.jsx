@@ -409,7 +409,7 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, compareMode, .
             closeButtonStyles={{ borderRadius: '3px', color: hexColor.blueDefault, borderColor: hexColor.blueDefault }}
             buttonHandlerStyles={{ variant: 'default' }}
             closeActionHandler={() => {
-              setStorageItem('redirect', router?.asPath);
+              setStorageItem('redirected-from', router?.asPath);
               router.push('/login');
             }}
             actionHandler={() => {

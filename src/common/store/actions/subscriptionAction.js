@@ -12,75 +12,72 @@ const useSubscriptionsHandler = () => {
     getPlanOffer,
   } = profileHandlers();
 
-  const fetchSubscriptions = () => new Promise((resolve, reject) => {
-    dispatch({
-      type: IS_LOADING,
-      payload: true,
-    });
-    bc.payment({
-      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED,ERROR',
-    }).subscriptions()
-      .then(async ({ data }) => {
-        const subscriptionsDataWithPlanOffer = data?.subscriptions?.length > 0 ? await Promise.all(data?.subscriptions.map(async (s) => {
+  const fetchSubscriptions = async () => {
+    let result;
+    try {
+      dispatch({
+        type: IS_LOADING,
+        payload: true,
+      });
+
+      const { data } = await bc.payment({
+        status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED,ERROR',
+      }).subscriptions();
+
+      const subscriptionsDataWithPlanOffer = data?.subscriptions?.length > 0
+        ? await Promise.all(data.subscriptions.map(async (s) => {
           const planOffer = await getPlanOffer({ slug: s?.plans[0]?.slug, disableRedirects: true });
-          return {
-            ...s,
-            type: 'subscription',
-            planOffer,
-          };
-        })) : [];
-        const planFinancingsDataWithPlanOffer = data?.plan_financings?.length > 0 ? await Promise.all(data?.plan_financings.map(async (f) => {
+          return { ...s, type: 'subscription', planOffer };
+        }))
+        : [];
+
+      const planFinancingsDataWithPlanOffer = data?.plan_financings?.length > 0
+        ? await Promise.all(data.plan_financings.map(async (f) => {
           const planOffer = await getPlanOffer({ slug: f?.plans[0]?.slug, disableRedirects: true });
-          return {
-            ...f,
-            type: 'plan_financing',
-            planOffer,
-          };
-        })) : [];
+          return { ...f, type: 'plan_financing', planOffer };
+        }))
+        : [];
 
-        resolve({
-          subscriptions: subscriptionsDataWithPlanOffer,
-          plan_financings: planFinancingsDataWithPlanOffer,
-        });
-        dispatch({
-          type: FETCH_SUBSCRIPTIONS,
-          payload: {
-            subscriptions: subscriptionsDataWithPlanOffer,
-            plan_financings: planFinancingsDataWithPlanOffer,
-          },
-        });
-      })
-      .catch((err) => {
-        reject(err);
-      })
-      .finally(() => {
-        dispatch({
-          type: IS_LOADING,
-          payload: false,
-        });
-      });
-  });
+      result = {
+        subscriptions: subscriptionsDataWithPlanOffer,
+        plan_financings: planFinancingsDataWithPlanOffer,
+      };
 
-  const cancelSubscription = (id) => new Promise((resolve, reject) => {
-    bc.payment().cancelMySubscription(id)
-      .then(({ data }) => {
-        dispatch({
-          type: CANCEL_SUBSCRIPTION,
-          payload: data,
-        });
-        resolve(data);
-      })
-      .catch((err) => {
-        createToast({
-          position: 'top',
-          title: 'Error cancelling subscription',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        reject(err);
+      dispatch({
+        type: FETCH_SUBSCRIPTIONS,
+        payload: result,
       });
-  });
+    } catch (error) {
+      result = error;
+    } finally {
+      dispatch({
+        type: IS_LOADING,
+        payload: false,
+      });
+      // eslint-disable-next-line no-unsafe-finally
+      return result;
+    }
+  };
+
+  const cancelSubscription = async (id) => {
+    try {
+      const { data } = await bc.payment().cancelMySubscription(id);
+      dispatch({
+        type: CANCEL_SUBSCRIPTION,
+        payload: data,
+      });
+      return data;
+    } catch (err) {
+      createToast({
+        position: 'top',
+        title: 'Error while cancelling subscription',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return err;
+    }
+  };
 
   return {
     state,
