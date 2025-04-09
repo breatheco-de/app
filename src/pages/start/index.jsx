@@ -129,7 +129,7 @@ export default function StartPage() {
             />
           </Box>
           <Text fontSize="2xl" fontWeight="bold" mb={6} color={headingColor} textAlign="center">
-            Start working on your project
+            {t('common:start-working-project')}
           </Text>
           <Box as="form" onSubmit={handleSearch} width="100%" maxW="600px">
             <InputGroup size="lg">
