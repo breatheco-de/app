@@ -50,13 +50,14 @@ function ContentHeading({
 
 ContentHeading.propTypes = {
   content: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
+  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]),
   callToAction: PropTypes.node,
   titleRightSide: PropTypes.node,
   currentData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 ContentHeading.defaultProps = {
   content: {},
+  children: null,
   currentData: {},
   callToAction: null,
   titleRightSide: null,

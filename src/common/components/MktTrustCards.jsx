@@ -79,10 +79,8 @@ function Card({ card, ...rest }) {
           />
         </Box>
         {images.map((image, i) => (
-          <Fade in={currentIndex === i}>
+          <Fade key={image} in={currentIndex === i}>
             <Img
-              // display={currentIndex === i ? 'block' : 'none'}
-              key={image}
               src={image}
               objectFit="contain"
               width="100%"
