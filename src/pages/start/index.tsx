@@ -1,7 +1,7 @@
 import {
   Box, Input, Button, Container, Text, InputGroup, InputRightElement, useColorModeValue, Skeleton,
 } from '@chakra-ui/react';
-import { useState, useEffect, lazy, Suspense, useCallback } from 'react';
+import React, { useState, useEffect, lazy, Suspense, useCallback, FC, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Icon from '../../common/components/Icon';
@@ -10,29 +10,54 @@ import bc from '../../common/services/breathecode';
 import useAuth from '../../common/hooks/useAuth';
 import useCustomToast from '../../common/hooks/useCustomToast';
 
+interface Asset {
+  status_code?: number;
+  [key: string]: any;
+}
+
+interface Vendor {
+  name?: string;
+  [key: string]: any;
+}
+
+interface ProvisioningVendor {
+  vendor?: Vendor;
+  [key: string]: any;
+}
+
+interface Cohort {
+  academy?: { id?: number };
+  [key: string]: any;
+}
+
+interface User {
+  id?: number;
+  [key: string]: any;
+}
+
 const ModalToCloneProject = lazy(() => import('../../common/components/GuidedExperience/ModalToCloneProject'));
 
-export default function StartPage() {
+const StartPage: FC = () => {
   const { t } = useTranslation();
-  const [searchInput, setSearchInput] = useState('');
-  const [assetData, setAssetData] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [provisioningVendors, setProvisioningVendors] = useState([]);
+  const [searchInput, setSearchInput] = useState<string>('');
+  const [assetData, setAssetData] = useState<Asset | null>(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [provisioningVendors, setProvisioningVendors] = useState<ProvisioningVendor[]>([]);
 
   const router = useRouter();
-  const { asset } = router.query;
+  const { asset } = router.query; // asset can be string | string[] | undefined
   const { hexColor } = useStyle();
-  const { user, isAuthenticated, cohorts } = useAuth();
+  const { user, isAuthenticated, cohorts } = useAuth() as any;
   const { createToast } = useCustomToast({ toastId: 'start-page-toast' });
 
-  const fetchVendorsForUser = useCallback(async () => {
+  const fetchVendorsForUser = useCallback(async (): Promise<ProvisioningVendor[]> => {
     if (!isAuthenticated || !cohorts || cohorts.length === 0) {
       return [];
     }
-    let foundVendors = [];
+    let foundVendors: ProvisioningVendor[] = [];
     let found = false;
-    await cohorts.reduce(async (previousPromise, cohort) => {
+    await (cohorts as Cohort[]).reduce(async (previousPromise, cohort: Cohort) => {
       await previousPromise;
       if (found || foundVendors.length > 0) return;
       if (cohort.academy?.id) {
@@ -41,43 +66,49 @@ export default function StartPage() {
           const { data } = await bc.provisioning().academyVendors(academyId);
           console.log('data', data);
           if (data && data.length > 0) {
-            foundVendors = data;
+            foundVendors = data as ProvisioningVendor[];
             found = true;
           }
-        } catch (e) {
-          console.error('Error fetching asset data:', e);
+        } catch (e: unknown) {
+          console.error('Error fetching vendor data:', e);
         }
       }
     }, Promise.resolve());
     return foundVendors;
   }, [isAuthenticated, cohorts]);
 
-  const fetchAssetAndVendors = useCallback(async (assetSlug) => {
+  const fetchAssetAndVendors = useCallback(async (assetSlug: string) => {
     setIsLoading(true);
     setAssetData(null);
     setProvisioningVendors([]);
     setShowModal(false);
     try {
       const assetResp = await bc.lesson().getAsset(assetSlug);
-      const fetchedAsset = assetResp?.data;
-      if (fetchedAsset?.status_code >= 400 || !fetchedAsset) {
-        throw new Error(`Project slug '${assetSlug}' not found or is invalid.`);
+      const fetchedAsset: Asset | undefined = assetResp?.data;
+
+      if (!fetchedAsset) {
+        throw new Error(`Project slug '${assetSlug}' not found or is invalid (no data).`);
       }
+      if (typeof fetchedAsset.status_code === 'number' && fetchedAsset.status_code >= 400) {
+        throw new Error(`Project slug '${assetSlug}' returned status ${fetchedAsset.status_code}.`);
+      }
+
       setAssetData(fetchedAsset);
       const vendors = await fetchVendorsForUser();
       setProvisioningVendors(vendors);
       setShowModal(true);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Error fetching asset data:', err);
+      const message = err instanceof Error ? err.message : 'Failed to load project data.';
       createToast({
         status: 'error',
         title: 'Error Loading Project',
-        description: err.message || 'Failed to load project data.',
+        description: message,
       });
     } finally {
       setIsLoading(false);
     }
-  }, [fetchVendorsForUser]);
+  }, [fetchVendorsForUser, createToast]);
 
   useEffect(() => {
     setIsLoading(false);
@@ -94,12 +125,12 @@ export default function StartPage() {
     }
   }, [asset, fetchAssetAndVendors]);
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: FormEvent) => {
     e.preventDefault();
     const input = searchInput.trim();
     if (!input) return;
 
-    setIsLoading(false);
+    setIsLoading(true);
     setShowModal(false);
     setAssetData(null);
 
@@ -136,7 +167,7 @@ export default function StartPage() {
               <Input
                 placeholder={t('common:start-placeholder')}
                 value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value)}
                 borderColor={hexColor.borderColor}
                 _hover={{ borderColor: hexColor.blueDefault }}
                 _focus={{ borderColor: hexColor.blueDefault, boxShadow: `0 0 0 1px ${hexColor.blueDefault}` }}
@@ -175,7 +206,7 @@ export default function StartPage() {
               currentAsset={assetData}
               isOpen={showModal}
               onClose={handleCloseModal}
-              provisioningVendors={assetData ? provisioningVendors : []}
+              provisioningVendors={provisioningVendors}
               publicView
               userID={user?.id}
             />
@@ -185,4 +216,6 @@ export default function StartPage() {
       </Container>
     </Box>
   );
-}
+};
+
+export default StartPage; 
