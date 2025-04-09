@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { LinkIcon } from '@chakra-ui/icons';
 import Icon from '../Icon';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import Text from '../Text';
 import Link from '../NextChakraLink';
 import useStyle from '../../hooks/useStyle';

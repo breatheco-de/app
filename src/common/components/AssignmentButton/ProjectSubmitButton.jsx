@@ -20,7 +20,7 @@ import { Field, Form, Formik } from 'formik';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useRef, useState } from 'react';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import iconDict from '../../../iconDict.json';
 import { isGithubUrl } from '../../../utils/regex';
 import MarkDownParser from '../MarkDownParser';

@@ -5,7 +5,7 @@ import useAuth from '../../hooks/useAuth';
 import useModuleHandler from '../../hooks/useModuleHandler';
 import useStyle from '../../hooks/useStyle';
 import useCustomToast from '../../hooks/useCustomToast';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import CodeRevisionsList from '../ReviewModal/CodeRevisionsList';
 import Icon from '../Icon';
 import Heading from '../Heading';

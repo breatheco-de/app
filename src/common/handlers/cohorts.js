@@ -1,5 +1,5 @@
 import { differenceInDays } from 'date-fns';
-import bc from '../services/breathecode';
+import bc from '../../services/breathecode';
 import { error } from '../../utils/logging';
 
 /**

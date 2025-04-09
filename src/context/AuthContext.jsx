@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { Avatar, Box } from '@chakra-ui/react';
-import bc from '../common/services/breathecode';
+import bc from '../services/breathecode';
 import axiosInstance, { cancelAllCurrentRequests } from '../axios';
 import { usePersistentBySession } from '../common/hooks/usePersistent';
 import useRigo from '../common/hooks/useRigo';

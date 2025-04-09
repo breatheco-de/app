@@ -10,7 +10,7 @@ import Icon from '../Icon';
 import Progress from '../ProgressBar/Progress';
 import Text from '../Text';
 import FinalProjectModal from './Modal';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import FinalProjectForm from './Form';
 import useStyle from '../../hooks/useStyle';
 import useFinalProjectProps from '../../store/actions/finalProjectAction';

@@ -1,9 +1,9 @@
 /* eslint-disable default-param-last */
-import axios from '../../axios';
-import { parseQuerys } from '../../utils/url';
-import modifyEnv from '../../../modifyEnv';
-import { cleanObject } from '../../utils';
-import { RIGOBOT_HOST, BREATHECODE_HOST } from '../../utils/variables';
+import axios from '../axios';
+import { parseQuerys } from '../utils/url';
+import modifyEnv from '../../modifyEnv';
+import { cleanObject } from '../utils';
+import { RIGOBOT_HOST, BREATHECODE_HOST } from '../utils/variables';
 
 const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
 const host = `${BREATHECODE_HOST}/v1`;

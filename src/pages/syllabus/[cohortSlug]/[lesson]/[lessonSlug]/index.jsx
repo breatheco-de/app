@@ -29,7 +29,7 @@ import ExerciseGuidedExperience from '../../../../../common/components/GuidedExp
 import ProjectBoardGuidedExperience from '../../../../../common/components/GuidedExperience/ProjectBoardGuidedExperience';
 import SyllabusMarkdownComponent from '../../../../../common/components/GuidedExperience/SyllabusMarkdownComponent';
 import Topbar from '../../../../../common/components/GuidedExperience/Topbar';
-import bc from '../../../../../common/services/breathecode';
+import bc from '../../../../../services/breathecode';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
 import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';

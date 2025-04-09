@@ -23,7 +23,7 @@ import useStyle from '../../../hooks/useStyle';
 import { location, slugToTitle, unSlugify } from '../../../../utils';
 import useSubscriptionsHandler from '../../../store/actions/subscriptionAction';
 import { CardSkeleton, SimpleSkeleton } from '../../Skeleton';
-import bc from '../../../services/breathecode';
+import bc from '../../../../services/breathecode';
 import SubscriptionCard from './SubscriptionCard';
 import ConsumableCard from './ConsumableCard';
 

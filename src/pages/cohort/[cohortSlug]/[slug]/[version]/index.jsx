@@ -41,7 +41,7 @@ import useAuth from '../../../../../common/hooks/useAuth';
 import useRigo from '../../../../../common/hooks/useRigo';
 import { ModuleMapSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
 import { parseQuerys } from '../../../../../utils/url';
-import bc from '../../../../../common/services/breathecode';
+import bc from '../../../../../services/breathecode';
 import axios from '../../../../../axios';
 
 import { reportDatalayer } from '../../../../../utils/requests';

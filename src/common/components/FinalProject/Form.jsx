@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import FieldForm from '../Forms/FieldForm';
 import { url } from '../../../utils/regex';
 import Heading from '../Heading';

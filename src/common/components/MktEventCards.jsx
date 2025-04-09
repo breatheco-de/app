@@ -12,7 +12,7 @@ import { getQueryString, sortToNearestTodayDate } from '../../utils';
 import DraggableContainer from './DraggableContainer';
 import DynamicContentCard from './DynamicContentCard';
 import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../utils/variables';
-import bc from '../services/breathecode';
+import bc from '../../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import { parseQuerys } from '../../utils/url';
 

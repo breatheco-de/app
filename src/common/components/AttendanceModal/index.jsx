@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react';
 import Icon from '../Icon';
 import Text from '../Text';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import ModalInfo from '../ModalInfo';
 import useStyle from '../../hooks/useStyle';
 import useCohortHandler from '../../hooks/useCohortHandler';

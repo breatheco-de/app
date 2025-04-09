@@ -7,7 +7,7 @@ import {
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Heading from '../Heading';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import useSignup from '../../store/actions/signupAction';
 import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../hooks/useStyle';

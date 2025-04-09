@@ -8,7 +8,7 @@ import { format, differenceInWeeks } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import bc from '../services/breathecode';
+import bc from '../../services/breathecode';
 import axios from '../../axios';
 import Icon from './Icon';
 import Text from './Text';

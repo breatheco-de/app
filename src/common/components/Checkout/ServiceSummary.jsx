@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Avatar, Box, Button, Link, Flex } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import useSignup from '../../store/actions/signupAction';
 import Heading from '../Heading';
 import Icon from '../Icon';

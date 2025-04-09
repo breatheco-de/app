@@ -5,7 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import Text from '../Text';
 import Icon from '../Icon';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import useStyle from '../../hooks/useStyle';
 import '@uiw/react-markdown-editor/markdown-editor.css';
 // eslint-disable-next-line import/no-extraneous-dependencies

@@ -10,7 +10,7 @@ import {
   SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON, SET_SIGNUP_INITIAL_STATE,
 } from '../types';
 import { formatPrice, getDiscountedPrice, getNextDateInMonths, getQueryString, getStorageItem, getTimeProps, getBrowserInfo } from '../../../utils';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import { usePersistent } from '../../hooks/usePersistent';
 import useSession from '../../hooks/useSession';

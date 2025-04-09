@@ -8,7 +8,7 @@ import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 import ProjectSubmitButton from './ProjectSubmitButton';
 import useCohortHandler from '../../hooks/useCohortHandler';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import ButtonVariants from './ButtonVariants';
 import useCustomToast from '../../hooks/useCustomToast';
 

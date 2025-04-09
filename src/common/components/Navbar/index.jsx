@@ -26,7 +26,7 @@ import LanguageSelector from '../LanguageSelector';
 import { setStorageItem } from '../../../utils';
 import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 import axios from '../../../axios';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import logoData from '../../../../public/logo.json';
 import { parseQuerys } from '../../../utils/url';
 import useStyle from '../../hooks/useStyle';

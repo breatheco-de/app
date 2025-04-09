@@ -24,7 +24,7 @@ import { getStorageItem, setStorageItem, getQueryString, getBrowserInfo } from '
 import { reportDatalayer } from '../../../utils/requests';
 import useSignup from '../../store/actions/signupAction';
 import ModalInfo from '../ModalInfo';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import useCustomToast from '../../hooks/useCustomToast';
 
 function SignupForm({

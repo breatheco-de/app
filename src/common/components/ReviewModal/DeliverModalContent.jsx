@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 import useCustomToast from '../../hooks/useCustomToast';

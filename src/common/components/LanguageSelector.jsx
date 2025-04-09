@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import styles from '../../../styles/flags.module.css';
-import bc from '../services/breathecode';
+import bc from '../../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import NextChakraLink from './NextChakraLink';
 import useSession from '../hooks/useSession';

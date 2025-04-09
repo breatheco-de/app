@@ -1,7 +1,7 @@
 import { useEffect, memo, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import Mentoring from './Mentoring';
 import useCustomToast from '../../hooks/useCustomToast';
 

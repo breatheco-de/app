@@ -7,7 +7,7 @@ import {
   ModalCloseButton,
 } from '@chakra-ui/react';
 import Text from './Text';
-import bc from '../services/breathecode';
+import bc from '../../services/breathecode';
 import useStyle from '../hooks/useStyle';
 import useCohortHandler from '../hooks/useCohortHandler';
 

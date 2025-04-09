@@ -2,7 +2,7 @@ import { formatDuration, intervalToDuration } from 'date-fns';
 import { es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import { isValidDate, toCapitalize } from '../../utils';
-import bc from '../services/breathecode';
+import bc from '../../services/breathecode';
 
 const availableLanguages = {
   es,

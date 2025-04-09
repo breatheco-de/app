@@ -5,7 +5,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import bc from '../services/breathecode';
+import bc from '../../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import useCohortHandler from '../hooks/useCohortHandler';
 import useStyle from '../hooks/useStyle';

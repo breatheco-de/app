@@ -26,7 +26,7 @@ import asPrivate from '../../../context/PrivateRouteWrapper';
 import ReactSelect, { AsyncSelect } from '../../../common/components/ReactSelect';
 import Link from '../../../common/components/NextChakraLink';
 import Heading from '../../../common/components/Heading';
-import bc from '../../../common/services/breathecode';
+import bc from '../../../services/breathecode';
 import Icon from '../../../common/components/Icon';
 import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';

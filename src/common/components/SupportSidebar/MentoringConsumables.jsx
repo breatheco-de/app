@@ -10,7 +10,7 @@ import Icon from '../Icon';
 import Image from '../Image';
 import ModalToGetAccess, { stageType } from '../ModalToGetAccess';
 import Link from '../NextChakraLink';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import useAuth from '../../hooks/useAuth';
 import useOnline from '../../hooks/useOnline';
 import AvatarUser from '../AvatarUser';

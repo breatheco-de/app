@@ -5,7 +5,7 @@ import Link from 'next/link';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
-import bc from '../../common/services/breathecode';
+import bc from '../../services/breathecode';
 import useStyle from '../../common/hooks/useStyle';
 import useAuth from '../../common/hooks/useAuth';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';

@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import {
   memo, useEffect, useState,
 } from 'react';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import Icon from '../Icon';
 import Text from '../Text';
 import SimpleModal from '../SimpleModal';

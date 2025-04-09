@@ -11,7 +11,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { intervalToDuration } from 'date-fns';
 import asPrivate from '../../../../../../../context/PrivateRouteWrapper';
 import useStyle from '../../../../../../../common/hooks/useStyle';
-import bc from '../../../../../../../common/services/breathecode';
+import bc from '../../../../../../../services/breathecode';
 import ReactSelect from '../../../../../../../common/components/ReactSelect';
 import KPI from '../../../../../../../common/components/KPI';
 import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../../../../../common/components/Skeleton';

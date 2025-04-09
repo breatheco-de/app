@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { CANCEL_SUBSCRIPTION, FETCH_SUBSCRIPTIONS, IS_LOADING } from '../types';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import useCustomToast from '../../hooks/useCustomToast';
 import profileHandlers from '../../components/Profile/Subscriptions/handlers';
 

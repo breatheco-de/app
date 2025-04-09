@@ -22,7 +22,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../../../../common/components/Assignments/index';
 import useStyle from '../../../../../common/hooks/useStyle';
-import bc from '../../../../../common/services/breathecode';
+import bc from '../../../../../services/breathecode';
 import ReactSelect from '../../../../../common/components/ReactSelect';
 import asPrivate from '../../../../../context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';

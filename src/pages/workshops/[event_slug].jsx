@@ -9,7 +9,7 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { reportDatalayer } from '../../utils/requests';
-import bc from '../../common/services/breathecode';
+import bc from '../../services/breathecode';
 import SimpleModal from '../../common/components/SimpleModal';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';

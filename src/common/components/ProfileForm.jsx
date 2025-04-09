@@ -7,7 +7,7 @@ import { Field, Form, Formik } from 'formik';
 import { memo, useEffect, useState } from 'react';
 import validationSchemas from './Forms/validationSchemas';
 import { objectAreNotEqual } from '../../utils';
-import bc from '../services/breathecode';
+import bc from '../../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import ConnectGithubRigobot from './ConnectGithubRigobot';
 import useStyle from '../hooks/useStyle';

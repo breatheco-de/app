@@ -24,7 +24,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import bc from '../../common/services/breathecode';
+import bc from '../../services/breathecode';
 import Link from '../../common/components/NextChakraLink';
 import Icon from '../../common/components/Icon';
 import Heading from '../../common/components/Heading';

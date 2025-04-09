@@ -10,7 +10,7 @@ import CodeReview from './CodeReview';
 import DeliverModalContent from './DeliverModalContent';
 import Icon from '../Icon';
 import FileList from './FileList';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import ReviewCodeRevision from './ReviewCodeRevision';
 import useAuth from '../../hooks/useAuth';
 import { error } from '../../../utils/logging';

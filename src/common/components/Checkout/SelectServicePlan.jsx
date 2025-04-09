@@ -5,7 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Heading from '../Heading';
 import useStyle from '../../hooks/useStyle';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import { getQueryString, toCapitalize, unSlugify } from '../../../utils';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import LoaderScreen from '../LoaderScreen';

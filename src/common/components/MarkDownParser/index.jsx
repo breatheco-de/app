@@ -13,7 +13,7 @@ import {
   Img,
 } from '@chakra-ui/react';
 import AnchorJS from 'anchor-js';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import {
   Wrapper, BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner, Quote,
 } from './MDComponents';

@@ -21,7 +21,7 @@ import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 import useAuth from '../hooks/useAuth';
 import useSession from '../hooks/useSession';
-import bc from '../services/breathecode';
+import bc from '../../services/breathecode';
 import { GithubIcon, LogoIcon, YoutubeIcon } from './Icon/components';
 import { log } from '../../utils/logging';
 import FooterTC from './FooterTC';

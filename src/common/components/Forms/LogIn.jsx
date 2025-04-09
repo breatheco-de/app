@@ -9,7 +9,7 @@ import {
 import { Form, Formik, Field } from 'formik';
 import { useRouter } from 'next/router';
 import { reportDatalayer } from '../../../utils/requests';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import Icon from '../Icon';
 import Text from '../Text';
 import validationSchema from './validationSchemas';

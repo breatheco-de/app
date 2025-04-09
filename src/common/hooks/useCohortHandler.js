@@ -8,7 +8,7 @@ import { getStorageItem, getBrowserInfo } from '../../utils';
 import useCohortAction from '../store/actions/cohortAction';
 import { processRelatedAssignments } from '../handlers/cohorts';
 import { reportDatalayer } from '../../utils/requests';
-import bc from '../services/breathecode';
+import bc from '../../services/breathecode';
 import { BREATHECODE_HOST, DOMAIN_NAME } from '../../utils/variables';
 import useCustomToast from './useCustomToast';
 

@@ -4,7 +4,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useState } from 'react';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';
-import bc from '../services/breathecode';
+import bc from '../../services/breathecode';
 import useCustomToast from '../hooks/useCustomToast';
 
 function UndoApprovalModal({ isOpen, currentTask, onSuccess, onClose, updpateAssignment }) {

@@ -7,7 +7,7 @@ import ProfileForm from '../ProfileForm';
 import Text from '../Text';
 import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import { location } from '../../../utils';
 import getCroppedImg from '../../../utils/cropImage';
 import Icon from '../Icon';

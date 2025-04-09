@@ -16,7 +16,7 @@ import ProjectSubmitButton from '../AssignmentButton/ProjectSubmitButton';
 import UndoApprovalModal from '../UndoApprovalModal';
 import iconDict from '../../../iconDict.json';
 import { error } from '../../../utils/logging';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 
 const statusList = {
   PENDING: 'PENDING',

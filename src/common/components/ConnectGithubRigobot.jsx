@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { getStorageItem } from '../../utils';
 import { RIGOBOT_HOST, BREATHECODE_HOST } from '../../utils/variables';
-import bc from '../services/breathecode';
+import bc from '../../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';

@@ -19,7 +19,7 @@ import {
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import NextChakraLink from '../NextChakraLink';
 import useStyle from '../../hooks/useStyle';
 import ReactSelect from '../ReactSelect';

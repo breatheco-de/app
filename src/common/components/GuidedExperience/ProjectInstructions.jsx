@@ -18,7 +18,7 @@ import useTranslation from 'next-translate/useTranslation';
 import noLearnpackAssets from '../../../../public/no-learnpack-in-cloud.json';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useModuleHandler from '../../hooks/useModuleHandler';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import Heading from '../Heading';
 import Text from '../Text';
 import Icon from '../Icon';

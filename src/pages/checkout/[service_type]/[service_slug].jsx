@@ -5,7 +5,7 @@ import {
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import bc from '../../../common/services/breathecode';
+import bc from '../../../services/breathecode';
 import useAuth from '../../../common/hooks/useAuth';
 import { isWindow } from '../../../utils';
 import PaymentInfo from '../../../common/components/Checkout/PaymentInfo';

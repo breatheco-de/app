@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import { email as emailRe } from '../../../utils/regex';
 import { isWindow } from '../../../utils';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 
 function useEmailValidation() {
   const [emailValidation, setEmailValidation] = useState({

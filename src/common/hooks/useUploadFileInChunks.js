@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import bc from '../services/breathecode';
+import bc from '../../services/breathecode';
 import { getStorageItem } from '../../utils';
 
 const useUploadFileInChunks = () => {
