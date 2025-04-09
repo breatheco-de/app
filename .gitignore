@@ -15,6 +15,7 @@
 # production
 /build
 /src/lib/asset-list.json
+/public/asset-list.json
 
 #sitemaps
 *.xml

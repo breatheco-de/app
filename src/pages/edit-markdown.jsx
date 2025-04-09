@@ -8,7 +8,7 @@ import { usePersistent } from '../common/hooks/usePersistent';
 import '@uiw/react-markdown-editor/markdown-editor.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import '@uiw/react-markdown-preview/markdown.css';
-import markdownDefaultText from '../lib/markdown-example';
+import markdownDefaultText from '../../public/markdown-example';
 import useDebounce from '../common/hooks/useDebounce';
 import { ORIGIN_HOST } from '../utils/variables';
 

@@ -25,7 +25,7 @@ import AssetsBreadcrumbs from '../../common/components/AssetsBreadcrumbs';
 import { getMarkdownFromCache } from '../../utils/requests';
 
 export const getStaticPaths = async () => {
-  const assetList = await import('../../lib/asset-list.json');
+  const assetList = await import('../../../public/asset-list.json');
   const data = assetList.lessons;
 
   const paths = data.flatMap((res) => {
@@ -49,7 +49,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
   try {
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
-    const assetList = await import('../../lib/asset-list.json')
+    const assetList = await import('../../../public/asset-list.json')
       .then((res) => res.default)
       .catch(() => []);
 

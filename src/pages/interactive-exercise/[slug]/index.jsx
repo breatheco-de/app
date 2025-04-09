@@ -34,7 +34,7 @@ import useStyle from '../../../common/hooks/useStyle';
 import { getMarkdownFromCache } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
-  const assetList = await import('../../../lib/asset-list.json');
+  const assetList = await import('../../../../public/asset-list.json');
   const data = assetList.excersises;
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
@@ -56,7 +56,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const staticImage = t('seo.image', { domain: ORIGIN_HOST });
 
   try {
-    const assetList = await import('../../../lib/asset-list.json')
+    const assetList = await import('../../../../public/asset-list.json')
       .then((res) => res.default)
       .catch(() => []);
 

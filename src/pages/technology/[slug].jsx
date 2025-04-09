@@ -95,7 +95,7 @@ export const getStaticPaths = async ({ locales }) => {
   }
   const relevantSlugs = publicTechs.map((tech) => tech.slug);
 
-  const assetList = await import('../../lib/asset-list.json').then((res) => res.default);
+  const assetList = await import('../../../public/asset-list.json').then((res) => res.default);
   const filteredTechnologies = assetList.landingTechnologies.filter((tech) => relevantSlugs.includes(tech.slug));
 
   const paths = filteredTechnologies.flatMap((tech) => locales.map((locale) => ({
@@ -137,7 +137,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const isSortPriorityOne = technologiesFetched.some((tech) => tech.slug === slug);
   if (!isSortPriorityOne) contentPerPage = 20;
 
-  const allTechnologies = await import('../../lib/asset-list.json');
+  const allTechnologies = await import('../../../public/asset-list.json');
   const assetList = {
     landingTechnologies: allTechnologies?.landingTechnologies.filter(
       (tech) => tech.lang === locale && tech.slug === slug,
