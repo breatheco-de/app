@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Box, Button, Flex, Image, Link, SkeletonText, useFormControlStyles, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, SkeletonText } from '@chakra-ui/react';
 import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -25,12 +25,11 @@ import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import Instructors from '../../common/components/Instructors';
 import Faq from '../../common/components/Faq';
 import FixedBottomCta from '../../common/components/Assets/FixedBottomCta';
-import TagCapsule from '../../common/components/TagCapsule';
 import MktTrustCards from '../../common/components/MktTrustCards';
 import MktShowPrices from '../../common/components/MktShowPrices';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useAuth from '../../common/hooks/useAuth';
-import useSignup from '../../common/store/actions/signupAction';
+import useSignup from '../../store/actions/signupAction';
 import { SUBS_STATUS, fetchSuggestedPlan, getAllMySubscriptions, getTranslations } from '../../handlers/subscriptions';
 import axiosInstance from '../../axios';
 import useCohortHandler from '../../common/hooks/useCohortHandler';

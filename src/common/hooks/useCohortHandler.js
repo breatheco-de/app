@@ -5,7 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useAuth from './useAuth';
 import { getStorageItem, getBrowserInfo } from '../../utils';
-import useCohortAction from '../store/actions/cohortAction';
+import useCohortAction from '../../store/actions/cohortAction';
 import { processRelatedAssignments } from '../../handlers/cohorts';
 import { reportDatalayer } from '../../utils/requests';
 import bc from '../../services/breathecode';

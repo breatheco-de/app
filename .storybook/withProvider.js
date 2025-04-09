@@ -1,5 +1,5 @@
 import { Provider } from 'react-redux';
-import { initStore } from '../src/common/store';
+import { initStore } from '../src/store';
 import {addDecorator} from '@storybook/react';
 
 const store = initStore();

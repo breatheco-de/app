@@ -9,15 +9,15 @@ import {
   PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
   SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON, SET_SIGNUP_INITIAL_STATE,
 } from '../types';
-import { formatPrice, getDiscountedPrice, getNextDateInMonths, getQueryString, getStorageItem, getTimeProps, getBrowserInfo } from '../../../utils';
-import bc from '../../../services/breathecode';
-import { BREATHECODE_HOST } from '../../../utils/variables';
-import { usePersistent } from '../../hooks/usePersistent';
-import useSession from '../../hooks/useSession';
-import useAuth from '../../hooks/useAuth';
-import { reportDatalayer } from '../../../utils/requests';
-import { generatePlan, getTranslations } from '../../../handlers/subscriptions';
-import useCustomToast from '../../hooks/useCustomToast';
+import { formatPrice, getDiscountedPrice, getNextDateInMonths, getQueryString, getStorageItem, getTimeProps, getBrowserInfo } from '../../utils';
+import bc from '../../services/breathecode';
+import { BREATHECODE_HOST } from '../../utils/variables';
+import { usePersistent } from '../../common/hooks/usePersistent';
+import useSession from '../../common/hooks/useSession';
+import useAuth from '../../common/hooks/useAuth';
+import { reportDatalayer } from '../../utils/requests';
+import { generatePlan, getTranslations } from '../../handlers/subscriptions';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
 const useSignup = () => {
   const { isAuthenticated } = useAuth();

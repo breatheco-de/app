@@ -11,7 +11,7 @@ import { isWindow } from '../../../utils';
 import PaymentInfo from '../../../common/components/Checkout/PaymentInfo';
 import ServiceSummary from '../../../common/components/Checkout/ServiceSummary';
 import SelectServicePlan from '../../../common/components/Checkout/SelectServicePlan';
-import useSignup from '../../../common/store/actions/signupAction';
+import useSignup from '../../../store/actions/signupAction';
 import axiosInstance from '../../../axios';
 import asPrivate from '../../../context/PrivateRouteWrapper';
 import LoaderScreen from '../../../common/components/LoaderScreen';

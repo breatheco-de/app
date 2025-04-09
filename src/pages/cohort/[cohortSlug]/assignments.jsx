@@ -32,7 +32,7 @@ import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
 import useAuth from '../../../common/hooks/useAuth';
 import useCohortHandler from '../../../common/hooks/useCohortHandler';
-import useAssignments from '../../../common/store/actions/assignmentsAction';
+import useAssignments from '../../../store/actions/assignmentsAction';
 import Projects from '../../../common/components/Assignments/Projects';
 import FinalProjects from '../../../common/components/Assignments/FinalProjects';
 import StudentAssignments from '../../../common/components/Assignments/StudentAssignments';

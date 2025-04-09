@@ -30,7 +30,7 @@ import ChooseYourClass from '../../common/components/Checkout/ChooseYourClass';
 import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem, getBrowserInfo } from '../../utils';
 import Summary from '../../common/components/Checkout/Summary';
 import PaymentInfo from '../../common/components/Checkout/PaymentInfo';
-import useSignup from '../../common/store/actions/signupAction';
+import useSignup from '../../store/actions/signupAction';
 import axiosInstance from '../../axios';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import ModalInfo from '../../common/components/ModalInfo';

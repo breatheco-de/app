@@ -22,7 +22,7 @@ import useSession from '../../hooks/useSession';
 import { BASE_PLAN, BREATHECODE_HOST, SILENT_CODE } from '../../../utils/variables';
 import { getStorageItem, setStorageItem, getQueryString, getBrowserInfo } from '../../../utils';
 import { reportDatalayer } from '../../../utils/requests';
-import useSignup from '../../store/actions/signupAction';
+import useSignup from '../../../store/actions/signupAction';
 import ModalInfo from '../ModalInfo';
 import bc from '../../../services/breathecode';
 import useCustomToast from '../../hooks/useCustomToast';

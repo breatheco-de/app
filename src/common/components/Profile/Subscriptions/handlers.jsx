@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { enUS, es } from 'date-fns/locale';
 import useStyle from '../../../hooks/useStyle';
 import bc from '../../../../services/breathecode';
-import useSignup from '../../../store/actions/signupAction';
+import useSignup from '../../../../store/actions/signupAction';
 import { toCapitalize, unSlugify } from '../../../../utils';
 import { currenciesSymbols } from '../../../../utils/variables';
 import useCustomToast from '../../../hooks/useCustomToast';

@@ -10,7 +10,7 @@ import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import FilterModal from '../../common/components/FilterModal';
 import TitleContent from '../../common/components/Assets/TitleContent';
-import useFilter from '../../common/store/actions/filterAction';
+import useFilter from '../../store/actions/filterAction';
 import Search from '../../common/components/Assets/Search';
 import GridContainer from '../../common/components/GridContainer';
 import PaginatedView from '../../common/components/PaginationView';

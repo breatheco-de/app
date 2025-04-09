@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { reportDatalayer } from '../../utils/requests';
 import { getBrowserInfo } from '../../utils';
-import useSubscriptionsHandler from '../../common/store/actions/subscriptionAction';
+import useSubscriptionsHandler from '../../store/actions/subscriptionAction';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Link from '../../common/components/NextChakraLink';
