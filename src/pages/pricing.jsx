@@ -14,7 +14,7 @@ import useSignup from '../common/store/actions/signupAction';
 import MktTrustCards from '../common/components/MktTrustCards';
 import DraggableContainer from '../common/components/DraggableContainer';
 import Icon from '../common/components/Icon';
-import { fetchSuggestedPlan, getTranslations } from '../common/handlers/subscriptions';
+import { fetchSuggestedPlan, getTranslations } from '../handlers/subscriptions';
 import { getQueryString, isWindow, slugToTitle } from '../utils';
 import { parseQuerys } from '../utils/url';
 import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../utils/variables';

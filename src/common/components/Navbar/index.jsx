@@ -30,7 +30,7 @@ import bc from '../../../services/breathecode';
 import logoData from '../../../../public/logo.json';
 import { parseQuerys } from '../../../utils/url';
 import useStyle from '../../hooks/useStyle';
-import { getAllMySubscriptions } from '../../handlers/subscriptions';
+import { getAllMySubscriptions } from '../../../handlers/subscriptions';
 
 function Navbar({ translations, pageProps }) {
   const [uniqueLanguages, setUniqueLanguages] = useState([]);

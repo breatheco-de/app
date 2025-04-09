@@ -1,6 +1,6 @@
-import { slugToTitle, unSlugifyCapitalize } from '../../utils';
-import { BASE_PLAN, currenciesSymbols } from '../../utils/variables';
-import bc from '../../services/breathecode';
+import { slugToTitle, unSlugifyCapitalize } from '../utils';
+import { BASE_PLAN, currenciesSymbols } from '../utils/variables';
+import bc from '../services/breathecode';
 
 export const SUBS_STATUS = {
   ACTIVE: 'ACTIVE',

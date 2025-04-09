@@ -41,7 +41,7 @@ import Text from '../../common/components/Text';
 import SelectServicePlan from '../../common/components/Checkout/SelectServicePlan';
 import { BASE_PLAN, ORIGIN_HOST, BREATHECODE_HOST, currenciesSymbols } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
-import { getTranslations, processPlans } from '../../common/handlers/subscriptions';
+import { getTranslations, processPlans } from '../../handlers/subscriptions';
 import Icon from '../../common/components/Icon';
 import { usePersistentBySession } from '../../common/hooks/usePersistent';
 import AcordionList from '../../common/components/AcordionList';

@@ -9,7 +9,7 @@ import useStyle from './useStyle';
 import Heading from '../components/Heading';
 import { toCapitalize, unSlugify } from '../../utils';
 import Icon from '../components/Icon';
-import { generatePlan } from '../handlers/subscriptions';
+import { generatePlan } from '../../handlers/subscriptions';
 import useCustomToast from './useCustomToast';
 
 const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose-program', onClose: onExternalClose = () => {} } = {}) => {

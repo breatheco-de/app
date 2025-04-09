@@ -14,7 +14,7 @@ import bc from '../../../services/breathecode';
 import ModalInfo from '../ModalInfo';
 import useStyle from '../../hooks/useStyle';
 import useCohortHandler from '../../hooks/useCohortHandler';
-import handlers from '../../handlers';
+import handlers from '../../../handlers';
 import useCustomToast from '../../hooks/useCustomToast';
 
 function AttendanceModal({

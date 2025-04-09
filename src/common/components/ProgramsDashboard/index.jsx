@@ -9,7 +9,7 @@ import { isPlural } from '../../../utils';
 import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 import Text from '../Text';
 import bc from '../../../services/breathecode';
-import handlers from '../../handlers';
+import handlers from '../../../handlers';
 import Program from './Program';
 import UpgradeAccessModal from '../UpgradeAccessModal';
 import ProgramCard from '../ProgramCard';

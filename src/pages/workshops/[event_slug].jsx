@@ -27,7 +27,7 @@ import { categoriesFor, BREATHECODE_HOST } from '../../utils/variables';
 import ComponentOnTime from '../../common/components/ComponentOnTime';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import MktEventCards from '../../common/components/MktEventCards';
-import { validatePlanExistence } from '../../common/handlers/subscriptions';
+import { validatePlanExistence } from '../../handlers/subscriptions';
 import ModalToGetAccess, { stageType } from '../../common/components/ModalToGetAccess';
 import SmallCardsCarousel from '../../common/components/SmallCardsCarousel';
 import { SessionContext } from '../../context/SessionContext';

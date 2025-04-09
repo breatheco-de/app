@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { subMinutes } from 'date-fns';
 import { memo, useState } from 'react';
-import handlers from '../../handlers';
+import handlers from '../../../handlers';
 import ProgramCard from '../ProgramCard';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useSubscriptionsHandler from '../../store/actions/subscriptionAction';

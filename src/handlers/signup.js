@@ -1,4 +1,4 @@
-import { BREATHECODE_HOST } from '../../utils/variables';
+import { BREATHECODE_HOST } from '../utils/variables';
 
 export const typeError = {
   common: 'common',

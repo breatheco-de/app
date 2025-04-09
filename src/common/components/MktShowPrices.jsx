@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { Box, Skeleton } from '@chakra-ui/react';
 import ShowPrices from './ShowPrices';
-import { generatePlan, getTranslations } from '../handlers/subscriptions';
+import { generatePlan, getTranslations } from '../../handlers/subscriptions';
 import { usePersistentBySession } from '../hooks/usePersistent';
 import { getQueryString } from '../../utils';
 

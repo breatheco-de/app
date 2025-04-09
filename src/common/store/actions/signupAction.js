@@ -16,7 +16,7 @@ import { usePersistent } from '../../hooks/usePersistent';
 import useSession from '../../hooks/useSession';
 import useAuth from '../../hooks/useAuth';
 import { reportDatalayer } from '../../../utils/requests';
-import { generatePlan, getTranslations } from '../../handlers/subscriptions';
+import { generatePlan, getTranslations } from '../../../handlers/subscriptions';
 import useCustomToast from '../../hooks/useCustomToast';
 
 const useSignup = () => {

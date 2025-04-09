@@ -1,6 +1,6 @@
 import { differenceInDays } from 'date-fns';
-import bc from '../../services/breathecode';
-import { error } from '../../utils/logging';
+import bc from '../services/breathecode';
+import { error } from '../utils/logging';
 
 /**
  * @param {Number | String} id Required id of the cohort

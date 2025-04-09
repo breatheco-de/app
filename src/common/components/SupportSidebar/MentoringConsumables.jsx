@@ -16,7 +16,7 @@ import useOnline from '../../hooks/useOnline';
 import AvatarUser from '../AvatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped, CardSkeleton } from '../Skeleton';
-import { validatePlanExistence } from '../../handlers/subscriptions';
+import { validatePlanExistence } from '../../../handlers/subscriptions';
 import { getStorageItem, getBrowserInfo } from '../../../utils';
 import { reportDatalayer } from '../../../utils/requests';
 import { BREATHECODE_HOST } from '../../../utils/variables';

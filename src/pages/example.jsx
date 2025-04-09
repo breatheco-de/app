@@ -7,7 +7,7 @@ import ModalToGetAccess, { stageType } from '../common/components/ModalToGetAcce
 import MktInfoCards from '../common/components/MktInfoCards';
 import MktTrustCards from '../common/components/MktTrustCards';
 import MktTestimonials from '../common/components/MktTestimonials';
-import { getSubscriptions, validatePlanExistence } from '../common/handlers/subscriptions';
+import { getSubscriptions, validatePlanExistence } from '../handlers/subscriptions';
 import useAuth from '../common/hooks/useAuth';
 import bc from '../services/breathecode';
 
