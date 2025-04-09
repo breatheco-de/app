@@ -165,6 +165,7 @@
     "jest": "29.5.0",
     "lint-staged": "13.2.2",
     "slice-machine-ui": "^1.0.3",
-    "storybook": "^7.0.15"
+    "storybook": "^7.0.15",
+    "typescript": "^5.8.3"
   }
 }

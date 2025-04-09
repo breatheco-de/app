@@ -3,7 +3,8 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: ['plugin:react/recommended', 'plugin:@next/next/recommended', 'airbnb', 'plugin:storybook/recommended'],
+  extends: ['plugin:react/recommended', 'plugin:@next/next/recommended', 'airbnb', 'plugin:@typescript-eslint/recommended', 'plugin:storybook/recommended'],
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -11,7 +12,7 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
   },
-  plugins: ['react', 'prettier'],
+  plugins: ['react', '@typescript-eslint', 'prettier'],
   settings: {
     'import/resolver': {
       node: {
@@ -20,6 +21,7 @@ module.exports = {
     },
   },
   rules: {
+    'react/jsx-filename-extension': [1, { extensions: ['.jsx', '.tsx'] }],
     'react/react-in-jsx-scope': 'off',
     'react/jsx-props-no-spreading': 'off',
     'no-console': 'off',
@@ -41,6 +43,8 @@ module.exports = {
     'react/jsx-no-useless-fragment': 'off',
     'default-param-last': 'off',
     'react/no-danger': 'off',
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
   },
   ignorePatterns: ['src/__tests__/*', 'cypress', 'src/stories/**/*.jsx', 'src/stories/**/*.js'],
 };
