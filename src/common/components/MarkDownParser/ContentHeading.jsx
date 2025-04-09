@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { Box, useColorModeValue } from '@chakra-ui/react';
+import useStyle from '../../hooks/useStyle';
 import Heading from '../Heading';
 import Text from '../Text';
 import Icon from '../Icon';
@@ -7,6 +8,7 @@ import Icon from '../Icon';
 function ContentHeading({
   content, children, callToAction, titleRightSide, currentData,
 }) {
+  const { hexColor } = useStyle();
   const { title, subtitle, assetType } = content;
   const assetTypeIcons = {
     LESSON: 'book',
@@ -28,7 +30,7 @@ function ContentHeading({
           margin={{ base: '1rem 0 0 0', md: '2rem 0 0 0' }}
         >
           <Box display="flex" width={{ base: 'auto', md: 'calc(100% - 182px)' }} gridGap="16px" alignItems="center">
-            <Icon icon={assetTypeIcons[assetType] || 'book'} height="30px" color="#0097CD" width="28px" style={{ margin: 'auto', marginRight: '0.4rem' }} />
+            <Icon icon={assetTypeIcons[assetType] || 'book'} height="30px" color={hexColor.blueDefault} width="28px" style={{ margin: 'auto', marginRight: '0.4rem' }} />
             <Heading size="m" display="inline-flex" gridGap="10px" margin="0 0 0 0 !important">
               {title}
             </Heading>
