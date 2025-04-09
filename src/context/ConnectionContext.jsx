@@ -3,11 +3,11 @@ import {
 } from 'react';
 import PropTypes from 'prop-types';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
-import { getStorageItem } from '../../utils';
-import useAuth from '../hooks/useAuth';
-import axiosInstance from '../../axios';
-import { BREATHECODE_HOST } from '../../utils/variables';
-import { log } from '../../utils/logging';
+import { getStorageItem } from '../utils';
+import useAuth from '../common/hooks/useAuth';
+import axiosInstance from '../axios';
+import { BREATHECODE_HOST } from '../utils/variables';
+import { log } from '../utils/logging';
 
 export const ConnectionContext = createContext({ usersConnected: [] });
 

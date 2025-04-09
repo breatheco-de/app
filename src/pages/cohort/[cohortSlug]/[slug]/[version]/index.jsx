@@ -36,7 +36,7 @@ import TeacherSidebar from '../../../../../common/components/TeacherSidebar';
 import CallToAction from '../../../../../common/components/CallToAction';
 import ProgressBar from '../../../../../common/components/ProgressBar';
 import Heading from '../../../../../common/components/Heading';
-import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
+import asPrivate from '../../../../../context/PrivateRouteWrapper';
 import useAuth from '../../../../../common/hooks/useAuth';
 import useRigo from '../../../../../common/hooks/useRigo';
 import { ModuleMapSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';

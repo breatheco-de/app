@@ -24,7 +24,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Question from '../../../common/components/Question';
 import Text from '../../../common/components/Text';
 import bc from '../../../common/services/breathecode';
-import asPrivate from '../../../common/context/PrivateRouteWrapper';
+import asPrivate from '../../../context/PrivateRouteWrapper';
 import { log } from '../../../utils/logging';
 import useCustomToast from '../../../common/hooks/useCustomToast';
 

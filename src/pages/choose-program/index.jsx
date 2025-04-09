@@ -6,7 +6,7 @@ import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
 import ProgramsDashboard from '../../common/components/ProgramsDashboard';
 import Text from '../../common/components/Text';
-import asPrivate from '../../common/context/PrivateRouteWrapper';
+import asPrivate from '../../context/PrivateRouteWrapper';
 import bc from '../../common/services/breathecode';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';

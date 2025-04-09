@@ -5,7 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import useAuth from '../common/hooks/useAuth';
 import bc from '../common/services/breathecode';
 import CardForm from '../common/components/Checkout/CardForm';
-import asPrivate from '../common/context/PrivateRouteWrapper';
+import asPrivate from '../context/PrivateRouteWrapper';
 import Icon from '../common/components/Icon';
 import useCustomToast from '../common/hooks/useCustomToast';
 

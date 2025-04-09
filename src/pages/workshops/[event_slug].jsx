@@ -30,7 +30,7 @@ import MktEventCards from '../../common/components/MktEventCards';
 import { validatePlanExistence } from '../../common/handlers/subscriptions';
 import ModalToGetAccess, { stageType } from '../../common/components/ModalToGetAccess';
 import SmallCardsCarousel from '../../common/components/SmallCardsCarousel';
-import { SessionContext } from '../../common/context/SessionContext';
+import { SessionContext } from '../../context/SessionContext';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import DynamicContentCard from '../../common/components/DynamicContentCard';

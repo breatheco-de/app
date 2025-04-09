@@ -8,7 +8,7 @@ import {
 import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import useAuth from '../../common/hooks/useAuth';
-import asPrivate from '../../common/context/PrivateRouteWrapper';
+import asPrivate from '../../context/PrivateRouteWrapper';
 import bc from '../../common/services/breathecode';
 import { cleanQueryStrings } from '../../utils';
 import GridContainer from '../../common/components/GridContainer';

@@ -2,8 +2,8 @@
 import React, { useEffect, createContext, useState } from 'react';
 import Script from 'next/script';
 import PropTypes from 'prop-types';
-import { reportDatalayer } from '../../utils/requests';
-import { isWindow, getBrowserInfo } from '../../utils';
+import { reportDatalayer } from '../utils/requests';
+import { isWindow, getBrowserInfo } from '../utils';
 
 export const RigoContext = createContext({
   rigo: null,

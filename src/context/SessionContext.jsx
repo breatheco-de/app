@@ -2,9 +2,9 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import { isWindow, getQueryString } from '../../utils';
-import useGoogleMaps from '../hooks/useGoogleMaps';
-import { error } from '../../utils/logging';
+import { isWindow, getQueryString } from '../utils';
+import useGoogleMaps from '../common/hooks/useGoogleMaps';
+import { error } from '../utils/logging';
 
 const initialUserSession = {
   utm_placement: '', // the ad placement

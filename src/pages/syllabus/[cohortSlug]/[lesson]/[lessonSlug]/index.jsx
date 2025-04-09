@@ -8,7 +8,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { isWindow, assetTypeValues, getExtensionName, getStorageItem, languageFix } from '../../../../../utils';
-import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
+import asPrivate from '../../../../../context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
 import AssignmentButton from '../../../../../common/components/AssignmentButton';

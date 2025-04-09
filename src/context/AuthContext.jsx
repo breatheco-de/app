@@ -4,19 +4,19 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { Avatar, Box } from '@chakra-ui/react';
-import bc from '../services/breathecode';
-import { getQueryString, isWindow, removeStorageItem, removeURLParameter, getBrowserInfo } from '../../utils';
-import { reportDatalayer, getPrismicPages } from '../../utils/requests';
-import { getPrismicPagesUrls } from '../../utils/url';
-import { BREATHECODE_HOST, RIGOBOT_HOST, SILENT_CODE } from '../../utils/variables';
-import axiosInstance, { cancelAllCurrentRequests } from '../../axios';
-import { usePersistentBySession } from '../hooks/usePersistent';
-import useRigo from '../hooks/useRigo';
-import ModalInfo from '../components/ModalInfo';
-import Text from '../components/Text';
-import { warn } from '../../utils/logging';
-import { generateUserContext } from '../../utils/rigobotContext';
-import useCustomToast from '../hooks/useCustomToast';
+import bc from '../common/services/breathecode';
+import axiosInstance, { cancelAllCurrentRequests } from '../axios';
+import { usePersistentBySession } from '../common/hooks/usePersistent';
+import useRigo from '../common/hooks/useRigo';
+import useCustomToast from '../common/hooks/useCustomToast';
+import ModalInfo from '../common/components/ModalInfo';
+import Text from '../common/components/Text';
+import { getPrismicPagesUrls } from '../utils/url';
+import { warn } from '../utils/logging';
+import { getQueryString, isWindow, removeStorageItem, removeURLParameter, getBrowserInfo } from '../utils';
+import { reportDatalayer, getPrismicPages } from '../utils/requests';
+import { BREATHECODE_HOST, RIGOBOT_HOST, SILENT_CODE } from '../utils/variables';
+import { generateUserContext } from '../utils/rigobotContext';
 
 const initialState = {
   isLoading: true,

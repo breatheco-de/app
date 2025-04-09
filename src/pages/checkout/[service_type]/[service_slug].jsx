@@ -13,7 +13,7 @@ import ServiceSummary from '../../../common/components/Checkout/ServiceSummary';
 import SelectServicePlan from '../../../common/components/Checkout/SelectServicePlan';
 import useSignup from '../../../common/store/actions/signupAction';
 import axiosInstance from '../../../axios';
-import asPrivate from '../../../common/context/PrivateRouteWrapper';
+import asPrivate from '../../../context/PrivateRouteWrapper';
 import LoaderScreen from '../../../common/components/LoaderScreen';
 import useStyle from '../../../common/hooks/useStyle';
 import useCustomToast from '../../../common/hooks/useCustomToast';

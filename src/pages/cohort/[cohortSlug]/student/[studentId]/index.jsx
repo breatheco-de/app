@@ -24,7 +24,7 @@ import { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../../.
 import useStyle from '../../../../../common/hooks/useStyle';
 import bc from '../../../../../common/services/breathecode';
 import ReactSelect from '../../../../../common/components/ReactSelect';
-import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
+import asPrivate from '../../../../../context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import Icon from '../../../../../common/components/Icon';
 import Text from '../../../../../common/components/Text';

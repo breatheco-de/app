@@ -15,7 +15,7 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import asPrivate from '../../../common/context/PrivateRouteWrapper';
+import asPrivate from '../../../context/PrivateRouteWrapper';
 import ReactSelect from '../../../common/components/ReactSelect';
 import Link from '../../../common/components/NextChakraLink';
 import Heading from '../../../common/components/Heading';
