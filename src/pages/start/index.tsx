@@ -57,6 +57,7 @@ const StartPage: FC = () => {
     }
     let foundVendors: ProvisioningVendor[] = [];
     let found = false;
+
     await (cohorts as Cohort[]).reduce(async (previousPromise, cohort: Cohort) => {
       await previousPromise;
       if (found || foundVendors.length > 0) return;
