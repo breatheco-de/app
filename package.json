@@ -149,6 +149,8 @@
     "@storybook/react": "7.0.10",
     "@storybook/testing-library": "^0.0.14-next.2",
     "@testing-library/react": "14.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.29.1",
+    "@typescript-eslint/parser": "^8.29.1",
     "babel-jest": "29.5.0",
     "babel-loader": "9.1.2",
     "babel-plugin-styled-components": "2.1.1",
