@@ -28,7 +28,3 @@ export const SILENT_CODE = {
   LIST_PROCESSING_ERRORS: ['rate-limit-error', 'invalid-request', 'authentication-error', 'payment-service-are-down', 'stripe-error'],
   UNEXPECTED_EXCEPTION: 'unexpected-exception',
 };
-
-// export {
-//   SILENT_CODE,
-// };
