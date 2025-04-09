@@ -6,7 +6,7 @@ import MktSearchBar from './MktSearchBar';
 import MktTechnologiesPills from './MktTechnologiesPills';
 import MktTechnologies from './MktTechnologies';
 import Heading from './Heading';
-import bc from '../services/breathecode';
+import bc from '../../services/breathecode';
 
 function WorkshopsLoggedLanding() {
   const { t, lang } = useTranslation('workshops');

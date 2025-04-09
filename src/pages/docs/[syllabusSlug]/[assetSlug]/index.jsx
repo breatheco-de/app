@@ -18,7 +18,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Head from 'next/head';
 import { processRelatedAssignments } from '../../../../common/handlers/cohorts';
 import useStyle from '../../../../common/hooks/useStyle';
-import bc from '../../../../common/services/breathecode';
+import bc from '../../../../services/breathecode';
 import Heading from '../../../../common/components/Heading';
 import Text from '../../../../common/components/Text';
 import Link from '../../../../common/components/NextChakraLink';

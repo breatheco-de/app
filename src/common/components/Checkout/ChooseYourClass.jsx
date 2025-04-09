@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useRef, useState } from 'react';
 import Heading from '../Heading';
-import bc from '../../services/breathecode';
+import bc from '../../../services/breathecode';
 import { getQueryString, getTimeProps, getBrowserInfo } from '../../../utils';
 import useGoogleMaps from '../../hooks/useGoogleMaps';
 import useSignup from '../../store/actions/signupAction';

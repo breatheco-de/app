@@ -13,7 +13,7 @@ import Text from '../../common/components/Text';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import { error } from '../../utils/logging';
-import bc from '../../common/services/breathecode';
+import bc from '../../services/breathecode';
 import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
 import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow, getBrowserInfo, getQueryString } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';

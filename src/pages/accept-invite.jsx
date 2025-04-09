@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { BREATHECODE_HOST } from '../utils/variables';
-import bc from '../common/services/breathecode';
+import bc from '../services/breathecode';
 import useAuth from '../common/hooks/useAuth';
 import LoaderScreen from '../common/components/LoaderScreen';
 import validationSchema from '../common/components/Forms/validationSchemas';

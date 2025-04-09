@@ -22,7 +22,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import { Form, Formik } from 'formik';
 import { getDataContentProps } from '../../utils/file';
-import bc from '../../common/services/breathecode';
+import bc from '../../services/breathecode';
 import useAuth from '../../common/hooks/useAuth';
 import useSession from '../../common/hooks/useSession';
 import ContactInformation from '../../common/components/Checkout/ContactInformation';
