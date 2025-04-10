@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import {
+  Container,
+  Box,
   Button,
   Modal,
   ModalOverlay,
@@ -9,44 +11,53 @@ import {
   ModalFooter,
   ModalCloseButton,
   Flex,
+  Step,
+  StepIcon,
+  StepIndicator,
+  StepSeparator,
+  StepStatus,
+  Stack,
+  Stepper,
 } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
-import styles from '../../../../styles/Home.module.css';
-import Steps from '../../../common/styledComponents/Steps';
-import Question from '../../../common/components/Question';
-import bc from '../../../common/services/breathecode';
-import asPrivate from '../../../common/context/PrivateRouteWrapper';
+import Question from '../../../components/Question';
+import Text from '../../../components/Text';
+import bc from '../../../services/breathecode';
+import asPrivate from '../../../context/PrivateRouteWrapper';
 import { log } from '../../../utils/logging';
-import useCustomToast from '../../../common/hooks/useCustomToast';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function Survey() {
   const router = useRouter();
   const { t } = useTranslation('survey');
   const { surveyId } = router.query;
-  const [questions, setQuestions] = useState(null);
+  const [questions, setQuestions] = useState([]);
   const [msg, setMsg] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [currentIndex, setcurrentIndex] = useState(0);
   const { createToast } = useCustomToast({ toastId: 'questions-toast' });
 
   const handleSurvey = async () => {
-    await bc.feedback().getSurvey(surveyId)
-      .then((res) => {
-        if (res === undefined) {
-          setMsg({ text: 'expired', type: 'error' });
-          return;
-        }
-        const { data } = res;
-        log('suyver_data:', data);
-        setQuestions(data.map((q) => ({ message: q.title, ...q })));
-        setMsg(null);
-      })
-      .catch((error) => {
-        log('error_survey:', error);
-        setMsg({ text: error.message || error, type: 'error' });
-        setQuestions([]);
-      });
+    try {
+      const res = await bc.feedback().getSurvey(surveyId);
+
+      console.log('res', res);
+
+      if (!res || res.status >= 400) {
+        setMsg({ text: 'expired', type: 'error' });
+        return;
+      }
+
+      const { data } = res;
+      log('suyver_data:', data);
+      setQuestions(data.map((q) => ({ message: q.title, ...q })));
+      setMsg(null);
+    } catch (error) {
+      log('error_survey:', error);
+      setMsg({ text: error.message || error, type: 'error' });
+      setQuestions([]);
+    }
   };
 
   useEffect(() => {
@@ -68,35 +79,53 @@ function Survey() {
     }
   }, [msg]);
 
-  const confirmSend = () => {
+  const confirmSend = async () => {
     const q = questions[currentIndex];
     if (q.score === null || !parseInt(q.score, 10) || q.score > 10 || q.score < 0) {
       setMsg({ type: 'error', text: 'valdiation' });
       setModalIsOpen(false);
-    } else {
-      bc.feedback().sendVote({
-        score: q.score, comment: q.comment, entity_id: q.id,
-      })
-        .then(() => {
-          setModalIsOpen(false);
-          if (questions.length - 1 > currentIndex) {
-            setcurrentIndex(currentIndex + 1);
-            setQuestions((qest) => qest.map((_q) => (_q.id === q.id ? q : _q)));
-          } else setMsg({ text: t('thanks'), type: 'success' });
-        })
-        .catch((error) => setMsg({ text: error.message || error, type: 'error' }));
+      return;
+    }
+
+    try {
+      await bc.feedback().sendVote({
+        score: q.score,
+        comment: q.comment,
+        entity_id: q.id,
+      });
+
+      setModalIsOpen(false);
+      if (questions.length - 1 > currentIndex) {
+        setcurrentIndex(currentIndex + 1);
+        setQuestions((qest) => qest.map((_q) => (_q.id === q.id ? q : _q)));
+      } else {
+        setMsg({ text: t('thanks'), type: 'success' });
+      }
+    } catch (error) {
+      setMsg({ text: error.message || error, type: 'error' });
     }
   };
 
+  const activeStepText = questions[currentIndex]?.label;
+
   return (
-    <div className={styles.container}>
-      <main className={styles.main}>
-        <div>
-          <Steps
-            currentIndex={currentIndex}
-            steps={!Array.isArray(questions) ? [] : questions.map((q, i) => ({ label: i }))}
-          />
-        </div>
+    <Container maxW="1280px">
+      <Box>
+        <Stack>
+          <Stepper size="sm" index={currentIndex} gap="0">
+            {questions.map(({ label }) => (
+              <Step key={label} gap="0">
+                <StepIndicator>
+                  <StepStatus complete={<StepIcon />} />
+                </StepIndicator>
+                <StepSeparator _horizontal={{ ml: '0' }} />
+              </Step>
+            ))}
+          </Stepper>
+          <Text>
+            {activeStepText}
+          </Text>
+        </Stack>
         {Array.isArray(questions) && questions.length > 0
           && (
             <Question
@@ -141,21 +170,19 @@ function Survey() {
               <Button
                 width={currentIndex > 0 ? '49%' : '100%'}
                 justifyContent="space-between"
-                // colorScheme='blue'
                 onClick={() => setModalIsOpen(true)}
                 variant="outline"
                 textAlign="left"
                 position="relative"
                 style={{ textAlign: 'left' }}
-              // rightIcon={<ArrowForwardIcon />}
               >
                 {currentIndex === questions.length - 1 ? t('send') : t('next')}
                 <ArrowForwardIcon />
               </Button>
             </Flex>
           )}
-      </main>
-    </div>
+      </Box>
+    </Container>
   );
 }
 

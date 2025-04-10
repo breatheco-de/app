@@ -1,6 +1,6 @@
 import React from 'react';
 
-import TagCapsule from '../common/components/TagCapsule';
+import TagCapsule from '../components/TagCapsule';
 
 export default {
   title: 'Components/TagCapsule',

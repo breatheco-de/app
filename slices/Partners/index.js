@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-filename-extension */
 import React from 'react';
-import MktPartners from '../../src/common/components/MktPartners';
+import MktPartners from '../../src/components/MktPartners';
 
 /**
  * @typedef {import("@prismicio/client").Content.PartnersSlice} PartnersSlice

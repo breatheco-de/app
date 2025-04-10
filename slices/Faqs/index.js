@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import Faq from '../../src/common/components/Faq';
+import Faq from '../../src/components/Faq';
 /**
  * @typedef {import("@prismicio/client").Content.FaqsSlice} FaqsSlice
  * @typedef {import("@prismicio/react").SliceComponentProps<FaqsSlice>} FaqsProps

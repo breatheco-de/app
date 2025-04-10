@@ -22,22 +22,22 @@ import {
   ModalCloseButton,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import asPrivate from '../../../common/context/PrivateRouteWrapper';
-import ReactSelect, { AsyncSelect } from '../../../common/components/ReactSelect';
-import Link from '../../../common/components/NextChakraLink';
-import Heading from '../../../common/components/Heading';
-import bc from '../../../common/services/breathecode';
-import Icon from '../../../common/components/Icon';
-import Text from '../../../common/components/Text';
-import useStyle from '../../../common/hooks/useStyle';
-import useAuth from '../../../common/hooks/useAuth';
-import useCohortHandler from '../../../common/hooks/useCohortHandler';
-import useAssignments from '../../../common/store/actions/assignmentsAction';
-import Projects from '../../../common/views/Projects';
-import FinalProjects from '../../../common/views/FinalProjects';
-import StudentAssignments from '../../../common/views/StudentAssignments';
+import asPrivate from '../../../context/PrivateRouteWrapper';
+import ReactSelect, { AsyncSelect } from '../../../components/ReactSelect';
+import Link from '../../../components/NextChakraLink';
+import Heading from '../../../components/Heading';
+import bc from '../../../services/breathecode';
+import Icon from '../../../components/Icon';
+import Text from '../../../components/Text';
+import useStyle from '../../../hooks/useStyle';
+import useAuth from '../../../hooks/useAuth';
+import useCohortHandler from '../../../hooks/useCohortHandler';
+import useAssignments from '../../../store/actions/assignmentsAction';
+import Projects from '../../../components/Assignments/Projects';
+import FinalProjects from '../../../components/Assignments/FinalProjects';
+import StudentAssignments from '../../../components/Assignments/StudentAssignments';
 import axiosInstance from '../../../axios';
-import useCustomToast from '../../../common/hooks/useCustomToast';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function Assignments() {
   const { t } = useTranslation('assignments');

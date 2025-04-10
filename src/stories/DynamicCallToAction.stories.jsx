@@ -1,5 +1,5 @@
 import React from 'react';
-import DynamicCallToAction from '../common/components/DynamicCallToAction';
+import DynamicCallToAction from '../components/DynamicCallToAction';
 
 export default {
   title: 'Components/DynamicCallToAction',
