@@ -1,5 +1,5 @@
 import {
-  Box, Input, Button, Container, Text, InputGroup, InputRightElement, useColorModeValue, Skeleton,
+  Box, Container, Text, useColorModeValue, Skeleton,
 } from '@chakra-ui/react';
 import React, { useState, useEffect, lazy, Suspense, useCallback } from 'react';
 import { useRouter } from 'next/router';
@@ -9,12 +9,12 @@ import useStyle from '../../common/hooks/useStyle';
 import bc from '../../common/services/breathecode';
 import useAuth from '../../common/hooks/useAuth';
 import useCustomToast from '../../common/hooks/useCustomToast';
+import MktSearchBar from '../../common/components/MktSearchBar';
 
 const ModalToCloneProject = lazy(() => import('../../common/components/GuidedExperience/ModalToCloneProject'));
 
 export default function StartPage() {
   const { t } = useTranslation();
-  const [searchInput, setSearchInput] = useState('');
   const [assetData, setAssetData] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -79,6 +79,8 @@ export default function StartPage() {
         title: 'Error Loading Project',
         description: message,
       });
+      setAssetData(null);
+      setShowModal(false);
     } finally {
       setIsLoading(false);
     }
@@ -92,39 +94,30 @@ export default function StartPage() {
 
     if (asset) {
       const assetSlug = Array.isArray(asset) ? asset[0] : asset;
-      setSearchInput(assetSlug);
       fetchAssetAndVendors(assetSlug);
-    } else {
-      setSearchInput('');
     }
-  }, [asset, fetchAssetAndVendors]);
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    const input = searchInput.trim();
-    if (!input) return;
-
-    setShowModal(false);
-    setAssetData(null);
-
-    router.push(`/start?asset=${encodeURIComponent(input)}`);
-  };
+  }, [asset]);
 
   const handleCloseModal = () => {
     setShowModal(false);
-    router.push('/start', undefined, { shallow: true });
+    const currentQuery = new URLSearchParams(router.query);
+    currentQuery.delete('asset');
+    const queryString = currentQuery.toString();
+    router.replace(`${router.pathname}${queryString ? `?${queryString}` : ''}`, undefined, { shallow: true });
   };
 
   const headingColor = useColorModeValue('black', 'white');
 
   const shouldRenderModal = showModal && !isLoading && assetData;
 
+  const popularSearches = ['node-api-tutorial'];
+
   return (
     <Box minHeight="100vh" display="flex" flexDirection="column">
       <Container maxW="container.md" py={10} flex="1" display="flex" flexDirection="column" alignItems="center">
 
-        <Box width="100%" display="flex" flexDirection="column" alignItems="center" mb={8}>
-          <Box mb={8}>
+        <Box width="100%" display="flex" flexDirection="column" alignItems="center">
+          <Box>
             <Icon
               icon="4GeeksIcon"
               width="196px"
@@ -132,37 +125,19 @@ export default function StartPage() {
               color={hexColor.blueDefault}
             />
           </Box>
-          <Text fontSize="2xl" fontWeight="bold" mb={6} color={headingColor} textAlign="center">
+          <Text fontSize="2xl" fontWeight="bold" color={headingColor} textAlign="center">
             {t('common:start-working-project')}
           </Text>
-          <Box as="form" onSubmit={handleSearch} width="100%" maxW="600px">
-            <InputGroup size="lg">
-              <Input
-                placeholder={t('common:start-placeholder')}
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                borderColor={hexColor.borderColor}
-                _hover={{ borderColor: hexColor.blueDefault }}
-                _focus={{ borderColor: hexColor.blueDefault, boxShadow: `0 0 0 1px ${hexColor.blueDefault}` }}
-                borderRadius="md"
-                height="60px"
-                fontSize="md"
-              />
-              <InputRightElement width="5.5rem" height="60px">
-                <Button
-                  h="40px"
-                  type="submit"
-                  bg={hexColor.blueDefault}
-                  color="white"
-                  _hover={{ bg: 'blue.600' }}
-                  mr={1}
-                  isLoading={isLoading}
-                >
-                  {t('common:search')}
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-          </Box>
+          <MktSearchBar
+            id="start-asset-search"
+            placeholder={t('common:start-placeholder')}
+            popularSearches={popularSearches}
+            popularSearchesTitle={t('common:popular-searches')}
+            width="100%"
+            padding="0"
+            searchOn="submit"
+            queryParamKey="asset"
+          />
         </Box>
 
         {isLoading && (
