@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import PropTypes from 'prop-types';
 import { Box } from '@chakra-ui/react';
-import iconDict from '../../iconDict.json';
+import iconDict from '../../../public/iconDict.json';
 
 function Icon({
   icon, width, size, height, style, color, secondColor, fill, className, props, full, text, ...rest
