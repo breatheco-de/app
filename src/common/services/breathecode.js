@@ -377,9 +377,9 @@ const breathecode = {
       verifyCoupon: () => axios.get(`${url}/coupon${qs}`),
       service: () => ({
         consumable: () => axios.get(`${url}/me/service/consumable${qs}`),
-        // getAcademyService: (serviceSlug) => axios.get(`${url}/academy/academyservice/${serviceSlug}${qs}`),
+        getAcademyServiceBySlug: (serviceSlug) => breathecode.get(`${url}/academy/academyservice/${serviceSlug}${qs}`),
         getAcademyService: () => breathecode.get(`${url}/academy/academyservice${qs}`),
-        payConsumable: (data) => axios.post(`${url}/consumable/checkout${qs}`, data),
+        payConsumable: (data) => breathecode.post(`${url}/consumable/checkout${qs}`, data),
       }),
       getEvent: (eventId) => axios.get(`${host}/events/academy/event/${eventId}${qs}`),
       getAllEventTypeSets: () => axios.get(`${host}/payments/eventtypeset`),
