@@ -1,7 +1,7 @@
 import { Box, Flex, Image } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Text from './Text';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 
 function MktMultipleColumnCard({ id, title, columns, fontFamily, marginBottom, marginTop, maxWidth, ...rest }) {
   const limitedColumns = columns.slice(0, 5);

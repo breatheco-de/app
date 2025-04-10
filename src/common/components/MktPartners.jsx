@@ -8,7 +8,7 @@ import {
 import { useRef } from 'react';
 import Heading from './Heading';
 import GridContainer from './GridContainer';
-import useGrabToScroll from '../hooks/useGrabToScroll';
+import useGrabToScroll from '../../hooks/useGrabToScroll';
 import { toCapitalize } from '../../utils';
 
 function MktPartners({ id, title, titleSize, images, description, imagesContent, ...rest }) {

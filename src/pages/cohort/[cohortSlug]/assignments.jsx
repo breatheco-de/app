@@ -29,15 +29,15 @@ import Heading from '../../../common/components/Heading';
 import bc from '../../../services/breathecode';
 import Icon from '../../../common/components/Icon';
 import Text from '../../../common/components/Text';
-import useStyle from '../../../common/hooks/useStyle';
-import useAuth from '../../../common/hooks/useAuth';
-import useCohortHandler from '../../../common/hooks/useCohortHandler';
+import useStyle from '../../../hooks/useStyle';
+import useAuth from '../../../hooks/useAuth';
+import useCohortHandler from '../../../hooks/useCohortHandler';
 import useAssignments from '../../../store/actions/assignmentsAction';
 import Projects from '../../../common/components/Assignments/Projects';
 import FinalProjects from '../../../common/components/Assignments/FinalProjects';
 import StudentAssignments from '../../../common/components/Assignments/StudentAssignments';
 import axiosInstance from '../../../axios';
-import useCustomToast from '../../../common/hooks/useCustomToast';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function Assignments() {
   const { t } = useTranslation('assignments');

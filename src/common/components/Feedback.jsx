@@ -10,12 +10,12 @@ import ReviewModal from './ReviewModal';
 import Icon from './Icon';
 import Text from './Text';
 import Heading from './Heading';
-import useStyle from '../hooks/useStyle';
-import useAuth from '../hooks/useAuth';
+import useStyle from '../../hooks/useStyle';
+import useAuth from '../../hooks/useAuth';
 import { error } from '../../utils/logging';
 import { BREATHECODE_HOST } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
-import useCustomToast from '../hooks/useCustomToast';
+import useCustomToast from '../../hooks/useCustomToast';
 
 const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
 

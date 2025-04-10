@@ -17,7 +17,7 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Head from 'next/head';
 import { processRelatedAssignments } from '../../../../handlers/cohorts';
-import useStyle from '../../../../common/hooks/useStyle';
+import useStyle from '../../../../hooks/useStyle';
 import bc from '../../../../services/breathecode';
 import Heading from '../../../../common/components/Heading';
 import Text from '../../../../common/components/Text';

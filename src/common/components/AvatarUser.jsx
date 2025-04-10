@@ -20,8 +20,8 @@ import { es } from 'date-fns/locale';
 import { format } from 'date-fns';
 import Heading from './Heading';
 import Text from './Text';
-import useOnline from '../hooks/useOnline';
-import useCohortHandler from '../hooks/useCohortHandler';
+import useOnline from '../../hooks/useOnline';
+import useCohortHandler from '../../hooks/useCohortHandler';
 
 const AvatarUser = memo(({
   data, fullName, isTeacherVersion, containerStyle, width, height, badge, customBadge, isWrapped, index, withoutPopover, avatarUrl,

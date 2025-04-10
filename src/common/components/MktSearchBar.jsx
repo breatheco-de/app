@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import Heading from './Heading';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 
 function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches, background, popularSearchesTitle, ...rest }) {
   const [search, setSearch] = useState('');

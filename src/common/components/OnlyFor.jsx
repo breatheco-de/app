@@ -4,9 +4,9 @@ import { Box, Button } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
-import useStyle from '../hooks/useStyle';
-import useAuth from '../hooks/useAuth';
-import useCohortHandler from '../hooks/useCohortHandler';
+import useStyle from '../../hooks/useStyle';
+import useAuth from '../../hooks/useAuth';
+import useCohortHandler from '../../hooks/useCohortHandler';
 
 function Component({ withBanner, children }) {
   const { t } = useTranslation('common');

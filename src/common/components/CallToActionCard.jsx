@@ -8,7 +8,7 @@ import Image from 'next/image';
 import Text from './Text';
 import Heading from './Heading';
 import NextChakraLink from './NextChakraLink';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import { reportDatalayer } from '../../utils/requests';
 import { getBrowserInfo } from '../../utils';
 

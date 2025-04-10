@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Text, Center, useColorModeValue, Tooltip } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import useCanAccess from '../hooks/useCanAccess';
+import useCanAccess from '../../hooks/useCanAccess';
 
 /**
  * CanAccess component that checks if a user has access to a specific service

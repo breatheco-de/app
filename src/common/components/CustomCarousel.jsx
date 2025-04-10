@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Flex, Box, Text, Image, Badge } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 
 function CustomCarousel({ assignmentList }) {
   const { t } = useTranslation();

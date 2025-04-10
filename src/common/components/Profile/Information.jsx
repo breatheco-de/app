@@ -5,14 +5,14 @@ import { useCallback, useEffect, useState } from 'react';
 import Cropper from 'react-easy-crop';
 import ProfileForm from '../ProfileForm';
 import Text from '../Text';
-import useAuth from '../../hooks/useAuth';
-import useStyle from '../../hooks/useStyle';
+import useAuth from '../../../hooks/useAuth';
+import useStyle from '../../../hooks/useStyle';
 import bc from '../../../services/breathecode';
 import { location } from '../../../utils';
 import getCroppedImg from '../../../utils/cropImage';
 import Icon from '../Icon';
-import useUploadFileInChunks from '../../hooks/useUploadFileInChunks';
-import useCustomToast from '../../hooks/useCustomToast';
+import useUploadFileInChunks from '../../../hooks/useUploadFileInChunks';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function Information() {
   const { t } = useTranslation('profile');

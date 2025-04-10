@@ -10,7 +10,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import logoData from '../../../public/logo.json';
 import NextChakraLink from './NextChakraLink';
-import useAuth from '../hooks/useAuth';
+import useAuth from '../../hooks/useAuth';
 
 function FooterTC({ pageProps }) {
   const { t } = useTranslation('footer');

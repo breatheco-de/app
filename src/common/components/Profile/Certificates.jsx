@@ -7,7 +7,7 @@ import Head from 'next/head';
 import Icon from '../Icon';
 import Text from '../Text';
 import ShareButton from '../ShareButton';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import { location } from '../../../utils';
 
 function Certificates({ certificates }) {

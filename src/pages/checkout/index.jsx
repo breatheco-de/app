@@ -23,8 +23,8 @@ import { useRouter } from 'next/router';
 import { Form, Formik } from 'formik';
 import { getDataContentProps } from '../../utils/file';
 import bc from '../../services/breathecode';
-import useAuth from '../../common/hooks/useAuth';
-import useSession from '../../common/hooks/useSession';
+import useAuth from '../../hooks/useAuth';
+import useSession from '../../hooks/useSession';
 import ContactInformation from '../../common/components/Checkout/ContactInformation';
 import ChooseYourClass from '../../common/components/Checkout/ChooseYourClass';
 import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem, getBrowserInfo } from '../../utils';
@@ -34,7 +34,7 @@ import useSignup from '../../store/actions/signupAction';
 import axiosInstance from '../../axios';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import ModalInfo from '../../common/components/ModalInfo';
-import useStyle from '../../common/hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import Stepper from '../../common/components/Checkout/Stepper';
 import ServiceSummary from '../../common/components/Checkout/ServiceSummary';
 import Text from '../../common/components/Text';
@@ -43,9 +43,9 @@ import { BASE_PLAN, ORIGIN_HOST, BREATHECODE_HOST, currenciesSymbols } from '../
 import { reportDatalayer } from '../../utils/requests';
 import { getTranslations, processPlans } from '../../handlers/subscriptions';
 import Icon from '../../common/components/Icon';
-import { usePersistentBySession } from '../../common/hooks/usePersistent';
+import { usePersistentBySession } from '../../hooks/usePersistent';
 import AcordionList from '../../common/components/AcordionList';
-import useCustomToast from '../../common/hooks/useCustomToast';
+import useCustomToast from '../../hooks/useCustomToast';
 import { handlePriceTextWithCoupon } from '../../utils/getPriceWithDiscount';
 
 export const getStaticProps = async ({ locale, locales }) => {

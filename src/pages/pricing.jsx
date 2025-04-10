@@ -18,9 +18,9 @@ import { fetchSuggestedPlan, getTranslations } from '../handlers/subscriptions';
 import { getQueryString, isWindow, slugToTitle } from '../utils';
 import { parseQuerys } from '../utils/url';
 import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../utils/variables';
-import useStyle from '../common/hooks/useStyle';
-import useAuth from '../common/hooks/useAuth';
-import usePlanMktInfo from '../common/hooks/usePlanMktInfo';
+import useStyle from '../hooks/useStyle';
+import useAuth from '../hooks/useAuth';
+import usePlanMktInfo from '../hooks/usePlanMktInfo';
 import bc from '../services/breathecode';
 
 const switchTypes = {

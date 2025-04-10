@@ -6,7 +6,7 @@ import {
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Link from '../NextChakraLink';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import Icon from '../Icon';
 import Text from '../Text';
 import TaskLabel from '../taskLabel';

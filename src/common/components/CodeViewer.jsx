@@ -21,11 +21,11 @@ import Editor, { DiffEditor } from '@monaco-editor/react';
 import { setStorageItem, getStorageItem, isWindow } from '../../utils';
 import { RIGOBOT_HOST, BREATHECODE_HOST } from '../../utils/variables';
 import ModalInfo from './ModalInfo';
-import useAuth from '../hooks/useAuth';
-import useStyle from '../hooks/useStyle';
+import useAuth from '../../hooks/useAuth';
+import useStyle from '../../hooks/useStyle';
 import Text from './Text';
 import Icon from './Icon';
-import useCustomToast from '../hooks/useCustomToast';
+import useCustomToast from '../../hooks/useCustomToast';
 
 const notExecutables = ['css', 'shell', 'windows', 'macos', 'mac', 'linux'];
 

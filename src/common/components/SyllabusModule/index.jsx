@@ -8,7 +8,7 @@ import { reportDatalayer } from '../../../utils/requests';
 import { languageFix, getBrowserInfo } from '../../../utils';
 import Text from '../Text';
 import SyllabusActivity from './SyllabusActivity';
-import useCohortHandler from '../../hooks/useCohortHandler';
+import useCohortHandler from '../../../hooks/useCohortHandler';
 import Icon from '../Icon';
 
 function SyllabusModule({

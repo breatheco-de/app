@@ -25,9 +25,9 @@ import iconDict from '../../../iconDict.json';
 import { isGithubUrl } from '../../../utils/regex';
 import MarkDownParser from '../MarkDownParser';
 import Icon from '../Icon';
-import useStyle from '../../hooks/useStyle';
-import useCohortHandler from '../../hooks/useCohortHandler';
-import useCustomToast from '../../hooks/useCustomToast';
+import useStyle from '../../../hooks/useStyle';
+import useCohortHandler from '../../../hooks/useCohortHandler';
+import useCustomToast from '../../../hooks/useCustomToast';
 import { formatBytes } from '../../../utils';
 import ButtonVariants from './ButtonVariants';
 

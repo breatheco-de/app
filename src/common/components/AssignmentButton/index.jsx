@@ -4,13 +4,13 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import Icon from '../Icon';
 import ProjectSubmitButton from './ProjectSubmitButton';
-import useCohortHandler from '../../hooks/useCohortHandler';
+import useCohortHandler from '../../../hooks/useCohortHandler';
 import bc from '../../../services/breathecode';
 import ButtonVariants from './ButtonVariants';
-import useCustomToast from '../../hooks/useCustomToast';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function AssignmentButton({
   currentTask,

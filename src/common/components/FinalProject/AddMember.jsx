@@ -21,8 +21,8 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import AutosuggestInput from './Autosuggest';
 import Icon from '../Icon';
-import useStyle from '../../hooks/useStyle';
-import useAuth from '../../hooks/useAuth';
+import useStyle from '../../../hooks/useStyle';
+import useAuth from '../../../hooks/useAuth';
 import { isNumber } from '../../../utils';
 
 function AddMember({ students, errors, required, hint }) {

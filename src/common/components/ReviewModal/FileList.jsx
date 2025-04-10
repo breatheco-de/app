@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useState } from 'react';
 import Heading from '../Heading';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import Icon from '../Icon';
 import Text from '../Text';
 import { log } from '../../../utils/logging';

@@ -5,14 +5,14 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import useStyle from '../hooks/useStyle';
-import useSession from '../hooks/useSession';
+import useStyle from '../../hooks/useStyle';
+import useSession from '../../hooks/useSession';
 import FieldForm from './Forms/FieldForm';
 import Heading from './Heading';
 import { setStorageItem, toCapitalize } from '../../utils';
 import { BREATHECODE_HOST } from '../../utils/variables';
 import { log } from '../../utils/logging';
-import useCustomToast from '../hooks/useCustomToast';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function DirectAccessModal({ title, modalIsOpen }) {
   const { t } = useTranslation('profile');

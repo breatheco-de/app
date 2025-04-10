@@ -8,7 +8,7 @@ import Link from '../common/components/NextChakraLink';
 import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
 import Icon from '../common/components/Icon';
-import useStyle from '../common/hooks/useStyle';
+import useStyle from '../hooks/useStyle';
 
 export const getStaticProps = () => ({
   props: {

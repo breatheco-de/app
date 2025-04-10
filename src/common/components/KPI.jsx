@@ -2,7 +2,7 @@ import {
   Box, Flex, Stack, Text, useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import Heading from './Heading';
 import Icon from './Icon';
 import Counter from './ProgressCircle/Counter';

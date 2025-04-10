@@ -13,9 +13,9 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import styles from '../../../styles/flags.module.css';
 import bc from '../../services/breathecode';
-import useAuth from '../hooks/useAuth';
+import useAuth from '../../hooks/useAuth';
 import NextChakraLink from './NextChakraLink';
-import useSession from '../hooks/useSession';
+import useSession from '../../hooks/useSession';
 
 function LanguageSelector({ display, translations, ...rest }) {
   const { userSession } = useSession();

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { Box, Button, Image, Input } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useState } from 'react';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import Icon from '../Icon';
 
 function FileInput({ name, formProps, setFormProps, handleOnChange, acceptedFiles, maxFileSize, multipleFiles,

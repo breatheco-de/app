@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
-import useAuth from '../../common/hooks/useAuth';
+import useAuth from '../../hooks/useAuth';
 import asPrivate from '../../context/PrivateRouteWrapper';
 import bc from '../../services/breathecode';
 import { cleanQueryStrings } from '../../utils';
@@ -15,7 +15,7 @@ import GridContainer from '../../common/components/GridContainer';
 import Subscriptions from '../../common/components/Profile/Subscriptions';
 import Certificates from '../../common/components/Profile/Certificates';
 import Information from '../../common/components/Profile/Information';
-import useCustomToast from '../../common/hooks/useCustomToast';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function Profile() {
   const { t } = useTranslation('profile');

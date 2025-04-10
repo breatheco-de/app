@@ -21,7 +21,7 @@ import { format } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../../../../common/components/Assignments/index';
-import useStyle from '../../../../../common/hooks/useStyle';
+import useStyle from '../../../../../hooks/useStyle';
 import bc from '../../../../../services/breathecode';
 import ReactSelect from '../../../../../common/components/ReactSelect';
 import asPrivate from '../../../../../context/PrivateRouteWrapper';
@@ -34,7 +34,7 @@ import KPI from '../../../../../common/components/KPI';
 import Link from '../../../../../common/components/NextChakraLink';
 import { isWindow } from '../../../../../utils';
 import axiosInstance from '../../../../../axios';
-import useCustomToast from '../../../../../common/hooks/useCustomToast';
+import useCustomToast from '../../../../../hooks/useCustomToast';
 
 const activitiesTemplate = {
   invite_created: {

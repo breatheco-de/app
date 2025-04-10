@@ -1,6 +1,6 @@
 import { Flex } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import Text from '../Text';
 import Icon from '../Icon';
 

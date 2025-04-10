@@ -15,7 +15,7 @@ import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate, getBrowserInfo } from '../../utils';
-import useStyle from '../../common/hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import Icon from '../../common/components/Icon';
 import PublicProfile from '../../common/components/PublicProfile';
 import AvatarUser from '../../common/components/AvatarUser';
@@ -34,8 +34,8 @@ import { SessionContext } from '../../context/SessionContext';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import DynamicContentCard from '../../common/components/DynamicContentCard';
-import useAuth from '../../common/hooks/useAuth';
-import useCustomToast from '../../common/hooks/useCustomToast';
+import useAuth from '../../hooks/useAuth';
+import useCustomToast from '../../hooks/useCustomToast';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',

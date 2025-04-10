@@ -1,6 +1,6 @@
 import { Box, Img } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 
 function LoaderScreen({ width, height, objectFit, background, ...rest }) {
   const { backgroundColor } = useStyle();

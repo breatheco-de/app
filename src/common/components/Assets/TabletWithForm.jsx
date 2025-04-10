@@ -8,14 +8,14 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { getStorageItem } from '../../../utils';
 import noLearnpackAssets from '../../../../public/no-learnpack-in-cloud.json';
-import useAuth from '../../hooks/useAuth';
+import useAuth from '../../../hooks/useAuth';
 import Heading from '../Heading';
 import Text from '../Text';
 import Icon from '../Icon';
 import SimpleTable from './SimpleTable';
 import ModalToCloneProject from '../GuidedExperience/ModalToCloneProject';
 import ShowOnSignUp from '../ShowOnSignup';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import ReactPlayerV2 from '../ReactPlayerV2';
 import ProjectInstructions from '../GuidedExperience/ProjectInstructions';
 

@@ -4,7 +4,7 @@ import Icon from './Icon';
 import Text from './Text';
 import Link from './NextChakraLink';
 import Heading from './Heading';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 
 function WidgetBox({ title, children, items, ...rest }) {
   const { backgroundColor, featuredColor, borderColor2, hexColor } = useStyle();

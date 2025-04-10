@@ -6,7 +6,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Image from 'next/image';
 import Text from '../Text';
 import Icon from '../Icon';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import CustomTheme from '../../../../styles/theme';
 import { getStorageItem, lengthOfString } from '../../../utils';
 

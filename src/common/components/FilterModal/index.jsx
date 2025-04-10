@@ -21,7 +21,7 @@ import Text from '../Text';
 import { isWindow } from '../../../utils';
 import TechnologiesSection from './technologies';
 import DifficultySection from './difficulty';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 
 function FilterModal({
   title, isModalOpen, onClose, setFilter, contextFilter, technologyTags, difficulties,

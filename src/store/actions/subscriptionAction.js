@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { CANCEL_SUBSCRIPTION, FETCH_SUBSCRIPTIONS, IS_LOADING } from '../types';
 import bc from '../../services/breathecode';
-import useCustomToast from '../../common/hooks/useCustomToast';
+import useCustomToast from '../../hooks/useCustomToast';
 import profileHandlers from '../../common/components/Profile/Subscriptions/handlers';
 
 const useSubscriptionsHandler = () => {

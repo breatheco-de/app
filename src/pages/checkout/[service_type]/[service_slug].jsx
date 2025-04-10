@@ -6,7 +6,7 @@ import {
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import bc from '../../../services/breathecode';
-import useAuth from '../../../common/hooks/useAuth';
+import useAuth from '../../../hooks/useAuth';
 import { isWindow } from '../../../utils';
 import PaymentInfo from '../../../common/components/Checkout/PaymentInfo';
 import ServiceSummary from '../../../common/components/Checkout/ServiceSummary';
@@ -15,8 +15,8 @@ import useSignup from '../../../store/actions/signupAction';
 import axiosInstance from '../../../axios';
 import asPrivate from '../../../context/PrivateRouteWrapper';
 import LoaderScreen from '../../../common/components/LoaderScreen';
-import useStyle from '../../../common/hooks/useStyle';
-import useCustomToast from '../../../common/hooks/useCustomToast';
+import useStyle from '../../../hooks/useStyle';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function ServiceSlug() {
   const router = useRouter();

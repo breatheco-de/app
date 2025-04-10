@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Progress } from '@chakra-ui/react';
 import axiosInstance from '../../axios';
-import useAuth from '../hooks/useAuth';
+import useAuth from '../../hooks/useAuth';
 
 function InterceptionLoader() {
   const { logout } = useAuth();

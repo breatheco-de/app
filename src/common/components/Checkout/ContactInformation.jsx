@@ -11,7 +11,7 @@ import Signup from '../Forms/Signup';
 import { getStorageItem, setStorageItem, getBrowserInfo } from '../../../utils';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import NextChakraLink from '../NextChakraLink';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import ModalInfo from '../ModalInfo';
 import Text from '../Text';
 import { reportDatalayer } from '../../../utils/requests';

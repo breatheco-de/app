@@ -3,7 +3,7 @@ import { Avatar, Flex, Skeleton, Tooltip } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { BREATHECODE_HOST } from '../../utils/variables';
 import Text from './Text';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import { adjustNumberBeetwenMinMax } from '../../utils';
 import Heading from './Heading';
 import Icon from './Icon';

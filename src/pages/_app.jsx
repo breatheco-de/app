@@ -38,7 +38,7 @@ import '@fontsource/lato/700.css';
 import '@fontsource/lato/900.css';
 import '@fontsource-variable/space-grotesk';
 import { BREATHECODE_HOST } from '../utils/variables';
-import useCustomToast from '../common/hooks/useCustomToast';
+import useCustomToast from '../hooks/useCustomToast';
 
 function InternalLinkComponent(props) {
   return <Link {...props} />;

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Text from './Text';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import { setStorageItem, slugToTitle } from '../../utils';
 import Heading from './Heading';
 

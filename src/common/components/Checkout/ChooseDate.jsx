@@ -9,7 +9,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Text from '../Text';
 import useSignup from '../../../store/actions/signupAction';
 import bc from '../../../services/breathecode';
-import useCustomToast from '../../hooks/useCustomToast';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function ChooseDate({ cohort, ...rest }) {
   const [isLoading, setIsLoading] = useState(false);

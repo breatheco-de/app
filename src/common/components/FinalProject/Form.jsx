@@ -9,11 +9,11 @@ import FieldForm from '../Forms/FieldForm';
 import { url } from '../../../utils/regex';
 import Heading from '../Heading';
 import AddMember from './AddMember';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import { isNumber } from '../../../utils';
 import useFinalProjectProps from '../../../store/actions/finalProjectAction';
 import Icon from '../Icon';
-import useCustomToast from '../../hooks/useCustomToast';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues, refreshFinalProject }) {
   const { t } = useTranslation('final-project');

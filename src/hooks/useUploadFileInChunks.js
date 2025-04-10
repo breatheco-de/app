@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import bc from '../../services/breathecode';
-import { getStorageItem } from '../../utils';
+import bc from '../services/breathecode';
+import { getStorageItem } from '../utils';
 
 const useUploadFileInChunks = () => {
   const [isSplitting, setIsSplitting] = useState(false);

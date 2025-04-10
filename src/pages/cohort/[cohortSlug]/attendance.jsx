@@ -20,8 +20,8 @@ import ReactSelect from '../../../common/components/ReactSelect';
 import Link from '../../../common/components/NextChakraLink';
 import Heading from '../../../common/components/Heading';
 import Text from '../../../common/components/Text';
-import useAuth from '../../../common/hooks/useAuth';
-import useStyle from '../../../common/hooks/useStyle';
+import useAuth from '../../../hooks/useAuth';
+import useStyle from '../../../hooks/useStyle';
 import Icon from '../../../common/components/Icon';
 import DottedTimeline from '../../../common/components/DottedTimeline';
 import GridContainer from '../../../common/components/GridContainer';
@@ -29,7 +29,7 @@ import handlers from '../../../handlers';
 import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../common/components/Skeleton';
 import Sparkline from '../../../common/components/Sparkline';
 import KPI from '../../../common/components/KPI';
-import useCustomToast from '../../../common/hooks/useCustomToast';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function Attendance() {
   const { t } = useTranslation('attendance');

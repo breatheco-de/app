@@ -5,7 +5,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { forwardRef } from 'react';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import Icon from '../Icon';
 
 const getProjectStatusConfig = (currentTask, isGuidedExperience, hasPendingSubtasks, hexColor, t) => {

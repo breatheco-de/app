@@ -19,7 +19,7 @@ import Image from 'next/image';
 import Icon from '../../Icon';
 import Heading from '../../Heading';
 import Text from '../../Text';
-import useStyle from '../../../hooks/useStyle';
+import useStyle from '../../../../hooks/useStyle';
 import { location, slugToTitle, unSlugify } from '../../../../utils';
 import useSubscriptionsHandler from '../../../../store/actions/subscriptionAction';
 import { CardSkeleton, SimpleSkeleton } from '../../Skeleton';

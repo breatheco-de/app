@@ -2,7 +2,7 @@ import { Box, Flex } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import Text from './Text';
 import Timer from './Timer';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import useSignup from '../../store/actions/signupAction';
 import NextChakraLink from './NextChakraLink';
 

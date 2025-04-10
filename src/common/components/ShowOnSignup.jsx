@@ -5,12 +5,12 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Text from './Text';
 import Signup from './Forms/Signup';
-import useAuth from '../hooks/useAuth';
-import useStyle from '../hooks/useStyle';
+import useAuth from '../../hooks/useAuth';
+import useStyle from '../../hooks/useStyle';
 import { setStorageItem } from '../../utils';
 import { BREATHECODE_HOST } from '../../utils/variables';
 import ModalInfo from './ModalInfo';
-import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
+import useSubscribeToPlan from '../../hooks/useSubscribeToPlan';
 import useSignup from '../../store/actions/signupAction';
 
 function ShowOnSignUp({

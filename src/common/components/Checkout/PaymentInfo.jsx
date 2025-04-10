@@ -10,11 +10,11 @@ import Heading from '../Heading';
 import bc from '../../../services/breathecode';
 import useSignup from '../../../store/actions/signupAction';
 import 'react-datepicker/dist/react-datepicker.css';
-import useStyle from '../../hooks/useStyle';
-import useAuth from '../../hooks/useAuth';
+import useStyle from '../../../hooks/useStyle';
+import useAuth from '../../../hooks/useAuth';
 import { reportDatalayer } from '../../../utils/requests';
 import { getQueryString, getStorageItem, getBrowserInfo } from '../../../utils';
-import useCohortHandler from '../../hooks/useCohortHandler';
+import useCohortHandler from '../../../hooks/useCohortHandler';
 import { getCohort } from '../../../handlers/cohorts';
 import { getAllMySubscriptions } from '../../../handlers/subscriptions';
 import { SILENT_CODE } from '../../../utils/variables';
@@ -24,7 +24,7 @@ import Text from '../Text';
 import AcordionList from '../AcordionList';
 import LoaderScreen from '../LoaderScreen';
 import NextChakraLink from '../NextChakraLink';
-import useCustomToast from '../../hooks/useCustomToast';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function PaymentInfo({ setShowPaymentDetails }) {
   const { t, lang } = useTranslation('signup');

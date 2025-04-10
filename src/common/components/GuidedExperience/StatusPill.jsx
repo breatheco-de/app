@@ -1,8 +1,8 @@
 import React from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { Box } from '@chakra-ui/react';
-import useModuleHandler from '../../hooks/useModuleHandler';
-import useStyle from '../../hooks/useStyle';
+import useModuleHandler from '../../../hooks/useModuleHandler';
+import useStyle from '../../../hooks/useStyle';
 
 function StatusPill() {
   const { t } = useTranslation('syllabus');

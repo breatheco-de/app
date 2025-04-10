@@ -9,7 +9,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
 import Text from './Text';
 import useSignup from '../../store/actions/signupAction';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import Icon from './Icon';
 import MktTechnologies from './MktTechnologies';
 

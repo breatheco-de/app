@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { isWindow } from '../../utils';
+import { isWindow } from '../utils';
 
 const useGoogleMaps = (apiKey, libraries = 'places') => {
   const [gmapStatus, setGmapStatus] = useState({

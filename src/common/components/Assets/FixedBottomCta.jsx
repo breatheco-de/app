@@ -8,7 +8,7 @@ import {
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from '../Heading';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import ReactPlayerV2 from '../ReactPlayerV2';
 import CouponTopBar from '../CouponTopBar';
 

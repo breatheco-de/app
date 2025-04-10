@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { Flex } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import Text from './Text';
 import AcordionList from './AcordionList';
 

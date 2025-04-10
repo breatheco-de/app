@@ -22,10 +22,10 @@ import NextChakraLink from '../NextChakraLink';
 import ModalInfo from '../ModalInfo';
 import Text from '../Text';
 import bc from '../../../services/breathecode';
-import useSession from '../../hooks/useSession';
-import useSubscribeToPlan from '../../hooks/useSubscribeToPlan';
+import useSession from '../../../hooks/useSession';
+import useSubscribeToPlan from '../../../hooks/useSubscribeToPlan';
 import { BASE_PLAN, BREATHECODE_HOST, SILENT_CODE } from '../../../utils/variables';
-import useCustomToast from '../../hooks/useCustomToast';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function Register({ setIsLoggedFromRegister }) {
   const { userSession } = useSession();

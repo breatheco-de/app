@@ -6,7 +6,7 @@ import {
 import Heading from './Heading';
 import Text from './Text';
 import Link from './NextChakraLink';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import PrismicTextComponent from './PrismicTextComponent';
 import ReactPlayerV2 from './ReactPlayerV2';
 // import Head from 'next/head';

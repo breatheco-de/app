@@ -17,11 +17,11 @@ import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
 import DesktopNavItem from './DesktopNavItem';
 import MobileNav from './MobileNav';
-import useCohortHandler from '../../hooks/useCohortHandler';
-import useSession from '../../hooks/useSession';
+import useCohortHandler from '../../../hooks/useCohortHandler';
+import useSession from '../../../hooks/useSession';
 import Heading from '../Heading';
 import Text from '../Text';
-import useAuth from '../../hooks/useAuth';
+import useAuth from '../../../hooks/useAuth';
 import LanguageSelector from '../LanguageSelector';
 import { setStorageItem } from '../../../utils';
 import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
@@ -29,7 +29,7 @@ import axios from '../../../axios';
 import bc from '../../../services/breathecode';
 import logoData from '../../../../public/logo.json';
 import { parseQuerys } from '../../../utils/url';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import { getAllMySubscriptions } from '../../../handlers/subscriptions';
 
 function Navbar({ translations, pageProps }) {

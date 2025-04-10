@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import {
   Grid, Box, SkeletonText, Skeleton, useColorModeValue, SkeletonCircle, Flex, AvatarGroup,
 } from '@chakra-ui/react';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 
 export function MDSkeleton() {
   const commonStartColor = useColorModeValue('gray.300', 'gray.700');

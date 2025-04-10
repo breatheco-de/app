@@ -10,10 +10,10 @@ import Text from '../Text';
 import Icon from '../Icon';
 import UpgradeForConsumableView from '../UpgradeForConsumableView';
 // import NextChakraLink from './NextChakraLink';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import PurchassePlanView from './PurchasePlanView';
 import WaitingListView from './WaitingListView';
-import useCustomToast from '../../hooks/useCustomToast';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 export const stageType = {
   login: 'login',

@@ -9,8 +9,7 @@ import {
   AccordionIcon,
 } from '@chakra-ui/react';
 import Heading from './Heading';
-import Text from './Text';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 
 function Faq({ id,
   title,

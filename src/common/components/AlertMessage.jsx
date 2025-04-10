@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import Text from './Text';
 import Icon from './Icon';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import Heading from './Heading';
 
 function AlertMessage({

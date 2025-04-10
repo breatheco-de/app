@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { RigoContext } from '../../context/RigoContext';
+import { RigoContext } from '../context/RigoContext';
 
 const useRigo = () => useContext(RigoContext);
 

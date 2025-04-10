@@ -8,8 +8,8 @@ import Heading from './Heading';
 import Text from './Text';
 import Icon from './Icon';
 import ReactPlayerV2 from './ReactPlayerV2';
-import useAuth from '../hooks/useAuth';
-import useStyle from '../hooks/useStyle';
+import useAuth from '../../hooks/useAuth';
+import useStyle from '../../hooks/useStyle';
 import { isAbsoluteUrl } from '../../utils/url';
 
 function JoinCohort({ margin, logo, joinFunction, isFetching, alreadyHaveCohort, cohort, syllabus, href, existsRelatedSubscription }) {

@@ -12,7 +12,7 @@ import Icon from '../Icon';
 import MobileNavItem from './MobileNavItem';
 import LanguageSelector from '../LanguageSelector';
 import NextChakraLink from '../NextChakraLink';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import { setStorageItem } from '../../../utils';
 
 function MobileNav({

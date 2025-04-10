@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Flex, Skeleton } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import GridContainer from './GridContainer';
 import Heading from './Heading';
 import Icon from './Icon';
@@ -13,7 +13,7 @@ import DraggableContainer from './DraggableContainer';
 import DynamicContentCard from './DynamicContentCard';
 import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../utils/variables';
 import bc from '../../services/breathecode';
-import useAuth from '../hooks/useAuth';
+import useAuth from '../../hooks/useAuth';
 import { parseQuerys } from '../../utils/url';
 
 function MktEventCards({

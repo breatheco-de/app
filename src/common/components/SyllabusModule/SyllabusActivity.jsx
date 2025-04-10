@@ -6,8 +6,8 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState, memo } from 'react';
-import useCohortHandler from '../../hooks/useCohortHandler';
-import useStyle from '../../hooks/useStyle';
+import useCohortHandler from '../../../hooks/useCohortHandler';
+import useStyle from '../../../hooks/useStyle';
 import AssignmentButton from '../AssignmentButton';
 import TaskBar from '../TaskBar';
 import ShareButton from '../ShareButton';

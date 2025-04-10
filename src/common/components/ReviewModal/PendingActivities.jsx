@@ -7,8 +7,8 @@ import useTranslation from 'next-translate/useTranslation';
 import Icon from '../Icon';
 import Text from '../Text';
 import Heading from '../Heading';
-import useCohortHandler from '../../hooks/useCohortHandler';
-import useStyle from '../../hooks/useStyle';
+import useCohortHandler from '../../../hooks/useCohortHandler';
+import useStyle from '../../../hooks/useStyle';
 import SyllabusActivity from '../SyllabusModule/SyllabusActivity';
 
 function PendingActivities({ cohortSlug, setStage }) {

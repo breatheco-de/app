@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Heading from '../Heading';
 import Icon from '../Icon';
 import Text from '../Text';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 
 function Stepper({ stepIndex, selectedPlanCheckoutData, isFreeTier, hideIndexList, isFirstStep, isSecondStep, isThirdStep, isFourthStep, handleGoBack }) {
   const { t } = useTranslation('signup');

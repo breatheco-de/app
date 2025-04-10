@@ -1,6 +1,6 @@
 import { intervalToDuration } from 'date-fns';
 import useTranslation from 'next-translate/useTranslation';
-import { isValidDate } from '../../utils';
+import { isValidDate } from '../utils';
 
 const useFormatTimeString = () => {
   const { t } = useTranslation('live-event');

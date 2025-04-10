@@ -6,7 +6,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import Text from '../Text';
 import Icon from '../Icon';
 import bc from '../../../services/breathecode';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import '@uiw/react-markdown-editor/markdown-editor.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import '@uiw/react-markdown-preview/markdown.css';
@@ -15,8 +15,8 @@ import MarkDownParser from '../MarkDownParser';
 import tomorrow from '../MarkDownParser/syntaxHighlighter/tomorrow';
 import { reportDatalayer } from '../../../utils/requests';
 import { getBrowserInfo } from '../../../utils';
-import useAuth from '../../hooks/useAuth';
-import useCustomToast from '../../hooks/useCustomToast';
+import useAuth from '../../../hooks/useAuth';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 const views = {
   initial: 'initial',

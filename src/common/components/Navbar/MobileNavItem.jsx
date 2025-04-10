@@ -17,7 +17,7 @@ import Image from 'next/image';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
 import { isAbsoluteUrl } from '../../../utils/url';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 
 function MobileItem({
   label, subMenu, href, onClickLink, description, icon, with_popover: withPopover, image,

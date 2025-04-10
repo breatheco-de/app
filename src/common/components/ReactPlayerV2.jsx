@@ -3,7 +3,7 @@ import ReactPlayer from 'react-player';
 import { Box, Flex, Heading, IconButton, Image, Skeleton, Portal } from '@chakra-ui/react';
 import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import Icon from './Icon';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 
 function ReactPlayerV2({
   url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, containerStyle, autoPlay, loop, autoFullScreen, muted, volume, pictureInPicture, playerConfig, preview, previewDuration, isPlayDisabled = false,

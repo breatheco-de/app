@@ -2,7 +2,7 @@ import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalO
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import Heading from '../Heading';
 import Text from '../Text';
 import FinalProjectForm from './Form';

@@ -7,13 +7,13 @@ import { useEffect, useRef, useState } from 'react';
 import Heading from '../Heading';
 import bc from '../../../services/breathecode';
 import { getQueryString, getTimeProps, getBrowserInfo } from '../../../utils';
-import useGoogleMaps from '../../hooks/useGoogleMaps';
+import useGoogleMaps from '../../../hooks/useGoogleMaps';
 import useSignup from '../../../store/actions/signupAction';
 import ChooseDate from './ChooseDate';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import { reportDatalayer } from '../../../utils/requests';
 import { CardSkeleton } from '../Skeleton';
-import useCustomToast from '../../hooks/useCustomToast';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function LoaderContent({ cohortIsLoading }) {
   const { t } = useTranslation('signup');

@@ -18,7 +18,7 @@ import SimpleTable from '../../../common/components/Assets/SimpleTable';
 import FixedBottomCta from '../../../common/components/Assets/FixedBottomCta';
 import TagCapsule from '../../../common/components/TagCapsule';
 import MarkDownParser from '../../../common/components/MarkDownParser';
-import useAuth from '../../../common/hooks/useAuth';
+import useAuth from '../../../hooks/useAuth';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
@@ -30,7 +30,7 @@ import MktEventCards from '../../../common/components/MktEventCards';
 import SupplementaryMaterial from '../../../common/components/SupplementaryMaterial';
 import AssetsBreadcrumbs from '../../../common/components/AssetsBreadcrumbs';
 import Icon from '../../../common/components/Icon';
-import useStyle from '../../../common/hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import { getMarkdownFromCache } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {

@@ -6,7 +6,7 @@ import {
 import Heading from './Heading';
 import Text from './Text';
 import Link from './NextChakraLink';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import GridContainer from './GridContainer';
 import PrismicTextComponent from './PrismicTextComponent';
 

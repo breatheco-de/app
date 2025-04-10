@@ -8,7 +8,7 @@ import MktInfoCards from '../common/components/MktInfoCards';
 import MktTrustCards from '../common/components/MktTrustCards';
 import MktTestimonials from '../common/components/MktTestimonials';
 import { getSubscriptions, validatePlanExistence } from '../handlers/subscriptions';
-import useAuth from '../common/hooks/useAuth';
+import useAuth from '../hooks/useAuth';
 import bc from '../services/breathecode';
 
 export const getStaticProps = () => {

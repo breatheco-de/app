@@ -6,7 +6,7 @@ import { useState, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Text from './Text';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import Heading from './Heading';
 import Icon from './Icon';
 import financeEN from '../../../public/locales/en/finance.json';

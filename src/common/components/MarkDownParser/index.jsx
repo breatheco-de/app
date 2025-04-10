@@ -17,7 +17,7 @@ import bc from '../../../services/breathecode';
 import {
   Wrapper, BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner, Quote,
 } from './MDComponents';
-import useModuleHandler from '../../hooks/useModuleHandler';
+import useModuleHandler from '../../../hooks/useModuleHandler';
 import CodeViewer, { languagesLabels, languagesNames } from '../CodeViewer';
 import DynamicCallToAction from '../DynamicCallToAction';
 

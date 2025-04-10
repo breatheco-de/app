@@ -9,9 +9,9 @@ import Icon from '../Icon';
 import bc from '../../../services/breathecode';
 import Text from '../Text';
 import Link from '../NextChakraLink';
-import useStyle from '../../hooks/useStyle';
-import useCohortHandler from '../../hooks/useCohortHandler';
-import useCustomToast from '../../hooks/useCustomToast';
+import useStyle from '../../../hooks/useStyle';
+import useCohortHandler from '../../../hooks/useCohortHandler';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function SubmissionReviewButton({ task, githubUrl, haveGithubDomain }) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);

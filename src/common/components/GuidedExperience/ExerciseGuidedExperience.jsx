@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { intervalToDuration } from 'date-fns';
 import { intervalToHours, getBrowserInfo } from '../../../utils';
 import ProjectInstructions from './ProjectInstructions';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import ReactPlayerV2 from '../ReactPlayerV2';
 import KPI from '../KPI';
 import Heading from '../Heading';

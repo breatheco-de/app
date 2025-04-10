@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import CodeRevisionsList from './CodeRevisionsList';
 import Heading from '../Heading';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import bc from '../../../services/breathecode';
 import Icon from '../Icon';
 import Text from '../Text';

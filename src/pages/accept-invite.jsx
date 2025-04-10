@@ -6,13 +6,13 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { BREATHECODE_HOST } from '../utils/variables';
 import bc from '../services/breathecode';
-import useAuth from '../common/hooks/useAuth';
+import useAuth from '../hooks/useAuth';
 import LoaderScreen from '../common/components/LoaderScreen';
 import validationSchema from '../common/components/Forms/validationSchemas';
 import NextChakraLink from '../common/components/NextChakraLink';
 import Text from '../common/components/Text';
 import Heading from '../common/components/Heading';
-import useCustomToast from '../common/hooks/useCustomToast';
+import useCustomToast from '../hooks/useCustomToast';
 
 function FormField({ name, label, type = 'text', isReadOnly = false, placeholder }) {
   return (

@@ -4,7 +4,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Heading from '../Heading';
 import ProgressCircle from '../ProgressCircle';
 import Text from '../Text';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import { toCapitalize } from '../../../utils';
 
 function SubTasks({

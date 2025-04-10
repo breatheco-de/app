@@ -12,7 +12,7 @@ import AvatarUser from './AvatarUser';
 import Text from './Text';
 import Icon from './Icon';
 import { isNumber } from '../../utils';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 
 function ProjectsSection({
   startsIn, syllabusContent, courseProgress,

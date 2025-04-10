@@ -12,12 +12,12 @@ import {
 import { formatPrice, getDiscountedPrice, getNextDateInMonths, getQueryString, getStorageItem, getTimeProps, getBrowserInfo } from '../../utils';
 import bc from '../../services/breathecode';
 import { BREATHECODE_HOST } from '../../utils/variables';
-import { usePersistent } from '../../common/hooks/usePersistent';
-import useSession from '../../common/hooks/useSession';
-import useAuth from '../../common/hooks/useAuth';
+import { usePersistent } from '../../hooks/usePersistent';
+import useSession from '../../hooks/useSession';
+import useAuth from '../../hooks/useAuth';
 import { reportDatalayer } from '../../utils/requests';
 import { generatePlan, getTranslations } from '../../handlers/subscriptions';
-import useCustomToast from '../../common/hooks/useCustomToast';
+import useCustomToast from '../../hooks/useCustomToast';
 
 const useSignup = () => {
   const { isAuthenticated } = useAuth();

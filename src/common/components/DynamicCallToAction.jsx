@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import CallToActionCard from './CallToActionCard';
 import { parseQuerys } from '../../utils/url';
 

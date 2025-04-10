@@ -10,10 +10,10 @@ import { useRouter } from 'next/router';
 import { getStorageItem } from '../../utils';
 import { RIGOBOT_HOST, BREATHECODE_HOST } from '../../utils/variables';
 import bc from '../../services/breathecode';
-import useAuth from '../hooks/useAuth';
+import useAuth from '../../hooks/useAuth';
 import Icon from './Icon';
-import useStyle from '../hooks/useStyle';
-import useCustomToast from '../hooks/useCustomToast';
+import useStyle from '../../hooks/useStyle';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function ConnectGithubRigobot({ ...rest }) {
   const { t } = useTranslation('profile');

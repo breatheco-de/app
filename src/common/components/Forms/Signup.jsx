@@ -17,15 +17,15 @@ import { email as emailRe, phone as phoneRe } from '../../../utils/regex';
 import useEmailValidation from './useEmailValidation';
 import PhoneInput from '../PhoneInput';
 import Text from '../Text';
-import useStyle from '../../hooks/useStyle';
-import useSession from '../../hooks/useSession';
+import useStyle from '../../../hooks/useStyle';
+import useSession from '../../../hooks/useSession';
 import { BASE_PLAN, BREATHECODE_HOST, SILENT_CODE } from '../../../utils/variables';
 import { getStorageItem, setStorageItem, getQueryString, getBrowserInfo } from '../../../utils';
 import { reportDatalayer } from '../../../utils/requests';
 import useSignup from '../../../store/actions/signupAction';
 import ModalInfo from '../ModalInfo';
 import bc from '../../../services/breathecode';
-import useCustomToast from '../../hooks/useCustomToast';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function SignupForm({
   planSlug, courseChoosed, showVerifyEmail, subscribeValues, buttonStyles,

@@ -2,7 +2,7 @@
 import { PrismicRichText } from '@prismicio/react';
 import PropTypes from 'prop-types';
 import { Link, ListItem, UnorderedList } from '@chakra-ui/react';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import Text from './Text';
 import Heading from './Heading';
 import Icon from './Icon';

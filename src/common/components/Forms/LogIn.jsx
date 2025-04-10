@@ -13,11 +13,11 @@ import bc from '../../../services/breathecode';
 import Icon from '../Icon';
 import Text from '../Text';
 import validationSchema from './validationSchemas';
-import useAuth from '../../hooks/useAuth';
-import useStyle from '../../hooks/useStyle';
+import useAuth from '../../../hooks/useAuth';
+import useStyle from '../../../hooks/useStyle';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import { getBrowserInfo, isValidEmail, isWindow } from '../../../utils';
-import useCustomToast from '../../hooks/useCustomToast';
+import useCustomToast from '../../../hooks/useCustomToast';
 import ModalInfo from '../ModalInfo';
 
 function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {

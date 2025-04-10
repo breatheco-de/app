@@ -4,7 +4,7 @@ import { subMinutes } from 'date-fns';
 import { memo, useState } from 'react';
 import handlers from '../../../handlers';
 import ProgramCard from '../ProgramCard';
-import useCohortHandler from '../../hooks/useCohortHandler';
+import useCohortHandler from '../../../hooks/useCohortHandler';
 import useSubscriptionsHandler from '../../../store/actions/subscriptionAction';
 import axios from '../../../axios';
 import useProgramList from '../../../store/actions/programListAction';

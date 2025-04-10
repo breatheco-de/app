@@ -3,7 +3,7 @@ import { forwardRef, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 import PropTypes from 'prop-types';
 import { Avatar, Box } from '@chakra-ui/react';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 
 const filterInputValue = (students, inputLength, inputValue) => students.filter(
   (student) => `${student?.user?.full_name}`.toLowerCase().slice(0, inputLength) === inputValue,

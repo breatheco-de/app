@@ -6,7 +6,7 @@ import Link from './NextChakraLink';
 import Text from './Text';
 import Heading from './Heading';
 import ProjectsSection from './ProjectsSection';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import { ORIGIN_HOST } from '../../utils/variables';
 
 function PublicCourseCard({

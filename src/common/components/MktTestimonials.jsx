@@ -9,7 +9,7 @@ import Image from 'next/image';
 import Heading from './Heading';
 import Text from './Text';
 import DraggableContainer from './DraggableContainer';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import StarRating from './StarRating';
 import { lengthOfString } from '../../utils';
 import axios from '../../axios';

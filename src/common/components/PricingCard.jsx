@@ -4,13 +4,13 @@ import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPane
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useState, useMemo } from 'react';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import useSignup from '../../store/actions/signupAction';
 import Text from './Text';
 import Icon from './Icon';
 import { parseQuerys } from '../../utils/url';
 import { getQueryString, isWindow, slugToTitle } from '../../utils';
-import { usePersistentBySession } from '../hooks/usePersistent';
+import { usePersistentBySession } from '../../hooks/usePersistent';
 import { currenciesSymbols } from '../../utils/variables';
 
 export default function PricingCard({ item, courseData, isFetching, relatedSubscription, moneyBack, ...rest }) {

@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { ConnectionContext } from '../../context/ConnectionContext';
+import { ConnectionContext } from '../context/ConnectionContext';
 
 const useOnline = () => useContext(ConnectionContext);
 

@@ -10,9 +10,9 @@ import { CardSkeleton } from './Skeleton';
 import { getBrowserSize, setStorageItem, getBrowserInfo } from '../../utils';
 import { ORIGIN_HOST } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
-import useStyle from '../hooks/useStyle';
-import useSession from '../hooks/useSession';
-import useRecommendations from '../hooks/useRecommendations';
+import useStyle from '../../hooks/useStyle';
+import useSession from '../../hooks/useSession';
+import useRecommendations from '../../hooks/useRecommendations';
 import ReactPlayerV2 from './ReactPlayerV2';
 
 const defaultEndpoint = '/v1/marketing/course';

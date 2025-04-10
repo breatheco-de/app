@@ -4,7 +4,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Image from 'next/image';
 import Text from '../Text';
 import Icon from '../Icon';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 
 const getIntervalDurationTranslation = (date) => {
   const { t } = useTranslation('common');

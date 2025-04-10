@@ -6,7 +6,7 @@ import { es, enUS } from 'date-fns/locale';
 import { format } from 'date-fns';
 import { useRouter } from 'next/router';
 import { getAsset } from '../../utils/requests';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import Heading from './Heading';
 import Text from './Text';
 import NextChakraLink from './NextChakraLink';

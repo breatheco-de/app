@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Text from '../Text';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import HeadInfo from './HeadInfo';
 import FeatureIndicator from './FeatureIndicator';
 import { types } from './card-types';

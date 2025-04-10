@@ -1,5 +1,5 @@
 import React from 'react';
-import useModuleHandler from '../../hooks/useModuleHandler';
+import useModuleHandler from '../../../hooks/useModuleHandler';
 import ProgressCircle from '../ProgressCircle';
 
 function SubtasksPill() {

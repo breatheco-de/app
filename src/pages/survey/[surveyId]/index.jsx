@@ -26,7 +26,7 @@ import Text from '../../../common/components/Text';
 import bc from '../../../services/breathecode';
 import asPrivate from '../../../context/PrivateRouteWrapper';
 import { log } from '../../../utils/logging';
-import useCustomToast from '../../../common/hooks/useCustomToast';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function Survey() {
   const router = useRouter();

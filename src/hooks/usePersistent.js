@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { isWindow } from '../../utils/index';
+import { isWindow } from '../utils/index';
 
 const usePersistent = (key, initialValue) => {
   const getStoredValues = useMemo(() => {

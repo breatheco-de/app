@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import { Box, Flex, Tooltip } from '@chakra-ui/react';
 import { useRef } from 'react';
 import Text from './Text';
-import useStyle from '../hooks/useStyle';
-import useGrabToScroll from '../hooks/useGrabToScroll';
+import useStyle from '../../hooks/useStyle';
+import useGrabToScroll from '../../hooks/useGrabToScroll';
 import { AnimatedContainer } from './Animated';
 
 // we need to fix a bug that causes the tooltip re-render multiple times when the mouse is over it and ref not being updated

@@ -8,9 +8,7 @@ import Heading from './Heading';
 import TagCapsule from './TagCapsule';
 import Text from './Text';
 import { isValidDate, syncInterval } from '../../utils';
-import useStyle from '../hooks/useStyle';
-// import { parseQuerys } from '../../utils/url';
-// import modifyEnv from '../../../modifyEnv';
+import useStyle from '../../hooks/useStyle';
 
 function EventCard({ id, language, slug, title, ignoreDynamicHandler, description, host, startingAt, endingAt, technologies, isSmall, ...rest }) {
   const { t } = useTranslation('live-event');

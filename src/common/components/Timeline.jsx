@@ -10,7 +10,7 @@ import {
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { languageFix } from '../../utils';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import Icon from './Icon';
 import Text from './Text';
 

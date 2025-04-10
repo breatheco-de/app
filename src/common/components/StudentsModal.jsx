@@ -8,8 +8,8 @@ import {
 } from '@chakra-ui/react';
 import Text from './Text';
 import bc from '../../services/breathecode';
-import useStyle from '../hooks/useStyle';
-import useCohortHandler from '../hooks/useCohortHandler';
+import useStyle from '../../hooks/useStyle';
+import useCohortHandler from '../../hooks/useCohortHandler';
 
 function StudentsModal({
   isOpen, onClose,

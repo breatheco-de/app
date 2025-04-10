@@ -6,10 +6,10 @@ import {
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import bc from '../../services/breathecode';
-import useAuth from '../hooks/useAuth';
-import useCohortHandler from '../hooks/useCohortHandler';
-import useStyle from '../hooks/useStyle';
-import useRigo from '../hooks/useRigo';
+import useAuth from '../../hooks/useAuth';
+import useCohortHandler from '../../hooks/useCohortHandler';
+import useStyle from '../../hooks/useStyle';
+import useRigo from '../../hooks/useRigo';
 import { SimpleSkeleton } from './Skeleton';
 import Heading from './Heading';
 import Text from './Text';

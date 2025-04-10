@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
 import bc from '../../services/breathecode';
-import useStyle from '../../common/hooks/useStyle';
-import useAuth from '../../common/hooks/useAuth';
+import useStyle from '../../hooks/useStyle';
+import useAuth from '../../hooks/useAuth';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
@@ -19,7 +19,7 @@ import GridContainer from '../../common/components/GridContainer';
 import MktEventCards from '../../common/components/MktEventCards';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
-import useCustomToast from '../../common/hooks/useCustomToast';
+import useCustomToast from '../../hooks/useCustomToast';
 
 let contentPerPage = 10;
 

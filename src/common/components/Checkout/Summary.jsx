@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import Heading from '../Heading';
 import Icon from '../Icon';
 import Text from '../Text';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import useSignup from '../../../store/actions/signupAction';
 import bc from '../../../services/breathecode';
 import { reportDatalayer } from '../../../utils/requests';
@@ -15,9 +15,9 @@ import { getQueryString, getStorageItem, toCapitalize, unSlugify, getBrowserInfo
 import { getAllMySubscriptions } from '../../../handlers/subscriptions';
 import { SILENT_CODE } from '../../../utils/variables';
 import axiosInstance from '../../../axios';
-import useCohortHandler from '../../hooks/useCohortHandler';
+import useCohortHandler from '../../../hooks/useCohortHandler';
 import { getCohort } from '../../../handlers/cohorts';
-import useCustomToast from '../../hooks/useCustomToast';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function Summary() {
   const { t, lang } = useTranslation('signup');

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import useModuleHandler from '../../hooks/useModuleHandler';
+import useModuleHandler from '../../../hooks/useModuleHandler';
 import Toc from './toc';
 import ContentHeading from './ContentHeading';
 import SubTasks from './SubTasks';

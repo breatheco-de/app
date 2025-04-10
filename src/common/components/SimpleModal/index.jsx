@@ -3,7 +3,7 @@ import {
   Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 
 function SimpleModal({ isOpen, title, size, leftButton, isCentered, children, onClose, bodyStyles, forceHandler, hideCloseButton, headerStyles, closeOnOverlayClick, onMouseUp, closeButtonStyles, ...rest }) {
   const { modal, borderColor2 } = useStyle();

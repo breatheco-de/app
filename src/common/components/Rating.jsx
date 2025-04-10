@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { Flex, Text, Box, Avatar, SimpleGrid } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import Icon from './Icon';
 
 function CommentCard({ review, ...rest }) {

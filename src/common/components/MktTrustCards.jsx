@@ -10,7 +10,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
 import Text from './Text';
 import Link from './NextChakraLink';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import PrismicTextComponent from './PrismicTextComponent';
 
 function Card({ card, ...rest }) {

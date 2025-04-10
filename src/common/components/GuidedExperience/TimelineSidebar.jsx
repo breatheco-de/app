@@ -9,8 +9,8 @@ import { getSlideProps } from './config';
 import Timeline from '../Timeline';
 import Icon from '../Icon';
 import Text from '../Text';
-import useCohortHandler from '../../hooks/useCohortHandler';
-import useStyle from '../../hooks/useStyle';
+import useCohortHandler from '../../../hooks/useCohortHandler';
+import useStyle from '../../../hooks/useStyle';
 
 function TimelineSidebar({
   onClickAssignment, showPendingTasks, setShowPendingTasks,

@@ -14,7 +14,7 @@ import Program from './Program';
 import UpgradeAccessModal from '../UpgradeAccessModal';
 import ProgramCard from '../ProgramCard';
 import Heading from '../Heading';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 
 function ProgramsDashboard({ cohorts, setLateModalProps }) {
   const { t } = useTranslation('choose-program');

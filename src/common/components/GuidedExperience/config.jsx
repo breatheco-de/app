@@ -1,4 +1,4 @@
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 
 export const getSlideProps = (open) => {
   const { borderColor } = useStyle();

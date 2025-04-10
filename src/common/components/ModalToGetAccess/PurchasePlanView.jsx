@@ -2,7 +2,7 @@ import { Box, Button, Flex, Image } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from '../Heading';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import Icon from '../Icon';
 import Text from '../Text';
 import { slugToTitle } from '../../../utils';

@@ -4,15 +4,15 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useState } from 'react';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import Heading from '../Heading';
 import Icon from '../Icon';
 import Image from '../Image';
 import ModalToGetAccess, { stageType } from '../ModalToGetAccess';
 import Link from '../NextChakraLink';
 import bc from '../../../services/breathecode';
-import useAuth from '../../hooks/useAuth';
-import useOnline from '../../hooks/useOnline';
+import useAuth from '../../../hooks/useAuth';
+import useOnline from '../../../hooks/useOnline';
 import AvatarUser from '../AvatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped, CardSkeleton } from '../Skeleton';
@@ -21,8 +21,8 @@ import { getStorageItem, getBrowserInfo } from '../../../utils';
 import { reportDatalayer } from '../../../utils/requests';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import CanAccess from '../CanAccess';
-import useCanAccess from '../../hooks/useCanAccess';
-import useCustomToast from '../../hooks/useCustomToast';
+import useCanAccess from '../../../hooks/useCanAccess';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mentoryProps, subscriptionData, disableBackButton = false, ...rest }) {
   return (

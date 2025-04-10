@@ -5,7 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { reportDatalayer } from '../../utils/requests';
 import { getBrowserInfo } from '../../utils';
 import useSubscriptionsHandler from '../../store/actions/subscriptionAction';
-import useAuth from '../../common/hooks/useAuth';
+import useAuth from '../../hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Link from '../../common/components/NextChakraLink';
 import bc from '../../services/breathecode';

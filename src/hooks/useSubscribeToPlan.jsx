@@ -2,14 +2,14 @@ import { useMemo, useState } from 'react';
 import { Box, ListItem, UnorderedList, Button, Image } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import SimpleModal from '../components/SimpleModal';
-import useSignup from '../../store/actions/signupAction';
-import axiosInstance from '../../axios';
+import SimpleModal from '../common/components/SimpleModal';
+import Icon from '../common/components/Icon';
+import Heading from '../common/components/Heading';
+import useSignup from '../store/actions/signupAction';
+import axiosInstance from '../axios';
 import useStyle from './useStyle';
-import Heading from '../components/Heading';
-import { toCapitalize, unSlugify } from '../../utils';
-import Icon from '../components/Icon';
-import { generatePlan } from '../../handlers/subscriptions';
+import { toCapitalize, unSlugify } from '../utils';
+import { generatePlan } from '../handlers/subscriptions';
 import useCustomToast from './useCustomToast';
 
 const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose-program', onClose: onExternalClose = () => {} } = {}) => {

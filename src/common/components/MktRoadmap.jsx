@@ -9,7 +9,7 @@ import Icon from './Icon';
 import { CustomTab } from './Animated';
 import Heading from './Heading';
 import Text from './Text';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import GridContainer from './GridContainer';
 import { BREATHECODE_HOST } from '../../utils/variables';
 

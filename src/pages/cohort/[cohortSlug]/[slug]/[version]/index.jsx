@@ -37,8 +37,8 @@ import CallToAction from '../../../../../common/components/CallToAction';
 import ProgressBar from '../../../../../common/components/ProgressBar';
 import Heading from '../../../../../common/components/Heading';
 import asPrivate from '../../../../../context/PrivateRouteWrapper';
-import useAuth from '../../../../../common/hooks/useAuth';
-import useRigo from '../../../../../common/hooks/useRigo';
+import useAuth from '../../../../../hooks/useAuth';
+import useRigo from '../../../../../hooks/useRigo';
 import { ModuleMapSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
 import { parseQuerys } from '../../../../../utils/url';
 import bc from '../../../../../services/breathecode';
@@ -49,12 +49,12 @@ import { BREATHECODE_HOST } from '../../../../../utils/variables';
 import ModalInfo from '../../../../../common/components/ModalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
-import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
+import useCohortHandler from '../../../../../hooks/useCohortHandler';
 import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
-import useStyle from '../../../../../common/hooks/useStyle';
+import useStyle from '../../../../../hooks/useStyle';
 import Feedback from '../../../../../common/components/Feedback';
-import useCustomToast from '../../../../../common/hooks/useCustomToast';
+import useCustomToast from '../../../../../hooks/useCustomToast';
 import ReviewModal, { stages } from '../../../../../common/components/ReviewModal';
 
 function Dashboard() {

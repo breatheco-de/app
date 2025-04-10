@@ -4,7 +4,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Heading from '../Heading';
 import Text from '../Text';
 import Icon from '../Icon';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import { slugToTitle } from '../../../utils';
 
 function WaitingListView({ planData, handleOnClose }) {

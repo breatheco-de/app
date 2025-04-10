@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import useCohortHandler from '../../hooks/useCohortHandler';
+import useCohortHandler from '../../../hooks/useCohortHandler';
 import Heading from '../Heading';
 import Icon from '../Icon';
 import Progress from '../ProgressBar/Progress';
@@ -12,7 +12,7 @@ import Text from '../Text';
 import FinalProjectModal from './Modal';
 import bc from '../../../services/breathecode';
 import FinalProjectForm from './Form';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import useFinalProjectProps from '../../../store/actions/finalProjectAction';
 
 function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {

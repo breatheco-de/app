@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Text from '../Text';
 import Icon from '../Icon';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 
 function DifficultySection({
   t,

@@ -3,7 +3,7 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import bc from '../../../services/breathecode';
 import Mentoring from './Mentoring';
-import useCustomToast from '../../hooks/useCustomToast';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function SupportSidebar({ allCohorts, allSyllabus, services, subscriptions, subscriptionData }) {
   const { t } = useTranslation();

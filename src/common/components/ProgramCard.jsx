@@ -17,7 +17,7 @@ import CustomTheme from '../../../styles/theme';
 import Text from './Text';
 import Icon from './Icon';
 import { isNumber, isValidDate } from '../../utils';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import ProjectsSection from './ProjectsSection';
 import ButtonHandler from './Profile/Subscriptions/ButtonHandler';
 

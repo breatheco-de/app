@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../utils/variables';
-import { parseQuerys } from '../../utils/url';
+import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../utils/variables';
+import { parseQuerys } from '../utils/url';
 
 const coursesLimit = 1;
 

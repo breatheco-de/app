@@ -10,8 +10,8 @@ import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import Text from './Text';
 import AttendanceModal from './AttendanceModal';
-import useCohortHandler from '../hooks/useCohortHandler';
-import useAuth from '../hooks/useAuth';
+import useCohortHandler from '../../hooks/useCohortHandler';
+import useAuth from '../../hooks/useAuth';
 import { isValidDate, isWindow } from '../../utils';
 
 function ItemText({ text }) {

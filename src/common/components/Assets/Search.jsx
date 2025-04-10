@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Icon from '../Icon';
-import useDebounce from '../../hooks/useDebounce';
+import useDebounce from '../../../hooks/useDebounce';
 
 function Search({ placeholder, onChange }) {
   const router = useRouter();

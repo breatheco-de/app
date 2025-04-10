@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Box, Button } from '@chakra-ui/react';
 import StatusPill from './StatusPill';
 import SubtasksPill from './SubtasksPill';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import Heading from '../Heading';
 import Icon from '../Icon';
 import ProjectInstructions from './ProjectInstructions';

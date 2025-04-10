@@ -1,5 +1,5 @@
 import { useColorModeValue } from '@chakra-ui/react';
-import theme from '../../../styles/theme';
+import theme from '../../styles/theme';
 
 const useStyle = () => {
   const navbarBackground = useColorModeValue('white', 'gray.800');

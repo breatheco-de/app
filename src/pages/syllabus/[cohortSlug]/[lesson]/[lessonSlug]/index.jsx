@@ -10,13 +10,13 @@ import Head from 'next/head';
 import { isWindow, assetTypeValues, getExtensionName, getStorageItem, languageFix } from '../../../../../utils';
 import asPrivate from '../../../../../context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
-import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
+import useModuleHandler from '../../../../../hooks/useModuleHandler';
 import AssignmentButton from '../../../../../common/components/AssignmentButton';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkDownParser from '../../../../../common/components/MarkDownParser';
 import Text from '../../../../../common/components/Text';
-import useAuth from '../../../../../common/hooks/useAuth';
-import useRigo from '../../../../../common/hooks/useRigo';
+import useAuth from '../../../../../hooks/useAuth';
+import useRigo from '../../../../../hooks/useRigo';
 import StickySideBar from '../../../../../common/components/StickySideBar';
 import Icon from '../../../../../common/components/Icon';
 import ShareButton from '../../../../../common/components/ShareButton';
@@ -30,18 +30,18 @@ import ProjectBoardGuidedExperience from '../../../../../common/components/Guide
 import SyllabusMarkdownComponent from '../../../../../common/components/GuidedExperience/SyllabusMarkdownComponent';
 import Topbar from '../../../../../common/components/GuidedExperience/Topbar';
 import bc from '../../../../../services/breathecode';
-import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
+import useCohortHandler from '../../../../../hooks/useCohortHandler';
 import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';
 import ConnectGithubRigobot from '../../../../../common/components/ConnectGithubRigobot';
-import useStyle from '../../../../../common/hooks/useStyle';
+import useStyle from '../../../../../hooks/useStyle';
 import { ORIGIN_HOST, BREATHECODE_HOST } from '../../../../../utils/variables';
 import { log } from '../../../../../utils/logging';
 import { parseQuerys } from '../../../../../utils/url';
 import completions from './completion-jobs.json';
 import { generateUserContext } from '../../../../../utils/rigobotContext';
 import SubTasks from '../../../../../common/components/MarkDownParser/SubTasks';
-import useCustomToast from '../../../../../common/hooks/useCustomToast';
+import useCustomToast from '../../../../../hooks/useCustomToast';
 import ReviewModal from '../../../../../common/components/ReviewModal';
 
 function SyllabusContent() {

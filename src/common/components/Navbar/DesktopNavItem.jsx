@@ -19,7 +19,7 @@ import Icon from '../Icon';
 import { isAbsoluteUrl, parseQuerys } from '../../../utils/url';
 import NextChakraLink from '../NextChakraLink';
 import CustomText from '../Text';
-import useStyle from '../../hooks/useStyle';
+import useStyle from '../../../hooks/useStyle';
 import { ArrowDown, ArrowRight } from '../Icon/components';
 import { getStorageItem } from '../../../utils';
 

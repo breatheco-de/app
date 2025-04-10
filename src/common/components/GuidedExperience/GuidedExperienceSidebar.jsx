@@ -17,9 +17,9 @@ import Timeline from '../Timeline';
 import NextChakraLink from '../NextChakraLink';
 import Text from '../Text';
 import Icon from '../Icon';
-import useCohortHandler from '../../hooks/useCohortHandler';
-import useStyle from '../../hooks/useStyle';
-import useAuth from '../../hooks/useAuth';
+import useCohortHandler from '../../../hooks/useCohortHandler';
+import useStyle from '../../../hooks/useStyle';
+import useAuth from '../../../hooks/useAuth';
 
 function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentModuleIndex, handleStartDay, grantSyllabusAccess }) {
   const router = useRouter();

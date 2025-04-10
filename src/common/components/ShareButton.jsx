@@ -11,7 +11,7 @@ import { reportDatalayer } from '../../utils/requests';
 import Icon from './Icon';
 import Text from './Text';
 import Link from './NextChakraLink';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import { getBrowserInfo } from '../../utils';
 
 function ShareButton({

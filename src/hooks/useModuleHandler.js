@@ -1,4 +1,4 @@
-import useModuleMap from '../../store/actions/moduleMapAction';
+import useModuleMap from '../store/actions/moduleMapAction';
 
 function useModuleHandler() {
   const { state, setCurrentTask, setSubTasks, setNextModule, setPrevModule } = useModuleMap();
