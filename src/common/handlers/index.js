@@ -169,8 +169,8 @@ const handlers = {
     };
   },
   getCohortsFinished: (cohorts) => cohorts.filter((cohort) => {
-    const educationalStatus = cohort.cohort_user.educational_status.toUpperCase();
-    const programCohortStage = cohort.stage.toUpperCase();
+    const educationalStatus = cohort.cohort_user.educational_status?.toUpperCase();
+    const programCohortStage = cohort.stage?.toUpperCase();
 
     const hasEnded = ['ENDED'].includes(programCohortStage);
     const isGraduated = educationalStatus === 'GRADUATED';
