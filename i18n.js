@@ -25,6 +25,7 @@ module.exports = {
     '/choose-program': ['choose-program', 'dashboard', 'profile', 'assignments'],
     '/main-cohort/[mainCohortSlug]/syllabus/[cohortSlug]/[lesson]/[lessonSlug]': ['syllabus', 'dashboard', 'projects', 'assignments'],
     '/syllabus/[cohortSlug]/[lesson]/[lessonSlug]': ['syllabus', 'dashboard', 'projects', 'assignments'],
+    '/start': ['workshops'],
     '/survey/[surveyId]': ['survey'],
     '/mentorship': ['mentorship'],
     '/mentorship/schedule': ['mentorship', 'dashboard', 'signup', 'common'],

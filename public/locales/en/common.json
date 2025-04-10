@@ -710,5 +710,6 @@
   "start-placeholder": "Enter the project slug (e.g., node-api-tutorial)",
   "search": "Search",
   "start-working-project": "Start working on your project",
-  "status": "Status"
+  "status": "Status",
+  "clear-search": "Clear search"
 }
