@@ -5,7 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import {
   Textarea, Text, useColorModeValue, Container,
 } from '@chakra-ui/react';
-import CustomTheme from '../../../styles/theme';
+import CustomTheme from '../../styles/theme';
 
 function SmartTextArea({ value, maxLength, ...props }) {
   const { t } = useTranslation('survey');

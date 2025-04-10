@@ -12,11 +12,11 @@ import bc from '../../services/breathecode';
 import Icon from '../Icon';
 import Text from '../Text';
 import SimpleModal from '../SimpleModal';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import { ORIGIN_HOST } from '../../utils/variables';
 import ReviewModalComponent from '../ReviewModal';
 import UndoApprovalModal from '../UndoApprovalModal';
-import useCustomToast from '../hooks/useCustomToast';
+import useCustomToast from '../../hooks/useCustomToast';
 
 export function DetailsModal({
   currentTask, projectLink, updpateAssignment, isOpen, onClose, readOnly,

@@ -6,13 +6,13 @@ import {
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Link from '../NextChakraLink';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 import Text from '../Text';
 import TaskLabel from '../taskLabel';
 import { isGithubUrl } from '../../utils/regex';
 import ButtonHandler from './index';
-import useAssignments from '../../../store/actions/assignmentsAction';
+import useAssignments from '../../store/actions/assignmentsAction';
 import SubmissionReviewButton from './SubmissionReviewButton';
 import LoaderScreen from '../LoaderScreen';
 import InfiniteScroll from '../InfiniteScroll';

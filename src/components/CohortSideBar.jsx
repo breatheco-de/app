@@ -9,7 +9,7 @@ import { es } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import bc from '../services/breathecode';
-import axios from '../../axios';
+import axios from '../axios';
 import Icon from './Icon';
 import Text from './Text';
 import AvatarUser from './AvatarUser';
@@ -17,7 +17,7 @@ import { AvatarSkeleton } from './Skeleton';
 import useOnline from '../hooks/useOnline';
 import useStyle from '../hooks/useStyle';
 import useCohortHandler from '../hooks/useCohortHandler';
-import useProgramList from '../../store/actions/programListAction';
+import useProgramList from '../store/actions/programListAction';
 import { isWindow } from '../utils';
 import useCustomToast from '../hooks/useCustomToast';
 

@@ -2,7 +2,7 @@ import { Tag, TagLabel } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import useTranslation from 'next-translate/useTranslation';
-import axios from '../../axios';
+import axios from '../axios';
 import SmallCardsCarousel from './SmallCardsCarousel';
 import { BREATHECODE_HOST } from '../utils/variables';
 

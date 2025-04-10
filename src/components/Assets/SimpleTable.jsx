@@ -2,12 +2,12 @@ import { useColorModeValue, Flex, Box } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { getDifficultyColors } from './ProjectList';
-import useAuth from '../hooks/useAuth';
+import useAuth from '../../hooks/useAuth';
 import TagCapsule from '../TagCapsule';
 import Text from '../Text';
 import Link from '../NextChakraLink';
 import Icon from '../Icon';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 
 function LinkedContent({ href, title, disableUntilAuth, icon }) {
   const { isAuthenticated } = useAuth();

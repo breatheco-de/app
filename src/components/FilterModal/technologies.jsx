@@ -3,7 +3,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import useStyle from '../hooks/useStyle';
+import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 import Text from '../Text';
 

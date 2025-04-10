@@ -2,7 +2,7 @@ import {
   Box, Flex, Heading,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import handlers from '../../../handlers';
+import handlers from '../../handlers';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 import Counter from '../ProgressCircle/Counter';
