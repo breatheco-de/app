@@ -459,17 +459,17 @@ function StudentReport() {
       const { status } = task;
       let file;
       if (status === 'UNDELIVERED' || status === 'REJECTED') {
-        const { data } = await bc.todo().deliver({
+        const { data } = await bc.assignments().deliver({
           id: task.id,
           academy,
         });
         setDeliveryUrl(data.delivery_url);
       } else if (status === 'APPROVED' || status === 'DELIVERED') {
-        const assetResp = await bc.lesson().getAsset(task.slug);
+        const assetResp = await bc.registry().getAsset(task.slug);
         if (assetResp && assetResp.status < 400) {
           const dataAsset = assetResp.data;
           if (!dataAsset?.delivery_formats.includes('url')) {
-            const fileResp = await bc.todo().getFile({ id: task.id, academyId: academy });
+            const fileResp = await bc.assignments().getFile({ id: task.id, academyId: academy });
             if (fileResp && fileResp.status < 400) {
               file = await fileResp.data;
             }

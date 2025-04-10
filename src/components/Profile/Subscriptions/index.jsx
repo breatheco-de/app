@@ -72,7 +72,7 @@ function Subscriptions({ cohorts }) {
         const { data } = res;
         setConsumables(data);
         const promiseMentorship = data.mentorship_service_sets.map(async (elem) => {
-          const mentRes = await bc.mentorship().getServiceSet(elem.id);
+          const mentRes = await bc.payment().getServiceSet(elem.id);
 
           return mentRes.data.mentorship_services.map((service) => ({ ...service, unit: elem.balance.unit }));
         });

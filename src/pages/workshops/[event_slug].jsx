@@ -58,7 +58,7 @@ const assetTypeDict = {
 };
 
 export const getStaticPaths = async ({ locales }) => {
-  const { data } = await bc.public().events();
+  const { data } = await bc.events().allEvents();
 
   const paths = data.filter((ev) => ev?.slug && ['ACTIVE', 'FINISHED'].includes(data.status))
     .flatMap((res) => locales.map((locale) => ({
@@ -76,7 +76,7 @@ export const getStaticPaths = async ({ locales }) => {
 
 export const getStaticProps = async ({ params, locale }) => {
   const { event_slug: slug } = params;
-  const resp = await bc.public({ context: 'true' }).singleEvent(slug).catch(() => ({
+  const resp = await bc.events({ context: 'true' }).getEvent(slug).catch(() => ({
     statusText: 'not-found',
   }));
   const data = resp?.data;
@@ -112,7 +112,7 @@ export const getStaticProps = async ({ params, locale }) => {
 
   let asset = null;
   if (data?.asset_slug) {
-    const assetResp = await bc.lesson().getAsset(data?.asset_slug);
+    const assetResp = await bc.registry().getAsset(data?.asset_slug);
     asset = assetResp?.data;
   }
 
@@ -179,12 +179,12 @@ function Workshop({ eventData, asset }) {
   const eventRecap = event?.recap;
 
   const getDefaultData = async () => {
-    const resp = await bc.public().singleEvent(eventData?.slug || eventSlug).catch(() => ({
+    const resp = await bc.events().getEvent(eventData?.slug || eventSlug).catch(() => ({
       statusText: 'not-found',
     }));
     const data = resp?.data;
     if (data?.asset_slug) {
-      const assetResp = await bc.lesson().getAsset(data?.asset_slug);
+      const assetResp = await bc.registry().getAsset(data?.asset_slug);
       setAssetData(assetResp?.data);
     }
     setEvent(data);

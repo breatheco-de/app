@@ -127,7 +127,7 @@ function MentorshipSchedule() {
   const getMentorsAndConsumables = async () => {
     const mentors = await getAllMentorsAvailable();
     const reqConsumables = await bc.payment().service().consumable()
-      .then((res) => res?.data?.mentorship_service_sets.map((mentorshipServiceSet) => bc.mentorship()
+      .then((res) => res?.data?.mentorship_service_sets.map((mentorshipServiceSet) => bc.payment()
         .getServiceSet(mentorshipServiceSet?.id)
         .then((rs) => ({
           ...rs?.data,

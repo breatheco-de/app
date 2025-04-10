@@ -84,7 +84,7 @@ function ChooseYourClass({
   useEffect(() => {
     setCohortIsLoading(true);
 
-    bc.public({
+    bc.admissions({
       coordinates: coords?.latitude && `${coords.latitude},${coords.longitude}`,
       saas: true,
       upcoming: true,

@@ -160,7 +160,7 @@ function MarkDownParser({
   //This function gets the subtasks from the backend (the original ones)
   const fetchSubtasks = async () => {
     try {
-      const { data } = await bc.todo().subtask().get(currentTask?.id);
+      const { data } = await bc.assignments().subtask().get(currentTask?.id);
       const subtasksAlreadyHashed = data.some((task) => task.lang && task.lang === lang);
       if (!subtasksAlreadyHashed) {
         setSubtaskFirstLoad(true);
@@ -181,7 +181,7 @@ function MarkDownParser({
         id: md5(subtask.id),
       }));
 
-      const resp = await bc.todo().subtask().update(currentTask?.id, [...updateSubtasks]);
+      const resp = await bc.assignments().subtask().update(currentTask?.id, [...updateSubtasks]);
       if (resp.status >= 200 && resp.status < 400) {
         const respData = await resp.data;
         setSubTasks(respData);
@@ -193,7 +193,7 @@ function MarkDownParser({
   const updateSubTask = async (checkedSubtask) => {
     const subtasksWithoutTheChecked = subTasks.filter((task) => task.id !== checkedSubtask.id);
     if (currentTask?.id) {
-      const resp = await bc.todo().subtask().update(currentTask?.id, [...subtasksWithoutTheChecked, checkedSubtask]);
+      const resp = await bc.assignments().subtask().update(currentTask?.id, [...subtasksWithoutTheChecked, checkedSubtask]);
       if (resp.status >= 200 && resp.status < 400) {
         const respData = await resp.data;
         setSubTasks(respData);

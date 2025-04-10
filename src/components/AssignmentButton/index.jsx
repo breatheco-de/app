@@ -46,13 +46,13 @@ function AssignmentButton({
 
   const fetchAsset = async () => {
     try {
-      const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
+      const assetResp = await bc.registry().getAsset(currentTask.associated_slug);
       if (assetResp?.status >= 400) {
         throw new Error('Error fetching asset');
       }
       let assetData = assetResp.data;
       if (assetData?.translations?.[lang]) {
-        const localeResp = await bc.lesson().getAsset(assetResp.data.translations[lang]);
+        const localeResp = await bc.registry().getAsset(assetResp.data.translations[lang]);
         assetData = localeResp.data;
       }
       setCurrentAsset(assetData);
@@ -83,7 +83,7 @@ function AssignmentButton({
       assetData = await fetchAsset();
     }
     if (typeof assetData?.delivery_formats === 'string' && !assetData?.delivery_formats.includes('url')) {
-      const fileResp = await bc.todo().getFile({ id: currentTask.id });
+      const fileResp = await bc.assignments().getFile({ id: currentTask.id });
       const respData = fileResp.data;
       setFileData(respData);
     }

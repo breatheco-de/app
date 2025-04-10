@@ -152,7 +152,7 @@ function Assignments() {
 
   const getFilterAssignments = (cohortId, academyId, limit = 20, offset = 0, appendMore = false) => {
     setLoadStatus({ loading: true, status: 'loading' });
-    bc.todo({
+    bc.assignments({
       limit,
       offset,
       task_type: typeLabel?.value || undefined,
@@ -162,7 +162,7 @@ function Assignments() {
       like: query.project,
       ...reverseStatus(query.status),
     })
-      .getAssignments({ id: cohortId, academy: academyId })
+      .getCohortAssignments({ id: cohortId, academy: academyId })
       .then((projectList) => {
         const allTasks = projectList.data?.results;
 

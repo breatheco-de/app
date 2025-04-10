@@ -139,7 +139,7 @@ function Dashboard() {
       id: task.id,
       cohort: cohortSession.id,
     }));
-    await bc.todo().updateBulk(tasksToUpdate)
+    await bc.assignments().updateBulk(tasksToUpdate)
       .then(({ data }) => {
         addTasks(data, cohortSession);
         setModalIsOpen(false);
@@ -158,7 +158,7 @@ function Dashboard() {
 
   const removeUnsyncedTasks = async () => {
     const idsParsed = ((taskCohortNull !== undefined) && taskCohortNull).map((task) => task.id).join(','); // 23,2,45,45
-    await bc.todo({
+    await bc.assignments({
       id: idsParsed,
     }).deleteBulk()
       .then(() => {

@@ -18,23 +18,25 @@ export const getCohort = (id) => bc.admissions({ id }).cohorts()
  * @param {Number | String} id Required id of the cohort
  * @returns {Promise<object>} Returns a cohort found
  */
-export const getCohortSyllabus = (id) => getCohort(id)
-  .then(async (cohortData) => {
+export const getCohortSyllabus = async (id) => {
+  try {
+    const cohortData = await getCohort(id);
+
     const syllabusSlug = cohortData?.syllabus_version?.slug;
     const syllabusVersion = cohortData?.syllabus_version?.version;
 
-    try {
-      const resp = await bc.admissions().publicSyllabus(syllabusSlug, syllabusVersion);
-      const data = await resp.json();
-      return {
-        syllabus: data,
-        cohort: cohortData || {},
-      };
-    } catch (reqErr) {
-      error('getCohortSyllabus:', reqErr);
-      return {};
-    }
-  });
+    const resp = await bc.admissions().publicSyllabus(syllabusSlug, syllabusVersion);
+    const data = await resp.json();
+
+    return {
+      syllabus: data,
+      cohort: cohortData || {},
+    };
+  } catch (reqErr) {
+    error('getCohortSyllabus:', reqErr);
+    return {};
+  }
+};
 
 /**
  * @typedef {Object} RelatedAssignments
@@ -169,10 +171,10 @@ export const generateCohortSyllabusModules = async (id) => {
     const cohortAndSyllabus = await getCohortSyllabus(id);
 
     const syllabusData = cohortAndSyllabus?.syllabus;
-    const cohortSyllabusList = syllabusData.json?.days || syllabusData.json?.modules;
+    const cohortSyllabusList = syllabusData.json?.days || syllabusData.json?.modules || [];
 
-    const newModulesStruct = cohortSyllabusList ? await Promise.all(cohortSyllabusList.map(async (module) => {
-      const relatedAssignments = await processRelatedAssignments(module);
+    const newModulesStruct = cohortSyllabusList.map((module) => {
+      const relatedAssignments = processRelatedAssignments(module);
 
       const { content, filteredContent, filteredContentByPending } = relatedAssignments;
       return {
@@ -188,7 +190,7 @@ export const generateCohortSyllabusModules = async (id) => {
         extendedInstructions: module.extended_instructions || '>:warning: No available instruction found for this module',
         keyConcepts: module['key-concepts'],
       };
-    })) : [];
+    });
 
     return {
       syllabus: {

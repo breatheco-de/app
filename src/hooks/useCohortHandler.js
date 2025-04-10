@@ -120,8 +120,8 @@ function useCohortHandler() {
 
       const cohortsToFetch = cohorts.filter((cohort) => !preFechedCohorts.some(({ slug }) => slug === cohort.slug));
 
-      const syllabusPromises = cohortsToFetch.map((cohort) => bc.syllabus().get(cohort.academy.id, cohort.syllabus_version.slug, cohort.syllabus_version.version).then((res) => ({ cohort: cohort.id, ...res })));
-      const tasksPromises = cohortsToFetch.map((cohort) => bc.todo({ cohort: cohort.id, limit: 1000 }).getTaskByStudent().then((res) => ({ cohort: cohort.id, ...res })));
+      const syllabusPromises = cohortsToFetch.map((cohort) => bc.admissions().academySyllabus(cohort.academy.id, cohort.syllabus_version.slug, cohort.syllabus_version.version).then((res) => ({ cohort: cohort.id, ...res })));
+      const tasksPromises = cohortsToFetch.map((cohort) => bc.assignments({ cohort: cohort.id, limit: 1000 }).getMeTasks().then((res) => ({ cohort: cohort.id, ...res })));
       const allResults = await Promise.all([
         ...syllabusPromises,
         ...tasksPromises,
@@ -296,7 +296,7 @@ function useCohortHandler() {
 
   const updateTaskReadAt = async (task) => {
     try {
-      const response = await bc.todo().update({
+      const response = await bc.assignments().updateTask({
         id: task.id,
         read_at: new Date().toISOString(),
       });
@@ -367,7 +367,7 @@ function useCohortHandler() {
         };
       }
 
-      const response = await bc.todo().update(taskToUpdate);
+      const response = await bc.assignments().updateTask(taskToUpdate);
       if (response.status < 400) {
         updateTask(taskToUpdate, cohort);
         reportDatalayer({
@@ -434,7 +434,7 @@ function useCohortHandler() {
     newTasks, cohort, label, customHandler = () => {}, updateContext = true,
   }) => {
     try {
-      const response = await bc.todo().add(newTasks);
+      const response = await bc.assignments().addTasks(newTasks);
 
       if (response.status < 400) {
         createToast({
@@ -466,7 +466,7 @@ function useCohortHandler() {
   const getTasksWithoutCohort = ({ setModalIsOpen }) => {
     // Tasks with cohort null
     if (router.asPath === cohortSession?.selectedProgramSlug) {
-      bc.todo({ cohort: null }).getTaskByStudent()
+      bc.assignments({ cohort: null }).getMeTasks()
         .then(({ data }) => {
           const filteredUnsyncedCohortTasks = sortedAssignments.flatMap(
             (module) => data.filter(

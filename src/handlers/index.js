@@ -25,15 +25,6 @@ const getCompletedTasksFromModule = (module, taskTodo) => (module?.length > 0 ? 
 ) : []);
 
 const handlers = {
-  getSyllabus: (academyId, slug, version) => new Promise((resolve, reject) => {
-    bc.syllabus().get(academyId, slug, version)
-      .then(({ data }) => {
-        resolve(data);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  }),
   getActivities: (cohortSlug, academyId = 4) => new Promise((resolve, reject) => {
     bc.cohort({ academy: academyId }).getAttendance(cohortSlug)
       .then(({ data }) => {
@@ -297,15 +288,6 @@ const handlers = {
       percentage: percentageLimited,
     };
   },
-  getAssetData: (slug) => new Promise((resolve, reject) => {
-    bc.lesson().getAsset(slug)
-      .then(({ data }) => {
-        resolve(data);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  }),
 
 };
 

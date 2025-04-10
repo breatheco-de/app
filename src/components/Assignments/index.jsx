@@ -168,7 +168,7 @@ function DeliverHandler({
         isLoading={isLoading}
         onClick={() => {
           setIsLoading(true);
-          bc.todo().deliver({
+          bc.assignments().deliver({
             id: currentTask.id,
             academy,
           })
