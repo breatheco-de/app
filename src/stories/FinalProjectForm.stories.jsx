@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@chakra-ui/layout';
-import FinalProjectModal from '../common/components/FinalProject/Modal';
+import FinalProjectModal from '../components/FinalProject/Modal';
 
 export default {
   title: 'Components/FinalProjectModal',

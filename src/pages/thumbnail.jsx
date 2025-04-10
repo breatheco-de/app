@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Box } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import Heading from '../common/components/Heading';
+import Heading from '../components/Heading';
 import { BREATHECODE_HOST } from '../utils/variables';
 
 export const getStaticProps = () => ({

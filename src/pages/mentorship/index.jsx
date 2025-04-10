@@ -25,13 +25,13 @@ import { format, startOfMonth, endOfMonth } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import bc from '../../services/breathecode';
-import Link from '../../common/components/NextChakraLink';
-import Icon from '../../common/components/Icon';
-import Heading from '../../common/components/Heading';
-import Text from '../../common/components/Text';
+import Link from '../../components/NextChakraLink';
+import Icon from '../../components/Icon';
+import Heading from '../../components/Heading';
+import Text from '../../components/Text';
 import asPrivate from '../../context/PrivateRouteWrapper';
 import CustomTheme from '../../../styles/theme';
-import GridContainer from '../../common/components/GridContainer';
+import GridContainer from '../../components/GridContainer';
 import { error } from '../../utils/logging';
 
 // eslint-disable-next-line react/prop-types

@@ -1,6 +1,6 @@
 import React from 'react';
-import DynamicContentCard from '../common/components/DynamicContentCard';
-import { types } from '../common/components/DynamicContentCard/card-types';
+import DynamicContentCard from '../components/DynamicContentCard';
+import { types } from '../components/DynamicContentCard/card-types';
 import { BREATHECODE_HOST } from '../utils/variables';
 import { Box } from '@chakra-ui/react';
 

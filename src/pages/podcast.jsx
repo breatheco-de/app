@@ -4,10 +4,10 @@ import {
   Box, Container, Image, Avatar,
 } from '@chakra-ui/react';
 import Script from 'next/script';
-import Link from '../common/components/NextChakraLink';
-import Heading from '../common/components/Heading';
-import Text from '../common/components/Text';
-import Icon from '../common/components/Icon';
+import Link from '../components/NextChakraLink';
+import Heading from '../components/Heading';
+import Text from '../components/Text';
+import Icon from '../components/Icon';
 import useStyle from '../hooks/useStyle';
 
 export const getStaticProps = () => ({

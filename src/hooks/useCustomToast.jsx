@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { Box, Button, Flex, useToast } from '@chakra-ui/react';
-import Icon from '../common/components/Icon';
+import Icon from '../components/Icon';
 
 const bgColors = {
   info: { background: '#F9F9F9', color: '#3A3A3A', borderColor: '#DADADA' },

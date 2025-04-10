@@ -14,14 +14,14 @@ import { useRouter } from 'next/router';
 import { repositoryName } from '../../prismicio';
 import wrapper from '../store';
 import theme from '../../styles/theme';
-import Navbar from '../common/components/Navbar';
+import Navbar from '../components/Navbar';
 import RigoProvider from '../context/RigoContext';
 import AuthProvider from '../context/AuthContext';
 import SessionProvider from '../context/SessionContext';
 import ConnectionProvider from '../context/ConnectionContext';
-import Footer from '../common/components/Footer';
-import Helmet from '../common/components/Helmet';
-import InterceptionLoader from '../common/components/InterceptionLoader';
+import Footer from '../components/Footer';
+import Helmet from '../components/Helmet';
+import InterceptionLoader from '../components/InterceptionLoader';
 import { customColorModeManager, updateThemeFromUrlParam } from '../../modifyTheme';
 
 import '../../styles/globals.css';

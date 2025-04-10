@@ -21,8 +21,8 @@ import {
 } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
-import Question from '../../../common/components/Question';
-import Text from '../../../common/components/Text';
+import Question from '../../../components/Question';
+import Text from '../../../components/Text';
 import bc from '../../../services/breathecode';
 import asPrivate from '../../../context/PrivateRouteWrapper';
 import { log } from '../../../utils/logging';

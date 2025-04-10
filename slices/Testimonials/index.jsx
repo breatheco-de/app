@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import MktTestimonials from '../../src/common/components/MktTestimonials';
+import MktTestimonials from '../../src/components/MktTestimonials';
 
 /**
  * @typedef {import("@prismicio/client").Content.TestimonialsSlice} TestimonialsSlice

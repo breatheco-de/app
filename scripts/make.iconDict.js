@@ -4,7 +4,7 @@ import { walk, success } from './_utils';
 
 const fileName = 'iconDict';
 
-walk(`${__dirname}/../src/common/components/Icon/set`)
+walk(`${__dirname}/../src/components/Icon/set`)
   .then((files) => {
     const slugs = [];
     for (let i = 0; i < files.length; i += 1) {

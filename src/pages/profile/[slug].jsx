@@ -6,15 +6,15 @@ import {
   memo, useEffect, useState,
 } from 'react';
 import { useRouter } from 'next/router';
-import Heading from '../../common/components/Heading';
+import Heading from '../../components/Heading';
 import useAuth from '../../hooks/useAuth';
 import asPrivate from '../../context/PrivateRouteWrapper';
 import bc from '../../services/breathecode';
 import { cleanQueryStrings } from '../../utils';
-import GridContainer from '../../common/components/GridContainer';
-import Subscriptions from '../../common/components/Profile/Subscriptions';
-import Certificates from '../../common/components/Profile/Certificates';
-import Information from '../../common/components/Profile/Information';
+import GridContainer from '../../components/GridContainer';
+import Subscriptions from '../../components/Profile/Subscriptions';
+import Certificates from '../../components/Profile/Certificates';
+import Information from '../../components/Profile/Information';
 import useCustomToast from '../../hooks/useCustomToast';
 
 function Profile() {

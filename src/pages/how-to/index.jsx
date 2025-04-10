@@ -7,21 +7,21 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 // import modifyEnv from '../../../modifyEnv';
-import FilterModal from '../../common/components/FilterModal';
-import GridContainer from '../../common/components/GridContainer';
+import FilterModal from '../../components/FilterModal';
+import GridContainer from '../../components/GridContainer';
 
-import Icon from '../../common/components/Icon';
-import PaginatedView from '../../common/components/PaginationView';
-import ProjectsLoader from '../../common/components/ProjectsLoader';
-import Text from '../../common/components/Text';
+import Icon from '../../components/Icon';
+import PaginatedView from '../../components/PaginationView';
+import ProjectsLoader from '../../components/ProjectsLoader';
+import Text from '../../components/Text';
 import useFilter from '../../store/actions/filterAction';
-import Search from '../../common/components/Assets/Search';
-import TitleContent from '../../common/components/Assets/TitleContent';
+import Search from '../../components/Assets/Search';
+import TitleContent from '../../components/Assets/TitleContent';
 import { getQueryString } from '../../utils';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import { parseQuerys } from '../../utils/url';
 import { log } from '../../utils/logging';
-import { types } from '../../common/components/DynamicContentCard/card-types';
+import { types } from '../../components/DynamicContentCard/card-types';
 
 const contentPerPage = 20;
 

@@ -6,8 +6,8 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import bc from '../../../services/breathecode';
 import { processRelatedAssignments } from '../../../handlers/cohorts';
-import GridContainer from '../../../common/components/GridContainer';
-import { MDSkeleton } from '../../../common/components/Skeleton';
+import GridContainer from '../../../components/GridContainer';
+import { MDSkeleton } from '../../../components/Skeleton';
 import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 import { isWindow } from '../../../utils';
 

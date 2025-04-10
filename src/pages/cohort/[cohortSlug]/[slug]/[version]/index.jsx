@@ -23,39 +23,39 @@ import {
   isValidDate,
   getBrowserInfo,
 } from '../../../../../utils/index';
-import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
-import NextChakraLink from '../../../../../common/components/NextChakraLink';
-import TagCapsule from '../../../../../common/components/TagCapsule';
-import SyllabusModule from '../../../../../common/components/SyllabusModule';
-import CohortHeader from '../../../../../common/components/CohortHeader';
-import CohortPanel from '../../../../../common/components/CohortPanel';
-import CohortSideBar from '../../../../../common/components/CohortSideBar';
-import Icon from '../../../../../common/components/Icon';
-import SupportSidebar from '../../../../../common/components/SupportSidebar';
-import TeacherSidebar from '../../../../../common/components/TeacherSidebar';
-import CallToAction from '../../../../../common/components/CallToAction';
-import ProgressBar from '../../../../../common/components/ProgressBar';
-import Heading from '../../../../../common/components/Heading';
+import ReactPlayerV2 from '../../../../../components/ReactPlayerV2';
+import NextChakraLink from '../../../../../components/NextChakraLink';
+import TagCapsule from '../../../../../components/TagCapsule';
+import SyllabusModule from '../../../../../components/SyllabusModule';
+import CohortHeader from '../../../../../components/CohortHeader';
+import CohortPanel from '../../../../../components/CohortPanel';
+import CohortSideBar from '../../../../../components/CohortSideBar';
+import Icon from '../../../../../components/Icon';
+import SupportSidebar from '../../../../../components/SupportSidebar';
+import TeacherSidebar from '../../../../../components/TeacherSidebar';
+import CallToAction from '../../../../../components/CallToAction';
+import ProgressBar from '../../../../../components/ProgressBar';
+import Heading from '../../../../../components/Heading';
 import asPrivate from '../../../../../context/PrivateRouteWrapper';
 import useAuth from '../../../../../hooks/useAuth';
 import useRigo from '../../../../../hooks/useRigo';
-import { ModuleMapSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
+import { ModuleMapSkeleton, SimpleSkeleton } from '../../../../../components/Skeleton';
 import { parseQuerys } from '../../../../../utils/url';
 import bc from '../../../../../services/breathecode';
 import axios from '../../../../../axios';
 
 import { reportDatalayer } from '../../../../../utils/requests';
 import { BREATHECODE_HOST } from '../../../../../utils/variables';
-import ModalInfo from '../../../../../common/components/ModalInfo';
-import Text from '../../../../../common/components/Text';
-import OnlyFor from '../../../../../common/components/OnlyFor';
+import ModalInfo from '../../../../../components/ModalInfo';
+import Text from '../../../../../components/Text';
+import OnlyFor from '../../../../../components/OnlyFor';
 import useCohortHandler from '../../../../../hooks/useCohortHandler';
-import LiveEvent from '../../../../../common/components/LiveEvent';
-import FinalProject from '../../../../../common/components/FinalProject';
+import LiveEvent from '../../../../../components/LiveEvent';
+import FinalProject from '../../../../../components/FinalProject';
 import useStyle from '../../../../../hooks/useStyle';
-import Feedback from '../../../../../common/components/Feedback';
+import Feedback from '../../../../../components/Feedback';
 import useCustomToast from '../../../../../hooks/useCustomToast';
-import ReviewModal, { stages } from '../../../../../common/components/ReviewModal';
+import ReviewModal, { stages } from '../../../../../components/ReviewModal';
 
 function Dashboard() {
   const { t, lang } = useTranslation('dashboard');

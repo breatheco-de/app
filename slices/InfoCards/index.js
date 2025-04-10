@@ -1,4 +1,4 @@
-import MktInfoCards from '../../src/common/components/MktInfoCards';
+import MktInfoCards from '../../src/components/MktInfoCards';
 /**
  * @typedef {import("@prismicio/client").Content.InfoCardsSlice} InfoCardsSlice
  * @typedef {import("@prismicio/react").SliceComponentProps<InfoCardsSlice>} InfoCardsProps

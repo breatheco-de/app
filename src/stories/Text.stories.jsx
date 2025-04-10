@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@chakra-ui/layout';
-import Text from '../common/components/Text';
+import Text from '../components/Text';
 
 export default {
   title: 'Components/Text',

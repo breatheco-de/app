@@ -8,13 +8,13 @@ import { useRouter } from 'next/router';
 import bc from '../../../services/breathecode';
 import useAuth from '../../../hooks/useAuth';
 import { isWindow } from '../../../utils';
-import PaymentInfo from '../../../common/components/Checkout/PaymentInfo';
-import ServiceSummary from '../../../common/components/Checkout/ServiceSummary';
-import SelectServicePlan from '../../../common/components/Checkout/SelectServicePlan';
+import PaymentInfo from '../../../components/Checkout/PaymentInfo';
+import ServiceSummary from '../../../components/Checkout/ServiceSummary';
+import SelectServicePlan from '../../../components/Checkout/SelectServicePlan';
 import useSignup from '../../../store/actions/signupAction';
 import axiosInstance from '../../../axios';
 import asPrivate from '../../../context/PrivateRouteWrapper';
-import LoaderScreen from '../../../common/components/LoaderScreen';
+import LoaderScreen from '../../../components/LoaderScreen';
 import useStyle from '../../../hooks/useStyle';
 import useCustomToast from '../../../hooks/useCustomToast';
 

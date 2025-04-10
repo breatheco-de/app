@@ -13,7 +13,7 @@ import { cleanObject, isDevMode } from '../../utils';
 import { ORIGIN_HOST } from '../../utils/variables';
 import completions from './completion-jobs.json';
 import useAuth from '../../hooks/useAuth';
-import WorkshopsLoggedLanding from '../../common/components/WorkshopsLoggedLanding';
+import WorkshopsLoggedLanding from '../../components/WorkshopsLoggedLanding';
 
 const usedPageId = ['home'];
 

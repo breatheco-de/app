@@ -31,7 +31,7 @@
     "test": "bun ./src/__tests__/publicSyllabus.js",
     "lint:files": "eslint src/**/*.{js,jsx}",
     "lint:fix": "eslint src/**/*.{js,jsx} --fix",
-    "lint:fix:components": "eslint --fix src/common/components/**/*.{js,jsx}",
+    "lint:fix:components": "eslint --fix src/components/**/*.{js,jsx}",
     "prepare-repo": "husky install && bun make:assets",
     "make:sitemap": "bun ./scripts/sitemap-generator/index.js",
     "slicemachine": "start-slicemachine",

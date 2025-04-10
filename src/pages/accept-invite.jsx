@@ -7,11 +7,11 @@ import useTranslation from 'next-translate/useTranslation';
 import { BREATHECODE_HOST } from '../utils/variables';
 import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
-import LoaderScreen from '../common/components/LoaderScreen';
-import validationSchema from '../common/components/Forms/validationSchemas';
-import NextChakraLink from '../common/components/NextChakraLink';
-import Text from '../common/components/Text';
-import Heading from '../common/components/Heading';
+import LoaderScreen from '../components/LoaderScreen';
+import validationSchema from '../components/Forms/validationSchemas';
+import NextChakraLink from '../components/NextChakraLink';
+import Text from '../components/Text';
+import Heading from '../components/Heading';
 import useCustomToast from '../hooks/useCustomToast';
 
 function FormField({ name, label, type = 'text', isReadOnly = false, placeholder }) {
