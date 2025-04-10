@@ -6,6 +6,7 @@ import profileHandlers from '../../components/Profile/Subscriptions/handlers';
 
 const useSubscriptionsHandler = () => {
   const state = useSelector((st) => st.subscriptionsReducer);
+  const { subscriptions } = state;
   const { createToast } = useCustomToast({ toastId: 'canceling-subscription-error-action' });
   const dispatch = useDispatch();
   const {
@@ -79,8 +80,14 @@ const useSubscriptionsHandler = () => {
     }
   };
 
+  const allSubscriptions = (subscriptions?.subscriptions
+    && subscriptions?.plan_financings
+    && [...subscriptions.subscriptions, ...subscriptions.plan_financings]) || [];
+
   return {
+    ...state,
     state,
+    allSubscriptions,
     fetchSubscriptions,
     cancelSubscription,
   };
