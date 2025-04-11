@@ -149,7 +149,7 @@ function PaymentInfo({ setShowPaymentDetails }) {
           agent: getBrowserInfo(),
         },
       });
-      const resp = await bc.cohort().join(cohort?.id);
+      const resp = await bc.admissions().joinCohort(cohort?.id);
       const dataRequested = await resp.json();
       if (resp.status >= 400) {
         createToast({

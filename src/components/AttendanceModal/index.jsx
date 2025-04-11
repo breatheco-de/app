@@ -145,8 +145,8 @@ function AttendanceModal({
   const updateCohortDay = () => {
     setIsLoading(true);
     if (currentModule > 0) {
-      bc.cohort()
-        .update(cohortSession.id, { current_day: Number(day), current_module: currentModule })
+      bc.admissions()
+        .updateCohort(cohortSession.id, { current_day: Number(day), current_module: currentModule })
         .then(({ data }) => {
           saveCohortAttendancy();
           setCohortSession({
@@ -208,11 +208,9 @@ function AttendanceModal({
   };
   useEffect(() => {
     if (attendanceList[1] && students.length > 0) {
-      handlers.getAttendance({ attendanceList, students, day })
-        .then((data) => {
-          setAttendanceTaken(data);
-        })
-        .finally(() => setIsLoading(false));
+      const data = handlers.getAttendance({ attendanceList, students, day });
+      setAttendanceTaken(data);
+      setIsLoading(false);
     }
   }, [attendanceList, students, currModuleData, day]);
 

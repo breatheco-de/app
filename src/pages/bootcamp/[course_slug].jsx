@@ -274,7 +274,7 @@ function CoursePage({ data, syllabus }) {
         },
       });
       setIsFetching(true);
-      bc.cohort().join(cohortId)
+      bc.admissions().joinCohort(cohortId)
         .then(async (resp) => {
           const dataRequested = await resp.json();
           if (dataRequested?.status === 'ACTIVE') {
@@ -410,7 +410,7 @@ function CoursePage({ data, syllabus }) {
 
     const modulesInfo = await getModulesInfo();
 
-    const studentList = await bc.public({ roles: 'STUDENT' }, true).syllabusMembers(cohortSyllabus.syllabus?.slug)
+    const studentList = await bc.admissions({ roles: 'STUDENT', syllabus: cohortSyllabus.syllabus?.slug }).getPublicMembers()
       .then((respMembers) => respMembers.data)
       .catch((err) => {
         error('Error fetching cohort users:', err);
@@ -420,7 +420,7 @@ function CoursePage({ data, syllabus }) {
       l.user.id === student.user.id
     )) === index) : [];
 
-    const instructorsList = await bc.cohort({
+    const instructorsList = await bc.admissions({
       roles: 'TEACHER,ASSISTANT',
       cohort_id: cohortId,
     }).getPublicMembers()

@@ -41,7 +41,7 @@ export default function Example() {
   const openEventConsumables = () => {
     if (isAuthenticated) {
       setIsFetchingEvent(true);
-      bc.public().singleEvent('crea-una-landing-page-con-html-css-789').then((respEvent) => {
+      bc.events().getEvent('crea-una-landing-page-con-html-css-789').then((respEvent) => {
         getSubscriptions().then((subscriptions) => {
           validatePlanExistence(subscriptions).then((data) => {
             setPlanData({

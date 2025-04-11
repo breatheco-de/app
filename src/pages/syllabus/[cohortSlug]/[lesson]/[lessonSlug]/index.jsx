@@ -235,7 +235,7 @@ function SyllabusContent() {
 
   const updateOpenedAt = async () => {
     try {
-      const result = await bc.todo().update({ id: currentTask.id, opened_at: new Date() });
+      const result = await bc.assignments().updateTask({ id: currentTask.id, opened_at: new Date() });
       if (result.data) {
         const updateTasks = taskTodo.map((task) => ({ ...task }));
         const index = updateTasks.findIndex((el) => el.task_type === assetTypeValues[lesson] && el.associated_slug === lessonSlug);
@@ -272,7 +272,7 @@ function SyllabusContent() {
       let aiContext;
       const cachedContext = JSON.parse(sessionStorage.getItem(`context-${currentAsset.slug}`));
       if (!cachedContext && currentAsset?.id) {
-        const resp = await bc.lesson().getAssetContext(currentAsset.id);
+        const resp = await bc.registry().getAssetContext(currentAsset.id);
         if (resp?.status === 200) {
           aiContext = resp.data;
           sessionStorage.setItem(`context-${currentAsset.slug}`, JSON.stringify(aiContext));
@@ -442,7 +442,7 @@ function SyllabusContent() {
         handleNotFound(currTask);
         return undefined;
       }
-      bc.lesson({ asset_type: assetTypeValues[lesson] }).getAsset(currentLanguageTaskSlug).then(({ data }) => {
+      bc.registry({ asset_type: assetTypeValues[lesson] }).getAsset(currentLanguageTaskSlug).then(({ data }) => {
         const translations = data?.translations;
         const exensionName = getExtensionName(data.readme_url);
         const isIpynb = exensionName === 'ipynb';
@@ -466,8 +466,8 @@ function SyllabusContent() {
           const avoidReadmeRequest = assetTypeValues[lesson] === 'QUIZ' || (isExercise && isAvailableAsSaas);
 
           Promise.all([
-            avoidReadmeRequest ? false : bc.lesson().getAssetReadme(currentTranslationSlug),
-            bc.lesson({ asset_type: assetTypeValues[lesson] }).getAsset(currentTranslationSlug),
+            avoidReadmeRequest ? false : bc.registry().getAssetReadme(currentTranslationSlug),
+            bc.registry({ asset_type: assetTypeValues[lesson] }).getAsset(currentTranslationSlug),
           ])
             .then(([respMarkdown, respData]) => {
               const currData = respData.data;

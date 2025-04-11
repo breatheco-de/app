@@ -179,7 +179,7 @@ function Summary() {
         agent: getBrowserInfo(),
       },
     });
-    bc.cohort().join(cohort?.id)
+    bc.admissions().joinCohort(cohort?.id)
       .then(async (resp) => {
         const dataRequested = await resp.json();
         if (resp.status >= 400) {

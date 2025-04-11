@@ -235,7 +235,8 @@ function FinalProjects({ finalProjects, loadStatus, updpateProject }) {
   const getAllStudents = async () => {
     try {
       if (finalProjects.length > 0) {
-        const resp = await bc.cohort().getStudents2(cohortSlug);
+        const resp = await bc.admissions().getAllCohortUsers(cohortSlug);
+
         if (resp.status === 200) {
           const { data } = resp;
           const members = finalProjects.flatMap((project) => project.members);
