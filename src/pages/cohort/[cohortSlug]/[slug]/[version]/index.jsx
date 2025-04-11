@@ -425,7 +425,7 @@ function Dashboard() {
   // Students and Teachers data
   useEffect(() => {
     if (cohortSession?.id) {
-      bc.cohort().getStudents(cohortSlug).then(({ data }) => {
+      bc.admissions().getStudents(cohortSlug).then(({ data }) => {
         if (data && data.length > 0) {
           setSudentAndTeachers(data.sort(
             (a, b) => a.user.first_name.localeCompare(b.user.first_name),

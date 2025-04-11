@@ -274,7 +274,7 @@ function CoursePage({ data, syllabus }) {
         },
       });
       setIsFetching(true);
-      bc.cohort().join(cohortId)
+      bc.admissions().joinCohort(cohortId)
         .then(async (resp) => {
           const dataRequested = await resp.json();
           if (dataRequested?.status === 'ACTIVE') {

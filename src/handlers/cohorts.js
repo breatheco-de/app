@@ -25,8 +25,7 @@ export const getCohortSyllabus = async (id) => {
     const syllabusSlug = cohortData?.syllabus_version?.slug;
     const syllabusVersion = cohortData?.syllabus_version?.version;
 
-    const resp = await bc.admissions().publicSyllabus(syllabusSlug, syllabusVersion);
-    const data = await resp.json();
+    const data = await bc.admissions().publicSyllabus(syllabusSlug, syllabusVersion);
 
     return {
       syllabus: data,

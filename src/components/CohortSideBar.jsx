@@ -247,12 +247,12 @@ function CohortSideBar({
   // Alumni Geeks data
   useEffect(() => {
     if (slug) {
-      bc.cohort({
+      bc.admissions({
         limit: 60,
         roles: 'STUDENT',
         syllabus: slug,
         distinct: true,
-      }).getFilterStudents()
+      }).getAcademyCohortUsers()
         .then(({ data }) => {
           setAlumniGeeksList({
             ...data,

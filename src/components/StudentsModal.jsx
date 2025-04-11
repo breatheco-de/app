@@ -27,7 +27,7 @@ function StudentsModal({
   const loadStudents = async (offset, append = false, like) => {
     try {
       setIsLoading(true);
-      const { data } = await bc.cohort({ offset, limit: 10, like }).getStudents(cohortSession.slug);
+      const { data } = await bc.admissions({ offset, limit: 10, like }).getStudents(cohortSession.slug);
 
       const { count, results } = data;
       setStudentsCount(parseInt(count, 10));

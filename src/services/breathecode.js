@@ -2,7 +2,6 @@
 import axios from '../axios';
 import { parseQuerys } from '../utils/url';
 import modifyEnv from '../../modifyEnv';
-import { cleanObject } from '../utils';
 import { RIGOBOT_HOST, BREATHECODE_HOST } from '../utils/variables';
 
 const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
@@ -124,7 +123,18 @@ const breathecode = {
         },
       }),
       cohorts: () => axios.get(`${url}/cohort/all${qs}`),
-      getAllCohortUsers: (cohortSlug) => axios.get(`${host}/admissions/cohort/user?cohorts=${cohortSlug}${qs}`),
+      getAcademyCohortUsers: () => axios.get(`${url}/academy/cohort/user${qs}`),
+      getAllCohortUsers: (cohortSlug) => axios.get(`${url}/cohort/user?cohorts=${cohortSlug}${qs}`),
+      getStudents: (cohortId, academy) => axios.get(`${url}/academy/cohort/user?roles=STUDENT&cohorts=${cohortId}${parseQuerys(query, true)}`, {
+        headers: academy && {
+          academy,
+        },
+      }),
+      getStudentsWithTasks: (cohortId, academyId) => axios.get(`${url}/academy/cohort/user?tasks=True&roles=STUDENT&cohorts=${cohortId}${parseQuerys(query, true)}`, {
+        headers: {
+          academy: academyId,
+        },
+      }),
       singleCohortUser: (cohortId, userId, academy) => axios.get(`${url}/academy/cohort/${cohortId}/user/${userId}${qs}`, {
         headers: academy && {
           academy,
@@ -144,60 +154,21 @@ const breathecode = {
         if (!slug) throw new Error('Missing slug');
         else return axios.get(`${url}/academy/${academyId}/syllabus/${slug}/version/${version}`);
       },
-      publicSyllabus: (slug, version) => breathecode.get(`${url}/syllabus/${slug}/version/${version || '1'}${qs}`, {
+      publicSyllabus: (slug, version) => axios.get(`${url}/syllabus/${slug}/version/${version || '1'}${qs}`, {
         headers: {
           Authorization: `Token ${BC_ACADEMY_TOKEN}`,
           academy: 4,
         },
       }),
+      joinCohort: (id) => breathecode.post(`${url}/cohort/${id}/join`),
       getPublicSyllabusVersion: () => axios.get(`${url}/syllabus/version${qs}`),
       getPublicMembers: () => axios.get(`${url}/public/cohort/user${qs}`),
+      takeAttendance: (id, activities) => axios.put(`${url}/academy/cohort/${id}/log${qs}`, activities),
+      getAttendance: (id) => axios.get(`${url}/academy/cohort/${id}/log${qs}`),
+      updateCohort: (id, args) => axios.put(`${url}/academy/cohort/${id}`, args),
     };
   },
 
-  cohort: (query = {}, isQueryConnector = false) => {
-    const url = `${host}/admissions/academy`;
-    const qs = parseQuerys(query, isQueryConnector);
-    return {
-      get: (id) => axios.get(`${url}/cohort/${id}`),
-      join: (id) => breathecode.post(`${host}/admissions/cohort/${id}/join`),
-      takeAttendance: (id, activities) => axios.put(`${url}/cohort/${id}/log${qs}`, activities),
-      getAttendance: (id) => axios.get(`${url}/cohort/${id}/log${qs}`),
-      getPublic: (id) => axios.get(`${url}/cohort/${id}`, {
-        headers: {
-          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
-          academy: 4,
-        },
-      }),
-      getFilterStudents: () => axios.get(`${url}/cohort/user${qs}`),
-      getMembers: () => axios.get(`${url}/cohort/user${qs}`),
-      getStudents: (cohortId, academyId, withDefaultToken = false) => {
-        const headers = cleanObject({
-          academy: academyId,
-          Authorization: withDefaultToken ? `Token ${BC_ACADEMY_TOKEN}` : undefined,
-          ...axios.defaults.headers.common,
-        });
-
-        return axios.get(`${url}/cohort/user?roles=STUDENT&cohorts=${cohortId}${parseQuerys(query, true)}`, {
-          headers,
-        });
-      },
-      getStudentsWithTasks: (cohortId, academyId) => axios.get(`${url}/cohort/user?tasks=True&roles=STUDENT&cohorts=${cohortId}${qs.replace('?', '&')}`, {
-        headers: academyId && {
-          academy: academyId,
-        },
-      }),
-      update: (id, args) => axios.put(`${url}/cohort/${id}`, args),
-      user: ({ cohortId, userId }) => axios({
-        method: 'get',
-        url: `${url}/cohort/${cohortId}/user/${userId}`,
-        headers: {
-          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
-          academy: 4,
-        },
-      }),
-    };
-  },
   activity: (query = {}) => {
     const url = `${hostV2}/activity`;
     const qs = parseQuerys(query);

@@ -213,11 +213,11 @@ function chooseProgram() {
     if (cohort?.slug) {
       const isFinantialStatusLate = cohort.cohort_user.finantial_status === 'LATE' || cohort.cohort_user.educational_status === 'SUSPENDED';
       const { slug } = cohort;
-      const studentAndTeachers = isFinantialStatusLate ? {} : await bc.cohort({
+      const studentAndTeachers = isFinantialStatusLate ? {} : await bc.admissions({
         role: 'TEACHER,ASSISTANT',
         cohorts: slug,
         academy: cohort.academy?.id,
-      }).getMembers();
+      }).getAcademyCohortUsers();
       const teacher = studentAndTeachers?.data?.filter((st) => st.role === 'TEACHER') || [];
       const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT') || [];
 

@@ -179,7 +179,7 @@ function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues
 
   useEffect(() => {
     if (studentsData?.length > 0) return;
-    bc.cohort().getStudents(cohortSlug, cohortAcademy)
+    bc.admissions().getStudents(cohortSlug, cohortAcademy)
       .then((res) => {
         const studentsFiltered = res?.data.filter((student) => student?.role === 'STUDENT')
           .map((student) => ({

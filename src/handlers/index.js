@@ -25,46 +25,36 @@ const getCompletedTasksFromModule = (module, taskTodo) => (module?.length > 0 ? 
 ) : []);
 
 const handlers = {
-  getActivities: (cohortSlug, academyId = 4) => new Promise((resolve, reject) => {
-    bc.cohort({ academy: academyId }).getAttendance(cohortSlug)
-      .then(({ data }) => {
-        resolve(data);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  }),
-  getStudents: (slug, academyId, params = {}) => new Promise((resolve, reject) => {
-    bc.cohort(params).getStudents(slug, academyId)
-      .then(({ data }) => {
-        const sortedStudents = data.sort(
-          (a, b) => a.user.first_name.localeCompare(b.user.first_name),
-        );
-        resolve(sortedStudents);
-      }).catch((err) => {
-        reject(err);
-      });
-  }),
-  getStudentsWithTasks: (slug, academyId) => new Promise((resolve, reject) => {
-    bc.cohort().getStudentsWithTasks(slug, academyId)
-      .then(({ data }) => {
-        resolve(data);
-      }).catch((err) => {
-        reject(err);
-      });
-  }),
+  getActivities: async (cohortSlug, academyId = 4) => {
+    try {
+      const { data } = await bc.admissions({ academy: academyId }).getAttendance(cohortSlug);
+      return data;
+    } catch (error) {
+      return error;
+    }
+  },
+  getStudents: async (slug, academyId, params = {}) => {
+    try {
+      const { data } = await bc.admissions(params).getStudents(slug, academyId);
+      const sortedStudents = data.sort(
+        (a, b) => a.user.first_name.localeCompare(b.user.first_name),
+      );
+      return sortedStudents;
+    } catch (err) {
+      return err;
+    }
+  },
 
-  getAttendanceList: ({ cohortSlug }) => new Promise((resolve, reject) => {
-    bc.cohort().getAttendance(cohortSlug)
-      .then(({ data }) => {
-        resolve(data);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  }),
+  getAttendanceList: async ({ cohortSlug }) => {
+    try {
+      const { data } = await bc.admissions().getAttendance(cohortSlug);
+      return data;
+    } catch (error) {
+      return error;
+    }
+  },
 
-  getAttendance: ({ attendanceList, students, day }) => new Promise((resolve) => {
+  getAttendance: ({ attendanceList, students, day }) => {
     const currentDayExists = typeof attendanceList[day] === 'object';
     const attendanceLog = currentDayExists ? students.filter(
       (student) => attendanceList[day].attendance_ids.find((userId) => userId === student.user.id),
@@ -73,45 +63,44 @@ const handlers = {
       (student) => attendanceList[day].unattendance_ids.find((userId) => userId === student.user.id),
     ) : [];
 
-    resolve({
+    return {
       updated_at: currentDayExists ? attendanceList[day].updated_at : null,
       attendanceStudents: attendanceLog,
       unattendanceStudents: unattendanceLog,
       current_module: currentDayExists ? attendanceList[day].current_module : null,
       teacher_comments: currentDayExists ? attendanceList[day].teacher_comments : null,
       day,
-    });
-  }),
-
-  saveCohortAttendancy: ({ cohortSlug, students, checked, currentModule }) => new Promise((resolve, reject) => {
-    const attendanceIds = students.reduce((accumulator, { user }) => {
-      const attended = checked.some((id) => parseInt(id, 10) === user.id);
-      if (attended) {
-        accumulator.attended.push(user.id);
-      } else {
-        accumulator.unattended.push(user.id);
-      }
-      return accumulator;
-    }, { attended: [], unattended: [] });
-
-    const dataStruct = {
-      current_module: currentModule,
-      teacher_comments: '',
-      attendance_ids: attendanceIds.attended,
-      unattendance_ids: attendanceIds.unattended,
     };
+  },
 
-    bc.cohort().takeAttendance(
-      cohortSlug,
-      dataStruct,
-    )
-      .then(({ data }) => {
-        resolve(data);
-      })
-      .catch(() => {
-        reject();
-      });
-  }),
+  saveCohortAttendancy: async ({ cohortSlug, students, checked, currentModule }) => {
+    try {
+      const attendanceIds = students.reduce((accumulator, { user }) => {
+        const attended = checked.some((id) => parseInt(id, 10) === user.id);
+        if (attended) {
+          accumulator.attended.push(user.id);
+        } else {
+          accumulator.unattended.push(user.id);
+        }
+        return accumulator;
+      }, { attended: [], unattended: [] });
+
+      const dataStruct = {
+        current_module: currentModule,
+        teacher_comments: '',
+        attendance_ids: attendanceIds.attended,
+        unattendance_ids: attendanceIds.unattended,
+      };
+
+      const { data } = await bc.admissions().takeAttendance(
+        cohortSlug,
+        dataStruct,
+      );
+      return data;
+    } catch (err) {
+      return err;
+    }
+  },
 
   formatTimeString: (start) => {
     const { t, lang } = useTranslation('live-event');

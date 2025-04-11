@@ -186,7 +186,7 @@ function Assignments() {
 
   const getDefaultStudent = () => {
     if (query.student) {
-      bc.cohort({ users: query.student })
+      bc.admissions({ users: query.student })
         .getStudentsWithTasks(cohortSlug, academy)
         .then((res) => {
           if (res.data?.length > 0) {
@@ -251,7 +251,7 @@ function Assignments() {
     setLoadStatus({ loading: true, status: 'loading' });
     const academyId = selectedCohort.academy.id || academy;
     const { slug } = selectedCohort;
-    bc.cohort({
+    bc.admissions({
       limit,
       offset,
       sort,
@@ -399,7 +399,7 @@ function Assignments() {
     setCurrentStudentList([...copyStudentList]);
   };
 
-  const getOptionsStudents = (inputValue) => bc.cohort(inputValue ? { like: inputValue, limit: 2000 } : { limit: 2000 })
+  const getOptionsStudents = (inputValue) => bc.admissions(inputValue ? { like: inputValue, limit: 2000 } : { limit: 2000 })
     .getStudents(
       selectedCohort.slug,
       selectedCohort.academy.id || academy,
