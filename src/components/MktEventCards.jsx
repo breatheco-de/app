@@ -44,8 +44,8 @@ function MktEventCards({
     featured: true,
     academy: WHITE_LABEL_ACADEMY,
     is_public: true,
-    status: techFilter ? 'ACTIVE,FINISHED' : 'ACTIVE',
-    past: !!techFilter,
+    status: (techFilter || searchSensitive) ? 'ACTIVE,FINISHED' : 'ACTIVE',
+    past: !!(techFilter || searchSensitive),
   }, (endpoint && endpoint?.includes('?')));
 
   const hoursLimited = hoursToLimit * 60;
@@ -91,14 +91,14 @@ function MktEventCards({
 
         if (data && data.length > 0) {
           const englishLang = lang === 'en' && 'us';
-          const sortDateToLiveClass = techFilter ? sortToNearestTodayDate(data, hoursLimited, true) : sortToNearestTodayDate(data, hoursLimited);
+          const sortDateToLiveClass = techFilter || searchSensitive ? sortToNearestTodayDate(data, hoursLimited, true) : sortToNearestTodayDate(data, hoursLimited);
           const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && (l?.ended_at || l?.ending_at) && l?.slug);
           const isMoreThanAnyEvents = sortDateToLiveClass?.length > maxEvents;
           const filteredByLang = existentLiveClasses?.filter((l) => l?.lang === englishLang || l?.lang === lang);
 
           const eventsFilteredByLang = isMoreThanAnyEvents ? filteredByLang : existentLiveClasses;
           const eventsWithTechnologies = transformEventsWithTechnologies(eventsFilteredByLang, sortPrioOneTechs);
-
+          console.log('eventsWithTechnologies', eventsWithTechnologies);
           const eventsFilteredByTech = techFilter ? eventsWithTechnologies.filter((event) => event?.event_type?.technologies?.split(',').includes(techFilter.toLowerCase())) : eventsWithTechnologies;
 
           setOriginalEvents(eventsFilteredByTech);
@@ -152,6 +152,10 @@ function MktEventCards({
   };
 
   const eventsToDisplay = showCheckedInEvents ? checkedInEvents : filteredEvents;
+
+  if (searchSensitive && !search) {
+    return null;
+  }
 
   return (
     <>
