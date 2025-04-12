@@ -552,7 +552,6 @@ function Dashboard() {
   }, [isSubscriptionFreeTrial, mandatoryProjectsCount, deletionOrders.length]);
 
   const dailyModuleData = getDailyModuleData() || '';
-  // const lastTaskDoneModuleData = getLastDoneTaskModuleData() || '';
 
   const onlyStudentsActive = studentAndTeachers.filter(
     (x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE',

@@ -489,16 +489,6 @@ function useCohortHandler() {
     return dailyModule;
   };
 
-  const getLastDoneTaskModuleData = () => {
-    let lastDoneTaskModule = null;
-    sortedAssignments.forEach(
-      (module) => {
-        if (module.content.some((task) => task.task_status === 'DONE')) lastDoneTaskModule = module;
-      },
-    );
-    return lastDoneTaskModule;
-  };
-
   const getMandatoryProjects = (cohortSlug = null) => {
     const assignments = cohortSlug ? cohortsAssignments[cohortSlug]?.modules : sortedAssignments;
     if (!assignments) return [];
@@ -768,7 +758,6 @@ function useCohortHandler() {
     getCohortUserCapabilities,
     getCohortData,
     getDailyModuleData,
-    getLastDoneTaskModuleData,
     getMandatoryProjects,
     getTasksWithoutCohort,
     userCapabilities,
