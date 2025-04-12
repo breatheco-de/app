@@ -98,7 +98,6 @@ function MktEventCards({
 
           const eventsFilteredByLang = isMoreThanAnyEvents ? filteredByLang : existentLiveClasses;
           const eventsWithTechnologies = transformEventsWithTechnologies(eventsFilteredByLang, sortPrioOneTechs);
-          console.log('eventsWithTechnologies', eventsWithTechnologies);
           const eventsFilteredByTech = techFilter ? eventsWithTechnologies.filter((event) => event?.event_type?.technologies?.split(',').includes(techFilter.toLowerCase())) : eventsWithTechnologies;
 
           setOriginalEvents(eventsFilteredByTech);
@@ -131,6 +130,7 @@ function MktEventCards({
           event?.title?.toLowerCase().includes(search.toLowerCase())
           || event?.event_type?.technologies?.includes(search.toLowerCase())
           || event?.event_type?.name?.toLowerCase().includes(search.toLowerCase())
+          || event?.description?.toLowerCase().includes(search.toLowerCase())
         ));
         setFilteredEvents(filteredBySearch);
         setLoading(false);
