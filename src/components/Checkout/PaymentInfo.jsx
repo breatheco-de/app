@@ -8,13 +8,14 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Heading from '../Heading';
 import bc from '../../services/breathecode';
-import useSignup from '../../store/actions/signupAction';
+import signupAction from '../../store/actions/signupAction';
 import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../hooks/useStyle';
 import useAuth from '../../hooks/useAuth';
 import { reportDatalayer } from '../../utils/requests';
 import { getQueryString, getStorageItem, getBrowserInfo } from '../../utils';
 import useCohortHandler from '../../hooks/useCohortHandler';
+import useSignup from '../../hooks/useSignup';
 import { getCohort } from '../../handlers/cohorts';
 import { getAllMySubscriptions } from '../../handlers/subscriptions';
 import { SILENT_CODE } from '../../utils/variables';
@@ -31,8 +32,9 @@ function PaymentInfo({ setShowPaymentDetails }) {
   const { isAuthenticated, reSetUserAndCohorts } = useAuth();
 
   const {
-    state, handlePayment, setSelectedPlanCheckoutData, setIsSubmittingCard, setIsSubmittingPayment, getPaymentMethods, setPaymentStatus, setPaymentInfo,
-  } = useSignup();
+    state, setSelectedPlanCheckoutData, setIsSubmittingCard, setIsSubmittingPayment, setPaymentStatus, setPaymentInfo,
+  } = signupAction();
+  const { handlePayment, getPaymentMethods } = useSignup();
   const {
     checkoutData, selectedPlanCheckoutData, cohortPlans, paymentMethods, loader, isSubmittingPayment, paymentStatus,
   } = state;

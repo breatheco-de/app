@@ -30,11 +30,12 @@ import ChooseYourClass from '../../components/Checkout/ChooseYourClass';
 import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem, getBrowserInfo } from '../../utils';
 import Summary from '../../components/Checkout/Summary';
 import PaymentInfo from '../../components/Checkout/PaymentInfo';
-import useSignup from '../../store/actions/signupAction';
+import signupAction from '../../store/actions/signupAction';
 import axiosInstance from '../../axios';
 import LoaderScreen from '../../components/LoaderScreen';
 import ModalInfo from '../../components/ModalInfo';
 import useStyle from '../../hooks/useStyle';
+import useSignup from '../../hooks/useSignup';
 import Stepper from '../../components/Checkout/Stepper';
 import ServiceSummary from '../../components/Checkout/ServiceSummary';
 import Text from '../../components/Text';
@@ -91,9 +92,12 @@ function Checkout() {
   const [allCoupons, setAllCoupons] = useState([]);
   const [originalPlan, setOriginalPlan] = useState(null);
   const {
-    state, toggleIfEnrolled, handleStep, handleChecking, setCohortPlans,
-    isFirstStep, isSecondStep, isThirdStep, isFourthStep, setLoader,
-    setSelectedPlanCheckoutData, setCheckoutData, getPriceWithDiscount, getSelfAppliedCoupon,
+    state, toggleIfEnrolled, handleStep, setCohortPlans, setLoader,
+    setSelectedPlanCheckoutData, setCheckoutData,
+  } = signupAction();
+  const {
+    isFirstStep, isSecondStep, isThirdStep, isFourthStep, getSelfAppliedCoupon,
+    handleChecking, getPriceWithDiscount,
   } = useSignup();
   const { stepIndex, checkoutData, selectedPlanCheckoutData, alreadyEnrolled, serviceProps, loader, selfAppliedCoupon, cohortPlans } = state;
   const [readyToSelectService, setReadyToSelectService] = useState(false);

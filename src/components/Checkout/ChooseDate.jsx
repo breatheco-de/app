@@ -7,15 +7,17 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import Text from '../Text';
-import useSignup from '../../store/actions/signupAction';
+import signupAction from '../../store/actions/signupAction';
 import bc from '../../services/breathecode';
 import useCustomToast from '../../hooks/useCustomToast';
+import useSignup from '../../hooks/useSignup';
 
 function ChooseDate({ cohort, ...rest }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { createToast } = useCustomToast({ toastId: 'no-plan-configuration-info' });
-  const { handleChecking, nextStep, setCohortPlans } = useSignup();
+  const { nextStep, setCohortPlans } = signupAction();
+  const { handleChecking } = useSignup();
   const { t } = useTranslation('signup');
 
   const kickoffDate = {

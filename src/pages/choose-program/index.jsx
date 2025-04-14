@@ -8,28 +8,28 @@ import ProgramsDashboard from '../../components/ProgramsDashboard';
 import Text from '../../components/Text';
 import asPrivate from '../../context/PrivateRouteWrapper';
 import bc from '../../services/breathecode';
-import useAuth from '../../hooks/useAuth';
 import Icon from '../../components/Icon';
 import TaskBar from '../../components/TaskBar';
 import { calculateDifferenceDays, getStorageItem, isPlural, isValidDate, removeStorageItem, setStorageItem, sortToNearestTodayDate, syncInterval, getBrowserInfo } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
 import Heading from '../../components/Heading';
+import useAuth from '../../hooks/useAuth';
 import { usePersistent } from '../../hooks/usePersistent';
 import useCohortHandler from '../../hooks/useCohortHandler';
+import useStyle from '../../hooks/useStyle';
+import useCustomToast from '../../hooks/useCustomToast';
+import useSignup from '../../hooks/useSignup';
 import LiveEvent from '../../components/LiveEvent';
 import NextChakraLink from '../../components/NextChakraLink';
 import { SimpleSkeleton } from '../../components/Skeleton';
 import useProgramList from '../../store/actions/programListAction';
 import useSubscriptionsHandler from '../../store/actions/subscriptionAction';
-import { PREPARING_FOR_COHORT } from '../../store/types';
 import SimpleModal from '../../components/SimpleModal';
 import ReactPlayerV2 from '../../components/ReactPlayerV2';
-import useStyle from '../../hooks/useStyle';
 import SupportSidebar from '../../components/SupportSidebar';
 import Feedback from '../../components/Feedback';
 import axios from '../../axios';
 import LanguageSelector from '../../components/LanguageSelector';
-import useCustomToast from '../../hooks/useCustomToast';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -51,6 +51,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 function chooseProgram() {
   const { t } = useTranslation('choose-program');
   const { setCohortSession, getCohortsModules, cohortsAssignments } = useCohortHandler();
+  const { subscriptionStatusDictionary } = useSignup();
   const { user, cohorts, isLoading, reSetUserAndCohorts, fetchUserAndCohorts, setCohorts } = useAuth();
   const [subscriptionProcess] = usePersistent('subscription-process', null);
   const [invites, setInvites] = useState([]);
@@ -148,7 +149,7 @@ function chooseProgram() {
       }
 
       revalidate = setTimeout(async () => {
-        if (subscriptionProcess?.status === PREPARING_FOR_COHORT && subscriptionProcess?.id) {
+        if (subscriptionProcess?.status === subscriptionStatusDictionary.PREPARING_FOR_COHORT && subscriptionProcess?.id) {
           setIsRevalidating(true);
           if (!cohortIsReady) {
             const { cohorts: myCohorts } = await fetchUserAndCohorts();

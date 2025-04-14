@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Avatar, Box, Button, Link, Flex } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import bc from '../../services/breathecode';
-import useSignup from '../../store/actions/signupAction';
+import signupAction from '../../store/actions/signupAction';
 import Heading from '../Heading';
 import Icon from '../Icon';
 import Text from '../Text';
@@ -16,6 +16,7 @@ import useStyle from '../../hooks/useStyle';
 import useAuth from '../../hooks/useAuth';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useCustomToast from '../../hooks/useCustomToast';
+import useSignup from '../../hooks/useSignup';
 import CardForm from './CardForm';
 import { reportDatalayer } from '../../utils/requests';
 import { BREATHECODE_HOST, SILENT_CODE } from '../../utils/variables';
@@ -26,8 +27,9 @@ function ServiceSummary({ service }) {
   const { isAuthenticated } = useAuth();
   const { t } = useTranslation('signup');
   const {
-    state, setSelectedService, setIsSubmittingCard, setIsSubmittingPayment, getPaymentMethods, setPaymentStatus,
-  } = useSignup();
+    state, setSelectedService, setIsSubmittingCard, setIsSubmittingPayment, setPaymentStatus,
+  } = signupAction();
+  const { getPaymentMethods } = useSignup();
   const { selectedService, paymentMethods, paymentStatus, loader } = state;
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const { state: cohortState } = useCohortHandler();

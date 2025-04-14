@@ -29,7 +29,6 @@ import MktTrustCards from '../../components/MktTrustCards';
 import MktShowPrices from '../../components/MktShowPrices';
 import NextChakraLink from '../../components/NextChakraLink';
 import useAuth from '../../hooks/useAuth';
-import useSignup from '../../store/actions/signupAction';
 import { SUBS_STATUS, fetchSuggestedPlan, getAllMySubscriptions, getTranslations } from '../../handlers/subscriptions';
 import axiosInstance from '../../axios';
 import useCohortHandler from '../../hooks/useCohortHandler';
@@ -43,6 +42,7 @@ import Rating from '../../components/Rating';
 import SimpleModal from '../../components/SimpleModal';
 import CustomCarousel from '../../components/CustomCarousel';
 import useCustomToast from '../../hooks/useCustomToast';
+import useSignup from '../../hooks/useSignup';
 import { usePlanPrice } from '../../utils/getPriceWithDiscount';
 
 export async function getStaticPaths({ locales }) {
@@ -112,7 +112,7 @@ export async function getStaticProps({ locale, locales, params }) {
 }
 
 function CoursePage({ data, syllabus }) {
-  const { state, getPriceWithDiscount, getSelfAppliedCoupon, applyDiscountCouponsToPlans } = useSignup();
+  const { getPriceWithDiscount, getSelfAppliedCoupon, applyDiscountCouponsToPlans, state } = useSignup();
   const [coupon] = usePersistentBySession('coupon', '');
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);

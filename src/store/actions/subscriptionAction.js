@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { CANCEL_SUBSCRIPTION, FETCH_SUBSCRIPTIONS, IS_LOADING } from '../types';
+import { CANCEL_SUBSCRIPTION, FETCH_SUBSCRIPTIONS, SET_SUBSCRIPTIONS_LOADING } from '../types';
 import bc from '../../services/breathecode';
 import useCustomToast from '../../hooks/useCustomToast';
 import profileHandlers from '../../components/Profile/Subscriptions/handlers';
@@ -17,7 +17,7 @@ const useSubscriptionsHandler = () => {
     let result;
     try {
       dispatch({
-        type: IS_LOADING,
+        type: SET_SUBSCRIPTIONS_LOADING,
         payload: true,
       });
 
@@ -52,7 +52,7 @@ const useSubscriptionsHandler = () => {
       result = error;
     } finally {
       dispatch({
-        type: IS_LOADING,
+        type: SET_SUBSCRIPTIONS_LOADING,
         payload: false,
       });
       // eslint-disable-next-line no-unsafe-finally

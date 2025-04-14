@@ -1,5 +1,5 @@
 import {
-  FETCH_SUBSCRIPTIONS, CANCEL_SUBSCRIPTION, IS_LOADING,
+  FETCH_SUBSCRIPTIONS, CANCEL_SUBSCRIPTION, SET_SUBSCRIPTIONS_LOADING,
 } from '../types';
 
 const initialState = {
@@ -9,7 +9,7 @@ const initialState = {
 
 const subscriptionsReducer = (state = initialState, action) => {
   switch (action.type) {
-    case IS_LOADING:
+    case SET_SUBSCRIPTIONS_LOADING:
       return {
         ...state,
         isLoading: action.payload,

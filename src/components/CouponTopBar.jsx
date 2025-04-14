@@ -3,13 +3,15 @@ import useTranslation from 'next-translate/useTranslation';
 import Text from './Text';
 import Timer from './Timer';
 import useStyle from '../hooks/useStyle';
-import useSignup from '../store/actions/signupAction';
+import signupAction from '../store/actions/signupAction';
+import useSignup from '../hooks/useSignup';
 import NextChakraLink from './NextChakraLink';
 
 function CouponTopBar({ ...rest }) {
   const { t } = useTranslation('course');
   const { hexColor } = useStyle();
-  const { getPriceWithDiscount, setSelfAppliedCoupon, state } = useSignup();
+  const { setSelfAppliedCoupon } = signupAction();
+  const { getPriceWithDiscount, state } = useSignup();
   const { selfAppliedCoupon } = state;
 
   // Since we are not showing the price after discount, we can give the price as cero

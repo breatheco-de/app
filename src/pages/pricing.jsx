@@ -10,7 +10,7 @@ import Text from '../components/Text';
 import Faq from '../components/Faq';
 import PricingCard from '../components/PricingCard';
 import LoaderScreen from '../components/LoaderScreen';
-import useSignup from '../store/actions/signupAction';
+import useSignup from '../hooks/useSignup';
 import MktTrustCards from '../components/MktTrustCards';
 import DraggableContainer from '../components/DraggableContainer';
 import Icon from '../components/Icon';

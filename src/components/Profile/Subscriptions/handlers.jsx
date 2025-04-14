@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { enUS, es } from 'date-fns/locale';
 import useStyle from '../../../hooks/useStyle';
 import bc from '../../../services/breathecode';
-import useSignup from '../../../store/actions/signupAction';
+import signupAction from '../../../store/actions/signupAction';
 import { toCapitalize, unSlugify } from '../../../utils';
 import { currenciesSymbols } from '../../../utils/variables';
 import useCustomToast from '../../../hooks/useCustomToast';
@@ -16,7 +16,7 @@ function profileHandlers() {
   const { reverseFontColor, fontColor, lightColor } = useStyle();
   const { createToast } = useCustomToast({ toastId: 'getting-plan-offer-error' });
   const router = useRouter();
-  const { setPaymentStatus } = useSignup();
+  const { setPaymentStatus } = signupAction();
 
   const getPlanProps = async (slug) => {
     const resp = await bc.payment().getPlanProps(encodeURIComponent(slug));

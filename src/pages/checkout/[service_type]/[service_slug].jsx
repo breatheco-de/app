@@ -11,11 +11,12 @@ import { isWindow } from '../../../utils';
 import PaymentInfo from '../../../components/Checkout/PaymentInfo';
 import ServiceSummary from '../../../components/Checkout/ServiceSummary';
 import SelectServicePlan from '../../../components/Checkout/SelectServicePlan';
-import useSignup from '../../../store/actions/signupAction';
+import signupAction from '../../../store/actions/signupAction';
 import axiosInstance from '../../../axios';
 import asPrivate from '../../../context/PrivateRouteWrapper';
 import LoaderScreen from '../../../components/LoaderScreen';
 import useStyle from '../../../hooks/useStyle';
+import useSignup from '../../../hooks/useSignup';
 import useCustomToast from '../../../hooks/useCustomToast';
 
 function ServiceSlug() {
@@ -23,8 +24,9 @@ function ServiceSlug() {
   const { query } = router;
   const { service_type, service_slug } = query;
   const {
-    state, handleStep, handleServiceToConsume, isThirdStep, isFourthStep, setLoader, restartSignup,
-  } = useSignup();
+    state, handleStep, setLoader, restartSignup,
+  } = signupAction();
+  const { handleServiceToConsume, isThirdStep, isFourthStep } = useSignup();
   const [readyToSelectService, setReadyToSelectService] = useState(false);
   const { stepIndex, selectedPlanCheckoutData, serviceProps, loader } = state;
   const { backgroundColor3, backgroundColor } = useStyle();

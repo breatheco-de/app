@@ -8,7 +8,7 @@ import Heading from '../Heading';
 import bc from '../../services/breathecode';
 import { getQueryString, getTimeProps, getBrowserInfo } from '../../utils';
 import useGoogleMaps from '../../hooks/useGoogleMaps';
-import useSignup from '../../store/actions/signupAction';
+import useSignup from '../../hooks/useSignup';
 import ChooseDate from './ChooseDate';
 import useStyle from '../../hooks/useStyle';
 import { reportDatalayer } from '../../utils/requests';

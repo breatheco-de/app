@@ -8,7 +8,7 @@ import Heading from '../Heading';
 import Icon from '../Icon';
 import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
-import useSignup from '../../store/actions/signupAction';
+import signupAction from '../../store/actions/signupAction';
 import bc from '../../services/breathecode';
 import { reportDatalayer } from '../../utils/requests';
 import { getQueryString, getStorageItem, toCapitalize, unSlugify, getBrowserInfo } from '../../utils';
@@ -18,6 +18,7 @@ import axiosInstance from '../../axios';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import { getCohort } from '../../handlers/cohorts';
 import useCustomToast from '../../hooks/useCustomToast';
+import useSignup from '../../hooks/useSignup';
 
 function Summary() {
   const { t, lang } = useTranslation('signup');
@@ -29,9 +30,9 @@ function Summary() {
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [paymentStatus, setPaymentStatus] = useState('idle');
   const {
-    state, nextStep, setSelectedPlanCheckoutData, handlePayment, getPaymentText,
-    setLoader,
-  } = useSignup();
+    state, nextStep, setSelectedPlanCheckoutData, setLoader,
+  } = signupAction();
+  const { handlePayment, getPaymentText } = useSignup();
   const [hasMounted, setHasMounted] = useState(false);
   const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
   const { createToast } = useCustomToast({ toastId: 'payment-request-data-detail-error' });
