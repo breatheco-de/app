@@ -321,9 +321,6 @@ function MentoringConsumables({
     });
   };
 
-  console.log('programServices', programServices);
-  console.log('mentoryProps', mentoryProps);
-
   return (
     <Box
       position="relative"
