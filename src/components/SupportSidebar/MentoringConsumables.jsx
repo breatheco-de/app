@@ -97,7 +97,7 @@ function MentoringConsumables({
   mentoryProps, width, consumables, cohortSessionIsSaaS, setMentoryProps,
   programServices, servicesFiltered, searchProps, setSearchProps, setProgramMentors,
   mentorsFiltered, allMentorsAvailable, subscriptionData, allSubscriptions,
-  queryService, queryMentor, titleSize,
+  queryService, queryMentor, titleSize, withDescription,
 }) {
   const { t } = useTranslation('dashboard');
   const { user } = useAuth();
@@ -330,35 +330,34 @@ function MentoringConsumables({
       borderRadius="lg"
     >
 
-      {open && mentoryProps?.service && (
-        <Box position="absolute" top="16px" left="18px" onClick={reset} cursor="pointer">
-          <Icon icon="arrowLeft" width="25px" height="25px" color="#606060" />
-        </Box>
-      )}
-      {open && !mentoryProps?.service && (
+      {open && (
         <Box position="absolute" top="16px" left="18px" onClick={reset} cursor="pointer">
           <Icon icon="arrowLeft" width="25px" height="25px" color="#606060" />
         </Box>
       )}
       <Box display="flex" flexDirection="column" p="4" pt="20px" alignItems="center">
-        <Box d="flex" flexDirection="column" alignItems="center" justifyContent="center">
-          {!mentoryProps?.service && (consumables?.mentorship_service_sets?.length !== 0 || currentBalance !== 0) && (
-            <>
-              <Heading size={titleSize || '14px'} textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
-                {t('supportSideBar.mentoring')}
-                <br />
-                <Link size="14px" variant="default" className="link" href={t('supportSideBar.learn-more-link')} target="_blank" rel="noopener noreferrer">
-                  {t('supportSideBar.learn-more')}
-                </Link>
+        {!mentoryProps?.service && (consumables?.mentorship_service_sets?.length !== 0 || currentBalance !== 0) && (
+          <Box d="flex" flexDirection="column" alignItems="center" justifyContent="center">
+            <Heading size={titleSize || '14px'} textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
+              {t('supportSideBar.mentoring')}
+            </Heading>
+            {withDescription && (
+              <Text size="l" mt="5px" textAlign="center">
+                {t('supportSideBar.description')}
+              </Text>
+            )}
+            <Text textAlign="center">
+              <Link size="14px" variant="default" className="link" href={t('supportSideBar.learn-more-link')} target="_blank" rel="noopener noreferrer">
+                {t('supportSideBar.learn-more')}
+              </Link>
+            </Text>
+            {programServices.length <= 0 && (
+              <Heading size="16px" textAlign="center" justify="center" mt="10px" mb="0px">
+                {programServices.length > 0 ? `${programServices.length} ${t('supportSideBar.mentoring-available')}` : t('supportSideBar.no-mentoring-available')}
               </Heading>
-              {!mentoryProps?.service && programServices.length <= 0 && (
-                <Heading size="16px" textAlign="center" justify="center" mt="10px" mb="0px">
-                  {programServices.length > 0 ? `${programServices.length} ${t('supportSideBar.mentoring-available')}` : t('supportSideBar.no-mentoring-available')}
-                </Heading>
-              )}
-            </>
-          )}
-        </Box>
+            )}
+          </Box>
+        )}
         {!open && (
           <>
             <Box margin="15px 0" display="flex" flexDirection="column">
@@ -593,6 +592,7 @@ MentoringConsumables.propTypes = {
   mentorsFiltered: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   subscriptionData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   allSubscriptions: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  withDescription: PropTypes.bool,
 };
 
 MentoringConsumables.defaultProps = {
@@ -606,6 +606,7 @@ MentoringConsumables.defaultProps = {
   setProgramMentors: () => { },
   subscriptionData: {},
   allSubscriptions: [],
+  withDescription: false,
 };
 
 export default MentoringConsumables;
