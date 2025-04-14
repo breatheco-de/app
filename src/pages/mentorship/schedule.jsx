@@ -4,18 +4,14 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { reportDatalayer } from '../../utils/requests';
 import { getBrowserInfo } from '../../utils';
-import useSubscriptionsHandler from '../../common/store/actions/subscriptionAction';
-import useAuth from '../../common/hooks/useAuth';
-import Icon from '../../common/components/Icon';
-import Link from '../../common/components/NextChakraLink';
-import bc from '../../common/services/breathecode';
-import MentoringConsumables from '../../common/components/SupportSidebar/MentoringConsumables';
+import useSubscriptionsHandler from '../../store/actions/subscriptionAction';
+import useAuth from '../../hooks/useAuth';
+import Icon from '../../components/Icon';
+import Link from '../../components/NextChakraLink';
+import bc from '../../services/breathecode';
+import MentoringConsumables from '../../components/SupportSidebar/MentoringConsumables';
 
 function MentorshipSchedule() {
-  let isTabletOrPhone = false;
-  if (typeof window !== 'undefined') {
-    isTabletOrPhone = window.innerWidth < 780;
-  }
   const router = useRouter();
   const { t } = useTranslation('signup');
   const { fetchSubscriptions } = useSubscriptionsHandler();
@@ -191,7 +187,7 @@ function MentorshipSchedule() {
   }, [mentoryProps.serviceSelected]);
 
   return !isLoading && user && !mentorshipServices.isLoading && (
-    <Container as="div" height="100%" maxWidth="full" minHeight="93vh" display="flex" flexDirection="column" padding={0} background={() => useColorModeValue('#f9f9f9', '#171f2a')} overflow="hidden">
+    <Container as="div" height="100%" maxWidth="full" minHeight="93vh" display="flex" flexDirection="column" padding={0} background={() => useColorModeValue('gray.light3', 'darkTheme')} overflow="hidden">
       <Container maxWidth="1280px">
         <Link href="/choose-program" color="#0196d1" display="inline-block" letterSpacing="0.05em" fontWeight="700" width="fit-content" padding="3rem 0 0.6rem 1rem">
           <Box display="flex" alignItems="center" justifyContent="center" gap="5px">
@@ -204,8 +200,8 @@ function MentorshipSchedule() {
             <MentoringConsumables
               {...{
                 mentoryProps,
-                width: !isTabletOrPhone ? '650px' : '350px',
-                titleSize: !isTabletOrPhone && '24px',
+                width: { base: '350px', md: '650px' },
+                titleSize: { base: '14px', md: '24px' },
                 consumables,
                 setMentoryProps,
                 programServices: mentorshipServices.data,
@@ -219,6 +215,7 @@ function MentorshipSchedule() {
                 allSubscriptions: subscriptionData.subscriptions,
                 queryService: service,
                 queryMentor: mentor,
+                withDescription: true,
               }}
             />
           </Box>

@@ -6,14 +6,14 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 
 import Head from 'next/head';
-import useRigo from '../../common/hooks/useRigo';
+import useRigo from '../../hooks/useRigo';
 import { createClient } from '../../../prismicio';
 import { components } from '../../../slices';
 import { cleanObject, isDevMode } from '../../utils';
 import { ORIGIN_HOST } from '../../utils/variables';
 import completions from './completion-jobs.json';
-import useAuth from '../../common/hooks/useAuth';
-import WorkshopsLoggedLanding from '../../common/components/WorkshopsLoggedLanding';
+import useAuth from '../../hooks/useAuth';
+import WorkshopsLoggedLanding from '../../components/WorkshopsLoggedLanding';
 
 const usedPageId = ['home'];
 

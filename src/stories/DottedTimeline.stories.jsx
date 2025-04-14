@@ -1,7 +1,7 @@
 import { Avatar, Flex } from '@chakra-ui/react';
 import React from 'react';
 
-import DottedTimeline from '../common/components/DottedTimeline';
+import DottedTimeline from '../components/DottedTimeline';
 
 const dots = [
   {

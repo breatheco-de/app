@@ -1,6 +1,6 @@
 import React from 'react';
 import { addMinutes, addDays, subHours, addHours, subMinutes, subDays } from 'date-fns';
-import ProgramCard from '../common/components/ProgramCard';
+import ProgramCard from '../components/ProgramCard';
 
 export default {
   title: 'Components/ProgramCard',

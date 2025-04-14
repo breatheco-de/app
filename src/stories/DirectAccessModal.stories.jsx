@@ -1,5 +1,5 @@
 import React from 'react';
-import DirectAccessModal from '../common/components/DirectAccessModal';
+import DirectAccessModal from '../components/DirectAccessModal';
 
 export default {
   title: 'Components/DirectAccessModal',

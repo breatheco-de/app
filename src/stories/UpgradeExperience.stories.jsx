@@ -1,7 +1,7 @@
 import { addHours } from 'date-fns';
 import React from 'react';
 
-import UpgradeExperience from '../common/components/UpgradeExperience';
+import UpgradeExperience from '../components/UpgradeExperience';
 
 export default {
   title: 'Components/UpgradeExperience',

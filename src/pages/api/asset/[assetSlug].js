@@ -1,5 +1,5 @@
 /* eslint-disable consistent-return */
-import bc from '../../../common/services/breathecode';
+import bc from '../../../services/breathecode';
 import { getExtensionName } from '../../../utils';
 import { setCacheItem } from '../../../utils/requests';
 

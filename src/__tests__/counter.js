@@ -1,4 +1,4 @@
-import CounterReducer from '../common/store/reducers/counterReducer';
+import CounterReducer from '../store/reducers/counterReducer';
 
 // optional
 const initialState = {

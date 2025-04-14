@@ -9,7 +9,7 @@ import {
   sitemapTemplateWithHreflangConnector,
 } from './sitemap-config';
 import { isWhiteLabelAcademy } from '../../src/utils/variables';
-import assetLists from '../../src/lib/asset-list.json';
+import assetLists from '../../public/asset-list.json';
 
 const createArray = (length) => Array.from({ length }, (_, i) => i);
 

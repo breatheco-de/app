@@ -1,6 +1,6 @@
 import React from 'react';
 
-import UpgradeAccessModal from '../common/components/UpgradeAccessModal';
+import UpgradeAccessModal from '../components/UpgradeAccessModal';
 
 export default {
   title: 'Components/UpgradeAccessModal',

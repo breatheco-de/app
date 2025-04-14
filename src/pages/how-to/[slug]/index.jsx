@@ -7,28 +7,28 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import getT from 'next-translate/getT';
 import Head from 'next/head';
-import Link from '../../../common/components/NextChakraLink';
-import ArticleMarkdown from '../../../common/components/MarkDownParser/ArticleMarkdown';
-import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
-import { MDSkeleton } from '../../../common/components/Skeleton';
-import Heading from '../../../common/components/Heading';
-import Text from '../../../common/components/Text';
-import Icon from '../../../common/components/Icon';
-import TagCapsule from '../../../common/components/TagCapsule';
-import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
-import GridContainer from '../../../common/components/GridContainer';
-import MktSideRecommendations from '../../../common/components/MktSideRecommendations';
+import Link from '../../../components/NextChakraLink';
+import ArticleMarkdown from '../../../components/MarkDownParser/ArticleMarkdown';
+import getMarkDownContent from '../../../components/MarkDownParser/markdown';
+import { MDSkeleton } from '../../../components/Skeleton';
+import Heading from '../../../components/Heading';
+import Text from '../../../components/Text';
+import Icon from '../../../components/Icon';
+import TagCapsule from '../../../components/TagCapsule';
+import MktRecommendedCourses from '../../../components/MktRecommendedCourses';
+import GridContainer from '../../../components/GridContainer';
+import MktSideRecommendations from '../../../components/MktSideRecommendations';
 import { cleanObject } from '../../../utils/index';
 import { ORIGIN_HOST, categoriesFor } from '../../../utils/variables';
-import useAuth from '../../../common/hooks/useAuth';
-import useStyle from '../../../common/hooks/useStyle';
-import RelatedContent from '../../../common/components/RelatedContent';
-import MktEventCards from '../../../common/components/MktEventCards';
-import AssetsBreadcrumbs from '../../../common/components/AssetsBreadcrumbs';
+import useAuth from '../../../hooks/useAuth';
+import useStyle from '../../../hooks/useStyle';
+import RelatedContent from '../../../components/RelatedContent';
+import MktEventCards from '../../../components/MktEventCards';
+import AssetsBreadcrumbs from '../../../components/AssetsBreadcrumbs';
 import { getMarkdownFromCache } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
-  const assetList = await import('../../../lib/asset-list.json');
+  const assetList = await import('../../../../public/asset-list.json');
   const data = assetList.howTos;
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
@@ -48,7 +48,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
 
   try {
-    const assetList = await import('../../../lib/asset-list.json')
+    const assetList = await import('../../../../public/asset-list.json')
       .then((res) => res.default)
       .catch(() => []);
     const data = assetList.howTos.find((l) => l?.slug === slug);
