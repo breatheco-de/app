@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ToggleColor from '../common/components/ToggleColor';
+import ToggleColor from '../components/ToggleColor';
 
 export default {
   title: 'Components/ToggleColor',

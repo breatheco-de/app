@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
 import { BREATHECODE_HOST, isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from '../src/utils/variables';
-import assetLists from '../src/lib/asset-list.json';
+import assetLists from '../public/asset-list.json';
 import { parseQuerys } from '../src/utils/url';
 
 const redirectConfig = {

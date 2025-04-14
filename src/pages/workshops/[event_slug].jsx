@@ -9,33 +9,33 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { reportDatalayer } from '../../utils/requests';
-import bc from '../../common/services/breathecode';
-import SimpleModal from '../../common/components/SimpleModal';
-import GridContainer from '../../common/components/GridContainer';
-import Heading from '../../common/components/Heading';
-import Text from '../../common/components/Text';
+import bc from '../../services/breathecode';
+import SimpleModal from '../../components/SimpleModal';
+import GridContainer from '../../components/GridContainer';
+import Heading from '../../components/Heading';
+import Text from '../../components/Text';
 import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate, getBrowserInfo } from '../../utils';
-import useStyle from '../../common/hooks/useStyle';
-import Icon from '../../common/components/Icon';
-import PublicProfile from '../../common/components/PublicProfile';
-import AvatarUser from '../../common/components/AvatarUser';
-import ModalInfo from '../../common/components/ModalInfo';
-import ShowOnSignUp from '../../common/components/ShowOnSignup';
-import Timer from '../../common/components/Timer';
-import Link from '../../common/components/NextChakraLink';
+import useStyle from '../../hooks/useStyle';
+import Icon from '../../components/Icon';
+import PublicProfile from '../../components/PublicProfile';
+import AvatarUser from '../../components/AvatarUser';
+import ModalInfo from '../../components/ModalInfo';
+import ShowOnSignUp from '../../components/ShowOnSignup';
+import Timer from '../../components/Timer';
+import Link from '../../components/NextChakraLink';
 import { categoriesFor, BREATHECODE_HOST } from '../../utils/variables';
-import ComponentOnTime from '../../common/components/ComponentOnTime';
-import MarkDownParser from '../../common/components/MarkDownParser';
-import MktEventCards from '../../common/components/MktEventCards';
-import { validatePlanExistence } from '../../common/handlers/subscriptions';
-import ModalToGetAccess, { stageType } from '../../common/components/ModalToGetAccess';
-import SmallCardsCarousel from '../../common/components/SmallCardsCarousel';
-import { SessionContext } from '../../common/context/SessionContext';
-import LoaderScreen from '../../common/components/LoaderScreen';
-import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
-import DynamicContentCard from '../../common/components/DynamicContentCard';
-import useCustomToast from '../../common/hooks/useCustomToast';
-import useAuth from '../../common/hooks/useAuth';
+import ComponentOnTime from '../../components/ComponentOnTime';
+import MarkDownParser from '../../components/MarkDownParser';
+import MktEventCards from '../../components/MktEventCards';
+import { validatePlanExistence } from '../../handlers/subscriptions';
+import ModalToGetAccess, { stageType } from '../../components/ModalToGetAccess';
+import SmallCardsCarousel from '../../components/SmallCardsCarousel';
+import { SessionContext } from '../../context/SessionContext';
+import LoaderScreen from '../../components/LoaderScreen';
+import ReactPlayerV2 from '../../components/ReactPlayerV2';
+import DynamicContentCard from '../../components/DynamicContentCard';
+import useAuth from '../../hooks/useAuth';
+import useCustomToast from '../../hooks/useCustomToast';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -349,6 +349,7 @@ function Workshop({ eventData, asset }) {
         setDataToGetAccessModal({
           ...data,
           event,
+          consumableType: 'event',
           academyServiceSlug: '',
         });
         setIsModalToGetAccessOpen(true);

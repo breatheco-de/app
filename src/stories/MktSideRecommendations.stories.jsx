@@ -1,5 +1,5 @@
 import React from 'react';
-import MktSideRecommendations from '../common/components/MktSideRecommendations';
+import MktSideRecommendations from '../components/MktSideRecommendations';
 import { Box } from '@chakra-ui/react';
 
 export default {

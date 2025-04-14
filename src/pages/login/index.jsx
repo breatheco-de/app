@@ -7,9 +7,9 @@ import { useRouter } from 'next/router';
 // import logo from '../../../public/static/images/bc_logo.png';
 import getT from 'next-translate/getT';
 import PropTypes from 'prop-types';
-import Login from '../../common/components/Forms/LogIn';
-import useAuth from '../../common/hooks/useAuth';
-import Icon from '../../common/components/Icon';
+import Login from '../../components/Forms/LogIn';
+import useAuth from '../../hooks/useAuth';
+import Icon from '../../components/Icon';
 import { isWindow } from '../../utils';
 import logoData from '../../../public/logo.json';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@chakra-ui/layout';
-import Feedback from '../common/components/Feedback';
+import Feedback from '../components/Feedback';
 
 export default {
   title: 'Components/Feedback',

@@ -3,11 +3,11 @@ import {
   Box, useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import Text from '../../../common/components/Text';
+import Text from '../../../components/Text';
 import { toCapitalize } from '../../../utils';
 import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
-import Heading from '../../../common/components/Heading';
-import ProjectList from '../../../common/components/Assets/ProjectList';
+import Heading from '../../../components/Heading';
+import ProjectList from '../../../components/Assets/ProjectList';
 import { parseQuerys } from '../../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {

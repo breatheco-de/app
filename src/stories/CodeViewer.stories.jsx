@@ -1,5 +1,5 @@
 import React from 'react';
-import CodeViewer from '../common/components/CodeViewer';
+import CodeViewer from '../components/CodeViewer';
 import { Box } from '@chakra-ui/react';
 
 export default {

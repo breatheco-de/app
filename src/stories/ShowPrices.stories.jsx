@@ -1,5 +1,5 @@
 import React from 'react';
-import ShowPrices from '../common/components/ShowPrices';
+import ShowPrices from '../components/ShowPrices';
 import { Box } from '@chakra-ui/react';
 
 export default {

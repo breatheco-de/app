@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/layout';
 import React from 'react';
-import OnlyFor from '../common/components/OnlyFor';
+import OnlyFor from '../components/OnlyFor';
 
 export default {
   title: 'Components/OnlyFor',

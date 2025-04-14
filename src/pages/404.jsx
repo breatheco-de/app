@@ -1,7 +1,7 @@
 import {
   Box, Heading, Text, Button,
 } from '@chakra-ui/react';
-import NextChakraLink from '../common/components/NextChakraLink';
+import NextChakraLink from '../components/NextChakraLink';
 
 export default function NotFound() {
   return (
