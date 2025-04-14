@@ -585,9 +585,11 @@ function Dashboard() {
     return 0;
   };
 
+  const openGithubModalHandler = () => setShowWarningModal(true);
+
   return (
     <Container minHeight="93vh" display="flex" flexDirection="column" maxW="none" padding="0">
-      {isAvailableAsSaas && <CohortHeader />}
+      {isAvailableAsSaas && <CohortHeader onOpenGithubModal={openGithubModalHandler} />}
       <Container flex="1" background={isAvailableAsSaas && hexColor.lightColor4} maxW="none">
         <Box maxW="1280px" width="100%" margin="0 auto">
           <Box width="fit-content" paddingTop="18px" marginBottom="18px">
@@ -1001,14 +1003,16 @@ function Dashboard() {
           )}
         </Box>
       </Container>
-      {showGithubWarning === 'active' && (
+      {showWarningModal && (
         <Modal
           isOpen={showWarningModal}
           size="md"
           margin="0 10px"
           onClose={() => {
             setShowWarningModal(false);
-            localStorage.setItem('showGithubWarning', 'postponed');
+            if (showGithubWarning === 'active') {
+              localStorage.setItem('showGithubWarning', 'postponed');
+            }
           }}
         >
           <ModalOverlay />
@@ -1070,7 +1074,9 @@ function Dashboard() {
                 color={fontColor2}
                 onClick={() => {
                   setShowWarningModal(false);
-                  localStorage.setItem('showGithubWarning', 'postponed');
+                  if (showGithubWarning === 'active') {
+                    localStorage.setItem('showGithubWarning', 'postponed');
+                  }
                 }}
               >
                 {t('warningModal.skip')}
