@@ -451,9 +451,32 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
                 const assignmentsCount = modulesProgress?.[module.id].assignmentsCount;
                 const moduleTotalAssignments = modulesProgress?.[module.id].moduleTotalAssignments;
                 const moduleDoneAssignments = modulesProgress?.[module.id].moduleDoneAssignments;
+                const isStarted = modulesProgress?.[module.id].isStarted;
 
                 const typesPerModule = Object.keys(assignmentsCount);
                 const moduleLabel = getModuleLabel(module);
+
+                const renderModuleStatusIcon = () => {
+                  if (!isStarted) {
+                    return (
+                      <Box
+                        bg={cohortColor}
+                        borderRadius="full"
+                        width="26px"
+                        height="26px"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <Icon icon="play" color="white" width="12px" height="12px" />
+                      </Box>
+                    );
+                  }
+                  if (moduleTotalAssignments === moduleDoneAssignments) {
+                    return <Icon icon="verified" width="26px" height="26px" color={hexColor.green} />;
+                  }
+                  return <CircularProgress color={hexColor.green} size="26px" value={(moduleDoneAssignments * 100) / moduleTotalAssignments} />;
+                };
 
                 return (
                   <Box key={moduleLabel} onClick={() => redirectToModule(module)} background={backgroundColor} cursor="pointer" _hover={{ opacity: 0.7 }} display="flex" alignItems="center" justifyContent="space-between" padding="8px" borderRadius="8px">
@@ -461,13 +484,7 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
                       {loadingModule === module.id ? (
                         <Spinner color={cohortColor} />
                       ) : (
-                        <>
-                          {moduleTotalAssignments === moduleDoneAssignments ? (
-                            <Icon icon="verified" width="26px" height="26px" color={hexColor.green} />
-                          ) : (
-                            <CircularProgress color={hexColor.green} size="26px" value={(moduleDoneAssignments * 100) / moduleTotalAssignments} />
-                          )}
-                        </>
+                        renderModuleStatusIcon()
                       )}
                       <Text size="md">
                         {moduleLabel}
