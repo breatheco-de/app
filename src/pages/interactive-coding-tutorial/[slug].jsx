@@ -6,32 +6,32 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
 import Head from 'next/head';
-import Heading from '../../common/components/Heading';
-import Link from '../../common/components/NextChakraLink';
-import Text from '../../common/components/Text';
-import Icon from '../../common/components/Icon';
-import useAuth from '../../common/hooks/useAuth';
-import useStyle from '../../common/hooks/useStyle';
-import FixedBottomCta from '../../common/components/Assets/FixedBottomCta';
-import SimpleTable from '../../common/components/Assets/SimpleTable';
-import TabletWithForm from '../../common/components/Assets/TabletWithForm';
-import ArticleMarkdown from '../../common/components/MarkDownParser/ArticleMarkdown';
-import { MDSkeleton } from '../../common/components/Skeleton';
-import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
-import GridContainer from '../../common/components/GridContainer';
-import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
+import Heading from '../../components/Heading';
+import Link from '../../components/NextChakraLink';
+import Text from '../../components/Text';
+import Icon from '../../components/Icon';
+import useAuth from '../../hooks/useAuth';
+import useStyle from '../../hooks/useStyle';
+import FixedBottomCta from '../../components/Assets/FixedBottomCta';
+import SimpleTable from '../../components/Assets/SimpleTable';
+import TabletWithForm from '../../components/Assets/TabletWithForm';
+import ArticleMarkdown from '../../components/MarkDownParser/ArticleMarkdown';
+import { MDSkeleton } from '../../components/Skeleton';
+import getMarkDownContent from '../../components/MarkDownParser/markdown';
+import GridContainer from '../../components/GridContainer';
+import MktRecommendedCourses from '../../components/MktRecommendedCourses';
 import { cleanObject, isWindow } from '../../utils/index';
 import { ORIGIN_HOST } from '../../utils/variables';
 import { log } from '../../utils/logging';
-import RelatedContent from '../../common/components/RelatedContent';
-import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
-import MktEventCards from '../../common/components/MktEventCards';
-import SupplementaryMaterial from '../../common/components/SupplementaryMaterial';
-import AssetsBreadcrumbs from '../../common/components/AssetsBreadcrumbs';
+import RelatedContent from '../../components/RelatedContent';
+import ReactPlayerV2 from '../../components/ReactPlayerV2';
+import MktEventCards from '../../components/MktEventCards';
+import SupplementaryMaterial from '../../components/SupplementaryMaterial';
+import AssetsBreadcrumbs from '../../components/AssetsBreadcrumbs';
 import { getMarkdownFromCache } from '../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
-  const assetList = await import('../../lib/asset-list.json');
+  const assetList = await import('../../../public/asset-list.json');
   const data = assetList.projects;
 
   if (data?.length) {
@@ -58,7 +58,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const staticImage = t('seo.image', { domain: ORIGIN_HOST });
 
   try {
-    const assetList = await import('../../lib/asset-list.json')
+    const assetList = await import('../../../public/asset-list.json')
       .then((res) => res.default)
       .catch(() => []);
     const result = assetList.projects.find((l) => l?.slug === slug);

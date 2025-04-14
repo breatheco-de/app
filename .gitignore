@@ -15,6 +15,7 @@
 # production
 /build
 /src/lib/asset-list.json
+/public/asset-list.json
 
 #sitemaps
 *.xml
@@ -27,8 +28,7 @@
 # misc
 .DS_Store
 *.pem
-src/common/utils/iconDict.json
-src/iconDict.json
+*/iconDict.json
 
 # debug
 npm-debug.log*

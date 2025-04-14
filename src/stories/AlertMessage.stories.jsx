@@ -1,5 +1,5 @@
 import React from 'react';
-import AlertMessage from '../common/components/AlertMessage';
+import AlertMessage from '../components/AlertMessage';
 
 export default {
     title: 'Components/AlertMessage',

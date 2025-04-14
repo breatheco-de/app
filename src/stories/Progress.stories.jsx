@@ -1,5 +1,5 @@
 import React from 'react';
-import Progress from '../common/components/ProgressBar/Progress';
+import Progress from '../components/ProgressBar/Progress';
 
 export default {
   title: 'Components/Progress',

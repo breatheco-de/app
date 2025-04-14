@@ -1,5 +1,5 @@
 
-import Subscriptions from '../common/components/Profile/Subscriptions';
+import Subscriptions from '../components/Profile/Subscriptions';
 
 export default {
   title: 'Components/Subscriptions',

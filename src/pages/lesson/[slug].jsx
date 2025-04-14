@@ -4,28 +4,28 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
-import Icon from '../../common/components/Icon';
+import Icon from '../../components/Icon';
 import { cleanObject, getExtensionName } from '../../utils';
-import Link from '../../common/components/NextChakraLink';
-import ArticleMarkdown from '../../common/components/MarkDownParser/ArticleMarkdown';
-import TagCapsule from '../../common/components/TagCapsule';
-import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
-import { MDSkeleton } from '../../common/components/Skeleton';
-import GridContainer from '../../common/components/GridContainer';
-import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
-import MktSideRecommendations from '../../common/components/MktSideRecommendations';
-import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
-import useAuth from '../../common/hooks/useAuth';
-import useStyle from '../../common/hooks/useStyle';
-import Heading from '../../common/components/Heading';
+import Link from '../../components/NextChakraLink';
+import ArticleMarkdown from '../../components/MarkDownParser/ArticleMarkdown';
+import TagCapsule from '../../components/TagCapsule';
+import getMarkDownContent from '../../components/MarkDownParser/markdown';
+import { MDSkeleton } from '../../components/Skeleton';
+import GridContainer from '../../components/GridContainer';
+import MktRecommendedCourses from '../../components/MktRecommendedCourses';
+import MktSideRecommendations from '../../components/MktSideRecommendations';
+import IpynbHtmlParser from '../../components/IpynbHtmlParser';
+import useAuth from '../../hooks/useAuth';
+import useStyle from '../../hooks/useStyle';
+import Heading from '../../components/Heading';
 import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
-import RelatedContent from '../../common/components/RelatedContent';
-import MktEventCards from '../../common/components/MktEventCards';
-import AssetsBreadcrumbs from '../../common/components/AssetsBreadcrumbs';
+import RelatedContent from '../../components/RelatedContent';
+import MktEventCards from '../../components/MktEventCards';
+import AssetsBreadcrumbs from '../../components/AssetsBreadcrumbs';
 import { getMarkdownFromCache } from '../../utils/requests';
 
 export const getStaticPaths = async () => {
-  const assetList = await import('../../lib/asset-list.json');
+  const assetList = await import('../../../public/asset-list.json');
   const data = assetList.lessons;
 
   const paths = data.flatMap((res) => {
@@ -49,7 +49,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
   try {
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
-    const assetList = await import('../../lib/asset-list.json')
+    const assetList = await import('../../../public/asset-list.json')
       .then((res) => res.default)
       .catch(() => []);
 

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import IntroductionSection from '../../src/common/components/IntroductionSection';
+import IntroductionSection from '../../src/components/IntroductionSection';
 
 /**
  * @typedef {import("@prismicio/client").Content.TitleIntroductionSlice} TitleIntroductionSlice

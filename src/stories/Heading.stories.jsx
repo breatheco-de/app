@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@chakra-ui/layout';
-import Heading from '../common/components/Heading';
+import Heading from '../components/Heading';
 
 export default {
   title: 'Components/Heading',

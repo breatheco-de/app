@@ -16,21 +16,21 @@ import { ChevronRightIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Head from 'next/head';
-import { processRelatedAssignments } from '../../../../common/handlers/cohorts';
-import useStyle from '../../../../common/hooks/useStyle';
-import bc from '../../../../common/services/breathecode';
-import Heading from '../../../../common/components/Heading';
-import Text from '../../../../common/components/Text';
-import Link from '../../../../common/components/NextChakraLink';
-import Icon from '../../../../common/components/Icon';
+import { processRelatedAssignments } from '../../../../handlers/cohorts';
+import useStyle from '../../../../hooks/useStyle';
+import bc from '../../../../services/breathecode';
+import Heading from '../../../../components/Heading';
+import Text from '../../../../components/Text';
+import Link from '../../../../components/NextChakraLink';
+import Icon from '../../../../components/Icon';
 import { cleanObject, getExtensionName } from '../../../../utils';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../../../utils/variables';
-import ArticleMarkdown from '../../../../common/components/MarkDownParser/ArticleMarkdown';
-import getMarkDownContent from '../../../../common/components/MarkDownParser/markdown';
-import GridContainer from '../../../../common/components/GridContainer';
-import IpynbHtmlParser from '../../../../common/components/IpynbHtmlParser';
-import { MDSkeleton } from '../../../../common/components/Skeleton';
-import Helmet from '../../../../common/components/Helmet';
+import ArticleMarkdown from '../../../../components/MarkDownParser/ArticleMarkdown';
+import getMarkDownContent from '../../../../components/MarkDownParser/markdown';
+import GridContainer from '../../../../components/GridContainer';
+import IpynbHtmlParser from '../../../../components/IpynbHtmlParser';
+import { MDSkeleton } from '../../../../components/Skeleton';
+import Helmet from '../../../../components/Helmet';
 
 const redirectLang = {
   es: '/es/',

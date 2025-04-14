@@ -1,6 +1,6 @@
 import React from 'react';
 import { addDays } from 'date-fns';
-import PublicCourseCard from '../common/components/PublicCourseCard';
+import PublicCourseCard from '../components/PublicCourseCard';
 
 export default {
   title: 'Components/PublicCourseCard',
