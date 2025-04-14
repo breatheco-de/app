@@ -4,14 +4,14 @@ import {
 import React, { useState, useEffect, lazy, Suspense, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import Icon from '../../common/components/Icon';
-import useStyle from '../../common/hooks/useStyle';
-import bc from '../../common/services/breathecode';
-import useAuth from '../../common/hooks/useAuth';
-import useCustomToast from '../../common/hooks/useCustomToast';
-import MktSearchBar from '../../common/components/MktSearchBar';
+import Icon from '../../components/Icon';
+import useStyle from '../../hooks/useStyle';
+import bc from '../../services/breathecode';
+import useAuth from '../../hooks/useAuth';
+import useCustomToast from '../../hooks/useCustomToast';
+import MktSearchBar from '../../components/MktSearchBar';
 
-const ModalToCloneProject = lazy(() => import('../../common/components/GuidedExperience/ModalToCloneProject'));
+const ModalToCloneProject = lazy(() => import('../../components/GuidedExperience/ModalToCloneProject'));
 
 export default function StartPage() {
   const { t } = useTranslation();
