@@ -71,22 +71,17 @@ function Header() {
   const hasGithub = user?.github && user.github.username !== '';
 
   const getRigobotButtonText = () => {
-    if (!hasGithub) return t('common:connect-with-github');
     if (!isAuthenticatedWithRigobot) return t('common:connect-with-tigobot');
 
     return t('common:get-help-rigobot');
   };
 
   const rigobotMessage = () => {
-    if (!hasGithub) {
-      const accessToken = getStorageItem('accessToken');
-      window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
-    } else if (!isAuthenticatedWithRigobot) {
+    if (!isAuthenticatedWithRigobot) {
       conntectToRigobot();
     } else {
       rigo.updateOptions({
         showBubble: true,
-        // highlight: true,
         welcomeMessage: t('rigo-chat.welcome-message', { firstName: user?.first_name, cohortName: cohortSession?.name }),
         collapsed: false,
         purposeSlug: '4geekscom-public-agent',
@@ -131,6 +126,20 @@ function Header() {
                     </Text>
                   </CustomButton>
                 )}
+
+                {!hasGithub && (
+                  <CustomButton onClick={() => {
+                    const accessToken = getStorageItem('accessToken');
+                    window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
+                  }}
+                  >
+                    <Icon icon="github" width="42px" height="42px" />
+                    <Text textAlign="center" color={hexColor.blueDefault}>
+                      {t('common:connect-with-github')}
+                    </Text>
+                  </CustomButton>
+                )}
+
               </>
             ) : (
               <>
