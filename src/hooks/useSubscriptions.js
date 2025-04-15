@@ -12,17 +12,23 @@ const useSubscriptions = () => {
   const { subscriptions } = state;
   const { createToast } = useCustomToast({ toastId: 'canceling-subscription-error-action' });
 
-  const getPlanOffer = async ({ slug, onOpenUpgrade = () => { }, disableRedirects = false, withCurrentPlan = false }) => {
+  const getPlanOffer = async (slug) => {
+    const { data } = await bc.payment({
+      original_plan: slug,
+    }).planOffer();
+
+    const currentOffer = data.find((item) => item.original_plan?.slug === slug);
+
+    return currentOffer;
+  };
+
+  const managePlanOffer = async ({ slug }) => {
     try {
-      const res = await bc.payment({
-        original_plan: slug,
-      }).planOffer();
-      const data = res?.data;
-      const currentOffer = data.find((item) => item.original_plan?.slug === slug);
+      const currentOffer = await getPlanOffer(slug);
+
       // find out if a plan has a plan offer
-      const currentSuggestedPlan = withCurrentPlan ? currentOffer?.original_plan : currentOffer?.suggested_plan;
-      if (currentOffer && currentSuggestedPlan?.slug) {
-        const offerData = currentSuggestedPlan;
+      const offerData = currentOffer?.suggested_plan;
+      if (offerData) {
         const { data: bullets } = await bc.payment().getServiceItemsByPlan(encodeURIComponent(slug));
         const outOfConsumables = currentOffer.original_plan?.service_items.some((item) => item.how_many === 0);
 
@@ -164,13 +170,6 @@ const useSubscriptions = () => {
         };
         // -------------------------------------------------- END PREPARING PRICES --------------------------------------------------
 
-        if (currentOffer.show_modal && !disableRedirects) {
-          onOpenUpgrade(finalData);
-        }
-
-        if (currentOffer.show_modal === false && offerData && !disableRedirects) {
-          router.push(`/checkout?plan=${offerData.slug}`);
-        }
         return finalData;
       }
       return {
@@ -211,14 +210,14 @@ const useSubscriptions = () => {
 
       const subscriptionsDataWithPlanOffer = data?.subscriptions?.length > 0
         ? await Promise.all(data.subscriptions.map(async (s) => {
-          const planOffer = await getPlanOffer({ slug: s?.plans[0]?.slug, disableRedirects: true });
+          const planOffer = await managePlanOffer({ slug: s?.plans[0]?.slug });
           return { ...s, type: 'subscription', planOffer };
         }))
         : [];
 
       const planFinancingsDataWithPlanOffer = data?.plan_financings?.length > 0
         ? await Promise.all(data.plan_financings.map(async (f) => {
-          const planOffer = await getPlanOffer({ slug: f?.plans[0]?.slug, disableRedirects: true });
+          const planOffer = await managePlanOffer({ slug: f?.plans[0]?.slug });
           return { ...f, type: 'plan_financing', planOffer };
         }))
         : [];

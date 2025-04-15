@@ -5,13 +5,15 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useSubscriptions from '../../../hooks/useSubscriptions';
+import useCustomToast from '../../../hooks/useCustomToast';
 import { reportDatalayer } from '../../../utils/requests';
 import { getBrowserInfo } from '../../../utils';
 
 function SubsriptionButton({
-  subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, allSubscriptions, ...restStyles
+  subscription, setSubscriptionProps, onOpenCancelSubscription, children, allSubscriptions, ...restStyles
 }) {
   const { t } = useTranslation('profile');
+  const { createToast } = useCustomToast({ toastId: 'subscription-button' });
   const status = subscription?.status;
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -28,9 +30,22 @@ function SubsriptionButton({
   const isPaymentIssue = status === 'PAYMENT_ISSUE';
 
   const { getPlanOffer, reactivatePlan } = useSubscriptions();
-  const handlePlanOffer = () => {
-    setIsLoading(true);
-    getPlanOffer({ slug: planSlug, onOpenUpgrade }).finally(() => setIsLoading(false));
+  const handlePlanOffer = async () => {
+    try {
+      setIsLoading(true);
+      const planOffer = await getPlanOffer(planSlug);
+      router.push(`/checkout?plan=${planOffer.suggested_plan.slug}`);
+    } catch (error) {
+      createToast({
+        position: 'top',
+        title: t('alert-message:error-getting-offer'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleReactivatePlan = () => {
@@ -156,7 +171,6 @@ function SubsriptionButton({
 
 SubsriptionButton.propTypes = {
   subscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  onOpenUpgrade: PropTypes.func,
   setSubscriptionProps: PropTypes.func,
   onOpenCancelSubscription: PropTypes.func,
   restStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
@@ -166,7 +180,6 @@ SubsriptionButton.propTypes = {
 
 SubsriptionButton.defaultProps = {
   subscription: {},
-  onOpenUpgrade: () => { },
   setSubscriptionProps: () => { },
   onOpenCancelSubscription: () => { },
   restStyles: {},
