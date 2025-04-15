@@ -21,6 +21,7 @@
   "progressText": "Progreso en el programa",
   "member-since": "{{role}} en esta cohorte desde",
   "share-message": "Acabo de terminar de programar {{title}} en 4geeks.com",
+  "micro-cohorts-description": "Sabemos lo que hacemos, tú también deberías saberlo. Aprende el proceso que hemos perfeccionado para que aprendas 2 años de contenido en solo unos pocos meses.",
   "students-modal": {
     "students-course": "Estudiantes en este curso",
     "select-student": "Selecciona un estudiante para ver el reporte de su progreso",
