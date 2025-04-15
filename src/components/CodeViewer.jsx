@@ -366,8 +366,10 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, compareMode, .
                       </Box>
                     ) : (
                       <Box borderTop="1px solid #4A5568" color="white" padding="20px" background="#00041A" borderRadius="0 0 4px 4px">
-                        <Text display="flex" alignItems="center" gap="5px" fontWeight="700" fontSize="14px" marginBottom="16px" width="fit-content" borderBottom="2px solid white">
-                          {t('terminal')}
+                        <Box display="flex" alignItems="center" gap="5px" marginBottom="16px" borderBottom="2px solid white" width="fit-content">
+                          <Text margin="0 !important" fontWeight="700" fontSize="14px">
+                            {t('terminal')}
+                          </Text>
                           <Tooltip
                             label={t('loading-output')}
                             placement="right"
@@ -377,7 +379,7 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, compareMode, .
                               <Icon icon="info" width="14px" height="14px" color={hexColor.blueDefault} />
                             </Box>
                           </Tooltip>
-                        </Text>
+                        </Box>
                         <Text whiteSpace="pre-line" fontFamily="monospace" padding="8px">
                           {output}
                         </Text>

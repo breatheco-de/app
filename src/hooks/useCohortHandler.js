@@ -369,7 +369,7 @@ function useCohortHandler() {
 
       const response = await bc.assignments().updateTask(taskToUpdate);
       if (response.status < 400) {
-        updateTask(taskToUpdate, cohort);
+        updateTask(response.data, cohort);
         reportDatalayer({
           dataLayer: {
             event: 'assignment_status_updated',
@@ -431,7 +431,7 @@ function useCohortHandler() {
   };
 
   const startDay = async ({
-    newTasks, cohort, label, customHandler = () => {}, updateContext = true,
+    newTasks, cohort, label, customHandler = () => { }, updateContext = true,
   }) => {
     try {
       const response = await bc.assignments().addTasks(newTasks);
@@ -479,7 +479,7 @@ function useCohortHandler() {
           setTaskCohortNull(filteredUnsyncedCohortTasks);
         });
     }
-    return () => {};
+    return () => { };
   };
 
   const getDailyModuleData = () => {
@@ -489,16 +489,6 @@ function useCohortHandler() {
     return dailyModule;
   };
 
-  const getLastDoneTaskModuleData = () => {
-    let lastDoneTaskModule = null;
-    sortedAssignments.forEach(
-      (module) => {
-        if (module.content.some((task) => task.task_status === 'DONE')) lastDoneTaskModule = module;
-      },
-    );
-    return lastDoneTaskModule;
-  };
-
   const getMandatoryProjects = (cohortSlug = null) => {
     const assignments = cohortSlug ? cohortsAssignments[cohortSlug]?.modules : sortedAssignments;
     if (!assignments) return [];
@@ -506,7 +496,7 @@ function useCohortHandler() {
     const mandatoryProjects = assignments.flatMap(
       (module) => module.filteredContent.filter(
         (l) => {
-          const timeOutExceeded = l.daysDiff >= 14; // exceeds 2 weeks
+          const timeOutExceeded = l.daysDiff >= 14;
           const isPendingRevision = l.reviewed_at !== null && (l.reviewed_at > l.read_at || l.read_at === null);
           const isMandatoryTimeOut = l.task_type === 'PROJECT' && (l.task_status === 'PENDING' || l.revision_status === 'REJECTED')
             && ((l.mandatory === true && timeOutExceeded) || isPendingRevision);
@@ -516,6 +506,221 @@ function useCohortHandler() {
       ),
     );
     return mandatoryProjects;
+  };
+
+  const getLastActiveModule = (cohortSlug = null) => {
+    const assignments = cohortSlug ? cohortsAssignments[cohortSlug]?.modules : sortedAssignments;
+    if (!assignments || assignments.length === 0) {
+      return { module: null, taskSlug: null, taskType: null };
+    }
+
+    const modulesWithDoneTasks = assignments
+      .filter((module) => module.content?.some((task) => task.task_status === 'DONE'))
+      .map((module) => {
+        const doneTasksInModule = module.content.filter((task) => task.task_status === 'DONE');
+        if (doneTasksInModule.length === 0) return null;
+
+        const lastDoneDate = Math.max(
+          ...doneTasksInModule.map((task) => new Date(task.updated_at).getTime() || 0),
+        );
+        const latestTaskInContent = doneTasksInModule.find(
+          (task) => (new Date(task.updated_at).getTime() || 0) === lastDoneDate,
+        );
+
+        return {
+          module,
+          lastDoneDate,
+          taskSlug: latestTaskInContent?.slug,
+          taskType: latestTaskInContent?.type,
+        };
+      })
+      .filter((item) => item && item.taskSlug && item.taskType)
+      .sort((a, b) => b.lastDoneDate - a.lastDoneDate);
+
+    if (modulesWithDoneTasks.length > 0) {
+      const { module, taskSlug, taskType } = modulesWithDoneTasks[0];
+      return { module, taskSlug, taskType };
+    }
+
+    const firstModuleWithContent = assignments.find((module) => module.content && module.content.length > 0);
+    if (firstModuleWithContent) {
+      const firstTask = firstModuleWithContent.content?.[0];
+      return {
+        module: firstModuleWithContent,
+        taskSlug: firstTask?.slug,
+        taskType: firstTask?.type,
+      };
+    }
+
+    const firstModule = assignments[0] || null;
+    return { module: firstModule, taskSlug: null, taskType: null };
+  };
+
+  const findLastActiveMicroCohortModule = (mainCohort) => {
+    let absoluteLatestTask = null;
+    let absoluteLatestDate = 0;
+    let absoluteLatestCohortSlug = null;
+
+    mainCohort.micro_cohorts.forEach((microCohort) => {
+      const microCohortSlug = microCohort.slug;
+      const cohortTasks = cohortsAssignments[microCohortSlug]?.tasks || [];
+      const completedTasks = cohortTasks.filter((task) => task.task_status === 'DONE');
+
+      if (completedTasks.length > 0) {
+        completedTasks.forEach((task) => {
+          const taskTimestamp = new Date(task.updated_at).getTime() || 0;
+          if (taskTimestamp >= absoluteLatestDate) {
+            absoluteLatestDate = taskTimestamp;
+            absoluteLatestTask = task;
+            absoluteLatestCohortSlug = microCohortSlug;
+          }
+        });
+      }
+    });
+
+    let determinedByCompletion = false;
+    let latestTaskModule = null;
+    let taskSlugForRoute = null;
+    let taskTypeForRoute = null;
+    let lastActiveCohort = null;
+
+    if (absoluteLatestTask && absoluteLatestCohortSlug) {
+      taskSlugForRoute = absoluteLatestTask.associated_slug || absoluteLatestTask.slug;
+
+      if (taskSlugForRoute && cohortsAssignments[absoluteLatestCohortSlug]?.modules) {
+        latestTaskModule = cohortsAssignments[absoluteLatestCohortSlug].modules.find(
+          (module) => module.content?.some(
+            (contentTask) => contentTask.slug === taskSlugForRoute,
+          ),
+        );
+        const contentTask = latestTaskModule?.content?.find(
+          (ct) => ct.slug === taskSlugForRoute,
+        );
+        taskTypeForRoute = contentTask?.type;
+
+        if (latestTaskModule && taskSlugForRoute && taskTypeForRoute) {
+          determinedByCompletion = true;
+          lastActiveCohort = myCohorts.find((c) => c.slug === absoluteLatestCohortSlug);
+        } else {
+          latestTaskModule = null;
+          taskSlugForRoute = null;
+          taskTypeForRoute = null;
+        }
+      }
+    }
+
+    if (!determinedByCompletion) {
+      const foundMicroCohortData = mainCohort.micro_cohorts.find((microCohort) => {
+        const microCohortSlug = microCohort.slug;
+        return cohortsAssignments[microCohortSlug]?.modules?.some(
+          (module) => module.content && module.content.length > 0,
+        );
+      });
+
+      if (foundMicroCohortData) {
+        const microCohortSlug = foundMicroCohortData.slug;
+        absoluteLatestCohortSlug = microCohortSlug;
+        latestTaskModule = cohortsAssignments[microCohortSlug].modules.find(
+          (module) => module.content && module.content.length > 0,
+        );
+        const firstTaskInContent = latestTaskModule?.content?.[0];
+        taskSlugForRoute = firstTaskInContent?.slug;
+        taskTypeForRoute = firstTaskInContent?.type;
+        lastActiveCohort = myCohorts.find((c) => c.slug === absoluteLatestCohortSlug);
+      }
+    }
+
+    if (!latestTaskModule || !lastActiveCohort || !taskSlugForRoute || !taskTypeForRoute) {
+      return { lastActiveModule: null, lastActiveCohort: null, determinedByCompletion: false, taskSlugForRoute: null, taskTypeForRoute: null };
+    }
+
+    return { lastActiveModule: latestTaskModule, lastActiveCohort, determinedByCompletion, taskSlugForRoute, taskTypeForRoute };
+  };
+
+  const continueWhereYouLeft = async (currentCohort) => {
+    if (!currentCohort) {
+      console.error('continueWhereYouLeft called without a valid cohortSession');
+      return false;
+    }
+
+    const mainCohortSlug = currentCohort.slug;
+    const hasMicroCohorts = currentCohort.micro_cohorts?.length > 0;
+
+    try {
+      let lastActiveModule;
+      let lastActiveCohort;
+      let determinedByCompletion;
+      let taskSlugForRoute;
+      let taskTypeForRoute;
+
+      if (hasMicroCohorts) {
+        const result = findLastActiveMicroCohortModule(currentCohort);
+        lastActiveModule = result.lastActiveModule;
+        lastActiveCohort = result.lastActiveCohort;
+        determinedByCompletion = result.determinedByCompletion;
+        taskSlugForRoute = result.taskSlugForRoute;
+        taskTypeForRoute = result.taskTypeForRoute;
+
+        if (!lastActiveModule || !lastActiveCohort || !taskSlugForRoute || !taskTypeForRoute) {
+          console.error('Failed to determine module, cohort, slug, or type for redirection (micro-cohorts).');
+          return false;
+        }
+
+        const moduleContent = lastActiveModule.content;
+        if (!determinedByCompletion && moduleContent?.length > 0) {
+          const newTasks = moduleContent.map((l) => ({
+            ...l,
+            associated_slug: l.slug,
+            cohort: lastActiveCohort.id,
+          }));
+          const moduleLabel = lastActiveModule.label?.us || lastActiveModule.label?.es || 'module';
+          await startDay({ newTasks, cohort: lastActiveCohort, updateContext: true, label: moduleLabel });
+        }
+
+        const syllabusRoute = `/main-cohort/${mainCohortSlug}/syllabus/${lastActiveCohort.slug}/${taskTypeForRoute.toLowerCase()}/${taskSlugForRoute}`;
+
+        router.push(syllabusRoute);
+        return true;
+      }
+      const targetCohort = currentCohort;
+      const result = getLastActiveModule(targetCohort.slug);
+      lastActiveModule = result.module;
+      taskSlugForRoute = result.taskSlug;
+      taskTypeForRoute = result.taskType;
+
+      if (!lastActiveModule || !taskSlugForRoute || !taskTypeForRoute) {
+        console.error('Failed to determine module, slug, or type for redirection (single cohort).');
+        return false;
+      }
+
+      const moduleContent = lastActiveModule.content;
+      if (!moduleContent || moduleContent.length === 0) {
+        console.error('Last active module identified (single cohort), but it has no content:', lastActiveModule);
+        return false;
+      }
+
+      const moduleHasDoneTasks = moduleContent.some(
+        (task) => task.task_status === 'DONE',
+      );
+
+      if (!moduleHasDoneTasks) {
+        const newTasks = moduleContent.map((l) => ({
+          ...l,
+          associated_slug: l.slug,
+          cohort: targetCohort.id,
+        }));
+        const moduleLabel = lastActiveModule.label?.us || lastActiveModule.label?.es || 'module';
+        await startDay({ newTasks, cohort: targetCohort, updateContext: true, label: moduleLabel });
+      }
+
+      const syllabusRoute = `/syllabus/${targetCohort.slug}/${taskTypeForRoute.toLowerCase()}/${taskSlugForRoute}`;
+
+      router.push(syllabusRoute);
+      return true;
+    } catch (e) {
+      console.log('Error in continueWhereYouLeft:', e);
+      return false;
+    }
   };
 
   const handleOpenReviewModal = (options = {}) => {
@@ -553,7 +758,6 @@ function useCohortHandler() {
     getCohortUserCapabilities,
     getCohortData,
     getDailyModuleData,
-    getLastDoneTaskModuleData,
     getMandatoryProjects,
     getTasksWithoutCohort,
     userCapabilities,
@@ -572,6 +776,8 @@ function useCohortHandler() {
     handleOpenReviewModal,
     handleCloseReviewModal,
     changeStatusAssignment,
+    getLastActiveModule,
+    continueWhereYouLeft,
     ...state,
   };
 }
