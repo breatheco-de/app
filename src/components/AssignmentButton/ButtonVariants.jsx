@@ -35,7 +35,7 @@ const getProjectStatusConfig = (currentTask, isGuidedExperience, hasPendingSubta
       APPROVED: {
         icon: {
           icon: 'verified',
-          color: hexColor.gray['600'],
+          color: hexColor.blueDefault,
           width: '20px',
         },
         text: t('common:taskStatus.project-approved'),
@@ -59,7 +59,7 @@ const getCommonTaskStatusConfig = (currentTask, taskIsApproved, hexColor, t) => 
     DONE: {
       icon: {
         icon: 'close',
-        color: hexColor.white,
+        color: hexColor.blueDefault,
         width: '12px',
       },
       text: t('common:taskStatus.mark-as-not-done'),
@@ -67,7 +67,7 @@ const getCommonTaskStatusConfig = (currentTask, taskIsApproved, hexColor, t) => 
     PENDING: {
       icon: {
         icon: 'checked2',
-        color: taskIsApproved ? hexColor.gray['600'] : hexColor.white,
+        color: taskIsApproved ? hexColor.gray['600'] : hexColor.blueDefault,
         width: '14px',
       },
       text: t('common:taskStatus.mark-as-done'),
@@ -152,6 +152,8 @@ const ButtonVariants = forwardRef(({
           borderRadius="full"
           variant="default"
           gridGap="12px"
+          _disabled={{ bg: backgroundColor, opacity: 0.6, cursor: 'not-allowed', _hover: { bg: backgroundColor } }}
+          _loading={{ color: 'blue.default' }}
           {...rest}
         >
           <Icon {...textAndIcon.icon} />
@@ -175,6 +177,7 @@ const ButtonVariants = forwardRef(({
         variant="default"
         textTransform="uppercase"
         gridGap="12px"
+        _loading={{ color: 'blue.default' }}
         {...rest}
       >
         {buttonChildren || (
@@ -203,6 +206,7 @@ const ButtonVariants = forwardRef(({
       variant="none"
       textTransform="none"
       gridGap="0"
+      _loading={{ color: 'blue.default' }}
       {...rest}
     >
       <IconByTaskStatus currentTask={currentTask} noDeliveryFormat={noDeliveryFormat} />
