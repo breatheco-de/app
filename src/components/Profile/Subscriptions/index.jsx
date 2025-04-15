@@ -20,8 +20,8 @@ import Icon from '../../Icon';
 import Heading from '../../Heading';
 import Text from '../../Text';
 import useStyle from '../../../hooks/useStyle';
+import useSubscriptions from '../../../hooks/useSubscriptions';
 import { location, slugToTitle, unSlugify } from '../../../utils';
-import useSubscriptionsHandler from '../../../store/actions/subscriptionAction';
 import { CardSkeleton, SimpleSkeleton } from '../../Skeleton';
 import bc from '../../../services/breathecode';
 import SubscriptionCard from './SubscriptionCard';
@@ -31,7 +31,7 @@ const ModalInfo = lazy(() => import('../../ModalInfo'));
 
 function Subscriptions({ cohorts }) {
   const { t } = useTranslation('profile');
-  const { state, isLoading, fetchSubscriptions, cancelSubscription } = useSubscriptionsHandler();
+  const { state, isLoading, cancelSubscription } = useSubscriptions();
   const { hexColor, fontColor } = useStyle();
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
   const [servicesModal, setServicesModal] = useState(null);
@@ -112,7 +112,6 @@ function Subscriptions({ cohorts }) {
   };
 
   useEffect(() => {
-    fetchSubscriptions();
     getConsumables();
   }, []);
 

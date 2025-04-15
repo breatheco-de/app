@@ -12,16 +12,17 @@ import signupAction from '../../store/actions/signupAction';
 import bc from '../../services/breathecode';
 import { reportDatalayer } from '../../utils/requests';
 import { getQueryString, getStorageItem, toCapitalize, unSlugify, getBrowserInfo } from '../../utils';
-import { getAllMySubscriptions } from '../../handlers/subscriptions';
 import { SILENT_CODE } from '../../utils/variables';
 import axiosInstance from '../../axios';
 import useCohortHandler from '../../hooks/useCohortHandler';
+import useSubscriptions from '../../hooks/useSubscriptions';
 import { getCohort } from '../../handlers/cohorts';
 import useCustomToast from '../../hooks/useCustomToast';
 import useSignup from '../../hooks/useSignup';
 
 function Summary() {
   const { t, lang } = useTranslation('signup');
+  const { getSubscriptions } = useSubscriptions();
   const { cohortsAssignments, startDay, getCohortsModules } = useCohortHandler();
   const [readyToRedirect, setReadyToRedirect] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -209,8 +210,12 @@ function Summary() {
     let interval;
     if (readyToRefetch && timeElapsed < 10) {
       interval = setInterval(() => {
-        getAllMySubscriptions()
-          .then((subscriptions) => {
+        getSubscriptions()
+          .then((data) => {
+            const subscriptions = (data?.subscriptions
+              && data?.plan_financings
+              && [...data.subscriptions, ...data.plan_financings]) || [];
+
             const currentSubscription = subscriptions?.find(
               (subscription) => checkoutData?.plans[0].plan_slug === subscription.plans[0]?.slug,
             );

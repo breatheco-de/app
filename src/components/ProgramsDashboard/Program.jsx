@@ -5,13 +5,13 @@ import { memo, useState } from 'react';
 import handlers from '../../handlers';
 import ProgramCard from '../ProgramCard';
 import useCohortHandler from '../../hooks/useCohortHandler';
-import useSubscriptionsHandler from '../../store/actions/subscriptionAction';
+import useSubscriptions from '../../hooks/useSubscriptions';
 import axios from '../../axios';
 import useProgramList from '../../store/actions/programListAction';
 
 function Program({ cohort, onOpenModal, setLateModalProps }) {
   const { setCohortSession, cohortsAssignments } = useCohortHandler();
-  const { state } = useSubscriptionsHandler();
+  const { state } = useSubscriptions();
   const { isLoading } = state;
   const [isLoadingPageContent, setIsLoadingPageContent] = useState(false);
   const { state: programsList } = useProgramList();

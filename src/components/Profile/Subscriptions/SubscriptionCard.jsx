@@ -6,7 +6,7 @@ import Icon from '../../Icon';
 import useStyle from '../../../hooks/useStyle';
 import profileHandlers from './handlers';
 import { toCapitalize, unSlugify } from '../../../utils';
-import ButtonHandler from './ButtonHandler';
+import SubsriptionButton from './SubsriptionButton';
 
 function SubscriptionInfo({ subscription }) {
   const { lang } = useTranslation('profile');
@@ -88,7 +88,7 @@ function SubscriptionCard({ subscription, allSubscriptions, onOpenUpgrade, setSu
           </Text>
         </Flex>
         <SubscriptionInfo subscription={subscription} />
-        <ButtonHandler
+        <SubsriptionButton
           subscription={subscription}
           allSubscriptions={allSubscriptions}
           onOpenUpgrade={onOpenUpgrade}

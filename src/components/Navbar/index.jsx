@@ -30,7 +30,7 @@ import bc from '../../services/breathecode';
 import logoData from '../../../public/logo.json';
 import { parseQuerys } from '../../utils/url';
 import useStyle from '../../hooks/useStyle';
-import { getAllMySubscriptions } from '../../handlers/subscriptions';
+import useSubscriptions from '../../hooks/useSubscriptions';
 
 function Navbar({ translations, pageProps }) {
   const [uniqueLanguages, setUniqueLanguages] = useState([]);
@@ -41,8 +41,8 @@ function Navbar({ translations, pageProps }) {
   const [mktCourses, setMktCourses] = useState([]);
   const { state } = useCohortHandler();
   const { cohortSession } = state;
+  const { allSubscriptions } = useSubscriptions();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const [hasPaidSubscription, setHasPaidSubscription] = useState(false);
 
   const { t } = useTranslation('navbar');
   const router = useRouter();
@@ -50,6 +50,10 @@ function Navbar({ translations, pageProps }) {
   const { toggleColorMode } = useColorMode();
   const fontColor = useColorModeValue('black', 'gray.200');
   const { hexColor, colorMode, reverseColorMode, borderColor, lightColor, navbarBackground } = useStyle();
+
+  const existsCohortWithoutAvailableAsSaas = cohorts.some((c) => c?.available_as_saas === false);
+  const existsPaidSubscription = allSubscriptions.some((sb) => sb?.invoices?.[0]?.amount > 0);
+  const hasPaidSubscription = existsCohortWithoutAvailableAsSaas || existsPaidSubscription;
 
   const disableLangSwitcher = pageProps?.disableLangSwitcher || false;
   const langs = ['en', 'es'];
@@ -89,20 +93,6 @@ function Navbar({ translations, pageProps }) {
       window.location.href = `/${locale}/pricing${parseQuerys({ internal_cta_placement: 'navbar-get-started' }, false)}`;
     }
   };
-
-  const verifyIfHasPaidSubscription = async () => {
-    const subscriptions = await getAllMySubscriptions();
-
-    const existsCohortWithoutAvailableAsSaas = cohorts?.length > 0 && cohorts.some((c) => c?.available_as_saas === false);
-    const existsPaidSubscription = subscriptions.some((sb) => sb?.invoices?.[0]?.amount > 0);
-    setHasPaidSubscription(existsCohortWithoutAvailableAsSaas || existsPaidSubscription);
-  };
-
-  useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      verifyIfHasPaidSubscription();
-    }
-  }, [isLoading, isAuthenticated]);
 
   useEffect(() => {
     const filteredLanguages = [...new Map(((translationsPropsExists && translations) || languages)

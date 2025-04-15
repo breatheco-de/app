@@ -1,15 +1,8 @@
-// import { useState } from 'react';
-import { Button } from '@chakra-ui/react';
-import { useState } from 'react';
 import styles from '../../styles/Home.module.css';
 import { isDevMode } from '../utils';
-import ModalToGetAccess, { stageType } from '../components/ModalToGetAccess';
 import MktInfoCards from '../components/MktInfoCards';
 import MktTrustCards from '../components/MktTrustCards';
 import MktTestimonials from '../components/MktTestimonials';
-import { getSubscriptions, validatePlanExistence } from '../handlers/subscriptions';
-import useAuth from '../hooks/useAuth';
-import bc from '../services/breathecode';
 
 export const getStaticProps = () => {
   if (!isDevMode) {
@@ -27,40 +20,6 @@ export const getStaticProps = () => {
 };
 
 export default function Example() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [stage, setStage] = useState('');
-  const { isAuthenticated } = useAuth();
-  const [isFetchingEvent, setIsFetchingEvent] = useState(false);
-  const [planData, setPlanData] = useState({});
-
-  const onClick = (value) => {
-    setStage(value);
-    setIsModalOpen(true);
-  };
-
-  const openEventConsumables = () => {
-    if (isAuthenticated) {
-      setIsFetchingEvent(true);
-      bc.events().getEvent('crea-una-landing-page-con-html-css-789').then((respEvent) => {
-        getSubscriptions().then((subscriptions) => {
-          validatePlanExistence(subscriptions).then((data) => {
-            setPlanData({
-              ...data,
-              event: respEvent?.data,
-              consumableType: 'event',
-              academyServiceSlug: '',
-            });
-            setStage(stageType.outOfConsumables);
-            setIsModalOpen(true);
-          })
-            .finally(() => setIsFetchingEvent(false));
-        });
-      }).catch(() => {
-        setIsFetchingEvent(false);
-      });
-    }
-  };
-
   const description = `The current traditional teaching methods focus on theoretical aspects, neglecting hands-on experience and student engagement, leading to high dropout rates and slow skill acquisition. Bootcamps and similar platforms offer faster, more interactive learning but lack a scientific approach.
 
   <br><br>Learn to code collaborating with others and become a developer to get your first job in tech.
@@ -97,21 +56,6 @@ export default function Example() {
         cardFourTitle="Motivation"
         cardFourDescription={cardDescription}
         paddingMobile="15px"
-      />
-      <Button variant="default" mb="1rem" onClick={() => onClick(stageType.login)}>
-        Open modal
-      </Button>
-      <Button variant="default" mb="1rem" isDisabled={!isAuthenticated} isLoading={isFetchingEvent} onClick={openEventConsumables}>
-        Open out of Event consumables
-      </Button>
-      <ModalToGetAccess
-        isOpen={isModalOpen}
-        stage={stage}
-        externalData={planData}
-        message={stage === stageType.login && 'In order to compile the code you need to register for free.'}
-        onClose={() => {
-          setIsModalOpen(false);
-        }}
       />
     </main>
   );

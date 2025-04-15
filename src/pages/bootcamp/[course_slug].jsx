@@ -29,7 +29,8 @@ import MktTrustCards from '../../components/MktTrustCards';
 import MktShowPrices from '../../components/MktShowPrices';
 import NextChakraLink from '../../components/NextChakraLink';
 import useAuth from '../../hooks/useAuth';
-import { SUBS_STATUS, fetchSuggestedPlan, getAllMySubscriptions, getTranslations } from '../../handlers/subscriptions';
+import useSubscriptions from '../../hooks/useSubscriptions';
+import { SUBS_STATUS, fetchSuggestedPlan, getTranslations } from '../../handlers/subscriptions';
 import axiosInstance from '../../axios';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import { reportDatalayer } from '../../utils/requests';
@@ -112,6 +113,7 @@ export async function getStaticProps({ locale, locales, params }) {
 }
 
 function CoursePage({ data, syllabus }) {
+  const { allSubscriptions } = useSubscriptions();
   const { getPriceWithDiscount, getSelfAppliedCoupon, applyDiscountCouponsToPlans, state } = useSignup();
   const [coupon] = usePersistentBySession('coupon', '');
   const { selfAppliedCoupon } = state;
@@ -130,7 +132,6 @@ function CoursePage({ data, syllabus }) {
     selectedFinanceIndex: 0,
     selectedIndex: 0,
   });
-  const [relatedSubscription, setRelatedSubscription] = useState(null);
   const [cohortData, setCohortData] = useState({});
   const [planData, setPlanData] = useState({});
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
@@ -163,6 +164,7 @@ function CoursePage({ data, syllabus }) {
   const cleanedStructuredData = cleanObject(structuredData);
   const students = cohortData.students || [];
   const instructors = cohortData.instructors || [];
+  const relatedSubscription = allSubscriptions?.find((sbs) => sbs?.selected_cohort_set?.cohorts.some((elmnt) => elmnt?.id === cohortId));
   const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
   const planList = planData?.planList || [];
   const payableList = planList.filter((plan) => plan?.type === 'PAYMENT');
@@ -447,19 +449,6 @@ function CoursePage({ data, syllabus }) {
   useEffect(() => {
     getInitialData();
   }, [lang, pathname]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      getAllMySubscriptions().then((subscriptions) => {
-        const subscriptionRelatedToThisCohort = subscriptions?.length > 0 ? subscriptions?.find((sbs) => {
-          const isRelated = sbs?.selected_cohort_set?.cohorts.some((elmnt) => elmnt?.id === cohortId);
-          return isRelated;
-        }) : null;
-
-        setRelatedSubscription(subscriptionRelatedToThisCohort);
-      });
-    }
-  }, [isAuthenticated]);
 
   useEffect(() => {
     if (isAuthenticated && cohortData?.cohortSyllabus?.cohort?.id) redirectToCohortIfItsReady();

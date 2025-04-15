@@ -19,11 +19,11 @@ import useCohortHandler from '../../hooks/useCohortHandler';
 import useStyle from '../../hooks/useStyle';
 import useCustomToast from '../../hooks/useCustomToast';
 import useSignup from '../../hooks/useSignup';
+import useSubscriptions from '../../hooks/useSubscriptions';
 import LiveEvent from '../../components/LiveEvent';
 import NextChakraLink from '../../components/NextChakraLink';
 import { SimpleSkeleton } from '../../components/Skeleton';
 import useProgramList from '../../store/actions/programListAction';
-import useSubscriptionsHandler from '../../store/actions/subscriptionAction';
 import SimpleModal from '../../components/SimpleModal';
 import ReactPlayerV2 from '../../components/ReactPlayerV2';
 import SupportSidebar from '../../components/SupportSidebar';
@@ -60,7 +60,7 @@ function chooseProgram() {
   const [liveClasses, setLiveClasses] = useState([]);
   const [loadingInvite, setLoadingInvite] = useState(null);
   const { updateProgramList } = useProgramList();
-  const { fetchSubscriptions, state: subscriptionsState } = useSubscriptionsHandler();
+  const { state: subscriptionsState } = useSubscriptions();
   const { isLoading: subscriptionLoading, subscriptions } = subscriptionsState;
   const [cohortMembers, setCohortMembers] = useState({});
   const [isRevalidating, setIsRevalidating] = useState(false);
@@ -168,21 +168,6 @@ function chooseProgram() {
     return () => clearTimeout(revalidate);
   }, [user, cohorts]);
 
-  useEffect(() => {
-    fetchSubscriptions()
-      .then((data) => {
-        reportDatalayer({
-          dataLayer: {
-            event: 'subscriptions_load',
-            method: 'native',
-            plan_financings: data?.plan_financings?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
-            subscriptions: data?.subscriptions?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
-            agent: getBrowserInfo(),
-          },
-        });
-      });
-  }, []);
-
   const allSubscriptions = [
     ...subscriptions?.subscriptions || [],
     ...subscriptions?.plan_financings || [],
@@ -247,7 +232,7 @@ function chooseProgram() {
   }, [cohorts, cohortsAssignments]);
 
   useEffect(() => {
-    bc.payment({ upcoming: true, limit: 20 }).events()
+    bc.events({ upcoming: true, limit: 20 }).meOnlineEvents()
       .then(({ data }) => {
         const results = data?.results || [];
         const eventsRemain = results?.length > 0 ? results.filter((l) => {

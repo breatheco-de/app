@@ -46,7 +46,7 @@ export const getCohortSyllabus = async (id) => {
 /**
  * @param {Object} syllabusData Syllabus of the cohort
  * @param {Array} taskTodo Tasks of the user in the cohort
- * @returns {Promise<RelatedAssignments>} Returns cohort modules to learn
+ * @returns {Object<RelatedAssignments>} Returns cohort modules to learn
  */
 export const processRelatedAssignments = (syllabusData = {}, taskTodo = []) => {
   const id = syllabusData?.id || '';

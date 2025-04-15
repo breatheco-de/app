@@ -16,8 +16,8 @@ import { reportDatalayer } from '../../utils/requests';
 import { getQueryString, getStorageItem, getBrowserInfo } from '../../utils';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useSignup from '../../hooks/useSignup';
+import useSubscriptions from '../../hooks/useSubscriptions';
 import { getCohort } from '../../handlers/cohorts';
-import { getAllMySubscriptions } from '../../handlers/subscriptions';
 import { SILENT_CODE } from '../../utils/variables';
 import CardForm from './CardForm';
 import Icon from '../Icon';
@@ -30,6 +30,7 @@ import useCustomToast from '../../hooks/useCustomToast';
 function PaymentInfo({ setShowPaymentDetails }) {
   const { t, lang } = useTranslation('signup');
   const { isAuthenticated, reSetUserAndCohorts } = useAuth();
+  const { initializeSubscriptionsData, getSubscriptions } = useSubscriptions();
 
   const {
     state, setSelectedPlanCheckoutData, setIsSubmittingCard, setIsSubmittingPayment, setPaymentStatus, setPaymentInfo,
@@ -190,7 +191,12 @@ function PaymentInfo({ setShowPaymentDetails }) {
     if (readyToRefetch && timeElapsed < 10 && isPaymentSuccess) {
       interval = setInterval(async () => {
         try {
-          const subscriptions = await getAllMySubscriptions();
+          const data = await getSubscriptions();
+
+          const subscriptions = (data?.subscriptions
+            && data?.plan_financings
+            && [...data.subscriptions, ...data.plan_financings]) || [];
+
           const currentSubscription = subscriptions?.find(
             (subscription) => checkoutData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
           );
@@ -206,6 +212,7 @@ function PaymentInfo({ setShowPaymentDetails }) {
             if (foundCohort?.id) {
               const cohort = await getCohort(foundCohort?.id);
               joinCohort(cohort);
+              initializeSubscriptionsData();
 
               clearInterval(interval);
               setReadyToRefetch(false);

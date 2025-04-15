@@ -256,7 +256,7 @@ function Dashboard() {
     if (showGithubWarning === 'active') {
       setShowWarningModal(true);
     }
-    bc.payment({ upcoming: true, limit: 20 }).events()
+    bc.events({ upcoming: true, limit: 20 }).meOnlineEvents()
       .then(({ data }) => {
         const results = data?.results || [];
         const eventsRemain = results?.length > 0 ? results.filter((l) => {

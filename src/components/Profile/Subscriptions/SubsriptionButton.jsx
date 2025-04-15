@@ -4,11 +4,11 @@ import { Button } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import profileHandlers from './handlers';
+import useSubscriptions from '../../../hooks/useSubscriptions';
 import { reportDatalayer } from '../../../utils/requests';
 import { getBrowserInfo } from '../../../utils';
 
-function ButtonHandler({
+function SubsriptionButton({
   subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, allSubscriptions, ...restStyles
 }) {
   const { t } = useTranslation('profile');
@@ -27,7 +27,7 @@ function ButtonHandler({
   const isExpired = status === 'EXPIRED';
   const isPaymentIssue = status === 'PAYMENT_ISSUE';
 
-  const { getPlanOffer, reactivatePlan } = profileHandlers({});
+  const { getPlanOffer, reactivatePlan } = useSubscriptions();
   const handlePlanOffer = () => {
     setIsLoading(true);
     getPlanOffer({ slug: planSlug, onOpenUpgrade }).finally(() => setIsLoading(false));
@@ -154,7 +154,7 @@ function ButtonHandler({
   );
 }
 
-ButtonHandler.propTypes = {
+SubsriptionButton.propTypes = {
   subscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   onOpenUpgrade: PropTypes.func,
   setSubscriptionProps: PropTypes.func,
@@ -164,7 +164,7 @@ ButtonHandler.propTypes = {
   allSubscriptions: PropTypes.arrayOf(PropTypes.objectOf([PropTypes.any])),
 };
 
-ButtonHandler.defaultProps = {
+SubsriptionButton.defaultProps = {
   subscription: {},
   onOpenUpgrade: () => { },
   setSubscriptionProps: () => { },
@@ -174,4 +174,4 @@ ButtonHandler.defaultProps = {
   allSubscriptions: [],
 };
 
-export default ButtonHandler;
+export default SubsriptionButton;
