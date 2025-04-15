@@ -118,7 +118,7 @@ function MktEventCards({
     };
 
     fetchEvents();
-  }, [externalEvents, techFilter, sortPrioOneTechs]);
+  }, [externalEvents, techFilter, sortPrioOneTechs, lang]);
 
   useEffect(() => {
     if (!searchSensitive || techFilter) return undefined;
