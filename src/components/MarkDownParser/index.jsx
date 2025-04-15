@@ -161,7 +161,7 @@ function MarkDownParser({
   const fetchSubtasks = async () => {
     try {
       const { data } = await bc.todo().subtask().get(currentTask?.id);
-      const subtasksAlreadyHashed = data.some((task) => task.lang && task.lang === lang);
+      const subtasksAlreadyHashed = data?.some((task) => task.lang && task.lang === lang);
       if (!subtasksAlreadyHashed) {
         setSubtaskFirstLoad(true);
         return;
