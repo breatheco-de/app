@@ -72,7 +72,7 @@ function Header({ onOpenGithubModal }) {
   const hasGithub = user?.github && user.github.username !== '';
 
   const getRigobotButtonText = () => {
-    if (!isAuthenticatedWithRigobot) return t('common:connect-with-tigobot');
+    if (!isAuthenticatedWithRigobot) return t('common:connect-with-rigobot');
 
     return t('common:get-help-rigobot');
   };
