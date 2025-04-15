@@ -79,8 +79,9 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
 
   const getLink = () => {
     if (isLesson || isExercise || isProject || isHowTo) {
-      const search = parseQuerys(query);
-      return `${langConnector}/${assetPath}/${data.slug}${search}`;
+      const { search, techs, difficulty, withVideo } = query;
+      const searchParams = parseQuerys({ search, techs, difficulty, withVideo });
+      return `${langConnector}/${assetPath}/${data.slug}${searchParams}`;
     }
     return `/${data.slug}`;
   };
