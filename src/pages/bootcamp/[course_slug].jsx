@@ -30,7 +30,6 @@ import MktShowPrices from '../../components/MktShowPrices';
 import NextChakraLink from '../../components/NextChakraLink';
 import useAuth from '../../hooks/useAuth';
 import useSubscriptions from '../../hooks/useSubscriptions';
-import { SUBS_STATUS, handleSuggestedPlan, getTranslations } from '../../handlers/subscriptions';
 import axiosInstance from '../../axios';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import { reportDatalayer } from '../../utils/requests';
@@ -113,8 +112,8 @@ export async function getStaticProps({ locale, locales, params }) {
 }
 
 function CoursePage({ data, syllabus }) {
-  const { allSubscriptions } = useSubscriptions();
-  const { getPriceWithDiscount, getSelfAppliedCoupon, applyDiscountCouponsToPlans, state } = useSignup();
+  const { allSubscriptions, SUBS_STATUS } = useSubscriptions();
+  const { handleSuggestedPlan, getPriceWithDiscount, getSelfAppliedCoupon, applyDiscountCouponsToPlans, state } = useSignup();
   const [coupon] = usePersistentBySession('coupon', '');
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);
@@ -138,7 +137,6 @@ function CoursePage({ data, syllabus }) {
   const [showModal, setShowModal] = useState(false);
   const { t, lang } = useTranslation('course');
   const router = useRouter();
-  const translationsObj = getTranslations(t);
   const limitViewStudents = 3;
   const cohortId = data?.cohort?.id;
   const isVisibilityPublic = data.visibility === 'PUBLIC';
@@ -409,7 +407,7 @@ function CoursePage({ data, syllabus }) {
         return { count: {}, assignmentList: [] };
       }
     };
-    const formatedPlanData = await handleSuggestedPlan(data?.plan_slug, translationsObj, 'mkt_plans');
+    const formatedPlanData = await handleSuggestedPlan(data?.plan_slug, 'mkt_plans');
 
     const modulesInfo = await getModulesInfo();
 

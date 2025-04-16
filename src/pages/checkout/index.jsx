@@ -42,7 +42,6 @@ import Text from '../../components/Text';
 import SelectServicePlan from '../../components/Checkout/SelectServicePlan';
 import { BASE_PLAN, ORIGIN_HOST, BREATHECODE_HOST, currenciesSymbols } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
-import { getTranslations, processPlans } from '../../handlers/subscriptions';
 import Icon from '../../components/Icon';
 import { usePersistentBySession } from '../../hooks/usePersistent';
 import AcordionList from '../../components/AcordionList';
@@ -97,7 +96,7 @@ function Checkout() {
   } = signupAction();
   const {
     isFirstStep, isSecondStep, isThirdStep, isFourthStep, getSelfAppliedCoupon,
-    handleChecking, getPriceWithDiscount,
+    handleChecking, getPriceWithDiscount, processPlans,
   } = useSignup();
   const { stepIndex, checkoutData, selectedPlanCheckoutData, alreadyEnrolled, serviceProps, loader, selfAppliedCoupon, cohortPlans } = state;
   const [readyToSelectService, setReadyToSelectService] = useState(false);
@@ -265,14 +264,13 @@ function Checkout() {
 
   useEffect(() => {
     removeStorageItem('redirect');
-    const translations = getTranslations(t);
     const defaultPlan = (plan && encodeURIComponent(plan)) || encodeURIComponent(BASE_PLAN);
     bc.payment().getPlan(defaultPlan).then(async (resp) => {
       const processedPlan = await processPlans(resp?.data, {
         quarterly: false,
         halfYearly: false,
         planType: 'original',
-      }, translations);
+      });
 
       const accordionList = processedPlan?.featured_info?.length > 0
         ? processedPlan?.featured_info.map((info) => ({

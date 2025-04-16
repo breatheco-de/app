@@ -27,7 +27,6 @@ import { categoriesFor, BREATHECODE_HOST } from '../../utils/variables';
 import ComponentOnTime from '../../components/ComponentOnTime';
 import MarkDownParser from '../../components/MarkDownParser';
 import MktEventCards from '../../components/MktEventCards';
-import { validatePlanExistence } from '../../handlers/subscriptions';
 import ModalToGetAccess, { stageType } from '../../components/ModalToGetAccess';
 import SmallCardsCarousel from '../../components/SmallCardsCarousel';
 import { SessionContext } from '../../context/SessionContext';
@@ -35,6 +34,7 @@ import LoaderScreen from '../../components/LoaderScreen';
 import ReactPlayerV2 from '../../components/ReactPlayerV2';
 import DynamicContentCard from '../../components/DynamicContentCard';
 import useAuth from '../../hooks/useAuth';
+import useSignup from '../../hooks/useSignup';
 import useCustomToast from '../../hooks/useCustomToast';
 
 const arrayOfImages = [
@@ -144,6 +144,7 @@ export const getStaticProps = async ({ params, locale }) => {
 function Workshop({ eventData, asset }) {
   const { t } = useTranslation('workshops');
   const { userSession } = useContext(SessionContext);
+  const { validatePlanExistence } = useSignup();
   const [users, setUsers] = useState([]);
   const [event, setEvent] = useState(eventData);
   const [allUsersJoined, setAllUsersJoined] = useState([]);

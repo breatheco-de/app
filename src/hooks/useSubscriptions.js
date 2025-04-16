@@ -10,6 +10,14 @@ const useSubscriptions = () => {
   const { subscriptions } = state;
   const { createToast } = useCustomToast({ toastId: 'canceling-subscription-error-action' });
 
+  const SUBS_STATUS = {
+    ACTIVE: 'ACTIVE',
+    FREE_TRIAL: 'FREE_TRIAL',
+    FULLY_PAID: 'FULLY_PAID',
+    CANCELLED: 'CANCELLED',
+    PAYMENT_ISSUE: 'PAYMENT_ISSUE',
+  };
+
   const getPlanOffer = async (slug) => {
     const { data } = await bc.payment({
       original_plan: slug,
@@ -120,6 +128,7 @@ const useSubscriptions = () => {
     ...state,
     state,
     allSubscriptions,
+    SUBS_STATUS,
     getPlanOffer,
     reactivatePlan,
     initializeSubscriptionsData,

@@ -10,16 +10,15 @@ import Text from '../components/Text';
 import Faq from '../components/Faq';
 import PricingCard from '../components/PricingCard';
 import LoaderScreen from '../components/LoaderScreen';
-import useSignup from '../hooks/useSignup';
 import MktTrustCards from '../components/MktTrustCards';
 import DraggableContainer from '../components/DraggableContainer';
 import Icon from '../components/Icon';
-import { handleSuggestedPlan, getTranslations } from '../handlers/subscriptions';
 import { getQueryString, isWindow, slugToTitle } from '../utils';
 import { parseQuerys } from '../utils/url';
 import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../utils/variables';
 import useStyle from '../hooks/useStyle';
 import useAuth from '../hooks/useAuth';
+import useSignup from '../hooks/useSignup';
 import usePlanMktInfo from '../hooks/usePlanMktInfo';
 import bc from '../services/breathecode';
 
@@ -42,7 +41,7 @@ const getYearlyPlans = (originalPlans, suggestedPlans, allFeaturedPlans) => {
 
 function PricingView() {
   const { t, lang } = useTranslation('pricing');
-  const { getSelfAppliedCoupon } = useSignup();
+  const { getSelfAppliedCoupon, handleSuggestedPlan } = useSignup();
   const { getPlanFeatures } = usePlanMktInfo();
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated, cohorts } = useAuth();
@@ -57,7 +56,6 @@ function PricingView() {
   const router = useRouter();
   const queryCourse = getQueryString('course');
   const queryPlan = getQueryString('plan');
-  const planTranslations = getTranslations(t);
   const defaultMonthlyPlans = t('signup:pricing.monthly-plans', {}, { returnObjects: true });
   const defaultYearlyPlans = t('signup:pricing.yearly-plans', {}, { returnObjects: true });
   const bootcampInfo = t('common:bootcamp', {}, { returnObjects: true });
@@ -89,7 +87,7 @@ function PricingView() {
   };
 
   const handleFetchPlan = async () => {
-    const data = await handleSuggestedPlan(planSlug, planTranslations);
+    const data = await handleSuggestedPlan(planSlug);
     const originalPlan = data?.plans?.original_plan || {};
     const suggestedPlan = data?.plans?.suggested_plan || {};
     const allPlanList = [...originalPlan?.plans || [], ...suggestedPlan?.plans || []];

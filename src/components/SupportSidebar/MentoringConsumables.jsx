@@ -16,11 +16,11 @@ import useOnline from '../../hooks/useOnline';
 import AvatarUser from '../AvatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped, CardSkeleton } from '../Skeleton';
-import { validatePlanExistence } from '../../handlers/subscriptions';
 import { getStorageItem, getBrowserInfo } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
 import { BREATHECODE_HOST } from '../../utils/variables';
 import CanAccess from '../CanAccess';
+import useSignup from '../../hooks/useSignup';
 import useCanAccess from '../../hooks/useCanAccess';
 import useCustomToast from '../../hooks/useCustomToast';
 
@@ -160,6 +160,7 @@ function MentoringConsumables({
 }) {
   const { t } = useTranslation('dashboard');
   const { user } = useAuth();
+  const { validatePlanExistence } = useSignup();
   const [open, setOpen] = useState(false);
   const accessToken = getStorageItem('accessToken');
   const [existsMentors, setExistsMentors] = useState(true);
