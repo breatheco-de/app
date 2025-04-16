@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import bc from '../../../services/breathecode';
-import { processRelatedAssignments } from '../../../handlers/cohorts';
+import { processRelatedAssignments } from '../../../utils/cohorts';
 import GridContainer from '../../../components/GridContainer';
 import { MDSkeleton } from '../../../components/Skeleton';
 import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
