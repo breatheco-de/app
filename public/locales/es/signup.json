@@ -107,6 +107,19 @@
   "discount": "{{discount}} DE DESCUENTO",
   "try-again": "Intenta de nuevo",
   "coupon-error": "Este cupón no es válido o está expirado",
+  "learn-at-your-pace": "Aprende a tu propio ritmo",
+  "yearly-savings": "Ahorra {{months}} meses",
+  "yearly-savings-singular": "Ahorra {{months}} mes",
+  "payment_unit": {
+      "month": "Mensual",
+      "year": "Anual",
+      "anual": "Anual"
+    },
+    "payment_unit_short": {
+      "month": "mes",
+      "year": "año",
+      "anual": "año"
+    },
   "join-cohort": {
     "cta": {
       "lesson": "Únete a la cohorte para poder acceder a esta lección",

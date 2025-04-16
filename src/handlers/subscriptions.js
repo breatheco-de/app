@@ -38,14 +38,17 @@ export const processPlans = async (data, {
     }
     const planData = Array.isArray(translations.checkout_featured_info(data?.slug)) ? translations.checkout_featured_info(data?.slug) : resp?.data;
     const owner = data?.owner;
+
     const existsAmountPerHalf = data?.price_per_half > 0;
     const existsAmountPerMonth = data?.price_per_month > 0;
     const existsAmountPerQuarter = data?.price_per_quarter > 0;
     const existsAmountPerYear = data?.price_per_year > 0;
+
     const hasPayaBleSuscription = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
     const financingOptionsExists = data?.financing_options?.length > 0;
     const financingOptionsManyMonthsExists = financingOptionsExists && data?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months > 1);
     const financingOptionsOnePaymentExists = financingOptionsExists && data?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months === 1);
+
     const singlePlan = data?.plans?.length > 0 ? data?.plans?.[0] : data;
     const isTotallyFree = !hasPayaBleSuscription && singlePlan?.trial_duration === 0 && !financingOptionsExists;
     const hasSubscriptionMethod = hasPayaBleSuscription || isTotallyFree || singlePlan?.trial_duration_unit > 0;
@@ -295,19 +298,19 @@ export const getTranslations = (t = () => { }) => {
  * @param {boolean} ignoreProcessPlans - Whether to ignore processing the plans (optional)
  * @returns {Promise<object>} - The suggested with formated data data.
  */
-export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = false) => bc.payment({
-  original_plan: slug,
-}).planOffer()
-  .then(async (resp) => {
+export const getSuggestedPlan = async (slug, translations = {}, ignoreProcessPlans = false) => {
+  try {
+    const resp = await bc.payment({
+      original_plan: slug,
+    }).planOffer();
+
     const data = resp?.data;
     const planComparison = data[0];
 
     if (data?.length === 0) {
-      return ({
-        status_code: 404,
-        detail: 'No suggested plan found',
-      });
+      return null;
     }
+
     if (!ignoreProcessPlans) {
       const originalPlan = planComparison?.original_plan;
       const suggestedPlan = planComparison?.suggested_plan;
@@ -317,6 +320,7 @@ export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = f
         halfYearly: false,
         planType: 'original',
       }, translations) : {};
+
       const dataForSuggestedPlan = suggestedPlan.slug ? await processPlans(suggestedPlan, {
         quarterly: false,
         halfYearly: false,
@@ -339,19 +343,21 @@ export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = f
       });
     }
     return planComparison;
-  })
-  .catch((err) => err?.response?.data);
+  } catch (err) {
+    return err?.response?.data;
+  }
+};
 
 /**
  * @param {String} planSlug Original plan slug
  * @param {Function} t Translation function
  * @returns {Promise<object>} Formated original and suggested plan data
  */
-export const fetchSuggestedPlan = async (planSlug, translationsObj = {}, version = 'default') => {
+export const handleSuggestedPlan = async (planSlug, translationsObj = {}, version = 'default') => {
   try {
     const suggestedPlanData = await getSuggestedPlan(planSlug, translationsObj);
     if (version === 'default') {
-      if (suggestedPlanData?.status_code === 404 || suggestedPlanData?.length === 0) {
+      if (!suggestedPlanData || suggestedPlanData.length === 0) {
         const originalPlanData = await generatePlan(planSlug, translationsObj);
         return {
           plans: {
@@ -372,11 +378,7 @@ export const fetchSuggestedPlan = async (planSlug, translationsObj = {}, version
       };
     }
     if (version === 'mkt_plans') {
-      const originalPlanProps = suggestedPlanData.plans?.original_plan || {};
-      const suggestedPlanProps = suggestedPlanData.plans?.suggested_plan || {};
-      const originalPlan = originalPlanProps?.plans || [];
-      const suggestedPlan = suggestedPlanProps?.plans || [];
-      if (suggestedPlanData?.status_code === 404 || suggestedPlanData?.length === 0) {
+      if (!suggestedPlanData || suggestedPlanData.length === 0) {
         const originalPlanData = await generatePlan(planSlug, translationsObj);
         return {
           ...originalPlanData,
@@ -389,6 +391,10 @@ export const fetchSuggestedPlan = async (planSlug, translationsObj = {}, version
           title: originalPlanData?.title || '',
         };
       }
+      const originalPlanProps = suggestedPlanData.plans?.original_plan || {};
+      const suggestedPlanProps = suggestedPlanData.plans?.suggested_plan || {};
+      const originalPlan = originalPlanProps?.plans || [];
+      const suggestedPlan = suggestedPlanProps?.plans || [];
       const formatedPlanData = {
         planList: [...originalPlan, ...suggestedPlan],
         plans: {
@@ -435,7 +441,8 @@ export const validatePlanExistence = async (subscriptions, plan = '') => {
   const planSlug = plan || BASE_PLAN;
   try {
     const planComparison = await getSuggestedPlan(planSlug, {}, true);
-    const { original_plan: basePlan, suggested_plan: suggestedPlan } = planComparison;
+    const basePlan = planComparison?.original_plan;
+    const suggestedPlan = planComparison?.suggested_plan;
 
     const hasBasePlan = subscriptions.some((s) => s?.plans?.[0]?.slug === basePlan?.slug);
     const hasASuggestedPlan = subscriptions.some((s) => s?.plans?.[0]?.slug === suggestedPlan?.slug);
@@ -453,7 +460,7 @@ export const validatePlanExistence = async (subscriptions, plan = '') => {
       suggestedPlan: {},
       hasBasePlan: false,
       hasASuggestedPlan: false,
-      allSubscriptions: {},
+      allSubscriptions: subscriptions,
     };
   }
 };

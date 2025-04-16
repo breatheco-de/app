@@ -55,7 +55,7 @@ function ShowPrices({
   bullets,
 }) {
   const [selectedPlanId, setSelectedPlanId] = useState('');
-  const { t } = useTranslation('profile');
+  const { t } = useTranslation('signup');
   const { backgroundColor, lightColor } = useStyle();
   const router = useRouter();
   const { applyDiscountCouponsToPlans, state } = useSignup();
@@ -80,11 +80,11 @@ function ShowPrices({
   const getPlanLabel = (plan) => {
     switch (plan.period) {
       case 'YEAR':
-        return t('subscription.payment_unit.anual');
+        return t('payment_unit.anual');
       case 'MONTH':
-        return t('subscription.payment_unit.month');
+        return t('payment_unit.month');
       case 'ONE_TIME':
-        return t('subscription.upgrade-modal.one_payment');
+        return t('one_payment');
       case 'FINANCING':
         return `${plan.how_many_months} ${t('common:word-connector.months')}`;
       default:
@@ -181,8 +181,8 @@ function ShowPrices({
             >
               <Text fontSize="inherit" fontWeight="inherit" color="inherit">
                 {monthsSaved === 1
-                  ? t('subscription.yearly-savings-singular', { months: monthsSaved })
-                  : t('subscription.yearly-savings', { months: monthsSaved })}
+                  ? t('yearly-savings-singular', { months: monthsSaved })
+                  : t('yearly-savings', { months: monthsSaved })}
               </Text>
             </Box>
           )}
@@ -244,7 +244,7 @@ function ShowPrices({
                   </Text>
                   {selfAppliedCoupon && (
                     <Text as="span" fontSize="xs" color="#01455E">
-                      {t('signup:discount-applied')}
+                      {t('discount-applied')}
                     </Text>
                   )}
                 </Flex>

@@ -14,7 +14,7 @@ import useSignup from '../hooks/useSignup';
 import MktTrustCards from '../components/MktTrustCards';
 import DraggableContainer from '../components/DraggableContainer';
 import Icon from '../components/Icon';
-import { fetchSuggestedPlan, getTranslations } from '../handlers/subscriptions';
+import { handleSuggestedPlan, getTranslations } from '../handlers/subscriptions';
 import { getQueryString, isWindow, slugToTitle } from '../utils';
 import { parseQuerys } from '../utils/url';
 import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../utils/variables';
@@ -89,7 +89,7 @@ function PricingView() {
   };
 
   const handleFetchPlan = async () => {
-    const data = await fetchSuggestedPlan(planSlug, planTranslations);
+    const data = await handleSuggestedPlan(planSlug, planTranslations);
     const originalPlan = data?.plans?.original_plan || {};
     const suggestedPlan = data?.plans?.suggested_plan || {};
     const allPlanList = [...originalPlan?.plans || [], ...suggestedPlan?.plans || []];

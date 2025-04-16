@@ -30,7 +30,7 @@ import MktShowPrices from '../../components/MktShowPrices';
 import NextChakraLink from '../../components/NextChakraLink';
 import useAuth from '../../hooks/useAuth';
 import useSubscriptions from '../../hooks/useSubscriptions';
-import { SUBS_STATUS, fetchSuggestedPlan, getTranslations } from '../../handlers/subscriptions';
+import { SUBS_STATUS, handleSuggestedPlan, getTranslations } from '../../handlers/subscriptions';
 import axiosInstance from '../../axios';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import { reportDatalayer } from '../../utils/requests';
@@ -266,52 +266,53 @@ function CoursePage({ data, syllabus }) {
     };
   }, []);
 
-  const joinCohort = () => {
-    if (isAuthenticated && existsRelatedSubscription) {
-      reportDatalayer({
-        dataLayer: {
-          event: 'join_cohort',
-          cohort_id: cohortId,
-          agent: getBrowserInfo(),
-        },
-      });
-      setIsFetching(true);
-      bc.admissions().joinCohort(cohortId)
-        .then(async (resp) => {
-          const dataRequested = await resp.json();
-          if (dataRequested?.status === 'ACTIVE') {
-            setReadyToRefetch(true);
-          }
-          if (dataRequested?.status_code === 400) {
-            createToast({
-              position: 'top',
-              title: dataRequested?.detail,
-              status: 'info',
-              duration: 5000,
-              isClosable: true,
-            });
-            setTimeout(() => {
-              router.push('/choose-program');
-            }, 600);
-          }
-          if (dataRequested?.status_code > 400) {
-            createToast({
-              position: 'top',
-              title: dataRequested?.detail,
-              status: 'error',
-              duration: 5000,
-              isClosable: true,
-            });
-            router.push('#pricing');
-          }
-        })
-        .catch(() => {
-          setTimeout(() => {
-            setIsFetching(false);
-          }, 600);
-        });
-    } else {
+  const joinCohort = async () => {
+    if (!isAuthenticated || !existsRelatedSubscription) {
       router.push('#pricing');
+      return;
+    }
+
+    reportDatalayer({
+      dataLayer: {
+        event: 'join_cohort',
+        cohort_id: cohortId,
+        agent: getBrowserInfo(),
+      },
+    });
+
+    setIsFetching(true);
+
+    try {
+      const resp = await bc.admissions().joinCohort(cohortId);
+      const dataRequested = await resp.json();
+
+      if (dataRequested?.status === 'ACTIVE') {
+        setReadyToRefetch(true);
+      } else if (dataRequested?.status_code === 400) {
+        createToast({
+          position: 'top',
+          title: dataRequested?.detail,
+          status: 'info',
+          duration: 5000,
+          isClosable: true,
+        });
+        setTimeout(() => {
+          router.push('/choose-program');
+        }, 600);
+      } else if (dataRequested?.status_code > 400) {
+        createToast({
+          position: 'top',
+          title: dataRequested?.detail,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+        router.push('#pricing');
+      }
+    } catch (err) {
+      setTimeout(() => {
+        setIsFetching(false);
+      }, 600);
     }
   };
 
@@ -394,8 +395,8 @@ function CoursePage({ data, syllabus }) {
         }
 
         const assignmentsFetch = await Promise.all(
-          combinedFeaturedAssets.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[language]?.slug || item?.slug}`)
-            .then((assignmentResp) => assignmentResp.json())
+          combinedFeaturedAssets.map((item) => bc.registry().getAsset(item?.translations?.[language]?.slug || item?.slug)
+            .then(({ data: assignmentsData }) => assignmentsData)
             .catch(() => [])),
         );
 
@@ -408,26 +409,23 @@ function CoursePage({ data, syllabus }) {
         return { count: {}, assignmentList: [] };
       }
     };
-    const formatedPlanData = await fetchSuggestedPlan(data?.plan_slug, translationsObj, 'mkt_plans').then((finalData) => finalData);
+    const formatedPlanData = await handleSuggestedPlan(data?.plan_slug, translationsObj, 'mkt_plans');
 
     const modulesInfo = await getModulesInfo();
 
-    const studentList = await bc.admissions({ roles: 'STUDENT', syllabus: cohortSyllabus.syllabus?.slug }).getPublicMembers()
-      .then((respMembers) => respMembers.data)
-      .catch((err) => {
-        error('Error fetching cohort users:', err);
-        return [];
-      });
-    const uniqueStudents = studentList?.length > 0 ? studentList?.filter((student, index, self) => self.findIndex((l) => (
+    const respStudents = await bc.admissions({ roles: 'STUDENT', syllabus: cohortSyllabus.syllabus?.slug }).getPublicMembers();
+    const studentList = respStudents.data;
+
+    const uniqueStudents = studentList?.length > 0 ? studentList.filter((student, index, self) => self.findIndex((l) => (
       l.user.id === student.user.id
     )) === index) : [];
 
-    const instructorsList = await bc.admissions({
+    const respMembers = await bc.admissions({
       roles: 'TEACHER,ASSISTANT',
       cohort_id: cohortId,
-    }).getPublicMembers()
-      .then((respMembers) => respMembers.data);
-    const uniqueInstructors = instructorsList?.length > 0 ? instructorsList?.filter((instructor, index, self) => self.findIndex((l) => (
+    }).getPublicMembers();
+    const instructorsList = respMembers.data;
+    const uniqueInstructors = instructorsList?.length > 0 ? instructorsList.filter((instructor, index, self) => self.findIndex((l) => (
       l.user.id === instructor.user.id
     )) === index) : [];
 
@@ -691,7 +689,7 @@ function CoursePage({ data, syllabus }) {
                         variant="default"
                         isLoading={isFetching}
                         textTransform="uppercase"
-                        onClick={() => joinCohort()}
+                        onClick={joinCohort}
                       >
                         {getAlternativeTranslation('join-cohort')}
                       </Button>

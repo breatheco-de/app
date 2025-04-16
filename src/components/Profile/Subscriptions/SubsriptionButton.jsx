@@ -86,7 +86,7 @@ function SubsriptionButton({
       };
     }
 
-    if (isFreeTrial || (subscription?.type !== 'plan_financing' && (isActive || isFullyPaid) && subscription?.planOffer.slug)) {
+    if (isFreeTrial || (subscription?.type !== 'plan_financing' && (isActive || isFullyPaid) && subscription?.planOffer?.slug)) {
       return {
         text: t('subscription.upgrade'),
         style: {
@@ -118,7 +118,7 @@ function SubsriptionButton({
       };
     }
 
-    if ((isPaymentIssue || isError || isExpired) && !subscription?.planOffer.slug) {
+    if ((isPaymentIssue || isError || isExpired) && !subscription?.planOffer?.slug) {
       return {
         text: t('subscription.contact-support'),
         isComponent: true,
@@ -152,8 +152,8 @@ function SubsriptionButton({
           isLoading={isLoading}
           onClick={() => {
             if (isPlanFinancingExpired) handlePlanOffer();
-            if ((['FREE_TRIAL', 'PAYMENT_ISSUE'].includes(status)) || (['ACTIVE', 'FULLY_PAID'].includes(status) && subscription?.planOffer.slug)) handlePlanOffer();
-            if (['ACTIVE', 'FULLY_PAID'].includes(status) && subscription?.type !== 'plan_financing' && !subscription?.planOffer.slug) onOpenCancelSubscription();
+            if ((['FREE_TRIAL', 'PAYMENT_ISSUE'].includes(status)) || (['ACTIVE', 'FULLY_PAID'].includes(status) && subscription?.planOffer?.slug)) handlePlanOffer();
+            if (['ACTIVE', 'FULLY_PAID'].includes(status) && subscription?.type !== 'plan_financing' && !subscription?.planOffer?.slug) onOpenCancelSubscription();
             if (['CANCELLED'].includes(status)) handleReactivatePlan();
             setSubscriptionProps(subscription);
           }}
