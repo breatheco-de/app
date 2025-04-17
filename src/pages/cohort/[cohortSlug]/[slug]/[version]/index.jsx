@@ -572,8 +572,8 @@ function Dashboard() {
           />
         </AlertMessage>
       )}
-      {isAvailableAsSaas && <CohortHeader />}
-      <Container flex="1" background={isAvailableAsSaas && hexColor.lightColor4} maxW="none">
+      {false && isAvailableAsSaas && <CohortHeader />}
+      <Container flex="1" background={false && isAvailableAsSaas && hexColor.lightColor4} maxW="none">
         <Box maxW="1280px" width="100%" margin="0 auto">
           <Box width="fit-content" paddingTop="18px" marginBottom="18px">
             <NextChakraLink
@@ -600,7 +600,7 @@ function Dashboard() {
           </Box>
           {cohortSession ? (
             <>
-              {isAvailableAsSaas ? (
+              {false && isAvailableAsSaas ? (
                 <Box flex="1 1 auto" pb="20px">
                   {hasMicroCohorts && (
                     <Box display="flex" alignItems="center" gap="10px" mb="20px">
@@ -613,7 +613,7 @@ function Dashboard() {
 
                   {!isLoadingAssigments ? (
                     <Box display="flex" flexDirection="column" gap="20px">
-                      {hasMicroCohorts
+                      {false && hasMicroCohorts
                         ? cohorts.filter((cohort) => cohortSession.micro_cohorts.some((elem) => elem.slug === cohort.slug))
                           .sort(sortMicroCohorts)
                           .map((microCohort) => (
