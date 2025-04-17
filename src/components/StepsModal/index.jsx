@@ -76,7 +76,7 @@ function StepsModal({ isOpen, onClose, title, titleIcon, description, steps, fin
           </Box>
 
           {/* Right Column: Video Player */}
-          <Box width="50%" display={{ base: 'none', md: 'block' }}>
+          <Box width="50%" display={{ base: 'none', md: 'block' }} marginTop="15px">
             <ReactPlayerV2
               className="react-player-border-radius"
               containerStyle={{ height: '100%' }}

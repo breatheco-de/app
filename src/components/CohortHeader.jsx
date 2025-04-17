@@ -80,7 +80,6 @@ function CustomButton({ children, infoTooltip, ...props }) {
             <PopoverArrow bg={hexColor.blueLight} />
             <PopoverHeader
               display="flex"
-              gap="8px"
               alignItems="center"
               justifyContent="center"
               border="none"
@@ -89,7 +88,7 @@ function CustomButton({ children, infoTooltip, ...props }) {
               mb="8px"
             >
               {infoTooltip.icon && (
-                <Icon icon={infoTooltip.icon} width="18px" height="18px" style={{ marginRight: '8px' }} color={hexColor.blueDefault} />
+                <Icon icon={infoTooltip.icon} width="27px" height="27px" style={{ marginRight: '8px' }} color={hexColor.blueDefault} />
               )}
               {infoTooltip.title}
             </PopoverHeader>
