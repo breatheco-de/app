@@ -14,6 +14,9 @@
   "ai-tutor": "AI Tutor",
   "tooltip-ai-tutor": "Never be stuck again, our internally developed AI tutor will help you everywhere, every step of the way.",
   "see-workshops": "See all workshops",
+  "see-all-events": "See more events",
+  "mentorships": "Mentorships",
+  "mentorship-description": "Schedule a face to face mentorship session with an industry expert. Mentorships are the most efficient way to learn.",
   "schedule-mentoring": "Schedule a mentoring session",
   "rigobot-bubble": {
     "greeting": "Hi!"
@@ -89,6 +92,8 @@
   "enroll-totally-free": "Enroll totally free",
   "enroll-for-connector": "Enroll for",
   "start-tutorial": "Start tutorial",
+  "see-upcoming-events": "See upcoming events",
+  "see-upcoming-events-description": "Every week new live classes, workshops & upcoming events are organized. Stay tuned!",
   "learn-more": "Learn more",
   "more-technologies": "More technologies",
   "continue-learning": "Continue learning about:",
@@ -171,6 +176,31 @@
   "external": {
     "title": "This is an external exercise",
     "description": "<strong>\"{{projectName}}\"</strong> is an external exercise you will be redirected to a new tab to do it; choose one of the following options to start working on the project:"
+  },
+  "chat-with-rigobot": "Chat with Rigobot",
+  "rigobot": {
+    "title": "Meet Rigobot",
+    "description": "Rigobot is an AI that guides students on their path to learning to code. It offers clear explanations, practical examples, and personalized step-by-step support. Ideal for beginners and curious students who want to master the world of code.",
+    "steps": [
+      {
+        "label": "It will review your project deliveries:",
+        "description": "You will be able to review your project deliveries and get feedback from Rigobot.",
+        "video": "",
+        "source": ""
+      },
+      {
+        "label": "Ask rigobot whatever you want, it knows a lot about you and the platform.",
+        "description": "You can ask Rigobot whatever you want, it knows a lot about you and the platform.",
+        "video": "",
+        "source": ""
+      },
+      {
+        "label": "Learning assistant, find the rigobot avatar while reading the lessons.",
+        "description": "Rigobot is your learning assistant, find the rigobot avatar while reading the lessons.",
+        "video": "",
+        "source": ""
+      }
+    ]
   },
   "learnpack": {
     "title": "This is a Learnpack interactive exercise",

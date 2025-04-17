@@ -61,7 +61,7 @@ function MainEvent({
           opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? '1' : '0.5'}
           position="relative"
         >
-          {mainEvents.length <= 1 && getOtherEvents().filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ended_at || e?.ending_at)))?.length !== 0 && (
+          {mainEvents.length <= 1 && getOtherEvents.filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ended_at || e?.ending_at)))?.length !== 0 && (
             <Box
               borderRadius="full"
               width="17px"
@@ -175,7 +175,7 @@ MainEvent.propTypes = {
   index: PropTypes.number.isRequired,
   event: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   mainEvents: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
-  getOtherEvents: PropTypes.func.isRequired,
+  getOtherEvents: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   isLiveOrStarting: PropTypes.func.isRequired,
   getLiveIcon: PropTypes.func.isRequired,
   host: PropTypes.string.isRequired,

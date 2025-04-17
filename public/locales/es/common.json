@@ -12,6 +12,9 @@
   "hide": "Ocultar",
   "rigo": "Rigo",
   "see-workshops": "Ver todos los workshops",
+  "see-all-events": "Ver más eventos",
+  "mentorships": "Mentorías",
+  "mentorship-description": "Programa una sesión de mentoría presencial con un experto en la industria. Las mentorías son la forma más eficiente de aprender.",
   "schedule-mentoring": "Agenda una sesión de mentoria",
   "rigobot-bubble": {
     "greeting": "Hola!"
@@ -89,6 +92,8 @@
   "enroll-totally-free": "Entrar totalmente gratis",
   "enroll-for-connector": "Unete por",
   "start-tutorial": "Empezar tutorial",
+  "see-upcoming-events": "Ver eventos próximos",
+  "see-upcoming-events-description": "Todas las semanas tenemos nuevos eventos, workshops y clases en vivo. ¡Mantente al día!",
   "learn-more": "Aprender más",
   "more-technologies": "Más tecnologías",
   "continue-learning": "Continúa aprendiendo sobre:",
@@ -171,6 +176,31 @@
   "external": {
     "title": "Este es un ejercicio externo",
     "description": "<strong>\"{{projectName}}\"</strong> es un ejercicio externo, serás redireccionado a una nueva pestaña para hacerlo; elige una de las siguientes opciones para comenzar a trabajar en el proyecto:"
+  },
+  "chat-with-rigobot": "Chatea con Rigobot",
+  "rigobot": {
+    "title": "Conoce a Rigobot",
+    "description": "Rigobot es una inteligencia artificial que guía a estudiantes en su camino para aprender a programar. Ofrece explicaciones claras, ejemplos prácticos y apoyo personalizado paso a paso. Ideal para principiantes y curiosos que quieren dominar el mundo del código.",
+    "steps": [
+      {
+        "label": "Revisará tus entregas de proyectos:",
+        "description": "Podrás revisar tus entregas de proyectos y obtener feedback de Rigobot.",
+        "video": "",
+        "source": ""
+      },
+      {
+        "label": "Pide a Rigobot lo que quieras, sabe mucho sobre ti y la plataforma.",
+        "description": "Puedes preguntarle a Rigobot lo que quieras, sabe mucho sobre ti y la plataforma.",
+        "video": "",
+        "source": ""
+      },
+      {
+        "label": "Asistente de aprendizaje, encuentra el avatar de Rigobot mientras lees las lecciones.",
+        "description": "Rigobot es tu asistente de aprendizaje, encuentra el avatar de Rigobot mientras lees las lecciones.",
+        "video": "",
+        "source": ""
+      }
+    ]
   },
   "learnpack": {
     "title": "Este es un ejercicio interactivo de Learnpack",
