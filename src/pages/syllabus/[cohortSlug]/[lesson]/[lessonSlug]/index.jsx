@@ -1270,7 +1270,7 @@ function SyllabusContent() {
                                     variant="default"
                                     onClick={() => setModalIntroOpen(true)}
                                   >
-                                    <Icon style={{ margin: 'auto', display: 'block' }} icon="youtube" width="30px" height="30px" />
+                                    <Icon style={{ margin: 'auto', display: 'block' }} icon="youtube" width="30px" color={hexColor.blueDefault} height="30px" />
                                   </Button>
                                 </Tooltip>
                               )}
@@ -1282,13 +1282,13 @@ function SyllabusContent() {
                                     justifyContent="center"
                                     width="40px"
                                     height="40px"
-                                    background={hexColor.blueDefault}
+                                    background={backgroundColor}
                                     padding="12px"
                                     borderRadius="full"
                                     variant="default"
                                     onClick={() => setSolutionVideoOpen(true)}
                                   >
-                                    <Icon color="white" style={{ margin: 'auto', display: 'block' }} icon="play" width="30px" height="30px" />
+                                    <Icon style={{ margin: 'auto', display: 'block' }} color={hexColor.blueDefault} icon="play" width="30px" height="30px" />
                                   </Button>
                                 </Tooltip>
                               )}

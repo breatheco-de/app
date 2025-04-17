@@ -5,6 +5,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
 import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import useCohortHandler from '../hooks/useCohortHandler';
@@ -42,7 +43,7 @@ function CustomButton({ children, ...props }) {
   );
 }
 
-function Header() {
+function Header({ onOpenGithubModal }) {
   const { t } = useTranslation('choose-program');
   const router = useRouter();
   const { user, isAuthenticatedWithRigobot, conntectToRigobot } = useAuth();
@@ -71,7 +72,7 @@ function Header() {
   const hasGithub = user?.github && user.github.username !== '';
 
   const getRigobotButtonText = () => {
-    if (!isAuthenticatedWithRigobot) return t('common:connect-with-tigobot');
+    if (!isAuthenticatedWithRigobot) return t('common:connect-with-rigobot');
 
     return t('common:get-help-rigobot');
   };
@@ -128,11 +129,7 @@ function Header() {
                 )}
 
                 {!hasGithub && (
-                  <CustomButton onClick={() => {
-                    const accessToken = getStorageItem('accessToken');
-                    window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
-                  }}
-                  >
+                  <CustomButton onClick={onOpenGithubModal}>
                     <Icon icon="github" width="42px" height="42px" />
                     <Text textAlign="center" color={hexColor.blueDefault}>
                       {t('common:connect-with-github')}
@@ -180,5 +177,9 @@ function Header() {
     </Container>
   );
 }
+
+Header.propTypes = {
+  onOpenGithubModal: PropTypes.func.isRequired,
+};
 
 export default Header;
