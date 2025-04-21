@@ -86,9 +86,10 @@ function CustomButton({ children, infoTooltip, ...props }) {
               fontSize="16px"
               padding="0"
               mb="8px"
+              gap="8px"
             >
               {infoTooltip.icon && (
-                <Icon icon={infoTooltip.icon} width="27px" height="27px" style={{ marginRight: '8px' }} color={hexColor.blueDefault} />
+                <Icon icon={infoTooltip.icon} width="30px" height="30px" color={hexColor.blueDefault} />
               )}
               {infoTooltip.title}
             </PopoverHeader>
@@ -224,11 +225,12 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
                   </PopoverTrigger>
                   <PopoverContent>
                     <PopoverArrow />
-                    <PopoverBody display="flex" flexDirection="column" alignItems="center">
+                    <PopoverBody display="flex" flexDirection="column" alignItems="center" background={hexColor.lightGreyBackground} borderRadius="8px">
                       <LiveEventWidgetV2
                         mainClasses={liveClasses || []}
                         otherEvents={upcomingEvents || []}
                         cohorts={cohorts || []}
+                        background={hexColor.lightGreyBackground}
                       />
                     </PopoverBody>
                   </PopoverContent>

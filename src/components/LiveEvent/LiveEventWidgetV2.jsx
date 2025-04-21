@@ -1,6 +1,7 @@
 import { useColorModeValue, Box, Button, Heading } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import CustomTheme from '../../../styles/theme';
 import Text from '../Text';
 import Icon from '../Icon';
@@ -12,7 +13,9 @@ function LiveEventWidgetV2({
   otherEvents,
   startingSoonDelta,
   cohorts,
+  ...rest
 }) {
+  const router = useRouter();
   const {
     t,
     eventTimeTexts,
@@ -40,20 +43,18 @@ function LiveEventWidgetV2({
     isLiveOrStarting(new Date(event?.starting_at), new Date((event?.ended_at || event?.ending_at)))
   ));
 
-  const upcomingMainEvents = mainEvents
+  const allUpcomingEvents = allEvents
     .filter((event) => !isLiveOrStarting(new Date(event?.starting_at), new Date((event?.ended_at || event?.ending_at))))
     .sort((a, b) => new Date(a.starting_at) - new Date(b.starting_at));
 
-  let finalDisplayEvents = [...liveOrStartingSoonEvents];
-  finalDisplayEvents = finalDisplayEvents.concat(
-    upcomingMainEvents.filter((event) => !finalDisplayEvents.some((e) => e.id === event.id)),
-  );
+  let finalDisplayEvents = [...liveOrStartingSoonEvents, ...allUpcomingEvents];
+
   finalDisplayEvents = finalDisplayEvents.slice(0, 3);
 
   return (
-    <Box padding="10px" maxWidth="100%">
-      <Heading size="sm" textAlign="center" mb={4} fontWeight="700">
-        {t('upcoming-events', 'Upcoming events')}
+    <Box padding="10px" maxWidth="100%" {...rest}>
+      <Heading size="sm" textAlign="center" mb={4} fontWeight="400">
+        {t('upcoming-events')}
       </Heading>
 
       {finalDisplayEvents.length > 0 ? (
@@ -63,9 +64,9 @@ function LiveEventWidgetV2({
             return (
               <Box
                 key={event.id}
-                background={bgColor2}
-                border={isCurrentEventLiveOrStarting ? '2px solid' : 'none'}
-                borderColor={CustomTheme.colors.blue[50]}
+                background={isCurrentEventLiveOrStarting ? bgColor2 : useColorModeValue('white', 'gray.700')}
+                border={isCurrentEventLiveOrStarting ? '2px solid' : '1px solid'}
+                borderColor={isCurrentEventLiveOrStarting ? CustomTheme.colors.blue[50] : 'transparent'}
                 padding="10px"
                 borderRadius="lg"
                 width="100%"
@@ -154,7 +155,7 @@ function LiveEventWidgetV2({
               color={textGrayColor}
               margin="0"
             >
-              {t('no-upcoming-events', 'No upcoming events.')}
+              {t('no-upcoming-events')}
             </Text>
           </Box>
         </Box>
@@ -163,14 +164,15 @@ function LiveEventWidgetV2({
       <Button
         variant="link"
         colorScheme="blue"
-        fontWeight="500"
+        fontSize="14px"
+        fontWeight="700"
         display="block"
         margin="10px auto 0"
         onClick={() => {
-          console.log('Navigate to all events page');
+          router.push('/workshops');
         }}
       >
-        {t('see-all-events', 'See all events')}
+        {t('common:see-all-events')}
       </Button>
 
     </Box>

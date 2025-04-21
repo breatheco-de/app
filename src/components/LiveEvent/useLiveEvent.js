@@ -49,7 +49,7 @@ const useLiveEvent = ({
       start: startDate,
     });
 
-    if (!duration) return t('few-seconds-ago');
+    if (!duration) return t('few-seconds');
 
     const formatDurationString = () => {
       const { months, days, hours, minutes } = duration;
@@ -61,7 +61,7 @@ const useLiveEvent = ({
     };
 
     const formated = formatDurationString();
-    return formated === '' ? t('few-seconds-ago') : formated;
+    return formated === '' ? t('few-seconds') : formated;
   }, [t]);
 
   const formatTimeUntil = useCallback((start) => {
@@ -70,7 +70,7 @@ const useLiveEvent = ({
     if (!startDate) return t('invalid-date');
 
     if (startDate <= new Date()) {
-      return t('starting-soon');
+      return t('few-seconds');
     }
 
     const duration = intervalToDuration({
@@ -78,19 +78,19 @@ const useLiveEvent = ({
       end: startDate,
     });
 
-    if (!duration) return t('starting-soon');
+    if (!duration) return t('few-seconds');
 
     const formatFutureDurationString = () => {
       const { months, days, hours, minutes } = duration;
-      if (minutes >= 1 && hours === 0 && days === 0 && months === 0) return minutes > 1 ? t('will-start-minutes', { time: minutes }) : t('will-start-minute', { time: minutes });
-      if (hours >= 1 && days === 0 && months === 0) return hours > 1 ? t('will-start-hours', { time: hours }) : t('will-start-hour', { time: hours });
-      if (days >= 1 && months === 0) return days > 1 ? t('will-start-days', { time: days }) : t('will-start-day', { time: days });
-      if (months >= 1) return months > 1 ? t('will-start-months', { time: months }) : t('will-start-month', { time: months });
+      if (minutes >= 1 && hours === 0 && days === 0 && months === 0) return minutes > 1 ? t('start-minutes', { time: minutes }) : t('start-minute', { time: minutes });
+      if (hours >= 1 && days === 0 && months === 0) return hours > 1 ? t('start-hours', { time: hours }) : t('start-hour', { time: hours });
+      if (days >= 1 && months === 0) return days > 1 ? t('start-days', { time: days }) : t('start-day', { time: days });
+      if (months >= 1) return months > 1 ? t('start-months', { time: months }) : t('start-month', { time: months });
       return '';
     };
 
     const formated = formatFutureDurationString();
-    return formated === '' ? t('starting-soon') : formated;
+    return formated === '' ? t('few-seconds') : formated;
   }, [t]);
 
   const textTime = useCallback((start, end) => {

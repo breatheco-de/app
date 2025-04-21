@@ -59,7 +59,6 @@ function CohortPanelContent({
   onCertificateModalOpen,
   onCertificateModalClose,
 }) {
-  console.log(certificate);
   return (
     <>
       <AccordionButton as="div" ref={containerRef} position="relative" cursor={cohortProgress?.isCohortStarted ? 'pointer' : 'auto'} _hover={{ background: 'none' }} padding="0" flexDirection="column" alignItems="flex-start" gap="9px">
@@ -311,41 +310,52 @@ function CohortPanelContent({
       <Modal isOpen={isCertificateModalOpen} onClose={onCertificateModalClose} size="xl">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{t('certificate-unlocked-title', '¡Wojoo, desbloqueaste un certificado!')}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <VStack spacing={4} align="stretch">
+          <ModalBody padding="10px">
+            <VStack spacing={4} align="stretch" flexDirection="column" borderRadius="8px">
               {certfLink !== '#' ? (
-                <Box as="iframe" src={certfLink} width="100%" height="400px" border="none" title={t('certificate-preview-title', 'Certificate Preview')} />
+                <Box as="iframe" src={certfLink} width="100%" height="400px" border="none" flexGrow={1} title={t('certificate-preview-title')} />
               ) : (
-                <Text>{t('certificate-preview-unavailable', 'Preview not available.')}</Text>
+                <Text>{t('certificate-preview-unavailable')}</Text>
               )}
-              <Heading size="md" textAlign="center">{cohort.name}</Heading>
-              <Box display="flex" justifyContent="space-around" alignItems="center" gap="20px" mt={4}>
-                <Box display="flex" alignItems="center" gap="5px">
-                  <Icon icon="clock" width="14px" height="14px" color={cohortColor} />
-                  <Text size="sm" textAlign="left">
-                    {t('hours-worked', { hours: cohort.syllabus_version.duration_in_hours })}
-                  </Text>
+              <Box display="flex" flexDirection="column" gap="10px">
+                <Box display="flex" flexDirection="column" gap="10px">
+                  <Text size="14px" fontWeight="bold">{t('certificate-hooray')}</Text>
+                  <Box display="flex" gap="10px" alignItems="center" minWidth="fit-content">
+                    <Icon icon="badge" width="24px" height="24px" />
+                    <Heading size="18px" fontWeight="400">
+                      {cohort.name}
+                    </Heading>
+                  </Box>
                 </Box>
-                <Box display="flex" alignItems="center" gap="5px">
-                  <Icon icon="calendar" width="14px" height="14px" color={cohortColor} />
-                  <Text size="sm" textAlign="left">
-                    {/* {t('issued-on', {
-                      date: format(new Date(certificate?.issued_at), 'MMMM d, y', {
-                        locale: locales[lang],
-                      }),
-                    })} */}
-                  </Text>
+                <Box display="flex" justifyContent="space-between">
+                  <Box display="flex" gap="20px">
+                    <Box display="flex" alignItems="center" gap="10px">
+                      <Icon icon="clock" width="14px" height="14px" color={cohortColor} />
+                      <Text size="md" textAlign="left">
+                        {t('hours-worked', { hours: cohort.syllabus_version.duration_in_hours })}
+                      </Text>
+                    </Box>
+                    {certificate?.issued_at && (
+                      <Box display="flex" alignItems="center" gap="10px">
+                        <Icon icon="attendance" color={cohortColor} />
+                        <Text size="md" textAlign="left">
+                          {t('issued-on', {
+                            date: format(new Date(certificate?.issued_at), 'MMMM d y', {
+                              locale: locales[lang],
+                            }),
+                          })}
+                        </Text>
+                      </Box>
+                    )}
+                  </Box>
+                  <Button onClick={share} width="fit-content" display="flex" alignItems="center" gap="5px" color="white" background={cohortColor} _hover={{ background: cohortColor, opacity: 0.7 }}>
+                    <Icon icon="share" />
+                    {t('share')}
+                  </Button>
                 </Box>
               </Box>
             </VStack>
           </ModalBody>
-          <ModalFooter>
-            <Button variant="ghost" onClick={onCertificateModalClose}>
-              {t('close', 'Close')}
-            </Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

@@ -58,6 +58,7 @@ const useStyle = () => {
     lightColor2: useColorModeValue('#F5F5F5', '#283340'),
     lightColor3: useColorModeValue('#F5F5F5', '#17202A'),
     lightColor4: useColorModeValue('#F0F2F5', '#4A5568'),
+    lightGreyBackground: useColorModeValue('#F9F9F9', '#283340'),
     white: '#FFFFFF',
     white2: useColorModeValue('#ffffff', '#283340'),
     danger: useColorModeValue('#CD0000', '#e26161'),

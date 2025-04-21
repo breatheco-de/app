@@ -58,7 +58,6 @@ function MainEvent({
           ? `${mainClasses.length === 0 ? 'pulse-blue' : 'pulse-red'}`
           : ''
       }
-      opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? '1' : '0.5'}
       position="relative"
     >
       {mainEvents.length <= 1 && getOtherEvents.filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ended_at || e?.ending_at)))?.length !== 0 && (
@@ -97,6 +96,9 @@ function MainEvent({
     if (variant === 'inline' && isLiveNow) {
       tagBg = 'white';
       tagColor = hexColor.blueDefault;
+    } else if (variant === 'inline' && isWorkshop) {
+      tagBg = 'blue.50';
+      tagColor = 'black';
     } else if (isWorkshop) {
       tagBg = 'green.light';
       tagColor = 'success';
@@ -113,7 +115,6 @@ function MainEvent({
         width="fit-content"
         background={tagBg}
         color={tagColor}
-        opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 1 : 0.5}
       >
         <TagLabel fontWeight="700">
           {event?.subLabel || event?.type || subLabel}
@@ -160,22 +161,30 @@ function MainEvent({
     );
   };
 
-  const renderTitle = (variant) => (
-    <Text
-      size="15px"
-      lineHeight="1.2"
-      fontWeight={variant === 'inline' ? '500' : '900'}
-      color={
-        variant === 'inline' ? hexColor.blueDefault : fontColor
+  const renderTitle = (variant) => {
+    let titleColor = fontColor; // Default to standard font color
+    if (variant === 'inline') {
+      if (isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
+        titleColor = hexColor.blueDefault; // Blue for live/starting soon inline events
+      } else {
+        titleColor = fontColor; // Default text color for upcoming inline events
       }
-      opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? 1 : 0.5}
-      title={eventTitle}
-      noOfLines={2}
-      wordBreak="break-word"
-    >
-      {(truncatedText && eventTitle) ? truncatedText : joinMessage()}
-    </Text>
-  );
+    }
+
+    return (
+      <Text
+        size="15px"
+        lineHeight="1.2"
+        fontWeight={variant === 'inline' ? '500' : '900'}
+        color={titleColor} // Use the determined color
+        title={eventTitle}
+        noOfLines={2}
+        wordBreak="break-word"
+      >
+        {(truncatedText && eventTitle) ? truncatedText : joinMessage()}
+      </Text>
+    );
+  };
 
   return (
     <>
@@ -191,7 +200,7 @@ function MainEvent({
             {renderIcon()}
             {renderTitle(layoutVariant)}
           </HStack>
-          <HStack justifyContent="space-between" width="100%" pl="48px">
+          <HStack justifyContent="space-between" width="100%">
             {renderBadge(layoutVariant, isCurrentEventLive)}
             {renderStatusTime(layoutVariant, isCurrentEventLive)}
           </HStack>

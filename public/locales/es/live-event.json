@@ -9,6 +9,7 @@
     "started": "Empezó hace {{time}}",
     "ended": "Terminó hace {{time}}",
     "few-seconds": "unos instantes",
+    "invalid-date": "cualquier momento",
     "will-start": "Inicia en {{time}}",
     "start-hours": "{{time}} horas",
     "start-hour": "{{time}} hora",
