@@ -1,10 +1,11 @@
 import {
-  SET_SUBSCRIPTIONS, CANCEL_SUBSCRIPTION, SET_SUBSCRIPTIONS_LOADING,
+  SET_SUBSCRIPTIONS, CANCEL_SUBSCRIPTION, SET_SUBSCRIPTIONS_LOADING, SET_ARE_SUBSCRIPTIONS_FECHED,
 } from '../types';
 
 const initialState = {
   subscriptions: [],
   isLoading: false,
+  areSubscriptionsFetched: false,
 };
 
 const subscriptionsReducer = (state = initialState, action) => {
@@ -35,7 +36,11 @@ const subscriptionsReducer = (state = initialState, action) => {
         },
       };
     }
-
+    case SET_ARE_SUBSCRIPTIONS_FECHED:
+      return {
+        ...state,
+        areSubscriptionsFetched: action.payload,
+      };
     default:
       return state;
   }

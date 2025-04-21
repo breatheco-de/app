@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { CANCEL_SUBSCRIPTION, SET_SUBSCRIPTIONS, SET_SUBSCRIPTIONS_LOADING } from '../types';
+import { CANCEL_SUBSCRIPTION, SET_SUBSCRIPTIONS, SET_SUBSCRIPTIONS_LOADING, SET_ARE_SUBSCRIPTIONS_FECHED } from '../types';
 
 const subscriptionAction = () => {
   const state = useSelector((st) => st.subscriptionsReducer);
@@ -20,11 +20,17 @@ const subscriptionAction = () => {
     payload,
   });
 
+  const setAreSubscriptionsFetched = (payload) => dispatch({
+    type: SET_ARE_SUBSCRIPTIONS_FECHED,
+    payload,
+  });
+
   return {
     state,
     setSubscriptionsLoading,
     setSubscriptions,
     setCancelSubscription,
+    setAreSubscriptionsFetched,
   };
 };
 

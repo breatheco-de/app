@@ -6,7 +6,7 @@ import { toCapitalize, unSlugify } from '../utils';
 
 const useSubscriptions = () => {
   const router = useRouter();
-  const { state, setSubscriptionsLoading, setSubscriptions, setCancelSubscription, setPaymentStatus } = subscriptionAction();
+  const { state, setAreSubscriptionsFetched, setSubscriptionsLoading, setSubscriptions, setCancelSubscription, setPaymentStatus } = subscriptionAction();
   const { subscriptions } = state;
   const { createToast } = useCustomToast({ toastId: 'canceling-subscription-error-action' });
 
@@ -73,19 +73,15 @@ const useSubscriptions = () => {
 
       const data = await getSubscriptions();
 
-      const subscriptionsDataWithPlanOffer = data?.subscriptions?.length > 0
-        ? await Promise.all(data.subscriptions.map(async (s) => {
-          const planOffer = await managePlanOffer({ slug: s?.plans[0]?.slug });
-          return { ...s, type: 'subscription', planOffer };
-        }))
-        : [];
+      const subscriptionsDataWithPlanOffer = await Promise.all(data.subscriptions.map(async (s) => {
+        const planOffer = await managePlanOffer({ slug: s?.plans[0]?.slug });
+        return { ...s, type: 'subscription', planOffer };
+      }));
 
-      const planFinancingsDataWithPlanOffer = data?.plan_financings?.length > 0
-        ? await Promise.all(data.plan_financings.map(async (f) => {
-          const planOffer = await managePlanOffer({ slug: f?.plans[0]?.slug });
-          return { ...f, type: 'plan_financing', planOffer };
-        }))
-        : [];
+      const planFinancingsDataWithPlanOffer = await Promise.all(data.plan_financings.map(async (f) => {
+        const planOffer = await managePlanOffer({ slug: f?.plans[0]?.slug });
+        return { ...f, type: 'plan_financing', planOffer };
+      }));
 
       result = {
         subscriptions: subscriptionsDataWithPlanOffer,
@@ -97,6 +93,7 @@ const useSubscriptions = () => {
       result = error;
     } finally {
       setSubscriptionsLoading(false);
+      setAreSubscriptionsFetched(true);
       // eslint-disable-next-line no-unsafe-finally
       return result;
     }
