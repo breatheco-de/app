@@ -146,7 +146,6 @@ function Workshop({ eventData, asset }) {
   const { userSession } = useContext(SessionContext);
   const [users, setUsers] = useState([]);
   const [event, setEvent] = useState(eventData);
-  const [allUsersJoined, setAllUsersJoined] = useState([]);
   const [subscriptions, setSubscriptions] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const [applied, setApplied] = useState(false);
@@ -204,31 +203,30 @@ function Workshop({ eventData, asset }) {
         window.location.href = `/${eventLang}/workshops/${eventData?.slug}`;
       }
       bc.events().getUsers(eventData?.id)
-        .then((resp) => {
-          const formatedUsers = resp.data.map((l, i) => {
+        .then(({ data }) => {
+          const formatedUsers = data.map((elem, i) => {
             const index = i + 1;
-            const existsAvatar = l?.attendee?.profile?.avatar_url;
+            const existsAvatar = elem?.attendee?.profile?.avatar_url;
             const avatarNumber = adjustNumberBeetwenMinMax({
               number: index,
               min: 1,
               max: 20,
             });
-            if (l?.attendee === null || !existsAvatar) {
+            if (elem?.attendee === null || !existsAvatar) {
               return {
-                ...l,
+                ...elem,
                 attendee: {
-                  id: l?.attendee?.id || 475335 + i,
-                  first_name: l?.attendee?.first_name || 'Anonymous',
-                  last_name: l?.attendee?.last_name || '',
+                  id: elem?.attendee?.id || 475335 + i,
+                  first_name: elem?.attendee?.first_name || 'Anonymous',
+                  last_name: elem?.attendee?.last_name || '',
                   profile: {
                     avatar_url: `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`,
                   },
                 },
               };
             }
-            return l;
+            return elem;
           });
-          setAllUsersJoined(resp.data);
           setUsers(formatedUsers);
         })
         .catch(() => { });
@@ -337,7 +335,7 @@ function Workshop({ eventData, asset }) {
   }, [isAuth]);
 
   const capacity = event?.capacity || 0;
-  const allUsersJoinedLength = allUsersJoined?.length || 0;
+  const allUsersJoinedLength = users?.length || 0;
   const spotsRemain = (capacity - allUsersJoinedLength);
 
   const buttonEnabled = ((finishedEvent && recordingUrl) || !finishedEvent) && (readyToJoinEvent || !alreadyApplied);
@@ -1210,7 +1208,7 @@ function Workshop({ eventData, asset }) {
           {users?.length > 0 && (
             <Box maxHeight="294px" display="flex" flexDirection="column" gridGap="18px" background={featuredColor} padding="20px 25px" borderRadius="17px">
               <Text>
-                {t('users-registered-count', { count: allUsersJoined.length, spot_count: spotsRemain })}
+                {t('users-registered-count', { count: users.length, spot_count: spotsRemain })}
               </Text>
               <Grid
                 gridAutoRows="3.4rem"
