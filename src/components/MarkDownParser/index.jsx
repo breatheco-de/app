@@ -64,6 +64,10 @@ function OnlyForComponent({ ...props }) {
   return (<OnlyForBanner {...props} />);
 }
 
+function HowToStartComponent({ children, ...props }) {
+  return <OnlyForComponent {...props} saas={false}>{children}</OnlyForComponent>;
+}
+
 function CodeViewerComponent(props) {
   const { preParsedContent, node, fileContext } = props;
   const nodeStartOffset = node.position.start.offset;
@@ -285,6 +289,7 @@ function MarkDownParser({
           // children[1].props.node.children[0].properties.type
           li: ({ ...props }) => ListComponent({ subtaskFirstLoad, newSubTasks, setNewSubTasks, subTasks, updateSubTask, currentTask, ...props }),
           quote: Quote,
+          'how-to-start': HowToStartComponent,
         }}
       >
         {preParsedContent}
