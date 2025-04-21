@@ -118,7 +118,9 @@ const AvatarUser = memo(({
               {fullNameLabel}
             </Heading>
             <Text size="sm" fontWeight="400">
-              {`${t('dashboard:member-since', { role: roles[data?.role?.toLowerCase()] || 'member' })} ${dateFormated[router?.locale]}`}
+              {data?.role
+                ? t('dashboard:member-since', { role: roles[data.role.toLowerCase()] || 'member', date: dateFormated[router?.locale] })
+                : t('common:member-since', { date: dateFormated[router?.locale] })}
             </Text>
           </Box>
         </PopoverBody>
