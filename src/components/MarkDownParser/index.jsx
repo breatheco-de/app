@@ -65,7 +65,7 @@ function OnlyForComponent({ ...props }) {
 }
 
 function HowToStartComponent({ children, ...props }) {
-  return <OnlyForComponent {...props} saas={false}>{children}</OnlyForComponent>;
+  return <OnlyForComponent {...props} saas={false} withbanner={false}>{children}</OnlyForComponent>;
 }
 
 function CodeViewerComponent(props) {
