@@ -51,9 +51,7 @@ const TabletWithForm = React.forwardRef(({
 
   const getTitleMessage = () => {
     if (user) return '';
-    if (asset.interactive) return t('direct-access-interactive');
-    if (asset.solution_url) return t('direct-access-solution');
-    return t('direct-access-similar');
+    return t('direct-access-similar', { assetType: t(`common:${asset?.asset_type?.toLowerCase()}`) });
   };
 
   const getLoggedTitleMessage = () => {

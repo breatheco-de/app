@@ -30,7 +30,7 @@ import useCustomToast from '../../hooks/useCustomToast';
 function SignupForm({
   planSlug, courseChoosed, showVerifyEmail, subscribeValues, buttonStyles,
   onHandleSubmit, containerGap, extraFields, columnLayout, conversionTechnologies, showLoginLink,
-  invertHandlerPosition, formContainerStyle, ...rest
+  invertHandlerPosition, formContainerStyle, hiddenFields, ...rest
 }) {
   const { userSession, location } = useSession();
   const { t, lang } = useTranslation('signup');
@@ -77,7 +77,9 @@ function SignupForm({
 
     if (field === 'phone' || field.type === 'phone') validator = validator.matches(phoneRe, field?.error || t('validators.invalid-phone'));
 
-    if (isString || field.required) validator = validator.required(field?.error || 'Required');
+    if ((isString || field.required) && !hiddenFields.includes(name)) {
+      validator = validator.required(field?.error || 'Required');
+    }
 
     const validations = { ...extra };
     validations[name] = validator;
@@ -89,14 +91,14 @@ function SignupForm({
     first_name: Yup.string()
       .min(2, t('validators.short-input'))
       .max(50, t('validators.long-input'))
-      .required(t('validators.first-name-required')),
+      .test('required', t('validators.first-name-required'), (value) => hiddenFields.includes('first_name') || Boolean(value)),
     last_name: Yup.string()
       .min(2, t('validators.short-input'))
       .max(50, t('validators.long-input'))
-      .required(t('validators.last-name-required')),
+      .test('required', t('validators.last-name-required'), (value) => hiddenFields.includes('last_name') || Boolean(value)),
     email: Yup.string()
       .matches(emailRe, t('validators.invalid-email'))
-      .required(t('validators.email-required')),
+      .test('required', t('validators.email-required'), (value) => hiddenFields.includes('email') || Boolean(value)),
     ...extraFieldsValidations,
     // .matches(phone, t('validators.invalid-phone')),
     // confirm_email: Yup.string()
@@ -240,78 +242,93 @@ function SignupForm({
             <Box display="flex" flexDirection="column" maxWidth="430px" margin="0 auto" gridGap={columnLayout ? '18px' : '24px'} {...rest}>
               <Box display="flex" gridGap="18px" flexDirection={{ base: 'column', md: 'row' }}>
                 <Box display="flex" flexDirection={{ base: 'column', sm: columnLayout ? 'column' : 'row' }} gridGap="18px" flex={1}>
-                  <FieldForm
-                    type="text"
-                    name="first_name"
-                    label={t('common:first-name')}
-                    formProps={formProps}
-                    setFormProps={setFormProps}
-                  />
-                  <FieldForm
-                    type="text"
-                    name="last_name"
-                    label={t('common:last-name')}
-                    formProps={formProps}
-                    setFormProps={setFormProps}
-                  />
-                </Box>
-              </Box>
-              {extraFields.map((field) => (field === 'phone' || field?.type === 'phone' ? (
-                <Box
-                  display="flex"
-                  flex={1}
-                  flexDirection="column"
-                  fontSize="12px"
-                  gridGap="4px"
-                >
-                  <PhoneInput
-                    inputStyle={{ height: '50px' }}
-                    setVal={setFormProps}
-                    placeholder={t('common:phone')}
-                    formData={formProps}
-                    required
-                    {...field}
-                  />
-                </Box>
-              ) : (
-                <Box display="flex" gridGap="18px" flexDirection={{ base: 'column', md: 'row' }}>
-                  <Box display="flex" flexDirection={{ base: 'column', sm: columnLayout ? 'column' : 'row' }} gridGap="18px" flex={1}>
+                  {!hiddenFields.includes('first_name') && (
                     <FieldForm
                       type="text"
+                      name="first_name"
+                      label={t('common:first-name')}
                       formProps={formProps}
                       setFormProps={setFormProps}
+                    />
+                  )}
+                  {!hiddenFields.includes('last_name') && (
+                    <FieldForm
+                      type="text"
+                      name="last_name"
+                      label={t('common:last-name')}
+                      formProps={formProps}
+                      setFormProps={setFormProps}
+                    />
+                  )}
+                </Box>
+              </Box>
+              {extraFields.map((field) => {
+                const isString = typeof field === 'string';
+                const fieldName = isString ? field : field.name;
+                const isHidden = hiddenFields.includes(fieldName);
+
+                if (isHidden) return null;
+
+                return fieldName === 'phone' || field?.type === 'phone' ? (
+                  <Box
+                    key={fieldName}
+                    display="flex"
+                    flex={1}
+                    flexDirection="column"
+                    fontSize="12px"
+                    gridGap="4px"
+                  >
+                    <PhoneInput
+                      inputStyle={{ height: '50px' }}
+                      setVal={setFormProps}
+                      placeholder={t('common:phone')}
+                      formData={formProps}
+                      required
                       {...field}
                     />
                   </Box>
+                ) : (
+                  <Box key={fieldName} display="flex" gridGap="18px" flexDirection={{ base: 'column', md: 'row' }}>
+                    <Box display="flex" flexDirection={{ base: 'column', sm: columnLayout ? 'column' : 'row' }} gridGap="18px" flex={1}>
+                      <FieldForm
+                        type="text"
+                        formProps={formProps}
+                        setFormProps={setFormProps}
+                        {...field}
+                      />
+                    </Box>
+                  </Box>
+                );
+              })}
+              {!hiddenFields.includes('email') && (
+                <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="18px">
+                  <Box
+                    display="flex"
+                    flex={1}
+                    flexDirection="column"
+                    fontSize="12px"
+                    gridGap="4px"
+                  >
+                    <InputGroup>
+                      <FieldForm
+                        type="email"
+                        name="email"
+                        label={t('common:email')}
+                        formProps={formProps}
+                        setFormProps={setFormProps}
+                        handleOnChange={thriggerValidation}
+                      />
+                      <InputRightElement top="50%" transform="translate(0,-50%)">
+                        {emailValidation.loading && <Spinner color={hexColor.blueDefault} />}
+                      </InputRightElement>
+                    </InputGroup>
+                    {emailValidation.loading && <Box>{t('validating-email')}</Box>}
+                    {emailValidation.valid && <Box color={hexColor.green}>{t('email-validated')}</Box>}
+                    {emailValidation.error && <Box color={hexColor.danger}>{emailValidation.error}</Box>}
+                    <Box color="blue.default2">{t('email-info')}</Box>
+                  </Box>
                 </Box>
-              )))}
-              <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="18px">
-                <Box
-                  display="flex"
-                  flex={1}
-                  flexDirection="column"
-                  fontSize="12px"
-                  gridGap="4px"
-                >
-                  <InputGroup>
-                    <FieldForm
-                      type="email"
-                      name="email"
-                      label={t('common:email')}
-                      formProps={formProps}
-                      setFormProps={setFormProps}
-                      handleOnChange={thriggerValidation}
-                    />
-                    <InputRightElement top="50%" transform="translate(0,-50%)">
-                      {emailValidation.loading && <Spinner color={hexColor.blueDefault} />}
-                    </InputRightElement>
-                  </InputGroup>
-                  {emailValidation.loading && <Box>{t('validating-email')}</Box>}
-                  {emailValidation.valid && <Box color={hexColor.green}>{t('email-validated')}</Box>}
-                  {emailValidation.error && <Box color={hexColor.danger}>{emailValidation.error}</Box>}
-                  <Box color="blue.default2">{t('email-info')}</Box>
-                </Box>
-              </Box>
+              )}
               <Checkbox size="md" spacing="8px" colorScheme="green" isChecked={marketingConsent} onChange={() => setMarketingConsent(!marketingConsent)}>
                 <Text size="10px" textAlign="left">
                   {t('validators.receive-information')}
@@ -460,6 +477,7 @@ SignupForm.propTypes = {
   buttonStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   invertHandlerPosition: PropTypes.bool,
   formContainerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  hiddenFields: PropTypes.arrayOf(PropTypes.string),
 };
 SignupForm.defaultProps = {
   onHandleSubmit: () => { },
@@ -475,6 +493,7 @@ SignupForm.defaultProps = {
   buttonStyles: {},
   invertHandlerPosition: false,
   formContainerStyle: {},
+  hiddenFields: [],
 };
 
 export default SignupForm;

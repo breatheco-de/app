@@ -14,7 +14,7 @@
   "backToExercises": "Back to Exercises",
   "direct-access-interactive": "Sign up and get access to this free interactive tutorial",
   "direct-access-solution": "Sign up and get access to solution files and videos for free",
-  "direct-access-similar": "Signup and get access to this project for free",
+  "direct-access-similar": "Get access to the {{assetType}} instructions, solution files and videos for free",
   "thanks": "Thanks!",
   "start-interactive": "Start interactive tutorial",
   "start-interactive-cta": "Take me there",
