@@ -24,7 +24,7 @@ import useSignup from '../../hooks/useSignup';
 import useCanAccess from '../../hooks/useCanAccess';
 import useCustomToast from '../../hooks/useCustomToast';
 
-function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mentoryProps, subscriptionData, disableBackButton = false, ...rest }) {
+function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mentoryProps, disableBackButton = false, ...rest }) {
   return (
     <Box display="flex" flexDirection="column" alignItems="center" {...rest}>
       <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
@@ -481,7 +481,7 @@ function MentoringConsumables({
         )}
 
         {mentoryProps?.service && open && !mentoryProps?.mentor && !existConsumablesOnCurrentService ? (
-          <NoConsumablesCard t={t} isLoading={isFetchingDataForModal} mentoryProps={mentoryProps} handleGetMoreMentorships={handleGetMoreMentorships} subscriptionData={subscriptionData} setMentoryProps={setMentoryProps} mt="30px" />
+          <NoConsumablesCard t={t} isLoading={isFetchingDataForModal} mentoryProps={mentoryProps} handleGetMoreMentorships={handleGetMoreMentorships} setMentoryProps={setMentoryProps} mt="30px" />
         ) : open
         && (
           <>

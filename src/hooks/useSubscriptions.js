@@ -76,7 +76,6 @@ const useSubscriptions = () => {
       const subscriptionsDataWithPlanOffer = data?.subscriptions?.length > 0
         ? await Promise.all(data.subscriptions.map(async (s) => {
           const planOffer = await managePlanOffer({ slug: s?.plans[0]?.slug });
-          console.log('planOffer', planOffer);
           return { ...s, type: 'subscription', planOffer };
         }))
         : [];

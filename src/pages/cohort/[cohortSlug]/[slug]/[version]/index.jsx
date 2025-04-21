@@ -705,29 +705,31 @@ function Dashboard() {
                   }}
                 >
                   <Box width="100%" minW={{ base: 'auto', md: 'clamp(300px, 60vw, 770px)' }}>
-                    {(cohortSession?.syllabus_version?.name || cohortProgram?.name) && grantAccess ? (
-                      <Heading as="h1" size="xl">
-                        {cohortSession?.syllabus_version?.name || cohortProgram.name}
-                      </Heading>
-                    ) : (
-                      <SimpleSkeleton
-                        height="60px"
-                        width="100%"
-                        borderRadius="10px"
-                      />
-                    )}
+                    <Box>
+                      {(cohortSession?.syllabus_version?.name || cohortProgram?.name) && grantAccess ? (
+                        <Heading as="h1" size="xl">
+                          {cohortSession?.syllabus_version?.name || cohortProgram.name}
+                        </Heading>
+                      ) : (
+                        <SimpleSkeleton
+                          height="60px"
+                          width="100%"
+                          borderRadius="10px"
+                        />
+                      )}
 
-                    {mainTechnologies && grantAccess ? (
-                      <TagCapsule variant="rounded" gridGap="10px" containerStyle={{ padding: '0px' }} tags={mainTechnologies} style={{ padding: '6px 10px' }} />
-                    ) : (
-                      <SimpleSkeleton
-                        height="34px"
-                        width="290px"
-                        padding="6px 18px 6px 18px"
-                        margin="18px 0"
-                        borderRadius="30px"
-                      />
-                    )}
+                      {mainTechnologies && grantAccess ? (
+                        <TagCapsule variant="rounded" gridGap="10px" containerStyle={{ padding: '0px' }} tags={mainTechnologies} style={{ padding: '6px 10px' }} />
+                      ) : (
+                        <SimpleSkeleton
+                          height="34px"
+                          width="290px"
+                          padding="6px 18px 6px 18px"
+                          margin="18px 0"
+                          borderRadius="30px"
+                        />
+                      )}
+                    </Box>
                     {isBelowTablet && (
                       <Box
                         display={{ base: 'flex', md: 'none' }}
@@ -791,6 +793,7 @@ function Dashboard() {
                             subscriptionData={subscriptionData}
                           />
                         )}
+                        <Feedback maxWidth="none" />
                       </Box>
                     )}
                     {cohortSession?.intro_video && cohortUserDaysCalculated?.isRemainingToExpire === false && (
@@ -830,7 +833,7 @@ function Dashboard() {
                       </>
                     )}
 
-                    {!cohortSession?.available_as_saas && cohortSession?.current_module && dailyModuleData && (
+                    {cohortSession.current_module && dailyModuleData && (
                       <CallToAction
                         background="blue.default"
                         margin="40px 0 auto 0"
@@ -842,7 +845,7 @@ function Dashboard() {
                       />
                     )}
 
-                    {(!cohortSession?.intro_video || ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_user?.role) || (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 3)) && (
+                    {(!cohortSession.intro_video || ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_user?.role) || (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 3)) && (
                       <Box marginTop="36px">
                         <ProgressBar
                           cohortProgram={cohortProgram}
@@ -965,7 +968,7 @@ function Dashboard() {
                           width="100%"
                         />
                       </OnlyFor>
-                      {cohortSession?.stage === 'FINAL_PROJECT' && (
+                      {cohortSession.stage === 'FINAL_PROJECT' && (
                         <FinalProject
                           tasks={taskTodo}
                           studentAndTeachers={onlyStudentsActive}
