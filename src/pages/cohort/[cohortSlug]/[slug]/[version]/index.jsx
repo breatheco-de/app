@@ -618,7 +618,7 @@ function Dashboard() {
           </Box>
           {cohortSession ? (
             <>
-              {isAvailableAsSaas ? (
+              {false && isAvailableAsSaas ? (
                 <Box flex="1 1 auto" pb="20px">
                   <Flex direction="column" gap="10px" mb="20px">
                     <Box display="flex" alignItems="center" gap="10px" justifyContent="space-between">
@@ -660,7 +660,7 @@ function Dashboard() {
                   </Flex>
                   {!isLoadingAssigments ? (
                     <Box display="flex" flexDirection="column" gap="20px">
-                      {hasMicroCohorts
+                      {false && hasMicroCohorts
                         ? cohorts.filter((cohort) => cohortSession.micro_cohorts.some((elem) => elem.slug === cohort.slug))
                           .sort(sortMicroCohorts)
                           .map((microCohort) => (
