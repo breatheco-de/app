@@ -590,8 +590,8 @@ function Dashboard() {
 
   return (
     <Container minHeight="93vh" display="flex" flexDirection="column" maxW="none" padding="0">
-      {isAvailableAsSaas && <CohortHeader onOpenGithubModal={openGithubModalHandler} />}
-      <Container flex="1" background={isAvailableAsSaas && hexColor.lightColor4} maxW="none">
+      {false && isAvailableAsSaas && <CohortHeader onOpenGithubModal={openGithubModalHandler} />}
+      <Container flex="1" background={false && isAvailableAsSaas && hexColor.lightColor4} maxW="none">
         <Box maxW="1280px" width="100%" margin="0 auto">
           <Box width="fit-content" paddingTop="18px" marginBottom="18px">
             <NextChakraLink
