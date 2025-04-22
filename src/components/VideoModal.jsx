@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactPlayer from 'react-player/lazy';
 import PropTypes from 'prop-types';
-import { Box, IconButton, Flex, useBreakpointValue, Text } from '@chakra-ui/react';
+import { Box, IconButton, Flex, useBreakpointValue, Text, useColorModeValue } from '@chakra-ui/react';
 import Icon from './Icon';
 
 function VideoModal({
@@ -17,6 +17,7 @@ function VideoModal({
   const playerWrapperRef = useRef(null);
 
   const isMobile = useBreakpointValue({ base: true, md: false });
+  const taskBarBackground = useColorModeValue('#DCE9FF', 'gray.dark');
 
   useEffect(() => {
     if (!isOpen) {
@@ -38,13 +39,15 @@ function VideoModal({
       const pipHeightPx = 180;
       const pipWidthPx = 320;
 
-      const pipTop = window.scrollY + containerRect.top - pipHeightPx - 20;
-      const pipLeft = window.scrollX + containerRect.left + (containerRect.width / 2) - (pipWidthPx / 2);
+      const pipTop = window.scrollY + containerRect.top - pipHeightPx - 50;
+      const pipLeft = isMobile
+        ? window.scrollX + containerRect.left + (containerRect.width / 2) - (pipWidthPx / 2)
+        : window.scrollX + containerRect.right - pipWidthPx;
 
       setPosition({ top: pipTop, left: pipLeft });
       setTimeout(() => setIsPositioned(true), 0);
     }
-  }, [isOpen, positioningRef, isPositioned]);
+  }, [isOpen, positioningRef, isPositioned, isMobile]);
 
   useEffect(() => {
     if (isOpen && !isExpanded && !isMobile && positioningRef?.current && playerWrapperRef.current) {
@@ -52,8 +55,10 @@ function VideoModal({
       const pipHeightPx = 180;
       const pipWidthPx = 320;
 
-      const pipTop = window.scrollY + containerRect.top - pipHeightPx - 20;
-      const pipLeft = window.scrollX + containerRect.left + (containerRect.width / 2) - (pipWidthPx / 2);
+      const pipTop = window.scrollY + containerRect.top - pipHeightPx - 50;
+      const pipLeft = isMobile
+        ? window.scrollX + containerRect.left + (containerRect.width / 2) - (pipWidthPx / 2)
+        : window.scrollX + containerRect.right - pipWidthPx;
 
       setPosition({ top: pipTop, left: pipLeft });
     }
@@ -64,7 +69,7 @@ function VideoModal({
   }
 
   const pipWidth = '320px';
-  const pipHeight = '180px';
+  const pipHeight = '220px';
   const expandedWidth = '60vw';
   const expandedHeight = '33.75vw';
 
@@ -112,7 +117,7 @@ function VideoModal({
         align="center"
         justify="space-between"
         p={2}
-        bg="gray.100"
+        bg={taskBarBackground}
         borderBottom="1px solid"
         borderColor="gray.300"
         height={headerHeight}
