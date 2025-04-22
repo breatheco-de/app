@@ -3,9 +3,9 @@ import React from 'react';
 import * as prismicH from '@prismicio/helpers';
 import PropTypes from 'prop-types';
 import { Box, useColorModeValue } from '@chakra-ui/react';
-import ArticleMarkdown from '../../src/common/components/MarkDownParser/ArticleMarkdown';
-import Heading from '../../src/common/components/Heading';
-import Text from '../../src/common/components/Text';
+import ArticleMarkdown from '../../src/components/MarkDownParser/ArticleMarkdown';
+import Heading from '../../src/components/Heading';
+import Text from '../../src/components/Text';
 
 function Markdown({ slice }) {
   const rawText = prismicH.asText(slice.primary.markdown);

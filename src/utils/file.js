@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 
 function getDataContentSlugs(dirFiles, locales) {
-  // const fileNames = fs.readdirSync(`${__dirname}/../common/data${file}`);
   const fileNames = fs.readdirSync(dirFiles);
 
   return fileNames.flatMap((fileName) => locales.map((locale) => ({

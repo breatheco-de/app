@@ -6,7 +6,6 @@ import {
   Divider,
   useColorModeValue,
   Flex,
-  useToast,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -21,20 +20,21 @@ import useTranslation from 'next-translate/useTranslation';
 import { format } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
-import { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../../../../js_modules/assignmentHandler/index';
-import useStyle from '../../../../../common/hooks/useStyle';
-import bc from '../../../../../common/services/breathecode';
-import ReactSelect from '../../../../../common/components/ReactSelect';
-import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
-import Heading from '../../../../../common/components/Heading';
-import Icon from '../../../../../common/components/Icon';
-import Text from '../../../../../common/components/Text';
-import DottedTimeline from '../../../../../common/components/DottedTimeline';
-import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
-import KPI from '../../../../../common/components/KPI';
-import Link from '../../../../../common/components/NextChakraLink';
+import { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../../../../components/Assignments/index';
+import useStyle from '../../../../../hooks/useStyle';
+import bc from '../../../../../services/breathecode';
+import ReactSelect from '../../../../../components/ReactSelect';
+import asPrivate from '../../../../../context/PrivateRouteWrapper';
+import Heading from '../../../../../components/Heading';
+import Icon from '../../../../../components/Icon';
+import Text from '../../../../../components/Text';
+import DottedTimeline from '../../../../../components/DottedTimeline';
+import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../../../components/Skeleton';
+import KPI from '../../../../../components/KPI';
+import Link from '../../../../../components/NextChakraLink';
 import { isWindow } from '../../../../../utils';
 import axiosInstance from '../../../../../axios';
+import useCustomToast from '../../../../../hooks/useCustomToast';
 
 const activitiesTemplate = {
   invite_created: {
@@ -108,7 +108,7 @@ const assetsDictionary = {
 function StudentReport() {
   const { t } = useTranslation('student');
   const router = useRouter();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'no-task-url-error' });
   const { query } = router;
   const { cohortSlug, studentId, academy } = query;
   const [selectedCohortUser, setSelectedCohortUser] = useState(null);
@@ -478,7 +478,7 @@ function StudentReport() {
       }
       setCurrentProject({ ...task, status, file });
     } catch (e) {
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:review-url-error'),
         status: 'error',
@@ -692,7 +692,7 @@ function StudentReport() {
                     if (isWindow) {
                       if (task.id) window.open(`/cohort/${cohortSlug}/student/${studentId}/assignment/${task.id}?academy=${academy}`);
                       else {
-                        toast({
+                        createToast({
                           position: 'top',
                           title: t('no-task'),
                           status: 'error',

@@ -1,48 +1,48 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Box, Button, Flex, Image, Link, SkeletonText, useFormControlStyles, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, SkeletonText } from '@chakra-ui/react';
 import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { parseQuerys } from '../../utils/url';
-import { BREATHECODE_HOST, ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
-import Icon from '../../common/components/Icon';
-import Text from '../../common/components/Text';
-import GridContainer from '../../common/components/GridContainer';
-import Heading from '../../common/components/Heading';
+import { BREATHECODE_HOST, ORIGIN_HOST, WHITE_LABEL_ACADEMY, BASE_COURSE } from '../../utils/variables';
+import Icon from '../../components/Icon';
+import Text from '../../components/Text';
+import GridContainer from '../../components/GridContainer';
+import Heading from '../../components/Heading';
 import { error } from '../../utils/logging';
-import bc from '../../common/services/breathecode';
-import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
+import bc from '../../services/breathecode';
+import { generateCohortSyllabusModules } from '../../handlers/cohorts';
 import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow, getBrowserInfo, getQueryString } from '../../utils';
-import useStyle from '../../common/hooks/useStyle';
-import useRigo from '../../common/hooks/useRigo';
-import OneColumnWithIcon from '../../common/components/OneColumnWithIcon';
-import CourseContent from '../../common/components/CourseContent';
-import ShowOnSignUp from '../../common/components/ShowOnSignup';
-import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
-import Instructors from '../../common/components/Instructors';
-import Faq from '../../common/components/Faq';
-import FixedBottomCta from '../../js_modules/projects/FixedBottomCta';
-import TagCapsule from '../../common/components/TagCapsule';
-import MktTrustCards from '../../common/components/MktTrustCards';
-import MktShowPrices from '../../common/components/MktShowPrices';
-import NextChakraLink from '../../common/components/NextChakraLink';
-import useAuth from '../../common/hooks/useAuth';
-import useSignup from '../../common/store/actions/signupAction';
-import { SUBS_STATUS, fetchSuggestedPlan, getAllMySubscriptions, getTranslations } from '../../common/handlers/subscriptions';
+import useStyle from '../../hooks/useStyle';
+import useRigo from '../../hooks/useRigo';
+import OneColumnWithIcon from '../../components/OneColumnWithIcon';
+import CourseContent from '../../components/CourseContent';
+import ShowOnSignUp from '../../components/ShowOnSignup';
+import ReactPlayerV2 from '../../components/ReactPlayerV2';
+import Instructors from '../../components/Instructors';
+import Faq from '../../components/Faq';
+import FixedBottomCta from '../../components/Assets/FixedBottomCta';
+import MktTrustCards from '../../components/MktTrustCards';
+import MktShowPrices from '../../components/MktShowPrices';
+import NextChakraLink from '../../components/NextChakraLink';
+import useAuth from '../../hooks/useAuth';
+import useSignup from '../../store/actions/signupAction';
+import { SUBS_STATUS, fetchSuggestedPlan, getAllMySubscriptions, getTranslations } from '../../handlers/subscriptions';
 import axiosInstance from '../../axios';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
+import useCohortHandler from '../../hooks/useCohortHandler';
 import { reportDatalayer } from '../../utils/requests';
-import MktTwoColumnSideImage from '../../common/components/MktTwoColumnSideImage';
-import { AvatarSkeletonWrapped } from '../../common/components/Skeleton';
-import { usePersistentBySession } from '../../common/hooks/usePersistent';
-import CouponTopBar from '../../common/components/CouponTopBar';
+import MktTwoColumnSideImage from '../../components/MktTwoColumnSideImage';
+import { AvatarSkeletonWrapped } from '../../components/Skeleton';
+import { usePersistentBySession } from '../../hooks/usePersistent';
+import CouponTopBar from '../../components/CouponTopBar';
 import completions from './completion-jobs.json';
-import Rating from '../../common/components/Rating';
-import SimpleModal from '../../common/components/SimpleModal';
-import CustomCarousel from '../../common/components/CustomCarousel';
+import Rating from '../../components/Rating';
+import SimpleModal from '../../components/SimpleModal';
+import CustomCarousel from '../../components/CustomCarousel';
+import useCustomToast from '../../hooks/useCustomToast';
 import { usePlanPrice } from '../../utils/getPriceWithDiscount';
 
 export async function getStaticPaths({ locales }) {
@@ -96,7 +96,7 @@ export async function getStaticProps({ locale, locales, params }) {
       seo: {
         title: data.course_translation.title,
         description: data.course_translation.description,
-        image: `${ORIGIN_HOST}/static/images/4geeks.png`,
+        image: data?.course_translation?.preview_url || `${ORIGIN_HOST}/static/images/4geeks.png`,
         locales,
         locale,
         disableStaticCanonical: true,
@@ -122,7 +122,7 @@ function CoursePage({ data, syllabus }) {
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor, backgroundColor7, backgroundColor8 } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'choose-program-pricing-detail' });
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
@@ -281,7 +281,7 @@ function CoursePage({ data, syllabus }) {
             setReadyToRefetch(true);
           }
           if (dataRequested?.status_code === 400) {
-            toast({
+            createToast({
               position: 'top',
               title: dataRequested?.detail,
               status: 'info',
@@ -293,7 +293,7 @@ function CoursePage({ data, syllabus }) {
             }, 600);
           }
           if (dataRequested?.status_code > 400) {
-            toast({
+            createToast({
               position: 'top',
               title: dataRequested?.detail,
               status: 'error',
@@ -332,10 +332,10 @@ function CoursePage({ data, syllabus }) {
 
       setIsFetching(false);
       if (withAlert) {
-        toast({
+        createToast({
           position: 'top',
           title: t('dashboard:already-have-this-cohort'),
-          status: 'info',
+          status: 'success',
           duration: 5000,
         });
       }
@@ -543,11 +543,7 @@ function CoursePage({ data, syllabus }) {
     <>
       {cleanedStructuredData?.name && (
         <Head>
-          <script
-            type="application/ld+json"
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(cleanedStructuredData) }}
-          />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(cleanedStructuredData) }} />
         </Head>
       )}
       <FixedBottomCta
@@ -663,7 +659,7 @@ function CoursePage({ data, syllabus }) {
               alignSelf="center"
               maxWidth="396px"
               description={isAuthenticated ? getAlternativeTranslation('join-cohort-description') : getAlternativeTranslation('sign-up-to-plus-description')}
-              borderColor={data.color || 'green.400'}
+              borderColor="green.400"
               textAlign="center"
               gridGap="11px"
               padding={data?.course_translation?.video_url ? '0 10px' : '24px 10px 0 10px'}
@@ -979,7 +975,7 @@ function CoursePage({ data, syllabus }) {
           />
         )}
 
-        {freePlan && (
+        {featuredPlanToEnroll?.type !== 'FREE' && (
           <MktTwoColumnSideImage
             mt="6.25rem"
             imageUrl={getAlternativeTranslation('havent-decided.image')}
@@ -987,7 +983,7 @@ function CoursePage({ data, syllabus }) {
             title={getAlternativeTranslation('havent-decided.title')}
             description={getAlternativeTranslation('havent-decided.description')}
             informationSize="Medium"
-            buttonUrl={getAlternativeTranslation('havent-decided.button-link')}
+            buttonUrl={BASE_COURSE ? `/${lang}/bootcamp/${BASE_COURSE}` : `/${lang}/bootcamp/coding-introduction`}
             buttonLabel={getAlternativeTranslation('havent-decided.button')}
             background="transparent"
             textBackgroundColor="#E1F5FF"

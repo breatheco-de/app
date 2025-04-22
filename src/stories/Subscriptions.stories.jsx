@@ -1,5 +1,5 @@
-import React from 'react';
-import Subscriptions from '../js_modules/profile/Subscriptions';
+
+import Subscriptions from '../components/Profile/Subscriptions';
 
 export default {
   title: 'Components/Subscriptions',

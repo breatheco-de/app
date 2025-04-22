@@ -1,24 +1,25 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect, useRef } from 'react';
-import { Box, Flex, Container, Image, Button, useToast, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, Container, Image, Button, useColorModeValue } from '@chakra-ui/react';
 import Link from 'next/link';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
-import bc from '../../common/services/breathecode';
-import useStyle from '../../common/hooks/useStyle';
-import useAuth from '../../common/hooks/useAuth';
-import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
-import Text from '../../common/components/Text';
-import Icon from '../../common/components/Icon';
+import bc from '../../services/breathecode';
+import useStyle from '../../hooks/useStyle';
+import useAuth from '../../hooks/useAuth';
+import ReactPlayerV2 from '../../components/ReactPlayerV2';
+import Text from '../../components/Text';
+import Icon from '../../components/Icon';
 import { toCapitalize, languageFix } from '../../utils';
-import Heading from '../../common/components/Heading';
-import ProjectList from '../../js_modules/projects/ProjectList';
-import DraggableContainer from '../../common/components/DraggableContainer';
-import GridContainer from '../../common/components/GridContainer';
-import MktEventCards from '../../common/components/MktEventCards';
-import ProjectsLoader from '../../common/components/ProjectsLoader';
+import Heading from '../../components/Heading';
+import ProjectList from '../../components/Assets/ProjectList';
+import DraggableContainer from '../../components/DraggableContainer';
+import GridContainer from '../../components/GridContainer';
+import MktEventCards from '../../components/MktEventCards';
+import ProjectsLoader from '../../components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
+import useCustomToast from '../../hooks/useCustomToast';
 
 let contentPerPage = 10;
 
@@ -94,7 +95,7 @@ export const getStaticPaths = async ({ locales }) => {
   }
   const relevantSlugs = publicTechs.map((tech) => tech.slug);
 
-  const assetList = await import('../../lib/asset-list.json').then((res) => res.default);
+  const assetList = await import('../../../public/asset-list.json').then((res) => res.default);
   const filteredTechnologies = assetList.landingTechnologies.filter((tech) => relevantSlugs.includes(tech.slug));
 
   const paths = filteredTechnologies.flatMap((tech) => locales.map((locale) => ({
@@ -131,12 +132,12 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   else contentPerPage = 10;
 
   const response = await bc.lesson({ sort_priority: 1, visibility: 'PUBLIC', is_deprecated: false }).techsBySort();
-  const technologiesFetched = response.data || [];
+  const technologiesFetched = response?.data || [];
 
   const isSortPriorityOne = technologiesFetched.some((tech) => tech.slug === slug);
   if (!isSortPriorityOne) contentPerPage = 20;
 
-  const allTechnologies = await import('../../lib/asset-list.json');
+  const allTechnologies = await import('../../../public/asset-list.json');
   const assetList = {
     landingTechnologies: allTechnologies?.landingTechnologies.filter(
       (tech) => tech.lang === locale && tech.slug === slug,
@@ -209,7 +210,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
   const [isAtEnd, setIsAtEnd] = useState(false);
   const [isAtStart, setIsAtStart] = useState(true);
   const router = useRouter();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'errors-no-data-error' });
   const scrollRef = useRef();
   const marketingInfoExist = Object.keys(marketingInfo).length > 0;
   const exercises = assetData?.filter((asset) => asset?.asset_type === 'EXERCISE');
@@ -285,7 +286,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
 
   useEffect(() => {
     if ((!technologyData?.slug || assetData?.length === 0)) {
-      toast({
+      createToast({
         position: 'top',
         title: t('errors.no-data'),
         status: 'error',

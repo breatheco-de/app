@@ -6,7 +6,7 @@ import { Redis } from '@upstash/redis';
 import TagManager from 'react-gtm-module';
 import { parseQuerys } from './url';
 import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from './variables';
-import bc from '../common/services/breathecode';
+import bc from '../services/breathecode';
 import { log } from './logging';
 import { getExtensionName } from './index';
 

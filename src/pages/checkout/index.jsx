@@ -10,7 +10,6 @@ import {
   InputGroup,
   InputRightElement,
   Skeleton,
-  useToast,
   Menu,
   MenuButton,
   MenuList,
@@ -23,29 +22,30 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import { Form, Formik } from 'formik';
 import { getDataContentProps } from '../../utils/file';
-import bc from '../../common/services/breathecode';
-import useAuth from '../../common/hooks/useAuth';
-import useSession from '../../common/hooks/useSession';
-import ContactInformation from '../../js_modules/checkout/ContactInformation';
-import ChooseYourClass from '../../js_modules/checkout/ChooseYourClass';
+import bc from '../../services/breathecode';
+import useAuth from '../../hooks/useAuth';
+import useSession from '../../hooks/useSession';
+import ContactInformation from '../../components/Checkout/ContactInformation';
+import ChooseYourClass from '../../components/Checkout/ChooseYourClass';
 import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem, getBrowserInfo } from '../../utils';
-import Summary from '../../js_modules/checkout/Summary';
-import PaymentInfo from '../../js_modules/checkout/PaymentInfo';
-import useSignup from '../../common/store/actions/signupAction';
+import Summary from '../../components/Checkout/Summary';
+import PaymentInfo from '../../components/Checkout/PaymentInfo';
+import useSignup from '../../store/actions/signupAction';
 import axiosInstance from '../../axios';
-import LoaderScreen from '../../common/components/LoaderScreen';
-import ModalInfo from '../../common/components/ModalInfo';
-import useStyle from '../../common/hooks/useStyle';
-import Stepper from '../../js_modules/checkout/Stepper';
-import ServiceSummary from '../../js_modules/checkout/ServiceSummary';
-import Text from '../../common/components/Text';
-import SelectServicePlan from '../../js_modules/checkout/SelectServicePlan';
+import LoaderScreen from '../../components/LoaderScreen';
+import ModalInfo from '../../components/ModalInfo';
+import useStyle from '../../hooks/useStyle';
+import Stepper from '../../components/Checkout/Stepper';
+import ServiceSummary from '../../components/Checkout/ServiceSummary';
+import Text from '../../components/Text';
+import SelectServicePlan from '../../components/Checkout/SelectServicePlan';
 import { BASE_PLAN, ORIGIN_HOST, BREATHECODE_HOST, currenciesSymbols } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
-import { getTranslations, processPlans } from '../../common/handlers/subscriptions';
-import Icon from '../../common/components/Icon';
-import { usePersistentBySession } from '../../common/hooks/usePersistent';
-import AcordionList from '../../common/components/AcordionList';
+import { getTranslations, processPlans } from '../../handlers/subscriptions';
+import Icon from '../../components/Icon';
+import { usePersistentBySession } from '../../hooks/usePersistent';
+import AcordionList from '../../components/AcordionList';
+import useCustomToast from '../../hooks/useCustomToast';
 import { handlePriceTextWithCoupon } from '../../utils/getPriceWithDiscount';
 
 export const getStaticProps = async ({ locale, locales }) => {
@@ -87,13 +87,12 @@ function Checkout() {
     loading: true,
   });
   const [showPaymentDetails, setShowPaymentDetails] = useState(true);
-  const [serviceToRequest, setServiceToRequest] = useState({});
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [allCoupons, setAllCoupons] = useState([]);
   const [originalPlan, setOriginalPlan] = useState(null);
   const {
     state, toggleIfEnrolled, handleStep, handleChecking, setCohortPlans,
-    handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep, setLoader,
+    isFirstStep, isSecondStep, isThirdStep, isFourthStep, setLoader,
     setSelectedPlanCheckoutData, setCheckoutData, getPriceWithDiscount, getSelfAppliedCoupon,
   } = useSignup();
   const { stepIndex, checkoutData, selectedPlanCheckoutData, alreadyEnrolled, serviceProps, loader, selfAppliedCoupon, cohortPlans } = state;
@@ -114,12 +113,10 @@ function Checkout() {
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { user, isAuthenticated, isLoading } = useAuth();
   const { userSession } = useSession();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'coupon-plan-email-detail' });
   const plan = getQueryString('plan');
   const queryPlans = getQueryString('plans');
   const queryPlanId = getQueryString('plan_id');
-  const mentorshipServiceSetSlug = getQueryString('mentorship_service_set');
-  const eventTypeSetSlug = getQueryString('event_type_set');
   const planFormated = (plan && encodeURIComponent(plan)) || '';
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
@@ -136,13 +133,10 @@ function Checkout() {
   }, [coupon, couponQuery]);
 
   const queryPlanExists = planFormated !== undefined && planFormated?.length > 0;
-  const queryMentorshipServiceSlugExists = mentorshipServiceSetSlug && mentorshipServiceSetSlug?.length > 0;
-  const queryEventTypeSetSlugExists = eventTypeSetSlug && eventTypeSetSlug?.length > 0;
   const queryPlansExists = queryPlans && queryPlans?.length > 0;
   const showPriceInformation = !readyToSelectService && isFourthStep;
   const isPaymentSuccess = selectedPlanCheckoutData?.payment_success;
 
-  const queryServiceExists = queryMentorshipServiceSlugExists || queryEventTypeSetSlugExists;
   const [menuWidth, setMenuWidth] = useState('auto');
   const [isOpenned, setIsOpenned] = useState(false);
   const flexRef = useRef(null);
@@ -197,7 +191,7 @@ function Checkout() {
     const isCouponAlreadyApplied = allCoupons.some((existingCoupon) => existingCoupon?.slug === couponToApply);
 
     if (isCouponAlreadyApplied) {
-      toast({
+      createToast({
         position: 'top',
         title: t('signup:alert-message.coupon-already-applied'),
         status: 'info',
@@ -229,7 +223,7 @@ function Checkout() {
         } else {
           setDiscountCoupon(null);
           setCouponError(true);
-          toast({
+          createToast({
             position: 'top',
             title: t('signup:coupon-error'),
             status: 'error',
@@ -300,7 +294,7 @@ function Checkout() {
     })
       .catch((err) => {
         if (err) {
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:no-plan-configuration'),
             status: 'info',
@@ -348,85 +342,16 @@ function Checkout() {
     if (!isAuthenticated && !tokenExists) {
       setLoader('plan', false);
     }
-    if (!queryPlanExists && !queryPlansExists && !queryEventTypeSetSlugExists && !queryMentorshipServiceSlugExists && isAuthenticated) {
+    if (!queryPlanExists && !queryPlansExists && isAuthenticated) {
       router.push('/pricing');
     }
-    if (isAuthenticated && isAvailableToSelectPlan && queryServiceExists) {
+    if (isAuthenticated && isAvailableToSelectPlan) {
+      // If exists plan to select show the select service plan view
       setReadyToSelectService(true);
       setShowChooseClass(false);
     }
 
-    if (!queryPlanExists && tokenExists && isAuthenticated && !isAvailableToSelectPlan) {
-      setShowChooseClass(false);
-      setLoader('plan', true);
-      bc.payment({
-        status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
-      }).subscriptions()
-        .then(({ data }) => {
-          const subscriptionRespData = data;
-          const items = {
-            subscriptions: subscriptionRespData?.subscriptions,
-            plan_financings: subscriptionRespData?.plan_financings,
-          };
-          const subscription = items?.subscriptions?.find(
-            (item) => (
-              item?.selected_mentorship_service_set?.slug === mentorshipServiceSetSlug
-              || item?.selected_event_type_set?.slug === eventTypeSetSlug
-            ),
-          );
-          const planFinanncing = items?.plan_financings?.find(
-            (item) => (
-              item?.selected_mentorship_service_set?.slug === mentorshipServiceSetSlug
-              || item?.selected_event_type_set?.slug === eventTypeSetSlug
-            ),
-          );
-
-          const currentSubscription = subscription || planFinanncing;
-          const isMentorshipType = currentSubscription?.selected_mentorship_service_set?.slug === mentorshipServiceSetSlug;
-
-          const serviceData = isMentorshipType
-            ? currentSubscription?.selected_mentorship_service_set
-            : currentSubscription?.selected_event_type_set;
-
-          if (serviceData) {
-            bc.payment({
-              academy: Number(serviceData?.academy?.id),
-              event_type_set: !isMentorshipType ? eventTypeSetSlug : undefined,
-              mentorship_service_set: isMentorshipType ? mentorshipServiceSetSlug : undefined,
-            }).service().getAcademyService()
-              .then(async (resp) => {
-                const respData = await resp.json();
-                if (resp.status > 400) {
-                  setShowChooseClass(true);
-                  toast({
-                    title: respData.detail,
-                    status: 'error',
-                    duration: 6000,
-                    position: 'top',
-                  });
-                }
-                if (resp.status < 400 && respData !== undefined && respData.length > 0) {
-                  handleStep(2);
-                  handleServiceToConsume({
-                    ...respData[0],
-                    serviceInfo: {
-                      type: isMentorshipType ? 'mentorship' : 'event',
-                      ...serviceData,
-                    },
-                  });
-                  setServiceToRequest(respData[0]);
-                }
-              });
-          } else {
-            setReadyToSelectService(true);
-            setShowChooseClass(false);
-          }
-        })
-        .finally(() => {
-          setLoader('plan', false);
-        });
-    }
-    if (!queryServiceExists && queryPlanExists && isAuthenticated && tokenExists && !cohortsData.loading) {
+    if (queryPlanExists && isAuthenticated && tokenExists && !cohortsData.loading) {
       setLoader('plan', true);
       setShowChooseClass(false);
       bc.payment().getPlan(planFormated)
@@ -434,7 +359,7 @@ function Checkout() {
           if (!resp) {
             setLoader('plan', false);
             router.push('/pricing');
-            toast({
+            createToast({
               position: 'top',
               title: t('alert-message:no-plan-configuration'),
               status: 'error',
@@ -451,7 +376,7 @@ function Checkout() {
 
             if ((resp && resp?.status >= 400) || resp?.data.length === 0) {
               setShowChooseClass(true);
-              toast({
+              createToast({
                 position: 'top',
                 title: t('alert-message:no-plan-configuration'),
                 status: 'info',
@@ -527,7 +452,7 @@ function Checkout() {
         })
         .catch(() => {
           setLoader('plan', false);
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:no-plan-configuration'),
             status: 'info',
@@ -656,6 +581,11 @@ function Checkout() {
         }
       }
 
+      if (originalPlan?.selectedPlan?.type === 'FREE') {
+        financingText = t('free_plan');
+        return <Text size="16px" color="green.400">{financingText}</Text>;
+      }
+
       if (financingOptions.length === 0) {
         if (monthlyPayment) {
           const finalMonthlyPrice = applyDiscounts(monthlyPayment, discountValues);
@@ -740,7 +670,7 @@ function Checkout() {
             .then((resp) => {
               const data = resp?.data;
               if (data === undefined) {
-                toast({
+                createToast({
                   position: 'top',
                   status: 'info',
                   title: t('signup:alert-message.email-already-sent'),
@@ -748,7 +678,7 @@ function Checkout() {
                   duration: 6000,
                 });
               } else {
-                toast({
+                createToast({
                   position: 'top',
                   status: 'success',
                   title: t('signup:alert-message.email-sent-to', { email: data?.email }),
@@ -808,7 +738,7 @@ function Checkout() {
           overflow="auto"
         >
           {/* Stepper */}
-          {!readyToSelectService && !serviceToRequest?.id && (
+          {!readyToSelectService && (
             <Stepper
               hideIndexList={showChooseClass ? [] : [1]}
               stepIndex={stepIndex}
@@ -883,7 +813,7 @@ function Checkout() {
                         )}
                         <Flex justifyContent="space-between" width="full" alignItems="center">
                           {showPaymentDetails && renderPlanDetails()}
-                          {!queryPlanId && (originalPlan?.financingOptions.length > 0 || originalPlan?.hasSubscriptionMethod) && showPaymentDetails && (
+                          {!queryPlanId && originalPlan?.selectedPlan?.type !== 'FREE' && (originalPlan?.financingOptions.length > 0 || originalPlan?.hasSubscriptionMethod) && showPaymentDetails && (
                             <Flex flexDirection="column" gap="4px">
                               <Heading as="h3" size="sm" width="100%" position="relative">
                                 <Menu>

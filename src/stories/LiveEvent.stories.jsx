@@ -1,6 +1,6 @@
 import React from 'react';
 import { addMinutes, subMinutes, addDays, addHours } from 'date-fns';
-import LiveEvent from '../common/components/LiveEvent';
+import LiveEvent from '../components/LiveEvent';
 import { Box } from '@chakra-ui/react';
 import { ORIGIN_HOST } from '../utils/variables';
 

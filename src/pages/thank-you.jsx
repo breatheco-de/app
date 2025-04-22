@@ -3,11 +3,11 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
-import Heading from '../common/components/Heading';
-import Text from '../common/components/Text';
-import Icon from '../common/components/Icon';
+import Heading from '../components/Heading';
+import Text from '../components/Text';
+import Icon from '../components/Icon';
 import { getStorageItem } from '../utils';
-import useStyle from '../common/hooks/useStyle';
+import useStyle from '../hooks/useStyle';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'thank-you');

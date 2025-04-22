@@ -3,13 +3,13 @@ import { Button } from '@chakra-ui/react';
 import { useState } from 'react';
 import styles from '../../styles/Home.module.css';
 import { isDevMode } from '../utils';
-import ModalToGetAccess, { stageType } from '../common/components/ModalToGetAccess';
-import MktInfoCards from '../common/components/MktInfoCards';
-import MktTrustCards from '../common/components/MktTrustCards';
-import MktTestimonials from '../common/components/MktTestimonials';
-import { getSubscriptions, validatePlanExistence } from '../common/handlers/subscriptions';
-import useAuth from '../common/hooks/useAuth';
-import bc from '../common/services/breathecode';
+import ModalToGetAccess, { stageType } from '../components/ModalToGetAccess';
+import MktInfoCards from '../components/MktInfoCards';
+import MktTrustCards from '../components/MktTrustCards';
+import MktTestimonials from '../components/MktTestimonials';
+import { getSubscriptions, validatePlanExistence } from '../handlers/subscriptions';
+import useAuth from '../hooks/useAuth';
+import bc from '../services/breathecode';
 
 export const getStaticProps = () => {
   if (!isDevMode) {
@@ -47,6 +47,7 @@ export default function Example() {
             setPlanData({
               ...data,
               event: respEvent?.data,
+              consumableType: 'event',
               academyServiceSlug: '',
             });
             setStage(stageType.outOfConsumables);

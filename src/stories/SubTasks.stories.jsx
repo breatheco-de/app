@@ -1,6 +1,6 @@
 import React from 'react';
 
-import SubTasks from '../common/components/MarkDownParser/SubTasks';
+import SubTasks from '../components/MarkDownParser/SubTasks';
 
 export default {
   title: 'Components/SubTasks',
