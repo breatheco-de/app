@@ -91,7 +91,7 @@ function LiveEvent({
           <Box
             background={bgColor2}
             border={mainEvents.some((event) => isLiveOrStarting(new Date(event?.starting_at), new Date((event?.ended_at || event?.ending_at)))) ? '2px solid' : 'none'} // Updated condition check
-            borderColor={CustomTheme.colors.blue.default2}
+            borderColor={CustomTheme.colors.blue.default}
             padding="10px"
             borderRadius="19px"
             width="100%"

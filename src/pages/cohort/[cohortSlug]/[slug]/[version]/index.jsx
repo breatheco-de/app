@@ -609,8 +609,8 @@ function Dashboard() {
               alignItems="center"
               fontWeight="700"
               gridGap="12px"
-              color="#0097CF"
-              _focus={{ boxShadow: 'none', color: '#0097CF' }}
+              color="blue.default"
+              _focus={{ boxShadow: 'none', color: 'blue.default' }}
             >
               <Icon
                 icon="arrowLeft"
@@ -629,100 +629,110 @@ function Dashboard() {
               {isAvailableAsSaas ? (
                 <Box flex="1 1 auto" pb="20px">
                   {cohortSession?.intro_video ? (
-                    <Flex direction={{ base: 'column', md: isVideoVisible ? 'row' : 'column' }} gap="20px" mb="20px">
-                      <Box flex={1}>
-                        {isVideoVisible ? (
-                          <Flex direction="column" gap="10px" height="100%">
-                            <Flex gap="10px">
-                              <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
-                              <Heading as="h1" size="m">
-                                {cohortSession.name}
-                              </Heading>
-                            </Flex>
-                            <Text fontSize="16px">
-                              {t('micro-cohorts-description')}
-                            </Text>
-                            <Button
-                              display="flex"
-                              padding="0"
-                              alignSelf="flex-start"
-                              flexDirection="row"
-                              alignItems="center"
-                              fontWeight="700"
-                              color="#0097CF"
-                              background="transparent"
-                              _focus={{ boxShadow: 'none', color: '#0097CF' }}
-                              _hover={{ background: 'transparent' }}
-                              onClick={() => {
-                                continueWhereYouLeft(cohortSession);
-                              }}
-                            >
-                              <span>
-                                {t('saasCohortcallToAction.buttonText')}
-                              </span>
-                              <Icon
-                                icon="longArrowRight"
-                                width="20px"
-                                height="20px"
-                                style={{ marginLeft: '7px' }}
-                                color="currentColor"
-                              />
-                            </Button>
-                            <Button variant="link" alignSelf="flex-end" mt="auto" onClick={() => setIsVideoVisible(false)}>
-                              {t('hide-content')}
-                            </Button>
-                          </Flex>
-                        ) : (
-                          <Flex direction="column" gap="10px">
-                            <Flex justifyContent="space-between" alignItems="center">
-                              <Flex gap="10px">
-                                <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
-                                <Heading as="h1" size="m">
-                                  {cohortSession.name}
-                                </Heading>
+                    <Flex direction="column" mb="20px">
+                      <Flex direction={{ base: 'column', md: isVideoVisible ? 'row' : 'column' }} gap="20px">
+                        <Box flex={1}>
+                          {isVideoVisible ? (
+                            <Flex direction="column" alignItems="center" gap="10px" height="100%">
+                              <Flex direction="column" gap="10px" height="100%" wrap="wrap">
+                                <Flex gap="10px">
+                                  <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
+                                  <Heading as="h1" size="m">
+                                    {cohortSession.name}
+                                  </Heading>
+                                </Flex>
+                                <Text fontSize="16px">
+                                  {t('micro-cohorts-description')}
+                                </Text>
+                                <Button
+                                  display="flex"
+                                  padding="0"
+                                  alignSelf="flex-start"
+                                  flexDirection="row"
+                                  alignItems="center"
+                                  fontWeight="700"
+                                  color="blue.default"
+                                  background="transparent"
+                                  _focus={{ boxShadow: 'none', color: 'blue.default' }}
+                                  _hover={{ background: 'transparent' }}
+                                  onClick={() => {
+                                    continueWhereYouLeft(cohortSession);
+                                  }}
+                                >
+                                  <span>
+                                    {t('saasCohortcallToAction.buttonText')}
+                                  </span>
+                                  <Icon
+                                    icon="longArrowRight"
+                                    width="20px"
+                                    height="20px"
+                                    style={{ marginLeft: '7px' }}
+                                    color="currentColor"
+                                  />
+                                </Button>
                               </Flex>
-                              <Button variant="link" onClick={() => setIsVideoVisible(true)}>
-                                {t('show-content')}
-                              </Button>
                             </Flex>
-                            <Button
-                              display="flex"
-                              padding="0"
-                              alignSelf="flex-start"
-                              flexDirection="row"
-                              alignItems="center"
-                              fontWeight="700"
-                              color="#0097CF"
-                              background="transparent"
-                              _focus={{ boxShadow: 'none', color: '#0097CF' }}
-                              _hover={{ background: 'transparent' }}
-                              onClick={() => {
-                                continueWhereYouLeft(cohortSession);
-                              }}
-                            >
-                              <span>
-                                {t('saasCohortcallToAction.buttonText')}
-                              </span>
-                              <Icon
-                                icon="longArrowRight"
-                                width="20px"
-                                height="20px"
-                                style={{ marginLeft: '7px' }}
-                                color="currentColor"
-                              />
-                            </Button>
-                          </Flex>
-                        )}
-                      </Box>
-                      {isVideoVisible && (
-                        <Box flex={1} borderRadius="12px" overflow="hidden">
-                          <ReactPlayerV2
-                            url={cohortSession.intro_video}
-                            width="100%"
-                            height="100%"
-                            iframeStyle={{ aspectRatio: '16/9', borderRadius: '12px' }}
-                          />
+                          ) : (
+                            <Flex direction="column" gap="10px">
+                              <Flex justifyContent="space-between" alignItems="center" wrap="wrap">
+                                <Flex gap="10px" alignItems="center">
+                                  <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
+                                  <Heading as="h1" size="m">
+                                    {cohortSession.name}
+                                  </Heading>
+                                </Flex>
+                                <Button
+                                  display="flex"
+                                  padding="0"
+                                  alignSelf="flex-start"
+                                  flexDirection="row"
+                                  alignItems="center"
+                                  fontWeight="700"
+                                  color="blue.default"
+                                  background="transparent"
+                                  _focus={{ boxShadow: 'none', color: 'blue.default' }}
+                                  _hover={{ background: 'transparent' }}
+                                  onClick={() => {
+                                    continueWhereYouLeft(cohortSession);
+                                  }}
+                                >
+                                  <span>
+                                    {t('saasCohortcallToAction.buttonText')}
+                                  </span>
+                                  <Icon
+                                    icon="longArrowRight"
+                                    width="20px"
+                                    height="20px"
+                                    style={{ marginLeft: '7px' }}
+                                    color="currentColor"
+                                  />
+                                </Button>
+                              </Flex>
+                            </Flex>
+                          )}
                         </Box>
+                        {isVideoVisible && (
+                          <Box flex={1} borderRadius="12px" overflow="hidden">
+                            <ReactPlayerV2
+                              url={cohortSession.intro_video}
+                              width="100%"
+                              height="100%"
+                              iframeStyle={{ aspectRatio: '16/9', borderRadius: '12px' }}
+                            />
+                          </Box>
+                        )}
+                      </Flex>
+                      {isVideoVisible && (
+                        <Button alignSelf="center" color="auto" display="flex" gap="10px" variant="link" mt="auto" onClick={() => setIsVideoVisible(false)}>
+                          {t('hide-content')}
+                          <Icon icon="arrowUp" width="10px" height="10px" />
+                        </Button>
+                      )}
+                      {!isVideoVisible && (
+                        <Button variant="link" color="auto" onClick={() => setIsVideoVisible(true)}>
+                          {t('show-content')}
+                          <Icon icon="arrowDown" width="15px" height="15px" />
+                        </Button>
                       )}
                     </Flex>
                   ) : (
@@ -740,9 +750,9 @@ function Dashboard() {
                           alignItems="center"
                           fontWeight="700"
                           gridGap="12px"
-                          color="#0097CF"
+                          color="blue.default"
                           background="transparent"
-                          _focus={{ boxShadow: 'none', color: '#0097CF' }}
+                          _focus={{ boxShadow: 'none', color: 'blue.default' }}
                           _hover={{ background: 'transparent' }}
                           onClick={() => {
                             continueWhereYouLeft(cohortSession);
@@ -910,7 +920,7 @@ function Dashboard() {
                                 <>
                                   <span>
                                     <AccordionButton display="flex" gridGap="16px" padding="10.5px 20px" borderRadius="17px">
-                                      <Icon icon="cameraFilled" width="29px" height="16px" color="#0097CF" />
+                                      <Icon icon="cameraFilled" width="29px" height="16px" color="blue.default" />
                                       <Box as="span" fontSize="21px" fontWeight={700} flex="1" textAlign="left">
                                         {t('intro-video-title')}
                                       </Box>

@@ -76,6 +76,8 @@ function CustomButton({ children, infoTooltip, ...props }) {
             textAlign="center"
             p={2}
             borderRadius="8px"
+            maxWidth="200px"
+            padding="8px"
           >
             <PopoverArrow bg={hexColor.blueLight} />
             <PopoverHeader
@@ -83,19 +85,21 @@ function CustomButton({ children, infoTooltip, ...props }) {
               alignItems="center"
               justifyContent="center"
               border="none"
-              fontSize="16px"
+              fontSize="14px"
               padding="0"
               mb="8px"
-              gap="8px"
+              gap="4px"
             >
-              {infoTooltip.icon && (
-                <Icon icon={infoTooltip.icon} width="30px" height="30px" color={hexColor.blueDefault} />
+              {infoTooltip.leftComponent && (
+                <>
+                  {infoTooltip.leftComponent}
+                </>
               )}
               {infoTooltip.title}
             </PopoverHeader>
             <PopoverBody
               padding="0"
-              fontSize="14px"
+              fontSize="12px"
               color="#4C648F"
               border="none"
               py={1}
@@ -104,7 +108,11 @@ function CustomButton({ children, infoTooltip, ...props }) {
               {infoTooltip.description}
             </PopoverBody>
             {infoTooltip.learnMoreLink && (
-              <PopoverFooter border="none" padding="0" fontWeight="bold">
+              <PopoverFooter
+                border="none"
+                padding="0"
+                fontSize="12px"
+              >
                 <Link
                   href={infoTooltip.learnMoreLink}
                   textAlign="center"
@@ -126,7 +134,7 @@ function CustomButton({ children, infoTooltip, ...props }) {
 CustomButton.propTypes = {
   children: PropTypes.node.isRequired,
   infoTooltip: PropTypes.shape({
-    icon: PropTypes.string,
+    leftComponent: PropTypes.element,
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     learnMoreLink: PropTypes.string,
@@ -205,15 +213,15 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
           <Flex gap="16px" flexDirection={{ base: 'column', sm: 'row' }} width={{ base: '100%', sm: 'auto' }}>
             {cohortSession.cohort_user.role === 'STUDENT' ? (
               <>
-                <Popover placement="bottom" isOpen={isOpen} onClose={onClose}>
+                <Popover placement="bottom-start" isOpen={isOpen} onClose={onClose}>
                   <PopoverTrigger>
                     <Box onClick={onOpen}>
                       <CustomButton
                         infoTooltip={{
-                          icon: 'live-event-opaque',
+                          leftComponent: <Icon icon="live-event-opaque" width="19px" height="19px" color={hexColor.blueDefault} />,
                           title: t('common:see-upcoming-events'),
                           description: t('common:see-upcoming-events-description'),
-                          learnMoreLink: '/lesson/interacting-in-workshops',
+                          learnMoreLink: '/docs/knowledge-base-4geeks/live-events-workshops-and-classes',
                         }}
                       >
                         <Icon icon="live-event-opaque" width="42px" height="42px" />
@@ -223,14 +231,22 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
                       </CustomButton>
                     </Box>
                   </PopoverTrigger>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverBody display="flex" flexDirection="column" alignItems="center" background={hexColor.lightGreyBackground} borderRadius="8px">
+                  <PopoverContent width="290px">
+                    <PopoverArrow width="20px !important" height="10px !important" left="-62px !important" />
+                    <PopoverBody
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="center"
+                      background={hexColor.lightGreyBackground}
+                      borderRadius="8px"
+                      padding="8px"
+                    >
                       <LiveEventWidgetV2
                         mainClasses={liveClasses || []}
                         otherEvents={upcomingEvents || []}
                         cohorts={cohorts || []}
                         background={hexColor.lightGreyBackground}
+                        padding="0"
                       />
                     </PopoverBody>
                   </PopoverContent>
@@ -239,10 +255,10 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
                 <CustomButton
                   onClick={() => router.push('/mentorship/schedule')}
                   infoTooltip={{
-                    icon: 'group2',
+                    leftComponent: <ProfilesSection size="19px" profiles={mentors} />,
                     title: t('common:mentorships'),
                     description: t('common:mentorship-description'),
-                    learnMoreLink: '/lesson/mentoring-sessons',
+                    learnMoreLink: '/docs/knowledge-base-4geeks/mentoring-sessions',
                   }}
                 >
                   <ProfilesSection size="40px" profiles={mentors} />

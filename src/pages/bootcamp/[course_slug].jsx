@@ -580,7 +580,7 @@ function CoursePage({ data, syllabus }) {
                       <Heading as="span" size={{ base: '38px', md: '40px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
                         {!isVisibilityPublic ? getAlternativeTranslation('title-connectors.learning') : getAlternativeTranslation('title-connectors.start')}
                       </Heading>
-                      <Heading as="span" color="blue.default2" width="100%" size={{ base: '42px', md: '45px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
+                      <Heading as="span" color="blue.default" width="100%" size={{ base: '42px', md: '45px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
                         {data?.course_translation?.title}
                       </Heading>
                       <Heading as="span" size={{ base: '38px', md: '40px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
@@ -828,7 +828,7 @@ function CoursePage({ data, syllabus }) {
             <Heading size={{ base: '24px', md: '34px' }} lineHeight="normal" textAlign="center">
               {getAlternativeTranslation('build-connector.what-you-will')}
               {' '}
-              <Box as="span" color="blue.default2">
+              <Box as="span" color="blue.default">
                 {getAlternativeTranslation('build-connector.build')}
               </Box>
             </Heading>
@@ -853,7 +853,7 @@ function CoursePage({ data, syllabus }) {
                   <Heading size={{ base: '24px', md: '34px' }} textAlign="center">
                     {getAlternativeTranslation('why-learn-4geeks-connector.why-learn-with')}
                     {' '}
-                    <Box as="span" color="blue.default2">4Geeks</Box>
+                    <Box as="span" color="blue.default">4Geeks</Box>
                     ?
                   </Heading>
                   <Text size="18px" margin={{ base: 'auto', md: '0 8vw' }} textAlign="center" style={{ textWrap: 'balance' }}>
@@ -992,7 +992,7 @@ function CoursePage({ data, syllabus }) {
             background="transparent"
             textBackgroundColor="#E1F5FF"
             imagePosition="right"
-            titleColor="blue.default2"
+            titleColor="blue.default"
             textSideProps={{
               flex: 2,
             }}

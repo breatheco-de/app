@@ -21,6 +21,7 @@ import {
   ModalCloseButton,
   useDisclosure,
   VStack,
+  Image,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -312,8 +313,8 @@ function CohortPanelContent({
         <ModalContent>
           <ModalBody padding="10px">
             <VStack spacing={4} align="stretch" flexDirection="column" borderRadius="8px">
-              {certfLink !== '#' ? (
-                <Box as="iframe" src={certfLink} width="100%" height="400px" border="none" flexGrow={1} title={t('certificate-preview-title')} />
+              {certificate?.preview_url ? (
+                <Image src={certificate?.preview_url} width="100%" height="400px" border="none" flexGrow={1} title={t('certificate-preview-title')} />
               ) : (
                 <Text>{t('certificate-preview-unavailable')}</Text>
               )}

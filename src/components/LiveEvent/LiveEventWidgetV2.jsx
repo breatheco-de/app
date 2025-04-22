@@ -75,6 +75,7 @@ function LiveEventWidgetV2({
                 <MainEvent
                   currentDateText={eventTimeTexts?.[event.id]}
                   event={event}
+                  limitOfText={24}
                   mainEvents={mainEvents}
                   getOtherEvents={getOtherEventsResult}
                   isLiveOrStarting={isLiveOrStarting}

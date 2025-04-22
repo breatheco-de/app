@@ -25,15 +25,15 @@ function PlanButton({
     <Button
       key={plan.plan_id}
       variant="unstyled"
-      bg={isSelected ? 'blue.default2' : 'transparent'}
-      color={isSelected ? 'white' : 'blue.default2'}
+      bg={isSelected ? 'blue.default' : 'transparent'}
+      color={isSelected ? 'white' : 'blue.default'}
       size="sm"
       px={4}
       border="1px solid"
       borderRadius="0"
       borderLeft={isFirst ? '1px solid' : 'none'}
       borderRight={isLast ? '1px solid' : 'none'}
-      borderColor="blue.default2"
+      borderColor="blue.default"
       _first={{ borderLeftRadius: '4px' }}
       _last={{ borderRightRadius: '4px' }}
       _hover="none"
@@ -124,7 +124,7 @@ function ShowPrices({
     <Flex flexDirection="column" mx="auto">
       <Box display="flex" flexDirection="column">
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-          <Heading as="h2" size="24px" color="blue.default2" flexGrow={1}>
+          <Heading as="h2" size="24px" color="blue.default" flexGrow={1}>
             {title || data?.pricing['choose-plan']}
           </Heading>
           <Box display={{ base: 'none', md: 'flex' }} alignItems="center" bg="transparent" border="none">
@@ -206,7 +206,7 @@ function ShowPrices({
             borderColor={selectedPlan.period === 'YEAR' ? 'black' : backgroundColor}
           >
             <Box
-              bg={selfAppliedCoupon ? 'green.500' : 'blue.default2'}
+              bg={selfAppliedCoupon ? 'green.500' : 'blue.default'}
               p={6}
               color="white"
               width={{ base: '100%', md: '250px' }}
