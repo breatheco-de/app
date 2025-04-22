@@ -40,7 +40,7 @@ function PlanButton({
       _hover="none"
       onClick={onClick}
     >
-      {getPlanLabel(plan)}
+      {getPlanLabel(plan).full}
     </Button>
   );
 }
@@ -93,15 +93,30 @@ function ShowPrices({
   const getPlanLabel = (plan) => {
     switch (plan.period) {
       case 'YEAR':
-        return t('subscription.payment_unit.anual');
+        return {
+          full: t('subscription.payment_unit.anual'),
+          short: t('subscription.payment_unit_short.year'),
+        };
       case 'MONTH':
-        return t('subscription.payment_unit.month');
+        return {
+          full: t('subscription.payment_unit.month'),
+          short: t('subscription.payment_unit_short.month'),
+        };
       case 'ONE_TIME':
-        return t('subscription.upgrade-modal.one_payment');
+        return {
+          full: t('subscription.upgrade-modal.one_payment'),
+          short: '',
+        };
       case 'FINANCING':
-        return `${plan.how_many_months} ${t('common:word-connector.months')}`;
+        return {
+          full: `${plan.how_many_months} ${t('common:word-connector.months')}`,
+          short: '',
+        };
       default:
-        return plan.title;
+        return {
+          full: plan.title,
+          short: '',
+        };
     }
   };
 
@@ -273,7 +288,7 @@ function ShowPrices({
                 {selectedPlan.period !== 'FINANCING' && selectedPlan.period !== 'ONE_TIME' && (
                   <Box bg="#0062BD" px={2} py={0.5} borderRadius="full" border="1px solid" borderColor="white">
                     <Text fontSize="xs" textWrap="nowrap" flexGrow={1} textAlign="center">
-                      {getPlanLabel(selectedPlan)}
+                      {getPlanLabel(selectedPlan).full}
                     </Text>
                   </Box>
                 )}
@@ -285,12 +300,13 @@ function ShowPrices({
                   fontFamily="Space Grotesk Variable"
                 >
                   {selectedPlan.priceText}
+                  {selectedPlan.period !== 'FINANCING' && selectedPlan.period !== 'ONE_TIME' && (
+                    <Text as="span" style={{ fontSize: '12px', fontWeight: 'normal' }}>
+                      /
+                      {getPlanLabel(selectedPlan).short}
+                    </Text>
+                  )}
                 </Text>
-                {selectedPlan.period === 'MONTH' && typeof selectedPlan.price === 'number' && (
-                  <Text fontSize="sm" color="black" opacity={selfAppliedCoupon ? 1 : 0.5} size="16px" fontFamily="Space Grotesk Variable">
-                    {`${t('subscription.charged')} ${currenciesSymbols[selectedPlan?.currency?.code] || '$'}${selectedPlan.price * 12}/${t('common:word-connector.year')}`}
-                  </Text>
-                )}
                 {shouldShowSavingsPill && selfAppliedCoupon && (
                   <Box
                     bg="black"
