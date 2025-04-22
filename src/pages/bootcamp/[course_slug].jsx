@@ -96,7 +96,7 @@ export async function getStaticProps({ locale, locales, params }) {
       seo: {
         title: data.course_translation.title,
         description: data.course_translation.description,
-        image: `${ORIGIN_HOST}/static/images/4geeks.png`,
+        image: data?.course_translation?.preview_url || `${ORIGIN_HOST}/static/images/4geeks.png`,
         locales,
         locale,
         disableStaticCanonical: true,
@@ -543,11 +543,7 @@ function CoursePage({ data, syllabus }) {
     <>
       {cleanedStructuredData?.name && (
         <Head>
-          <script
-            type="application/ld+json"
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(cleanedStructuredData) }}
-          />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(cleanedStructuredData) }} />
         </Head>
       )}
       <FixedBottomCta
