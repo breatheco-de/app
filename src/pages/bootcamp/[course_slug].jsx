@@ -14,7 +14,7 @@ import GridContainer from '../../components/GridContainer';
 import Heading from '../../components/Heading';
 import { error } from '../../utils/logging';
 import bc from '../../services/breathecode';
-import { generateCohortSyllabusModules } from '../../handlers/cohorts';
+import { generateCohortSyllabusModules } from '../../lib/admissions';
 import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow, getBrowserInfo, getQueryString } from '../../utils';
 import useStyle from '../../hooks/useStyle';
 import useRigo from '../../hooks/useRigo';

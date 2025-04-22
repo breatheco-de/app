@@ -6,11 +6,10 @@ import { processRelatedAssignments } from '../utils/cohorts';
  * @param {Number | String} id Required id of the cohort
  * @returns {Promise<object>} Returns a cohort found
  */
-export const getCohort = (id) => bc.admissions({ id }).cohorts()
-  .then((resp) => {
-    const cohortFinded = resp.data.find((cohort) => cohort?.id === id);
-    return cohortFinded;
-  });
+export const getCohort = async (id) => {
+  const { data } = await bc.admissions({ id }).cohorts();
+  return data.find((cohort) => cohort?.id === id);
+};
 
 /**
  *  Generate Syllabus data using the id of the cohort
@@ -82,5 +81,55 @@ export const generateCohortSyllabusModules = async (id) => {
   } catch (reqErr) {
     error('generateCohortSyllabusModules:', reqErr);
     return {};
+  }
+};
+
+export const getStudents = async (slug, academyId, params = {}) => {
+  try {
+    const { data } = await bc.admissions(params).getStudents(slug, academyId);
+    const sortedStudents = data.sort(
+      (a, b) => a.user.first_name.localeCompare(b.user.first_name),
+    );
+    return sortedStudents;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const getAttendanceList = async ({ cohortSlug, academy }) => {
+  try {
+    const { data } = await bc.admissions({ academy }).getAttendance(cohortSlug);
+    return data;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const saveCohortAttendancy = async ({ cohortSlug, students, checked, currentModule }) => {
+  try {
+    const attendanceIds = students.reduce((accumulator, { user }) => {
+      const attended = checked.some((id) => parseInt(id, 10) === user.id);
+      if (attended) {
+        accumulator.attended.push(user.id);
+      } else {
+        accumulator.unattended.push(user.id);
+      }
+      return accumulator;
+    }, { attended: [], unattended: [] });
+
+    const dataStruct = {
+      current_module: currentModule,
+      teacher_comments: '',
+      attendance_ids: attendanceIds.attended,
+      unattendance_ids: attendanceIds.unattended,
+    };
+
+    const { data } = await bc.admissions().takeAttendance(
+      cohortSlug,
+      dataStruct,
+    );
+    return data;
+  } catch (err) {
+    return err;
   }
 };

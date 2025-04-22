@@ -16,7 +16,7 @@ import { SILENT_CODE } from '../../utils/variables';
 import axiosInstance from '../../axios';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useSubscriptions from '../../hooks/useSubscriptions';
-import { getCohort } from '../../handlers/cohorts';
+import { getCohort } from '../../lib/admissions';
 import useCustomToast from '../../hooks/useCustomToast';
 import useSignup from '../../hooks/useSignup';
 

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { subMinutes } from 'date-fns';
 import { memo, useState } from 'react';
-import handlers from '../../handlers';
+import { getAssignmentsCount } from '../../utils/cohorts';
 import ProgramCard from '../ProgramCard';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useSubscriptions from '../../hooks/useSubscriptions';
@@ -19,7 +19,7 @@ function Program({ cohort, onOpenModal, setLateModalProps }) {
   const currentCohort = programsList?.[cohort.slug];
   const tasks = cohortsAssignments[cohort.slug]?.tasks;
   const syllabus = cohortsAssignments[cohort.slug]?.syllabus;
-  const assignmentsData = handlers.getAssignmentsCount({ data: syllabus, taskTodo: tasks });
+  const assignmentsData = getAssignmentsCount({ syllabus, tasks });
 
   const isAvailableAsSaas = cohort.cohort_user?.role === 'TEACHER' ? false : cohort.available_as_saas;
 

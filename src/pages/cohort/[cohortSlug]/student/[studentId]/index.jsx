@@ -221,16 +221,16 @@ function StudentReport() {
       };
       Promise.all([
         bc
-          .cohort({ academy })
+          .admissions({ academy })
           .getAttendance(selectedCohortUser.cohort.slug),
         bc
-          .todo({
+          .assignments({
             academy,
             limit: 1000,
             task_type: 'PROJECT,LESSON,EXERCISE',
             student: studentId,
           })
-          .getAssignments({ id: selectedCohortUser.cohort.id, academy }),
+          .getCohortAssignments({ id: selectedCohortUser.cohort.id, academy }),
         bc.admissions().cohort(selectedCohortUser.cohort.slug, academy),
         bc.activity({ query: JSON.stringify(npsQueryObject), by: 'kind', fields: 'kind' }).getActivityReport(academy),
         bc.activity({ query: JSON.stringify(eventsQueryObject), order: 'timestamp' }).getActivityReport(academy),
