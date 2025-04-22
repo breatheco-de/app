@@ -242,14 +242,10 @@ function Dashboard() {
 
   useEffect(() => {
     if (cohortSession?.cohort_user) {
-      if (cohortSession.cohort_user.finantial_status === 'LATE' || cohortSession.cohort_user.educational_status === 'SUSPENDED') {
-        router.push('/choose-program');
-      } else {
-        const isReadyToShowGithubMessage = cohorts.some(
-          (l) => l.cohort_user.educational_status === 'ACTIVE' && l.available_as_saas === false,
-        );
-        setIsAvailableToShowModalMessage(isReadyToShowGithubMessage);
-      }
+      const isReadyToShowGithubMessage = cohorts.some(
+        (l) => l.cohort_user.educational_status === 'ACTIVE' && l.available_as_saas === false,
+      );
+      setIsAvailableToShowModalMessage(isReadyToShowGithubMessage);
     }
   }, [cohortSession]);
 
@@ -559,7 +555,7 @@ function Dashboard() {
   const dailyModuleData = getDailyModuleData() || '';
 
   const onlyStudentsActive = studentAndTeachers.filter(
-    (x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE',
+    (x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE' && x.finantial_status !== 'LATE',
   ).map((student) => ({
     ...student,
     user: {
