@@ -117,9 +117,11 @@ const AvatarUser = memo(({
             <Heading size="15px">
               {fullNameLabel}
             </Heading>
-            <Text size="sm" fontWeight="400">
-              {`${t('dashboard:member-since', { role: roles[data?.role?.toLowerCase()] || 'member' })} ${dateFormated[router?.locale]}`}
-            </Text>
+            {data?.role && (
+              <Text size="sm" fontWeight="400">
+                {t('dashboard:member-since', { role: roles[data.role.toLowerCase()] || 'member', date: dateFormated[router?.locale] })}
+              </Text>
+            )}
           </Box>
         </PopoverBody>
       </PopoverContent>

@@ -471,6 +471,7 @@ function Dashboard() {
 
   const mandatoryProjects = getMandatoryProjects();
   const mandatoryProjectsCount = mandatoryProjects.length;
+
   useEffect(() => {
     if (isSubscriptionFreeTrial && !hasShownFreeTrialToast.current) {
       hasShownFreeTrialToast.current = true;
@@ -533,9 +534,13 @@ function Dashboard() {
             <span
               role="button"
               tabIndex={0}
-              onClick={() => setShowDeletionOrdersModal(true)}
+              onClick={() => {
+                closeToast();
+                setShowDeletionOrdersModal(true);
+              }}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
+                  closeToast();
                   setShowDeletionOrdersModal(true);
                 }
               }}
