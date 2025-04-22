@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { format } from 'date-fns';
 import {
-  Avatar, Box, Flex, IconButton, Input, InputGroup, InputRightElement, usePrefersReducedMotion, useToast,
+  Avatar, Box, Flex, IconButton, Input, InputGroup, InputRightElement, usePrefersReducedMotion,
   keyframes,
   Popover,
   PopoverTrigger,
@@ -15,25 +15,26 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import asPrivate from '../../../common/context/PrivateRouteWrapper';
-import ReactSelect from '../../../common/components/ReactSelect';
-import Link from '../../../common/components/NextChakraLink';
-import Heading from '../../../common/components/Heading';
-import Text from '../../../common/components/Text';
-import useAuth from '../../../common/hooks/useAuth';
-import useStyle from '../../../common/hooks/useStyle';
-import Icon from '../../../common/components/Icon';
-import DottedTimeline from '../../../common/components/DottedTimeline';
-import GridContainer from '../../../common/components/GridContainer';
-import handlers from '../../../common/handlers';
-import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../common/components/Skeleton';
-import Sparkline from '../../../common/components/Sparkline';
-import KPI from '../../../common/components/KPI';
+import asPrivate from '../../../context/PrivateRouteWrapper';
+import ReactSelect from '../../../components/ReactSelect';
+import Link from '../../../components/NextChakraLink';
+import Heading from '../../../components/Heading';
+import Text from '../../../components/Text';
+import useAuth from '../../../hooks/useAuth';
+import useStyle from '../../../hooks/useStyle';
+import Icon from '../../../components/Icon';
+import DottedTimeline from '../../../components/DottedTimeline';
+import GridContainer from '../../../components/GridContainer';
+import handlers from '../../../handlers';
+import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../components/Skeleton';
+import Sparkline from '../../../components/Sparkline';
+import KPI from '../../../components/KPI';
+import useCustomToast from '../../../hooks/useCustomToast';
 
 function Attendance() {
   const { t } = useTranslation('attendance');
   const router = useRouter();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: ' attendance-list-found-activities' });
   const { cohorts } = useAuth();
   const [allCohorts, setAllCohorts] = useState([]);
   const [selectedCohort, setSelectedCohort] = useState({});
@@ -133,7 +134,7 @@ function Attendance() {
         .then((daysLog) => {
           if (Object.keys(daysLog).length <= 0) {
             setCurrentDaysLog({});
-            toast({
+            createToast({
               position: 'top',
               title: t('alert-message:no-attendance-list-found'),
               status: 'warning',
@@ -145,7 +146,7 @@ function Attendance() {
           }
         })
         .catch(() => {
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:error-fetching-activities'),
             status: 'error',
@@ -158,7 +159,7 @@ function Attendance() {
           setCurrentStudentList(students);
         })
         .catch(() => {
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:error-fetching-students'),
             status: 'error',

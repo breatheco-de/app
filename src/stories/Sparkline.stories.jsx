@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Sparkline from '../common/components/Sparkline';
+import Sparkline from '../components/Sparkline';
 
 export default {
   title: 'Components/Sparkline',

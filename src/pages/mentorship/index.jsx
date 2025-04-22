@@ -21,20 +21,18 @@ import {
 import { ArrowUpIcon, ChevronDownIcon, CloseIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import styled from 'styled-components';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import bc from '../../common/services/breathecode';
-import Link from '../../common/components/NextChakraLink';
-import Icon from '../../common/components/Icon';
-import Heading from '../../common/components/Heading';
-import Text from '../../common/components/Text';
-import asPrivate from '../../common/context/PrivateRouteWrapper';
+import bc from '../../services/breathecode';
+import Link from '../../components/NextChakraLink';
+import Icon from '../../components/Icon';
+import Heading from '../../components/Heading';
+import Text from '../../components/Text';
+import asPrivate from '../../context/PrivateRouteWrapper';
 import CustomTheme from '../../../styles/theme';
-import GridContainer from '../../common/components/GridContainer';
+import GridContainer from '../../components/GridContainer';
 import { error } from '../../utils/logging';
-// import KPI from '../../common/components/KPI';
 
 // eslint-disable-next-line react/prop-types
 const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
@@ -81,12 +79,7 @@ function Mentorship() {
   const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
   const commonFontColor = useColorModeValue('gray.dark', 'gray.light');
 
-  const getMentorshipSessions = async (filter) => {
-    const { data } = await bc.mentorship(filter).getMySessions();
-    return data;
-  };
-
-  useEffect(() => {
+  const getMentorshipSessions = async () => {
     setIsLoading(true);
     let filter = {};
     if (startDate) {
@@ -96,13 +89,17 @@ function Mentorship() {
       };
     }
     try {
-      const data = getMentorshipSessions(filter);
+      const { data } = await bc.mentorship(filter).getMySessions();
       setIsLoading(false);
       setSessions(data);
     } catch (e) {
       error(e);
       setIsLoading(false);
     }
+  };
+
+  useEffect(() => {
+    getMentorshipSessions();
   }, [startDate]);
 
   const getExtraTime = (str) => str.substr(0, str.indexOf(', the expected duration')).replace('Extra time of ', '');
@@ -173,22 +170,10 @@ function Mentorship() {
         >
           {`← ${t('common:goBack')}`}
         </Link>
-        <Container
-          maxW="none"
-          padding="0"
-        >
-          <Heading
-            as="h2"
-            size="m"
-            maxW="90%"
-            // size={['lg', 'lg', 'xl', 'xl']}
-            // fontSize={['16px', '16px', '34px', '34px']}
-          >
+        <Container maxW="none" padding="0">
+          <Heading as="h2" size="m" maxW="90%">
             {`${t('log')}:`}
-            <Box
-              display="inline-block"
-              maxW="100px"
-            >
+            <Box display="inline-block" maxW="100px">
               <DatePicker
                 selected={startDate}
                 onChange={(date) => {
@@ -201,24 +186,23 @@ function Mentorship() {
               />
             </Box>
             {startDate && (
-            <IconButton
-              marginLeft={['5px', '5px', '90px', '90px']}
-              // variant="outline"
-              colorScheme="blue"
-              aria-label="Clear"
-              // fontSize="20px"
-              size="xs"
-              icon={<CloseIcon />}
-              onClick={() => {
-                router.push('?month=all');
-                setStartDate(null);
-              }}
-            />
+              <IconButton
+                marginLeft={['5px', '5px', '90px', '90px']}
+                colorScheme="blue"
+                aria-label="Clear"
+                size="xs"
+                icon={<CloseIcon />}
+                onClick={() => {
+                  router.push('?month=all');
+                  setStartDate(null);
+                }}
+              />
             )}
           </Heading>
         </Container>
       </GridContainer>
       <Divider borderBottomWidth="2px" />
+
       <Box
         display="grid"
         gridTemplateColumns={{
@@ -226,16 +210,38 @@ function Mentorship() {
           md: '1.8fr repeat(12, 1fr) 1.8fr',
         }}
       >
-        <StyledContainer>
-          <table>
-            <tr className="table-head">
-              <th className="session-date-head">{t('mentorshipSession')}</th>
-              <th className="icons-row-head">{t('events')}</th>
-              <th className="session-time-head">{t('billed')}</th>
-            </tr>
+        <Box gridColumn="2 / span 12" width="100%">
+          {/* Header */}
+          <Flex
+            p="20px"
+            fontWeight="700"
+            color={commonFontColor}
+          >
+            <Box width="35%" pl="20px">
+              {t('mentorshipSession')}
+            </Box>
+            <Box width="40%" pl="20px">
+              {t('events')}
+            </Box>
+            <Box width="25%" pl="20px">
+              {t('billed')}
+            </Box>
+          </Flex>
+
+          {/* Sessions List */}
+          <Box display="flex" flexDirection="column" gap="15px">
             {sessions?.length > 0 && sessions.map((session) => (
-              <tr className="table-rows">
-                <td className="session-date">
+              <Flex
+                key={session.id}
+                alignItems="center"
+                p="20px"
+                border="1px solid"
+                borderColor="#DADADA"
+                borderRadius="17px"
+                _hover={{ bg: useColorModeValue('gray.50', 'gray.700') }}
+              >
+                {/* Session Date and Mentee */}
+                <Box width="35%" pl="20px">
                   <Text fontSize="md">
                     {session.started_at ? `${format(new Date(session.started_at.slice(0, -1)), 'MMMM dd, y, h:mm aaa')}` : t('invalidDate')}
                   </Text>
@@ -243,48 +249,87 @@ function Mentorship() {
                     <Text fontSize="md">
                       {t('with')}
                       {' '}
-                      <span style={{ fontWeight: 'bold' }}>{`${session.mentee.first_name ? session.mentee.first_name : ''} ${session.mentee.last_name ? session.mentee.last_name : ''}`}</span>
+                      <Box as="span" fontWeight="bold">
+                        {`${session.mentee.first_name ? session.mentee.first_name : ''} ${session.mentee.last_name ? session.mentee.last_name : ''}`}
+                      </Box>
                     </Text>
-                  )
-                    : (
-                      <Text fontSize="md">
-                        <span style={{ fontWeight: 'bold' }}>
-                          {t('ghostLabel')}
-                        </span>
-                      </Text>
-                    )}
-                </td>
-                <td className="icons-row">
-                  <Flex alignItems="center">
+                  ) : (
+                    <Text fontSize="md" fontWeight="bold">
+                      {t('ghostLabel')}
+                    </Text>
+                  )}
+                </Box>
+
+                {/* Icons and Events */}
+                <Box width="40%" pl="20px">
+                  <Flex alignItems="center" display={{ base: 'none', md: 'flex' }}>
                     {tooltipsGenerator(session).map((tooltip) => (
-                      <Tooltip label={tooltip.label} fontSize="md" placement="top">
-                        <Icon style={{ marginRight: '15px' }} icon={tooltip.icon} width="25px" height="25px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
+                      <Tooltip key={tooltip.label} label={tooltip.label} fontSize="md" placement="top">
+                        <Box>
+                          <Icon
+                            style={{ marginRight: '15px' }}
+                            icon={tooltip.icon}
+                            width="25px"
+                            height="25px"
+                            color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white}
+                          />
+                        </Box>
                       </Tooltip>
                     ))}
-                    <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link" onClick={() => setShowModal({ show: true, session })}>
+                    <Button
+                      colorScheme="blue.default"
+                      variant="link"
+                      onClick={() => setShowModal({ show: true, session })}
+                    >
                       {t('details')}
                     </Button>
                   </Flex>
-                </td>
-                <td className="session-time">
-                  <Text marginBottom={['10px', '0', '0', '0']} fontSize="md" color={session.extra_time ? CustomTheme.colors.danger : ''}>
+                </Box>
+
+                {/* Billed Time */}
+                <Box width="25%" pl="20px">
+                  <Text
+                    marginBottom={['10px', '0', '0', '0']}
+                    fontSize="md"
+                    color={session.extra_time ? CustomTheme.colors.danger : undefined}
+                  >
                     {session.extra_time && <ArrowUpIcon />}
                     {session.billed_str}
                   </Text>
-                  <Flex wrap="wrap" maxWith="250px" className="icons-row-responsive" alignItems="center">
+                  {/* Mobile View Icons */}
+                  <Flex
+                    wrap="wrap"
+                    maxWidth="250px"
+                    alignItems="center"
+                    display={{ base: 'flex', md: 'none' }}
+                  >
                     {tooltipsGenerator(session).map((tooltip) => (
-                      <Tooltip label={tooltip.label} fontSize="md" placement="top">
-                        <Icon style={{ marginRight: '15px', marginTop: '5px' }} icon={tooltip.icon} width="20px" height="20px" color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white} />
+                      <Tooltip key={tooltip.label} label={tooltip.label} fontSize="md" placement="top">
+                        <Box>
+                          <Icon
+                            style={{ marginRight: '15px', marginTop: '5px' }}
+                            icon={tooltip.icon}
+                            width="20px"
+                            height="20px"
+                            color={colorMode === 'light' ? CustomTheme.colors.gray.dark : CustomTheme.colors.white}
+                          />
+                        </Box>
                       </Tooltip>
                     ))}
-                    <Button style={{ marginRight: '15px' }} colorScheme="blue.default" variant="link" onClick={() => setShowModal({ show: true, session })}>
+                    <Button
+                      colorScheme="blue.default"
+                      variant="link"
+                      onClick={() => setShowModal({ show: true, session })}
+                    >
                       {t('details')}
                     </Button>
                   </Flex>
-                </td>
-              </tr>
+                </Box>
+              </Flex>
             ))}
-          </table>
+          </Box>
+
+          {/* No Sessions Message */}
           {!isLoading && sessions.length === 0 && (
             <Container
               maxW="none"
@@ -297,7 +342,7 @@ function Mentorship() {
               <Text fontSize="md">{t('common:no-elements')}</Text>
             </Container>
           )}
-        </StyledContainer>
+        </Box>
       </Box>
       <Modal
         isOpen={showModal.show}
@@ -348,87 +393,7 @@ function Mentorship() {
         </ModalContent>
       </Modal>
     </Container>
-
   );
 }
-
-const StyledContainer = styled.div`
-  width: 100%;
-  // padding: 20px 10%;
-  grid-column: 2 / span 12;
-
-  td:first-child,
-  th:first-child {
-    border-radius: 17px 0 0 17px;
-  }
-
-  // Set border-radius on the top-right and bottom-right of the last table data on the table row
-  td:last-child,
-  th:last-child {
-    border-radius: 0 17px 17px 0;
-  }
-  table{
-    width:100%;
-    border-collapse: separate;
-    border-spacing: 0 15px;
-    .table-head{
-      text-align: left;
-      th{
-        padding-left: 20px;
-      }
-    }
-    .session-date{
-      width:35%;
-      border-right: none;
-    }
-    .icons-row{
-      border-right: none;
-      border-left: none;
-    }
-    .session-time{
-      border-left: none;
-      .icons-row-responsive{
-        display: none;
-      }
-    }
-    td{
-      border: 1px solid #DADADA;
-      padding: 20px;
-    }
-  }
-
-  @media screen and (max-width: 975px){
-    padding: 20px 5%;
-    table{
-      .icons-row{
-        width: 300px;
-      }
-    }
-  }
-
-  @media screen and (max-width: 910px){
-    table{
-      .session-date{
-        width:30%;
-      }
-    }
-  }
-
-  @media screen and (max-width: 810px){
-    table{
-      .session-date{
-        width:auto;
-      }
-      .icons-row, .icons-row-head{
-        display: none;
-      }
-      .session-time{
-        .icons-row-responsive{
-          display: flex;
-        }
-      }
-    }
-  }
-`;
 
 export default asPrivate(Mentorship);

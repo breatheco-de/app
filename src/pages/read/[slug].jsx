@@ -5,12 +5,12 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import Heading from '../../common/components/Heading';
-import Text from '../../common/components/Text';
-import Search from '../../common/components/Assets/Search';
-import TitleContent from '../../common/components/Assets/TitleContent';
-import Link from '../../common/components/NextChakraLink';
-import GridContainer from '../../common/components/GridContainer';
+import Heading from '../../components/Heading';
+import Text from '../../components/Text';
+import Search from '../../components/Assets/Search';
+import TitleContent from '../../components/Assets/TitleContent';
+import Link from '../../components/NextChakraLink';
+import GridContainer from '../../components/GridContainer';
 import { cleanObject } from '../../utils';
 import { ORIGIN_HOST } from '../../utils/variables';
 

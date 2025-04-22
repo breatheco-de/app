@@ -5,23 +5,23 @@ import useTranslation from 'next-translate/useTranslation';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import Heading from '../common/components/Heading';
-import Text from '../common/components/Text';
-import Faq from '../common/components/Faq';
-import useStyle from '../common/hooks/useStyle';
-import useAuth from '../common/hooks/useAuth';
-import bc from '../common/services/breathecode';
-import PricingCard from '../common/components/PricingCard';
-import useSignup from '../common/store/actions/signupAction';
-import LoaderScreen from '../common/components/LoaderScreen';
+import Heading from '../components/Heading';
+import Text from '../components/Text';
+import Faq from '../components/Faq';
+import PricingCard from '../components/PricingCard';
+import LoaderScreen from '../components/LoaderScreen';
+import useSignup from '../store/actions/signupAction';
+import MktTrustCards from '../components/MktTrustCards';
+import DraggableContainer from '../components/DraggableContainer';
+import Icon from '../components/Icon';
+import { fetchSuggestedPlan, getTranslations } from '../handlers/subscriptions';
 import { getQueryString, isWindow, slugToTitle } from '../utils';
-import { fetchSuggestedPlan, getTranslations } from '../common/handlers/subscriptions';
 import { parseQuerys } from '../utils/url';
 import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../utils/variables';
-import MktTrustCards from '../common/components/MktTrustCards';
-import DraggableContainer from '../common/components/DraggableContainer';
-import Icon from '../common/components/Icon';
-import usePlanMktInfo from '../common/hooks/usePlanMktInfo';
+import useStyle from '../hooks/useStyle';
+import useAuth from '../hooks/useAuth';
+import usePlanMktInfo from '../hooks/usePlanMktInfo';
+import bc from '../services/breathecode';
 
 const switchTypes = {
   monthly: 'monthly',

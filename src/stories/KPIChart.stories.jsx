@@ -1,6 +1,6 @@
 import React from 'react';
-import KPI from '../common/components/KPI';
-import Sparkline from '../common/components/Sparkline';
+import KPI from '../components/KPI';
+import Sparkline from '../components/Sparkline';
 
 export default {
   title: 'Components/KPIChart',

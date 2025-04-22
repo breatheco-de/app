@@ -1,34 +1,35 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import {
-  Flex, Box, Button, useToast,
+  Flex, Box, Button,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
-import ProgramsDashboard from '../../common/components/ProgramsDashboard';
-import Text from '../../common/components/Text';
-import asPrivate from '../../common/context/PrivateRouteWrapper';
-import bc from '../../common/services/breathecode';
-import useAuth from '../../common/hooks/useAuth';
-import Icon from '../../common/components/Icon';
-import TaskBar from '../../common/components/TaskBar';
+import ProgramsDashboard from '../../components/ProgramsDashboard';
+import Text from '../../components/Text';
+import asPrivate from '../../context/PrivateRouteWrapper';
+import bc from '../../services/breathecode';
+import useAuth from '../../hooks/useAuth';
+import Icon from '../../components/Icon';
+import TaskBar from '../../components/TaskBar';
 import { calculateDifferenceDays, getStorageItem, isPlural, isValidDate, removeStorageItem, setStorageItem, sortToNearestTodayDate, syncInterval, getBrowserInfo } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
-import Heading from '../../common/components/Heading';
-import { usePersistent } from '../../common/hooks/usePersistent';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
-import LiveEvent from '../../common/components/LiveEvent';
-import NextChakraLink from '../../common/components/NextChakraLink';
-import { SimpleSkeleton } from '../../common/components/Skeleton';
-import useProgramList from '../../common/store/actions/programListAction';
-import useSubscriptionsHandler from '../../common/store/actions/subscriptionAction';
-import { PREPARING_FOR_COHORT } from '../../common/store/types';
-import SimpleModal from '../../common/components/SimpleModal';
-import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
-import useStyle from '../../common/hooks/useStyle';
-import SupportSidebar from '../../common/components/SupportSidebar';
-import Feedback from '../../common/components/Feedback';
+import Heading from '../../components/Heading';
+import { usePersistent } from '../../hooks/usePersistent';
+import useCohortHandler from '../../hooks/useCohortHandler';
+import LiveEvent from '../../components/LiveEvent';
+import NextChakraLink from '../../components/NextChakraLink';
+import { SimpleSkeleton } from '../../components/Skeleton';
+import useProgramList from '../../store/actions/programListAction';
+import useSubscriptionsHandler from '../../store/actions/subscriptionAction';
+import { PREPARING_FOR_COHORT } from '../../store/types';
+import SimpleModal from '../../components/SimpleModal';
+import ReactPlayerV2 from '../../components/ReactPlayerV2';
+import useStyle from '../../hooks/useStyle';
+import SupportSidebar from '../../components/SupportSidebar';
+import Feedback from '../../components/Feedback';
 import axios from '../../axios';
-import LanguageSelector from '../../common/components/LanguageSelector';
+import LanguageSelector from '../../components/LanguageSelector';
+import useCustomToast from '../../hooks/useCustomToast';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -71,7 +72,7 @@ function chooseProgram() {
     isLoading: true,
     data: [],
   });
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'invitation-error-accepted' });
   const { hexColor } = useStyle();
   const isClosedLateModal = getStorageItem('isClosedLateModal');
   const TwelveHoursInMinutes = 720;
@@ -309,7 +310,7 @@ function chooseProgram() {
         ...pendingProfileAcademies,
       ]);
     } catch (e) {
-      toast({
+      createToast({
         title: t('alert-message:something-went-wrong-with', { property: 'Admissions' }),
         status: 'error',
         duration: 5000,
@@ -338,14 +339,14 @@ function chooseProgram() {
         invList.splice(invitationIndex, 1);
         setInvites(invList);
 
-        toast({
+        createToast({
           title: t('alert-message:invitation-accepted-cohort', { cohortName }),
           status: 'success',
           duration: 9000,
           isClosable: true,
         });
       } else {
-        toast({
+        createToast({
           title: t('alert-message:invitation-error'),
           status: 'error',
           duration: 5000,
@@ -354,7 +355,7 @@ function chooseProgram() {
       }
     } catch (e) {
       console.log(e);
-      toast({
+      createToast({
         title: t('alert-message:invitation-error'),
         status: 'error',
         duration: 5000,
@@ -379,14 +380,14 @@ function chooseProgram() {
         invList.splice(invitationIndex, 1);
         setInvites(invList);
 
-        toast({
+        createToast({
           title: t('alert-message:invitation-accepted'),
           status: 'success',
           duration: 9000,
           isClosable: true,
         });
       } else {
-        toast({
+        createToast({
           title: t('alert-message:invitation-error'),
           status: 'error',
           duration: 5000,
@@ -395,7 +396,7 @@ function chooseProgram() {
       }
     } catch (e) {
       console.log(e);
-      toast({
+      createToast({
         title: t('alert-message:invitation-error'),
         status: 'error',
         duration: 5000,
@@ -469,8 +470,8 @@ function chooseProgram() {
           size="md"
           dangerouslySetInnerHTML={{
             __html: t('late-payment.description', {
-              cohort_name: lateModalProps.data[0]?.cohort?.name,
-              academy_name: lateModalProps.data?.[0]?.cohort?.academy?.name,
+              cohort_name: lateModalProps.data[0]?.name,
+              academy_name: lateModalProps.data?.[0]?.academy?.name,
             }),
           }}
         />

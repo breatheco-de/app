@@ -10,31 +10,31 @@ import useTranslation from 'next-translate/useTranslation';
 import React, { useRef, useState, useEffect } from 'react';
 import Head from 'next/head';
 import getT from 'next-translate/getT';
-import Heading from '../../../common/components/Heading';
-import Link from '../../../common/components/NextChakraLink';
-import Text from '../../../common/components/Text';
-import TabletWithForm from '../../../common/components/Assets/TabletWithForm';
-import SimpleTable from '../../../common/components/Assets/SimpleTable';
-import FixedBottomCta from '../../../common/components/Assets/FixedBottomCta';
-import TagCapsule from '../../../common/components/TagCapsule';
-import MarkDownParser from '../../../common/components/MarkDownParser';
-import useAuth from '../../../common/hooks/useAuth';
-import { MDSkeleton } from '../../../common/components/Skeleton';
-import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
-import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
-import GridContainer from '../../../common/components/GridContainer';
+import Heading from '../../../components/Heading';
+import Link from '../../../components/NextChakraLink';
+import Text from '../../../components/Text';
+import TabletWithForm from '../../../components/Assets/TabletWithForm';
+import SimpleTable from '../../../components/Assets/SimpleTable';
+import FixedBottomCta from '../../../components/Assets/FixedBottomCta';
+import TagCapsule from '../../../components/TagCapsule';
+import MarkDownParser from '../../../components/MarkDownParser';
+import useAuth from '../../../hooks/useAuth';
+import { MDSkeleton } from '../../../components/Skeleton';
+import getMarkDownContent from '../../../components/MarkDownParser/markdown';
+import MktRecommendedCourses from '../../../components/MktRecommendedCourses';
+import GridContainer from '../../../components/GridContainer';
 import { cleanObject, isWindow } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
-import RelatedContent from '../../../common/components/RelatedContent';
-import MktEventCards from '../../../common/components/MktEventCards';
-import SupplementaryMaterial from '../../../common/components/SupplementaryMaterial';
-import AssetsBreadcrumbs from '../../../common/components/AssetsBreadcrumbs';
-import Icon from '../../../common/components/Icon';
-import useStyle from '../../../common/hooks/useStyle';
+import RelatedContent from '../../../components/RelatedContent';
+import MktEventCards from '../../../components/MktEventCards';
+import SupplementaryMaterial from '../../../components/SupplementaryMaterial';
+import AssetsBreadcrumbs from '../../../components/AssetsBreadcrumbs';
+import Icon from '../../../components/Icon';
+import useStyle from '../../../hooks/useStyle';
 import { getMarkdownFromCache } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
-  const assetList = await import('../../../lib/asset-list.json');
+  const assetList = await import('../../../../public/asset-list.json');
   const data = assetList.excersises;
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
@@ -56,7 +56,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const staticImage = t('seo.image', { domain: ORIGIN_HOST });
 
   try {
-    const assetList = await import('../../../lib/asset-list.json')
+    const assetList = await import('../../../../public/asset-list.json')
       .then((res) => res.default)
       .catch(() => []);
 

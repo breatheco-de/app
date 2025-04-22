@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Box, Image, Flex, Button, FormControl, FormLabel, Input, Checkbox, useToast, FormErrorMessage } from '@chakra-ui/react';
+import { Box, Image, Flex, Button, FormControl, FormLabel, Input, Checkbox, FormErrorMessage } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { BREATHECODE_HOST } from '../utils/variables';
-import bc from '../common/services/breathecode';
-import useAuth from '../common/hooks/useAuth';
-import LoaderScreen from '../common/components/LoaderScreen';
-import validationSchema from '../common/components/Forms/validationSchemas';
-import NextChakraLink from '../common/components/NextChakraLink';
-import Text from '../common/components/Text';
-import Heading from '../common/components/Heading';
+import bc from '../services/breathecode';
+import useAuth from '../hooks/useAuth';
+import LoaderScreen from '../components/LoaderScreen';
+import validationSchema from '../components/Forms/validationSchemas';
+import NextChakraLink from '../components/NextChakraLink';
+import Text from '../components/Text';
+import Heading from '../components/Heading';
+import useCustomToast from '../hooks/useCustomToast';
 
 function FormField({ name, label, type = 'text', isReadOnly = false, placeholder }) {
   return (
@@ -36,7 +37,7 @@ function FormField({ name, label, type = 'text', isReadOnly = false, placeholder
 }
 
 function AcceptInvite() {
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'accept-invitation-successfull-error' });
   const router = useRouter();
   const { t, lang } = useTranslation('accept-invite');
   const { isAuthenticated, user, isLoading, login } = useAuth();
@@ -85,7 +86,7 @@ function AcceptInvite() {
       const res = await bc.auth().invites().accept(id);
       const { status } = res;
       if (status >= 200 && status < 400) {
-        toast({
+        createToast({
           title: t('alert-message:invitation-accepted-cohort', { cohortName: cohort.name }),
           position: 'top',
           status: 'success',
@@ -99,7 +100,7 @@ function AcceptInvite() {
       }
     } catch (e) {
       console.log(e);
-      toast({
+      createToast({
         title: t('alert-message:invitation-error'),
         position: 'top',
         status: 'error',
@@ -115,7 +116,7 @@ function AcceptInvite() {
       .then((data) => {
         actions.setSubmitting(false);
         if (data.status === 200) {
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:welcome'),
             status: 'success',
@@ -128,7 +129,7 @@ function AcceptInvite() {
       })
       .catch(() => {
         actions.setSubmitting(false);
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:account-not-found'),
           status: 'error',
@@ -155,14 +156,14 @@ function AcceptInvite() {
       const result = await resp.json();
 
       if (resp.status >= 400) {
-        toast({
+        createToast({
           title: result.detail,
           status: 'error',
           duration: 9000,
           isClosable: true,
         });
       } else if (resp.status >= 200 && resp.status <= 299) {
-        toast({
+        createToast({
           title: 'Successfully accepted!',
           status: 'success',
           duration: 9000,
@@ -174,7 +175,7 @@ function AcceptInvite() {
       actions.setSubmitting(false);
     } catch (e) {
       console.log(e);
-      toast({
+      createToast({
         title: e?.message || t('error'),
         status: 'error',
         duration: 9000,

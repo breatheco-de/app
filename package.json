@@ -31,7 +31,7 @@
     "test": "bun ./src/__tests__/publicSyllabus.js",
     "lint:files": "eslint src/**/*.{js,jsx}",
     "lint:fix": "eslint src/**/*.{js,jsx} --fix",
-    "lint:fix:components": "eslint --fix src/common/components/**/*.{js,jsx}",
+    "lint:fix:components": "eslint --fix src/components/**/*.{js,jsx}",
     "prepare-repo": "husky install && bun make:assets",
     "make:sitemap": "bun ./scripts/sitemap-generator/index.js",
     "slicemachine": "start-slicemachine",
@@ -66,6 +66,7 @@
     "@tanstack/react-query-devtools": "^5.31.0",
     "@uiw/react-markdown-editor": "^5.11.1",
     "@upstash/redis": "^1.34.4",
+    "@vercel/speed-insights": "^1.2.0",
     "anchor-js": "^5.0.0",
     "atob": "2.1.2",
     "axios": "1.4.0",
@@ -129,10 +130,8 @@
     "remark-variables": "1.4.9",
     "sharp": "^0.32.1",
     "socket.io-client": "^4.6.1",
-    "styled-components": "5.3.10",
     "websocket": "^1.0.34",
-    "yup": "1.1.1",
-    "@vercel/speed-insights": "^1.2.0"
+    "yup": "1.1.1"
   },
   "devDependencies": {
     "@babel/core": "7.21.8",
@@ -151,7 +150,6 @@
     "@testing-library/react": "14.0.0",
     "babel-jest": "29.5.0",
     "babel-loader": "9.1.2",
-    "babel-plugin-styled-components": "2.1.1",
     "eslint": "8.40.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-next": "13.4.1",
