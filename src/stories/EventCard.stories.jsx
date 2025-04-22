@@ -1,5 +1,5 @@
 import React from 'react';
-import EventCard from '../common/components/EventCard';
+import EventCard from '../components/EventCard';
 import { addHours, subMinutes } from 'date-fns';
 
 export default {

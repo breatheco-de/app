@@ -59,6 +59,7 @@
   "reached-the-end-of-the-module": "You have reached the end of the current module \"{{label}}\" but you can start the next module \"{{nextModuleLabel}}\" right away.",
   "start-next-module": "Yes, let's start the next module",
   "superseded-message": "This lesson belongs to the legacy archive, we recommend reading a more updated version:",
+  "solution-title": "Project solution",
   "solution-message": "This project includes a model solution that you can review if you need additional guidance.",
   "open-solution": "Click here to review the model solution",
   "completion-percentage": "Completion percentage",

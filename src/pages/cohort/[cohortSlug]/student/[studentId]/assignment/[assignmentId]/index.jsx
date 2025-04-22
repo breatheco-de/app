@@ -9,17 +9,17 @@ import {
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { intervalToDuration } from 'date-fns';
-import asPrivate from '../../../../../../../common/context/PrivateRouteWrapper';
-import useStyle from '../../../../../../../common/hooks/useStyle';
-import bc from '../../../../../../../common/services/breathecode';
-import ReactSelect from '../../../../../../../common/components/ReactSelect';
-import KPI from '../../../../../../../common/components/KPI';
-import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../../../../../common/components/Skeleton';
-import Link from '../../../../../../../common/components/NextChakraLink';
-import Heading from '../../../../../../../common/components/Heading';
-import Text from '../../../../../../../common/components/Text';
-import Icon from '../../../../../../../common/components/Icon';
-import DottedTimeline from '../../../../../../../common/components/DottedTimeline';
+import asPrivate from '../../../../../../../context/PrivateRouteWrapper';
+import useStyle from '../../../../../../../hooks/useStyle';
+import bc from '../../../../../../../services/breathecode';
+import ReactSelect from '../../../../../../../components/ReactSelect';
+import KPI from '../../../../../../../components/KPI';
+import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../../../../../components/Skeleton';
+import Link from '../../../../../../../components/NextChakraLink';
+import Heading from '../../../../../../../components/Heading';
+import Text from '../../../../../../../components/Text';
+import Icon from '../../../../../../../components/Icon';
+import DottedTimeline from '../../../../../../../components/DottedTimeline';
 import { intervalToHours } from '../../../../../../../utils';
 import axiosInstance from '../../../../../../../axios';
 

@@ -1,5 +1,5 @@
 import React,{useEffect} from 'react';
-import MarkDownParser from '../common/components/MarkDownParser';
+import MarkDownParser from '../components/MarkDownParser';
 import { ORIGIN_HOST } from '../utils/variables';
 
 

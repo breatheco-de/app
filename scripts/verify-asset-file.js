@@ -2,9 +2,9 @@ import fs from 'fs';
 import generateAssetFile from './prepare-asset-data';
 
 function verifyAssetsFile() {
-  fs.access('src/lib/asset-list.json', fs.constants.F_OK, (err) => {
+  fs.access('public/asset-list.json', fs.constants.F_OK, (err) => {
     if (err) {
-      console.log("\nGenerating asset-file.json because it's not found in /src/lib/asset-list.json\n");
+      console.log("\nGenerating asset-file.json because it's not found in /public/asset-list.json\n");
       generateAssetFile();
       return;
     }

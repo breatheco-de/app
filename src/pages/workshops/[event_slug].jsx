@@ -1,5 +1,5 @@
 import {
-  Box, Button, Grid, useColorModeValue, useToast, Image, Avatar, Skeleton, Flex,
+  Box, Button, Grid, useColorModeValue, Image, Avatar, Skeleton, Flex, Portal, IconButton,
 } from '@chakra-ui/react';
 import { useEffect, useState, useContext } from 'react';
 import { intervalToDuration, format } from 'date-fns';
@@ -9,31 +9,33 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { reportDatalayer } from '../../utils/requests';
-import bc from '../../common/services/breathecode';
-import SimpleModal from '../../common/components/SimpleModal';
-import GridContainer from '../../common/components/GridContainer';
-import Heading from '../../common/components/Heading';
-import Text from '../../common/components/Text';
+import bc from '../../services/breathecode';
+import SimpleModal from '../../components/SimpleModal';
+import GridContainer from '../../components/GridContainer';
+import Heading from '../../components/Heading';
+import Text from '../../components/Text';
 import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate, getBrowserInfo } from '../../utils';
-import useStyle from '../../common/hooks/useStyle';
-import Icon from '../../common/components/Icon';
-import PublicProfile from '../../common/components/PublicProfile';
-import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
-import ModalInfo from '../../common/components/ModalInfo';
-import ShowOnSignUp from '../../common/components/ShowOnSignup';
-import useAuth from '../../common/hooks/useAuth';
-import Timer from '../../common/components/Timer';
-import Link from '../../common/components/NextChakraLink';
+import useStyle from '../../hooks/useStyle';
+import Icon from '../../components/Icon';
+import PublicProfile from '../../components/PublicProfile';
+import AvatarUser from '../../components/AvatarUser';
+import ModalInfo from '../../components/ModalInfo';
+import ShowOnSignUp from '../../components/ShowOnSignup';
+import Timer from '../../components/Timer';
+import Link from '../../components/NextChakraLink';
 import { categoriesFor, BREATHECODE_HOST } from '../../utils/variables';
-import ComponentOnTime from '../../common/components/ComponentOnTime';
-import MarkDownParser from '../../common/components/MarkDownParser';
-import MktEventCards from '../../common/components/MktEventCards';
-import { validatePlanExistence } from '../../common/handlers/subscriptions';
-import ModalToGetAccess, { stageType } from '../../common/components/ModalToGetAccess';
-import SmallCardsCarousel from '../../common/components/SmallCardsCarousel';
-import LoaderScreen from '../../common/components/LoaderScreen';
-import DynamicContentCard from '../../common/components/DynamicContentCard';
-import { SessionContext } from '../../common/context/SessionContext';
+import ComponentOnTime from '../../components/ComponentOnTime';
+import MarkDownParser from '../../components/MarkDownParser';
+import MktEventCards from '../../components/MktEventCards';
+import { validatePlanExistence } from '../../handlers/subscriptions';
+import ModalToGetAccess, { stageType } from '../../components/ModalToGetAccess';
+import SmallCardsCarousel from '../../components/SmallCardsCarousel';
+import { SessionContext } from '../../context/SessionContext';
+import LoaderScreen from '../../components/LoaderScreen';
+import ReactPlayerV2 from '../../components/ReactPlayerV2';
+import DynamicContentCard from '../../components/DynamicContentCard';
+import useAuth from '../../hooks/useAuth';
+import useCustomToast from '../../hooks/useCustomToast';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -74,7 +76,7 @@ export const getStaticPaths = async ({ locales }) => {
 
 export const getStaticProps = async ({ params, locale }) => {
   const { event_slug: slug } = params;
-  const resp = await bc.public().singleEvent(slug).catch(() => ({
+  const resp = await bc.public({ context: 'true' }).singleEvent(slug).catch(() => ({
     statusText: 'not-found',
   }));
   const data = resp?.data;
@@ -165,14 +167,16 @@ function Workshop({ eventData, asset }) {
   const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
   const [noConsumablesFound, setNoConsumablesFound] = useState(false);
   const [denyAccessToEvent, setDenyAccessToEvent] = useState(false);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   const router = useRouter();
   const { locale } = router;
   const eventSlug = router?.query?.event_slug;
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'event-and-access-reservation' });
   const { isAuthenticated, user, cohorts } = useAuth();
   const { featuredColor, hexColor } = useStyle();
   const endDate = event?.ended_at || event?.ending_at;
+  const eventRecap = event?.recap;
 
   const getDefaultData = async () => {
     const resp = await bc.public().singleEvent(eventData?.slug || eventSlug).catch(() => ({
@@ -345,6 +349,7 @@ function Workshop({ eventData, asset }) {
         setDataToGetAccessModal({
           ...data,
           event,
+          consumableType: 'event',
           academyServiceSlug: '',
         });
         setIsModalToGetAccessOpen(true);
@@ -403,7 +408,7 @@ function Workshop({ eventData, asset }) {
       if (finishedEvent && recordingUrl) {
         return ({
           title: t('form.watch-workshop-recording-no-auth-title'),
-          description: t('form.watch-workshop-recording-no-auth-description'),
+          description: eventRecap || t('form.watch-workshop-recording-no-auth-description'),
           childrenDescription: (
             <Box>
               <Box mb="10px" display="flex" gridGap="5px" justifyContent="center">
@@ -429,6 +434,12 @@ function Workshop({ eventData, asset }) {
           ),
         });
       }
+    }
+    if (finishedEvent && recordingUrl) {
+      return ({
+        title: t('form.finished-with-recording-title'),
+        description: t('form.finished-with-recording-description'),
+      });
     }
     if (finishedEvent) {
       return ({
@@ -565,7 +576,7 @@ function Workshop({ eventData, asset }) {
             if (resp !== undefined) {
               setApplied(true);
               setIsCheckinModalOpen(true);
-              toast({
+              createToast({
                 position: 'top',
                 status: 'success',
                 title: t('alert-message:success-event-reservation'),
@@ -587,7 +598,7 @@ function Workshop({ eventData, asset }) {
                 },
               });
             } else {
-              toast({
+              createToast({
                 position: 'top',
                 status: 'info',
                 title: t('alert-message:event-access-error'),
@@ -663,6 +674,52 @@ function Workshop({ eventData, asset }) {
         </Flex>
 
       </SimpleModal>
+
+      {isVideoModalOpen && (
+        <Portal>
+          <Box
+            position="fixed"
+            top="0"
+            left="0"
+            width="100%"
+            height="100%"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            background="rgba(0, 0, 0, 0.7)"
+            zIndex="9999"
+            className="video-overlay"
+          >
+            <Box
+              className="video-container"
+              position="relative"
+              onClick={(e) => e.stopPropagation()}
+              background={featuredColor}
+              padding="25px 25px"
+              borderRadius="12px"
+            >
+              <IconButton
+                position="absolute"
+                top={4}
+                right={5}
+                borderColor="blue.default"
+                color="blue.default"
+                onClick={() => setIsVideoModalOpen(false)}
+                zIndex="1"
+                icon={<Icon icon="close" color={hexColor.black} width="25px" height="25px" />}
+              />
+              <ReactPlayerV2
+                url={event?.recording_url}
+                autoPlay
+                controls
+                width="100%"
+                height="auto"
+                aspectRatio="16/9"
+              />
+            </Box>
+          </Box>
+        </Portal>
+      )}
 
       <Head>
         <script
@@ -782,11 +839,18 @@ function Workshop({ eventData, asset }) {
                 </Box>
               )}
               {formatedDate[locale] && (
+
                 <Box display="flex" gridGap="10px">
                   <Icon icon="calendar" width="20px" height="20px" color={hexColor.blueDefault} />
-                  <Text withTooltip size="14px" label={capitalizeFirstLetter(countryOfDate)} fontWeight={700} width="fit-content">
-                    {capitalizeFirstLetter(formatedDate[locale])}
-                  </Text>
+                  {finishedEvent ? (
+                    <Text size="14px" fontWeight={700}>
+                      {t('event-took-place', { date: capitalizeFirstLetter(formatedDate[locale]) })}
+                    </Text>
+                  ) : (
+                    <Text withTooltip size="14px" label={capitalizeFirstLetter(countryOfDate)} fontWeight={700} width="fit-content">
+                      {capitalizeFirstLetter(formatedDate[locale])}
+                    </Text>
+                  )}
                 </Box>
               )}
               {duration?.hours > 0 && (
@@ -937,7 +1001,7 @@ function Workshop({ eventData, asset }) {
                           }}
                           onClick={() => {
                             if (finishedEvent && recordingUrl) {
-                              window.open(recordingUrl, '_blank');
+                              setIsVideoModalOpen(true);
                             } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
                             else handleJoin();
                           }}
@@ -984,7 +1048,7 @@ function Workshop({ eventData, asset }) {
                         {formInfo?.title}
                       </Heading>
                       <Text>
-                        {formInfo?.description}
+                        {eventRecap || formInfo?.description}
                       </Text>
                     </Box>
                   </>
@@ -1031,7 +1095,22 @@ function Workshop({ eventData, asset }) {
                   }}
                   headContent={readyToJoinEvent ? (
                     <Box position="relative" zIndex={1} width="100%" height={177}>
-                      <Image src={randomImage} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" alt="head banner" />
+                      {recordingUrl ? (
+                        <ReactPlayerV2
+                          url={recordingUrl}
+                          withThumbnail
+                          withModal
+                          preview
+                          isPlayDisabled={!isAuthenticated}
+                          previewDuration={10}
+                          thumbnailStyle={{
+                            borderRadius: '17px 17px 0 0',
+                          }}
+                          margin="0 0 12px 0"
+                        />
+                      ) : (
+                        <Image src={randomImage} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" alt="head banner" />
+                      )}
                     </Box>
                   ) : (
                     <Timer
@@ -1080,7 +1159,7 @@ function Workshop({ eventData, asset }) {
                       }}
                       onClick={() => {
                         if (finishedEvent && recordingUrl) {
-                          window.open(recordingUrl, '_blank');
+                          setIsVideoModalOpen(true);
                         } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
                         else handleJoin();
                       }}

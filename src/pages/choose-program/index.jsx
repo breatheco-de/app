@@ -1,35 +1,35 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import {
-  Flex, Box, Button, useToast,
+  Flex, Box, Button,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
-import ChooseProgram from '../../js_modules/chooseProgram';
-import Text from '../../common/components/Text';
-import asPrivate from '../../common/context/PrivateRouteWrapper';
-import bc from '../../common/services/breathecode';
-import useAuth from '../../common/hooks/useAuth';
-import Icon from '../../common/components/Icon';
-import TaskBar from '../../common/components/TaskBar';
+import ProgramsDashboard from '../../components/ProgramsDashboard';
+import Text from '../../components/Text';
+import asPrivate from '../../context/PrivateRouteWrapper';
+import bc from '../../services/breathecode';
+import useAuth from '../../hooks/useAuth';
+import Icon from '../../components/Icon';
+import TaskBar from '../../components/TaskBar';
 import { calculateDifferenceDays, getStorageItem, isPlural, isValidDate, removeStorageItem, setStorageItem, sortToNearestTodayDate, syncInterval, getBrowserInfo } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
-import Heading from '../../common/components/Heading';
-import { usePersistent } from '../../common/hooks/usePersistent';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
-import LiveEvent from '../../common/components/LiveEvent';
-import NextChakraLink from '../../common/components/NextChakraLink';
-import { SimpleSkeleton } from '../../common/components/Skeleton';
-import useProgramList from '../../common/store/actions/programListAction';
-import handlers from '../../common/handlers';
-import useSubscriptionsHandler from '../../common/store/actions/subscriptionAction';
-import { PREPARING_FOR_COHORT } from '../../common/store/types';
-import SimpleModal from '../../common/components/SimpleModal';
-import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
-import useStyle from '../../common/hooks/useStyle';
-import SupportSidebar from '../../common/components/SupportSidebar';
-import Feedback from '../../common/components/Feedback';
+import Heading from '../../components/Heading';
+import { usePersistent } from '../../hooks/usePersistent';
+import useCohortHandler from '../../hooks/useCohortHandler';
+import LiveEvent from '../../components/LiveEvent';
+import NextChakraLink from '../../components/NextChakraLink';
+import { SimpleSkeleton } from '../../components/Skeleton';
+import useProgramList from '../../store/actions/programListAction';
+import useSubscriptionsHandler from '../../store/actions/subscriptionAction';
+import { PREPARING_FOR_COHORT } from '../../store/types';
+import SimpleModal from '../../components/SimpleModal';
+import ReactPlayerV2 from '../../components/ReactPlayerV2';
+import useStyle from '../../hooks/useStyle';
+import SupportSidebar from '../../components/SupportSidebar';
+import Feedback from '../../components/Feedback';
 import axios from '../../axios';
-import LanguageSelector from '../../common/components/LanguageSelector';
+import LanguageSelector from '../../components/LanguageSelector';
+import useCustomToast from '../../hooks/useCustomToast';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -58,10 +58,10 @@ function chooseProgram() {
   const [events, setEvents] = useState(null);
   const [liveClasses, setLiveClasses] = useState([]);
   const [loadingInvite, setLoadingInvite] = useState(null);
-  const { state, programsList, updateProgramList } = useProgramList();
+  const { updateProgramList } = useProgramList();
   const { fetchSubscriptions, state: subscriptionsState } = useSubscriptionsHandler();
   const { isLoading: subscriptionLoading, subscriptions } = subscriptionsState;
-  const [cohortTasks, setCohortTasks] = useState({});
+  const [cohortMembers, setCohortMembers] = useState({});
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
   const [lateModalProps, setLateModalProps] = useState({
@@ -72,37 +72,20 @@ function chooseProgram() {
     isLoading: true,
     data: [],
   });
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'invitation-error-accepted' });
   const { hexColor } = useStyle();
   const isClosedLateModal = getStorageItem('isClosedLateModal');
   const TwelveHoursInMinutes = 720;
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
 
-  const getStudentAndTeachers = async (item) => {
-    const users = await bc.cohort({
-      role: 'TEACHER,ASSISTANT',
-      cohorts: item?.slug,
-      academy: item?.academy?.id,
-    }).getMembers();
-
-    return users || [];
-  };
-
-  const getMembers = async (cohortSubscription) => {
-    const members = await getStudentAndTeachers(cohortSubscription);
-    return members;
-  };
-
-  const getAllSyllabus = () => {
+  const allSyllabus = useMemo(() => {
     const syllabus = [];
 
     cohorts.forEach(({ syllabus_version: syllabusVersion }) => {
       if (!syllabus.includes(syllabusVersion.slug)) syllabus.push(syllabusVersion.slug);
     });
     return syllabus;
-  };
-
-  const allSyllabus = useMemo(getAllSyllabus, [cohorts]);
+  }, [cohorts]);
 
   const getServices = async (userRoles) => {
     if (userRoles?.length > 0) {
@@ -135,12 +118,8 @@ function chooseProgram() {
   useEffect(() => {
     let revalidate;
     if (user) {
-      const cohortSubscription = cohorts?.find((item) => item?.slug === subscriptionProcess?.slug);
-      const members = cohortSubscription ? getMembers(cohortSubscription) : [];
-
       getServices(user.roles);
       const cohortIsReady = cohorts?.length > 0 && cohorts?.some((cohort) => {
-        // const cohort = item?.cohort;
         const academy = cohort?.academy;
         if (cohort?.id === subscriptionProcess?.id
         && cohort?.slug === subscriptionProcess?.slug
@@ -149,7 +128,7 @@ function chooseProgram() {
         return false;
       });
       if (cohorts?.length > 0) {
-        const hasAvailableAsSaas = cohorts.some((elem) => elem.available_as_saas === true);
+        const hasAvailableAsSaas = cohorts.some((elem) => elem.available_as_saas);
         const cohortsSlugs = cohorts.map((elem) => elem.slug).join(',');
         const cohortsAcademies = cohorts.map((elem) => elem.academy.slug).join(',');
         const cohortWithFinantialStatusLate = cohorts.filter((elem) => elem.cohort_user.finantial_status === 'LATE' || elem.educational_status === 'SUSPENDED');
@@ -171,7 +150,7 @@ function chooseProgram() {
       revalidate = setTimeout(async () => {
         if (subscriptionProcess?.status === PREPARING_FOR_COHORT && subscriptionProcess?.id) {
           setIsRevalidating(true);
-          if (!cohortIsReady && members.length === 0) {
+          if (!cohortIsReady) {
             const { cohorts: myCohorts } = await fetchUserAndCohorts();
             setCohorts(myCohorts);
             console.log('revalidated on:', new Date().toLocaleString());
@@ -210,12 +189,10 @@ function chooseProgram() {
   // .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
 
   useEffect(() => {
-    if (subscriptionLoading === false && cohorts.length > 0 && Object.values(cohortTasks)?.length > 0) {
-      updateProgramList(cohorts?.reduce((acc, value) => {
+    if (subscriptionLoading === false && cohorts.length > 0 && Object.values(cohortMembers)?.length > 0) {
+      const programList = cohorts?.reduce((acc, value) => {
         acc[value.slug] = {
-          ...state[value.slug],
-          ...programsList[value.slug],
-          ...cohortTasks[value.slug],
+          ...cohortMembers[value.slug],
           name: value.name,
           plan_financing: subscriptions?.plan_financings?.find(
             (sub) => sub?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === value.slug),
@@ -227,9 +204,10 @@ function chooseProgram() {
           slug: value.slug,
         };
         return acc;
-      }, {}));
+      }, {});
+      updateProgramList(programList);
     }
-  }, [cohorts, cohortTasks, subscriptionLoading]);
+  }, [cohorts, cohortMembers, subscriptionLoading]);
 
   const processCohort = async (cohort) => {
     if (cohort?.slug) {
@@ -242,13 +220,10 @@ function chooseProgram() {
       }).getMembers();
       const teacher = studentAndTeachers?.data?.filter((st) => st.role === 'TEACHER') || [];
       const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT') || [];
-      const { tasks, syllabus } = cohortsAssignments[slug];
-      const assignmentData = await handlers.getAssignmentsCount({ data: syllabus, taskTodo: tasks, cohortId: cohort.id });
 
-      setCohortTasks((prev) => ({
+      setCohortMembers((prev) => ({
         ...prev,
         [slug]: {
-          ...assignmentData,
           teacher,
           assistant,
         },
@@ -263,8 +238,9 @@ function chooseProgram() {
   }, [cohorts]);
 
   useEffect(() => {
-    const cohortSlugs = Object.keys(cohortsAssignments);
-    if (cohorts.length > 0 && cohorts.every((cohort) => cohortSlugs.includes(cohort.slug))) {
+    // const cohortSlugs = Object.keys(cohortsAssignments);
+    // if (cohorts.length > 0 && cohorts.every((cohort) => cohortSlugs.includes(cohort.slug))) {
+    if (cohorts.length > 0) {
       cohorts.map(processCohort);
     }
   }, [cohorts, cohortsAssignments]);
@@ -334,7 +310,7 @@ function chooseProgram() {
         ...pendingProfileAcademies,
       ]);
     } catch (e) {
-      toast({
+      createToast({
         title: t('alert-message:something-went-wrong-with', { property: 'Admissions' }),
         status: 'error',
         duration: 5000,
@@ -363,14 +339,14 @@ function chooseProgram() {
         invList.splice(invitationIndex, 1);
         setInvites(invList);
 
-        toast({
+        createToast({
           title: t('alert-message:invitation-accepted-cohort', { cohortName }),
           status: 'success',
           duration: 9000,
           isClosable: true,
         });
       } else {
-        toast({
+        createToast({
           title: t('alert-message:invitation-error'),
           status: 'error',
           duration: 5000,
@@ -379,7 +355,7 @@ function chooseProgram() {
       }
     } catch (e) {
       console.log(e);
-      toast({
+      createToast({
         title: t('alert-message:invitation-error'),
         status: 'error',
         duration: 5000,
@@ -404,14 +380,14 @@ function chooseProgram() {
         invList.splice(invitationIndex, 1);
         setInvites(invList);
 
-        toast({
+        createToast({
           title: t('alert-message:invitation-accepted'),
           status: 'success',
           duration: 9000,
           isClosable: true,
         });
       } else {
-        toast({
+        createToast({
           title: t('alert-message:invitation-error'),
           status: 'error',
           duration: 5000,
@@ -420,7 +396,7 @@ function chooseProgram() {
       }
     } catch (e) {
       console.log(e);
-      toast({
+      createToast({
         title: t('alert-message:invitation-error'),
         status: 'error',
         duration: 5000,
@@ -593,7 +569,7 @@ function chooseProgram() {
 
           <Box>
             {!isLoading && (
-              <ChooseProgram chooseList={cohorts.filter(isMainCohort)} setLateModalProps={setLateModalProps} />
+              <ProgramsDashboard cohorts={cohorts.filter(isMainCohort)} setLateModalProps={setLateModalProps} />
             )}
           </Box>
           {isRevalidating && (

@@ -1,4 +1,4 @@
-import PaginatedView from '../common/components/PaginationView';
+import PaginatedView from '../components/PaginationView';
 
 export default {
   title: 'Components/PaginatedView',

@@ -35,7 +35,7 @@ async function prepareAssetData() {
   });
 
   // This file is disposable and will disappear at the end of the build process.
-  fs.writeFileSync('src/lib/asset-list.json', JSON.stringify(data));
+  fs.writeFileSync('public/asset-list.json', JSON.stringify(data));
 
   return data;
 }

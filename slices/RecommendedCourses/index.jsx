@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import MktRecommendedCourses from '../../src/common/components/MktRecommendedCourses';
+import MktRecommendedCourses from '../../src/components/MktRecommendedCourses';
 
 /**
  * @typedef {import("@prismicio/client").Content.RecommendedCoursesSlice} RecommendedCoursesSlice

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import MktMultipleColumnCard from '../../src/common/components/MktMultipleColumnCard';
+import MktMultipleColumnCard from '../../src/components/MktMultipleColumnCard';
 /**
  * @typedef {import("@prismicio/client").Content.MultipleColumnCardSlice} MultipleColumnCardSlice
  * @typedef {import("@prismicio/react").SliceComponentProps<MultipleColumnCardSlice>} MultipleColumnCardProps
