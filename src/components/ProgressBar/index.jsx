@@ -16,7 +16,7 @@ function ProgressBar({
   const { assignmentsProgress, percentage } = getAssignmentsCount({ syllabus: cohortProgram, tasks: taskTodo });
 
   return (
-    <Box width={width || '100%'}>
+    <Box width={width}>
       <Flex marginBottom="15px" gridGap="10px" align="center">
         <Heading fontSize="22px" marginY="0">
           <Counter valueTo={percentage} totalDuration={2} />
