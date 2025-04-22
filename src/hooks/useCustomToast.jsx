@@ -91,6 +91,7 @@ const useCustomToast = ({
                   fontSize="14px"
                   textDecoration="underline"
                   target="_blank"
+                  onClick={closeToast}
                 >
                   {action.label}
                 </Button>
