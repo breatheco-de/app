@@ -62,7 +62,7 @@ function ShowPrices({
   const { applyDiscountCouponsToPlans, state } = useSignup();
   const { selfAppliedCoupon } = state;
   const { location } = useContext(SessionContext);
-  const isSpain = location?.country.toLowerCase() === 'spain' || location?.country.toLowerCase() === 'españa';
+  const isSpain = location?.country?.toLowerCase() === 'spain' || location?.country?.toLowerCase() === 'españa';
 
   const tiersTypes = {
     subscriptions: applyDiscountCouponsToPlans(list, selfAppliedCoupon) || data?.pricing.list || [],
