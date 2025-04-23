@@ -65,6 +65,31 @@
       "https://randomuser.me/api/portraits/men/11.jpg",
       "https://randomuser.me/api/portraits/women/12.jpg",
       "https://randomuser.me/api/portraits/men/20.jpg"
+    ],
+    "coding-introduction":[
+      "https://randomuser.me/api/portraits/men/32.jpg",
+      "https://randomuser.me/api/portraits/women/45.jpg",
+      "https://randomuser.me/api/portraits/men/76.jpg"
+    ],
+    "applied-ai":[
+      "https://randomuser.me/api/portraits/men/2.jpg",
+      "https://randomuser.me/api/portraits/women/5.jpg",
+      "https://randomuser.me/api/portraits/men/7.jpg"
+    ],
+    "data-science-and-ml": [
+      "https://randomuser.me/api/portraits/men/11.jpg",
+      "https://randomuser.me/api/portraits/women/12.jpg",
+      "https://randomuser.me/api/portraits/men/20.jpg"
+    ],
+    "front-end-development":[
+      "https://randomuser.me/api/portraits/men/2.jpg",
+      "https://randomuser.me/api/portraits/women/5.jpg",
+      "https://randomuser.me/api/portraits/men/7.jpg"
+    ],
+    "weekly-coding-challenge": [
+      "https://randomuser.me/api/portraits/men/11.jpg",
+      "https://randomuser.me/api/portraits/women/12.jpg",
+      "https://randomuser.me/api/portraits/men/20.jpg"
     ]
   },
   "coupon-bar": {
@@ -182,6 +207,62 @@
           "rating": 4,
           "date": "1 week ago",
           "review": "Amazing content and structure. The AI tool is wonderful!"
+        }
+      ]
+    },
+    "vibe-coding-with-ai": {
+      "rating": 4.7,
+      "total_ratings": 203,
+      "reviews_numbers": 38,
+      "reviews": [
+        {
+          "name": "Felipe Cespedes",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/felipe-profile-picture-jpg",
+          "rating": 5,
+          "date": "1 week ago",
+          "review": "This course is very flexible and allowed me to learn while doing other things in my life!"
+        },
+        {
+          "name": "Rubi Rimache",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/ruby-profile-picture-jpg",
+          "rating": 5,
+          "date": "2 weeks ago",
+          "review": "I love the program, it's very good and comfortable! I would recommend it for its comfort and the clarity with which things are explained."
+        },
+        {
+          "name": "Brian Hernandes ",
+          "avatar": "https://example.com/avatar3.jpg",
+          "rating": 4,
+          "date": "1 week ago",
+          "review": "Amazing content and structure. The AI tool is wonderful!"
+        }
+      ]
+    },
+    "front-end-development": {
+      "rating": 4.7,
+      "total_ratings": 562,
+      "reviews_numbers": 47,
+      "reviews": [
+        {
+          "name": "Felipe Cespedes",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/felipe-profile-picture-jpg",
+          "rating": 5,
+          "date": "1 week ago",
+          "review": "This course is very flexible and allowed me to learn while doing other things in my life!"
+        },
+        {
+          "name": "Brian Hernandez",
+          "avatar": "https://example.com/avatar3.jpg",
+          "rating": 4,
+          "date": "1 week ago",
+          "review": "Amazing content and structure. The AI tool is wonderful!"
+        },
+        {
+          "name": "Rubi Rimache",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/ruby-profile-picture-jpg",
+          "rating": 5,
+          "date": "2 weeks ago",
+          "review": "I love the program, it's very good and comfortable! I would recommend it for its comfort and the clarity with which things are explained."
         }
       ]
     }
