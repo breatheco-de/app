@@ -240,6 +240,7 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
                       background={hexColor.lightGreyBackground}
                       borderRadius="8px"
                       padding="8px"
+                      paddingBottom="0 !important"
                     >
                       <LiveEventWidgetV2
                         mainClasses={liveClasses || []}

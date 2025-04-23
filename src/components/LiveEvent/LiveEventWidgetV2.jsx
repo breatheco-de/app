@@ -59,7 +59,7 @@ function LiveEventWidgetV2({
 
       {finalDisplayEvents.length > 0 ? (
         <>
-          {finalDisplayEvents.map((event) => {
+          {finalDisplayEvents.map((event, index, array) => {
             const isCurrentEventLiveOrStarting = isLiveOrStarting(new Date(event?.starting_at), new Date((event?.ended_at || event?.ending_at)));
             return (
               <Box
@@ -70,12 +70,12 @@ function LiveEventWidgetV2({
                 padding="10px"
                 borderRadius="lg"
                 width="100%"
-                mb={3}
+                mb={index === array.length - 1 ? 1 : 3}
               >
                 <MainEvent
                   currentDateText={eventTimeTexts?.[event.id]}
                   event={event}
-                  limitOfText={24}
+                  limitOfText={28}
                   mainEvents={mainEvents}
                   getOtherEvents={getOtherEventsResult}
                   isLiveOrStarting={isLiveOrStarting}
