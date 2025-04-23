@@ -255,7 +255,7 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
                 <CustomButton
                   onClick={() => router.push('/mentorship/schedule')}
                   infoTooltip={{
-                    leftComponent: <ProfilesSection size="19px" profiles={mentors} />,
+                    leftComponent: <Box><ProfilesSection size="19px" profiles={mentors} /></Box>,
                     title: t('common:mentorships'),
                     description: t('common:mentorship-description'),
                     learnMoreLink: '/docs/knowledge-base-4geeks/mentoring-sessions',

@@ -47,11 +47,11 @@ function MainEvent({
   const renderIcon = () => (
     <Box
       borderRadius="full"
-      width="40px"
-      height="40px"
-      minWidth="40px"
-      minHeight="40px"
-      maxHeight="40px"
+      width={layoutVariant === 'inline' ? '28px' : '40px'}
+      height={layoutVariant === 'inline' ? '28px' : '40px'}
+      minWidth={layoutVariant === 'inline' ? '28px' : '40px'}
+      minHeight={layoutVariant === 'inline' ? '28px' : '40px'}
+      maxHeight={layoutVariant === 'inline' ? '28px' : '40px'}
       flexShrink={0}
       className={
         isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)
@@ -109,7 +109,7 @@ function MainEvent({
 
     return (
       <Tag
-        size="sm"
+        fontSize={variant === 'inline' ? '12px' : '13px'}
         borderRadius="full"
         variant="solid"
         width="fit-content"
@@ -127,7 +127,7 @@ function MainEvent({
     if (isLiveNow) {
       if (variant === 'inline') {
         return (
-          <Text fontSize="13px" lineHeight="1.2" fontWeight="700" color={CustomTheme.colors.danger}>
+          <Text fontSize="12px" lineHeight="1.2" fontWeight="700" color={CustomTheme.colors.danger}>
             {`• ${t('live-now')}`}
           </Text>
         );
@@ -149,7 +149,7 @@ function MainEvent({
     const upcomingColor = variant === 'inline' ? theme.colors.gray[500] : disabledColor;
     return (
       <Text
-        fontSize="13px"
+        fontSize={variant === 'inline' ? '12px' : '13px'}
         lineHeight="1.2"
         fontWeight={500}
         color={upcomingColor}
@@ -162,21 +162,21 @@ function MainEvent({
   };
 
   const renderTitle = (variant) => {
-    let titleColor = fontColor; // Default to standard font color
+    let titleColor = fontColor;
     if (variant === 'inline') {
       if (isLiveOrStarting(liveStartsAtDate, liveEndsAtDate)) {
-        titleColor = hexColor.blueDefault; // Blue for live/starting soon inline events
+        titleColor = hexColor.blueDefault;
       } else {
-        titleColor = fontColor; // Default text color for upcoming inline events
+        titleColor = fontColor;
       }
     }
 
     return (
       <Text
-        size="15px"
+        fontSize={variant === 'inline' ? '12px' : '15px'}
         lineHeight="1.2"
         fontWeight={variant === 'inline' ? '500' : '900'}
-        color={titleColor} // Use the determined color
+        color={titleColor}
         title={eventTitle}
         noOfLines={2}
         wordBreak="break-word"

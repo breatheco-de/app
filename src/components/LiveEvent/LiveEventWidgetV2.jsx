@@ -52,8 +52,8 @@ function LiveEventWidgetV2({
   finalDisplayEvents = finalDisplayEvents.slice(0, 3);
 
   return (
-    <Box padding="10px" maxWidth="100%" {...rest}>
-      <Heading size="sm" textAlign="center" mb={4} fontWeight="400">
+    <Box padding="10px" width="100%" {...rest}>
+      <Heading fontSize="14px" textAlign="center" mb={2} fontWeight="400">
         {t('upcoming-events')}
       </Heading>
 
@@ -147,7 +147,7 @@ function LiveEventWidgetV2({
               marginBottom="5px"
               marginTop="0"
             >
-              {t('live-class', 'Live Class')}
+              {t('live-class')}
             </Text>
             <Text
               fontSize="12px"
@@ -156,7 +156,7 @@ function LiveEventWidgetV2({
               color={textGrayColor}
               margin="0"
             >
-              {t('no-upcoming-events')}
+              {t('no-live-class')}
             </Text>
           </Box>
         </Box>
@@ -168,7 +168,7 @@ function LiveEventWidgetV2({
         fontSize="14px"
         fontWeight="700"
         display="block"
-        margin="10px auto 0"
+        margin="0 auto"
         onClick={() => {
           router.push('/workshops');
         }}

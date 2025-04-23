@@ -262,6 +262,7 @@ function Dashboard() {
     bc.payment({ upcoming: true, limit: 20 }).events()
       .then(({ data }) => {
         const results = data?.results || [];
+        console.log('results', data);
         const eventsRemain = results?.length > 0 ? results.filter((l) => {
           if (isValidDate(l?.ended_at)) return new Date(l?.ended_at) - new Date() > 0;
           if (isValidDate(l?.ending_at)) return new Date(l?.ending_at) - new Date() > 0;
