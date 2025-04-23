@@ -40,13 +40,24 @@ function MktEventCards({
   const router = useRouter();
   const lang = router.locale;
   const search = getQueryString('search');
-  const qsConnector = parseQuerys({
+
+  const queryParams = {
     featured: true,
     academy: WHITE_LABEL_ACADEMY,
     is_public: true,
-    status: (techFilter || searchSensitive) ? 'ACTIVE,FINISHED' : 'ACTIVE',
-    past: !!(techFilter || searchSensitive),
-  }, (endpoint && endpoint?.includes('?')));
+  };
+
+  if (searchSensitive) {
+    queryParams.status = 'ACTIVE,FINISHED';
+    queryParams.all_time = true;
+  } else if (techFilter) {
+    queryParams.status = 'ACTIVE,FINISHED';
+    queryParams.past = true;
+  } else {
+    queryParams.status = 'ACTIVE';
+  }
+
+  const qsConnector = parseQuerys(queryParams, (endpoint && endpoint?.includes('?')));
 
   const hoursLimited = hoursToLimit * 60;
   const choosenEndpoint = endpoint || '/v1/events/all';
