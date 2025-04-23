@@ -198,7 +198,7 @@ function CoursePage({ data, syllabus }) {
   const faqList = getAlternativeTranslation('faq', {}, { returnObjects: true }) || [];
   const features = getAlternativeTranslation('features', {}, { returnObjects: true }) || {};
   const featuredBullets = getAlternativeTranslation('featured-bullets', {}, { returnObjects: true }) || [];
-  const isSpain = location?.country.toLowerCase() === 'spain' || location?.country.toLowerCase() === 'españa';
+  const isSpain = location?.country?.toLowerCase() === 'spain' || location?.country?.toLowerCase() === 'españa';
 
   useEffect(() => {
     if (isRigoInitialized && data.course_translation && !initialDataIsFetching && planData?.slug) {
