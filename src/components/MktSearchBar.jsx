@@ -7,7 +7,7 @@ import Icon from './Icon';
 import Heading from './Heading';
 import useStyle from '../hooks/useStyle';
 
-function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches, background, popularSearchesTitle, ...rest }) {
+function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches, background, popularSearchesTitle, placeholder, searchOn, queryParamKey, ...rest }) {
   const [search, setSearch] = useState('');
   const timeoutRef = useRef(null);
   const { hexColor, fontColor } = useStyle();
@@ -17,7 +17,7 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
   const updateQueryParams = (newParams) => {
     const currentQuery = new URLSearchParams(router.query);
     Object.entries(newParams).forEach(([key, value]) => {
-      if (value) {
+      if (value !== null && value !== undefined && value !== '') {
         currentQuery.set(key, value);
       } else {
         currentQuery.delete(key);
@@ -31,15 +31,15 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (search) {
-      updateQueryParams({ search });
+      updateQueryParams({ [queryParamKey]: search });
     } else {
-      updateQueryParams({ search: null });
+      updateQueryParams({ [queryParamKey]: null });
     }
   };
 
   const handlePopularSearchClick = (term) => {
     setSearch(term);
-    updateQueryParams({ search: term });
+    updateQueryParams({ [queryParamKey]: term });
   };
 
   const clearSearch = () => {
@@ -48,7 +48,7 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
       timeoutRef.current = null;
     }
     setSearch('');
-    updateQueryParams({ search: null });
+    updateQueryParams({ [queryParamKey]: null });
   };
 
   const handleInputChange = (e) => {
@@ -61,17 +61,19 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
       clearSearch();
       return;
     }
-    timeoutRef.current = setTimeout(() => {
-      updateQueryParams({ search: value });
-    }, 500);
+    if (searchOn === 'debounce') {
+      timeoutRef.current = setTimeout(() => {
+        updateQueryParams({ [queryParamKey]: value });
+      }, 500);
+    }
   };
 
   useEffect(() => {
-    const searchParam = router.query.search;
+    const searchParam = router.query[queryParamKey];
     if (searchParam !== undefined && searchParam !== search) {
       setSearch(searchParam || '');
     }
-  }, [router.query.search]);
+  }, [router.query[queryParamKey], queryParamKey]);
 
   useEffect(() => () => {
     if (timeoutRef.current) {
@@ -82,11 +84,13 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
   return (
     <Box id={id} padding={{ base: '10px 0', md: '60px 80px' }} {...rest}>
       <Box width="auto" maxWidth="961px" margin="0 auto">
-        <Heading fontSize="38px" fontWeight="bold" mb={2} textAlign="center">
-          {headingTop}
-          <br />
-          {headingBottom}
-        </Heading>
+        {(headingTop || headingBottom) && (
+          <Heading fontSize="38px" fontWeight="bold" mb={2} textAlign="center">
+            {headingTop}
+            <br />
+            {headingBottom}
+          </Heading>
+        )}
         <Text fontSize="21px" color={useColorModeValue('gray.600')} mb={4} textAlign="center">
           {subtitle}
         </Text>
@@ -105,7 +109,7 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
               <Input
                 value={search}
                 onChange={handleInputChange}
-                placeholder={t('search-workshops')}
+                placeholder={placeholder || t('search-workshops')}
                 variant="unstyled"
                 _placeholder={{ color: useColorModeValue('gray.600', 'white') }}
                 flex="1"
@@ -180,12 +184,18 @@ MktSearchBar.propTypes = {
   background: PropTypes.string,
   id: PropTypes.string,
   popularSearchesTitle: PropTypes.string,
+  placeholder: PropTypes.string,
+  searchOn: PropTypes.oneOf(['debounce', 'submit']),
+  queryParamKey: PropTypes.string,
 };
 
 MktSearchBar.defaultProps = {
   background: 'auto',
   popularSearchesTitle: 'Popular searches',
   id: '',
+  placeholder: '',
+  searchOn: 'debounce',
+  queryParamKey: 'search',
 };
 
 export default MktSearchBar;

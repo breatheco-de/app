@@ -169,7 +169,7 @@ function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID,
             </Button>
           )}
           <Accordion index={expanded} onChange={(val) => setExpanded(val)} allowToggle display="flex" flexDirection="column" gap="10px">
-            {steps.map((step, i) => (
+            {steps && steps.map((step, i) => (
               <AccordionItem display="flex" flexDirection="column" key={step.title} border="1px solid" borderColor={expanded === i ? 'blue.default' : borderColor} borderRadius="8px">
                 <Heading position="relative" as="h3">
                   <Checkbox top="10px" left="16px" position="absolute" />
@@ -249,7 +249,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const [selectedOs, setSelectedOs] = useState(null);
   const [selectedOption, setSelectedOption] = useState(null);
   const [availableOptions, setAvailableOptions] = useState([]);
-  const [expanded, setExpanded] = useState(0);
+  const [expanded, setExpanded] = useState(null);
 
   //__In case of public view (interactive ex and rest...) manage open provisioning vendors with this:
   const assetUrl = currentAsset?.readme_url || currentAsset?.url;
@@ -259,7 +259,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const isInteractive = currentAsset?.interactive;
 
   const isForOpenLocaly = isInteractive || templateUrl;
-  const showProvisioningLinks = (provisioningVendors?.length > 0) && currentAsset?.gitpod;
+  const showProvisioningLinks = ((provisioningVendors?.length > 0) && currentAsset?.gitpod);
   const onlyReadme = !isForOpenLocaly && !showProvisioningLinks;
 
   //__info used in steps on open locally options__
@@ -288,6 +288,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const openInLearnpackAction = t('common:learnpack.open-in-learnpack-button', { repoUrl: getFinalUrl() ? `<a href='${getFinalUrl()}'>${t('common:repository-information')}</a>` : t('common:repository-information') }, { returnObjects: true });
 
   const finalStep = currentAsset?.agent === 'vscode' ? agentVsCode : agentOS;
+  console.log(currentAsset);
 
   const formatDependencies = (input) => {
     if (!input) return [];
@@ -313,7 +314,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
 
   //__based on selected option and data previously obtained, get the steps__
   const parseSteps = () => {
-    if (showProvisioningLinks && selectedOption === 'provisioning_vendors') return openInLearnpackAction.steps;
+    if (showProvisioningLinks && selectedOption === 'provisioning_vendors' && !isInteractive) return openInLearnpackAction.steps;
     if (isInteractive) return selectedOs?.steps.concat([finalStep]);
     if (onlyReadme) return selectedOs?.readme_steps;
     return selectedOs?.steps.filter((step) => step.slug === 'download-ide' || step.slug === 'clone' || step.slug === 'create-folders').concat([...dependenciesStepsWithVersions, projectReadme]);
@@ -323,7 +324,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
 
   const resetOsSelector = () => {
     setSelectedOs(null);
-    setExpanded(0);
+    setExpanded(null);
   };
 
   const resetOptionSelector = () => {
@@ -334,8 +335,8 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   //__manage the available options based on asset data obtained before__
   useEffect(() => {
     const options = [
-      showProvisioningLinks && { key: 'provisioning_vendors', label: t('common:option-provisioning-vendors') },
-      isForOpenLocaly && { key: 'open_locally', label: t('common:option-open-locally') },
+      (showProvisioningLinks) && { key: 'provisioning_vendors', label: t('common:option-provisioning-vendors') },
+      (isForOpenLocaly) && { key: 'open_locally', label: t('common:option-open-locally') },
       onlyReadme && { key: 'open_locally', label: t('common:option-open-locally') },
     ].filter(Boolean);
 
@@ -345,9 +346,23 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
       setSelectedOption(options[0].key);
       return;
     }
-
     setSelectedOption(null);
   }, [isForOpenLocaly, showProvisioningLinks, onlyReadme, lang]);
+
+  useEffect(() => {
+    let timer;
+    const shouldShowAccordion = selectedOs || (selectedOption === 'provisioning_vendors' && !isInteractive);
+
+    if (isOpen && shouldShowAccordion) {
+      timer = setTimeout(() => {
+        setExpanded(0);
+      }, 100);
+    } else {
+      setExpanded(null);
+    }
+
+    return () => clearTimeout(timer);
+  }, [isOpen, selectedOption, selectedOs, isInteractive]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={(selectedOption === 'provisioning_vendors' && isInteractive) || !selectedOption ? 'lg' : '5xl'}>
