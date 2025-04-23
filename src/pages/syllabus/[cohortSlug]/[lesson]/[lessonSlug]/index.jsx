@@ -837,7 +837,7 @@ function SyllabusContent() {
     if (selectedSyllabus && cohortModule && cohortModule.id !== selectedSyllabus.id) {
       createToast({
         title: t('teacherSidebar.no-need-to-teach-today.title'),
-        description: t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule.id} - ${cohortModule.label}` }),
+        description: t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule.id} - ${languageFix(cohortModule.label, lang)}` }),
         status: 'info',
         duration: 5000,
         isClosable: true,

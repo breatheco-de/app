@@ -51,7 +51,7 @@
     "key-concepts": "Key concepts",
     "no-need-to-teach-today": {
       "title": "This is not what you need to teach today.",
-      "description": "According to the syllabus and the information you set up in the attendance, students are learning the module <strong>\"{{module_name}}\"</strong> today instead. Please move back to that module to keep teaching the class or update the module information in the attendance if needed."
+      "description": "According to the syllabus and the information you set up in the attendance, students are learning the module \"{{module_name}}\" today instead. Please move back to that module to keep teaching the class or update the module information in the attendance if needed."
     }
   },
   "close-exercise": "Close exercise",
