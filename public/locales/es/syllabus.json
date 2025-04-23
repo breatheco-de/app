@@ -51,7 +51,7 @@
     "key-concepts": "Conceptos clave",
     "no-need-to-teach-today": {
       "title": "Esto no es lo que necesitas enseñar hoy.",
-      "description": "Según el plan de estudios y la información que configuraste en la asistencia, los estudiantes están aprendiendo el módulo <strong>\"{{module_name}}\"</strong> hoy. Vuelva a ese módulo para seguir enseñando la clase o actualice la información del módulo en la asistencia si es necesario."
+      "description": "Según el plan de estudios y la información que configuraste en la asistencia, los estudiantes están aprendiendo el módulo \"{{module_name}}\" hoy. Vuelva a ese módulo para seguir enseñando la clase o actualice la información del módulo en la asistencia si es necesario."
     }
   },
   "close-exercise": "Cerrar ejercicio",

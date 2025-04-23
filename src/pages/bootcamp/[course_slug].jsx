@@ -2,7 +2,7 @@
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Box, Button, Flex, Image, SkeletonText } from '@chakra-ui/react';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useContext } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -44,6 +44,7 @@ import SimpleModal from '../../components/SimpleModal';
 import CustomCarousel from '../../components/CustomCarousel';
 import useCustomToast from '../../hooks/useCustomToast';
 import { usePlanPrice } from '../../utils/getPriceWithDiscount';
+import { SessionContext } from '../../context/SessionContext';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -136,6 +137,7 @@ function CoursePage({ data, syllabus }) {
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const { t, lang } = useTranslation('course');
+  const { location } = useContext(SessionContext);
   const router = useRouter();
   const translationsObj = getTranslations(t);
   const limitViewStudents = 3;
@@ -196,6 +198,7 @@ function CoursePage({ data, syllabus }) {
   const faqList = getAlternativeTranslation('faq', {}, { returnObjects: true }) || [];
   const features = getAlternativeTranslation('features', {}, { returnObjects: true }) || {};
   const featuredBullets = getAlternativeTranslation('featured-bullets', {}, { returnObjects: true }) || [];
+  const isSpain = location?.country.toLowerCase() === 'spain' || location?.country.toLowerCase() === 'españa';
 
   useEffect(() => {
     if (isRigoInitialized && data.course_translation && !initialDataIsFetching && planData?.slug) {
@@ -206,9 +209,9 @@ function CoursePage({ data, syllabus }) {
 
       const plansContext = plans.map((plan) => `
         - ${plan.title}
-        price: ${plan.priceText}
+        price: ${isSpain ? '€74.99' : plan.priceText}
         period: ${plan.period_label}
-        ${plan.lastPrice ? `original price: ${plan.lastPrice}\n discount: ${discount}\n` : ''}
+        ${plan.lastPrice ? `original price: ${isSpain ? '€149.99' : plan.lastPrice}\n discount: ${discount}\n` : ''}
       `);
       const syllabusContext = syllabus?.json
         ? syllabus.json.days
@@ -722,7 +725,7 @@ function CoursePage({ data, syllabus }) {
                           <Flex flexDirection="column" alignItems="center">
                             <Text fontSize={!featuredPlanToEnroll?.isFreeTier ? '16px' : '14px'}>
                               {allDiscounts.length > 0 && '🔥'}
-                              {capitalizeFirstLetter(featurePrice)}
+                              {capitalizeFirstLetter(isSpain ? '€74.99' : featurePrice)}
                             </Text>
                             {!featuredPlanToEnroll?.isFreeTier && (
                               <Flex alignItems="center" marginTop="5px" gap="5px" justifyContent="center">
