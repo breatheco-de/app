@@ -17,6 +17,7 @@ import {
   includesToLowerCase,
   getStorageItem,
   sortToNearestTodayDate,
+  getBrowserSize,
   calculateDifferenceDays,
   adjustNumberBeetwenMinMax,
   isValidDate,
@@ -77,6 +78,7 @@ function Dashboard() {
 
   const [subscriptionData, setSubscriptionData] = useState(null);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
+  const isBelowTablet = getBrowserSize()?.width < 768;
   const [isAvailableToShowWarningModal, setIsAvailableToShowModalMessage] = useState(false);
   const [deletionOrders, setDeletionOrders] = useState([]);
   const [showDeletionOrdersModal, setShowDeletionOrdersModal] = useState(false);
@@ -127,6 +129,8 @@ function Dashboard() {
 
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const cohortUserDaysCalculated = calculateDifferenceDays(cohortSession?.cohort_user?.created_at);
+
+  const [isVideoVisible, setIsVideoVisible] = useState(true);
 
   if (cohortSession?.academy?.id) {
     axios.defaults.headers.common.Academy = cohortSession.academy.id;
@@ -239,14 +243,10 @@ function Dashboard() {
 
   useEffect(() => {
     if (cohortSession?.cohort_user) {
-      if (cohortSession.cohort_user.finantial_status === 'LATE' || cohortSession.cohort_user.educational_status === 'SUSPENDED') {
-        router.push('/choose-program');
-      } else {
-        const isReadyToShowGithubMessage = cohorts.some(
-          (l) => l.cohort_user.educational_status === 'ACTIVE' && l.available_as_saas === false,
-        );
-        setIsAvailableToShowModalMessage(isReadyToShowGithubMessage);
-      }
+      const isReadyToShowGithubMessage = cohorts.some(
+        (l) => l.cohort_user.educational_status === 'ACTIVE' && l.available_as_saas === false,
+      );
+      setIsAvailableToShowModalMessage(isReadyToShowGithubMessage);
     }
   }, [cohortSession]);
 
@@ -257,6 +257,7 @@ function Dashboard() {
     bc.events({ upcoming: true, limit: 20 }).meOnlineEvents()
       .then(({ data }) => {
         const results = data?.results || [];
+        console.log('results', data);
         const eventsRemain = results?.length > 0 ? results.filter((l) => {
           if (isValidDate(l?.ended_at)) return new Date(l?.ended_at) - new Date() > 0;
           if (isValidDate(l?.ending_at)) return new Date(l?.ending_at) - new Date() > 0;
@@ -468,6 +469,7 @@ function Dashboard() {
 
   const mandatoryProjects = getMandatoryProjects();
   const mandatoryProjectsCount = mandatoryProjects.length;
+
   useEffect(() => {
     if (isSubscriptionFreeTrial && !hasShownFreeTrialToast.current) {
       hasShownFreeTrialToast.current = true;
@@ -530,9 +532,13 @@ function Dashboard() {
             <span
               role="button"
               tabIndex={0}
-              onClick={() => setShowDeletionOrdersModal(true)}
+              onClick={() => {
+                closeToast();
+                setShowDeletionOrdersModal(true);
+              }}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
+                  closeToast();
                   setShowDeletionOrdersModal(true);
                 }
               }}
@@ -551,7 +557,7 @@ function Dashboard() {
   const dailyModuleData = getDailyModuleData() || '';
 
   const onlyStudentsActive = studentAndTeachers.filter(
-    (x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE',
+    (x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE' && x.finantial_status !== 'LATE',
   ).map((student) => ({
     ...student,
     user: {
@@ -586,8 +592,15 @@ function Dashboard() {
 
   return (
     <Container minHeight="93vh" display="flex" flexDirection="column" maxW="none" padding="0">
-      {isAvailableAsSaas && <CohortHeader onOpenGithubModal={openGithubModalHandler} />}
-      <Container flex="1" background={isAvailableAsSaas && hexColor.lightColor4} maxW="none">
+      {false && isAvailableAsSaas && (
+        <CohortHeader
+          onOpenGithubModal={openGithubModalHandler}
+          mainClasses={liveClasses}
+          upcomingEvents={events}
+          isLoadingEvents={isLoadingAssigments}
+        />
+      )}
+      <Container flex="1" background={false && isAvailableAsSaas && hexColor.lightColor4} maxW="none">
         <Box maxW="1280px" width="100%" margin="0 auto">
           <Box width="fit-content" paddingTop="18px" marginBottom="18px">
             <NextChakraLink
@@ -597,8 +610,8 @@ function Dashboard() {
               alignItems="center"
               fontWeight="700"
               gridGap="12px"
-              color="#0097CF"
-              _focus={{ boxShadow: 'none', color: '#0097CF' }}
+              color="blue.default"
+              _focus={{ boxShadow: 'none', color: 'blue.default' }}
             >
               <Icon
                 icon="arrowLeft"
@@ -614,49 +627,158 @@ function Dashboard() {
           </Box>
           {cohortSession ? (
             <>
-              {isAvailableAsSaas ? (
+              {false && isAvailableAsSaas ? (
                 <Box flex="1 1 auto" pb="20px">
-                  <Flex direction="column" gap="10px" mb="20px">
-                    <Box display="flex" alignItems="center" gap="10px" justifyContent="space-between">
-                      <Flex gap="10px">
-                        <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
-                        <Heading as="h1" size="m">
-                          {cohortSession.name}
-                        </Heading>
+                  {cohortSession?.intro_video ? (
+                    <Flex direction="column" mb="20px">
+                      <Flex direction={{ base: 'column', md: isVideoVisible ? 'row' : 'column' }} gap="20px">
+                        <Box flex={1}>
+                          {isVideoVisible ? (
+                            <Flex direction="column" alignItems="center" gap="10px" height="100%">
+                              <Flex direction="column" gap="10px" height="100%" wrap="wrap">
+                                <Flex gap="10px">
+                                  <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
+                                  <Heading as="h1" size="m">
+                                    {cohortSession.name}
+                                  </Heading>
+                                </Flex>
+                                <Text fontSize="16px">
+                                  {t('micro-cohorts-description')}
+                                </Text>
+                                <Button
+                                  display="flex"
+                                  padding="0"
+                                  alignSelf="flex-start"
+                                  flexDirection="row"
+                                  alignItems="center"
+                                  fontWeight="700"
+                                  color="blue.default"
+                                  background="transparent"
+                                  _focus={{ boxShadow: 'none', color: 'blue.default' }}
+                                  _hover={{ background: 'transparent' }}
+                                  onClick={() => {
+                                    continueWhereYouLeft(cohortSession);
+                                  }}
+                                >
+                                  <span>
+                                    {t('saasCohortcallToAction.buttonText')}
+                                  </span>
+                                  <Icon
+                                    icon="longArrowRight"
+                                    width="20px"
+                                    height="20px"
+                                    style={{ marginLeft: '7px' }}
+                                    color="currentColor"
+                                  />
+                                </Button>
+                              </Flex>
+                            </Flex>
+                          ) : (
+                            <Flex direction="column" gap="10px">
+                              <Flex justifyContent="space-between" alignItems="center" wrap="wrap">
+                                <Flex gap="10px" alignItems="center">
+                                  <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
+                                  <Heading as="h1" size="m">
+                                    {cohortSession.name}
+                                  </Heading>
+                                </Flex>
+                                <Button
+                                  display="flex"
+                                  padding="0"
+                                  alignSelf="flex-start"
+                                  flexDirection="row"
+                                  alignItems="center"
+                                  fontWeight="700"
+                                  color="blue.default"
+                                  background="transparent"
+                                  _focus={{ boxShadow: 'none', color: 'blue.default' }}
+                                  _hover={{ background: 'transparent' }}
+                                  onClick={() => {
+                                    continueWhereYouLeft(cohortSession);
+                                  }}
+                                >
+                                  <span>
+                                    {t('saasCohortcallToAction.buttonText')}
+                                  </span>
+                                  <Icon
+                                    icon="longArrowRight"
+                                    width="20px"
+                                    height="20px"
+                                    style={{ marginLeft: '7px' }}
+                                    color="currentColor"
+                                  />
+                                </Button>
+                              </Flex>
+                            </Flex>
+                          )}
+                        </Box>
+                        {isVideoVisible && (
+                          <Box flex={1} borderRadius="12px" overflow="hidden">
+                            <ReactPlayerV2
+                              url={cohortSession.intro_video}
+                              width="100%"
+                              height="100%"
+                              iframeStyle={{ aspectRatio: '16/9', borderRadius: '12px' }}
+                            />
+                          </Box>
+                        )}
                       </Flex>
-                      <Button
-                        display="flex"
-                        flexDirection="row"
-                        alignItems="center"
-                        fontWeight="700"
-                        gridGap="12px"
-                        color="#0097CF"
-                        background="transparent"
-                        _focus={{ boxShadow: 'none', color: '#0097CF' }}
-                        _hover={{ background: 'transparent' }}
-                        onClick={() => {
-                          continueWhereYouLeft(cohortSession);
-                        }}
-                      >
-                        <span>
-                          {t('saasCohortcallToAction.buttonText')}
-                        </span>
-                        <Icon
-                          icon="longArrowRight"
-                          width="20px"
-                          height="20px"
-                          style={{ marginLeft: '7px' }}
-                          color="currentColor"
-                        />
-                      </Button>
-                    </Box>
-                    <Text fontSize="16px">
-                      {t('micro-cohorts-description')}
-                    </Text>
-                  </Flex>
+                      {isVideoVisible && (
+                        <Button alignSelf="center" color="auto" display="flex" gap="10px" variant="link" mt="auto" onClick={() => setIsVideoVisible(false)}>
+                          {t('hide-content')}
+                          <Icon icon="arrowUp" width="10px" height="10px" />
+                        </Button>
+                      )}
+                      {!isVideoVisible && (
+                        <Button variant="link" color="auto" onClick={() => setIsVideoVisible(true)}>
+                          {t('show-content')}
+                          <Icon icon="arrowDown" width="15px" height="15px" />
+                        </Button>
+                      )}
+                    </Flex>
+                  ) : (
+                    <Flex direction="column" gap="10px" mb="20px">
+                      <Box display="flex" alignItems="center" gap="10px" justifyContent="space-between">
+                        <Flex gap="10px">
+                          <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
+                          <Heading as="h1" size="m">
+                            {cohortSession.name}
+                          </Heading>
+                        </Flex>
+                        <Button
+                          display="flex"
+                          flexDirection="row"
+                          alignItems="center"
+                          fontWeight="700"
+                          gridGap="12px"
+                          color="blue.default"
+                          background="transparent"
+                          _focus={{ boxShadow: 'none', color: 'blue.default' }}
+                          _hover={{ background: 'transparent' }}
+                          onClick={() => {
+                            continueWhereYouLeft(cohortSession);
+                          }}
+                        >
+                          <span>
+                            {t('saasCohortcallToAction.buttonText')}
+                          </span>
+                          <Icon
+                            icon="longArrowRight"
+                            width="20px"
+                            height="20px"
+                            style={{ marginLeft: '7px' }}
+                            color="currentColor"
+                          />
+                        </Button>
+                      </Box>
+                      <Text fontSize="16px">
+                        {t('micro-cohorts-description')}
+                      </Text>
+                    </Flex>
+                  )}
                   {!isLoadingAssigments ? (
                     <Box display="flex" flexDirection="column" gap="20px">
-                      {hasMicroCohorts
+                      {false && hasMicroCohorts
                         ? cohorts.filter((cohort) => cohortSession.micro_cohorts.some((elem) => elem.slug === cohort.slug))
                           .sort(sortMicroCohorts)
                           .map((microCohort) => (
@@ -697,45 +819,263 @@ function Dashboard() {
               ) : (
                 <Flex
                   justifyContent="space-between"
-                  flexDirection={{ base: 'column', md: 'row' }}
-                  gap={{ base: '30px', md: '5rem' }}
+                  flexDirection={{
+                    base: 'column', sm: 'column', md: 'row', lg: 'row',
+                  }}
                 >
-                  {/* Main Content Column */}
-                  <Box width={{ base: '100%', md: 'clamp(300px, 60vw, 770px)' }}>
-                    {/* Cohort Header - Always at top */}
-                    <Box className="cohort-header" order={{ base: -1 }}>
-                      {(cohortSession?.syllabus_version?.name || cohortProgram?.name) && grantAccess ? (
-                        <Heading as="h1" size="xl">
-                          {cohortSession?.syllabus_version?.name || cohortProgram.name}
-                        </Heading>
-                      ) : (
-                        <SimpleSkeleton
-                          height="60px"
-                          width="100%"
-                          borderRadius="10px"
-                        />
-                      )}
+                  <Box width="100%" minW={{ base: 'auto', md: 'clamp(300px, 60vw, 770px)' }}>
+                    {(cohortSession?.syllabus_version?.name || cohortProgram?.name) && grantAccess ? (
+                      <Heading as="h1" size="xl">
+                        {cohortSession?.syllabus_version?.name || cohortProgram.name}
+                      </Heading>
+                    ) : (
+                      <SimpleSkeleton
+                        height="60px"
+                        width="100%"
+                        borderRadius="10px"
+                      />
+                    )}
 
-                      {mainTechnologies && grantAccess ? (
-                        <TagCapsule variant="rounded" gridGap="10px" containerStyle={{ padding: '0px' }} tags={mainTechnologies} style={{ padding: '6px 10px' }} />
-                      ) : (
-                        <SimpleSkeleton
-                          height="34px"
-                          width="290px"
-                          padding="6px 18px 6px 18px"
-                          margin="18px 0"
-                          borderRadius="30px"
+                    {mainTechnologies && grantAccess ? (
+                      <TagCapsule variant="rounded" gridGap="10px" containerStyle={{ padding: '0px' }} tags={mainTechnologies} style={{ padding: '6px 10px' }} />
+                    ) : (
+                      <SimpleSkeleton
+                        height="34px"
+                        width="290px"
+                        padding="6px 18px 6px 18px"
+                        margin="18px 0"
+                        borderRadius="30px"
+                      />
+                    )}
+                    {isBelowTablet && (
+                      <Box
+                        display={{ base: 'flex', md: 'none' }}
+                        flexDirection="column"
+                        gridGap="30px"
+                      >
+                        <OnlyFor onlyTeachers capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
+                          <TeacherSidebar
+                            title={t('teacher-sidebar.actions')}
+                            students={onlyStudentsActive}
+                            width="100%"
+                          />
+                        </OnlyFor>
+                        {academyOwner?.white_labeled && (
+                          <Box
+                            className="white-label"
+                            borderRadius="md"
+                            padding="10px"
+                            display="flex"
+                            justifyContent="space-around"
+                            bg={featuredColor}
+                          >
+                            <Avatar
+                              name={academyOwner.name}
+                              src={academyOwner.icon_url}
+                            />
+                            <Box className="white-label-text" width="80%">
+                              <Text size="md" fontWeight="700" marginBottom="5px">
+                                {academyOwner.name}
+                              </Text>
+                              <Text size="sm">
+                                {t('whiteLabeledText')}
+                              </Text>
+                            </Box>
+                          </Box>
+                        )}
+                        <LiveEvent
+                          featureLabel={t('common:live-event.title')}
+                          featureReadMoreUrl={t('common:live-event.readMoreUrl')}
+                          mainClasses={liveClasses?.length > 0 ? liveClasses : []}
+                          otherEvents={events}
+                          cohorts={cohortSession ? [{ role: cohortSession.cohort_user.role, cohort: cohortSession }] : []}
                         />
-                      )}
+
+                        {cohortSession?.kickoff_date && (
+                          <CohortSideBar
+                            teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_user?.role)}
+                            studentAndTeachers={studentAndTeachers}
+                            width="100%"
+                          />
+                        )}
+                        {cohortSession?.cohort_user?.role?.toLowerCase() === 'student' && (
+                          <SupportSidebar
+                            allCohorts={[{
+                              cohort: {
+                                ...cohortSession,
+                                ...cohortSession?.cohort_user,
+                              },
+                            }]}
+                            subscriptions={allSubscriptions}
+                            subscriptionData={subscriptionData}
+                          />
+                        )}
+                      </Box>
+                    )}
+                    {cohortSession?.intro_video && cohortUserDaysCalculated?.isRemainingToExpire === false && (
+                      <>
+                        {grantAccess ? (
+                          <Accordion defaultIndex={cohortUserDaysCalculated?.result <= 3 ? [0] : [1]} allowMultiple>
+                            <AccordionItem background={featuredColor} borderRadius="17px" border="0">
+                              {({ isExpanded }) => (
+                                <>
+                                  <span>
+                                    <AccordionButton display="flex" gridGap="16px" padding="10.5px 20px" borderRadius="17px">
+                                      <Icon icon="cameraFilled" width="29px" height="16px" color="blue.default" />
+                                      <Box as="span" fontSize="21px" fontWeight={700} flex="1" textAlign="left">
+                                        {t('intro-video-title')}
+                                      </Box>
+                                      <Icon icon="arrowRight" width="11px" height="20px" color="currentColor" style={{}} transform={isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'} transition="transform 0.2s ease-in" />
+                                    </AccordionButton>
+                                  </span>
+                                  <AccordionPanel padding="0px 4px 4px 4px">
+                                    <ReactPlayerV2
+                                      className="intro-video"
+                                      url={cohortSession?.intro_video}
+                                    />
+                                  </AccordionPanel>
+                                </>
+                              )}
+                            </AccordionItem>
+                          </Accordion>
+                        ) : (
+                          <SimpleSkeleton
+                            height="450px"
+                            padding="6px 18px 6px 18px"
+                            margin="18px 0"
+                            borderRadius="30px"
+                          />
+                        )}
+                      </>
+                    )}
+
+                    {!cohortSession?.available_as_saas && cohortSession?.current_module && dailyModuleData && (
+                      <CallToAction
+                        background="blue.default"
+                        margin="40px 0 auto 0"
+                        title={t('callToAction.title')}
+                        href={`#${slugify(dailyModuleData.label)}`}
+                        text={languageFix(dailyModuleData.description, lang)}
+                        buttonText={t('callToAction.buttonText')}
+                        width={{ base: '100%', md: 'fit-content' }}
+                      />
+                    )}
+
+                    {(!cohortSession?.intro_video || ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_user?.role) || (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 3)) && (
+                      <Box marginTop="36px">
+                        <ProgressBar
+                          cohortProgram={cohortProgram}
+                          taskTodo={taskTodo}
+                          progressText={t('progressText')}
+                          width="100%"
+                        />
+                      </Box>
+                    )}
+
+                    <Box height="2px" bg={borderColor} marginY="32px" />
+
+                    <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} justifyContent="space-between" gridGap="18px">
+                      <Heading as="h2" fontWeight="900" size="15px" textTransform="uppercase">{t('moduleMap')}</Heading>
+
+                      <Box display="flex" alignItems="center">
+                        <InputGroup>
+                          <Input
+                            borderRadius="25px"
+                            type="text"
+                            value={searchValue}
+                            backgroundColor={backgroundColor2}
+                            style={{
+                              cursor: 'default',
+                              opacity: showSearch ? 1 : 0,
+                            }}
+                            isDisabled={!showSearch}
+                            animation={showSearch ? slideLeftAnimation : ''}
+                            onChange={(e) => setSearchValue(e.target.value)}
+                            color={disabledColor2}
+                            _focus={{
+                              color: fontColor3,
+                              backgroundColor: backgroundColor3,
+                            }}
+                            _hover={{
+                              color: fontColor3,
+                              backgroundColor: backgroundColor3,
+                            }}
+                          />
+                          <InputRightElement>
+                            <IconButton onClick={() => setShowSearch(!showSearch)} pr="8px" background="transparent" _hover={{ background: 'transparent' }} _active={{ background: 'transparent' }} aria-label="Search in modules" icon={<Icon icon="search" color={showSearch ? hexColor.black : ''} width="18px" height="18px" />} />
+                          </InputRightElement>
+                        </InputGroup>
+                        {modulesExists && (
+                          <Checkbox onChange={(e) => setShowPendingTasks(e.target.checked)} textAlign="right" gridGap="10px" display="flex" flexDirection="row-reverse" color={lightColor}>
+                            {t('modules.show-pending-tasks')}
+                          </Checkbox>
+                        )}
+                      </Box>
+                    </Box>
+                    <Box
+                      id="module-map"
+                      marginTop="30px"
+                      gridGap="24px"
+                      display="flex"
+                      flexDirection="column"
+                    >
+                      {sortedAssignments && sortedAssignments.length >= 1 && !isLoadingAssigments && grantAccess ? (
+                        <>
+                          {sortedAssignmentsSearched.map((module, i) => {
+                            const {
+                              label, description, filteredContent, exists_activities: existsActivities, content, filteredContentByPending,
+                            } = module;
+
+                            const filteredModulesSearched = searchValue && searchValue.length > 0
+                              ? filteredContent.filter(
+                                (l) => includesToLowerCase(l.title, searchValue),
+                              )
+                              : filteredContent;
+
+                            const filteredModulesByPendingSearched = searchValue && searchValue.length > 0
+                              ? filteredContentByPending.filter(
+                                (l) => includesToLowerCase(l.title, searchValue),
+                              )
+                              : filteredContentByPending;
+
+                            const index = i;
+                            return (
+                              <SyllabusModule
+                                key={index}
+                                existsActivities={existsActivities}
+                                cohortData={cohortSession}
+                                index={index}
+                                title={label}
+                                slug={slugify(label)}
+                                searchValue={searchValue}
+                                description={description}
+                                content={content}
+                                filteredContent={filteredModulesSearched}
+                                showPendingTasks={showPendingTasks}
+                                filteredContentByPending={filteredModulesByPendingSearched}
+                              />
+                            );
+                          })}
+                          {sortedAssignmentsSearched && sortedAssignmentsSearched.length <= 0 && (
+                            <Text size="l">
+                              {t('modules.search-not-found')}
+                            </Text>
+                          )}
+                        </>
+                      ) : <ModuleMapSkeleton />}
+
                     </Box>
 
-                    {/* Sidebar Content - Shows after header in mobile */}
+                  </Box>
+                  <Box width="5rem" />
+
+                  {!isBelowTablet && (
                     <Box
-                      display={{ base: 'flex', md: 'none' }}
+                      display={{ base: 'none', md: 'flex' }}
                       flexDirection="column"
                       gridGap="30px"
-                      order={{ base: 0 }}
-                      width="100%"
+                      maxWidth="380px"
+                      minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
                     >
                       <OnlyFor onlyTeachers capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
                         <TeacherSidebar
@@ -744,7 +1084,7 @@ function Dashboard() {
                           width="100%"
                         />
                       </OnlyFor>
-                      {cohortSession.stage === 'FINAL_PROJECT' && (
+                      {cohortSession?.stage === 'FINAL_PROJECT' && (
                         <FinalProject
                           tasks={taskTodo}
                           studentAndTeachers={onlyStudentsActive}
@@ -800,238 +1140,9 @@ function Dashboard() {
                           subscriptionData={subscriptionData}
                         />
                       )}
-                      <Feedback maxWidth="none" />
+                      <Feedback />
                     </Box>
-
-                    {/* Main Content - Shows after sidebar in mobile */}
-                    <Box order={{ base: 1 }}>
-                      {cohortSession?.intro_video && cohortUserDaysCalculated?.isRemainingToExpire === false && (
-                        <>
-                          {grantAccess ? (
-                            <Accordion defaultIndex={cohortUserDaysCalculated?.result <= 3 ? [0] : [1]} allowMultiple>
-                              <AccordionItem background={featuredColor} borderRadius="17px" border="0">
-                                {({ isExpanded }) => (
-                                  <>
-                                    <span>
-                                      <AccordionButton display="flex" gridGap="16px" padding="10.5px 20px" borderRadius="17px">
-                                        <Icon icon="cameraFilled" width="29px" height="16px" color="#0097CF" />
-                                        <Box as="span" fontSize="21px" fontWeight={700} flex="1" textAlign="left">
-                                          {t('intro-video-title')}
-                                        </Box>
-                                        <Icon icon="arrowRight" width="11px" height="20px" color="currentColor" style={{}} transform={isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'} transition="transform 0.2s ease-in" />
-                                      </AccordionButton>
-                                    </span>
-                                    <AccordionPanel padding="0px 4px 4px 4px">
-                                      <ReactPlayerV2
-                                        className="intro-video"
-                                        url={cohortSession?.intro_video}
-                                      />
-                                    </AccordionPanel>
-                                  </>
-                                )}
-                              </AccordionItem>
-                            </Accordion>
-                          ) : (
-                            <SimpleSkeleton
-                              height="450px"
-                              padding="6px 18px 6px 18px"
-                              margin="18px 0"
-                              borderRadius="30px"
-                            />
-                          )}
-                        </>
-                      )}
-
-                      {cohortSession.current_module && dailyModuleData && (
-                        <CallToAction
-                          background="blue.default"
-                          margin="40px 0 auto 0"
-                          title={t('callToAction.title')}
-                          href={`#${slugify(dailyModuleData.label)}`}
-                          text={languageFix(dailyModuleData.description, lang)}
-                          buttonText={t('callToAction.buttonText')}
-                          width={{ base: '100%', md: 'fit-content' }}
-                        />
-                      )}
-
-                      {(!cohortSession.intro_video || ['TEACHER', 'ASSISTANT'].includes(cohortSession.cohort_user?.role) || (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 3)) && (
-                        <Box marginTop="36px">
-                          <ProgressBar
-                            cohortProgram={cohortProgram}
-                            taskTodo={taskTodo}
-                            progressText={t('progressText')}
-                            width="100%"
-                          />
-                        </Box>
-                      )}
-
-                      <Box height="2px" bg={borderColor} marginY="32px" />
-
-                      <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} justifyContent="space-between" gridGap="18px">
-                        <Heading as="h2" fontWeight="900" size="15px" textTransform="uppercase">{t('moduleMap')}</Heading>
-
-                        <Box display="flex" alignItems="center">
-                          <InputGroup>
-                            <Input
-                              borderRadius="25px"
-                              type="text"
-                              value={searchValue}
-                              backgroundColor={backgroundColor2}
-                              style={{
-                                cursor: 'default',
-                                opacity: showSearch ? 1 : 0,
-                              }}
-                              isDisabled={!showSearch}
-                              animation={showSearch ? slideLeftAnimation : ''}
-                              onChange={(e) => setSearchValue(e.target.value)}
-                              color={disabledColor2}
-                              _focus={{
-                                color: fontColor3,
-                                backgroundColor: backgroundColor3,
-                              }}
-                              _hover={{
-                                color: fontColor3,
-                                backgroundColor: backgroundColor3,
-                              }}
-                            />
-                            <InputRightElement>
-                              <IconButton onClick={() => setShowSearch(!showSearch)} pr="8px" background="transparent" _hover={{ background: 'transparent' }} _active={{ background: 'transparent' }} aria-label="Search in modules" icon={<Icon icon="search" color={showSearch ? hexColor.black : ''} width="18px" height="18px" />} />
-                            </InputRightElement>
-                          </InputGroup>
-                          {modulesExists && (
-                            <Checkbox onChange={(e) => setShowPendingTasks(e.target.checked)} textAlign="right" gridGap="10px" display="flex" flexDirection="row-reverse" color={lightColor}>
-                              {t('modules.show-pending-tasks')}
-                            </Checkbox>
-                          )}
-                        </Box>
-                      </Box>
-                      <Box
-                        id="module-map"
-                        marginTop="30px"
-                        gridGap="24px"
-                        display="flex"
-                        flexDirection="column"
-                      >
-                        {sortedAssignments && sortedAssignments.length >= 1 && !isLoadingAssigments && grantAccess ? (
-                          <>
-                            {sortedAssignmentsSearched.map((module, i) => {
-                              const {
-                                label, description, filteredContent, exists_activities: existsActivities, content, filteredContentByPending,
-                              } = module;
-
-                              const filteredModulesSearched = searchValue && searchValue.length > 0
-                                ? filteredContent.filter(
-                                  (l) => includesToLowerCase(l.title, searchValue),
-                                )
-                                : filteredContent;
-
-                              const filteredModulesByPendingSearched = searchValue && searchValue.length > 0
-                                ? filteredContentByPending.filter(
-                                  (l) => includesToLowerCase(l.title, searchValue),
-                                )
-                                : filteredContentByPending;
-
-                              const index = i;
-                              return (
-                                <SyllabusModule
-                                  key={index}
-                                  existsActivities={existsActivities}
-                                  cohortData={cohortSession}
-                                  index={index}
-                                  title={label}
-                                  slug={slugify(label)}
-                                  searchValue={searchValue}
-                                  description={description}
-                                  content={content}
-                                  filteredContent={filteredModulesSearched}
-                                  showPendingTasks={showPendingTasks}
-                                  filteredContentByPending={filteredModulesByPendingSearched}
-                                />
-                              );
-                            })}
-                            {sortedAssignmentsSearched && sortedAssignmentsSearched.length <= 0 && (
-                              <Text size="l">
-                                {t('modules.search-not-found')}
-                              </Text>
-                            )}
-                          </>
-                        ) : <ModuleMapSkeleton />}
-                      </Box>
-                    </Box>
-                  </Box>
-
-                  {/* Desktop Sidebar */}
-                  <Box
-                    display={{ base: 'none', md: 'flex' }}
-                    flexDirection="column"
-                    gridGap="30px"
-                    width={{ md: 'clamp(250px, 32vw, 380px)' }}
-                  >
-                    <OnlyFor onlyTeachers capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
-                      <TeacherSidebar
-                        title={t('teacher-sidebar.actions')}
-                        students={onlyStudentsActive}
-                        width="100%"
-                      />
-                    </OnlyFor>
-                    {cohortSession.stage === 'FINAL_PROJECT' && (
-                      <FinalProject
-                        tasks={taskTodo}
-                        studentAndTeachers={onlyStudentsActive}
-                        isStudent={!profesionalRoles.includes(cohortSession?.cohort_user?.role)}
-                      />
-                    )}
-                    {academyOwner?.white_labeled && (
-                      <Box
-                        className="white-label"
-                        borderRadius="md"
-                        padding="10px"
-                        display="flex"
-                        justifyContent="space-around"
-                        bg={featuredColor}
-                      >
-                        <Avatar
-                          name={academyOwner.name}
-                          src={academyOwner.icon_url}
-                        />
-                        <Box className="white-label-text" width="80%">
-                          <Text size="md" fontWeight="700" marginBottom="5px">
-                            {academyOwner.name}
-                          </Text>
-                          <Text size="sm">
-                            {t('whiteLabeledText')}
-                          </Text>
-                        </Box>
-                      </Box>
-                    )}
-                    <LiveEvent
-                      featureLabel={t('common:live-event.title')}
-                      featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                      mainClasses={liveClasses?.length > 0 ? liveClasses : []}
-                      otherEvents={events}
-                      cohorts={cohortSession ? [cohortSession] : []}
-                    />
-                    {cohortSession?.kickoff_date && (
-                      <CohortSideBar
-                        teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_user?.role)}
-                        studentAndTeachers={studentAndTeachers}
-                        width="100%"
-                      />
-                    )}
-                    {cohortSession?.cohort_user?.role?.toLowerCase() === 'student' && (
-                      <SupportSidebar
-                        allCohorts={[{
-                          cohort: {
-                            ...cohortSession,
-                            ...cohortSession?.cohort_user,
-                          },
-                        }]}
-                        subscriptions={allSubscriptions}
-                        subscriptionData={subscriptionData}
-                      />
-                    )}
-                    <Feedback />
-                  </Box>
+                  )}
                 </Flex>
               )}
             </>

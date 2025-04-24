@@ -18,7 +18,7 @@ function AcordionList({
           flexDirection="column"
           key={item?.title}
           border={unstyled ? '0px' : '1px solid'}
-          borderColor="blue.default2"
+          borderColor="blue.default"
           borderRadius="17px"
           {...rest}
           borderBottom={rest?.borderBottom && i < list.length - 1 ? rest.borderBottom : ''}
@@ -31,7 +31,7 @@ function AcordionList({
                   padding={paddingButton}
                   color={color}
                   _expanded={{
-                    color: item?.description ? (highlightColor || 'blue.default2') : 'currentColor',
+                    color: item?.description ? (highlightColor || 'blue.default') : 'currentColor',
                     padding: unstyled ? paddingButton : '17px 17px 0',
                   }}
                 >

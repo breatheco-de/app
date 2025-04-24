@@ -203,7 +203,7 @@ function ChooseYourClass({
         flex={1}
         flexDirection="column"
         fontSize="12px"
-        color="blue.default2"
+        color="blue.default"
         mt="-12px"
         w="80%"
       >

@@ -309,7 +309,7 @@ function SignupForm({
                   {emailValidation.loading && <Box>{t('validating-email')}</Box>}
                   {emailValidation.valid && <Box color={hexColor.green}>{t('email-validated')}</Box>}
                   {emailValidation.error && <Box color={hexColor.danger}>{emailValidation.error}</Box>}
-                  <Box color="blue.default2">{t('email-info')}</Box>
+                  <Box color="blue.default">{t('email-info')}</Box>
                 </Box>
               </Box>
               <Checkbox size="md" spacing="8px" colorScheme="green" isChecked={marketingConsent} onChange={() => setMarketingConsent(!marketingConsent)}>

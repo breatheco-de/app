@@ -421,7 +421,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
             )}
           </Box>
           {selectedOption && (
-            <Box width="50%" display={{ base: 'none', md: (selectedOption === 'provisioning_vendors' && isInteractive) || !selectedOption ? 'none' : 'block' }}>
+            <Box width="50%" marginTop="15px" display={{ base: 'none', md: (selectedOption === 'provisioning_vendors' && isInteractive) || !selectedOption ? 'none' : 'block' }}>
               {selectedOs || selectedOption === 'provisioning_vendors' ? (
                 <ReactPlayerV2
                   className="react-player-border-radius"

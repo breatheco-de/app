@@ -12,6 +12,16 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  VStack,
+  Image,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -35,10 +45,20 @@ function CohortPanelContent({
   containerRef, isExpanded, colorVariations, cohortColor, backgroundColor, hexColor, colorMode,
   modulesProgress, cohortProgress, mandatoryProjects, hasPendingRevisions,
   handleOpenReviewModal,
-  showFeedback, redirectToModule, getModuleLabel, showCertificate, share, shareModal, setShareModal, certfLink, socials,
-  startCourse, loadingModule, loadingStartCourse,
+  showFeedback, redirectToModule, getModuleLabel, showCertificate,
+  certfLink,
+  startCourse,
+  loadingModule,
+  loadingStartCourse,
+  share,
+  shareModal,
+  setShareModal,
+  socials,
   t, lang,
   progressBoxStyles,
+  isCertificateModalOpen,
+  onCertificateModalOpen,
+  onCertificateModalClose,
 }) {
   return (
     <>
@@ -99,7 +119,7 @@ function CohortPanelContent({
         </Box>
         <Box mt={isGraduated && '10px'} width="100%" display="flex">
           {isGraduated && (
-            <Box onClick={showCertificate} justifyContent="center" display="flex" flexDirection="column" gap="10px" background={colorVariations[colorMode]?.mode4 || hexColor.lightColor} borderRadius="4px" padding="8px 16px">
+            <Box onClick={onCertificateModalOpen} justifyContent="center" display="flex" flexDirection="column" gap="10px" background={colorVariations[colorMode]?.mode4 || hexColor.lightColor} borderRadius="4px" padding="8px 16px">
               <Icon
                 icon="certificate-2"
                 props={{
@@ -108,7 +128,6 @@ function CohortPanelContent({
                 }}
                 width="90px"
                 height="80px"
-                onClick={showCertificate}
               />
               <Text color={cohortColor} textAlign="center">
                 {t('open')}
@@ -288,6 +307,58 @@ function CohortPanelContent({
           →
         </Button>
       )}
+
+      <Modal isOpen={isCertificateModalOpen} onClose={onCertificateModalClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalBody padding="10px">
+            <VStack spacing={4} align="stretch" flexDirection="column" borderRadius="8px">
+              {certificate?.preview_url ? (
+                <Image src={certificate?.preview_url} width="100%" height="400px" border="none" flexGrow={1} title={t('certificate-preview-title')} />
+              ) : (
+                <Text>{t('certificate-preview-unavailable')}</Text>
+              )}
+              <Box display="flex" flexDirection="column" gap="10px">
+                <Box display="flex" flexDirection="column" gap="10px">
+                  <Text size="14px" fontWeight="bold">{t('certificate-hooray')}</Text>
+                  <Box display="flex" gap="10px" alignItems="center" minWidth="fit-content">
+                    <Icon icon="badge" width="24px" height="24px" />
+                    <Heading size="18px" fontWeight="400">
+                      {cohort.name}
+                    </Heading>
+                  </Box>
+                </Box>
+                <Box display="flex" justifyContent="space-between">
+                  <Box display="flex" gap="20px">
+                    <Box display="flex" alignItems="center" gap="10px">
+                      <Icon icon="clock" width="14px" height="14px" color={cohortColor} />
+                      <Text size="md" textAlign="left">
+                        {t('hours-worked', { hours: cohort.syllabus_version.duration_in_hours })}
+                      </Text>
+                    </Box>
+                    {certificate?.issued_at && (
+                      <Box display="flex" alignItems="center" gap="10px">
+                        <Icon icon="attendance" color={cohortColor} />
+                        <Text size="md" textAlign="left">
+                          {t('issued-on', {
+                            date: format(new Date(certificate?.issued_at), 'MMMM d y', {
+                              locale: locales[lang],
+                            }),
+                          })}
+                        </Text>
+                      </Box>
+                    )}
+                  </Box>
+                  <Button onClick={share} width="fit-content" display="flex" alignItems="center" gap="5px" color="white" background={cohortColor} _hover={{ background: cohortColor, opacity: 0.7 }}>
+                    <Icon icon="share" />
+                    {t('share')}
+                  </Button>
+                </Box>
+              </Box>
+            </VStack>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 }
@@ -312,6 +383,8 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
   const router = useRouter();
   const { backgroundColor, hexColor } = useStyle();
   const { colorMode } = useColorMode();
+  const { isOpen: isCertificateModalOpen, onOpen: onCertificateModalOpen, onClose: onCertificateModalClose } = useDisclosure();
+
   const {
     startDay,
     cohortsAssignments,
@@ -559,17 +632,20 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
     redirectToModule,
     getModuleLabel,
     showCertificate,
-    share,
-    shareModal,
-    setShareModal,
     certfLink,
     socials,
     startCourse,
     loadingModule,
     loadingStartCourse,
+    share,
+    shareModal,
+    setShareModal,
     t,
     lang,
     progressBoxStyles,
+    isCertificateModalOpen,
+    onCertificateModalOpen,
+    onCertificateModalClose,
   };
 
   return (
@@ -646,17 +722,20 @@ CohortPanelContent.propTypes = {
   redirectToModule: PropTypes.func.isRequired,
   getModuleLabel: PropTypes.func.isRequired,
   showCertificate: PropTypes.func.isRequired,
-  share: PropTypes.func.isRequired,
-  shareModal: PropTypes.bool.isRequired,
-  setShareModal: PropTypes.func.isRequired,
   certfLink: PropTypes.string.isRequired,
   socials: PropTypes.oneOfType([PropTypes.any]).isRequired,
   startCourse: PropTypes.func.isRequired,
-  loadingModule: PropTypes.bool,
+  loadingModule: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   loadingStartCourse: PropTypes.bool.isRequired,
+  share: PropTypes.func.isRequired,
+  shareModal: PropTypes.bool.isRequired,
+  setShareModal: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
   lang: PropTypes.string.isRequired,
   progressBoxStyles: PropTypes.func.isRequired,
+  isCertificateModalOpen: PropTypes.bool.isRequired,
+  onCertificateModalOpen: PropTypes.func.isRequired,
+  onCertificateModalClose: PropTypes.func.isRequired,
 };
 
 CohortPanelContent.defaultProps = {
