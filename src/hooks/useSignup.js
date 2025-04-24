@@ -626,7 +626,7 @@ const useSignup = () => {
       const data = await response.json();
       const currentPlan = data?.plans?.[0];
       const planSlug = encodeURIComponent(currentPlan?.slug);
-      const finalData = await generatePlan(planSlug, translations);
+      const finalData = await generatePlan(planSlug);
       setPlanProps(finalData?.featured_info);
 
       if (response.status < 400) {

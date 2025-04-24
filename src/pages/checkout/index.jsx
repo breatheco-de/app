@@ -28,7 +28,7 @@ import useAuth from '../../hooks/useAuth';
 import useSession from '../../hooks/useSession';
 import ContactInformation from '../../components/Checkout/ContactInformation';
 import ChooseYourClass from '../../components/Checkout/ChooseYourClass';
-import { isWindow, formatCohortSchedule, removeURLParameter, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem, getBrowserInfo } from '../../utils';
+import { isWindow, formatCohortSchedule, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem, getBrowserInfo } from '../../utils';
 import Summary from '../../components/Checkout/Summary';
 import PaymentInfo from '../../components/Checkout/PaymentInfo';
 import signupAction from '../../store/actions/signupAction';
@@ -462,15 +462,10 @@ function Checkout() {
   }, [userSelectedPlan]);
 
   useEffect(() => {
-    if (user?.id && !isLoading) {
-      if (router.query.token) {
-        const cleanTokenQuery = isWindow && removeURLParameter(window.location.href, 'token');
-        router.push(cleanTokenQuery);
-      }
-
+    if (user && !isLoading) {
       handleStep(stepsEnum.CHOOSE_CLASS);
     }
-  }, [user?.id]);
+  }, [user]);
 
   useEffect(() => {
     const coupons = [];
