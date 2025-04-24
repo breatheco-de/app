@@ -147,24 +147,6 @@ function SyllabusContent() {
 
   useEffect(() => {
     setLearnpackStart(false);
-    if (currentAsset?.solution_url) {
-      createToast({
-        title: t('solution-title'),
-        description: (
-          <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
-            {t('solution-message')}
-            {' '}
-            <Link fontSize="15px" textDecoration="underline" href={currentAsset.solution_url} target="_blank">
-              You can see it here
-            </Link>
-          </Text>
-        ),
-        status: 'warning',
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-
     if (currentAsset?.superseded_by?.slug) {
       createToast({
         title: t('superseded-message'),
@@ -834,7 +816,7 @@ function SyllabusContent() {
   };
 
   useEffect(() => {
-    if (selectedSyllabus && cohortModule && cohortModule.id !== selectedSyllabus.id) {
+    if (professionalRoles.includes(cohortSession?.cohort_user?.role) && selectedSyllabus && cohortModule && cohortModule.id !== selectedSyllabus.id) {
       createToast({
         title: t('teacherSidebar.no-need-to-teach-today.title'),
         description: t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule.id} - ${languageFix(cohortModule.label, lang)}` }),
@@ -846,7 +828,7 @@ function SyllabusContent() {
   }, [selectedSyllabus, cohortModule]);
 
   useEffect(() => {
-    if (selectedSyllabus && defaultSelectedSyllabus?.id !== selectedSyllabus.id) {
+    if (professionalRoles.includes(cohortSession?.cohort_user?.role) && selectedSyllabus && defaultSelectedSyllabus?.id !== selectedSyllabus.id) {
       createToast({
         title: t('teacherSidebar.alert-updated-module-instructions'),
         status: 'warning',
