@@ -244,14 +244,10 @@ function Dashboard() {
 
   useEffect(() => {
     if (cohortSession?.cohort_user) {
-      if (cohortSession.cohort_user.finantial_status === 'LATE' || cohortSession.cohort_user.educational_status === 'SUSPENDED') {
-        router.push('/choose-program');
-      } else {
-        const isReadyToShowGithubMessage = cohorts.some(
-          (l) => l.cohort_user.educational_status === 'ACTIVE' && l.available_as_saas === false,
-        );
-        setIsAvailableToShowModalMessage(isReadyToShowGithubMessage);
-      }
+      const isReadyToShowGithubMessage = cohorts.some(
+        (l) => l.cohort_user.educational_status === 'ACTIVE' && l.available_as_saas === false,
+      );
+      setIsAvailableToShowModalMessage(isReadyToShowGithubMessage);
     }
   }, [cohortSession]);
 
@@ -474,6 +470,7 @@ function Dashboard() {
 
   const mandatoryProjects = getMandatoryProjects();
   const mandatoryProjectsCount = mandatoryProjects.length;
+
   useEffect(() => {
     if (isSubscriptionFreeTrial && !hasShownFreeTrialToast.current) {
       hasShownFreeTrialToast.current = true;
@@ -536,9 +533,13 @@ function Dashboard() {
             <span
               role="button"
               tabIndex={0}
-              onClick={() => setShowDeletionOrdersModal(true)}
+              onClick={() => {
+                closeToast();
+                setShowDeletionOrdersModal(true);
+              }}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
+                  closeToast();
                   setShowDeletionOrdersModal(true);
                 }
               }}
@@ -557,7 +558,7 @@ function Dashboard() {
   const dailyModuleData = getDailyModuleData() || '';
 
   const onlyStudentsActive = studentAndTeachers.filter(
-    (x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE',
+    (x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE' && x.finantial_status !== 'LATE',
   ).map((student) => ({
     ...student,
     user: {
@@ -592,7 +593,7 @@ function Dashboard() {
 
   return (
     <Container minHeight="93vh" display="flex" flexDirection="column" maxW="none" padding="0">
-      {isAvailableAsSaas && (
+      {false && isAvailableAsSaas && (
         <CohortHeader
           onOpenGithubModal={openGithubModalHandler}
           mainClasses={liveClasses}
@@ -600,7 +601,7 @@ function Dashboard() {
           isLoadingEvents={isLoadingAssigments}
         />
       )}
-      <Container flex="1" background={isAvailableAsSaas && hexColor.lightColor4} maxW="none">
+      <Container flex="1" background={false && isAvailableAsSaas && hexColor.lightColor4} maxW="none">
         <Box maxW="1280px" width="100%" margin="0 auto">
           <Box width="fit-content" paddingTop="18px" marginBottom="18px">
             <NextChakraLink
@@ -627,7 +628,7 @@ function Dashboard() {
           </Box>
           {cohortSession ? (
             <>
-              {isAvailableAsSaas ? (
+              {false && isAvailableAsSaas ? (
                 <Box flex="1 1 auto" pb="20px">
                   {cohortSession?.intro_video ? (
                     <Flex direction="column" mb="20px">
@@ -778,7 +779,7 @@ function Dashboard() {
                   )}
                   {!isLoadingAssigments ? (
                     <Box display="flex" flexDirection="column" gap="20px">
-                      {hasMicroCohorts
+                      {false && hasMicroCohorts
                         ? cohorts.filter((cohort) => cohortSession.micro_cohorts.some((elem) => elem.slug === cohort.slug))
                           .sort(sortMicroCohorts)
                           .map((microCohort) => (

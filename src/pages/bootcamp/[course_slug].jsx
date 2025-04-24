@@ -2,7 +2,7 @@
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Box, Button, Flex, Image, SkeletonText } from '@chakra-ui/react';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useContext } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -44,6 +44,7 @@ import SimpleModal from '../../components/SimpleModal';
 import CustomCarousel from '../../components/CustomCarousel';
 import useCustomToast from '../../hooks/useCustomToast';
 import { usePlanPrice } from '../../utils/getPriceWithDiscount';
+import { SessionContext } from '../../context/SessionContext';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -96,7 +97,7 @@ export async function getStaticProps({ locale, locales, params }) {
       seo: {
         title: data.course_translation.title,
         description: data.course_translation.description,
-        image: `${ORIGIN_HOST}/static/images/4geeks.png`,
+        image: data?.course_translation?.preview_url || `${ORIGIN_HOST}/static/images/4geeks.png`,
         locales,
         locale,
         disableStaticCanonical: true,
@@ -136,6 +137,7 @@ function CoursePage({ data, syllabus }) {
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const { t, lang } = useTranslation('course');
+  const { location } = useContext(SessionContext);
   const router = useRouter();
   const translationsObj = getTranslations(t);
   const limitViewStudents = 3;
@@ -196,6 +198,7 @@ function CoursePage({ data, syllabus }) {
   const faqList = getAlternativeTranslation('faq', {}, { returnObjects: true }) || [];
   const features = getAlternativeTranslation('features', {}, { returnObjects: true }) || {};
   const featuredBullets = getAlternativeTranslation('featured-bullets', {}, { returnObjects: true }) || [];
+  const isSpain = location?.country?.toLowerCase() === 'spain' || location?.country?.toLowerCase() === 'españa';
 
   useEffect(() => {
     if (isRigoInitialized && data.course_translation && !initialDataIsFetching && planData?.slug) {
@@ -206,9 +209,9 @@ function CoursePage({ data, syllabus }) {
 
       const plansContext = plans.map((plan) => `
         - ${plan.title}
-        price: ${plan.priceText}
+        price: ${isSpain ? '€74.99' : plan.priceText}
         period: ${plan.period_label}
-        ${plan.lastPrice ? `original price: ${plan.lastPrice}\n discount: ${discount}\n` : ''}
+        ${plan.lastPrice ? `original price: ${isSpain ? '€149.99' : plan.lastPrice}\n discount: ${discount}\n` : ''}
       `);
       const syllabusContext = syllabus?.json
         ? syllabus.json.days
@@ -543,11 +546,7 @@ function CoursePage({ data, syllabus }) {
     <>
       {cleanedStructuredData?.name && (
         <Head>
-          <script
-            type="application/ld+json"
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(cleanedStructuredData) }}
-          />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(cleanedStructuredData) }} />
         </Head>
       )}
       <FixedBottomCta
@@ -629,7 +628,7 @@ function CoursePage({ data, syllabus }) {
                 ? <SkeletonText margin="0 0 0 21px" width="10rem" noOfLines={1} />
                 : (
                   <Text size={{ base: '14', md: '16px' }} color="currentColor" fontWeight={400}>
-                    {students?.length > limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : t('students-enrolled')}
+                    {students?.length > 20 ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : t('students-enrolled')}
                   </Text>
                 )}
             </Flex>
@@ -726,7 +725,7 @@ function CoursePage({ data, syllabus }) {
                           <Flex flexDirection="column" alignItems="center">
                             <Text fontSize={!featuredPlanToEnroll?.isFreeTier ? '16px' : '14px'}>
                               {allDiscounts.length > 0 && '🔥'}
-                              {capitalizeFirstLetter(featurePrice)}
+                              {capitalizeFirstLetter(isSpain ? '€74.99' : featurePrice)}
                             </Text>
                             {!featuredPlanToEnroll?.isFreeTier && (
                               <Flex alignItems="center" marginTop="5px" gap="5px" justifyContent="center">

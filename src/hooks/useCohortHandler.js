@@ -231,6 +231,17 @@ function useCohortHandler() {
           return router.push('/choose-program');
         }
 
+        if (currentCohort.cohort_user.finantial_status === 'LATE') {
+          createToast({
+            position: 'top',
+            title: t('alert-message:finantial-late'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
+          return router.push('/choose-program');
+        }
+
         const cohorts = currentCohort.micro_cohorts.length > 0 ? prefetchedCohorts.filter((c) => currentCohort.micro_cohorts.some((elem) => elem.slug === c.slug)) : [currentCohort];
 
         await getCohortsModules(cohorts);

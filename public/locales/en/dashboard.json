@@ -19,7 +19,7 @@
   "start-course": "Start course",
   "backToChooseProgram": "Back to choose program",
   "progressText": "progress in the program",
-  "member-since": "{{role}} in this cohort since",
+  "member-since": "{{role}} in this cohort since {{date}}",
   "share-message": "I just finished coding {{title}} at 4geeks.com",
   "micro-cohorts-description": "We know what we are doing, you should know too. Learn the process we have polished to make you learn 2 years of content in just a few weeks.",
   "students-modal": {
