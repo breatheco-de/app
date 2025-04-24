@@ -99,7 +99,7 @@ function ProjectsSection({
               <Box>
                 {((isAvailableAsSaas === false || statusActive || isFreeTrial) && (hasStarted || courseProgress > 0)) && (
                   <>
-                    <Text as="span" color="blue.default2">{elem.completed || 0}</Text>
+                    <Text as="span" color="blue.default">{elem.completed || 0}</Text>
                     /
                   </>
                 )}

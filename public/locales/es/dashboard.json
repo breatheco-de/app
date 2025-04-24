@@ -89,6 +89,7 @@
     "no-active-students": "Esta cohorte aún no tiene estudiantes activos",
     "no-graduated-students": "Esta cohorte aún no tiene estudiantes graduados"
   },
+  "certificate-hooray": "¡Wojoo, desbloqueaste un certificado!",
   "supportSideBar": {
     "title": "No te quedes atascado",
     "description": "¿Sabías que puedes programar sesiones de mentoría en cualquier momento o preguntar en el Chat de soporte?",
