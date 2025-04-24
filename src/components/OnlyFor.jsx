@@ -57,6 +57,7 @@ function OnlyFor({
   const userCapabilities = [...new Set([...cohortCapabilities, ...profileCapabilities])];
   const profileRole = user?.roles?.length > 0 && user.roles[0].role.toUpperCase();
   const cohortRole = role?.toUpperCase() || profileRole || 'NONE';
+  const isCapableAcademy = currentCohort && currentCohort.academy?.id === academyNumber;
   const isMember = commonUser.includes(cohortRole);
   const isTeacher = teachers.includes(cohortRole);
   const capabilitiesNotExists = capabilities.length <= 0 || capabilities.includes('');
@@ -81,24 +82,29 @@ function OnlyFor({
       }
     }
 
-    const isCapableAcademy = currentCohort && currentCohort.academy?.id === academyNumber;
-
     if (onlyTeachers && isTeacher) {
-      if (isCapableRole) return true;
-      if (capabilitiesNotExists) return true;
+      if (isCapableRole || capabilitiesNotExists) return true;
     }
     if (onlyMember && isMember) {
-      if (isCapableRole) return true;
-      if (capabilitiesNotExists) return true;
+      if (isCapableRole || capabilitiesNotExists) return true;
     }
     if (!onlyMember && !onlyTeachers && isCapableRole) return true;
     if (capabilitiesNotExists && isCapableAcademy) return true;
     if (academy && isCapableAcademy && isCapableRole) return true;
 
+    if (isSaasAllowed && !currentCohort) {
+      const isNonSaasCheck = ['false', 'False', '0'].includes(String(saas));
+      if (isNonSaasCheck && hasNonSaasCohort) {
+        return true;
+      }
+    }
+
     return false;
   };
 
-  return haveRequiredCapabilities()
+  const shouldRender = haveRequiredCapabilities();
+
+  return shouldRender
     ? children
     : (
       <Component withBanner={withBanner}>
