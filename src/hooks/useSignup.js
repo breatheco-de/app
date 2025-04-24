@@ -11,7 +11,7 @@ import {
   getNextDateInMonths,
   getQueryString,
   getStorageItem,
-  getTimeProps,
+  formatCohortSchedule,
   getBrowserInfo,
   toCapitalize,
   unSlugify,
@@ -66,10 +66,17 @@ const useSignup = () => {
     selectedPlanCheckoutData,
   } = state;
 
-  const isFirstStep = stepIndex === 0; // Contact
-  const isSecondStep = stepIndex === 1; // Choose your class
-  const isThirdStep = stepIndex === 2; // Summary
-  const isFourthStep = stepIndex === 3; // Payment
+  const stepsEnum = {
+    CONTACT: 0,
+    CHOOSE_CLASS: 1,
+    SUMMARY: 2,
+    PAYMENT: 3,
+  };
+
+  const isFirstStep = stepIndex === stepsEnum.CONTACT; // Contact
+  const isSecondStep = stepIndex === stepsEnum.CHOOSE_CLASS; // Choose your class
+  const isThirdStep = stepIndex === stepsEnum.SUMMARY; // Summary
+  const isFourthStep = stepIndex === stepsEnum.PAYMENT; // Payment
 
   const translations = {
     one_payment: t('signup:one_payment'),
@@ -147,22 +154,15 @@ const useSignup = () => {
 
       const hasPayaBleSuscription = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
       const financingOptionsExists = data?.financing_options?.length > 0;
-      const financingOptionsManyMonthsExists = financingOptionsExists && data?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months > 1);
-      const financingOptionsOnePaymentExists = financingOptionsExists && data?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months === 1);
 
       const singlePlan = data?.plans?.length > 0 ? data?.plans?.[0] : data;
       const isTotallyFree = !hasPayaBleSuscription && singlePlan?.trial_duration === 0 && !financingOptionsExists;
       const hasSubscriptionMethod = hasPayaBleSuscription || isTotallyFree || singlePlan?.trial_duration_unit > 0;
 
-      const financingOptions = financingOptionsManyMonthsExists
-        ? data?.financing_options
-          .filter((l) => l?.monthly_price > 0 && l?.how_many_months > 1)
-          .sort((a, b) => a.monthly_price - b.monthly_price)
-        : [];
-      const financingOptionsOnePayment = financingOptionsOnePaymentExists
-        ? data?.financing_options
-          .filter((l) => l?.monthly_price > 0 && l?.how_many_months === 1)
-        : [];
+      const financingOptions = data?.financing_options
+        .filter((l) => l.monthly_price > 0 && l.how_many_months > 1)
+        .sort((a, b) => a.monthly_price - b.monthly_price) || [];
+      const financingOptionsOnePayment = data?.financing_options?.filter((l) => l?.monthly_price > 0 && l?.how_many_months === 1) || [];
 
       const relevantInfo = {
         plan_slug: singlePlan?.slug,
@@ -203,7 +203,8 @@ const useSignup = () => {
         ? textInfo.totally_free
         : textInfo.label.free_trial_period(singlePlan?.trial_duration, singlePlan?.trial_duration_unit);
 
-      const onePaymentFinancing = financingOptionsOnePaymentExists ? financingOptionsOnePayment.map((item) => ({
+      // plan_id seems to be a manually designed pattern none related to the database id
+      const onePaymentFinancing = financingOptionsOnePayment.map((item) => ({
         ...relevantInfo,
         title: textInfo.one_payment,
         price: item?.monthly_price,
@@ -214,7 +215,7 @@ const useSignup = () => {
         description: translations?.one_payment_description || '',
         how_many_months: item?.how_many_months,
         type: 'PAYMENT',
-      })) : [{}];
+      }));
 
       const trialPlan = (!financingOptionsExists && !hasPayaBleSuscription) ? {
         ...relevantInfo,
@@ -286,7 +287,7 @@ const useSignup = () => {
         type: 'PAYMENT',
       } : {};
 
-      const financingOption = financingOptionsExists ? financingOptions.map((item, index) => {
+      const financingOption = financingOptions.map((item, index) => {
         const financingTitle = translations.many_months_payment(item?.how_many_months);
         const financingOptionsDescription = translations?.financing_description(item?.monthly_price, item?.how_many_months, currenciesSymbols[item?.currency?.code] || '$');
         return ({
@@ -302,7 +303,7 @@ const useSignup = () => {
           how_many_months: item?.how_many_months,
           type: 'PAYMENT',
         });
-      }) : [{}];
+      });
 
       const planList = [trialPlan, onePaymentFinancing[0], yearPlan, halfPlan, quarterPlan, monthPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0 && plan.show);
       const paymentList = [onePaymentFinancing[0], yearPlan, monthPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
@@ -549,7 +550,7 @@ const useSignup = () => {
         let currency = 'USD';
         let simplePlans = [];
         if (cohortPlans) {
-          currency = cohortPlans[0]?.plan?.currency?.code || 'USD';
+          if (cohortPlans[0]?.plan?.currency?.code) currency = cohortPlans[0].plan.currency.code;
           simplePlans = cohortPlans.map((cohortPlan) => {
             const { plan } = cohortPlan;
             const { service_items, ...restOfPlan } = plan;
@@ -557,7 +558,6 @@ const useSignup = () => {
           });
         }
 
-        console.log('selectedPlanCheckoutData', selectedPlanCheckoutData);
         reportDatalayer({
           dataLayer: {
             event: 'purchase',
@@ -600,7 +600,7 @@ const useSignup = () => {
   };
 
   const getChecking = async (cohortData) => {
-    const selectedPlan = cohortData?.plan ? cohortData?.plan : undefined;
+    const selectedPlan = cohortData?.plan;
     const cohortPlan = cohortPlans?.length > 0 ? cohortPlans[cohortData?.index || 0] : selectedPlan;
 
     const checkingBody = {
@@ -691,7 +691,7 @@ const useSignup = () => {
   const handleChecking = async (cohortData) => {
     try {
       if (cohortData?.id) {
-        const { kickoffDate, weekDays, availableTime } = getTimeProps(cohortData);
+        const { kickoffDate, weekDays, availableTime } = formatCohortSchedule(cohortData);
         setDateProps({
           ...cohortData,
           kickoffDate,
@@ -888,6 +888,7 @@ const useSignup = () => {
 
   return {
     state,
+    stepsEnum,
     isFirstStep,
     isSecondStep,
     isThirdStep,

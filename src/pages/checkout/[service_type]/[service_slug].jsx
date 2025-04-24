@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import bc from '../../../services/breathecode';
 import useAuth from '../../../hooks/useAuth';
-import { isWindow } from '../../../utils';
 import PaymentInfo from '../../../components/Checkout/PaymentInfo';
 import ServiceSummary from '../../../components/Checkout/ServiceSummary';
 import SelectServicePlan from '../../../components/Checkout/SelectServicePlan';
@@ -28,7 +27,7 @@ function ServiceSlug() {
   } = signupAction();
   const { handleServiceToConsume, isThirdStep, isFourthStep } = useSignup();
   const [readyToSelectService, setReadyToSelectService] = useState(false);
-  const { stepIndex, selectedPlanCheckoutData, serviceProps, loader } = state;
+  const { selectedPlanCheckoutData, serviceProps, loader } = state;
   const { backgroundColor3, backgroundColor } = useStyle();
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
@@ -42,7 +41,7 @@ function ServiceSlug() {
 
   useEffect(() => {
     // Alert before leave the page if the user is in the payment process
-    if (isWindow && stepIndex >= 2 && isAuthenticated && !isPaymentSuccess) {
+    if (!isPaymentSuccess) {
       const handleBeforeUnload = (e) => {
         e.preventDefault();
       };
@@ -54,7 +53,7 @@ function ServiceSlug() {
       };
     }
     return () => {};
-  }, [stepIndex, isAuthenticated]);
+  }, [isPaymentSuccess]);
 
   const getServiceData = async () => {
     // Prepare service data to get consumables

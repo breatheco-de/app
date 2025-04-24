@@ -31,7 +31,7 @@ function Summary() {
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [paymentStatus, setPaymentStatus] = useState('idle');
   const {
-    state, nextStep, setSelectedPlanCheckoutData, setLoader,
+    state, setSelectedPlanCheckoutData, setLoader,
   } = signupAction();
   const { handlePayment, getPaymentText } = useSignup();
   const [hasMounted, setHasMounted] = useState(false);
@@ -47,8 +47,6 @@ function Summary() {
   const redirect = getStorageItem('redirect');
   const redirectedFrom = getStorageItem('redirected-from');
   const router = useRouter();
-  const { query } = router;
-  const { mentorship_service_slug, event_service_slug } = query;
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const { backgroundColor, borderColor, lightColor, hexColor } = useStyle();
   const planId = getQueryString('plan_id');
@@ -74,7 +72,7 @@ function Summary() {
 
   const getPrice = () => {
     if (isNotTrial) {
-      if (selectedPlanCheckoutData?.financing_options?.length > 0 && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0) return selectedPlanCheckoutData?.financing_options[0]?.monthly_price;
+      if (selectedPlanCheckoutData?.financing_options?.[0]?.monthly_price > 0) return selectedPlanCheckoutData.financing_options[0].monthly_price;
       if (checkoutData?.amount_per_half > 0) return checkoutData?.amount_per_half;
       if (checkoutData?.amount_per_month > 0) return checkoutData?.amount_per_month;
       if (checkoutData?.amount_per_quarter > 0) return checkoutData?.amount_per_quarter;
@@ -271,77 +269,67 @@ function Summary() {
   const handleSubmit = () => {
     if (!isPaymentIdle || isSubmitting || !selectedPlanCheckoutData?.plan_id) return;
     setIsSubmitting(true);
-    if ((isNotTrial || !priceIsNotNumber) && !mentorship_service_slug && event_service_slug) {
-      nextStep();
-      router.push({
-        pathname: '/checkout',
-        query: {
-          ...router.query,
-          plan_id: selectedPlanCheckoutData?.plan_id,
-        },
-      });
-    } else {
-      handlePayment({
-        ...checkoutData,
-        installments: selectedPlanCheckoutData?.how_many_months,
-      }, true)
-        .then((respPayment) => {
-          setIsSubmitting(false);
-          setTimeout(() => {
-            setLoader('plan', false);
-          }, 1000);
-          if (respPayment?.status_code >= 400) {
+
+    handlePayment({
+      ...checkoutData,
+      installments: selectedPlanCheckoutData?.how_many_months,
+    }, true)
+      .then((respPayment) => {
+        setIsSubmitting(false);
+        setTimeout(() => {
+          setLoader('plan', false);
+        }, 1000);
+        if (respPayment?.status_code >= 400) {
+          setPaymentStatus('error');
+          setDeclinedPaymentProps({
+            title: t('transaction-denied'),
+            description: t('payment-not-processed'),
+          });
+        }
+        const silentCode = respPayment?.silent_code;
+        if (silentCode) {
+          setReadyToRefetch(false);
+
+          if (silentCode === SILENT_CODE.CARD_ERROR) {
+            setPaymentStatus('error');
+            setDeclinedPaymentProps({
+              title: t('transaction-denied'),
+              description: t('card-declined'),
+            });
+          }
+          if (SILENT_CODE.LIST_PROCESSING_ERRORS.includes(silentCode)) {
             setPaymentStatus('error');
             setDeclinedPaymentProps({
               title: t('transaction-denied'),
               description: t('payment-not-processed'),
             });
           }
-          const silentCode = respPayment?.silent_code;
-          if (silentCode) {
-            setReadyToRefetch(false);
-
-            if (silentCode === SILENT_CODE.CARD_ERROR) {
-              setPaymentStatus('error');
-              setDeclinedPaymentProps({
-                title: t('transaction-denied'),
-                description: t('card-declined'),
-              });
-            }
-            if (SILENT_CODE.LIST_PROCESSING_ERRORS.includes(silentCode)) {
-              setPaymentStatus('error');
-              setDeclinedPaymentProps({
-                title: t('transaction-denied'),
-                description: t('payment-not-processed'),
-              });
-            }
-            if (silentCode === SILENT_CODE.UNEXPECTED_EXCEPTION) {
-              setPaymentStatus('error');
-              setDeclinedPaymentProps({
-                title: t('transaction-denied'),
-                description: t('payment-error'),
-              });
-            }
-          }
-          if (respPayment.status === 'FULFILLED') {
-            setPaymentStatus('success');
-            setSelectedPlanCheckoutData({
-              ...selectedPlanCheckoutData,
-              payment_success: true,
+          if (silentCode === SILENT_CODE.UNEXPECTED_EXCEPTION) {
+            setPaymentStatus('error');
+            setDeclinedPaymentProps({
+              title: t('transaction-denied'),
+              description: t('payment-error'),
             });
           }
-        })
-        .catch(() => {
-          setLoader('plan', false);
-          createToast({
-            position: 'top',
-            title: t('alert-message:payment-error'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
+        }
+        if (respPayment.status === 'FULFILLED') {
+          setPaymentStatus('success');
+          setSelectedPlanCheckoutData({
+            ...selectedPlanCheckoutData,
+            payment_success: true,
           });
+        }
+      })
+      .catch(() => {
+        setLoader('plan', false);
+        createToast({
+          position: 'top',
+          title: t('alert-message:payment-error'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
         });
-    }
+      });
   };
 
   useEffect(() => {

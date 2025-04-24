@@ -57,7 +57,7 @@ function Navbar({ translations, pageProps }) {
 
   const disableLangSwitcher = pageProps?.disableLangSwitcher || false;
   const langs = ['en', 'es'];
-  const locale = router.locale === 'default' ? 'en' : router.locale;
+  const { locale } = router;
 
   const imageFilter = useColorModeValue('none', 'brightness(0) invert(1)');
 
