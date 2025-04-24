@@ -181,6 +181,8 @@ function CustomCarousel({ assignmentList }) {
         <Flex height="40px" gridGap="8px" position="relative" alignItems="center">
           {assignmentList.map((_, index) => (
             <Box
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${index}-dots`}
               width="10px"
               height="10px"
               borderRadius="full"

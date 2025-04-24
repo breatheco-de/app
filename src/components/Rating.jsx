@@ -24,14 +24,16 @@ function CommentCard({ review, ...rest }) {
       <Flex alignItems="center" gap="10px">
         <Avatar src={review.avatar} name={review.name} size="sm" />
         <Box>
-          <Text fontWeight="bold" fontColor={fontColor}>{review.name}</Text>
+          <Text fontWeight="bold" color={fontColor}>{review.name}</Text>
           <Flex gap="10px" alignItems="center">
             <Flex gap="4px">
               {Array.from({ length: 5 }).map((_, index) => (
                 index + 1 <= roundedRating ? (
-                  <Icon icon="star" color="#FFB718" width="12px" />
+                  // eslint-disable-next-line react/no-array-index-key
+                  <Icon key={`${index}-${review.id}`} icon="star" color="#FFB718" width="12px" />
                 ) : (
-                  <Icon icon="star" color="#FFFFFF" secondColor="#FFB718" width="12px" />
+                  // eslint-disable-next-line react/no-array-index-key
+                  <Icon key={`${index}-${review.id}`} icon="star" color="#FFFFFF" secondColor="#FFB718" width="12px" />
                 )
               ))}
             </Flex>
@@ -110,16 +112,16 @@ function Rating({ variant, totalRatings, totalReviews, rating, reviews, link, ca
 
 Rating.propTypes = {
   variant: PropTypes.string,
-  totalRatings: PropTypes.string,
-  totalReviews: PropTypes.string,
-  rating: PropTypes.string,
+  totalRatings: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  totalReviews: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  rating: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   reviews: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])),
   link: PropTypes.string,
   cardStyles: PropTypes.objectOf(PropTypes.string),
 };
 
 CommentCard.propTypes = {
-  review: PropTypes.string.isRequired,
+  review: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 Rating.defaultProps = {

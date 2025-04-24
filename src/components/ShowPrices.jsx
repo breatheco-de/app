@@ -224,7 +224,7 @@ function ShowPrices({
                 </Text>
                 {selectedPlan.period !== 'FINANCING' && selectedPlan.period !== 'ONE_TIME' && (
                   <Box bg={selfAppliedCoupon ? 'green.700' : '#0062BD'} px={2} py={0.5} borderRadius="md" border="1px solid" borderColor="white">
-                    <Text fontSize="xs" textWrap="nowrap" flexGrow={1} textAlign="center">
+                    <Text fontSize="xs" flexGrow={1} textAlign="center">
                       {getPlanLabel(selectedPlan)}
                     </Text>
                   </Box>

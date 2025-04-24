@@ -59,7 +59,7 @@ MktShowPrices.propTypes = {
   id: PropTypes.string,
   cohortId: PropTypes.number,
   pricingMktInfo: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
-  externalPlanProps: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.any)),
+  externalPlanProps: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
 };
 
 MktShowPrices.defaultProps = {

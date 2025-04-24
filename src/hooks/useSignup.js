@@ -305,9 +305,9 @@ const useSignup = () => {
         });
       });
 
-      const planList = [trialPlan, onePaymentFinancing[0], yearPlan, halfPlan, quarterPlan, monthPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0 && plan.show);
-      const paymentList = [onePaymentFinancing[0], yearPlan, monthPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
-      const financingList = financingOption?.filter((plan) => Object.keys(plan).length > 0);
+      const planList = [trialPlan, onePaymentFinancing[0], yearPlan, halfPlan, quarterPlan, monthPlan, ...financingOption].filter((plan) => plan && Object.keys(plan).length > 0 && plan.show);
+      const paymentList = [onePaymentFinancing[0], yearPlan, monthPlan, trialPlan].filter((plan) => plan && Object.keys(plan).length > 0);
+      const financingList = financingOption?.filter((plan) => plan && Object.keys(plan).length > 0);
 
       return {
         ...data,

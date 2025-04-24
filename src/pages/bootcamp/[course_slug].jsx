@@ -127,10 +127,6 @@ function CoursePage({ data, syllabus }) {
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
-  const [financeSelected, setFinanceSelected] = useState({
-    selectedFinanceIndex: 0,
-    selectedIndex: 0,
-  });
   const [cohortData, setCohortData] = useState({});
   const [planData, setPlanData] = useState({});
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
@@ -428,7 +424,7 @@ function CoursePage({ data, syllabus }) {
     )) === index) : [];
 
     await getSelfAppliedCoupon(formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug);
-    const couponOnQuery = await getQueryString('coupon');
+    const couponOnQuery = getQueryString('coupon');
     const { data: allCouponsApplied } = await bc.payment({ coupons: [couponOnQuery || coupon], plan: formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug }).verifyCoupon();
     setAllDiscounts(allCouponsApplied);
 
@@ -475,16 +471,15 @@ function CoursePage({ data, syllabus }) {
     project: assetCount?.project || 0,
   };
 
-  const courseContentList = data?.course_translation?.course_modules?.length > 0
-    ? data?.course_translation?.course_modules.map((module) => ({
-      certificate: module.certificate,
-      time: module.time,
-      exercises: module.exercises,
-      projects: module.projects,
-      readings: module.readings,
-      title: module.name,
-      description: module.description,
-    })) : [];
+  const courseContentList = data?.course_translation?.course_modules?.map((module) => ({
+    certificate: module.certificate,
+    time: module.time,
+    exercises: module.exercises,
+    projects: module.projects,
+    readings: module.readings,
+    title: module.name,
+    description: module.description,
+  }));
 
   const tryRigobot = (targetId) => {
     rigo.updateOptions({
@@ -499,10 +494,6 @@ function CoursePage({ data, syllabus }) {
 
   const goToFinancingOptions = () => {
     router.push('#pricing');
-    setFinanceSelected({
-      selectedFinanceIndex: 1,
-      selectedIndex: 0,
-    });
   };
 
   const adjustFontSizeForMobile = (html) => {
@@ -599,6 +590,7 @@ function CoursePage({ data, syllabus }) {
                 ) : (
                   imageSource.map((imageUrl, index) => (
                     <Image
+                      key={imageUrl}
                       margin={index < limitViewStudents - 1 ? '0 -21px 0 0' : '0'}
                       src={imageUrl}
                       width={{ base: '30px', md: '40px' }}
@@ -704,7 +696,6 @@ function CoursePage({ data, syllabus }) {
                           color="white"
                           width="100%"
                           whiteSpace="normal"
-                          wordWrap="break-word"
                           padding="10px"
                           onClick={() => { router.push(`/checkout${enrollQuerys}`); }}
                         >
@@ -798,7 +789,6 @@ function CoursePage({ data, syllabus }) {
               {cohortData?.cohortSyllabus?.syllabus && (
                 <CourseContent
                   data={courseContentList}
-                  assetCount={assetCount}
                   backgroundColor={backgroundColor}
                   titleStyle={{ textTransform: 'capitalize', fontSize: '18px', fontWeight: 'bold', fontFamily: 'Space Grotesk Variable' }}
                   featuresStyle={{ background: backgroundColor8, padding: '4px', borderRadius: '4px' }}
@@ -952,7 +942,6 @@ function CoursePage({ data, syllabus }) {
           <MktShowPrices
             id="pricing"
             externalPlanProps={planData}
-            externalSelection={financeSelected}
             title={getAlternativeTranslation('show-prices.title')}
             description={getAlternativeTranslation('show-prices.description')}
             plan={data?.plan_slug}
@@ -1062,7 +1051,7 @@ function CoursePage({ data, syllabus }) {
 }
 
 CoursePage.propTypes = {
-  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.array])),
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   syllabus: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 

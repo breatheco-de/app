@@ -24,9 +24,9 @@ function CourseContent({ data, ...rest }) {
   );
 }
 CourseContent.propTypes = {
-  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object])),
+  data: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 CourseContent.defaultProps = {
-  data: {},
+  data: [],
 };
 export default CourseContent;

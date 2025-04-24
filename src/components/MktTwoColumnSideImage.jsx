@@ -380,7 +380,7 @@ MktTwoColumnSideImage.propTypes = {
   studentsAvatarsDescriptions: PropTypes.string,
   studentsAvatars: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   fontFamilySubtitle: PropTypes.string,
-  customTitleSize: PropTypes.string,
+  customTitleSize: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   customSubTitleSize: PropTypes.string,
   multiDescription: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   transparent: PropTypes.bool,
