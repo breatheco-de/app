@@ -67,10 +67,10 @@ const useSignup = () => {
   } = state;
 
   const stepsEnum = {
-    CONTACT: 0,
-    CHOOSE_CLASS: 1,
-    SUMMARY: 2,
-    PAYMENT: 3,
+    CONTACT: 1,
+    CHOOSE_CLASS: 2,
+    SUMMARY: 3,
+    PAYMENT: 4,
   };
 
   const isFirstStep = stepIndex === stepsEnum.CONTACT; // Contact
@@ -704,7 +704,7 @@ const useSignup = () => {
       return data;
     } catch (err) {
       if (err?.status === 400) {
-        handleStep(1);
+        handleStep(stepsEnum.CHOOSE_CLASS);
         toggleIfEnrolled(true);
       } else {
         console.err(err);

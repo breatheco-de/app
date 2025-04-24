@@ -385,13 +385,13 @@ function Checkout() {
           const autoSelectedPlan = findAutoSelectedPlan(checkingData);
           if (existsPayablePlan && autoSelectedPlan) {
             setSelectedPlanCheckoutData(autoSelectedPlan);
-            handleStep(3);
+            handleStep(stepsEnum.PAYMENT);
             setLoader('plan', false);
           } else {
             if (autoSelectedPlan) {
               setSelectedPlanCheckoutData(autoSelectedPlan);
             }
-            handleStep(2);
+            handleStep(stepsEnum.SUMMARY);
           }
         }
         if (cohorts?.length === 0) {
@@ -405,20 +405,20 @@ function Checkout() {
 
           if (existsPayablePlan && autoSelectedPlan) {
             setSelectedPlanCheckoutData(autoSelectedPlan);
-            handleStep(3);
+            handleStep(stepsEnum.PAYMENT);
             setLoader('plan', false);
           } else {
             if (autoSelectedPlan) {
               setSelectedPlanCheckoutData(autoSelectedPlan);
             }
-            handleStep(2);
+            handleStep(stepsEnum.SUMMARY);
           }
         }
       }
 
       if (!data.is_renewable) {
         setShowChooseClass(false);
-        handleStep(1);
+        handleStep(stepsEnum.CHOOSE_CLASS);
       }
     } catch (error) {
       setLoader('plan', false);
@@ -453,7 +453,7 @@ function Checkout() {
         const autoSelectedPlan = findAutoSelectedPlan(checkingData);
 
         setSelectedPlanCheckoutData(autoSelectedPlan);
-        handleStep(3);
+        handleStep(stepsEnum.PAYMENT);
         setCheckInfoLoader(false);
       })
       .catch(() => {
@@ -468,7 +468,7 @@ function Checkout() {
         router.push(cleanTokenQuery);
       }
 
-      handleStep(1);
+      handleStep(stepsEnum.CHOOSE_CLASS);
     }
   }, [user?.id]);
 

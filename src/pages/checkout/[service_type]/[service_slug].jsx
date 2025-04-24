@@ -25,7 +25,7 @@ function ServiceSlug() {
   const {
     state, handleStep, setLoader, restartSignup,
   } = signupAction();
-  const { handleServiceToConsume, isThirdStep, isFourthStep } = useSignup();
+  const { stepsEnum, handleServiceToConsume, isThirdStep, isFourthStep } = useSignup();
   const [readyToSelectService, setReadyToSelectService] = useState(false);
   const { selectedPlanCheckoutData, serviceProps, loader } = state;
   const { backgroundColor3, backgroundColor } = useStyle();
@@ -120,7 +120,7 @@ function ServiceSlug() {
           });
         }
         if (resp.status < 400 && respData !== undefined && service) {
-          handleStep(2);
+          handleStep(stepsEnum.SUMMARY);
           handleServiceToConsume({
             ...service,
             serviceInfo: {

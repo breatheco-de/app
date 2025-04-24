@@ -6,7 +6,7 @@ import {
 } from '../types';
 
 const initialState = {
-  stepIndex: 0,
+  stepIndex: 1,
   dateProps: null,
   checkoutData: null,
   paymentInfo: {
