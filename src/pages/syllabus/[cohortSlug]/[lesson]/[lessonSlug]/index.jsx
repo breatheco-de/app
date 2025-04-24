@@ -7,7 +7,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { isWindow, assetTypeValues, getExtensionName, getStorageItem, languageFix } from '../../../../../utils';
+import { isWindow, assetTypeValues, getExtensionName, getStorageItem, languageFix, addQueryToURL } from '../../../../../utils';
 import asPrivate from '../../../../../context/PrivateRouteWrapper';
 import Heading from '../../../../../components/Heading';
 import useModuleHandler from '../../../../../hooks/useModuleHandler';
@@ -837,7 +837,7 @@ function SyllabusContent() {
     if (selectedSyllabus && cohortModule && cohortModule.id !== selectedSyllabus.id) {
       createToast({
         title: t('teacherSidebar.no-need-to-teach-today.title'),
-        description: t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule.id} - ${cohortModule.label}` }),
+        description: t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule.id} - ${languageFix(cohortModule.label, lang)}` }),
         status: 'info',
         duration: 5000,
         isClosable: true,
@@ -1270,7 +1270,7 @@ function SyllabusContent() {
                                     variant="default"
                                     onClick={() => setModalIntroOpen(true)}
                                   >
-                                    <Icon style={{ margin: 'auto', display: 'block' }} icon="youtube" width="30px" height="30px" />
+                                    <Icon style={{ margin: 'auto', display: 'block' }} icon="youtube" width="30px" color={hexColor.blueDefault} height="30px" />
                                   </Button>
                                 </Tooltip>
                               )}
@@ -1282,13 +1282,13 @@ function SyllabusContent() {
                                     justifyContent="center"
                                     width="40px"
                                     height="40px"
-                                    background={hexColor.blueDefault}
+                                    background={backgroundColor}
                                     padding="12px"
                                     borderRadius="full"
                                     variant="default"
                                     onClick={() => setSolutionVideoOpen(true)}
                                   >
-                                    <Icon color="white" style={{ margin: 'auto', display: 'block' }} icon="play" width="30px" height="30px" />
+                                    <Icon style={{ margin: 'auto', display: 'block' }} color={hexColor.blueDefault} icon="play" width="30px" height="30px" />
                                   </Button>
                                 </Tooltip>
                               )}
@@ -1456,7 +1456,7 @@ function SyllabusContent() {
         title={t('dashboard:modules.target-blank-title')}
         isReadonly
         description={t('dashboard:modules.target-blank-msg', { title: clickedPage?.title || currentBlankProps?.title })}
-        link={inputModalLink}
+        link={addQueryToURL(inputModalLink, { lang })}
         handlerText={t('common:open')}
         closeText={t('common:close')}
         closeButtonVariant="outline"
@@ -1468,7 +1468,7 @@ function SyllabusContent() {
         }}
       />
       {extendedInstructions !== null && (
-        <SimpleModal isOpen={extendedIsEnabled} onClose={() => setExtendedIsEnabled(false)} padding="2rem 0 2rem 0" style={{ margin: '3rem 0' }}>
+        <SimpleModal isOpen={extendedIsEnabled} onClose={() => setExtendedIsEnabled(false)} padding="2rem 0 2rem 0" style={{ margin: '3rem 0' }} size={{ md: '2xl', base: 'xl' }}>
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
             <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
               {`${t('teacherSidebar.instructions')}:`}

@@ -82,7 +82,7 @@ function MktTwoColumnSideImage({
     if (buttonColor === BUTTON_COLOR.BLUE) {
       return {
         color: '#FFF',
-        background: 'blue.default2',
+        background: 'blue.default',
       };
     }
     if (buttonColor === BUTTON_COLOR.WHITE) {
@@ -99,7 +99,7 @@ function MktTwoColumnSideImage({
     }
     return {
       color: '#FFF',
-      background: 'blue.default2',
+      background: 'blue.default',
     };
   };
   const buttonColors = getButtonColors();

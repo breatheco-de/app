@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Box, Button, Flex, Grid,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
@@ -12,6 +12,7 @@ import useSignup from '../store/actions/signupAction';
 import useStyle from '../hooks/useStyle';
 import Icon from './Icon';
 import MktTechnologies from './MktTechnologies';
+import { SessionContext } from '../context/SessionContext';
 
 function PlanButton({
   plan,
@@ -25,15 +26,15 @@ function PlanButton({
     <Button
       key={plan.plan_id}
       variant="unstyled"
-      bg={isSelected ? 'blue.default2' : 'transparent'}
-      color={isSelected ? 'white' : 'blue.default2'}
+      bg={isSelected ? 'blue.default' : 'transparent'}
+      color={isSelected ? 'white' : 'blue.default'}
       size="sm"
       px={4}
       border="1px solid"
       borderRadius="0"
       borderLeft={isFirst ? '1px solid' : 'none'}
       borderRight={isLast ? '1px solid' : 'none'}
-      borderColor="blue.default2"
+      borderColor="blue.default"
       _first={{ borderLeftRadius: '4px' }}
       _last={{ borderRightRadius: '4px' }}
       _hover="none"
@@ -60,6 +61,8 @@ function ShowPrices({
   const router = useRouter();
   const { applyDiscountCouponsToPlans, state } = useSignup();
   const { selfAppliedCoupon } = state;
+  const { location } = useContext(SessionContext);
+  const isSpain = location?.country?.toLowerCase() === 'spain' || location?.country?.toLowerCase() === 'españa';
 
   const tiersTypes = {
     subscriptions: applyDiscountCouponsToPlans(list, selfAppliedCoupon) || data?.pricing.list || [],
@@ -76,6 +79,14 @@ function ShowPrices({
   const hasMonthlyAndYearly = monthlyPlan && yearlyPlan;
   const monthsSaved = hasMonthlyAndYearly ? Math.floor((monthlyPlan.price * 12 - yearlyPlan.price) / monthlyPlan.price) : 0;
   const shouldShowSavingsPill = selectedPlan?.period === 'YEAR' && hasMonthlyAndYearly && monthsSaved > 0;
+
+  const getSpanishPrice = (plan, priceType) => {
+    if (plan.period === 'MONTH' && priceType === 'price') return '€74.99';
+    if (plan.period === 'MONTH' && priceType === 'lastPrice') return '€149.99';
+    if (plan.period === 'YEAR' && priceType === 'price') return '€749.99';
+    if (plan.period === 'YEAR' && priceType === 'lastPrice') return '€1499.99';
+    return '€749.99';
+  };
 
   const getPlanLabel = (plan) => {
     switch (plan.period) {
@@ -124,7 +135,7 @@ function ShowPrices({
     <Flex flexDirection="column" mx="auto">
       <Box display="flex" flexDirection="column">
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-          <Heading as="h2" size="24px" color="blue.default2" flexGrow={1}>
+          <Heading as="h2" size="24px" color="blue.default" flexGrow={1}>
             {title || data?.pricing['choose-plan']}
           </Heading>
           <Box display={{ base: 'none', md: 'flex' }} alignItems="center" bg="transparent" border="none">
@@ -206,7 +217,7 @@ function ShowPrices({
             borderColor={selectedPlan.period === 'YEAR' ? 'black' : backgroundColor}
           >
             <Box
-              bg={selfAppliedCoupon ? 'green.500' : 'blue.default2'}
+              bg={selfAppliedCoupon ? 'green.500' : 'blue.default'}
               p={6}
               color="white"
               width={{ base: '100%', md: '250px' }}
@@ -236,11 +247,11 @@ function ShowPrices({
                   fontWeight="bold"
                   fontFamily="Space Grotesk Variable"
                 >
-                  {selectedPlan.priceText}
+                  {isSpain ? getSpanishPrice(selectedPlan, 'price') : selectedPlan.priceText}
                 </Text>
                 <Flex gap="10px" alignItems="center" direction="column">
                   <Text as="span" fontSize="md" color="#01455E" textDecoration="line-through">
-                    {selectedPlan.lastPrice}
+                    {isSpain ? getSpanishPrice(selectedPlan, 'lastPrice') : selectedPlan.lastPrice}
                   </Text>
                   {selfAppliedCoupon && (
                     <Text as="span" fontSize="xs" color="#01455E">

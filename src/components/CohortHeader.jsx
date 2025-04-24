@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import {
-  Flex, Box, Container,
+  Flex, Box, Container, Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverCloseButton, PopoverHeader, PopoverBody, PopoverFooter, Link, Button, useDisclosure,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
 import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import useCohortHandler from '../hooks/useCohortHandler';
@@ -18,12 +19,17 @@ import StudentsModal from './StudentsModal';
 import { ProfilesSection } from './SupportSidebar/MentoringConsumables';
 import { BREATHECODE_HOST } from '../utils/variables';
 import { getStorageItem } from '../utils';
+import LiveEventWidgetV2 from './LiveEvent/LiveEventWidgetV2';
+import StepsModal from './StepsModal';
 
 // eslint-disable-next-line react/prop-types
-function CustomButton({ children, ...props }) {
-  const { backgroundColor, backgroundColor4 } = useStyle();
+function CustomButton({ children, infoTooltip, ...props }) {
+  const { t } = useTranslation('');
+  const { backgroundColor, backgroundColor4, hexColor } = useStyle();
+
   return (
     <Box
+      position="relative"
       width={{ base: '100%', sm: '145px' }}
       height="102px"
       borderRadius="8px"
@@ -37,20 +43,120 @@ function CustomButton({ children, ...props }) {
       _hover={{ background: backgroundColor4, transition: 'background 0.3s' }}
       {...props}
     >
+      {infoTooltip && (
+        <Popover
+          placement="top-start"
+          trigger="hover"
+        >
+          <PopoverTrigger>
+            <Box
+              position="absolute"
+              top="4px"
+              right="4px"
+              zIndex={2}
+              _hover={{
+                svg: {
+                  fill: hexColor.blueDefault,
+                },
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Icon
+                icon="info"
+                color={hexColor.grayLight}
+                width="12px"
+                height="12px"
+              />
+            </Box>
+          </PopoverTrigger>
+          <PopoverContent
+            background={hexColor.blueLight}
+            border="none"
+            onClick={(e) => e.stopPropagation()}
+            textAlign="center"
+            p={2}
+            borderRadius="8px"
+            maxWidth="200px"
+            padding="8px"
+          >
+            <PopoverArrow bg={hexColor.blueLight} />
+            <PopoverHeader
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              border="none"
+              fontSize="14px"
+              padding="0"
+              mb="8px"
+              gap="4px"
+            >
+              {infoTooltip.leftComponent && (
+                <>
+                  {infoTooltip.leftComponent}
+                </>
+              )}
+              {infoTooltip.title}
+            </PopoverHeader>
+            <PopoverBody
+              padding="0"
+              fontSize="12px"
+              color="#4C648F"
+              border="none"
+              py={1}
+              mb="8px"
+            >
+              {infoTooltip.description}
+            </PopoverBody>
+            {infoTooltip.learnMoreLink && (
+              <PopoverFooter
+                border="none"
+                padding="0"
+                fontSize="12px"
+              >
+                <Link
+                  href={infoTooltip.learnMoreLink}
+                  textAlign="center"
+                  isExternal
+                  color={hexColor.blueDefault}
+                >
+                  {t('common:learn-more')}
+                </Link>
+              </PopoverFooter>
+            )}
+          </PopoverContent>
+        </Popover>
+      )}
       {children}
     </Box>
   );
 }
 
-function Header() {
+CustomButton.propTypes = {
+  children: PropTypes.node.isRequired,
+  infoTooltip: PropTypes.shape({
+    leftComponent: PropTypes.element,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    learnMoreLink: PropTypes.string,
+  }),
+};
+
+CustomButton.defaultProps = {
+  infoTooltip: null,
+};
+
+function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
   const { t } = useTranslation('choose-program');
   const router = useRouter();
-  const { user, isAuthenticatedWithRigobot, conntectToRigobot } = useAuth();
+  const { user, isAuthenticatedWithRigobot, conntectToRigobot, cohorts } = useAuth();
   const { rigo, isRigoInitialized } = useRigo();
   const { featuredLight, hexColor } = useStyle();
   const { cohortSession } = useCohortHandler();
   const [mentors, setMentors] = useState([]);
   const [showStudentsModal, setShowStudentsModal] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isRigobotModalOpen, onOpen: onRigobotModalOpen, onClose: onRigobotModalClose } = useDisclosure();
+  const rigobotModalInfo = t('common:rigobot', {}, { returnObjects: true });
 
   const fetchServices = async () => {
     try {
@@ -65,13 +171,15 @@ function Header() {
   };
 
   useEffect(() => {
-    if (cohortSession && cohortSession.cohort_user.role === 'STUDENT') fetchServices();
+    if (cohortSession && cohortSession.cohort_user.role === 'STUDENT') {
+      fetchServices();
+    }
   }, [cohortSession]);
 
   const hasGithub = user?.github && user.github.username !== '';
 
   const getRigobotButtonText = () => {
-    if (!isAuthenticatedWithRigobot) return t('common:connect-with-tigobot');
+    if (!isAuthenticatedWithRigobot) return t('common:connect-with-rigobot');
 
     return t('common:get-help-rigobot');
   };
@@ -87,6 +195,7 @@ function Header() {
         purposeSlug: '4geekscom-public-agent',
       });
     }
+    onRigobotModalClose();
   };
 
   return (
@@ -104,14 +213,55 @@ function Header() {
           <Flex gap="16px" flexDirection={{ base: 'column', sm: 'row' }} width={{ base: '100%', sm: 'auto' }}>
             {cohortSession.cohort_user.role === 'STUDENT' ? (
               <>
-                <CustomButton onClick={() => router.push('/workshops')}>
-                  <Icon icon="live-event-opaque" width="42px" height="42px" />
-                  <Text textAlign="center" color={hexColor.blueDefault}>
-                    {t('common:see-workshops')}
-                  </Text>
-                </CustomButton>
+                <Popover placement="bottom-start" isOpen={isOpen} onClose={onClose}>
+                  <PopoverTrigger>
+                    <Box onClick={onOpen}>
+                      <CustomButton
+                        infoTooltip={{
+                          leftComponent: <Icon icon="live-event-opaque" width="19px" height="19px" color={hexColor.blueDefault} />,
+                          title: t('common:see-upcoming-events'),
+                          description: t('common:see-upcoming-events-description'),
+                          learnMoreLink: '/docs/knowledge-base-4geeks/live-events-workshops-and-classes',
+                        }}
+                      >
+                        <Icon icon="live-event-opaque" width="42px" height="42px" />
+                        <Text textAlign="center" color={hexColor.blueDefault}>
+                          {t('common:see-workshops')}
+                        </Text>
+                      </CustomButton>
+                    </Box>
+                  </PopoverTrigger>
+                  <PopoverContent width="290px">
+                    <PopoverArrow width="20px !important" height="10px !important" left="-62px !important" />
+                    <PopoverBody
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="center"
+                      background={hexColor.lightGreyBackground}
+                      borderRadius="8px"
+                      padding="8px"
+                      paddingBottom="0 !important"
+                    >
+                      <LiveEventWidgetV2
+                        mainClasses={liveClasses || []}
+                        otherEvents={upcomingEvents || []}
+                        cohorts={cohorts || []}
+                        background={hexColor.lightGreyBackground}
+                        padding="0"
+                      />
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
 
-                <CustomButton onClick={() => router.push('/mentorship/schedule')}>
+                <CustomButton
+                  onClick={() => router.push('/mentorship/schedule')}
+                  infoTooltip={{
+                    leftComponent: <Box><ProfilesSection size="19px" profiles={mentors} /></Box>,
+                    title: t('common:mentorships'),
+                    description: t('common:mentorship-description'),
+                    learnMoreLink: '/docs/knowledge-base-4geeks/mentoring-sessions',
+                  }}
+                >
                   <ProfilesSection size="40px" profiles={mentors} />
                   <Text textAlign="center" color={hexColor.blueDefault}>
                     {t('common:schedule-mentoring')}
@@ -119,7 +269,7 @@ function Header() {
                 </CustomButton>
 
                 {isRigoInitialized && (
-                  <CustomButton onClick={rigobotMessage}>
+                  <CustomButton onClick={onRigobotModalOpen}>
                     <Icon icon="rigobot-avatar-tiny" width="42px" height="42px" />
                     <Text textAlign="center" color={hexColor.blueDefault}>
                       {getRigobotButtonText()}
@@ -128,11 +278,7 @@ function Header() {
                 )}
 
                 {!hasGithub && (
-                  <CustomButton onClick={() => {
-                    const accessToken = getStorageItem('accessToken');
-                    window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
-                  }}
-                  >
+                  <CustomButton onClick={onOpenGithubModal}>
                     <Icon icon="github" width="42px" height="42px" />
                     <Text textAlign="center" color={hexColor.blueDefault}>
                       {t('common:connect-with-github')}
@@ -177,8 +323,30 @@ function Header() {
       {cohortSession && cohortSession.cohort_user.role !== 'STUDENT' && (
         <StudentsModal isOpen={showStudentsModal} onClose={() => setShowStudentsModal(false)} />
       )}
+      <StepsModal
+        isOpen={isRigobotModalOpen}
+        onClose={onRigobotModalClose}
+        title={rigobotModalInfo.title}
+        titleIcon="rigobot-avatar-tiny"
+        description={rigobotModalInfo.description}
+        steps={rigobotModalInfo.steps}
+        finalAction={rigobotMessage}
+        commonVideoUrl={rigobotModalInfo.commonVideoUrl}
+        finalActionLabel={t('common:chat-with-rigobot')}
+      />
     </Container>
   );
 }
+
+Header.propTypes = {
+  onOpenGithubModal: PropTypes.func.isRequired,
+  upcomingEvents: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
+  liveClasses: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
+};
+
+Header.defaultProps = {
+  upcomingEvents: [],
+  liveClasses: [],
+};
 
 export default Header;
