@@ -501,11 +501,33 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
                             <Spinner color={cohortColor} />
                           ) : (
                             <>
-                              {moduleTotalAssignments === moduleDoneAssignments ? (
-                                <Icon icon="verified" width="26px" height="26px" color={hexColor.green} />
-                              ) : (
-                                <CircularProgress color={hexColor.green} size="26px" value={(moduleDoneAssignments * 100) / (moduleTotalAssignments || 1)} />
-                              )}
+                              {(() => {
+                                // Get the 'isStarted' status for this specific module
+                                const moduleIsStarted = modulesProgress?.[module.id]?.isStarted;
+
+                                if (!moduleIsStarted) { // Case 1: Not started at all
+                                  return (
+                                    <Box
+                                      display="flex"
+                                      justifyContent="center"
+                                      alignItems="center"
+                                      borderRadius="full"
+                                      width="26px"
+                                      height="26px"
+                                      bg={cohortColor}
+                                    >
+                                      <Icon icon="play" width="12px" height="12px" color="white" />
+                                    </Box>
+                                  );
+                                } if (moduleTotalAssignments === moduleDoneAssignments) { // Case 2: Started and Complete
+                                  return (
+                                    <Icon icon="verified" width="26px" height="26px" color={hexColor.green} />
+                                  );
+                                } // else: Case 3: Started but In Progress (including 0 done)
+                                return (
+                                  <CircularProgress color={hexColor.green} size="26px" value={(moduleDoneAssignments * 100) / (moduleTotalAssignments || 1)} />
+                                );
+                              })()}
                             </>
                           )}
                           <Text size="md">
