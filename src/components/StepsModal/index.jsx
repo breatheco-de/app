@@ -20,7 +20,7 @@ import MarkDownParser from '../MarkDownParser';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 
-function StepsModal({ isOpen, onClose, title, titleIcon, description, steps, finalAction, finalActionLabel }) {
+function StepsModal({ isOpen, onClose, title, titleIcon, description, steps, finalAction, finalActionLabel, commonVideoUrl }) {
   const { borderColor } = useStyle();
   const [expanded, setExpanded] = useState(0);
 
@@ -81,7 +81,7 @@ function StepsModal({ isOpen, onClose, title, titleIcon, description, steps, fin
               className="react-player-border-radius"
               containerStyle={{ height: '100%' }}
               iframeStyle={{ background: 'none', borderRadius: '11px', height: '100%' }}
-              url={steps?.[expanded]?.video || ''}
+              url={commonVideoUrl || steps?.[expanded]?.video || ''}
               autoPlay
               height="100%"
             />
@@ -105,6 +105,7 @@ StepsModal.propTypes = {
   })).isRequired,
   finalAction: PropTypes.func,
   finalActionLabel: PropTypes.string,
+  commonVideoUrl: PropTypes.string,
 };
 
 StepsModal.defaultProps = {
@@ -113,6 +114,7 @@ StepsModal.defaultProps = {
   titleIcon: null,
   finalAction: null,
   finalActionLabel: null,
+  commonVideoUrl: null,
 };
 
 export default StepsModal;

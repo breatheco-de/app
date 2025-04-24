@@ -331,6 +331,7 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
         description={rigobotModalInfo.description}
         steps={rigobotModalInfo.steps}
         finalAction={rigobotMessage}
+        commonVideoUrl={rigobotModalInfo.commonVideoUrl}
         finalActionLabel={t('common:chat-with-rigobot')}
       />
     </Container>
