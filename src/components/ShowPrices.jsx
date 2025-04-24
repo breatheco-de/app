@@ -81,11 +81,11 @@ function ShowPrices({
   const shouldShowSavingsPill = selectedPlan?.period === 'YEAR' && hasMonthlyAndYearly && monthsSaved > 0;
 
   const getSpanishPrice = (plan, priceType) => {
-    if (plan.period === 'MONTH' && priceType === 'price') return '€74.99';
-    if (plan.period === 'MONTH' && priceType === 'lastPrice') return '€149.99';
-    if (plan.period === 'YEAR' && priceType === 'price') return '€749.99';
-    if (plan.period === 'YEAR' && priceType === 'lastPrice') return '€1499.99';
-    return '€749.99';
+    if (plan.period === 'MONTH' && priceType === 'price') return '99.99€';
+    if (plan.period === 'MONTH' && priceType === 'lastPrice') return '199.99€';
+    if (plan.period === 'YEAR' && priceType === 'price') return '749.99€';
+    if (plan.period === 'YEAR' && priceType === 'lastPrice') return '1499.99€';
+    return '749.99€';
   };
 
   const getPlanLabel = (plan) => {

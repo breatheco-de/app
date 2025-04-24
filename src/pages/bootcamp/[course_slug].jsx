@@ -209,9 +209,9 @@ function CoursePage({ data, syllabus }) {
 
       const plansContext = plans.map((plan) => `
         - ${plan.title}
-        price: ${isSpain ? '€74.99' : plan.priceText}
+        price: ${isSpain && plan.type !== 'FREE' ? '99.99€' : plan.priceText}
         period: ${plan.period_label}
-        ${plan.lastPrice ? `original price: ${isSpain ? '€149.99' : plan.lastPrice}\n discount: ${discount}\n` : ''}
+        ${plan.lastPrice ? `original price: ${isSpain && plan.type !== 'FREE' ? '199.99€' : plan.lastPrice}\n discount: ${discount}\n` : ''}
       `);
       const syllabusContext = syllabus?.json
         ? syllabus.json.days
@@ -725,7 +725,7 @@ function CoursePage({ data, syllabus }) {
                           <Flex flexDirection="column" alignItems="center">
                             <Text fontSize={!featuredPlanToEnroll?.isFreeTier ? '16px' : '14px'}>
                               {allDiscounts.length > 0 && '🔥'}
-                              {capitalizeFirstLetter(isSpain ? '€74.99' : featurePrice)}
+                              {capitalizeFirstLetter(featuredPlanToEnroll?.type !== 'FREE' && isSpain ? '99.99€' : featurePrice)}
                             </Text>
                             {!featuredPlanToEnroll?.isFreeTier && (
                               <Flex alignItems="center" marginTop="5px" gap="5px" justifyContent="center">
