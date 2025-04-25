@@ -64,58 +64,10 @@ function OnlyForComponent({ ...props }) {
   return (<OnlyForBanner {...props} />);
 }
 
-function HowToStartComponent({ node, components, remarkPlugins, rehypePlugins, fullMarkdownContent, ...props }) {
-  let rawMarkdownString = '';
-  const openingTagName = 'how-to-start';
-  const closingTagName = '/how-to-start';
-
-  if (node && node.position && node.position.start && node.position.end && fullMarkdownContent) {
-    try {
-      const startOffset = node.position.start.offset;
-      const endOffset = node.position.end.offset;
-
-      const openingTag = `<${openingTagName}>`;
-      let startIndex = fullMarkdownContent.indexOf(openingTag, startOffset);
-      if (startIndex !== -1) {
-        startIndex += openingTag.length;
-      } else {
-        startIndex = fullMarkdownContent.indexOf('>', startOffset) + 1;
-      }
-
-      const closingTag = `<${closingTagName}>`;
-      let endIndex = fullMarkdownContent.lastIndexOf(closingTag, endOffset);
-      if (endIndex === -1 || endIndex < startIndex) {
-        endIndex = endOffset - closingTag.length;
-        if (endIndex < startIndex) endIndex = startIndex;
-      }
-
-      if (startIndex >= 0 && endIndex >= startIndex) {
-        rawMarkdownString = fullMarkdownContent.substring(startIndex, endIndex).trim();
-      } else {
-        rawMarkdownString = '';
-      }
-    } catch (e) {
-      rawMarkdownString = '';
-    }
-  } else {
-    rawMarkdownString = '';
-  }
-
-  console.log('rawMarkdownString', rawMarkdownString);
-
-  const InnerComponent = (
-    <ReactMarkdown
-      components={components}
-      remarkPlugins={remarkPlugins}
-      rehypePlugins={rehypePlugins}
-    >
-      {rawMarkdownString}
-    </ReactMarkdown>
-  );
-
+function HowToStartComponent({ ...props }) {
   return (
-    <OnlyForComponent {...props} node={node} saas={false} withbanner={false}>
-      {InnerComponent}
+    <OnlyForComponent {...props} saas={false} withbanner={false}>
+      {props.children}
     </OnlyForComponent>
   );
 }
@@ -309,55 +261,35 @@ function MarkDownParser({
     return contentReplace;
   }, [content]);
 
-  const markdownRemarkPlugins = [remarkGfm, remarkGemoji, remarkMath];
-  const markdownRehypePlugins = [rehypeRaw, rehypeKatex];
-  console.log('content', content);
-
-  // Define base components first
-  const baseMarkdownComponents = useMemo(() => ({
-    div: Wrapper,
-    a: MDLink,
-    code: ({ ...props }) => Code({ ...props, showLineNumbers, showInlineLineNumbers }),
-    h1: MarkdownH2Heading,
-    h2: MarkdownH2Heading,
-    h3: MarkdownH3Heading,
-    h4: MarkdownH4Heading,
-    ul: UlComponent,
-    ol: OlComponent,
-    img: ImgComponent,
-    p: ParagraphComponent,
-    hr: HrComponent,
-    BeforeAfter,
-    'before-after': BeforeAfter,
-    iframe: IframeComponent,
-    onlyfor: ({ ...props }) => OnlyForComponent({ ...props }),
-    codeviewer: ({ ...props }) => CodeViewerComponent({ ...props, preParsedContent, fileContext }),
-    calltoaction: ({ ...props }) => MdCallToAction({ ...props, assetData }),
-    li: ({ ...props }) => ListComponent({ subtaskFirstLoad, newSubTasks, setNewSubTasks, subTasks, updateSubTask, currentTask, ...props }),
-    quote: Quote,
-  }), [
-    showLineNumbers, showInlineLineNumbers, preParsedContent, fileContext,
-    assetData, subtaskFirstLoad, newSubTasks, subTasks, currentTask,
-  ]); // Dependencies for base components
-
-  // Define the full components object including HowToStartComponent
-  const markdownComponents = useMemo(() => ({
-    ...baseMarkdownComponents,
-    'how-to-start': (props) => HowToStartComponent({
-      ...props,
-      fullMarkdownContent: content,
-      components: markdownComponents,
-      remarkPlugins: markdownRemarkPlugins,
-      rehypePlugins: markdownRehypePlugins,
-    }),
-  }), [baseMarkdownComponents, markdownRemarkPlugins, markdownRehypePlugins, content]);
-
   return (
     <>
       <ReactMarkdown
-        remarkPlugins={markdownRemarkPlugins}
-        rehypePlugins={markdownRehypePlugins}
-        components={markdownComponents}
+        // gemoji plugin
+        remarkPlugins={[remarkGfm, remarkGemoji, remarkMath]}
+        rehypePlugins={[rehypeRaw, rehypeKatex]}
+        components={{
+          div: Wrapper,
+          a: MDLink,
+          code: ({ ...props }) => Code({ ...props, showLineNumbers, showInlineLineNumbers }),
+          h1: MarkdownH2Heading,
+          h2: MarkdownH2Heading,
+          h3: MarkdownH3Heading,
+          h4: MarkdownH4Heading,
+          ul: UlComponent,
+          ol: OlComponent,
+          img: ImgComponent,
+          p: ParagraphComponent,
+          hr: HrComponent,
+          BeforeAfter,
+          'before-after': BeforeAfter,
+          iframe: IframeComponent,
+          onlyfor: ({ ...props }) => OnlyForComponent({ ...props }),
+          'how-to-start': ({ ...props }) => HowToStartComponent({ ...props, preParsedContent, fileContext }),
+          codeviewer: ({ ...props }) => CodeViewerComponent({ ...props, preParsedContent, fileContext }),
+          calltoaction: ({ ...props }) => MdCallToAction({ ...props, assetData }),
+          li: ({ ...props }) => ListComponent({ subtaskFirstLoad, newSubTasks, setNewSubTasks, subTasks, updateSubTask, currentTask, ...props }),
+          quote: Quote,
+        }}
       >
         {preParsedContent}
       </ReactMarkdown>
