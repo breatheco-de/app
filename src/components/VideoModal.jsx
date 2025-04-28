@@ -3,6 +3,7 @@ import ReactPlayer from 'react-player/lazy';
 import PropTypes from 'prop-types';
 import { Box, IconButton, Flex, useBreakpointValue, Text, useColorModeValue } from '@chakra-ui/react';
 import Icon from './Icon';
+import useStyle from '../hooks/useStyle';
 
 function VideoModal({
   videoUrl,
@@ -18,6 +19,7 @@ function VideoModal({
 
   const isMobile = useBreakpointValue({ base: true, md: false });
   const taskBarBackground = useColorModeValue('#DCE9FF', 'gray.dark');
+  const { fontColor3 } = useStyle();
 
   useEffect(() => {
     if (!isOpen) {
@@ -137,7 +139,7 @@ function VideoModal({
           <Box w="40px" />
         )}
 
-        <Text fontWeight="bold" fontSize="sm" color="gray.700" isTruncated>
+        <Text fontWeight="bold" fontSize="sm" color={fontColor3} isTruncated>
           {title}
         </Text>
 
