@@ -341,6 +341,8 @@ function Checkout() {
     return () => { };
   }, [stepIndex, isAuthenticated]);
 
+  console.log('cohorts', cohorts);
+
   const getPlanData = async () => {
     try {
       setLoader('plan', true);
@@ -614,8 +616,6 @@ function Checkout() {
 
     return null;
   };
-
-  console.log('originalPlan', originalPlan);
 
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
