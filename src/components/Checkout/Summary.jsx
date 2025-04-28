@@ -34,7 +34,6 @@ function Summary() {
     state, setSelectedPlanCheckoutData, setLoader,
   } = signupAction();
   const { handlePayment, getPaymentText } = useSignup();
-  const [hasMounted, setHasMounted] = useState(false);
   const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
   const { createToast } = useCustomToast({ toastId: 'payment-request-data-detail-error' });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,9 +50,7 @@ function Summary() {
   const { backgroundColor, borderColor, lightColor, hexColor } = useStyle();
   const planId = getQueryString('plan_id');
   const cohortId = Number(getQueryString('cohort'));
-  const findedPlan = checkoutData?.plans?.length === 1
-    ? checkoutData?.plans[0]
-    : checkoutData?.plans?.find((plan) => plan?.plan_id === planId);
+  const planFound = checkoutData?.plans?.find((plan) => plan?.plan_id === planId);
   const isNotTrial = !['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
   const isPaymentIdle = paymentStatus === 'idle';
   const isPaymentSuccess = paymentStatus === 'success';
@@ -333,19 +330,14 @@ function Summary() {
   };
 
   useEffect(() => {
-    setHasMounted(true);
-  }, []);
-  useEffect(() => {
-    if (hasMounted) {
-      if (findedPlan?.plan_slug) {
-        handleSubmit();
-      }
-      if (!findedPlan?.plan_slug && checkoutData?.plans?.[selectedIndex]) {
-        setLoader('plan', false);
-        setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
-      }
+    if (planFound?.plan_slug) {
+      handleSubmit();
     }
-  }, [findedPlan?.plan_slug, hasMounted]);
+    if (!planFound?.plan_slug && checkoutData?.plans?.[selectedIndex]) {
+      setLoader('plan', false);
+      setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
+    }
+  }, [planFound?.plan_slug]);
 
   return (
     <Box
