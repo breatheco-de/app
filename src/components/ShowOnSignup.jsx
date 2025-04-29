@@ -125,9 +125,9 @@ function ShowOnSignUp({
                 label: '',
                 error: t('validators.invalid-phone'),
               }]}
-              onHandleSubmit={(data) => {
+              onHandleSubmit={() => {
                 onSubmit();
-                handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token, disableRedirects: true })
+                handleSubscribeToPlan({ slug: defaultPlan, disableRedirects: true })
                   .then((respData) => {
                     if (respData.status === 'FULFILLED') {
                       setIsReadyToRefetch(true);
