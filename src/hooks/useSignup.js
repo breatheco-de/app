@@ -611,7 +611,6 @@ const useSignup = () => {
         const result = {
           ...data,
           ...finalData,
-          id: data.id,
         };
         setCheckoutData(result);
         return result;

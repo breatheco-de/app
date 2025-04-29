@@ -236,18 +236,13 @@ function Checkout() {
 
   const findAutoSelectedPlan = (checkingData) => {
     const plans = checkingData?.plans || [];
-    const newPlanList = [...plans];
-    const sortedPlans = newPlanList.sort((a, b) => (a.how_many_months || 0) - (b.how_many_months || 0));
+    const sortedPlans = plans.sort((a, b) => (a.how_many_months || 0) - (b.how_many_months || 0));
     const defaultAutoSelectedPlan = sortedPlans[0];
-    const autoSelectedPlanByQueryString = checkingData?.plans?.length === 1
-      ? checkingData?.plans[0]
-      : checkingData?.plans.find(
-        (item) => item?.plan_id === (planId || userSelectedPlan?.plan_id),
-      );
-    const autoSelectedPlan = autoSelectedPlanByQueryString?.plan_id
-      ? autoSelectedPlanByQueryString
-      : defaultAutoSelectedPlan;
-    return autoSelectedPlan;
+    const autoSelectedPlanByQueryString = checkingData?.plans.find(
+      (item) => item?.plan_id === (planId || userSelectedPlan?.plan_id),
+    );
+
+    return autoSelectedPlanByQueryString || defaultAutoSelectedPlan;
   };
 
   useEffect(() => {
@@ -370,15 +365,16 @@ function Checkout() {
         const plans = checkingData?.plans || [];
         const existsPayablePlan = plans.some((item) => item?.price > 0);
         const autoSelectedPlan = findAutoSelectedPlan(checkingData);
+        console.log('autoSelectedPlan', autoSelectedPlan);
 
-        if (existsPayablePlan && autoSelectedPlan) {
+        if (autoSelectedPlan) {
           setSelectedPlanCheckoutData(autoSelectedPlan);
+        }
+
+        if (existsPayablePlan) {
           handleStep(stepsEnum.PAYMENT);
           setLoader('plan', false);
         } else {
-          if (autoSelectedPlan) {
-            setSelectedPlanCheckoutData(autoSelectedPlan);
-          }
           handleStep(stepsEnum.SUMMARY);
         }
       }

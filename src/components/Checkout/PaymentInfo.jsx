@@ -1,4 +1,3 @@
-/* eslint-disable no-unsafe-optional-chaining */
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
@@ -6,7 +5,6 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import Heading from '../Heading';
 import bc from '../../services/breathecode';
 import signupAction from '../../store/actions/signupAction';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -15,40 +13,29 @@ import useAuth from '../../hooks/useAuth';
 import { reportDatalayer } from '../../utils/requests';
 import { getQueryString, getStorageItem, getBrowserInfo } from '../../utils';
 import useCohortHandler from '../../hooks/useCohortHandler';
-import useSignup from '../../hooks/useSignup';
 import useSubscriptions from '../../hooks/useSubscriptions';
 import { getCohort } from '../../lib/admissions';
-import { SILENT_CODE } from '../../utils/variables';
-import CardForm from './CardForm';
+import PaymentMethods from './PaymentMethods';
 import Icon from '../Icon';
 import Text from '../Text';
-import AcordionList from '../AcordionList';
-import LoaderScreen from '../LoaderScreen';
-import NextChakraLink from '../NextChakraLink';
 import useCustomToast from '../../hooks/useCustomToast';
 
 function PaymentInfo({ setShowPaymentDetails }) {
-  const { t, lang } = useTranslation('signup');
-  const { isAuthenticated, reSetUserAndCohorts } = useAuth();
+  const { lang } = useTranslation('signup');
+  const { reSetUserAndCohorts } = useAuth();
   const { initializeSubscriptionsData, getSubscriptions } = useSubscriptions();
 
   const {
-    state, setSelectedPlanCheckoutData, setIsSubmittingCard, setIsSubmittingPayment, setPaymentStatus, setPaymentInfo,
+    state, setIsSubmittingPayment, setPaymentStatus,
   } = signupAction();
-  const { handlePayment, getPaymentMethods } = useSignup();
   const {
-    checkoutData, selectedPlanCheckoutData, cohortPlans, paymentMethods, loader, isSubmittingPayment, paymentStatus,
+    checkoutData, isSubmittingPayment, paymentStatus,
   } = state;
   const { cohortsAssignments, getCohortsModules, startDay } = useCohortHandler();
   const [readyToRedirect, setReadyToRedirect] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [updatedUser, setUpdatedUser] = useState(undefined);
   const cohortId = Number(getQueryString('cohort'));
-  const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
-  const [declinedModalProps, setDeclinedModalProps] = useState({
-    title: '',
-    description: '',
-  });
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [cohortFound, setCohortFound] = useState(undefined);
   const [timeElapsed, setTimeElapsed] = useState(0);
@@ -56,7 +43,7 @@ function PaymentInfo({ setShowPaymentDetails }) {
   const redirect = getStorageItem('redirect');
   const redirectedFrom = getStorageItem('redirected-from');
   const router = useRouter();
-  const { backgroundColor, fontColor, hexColor } = useStyle();
+  const { backgroundColor } = useStyle();
 
   const isPaymentSuccess = paymentStatus === 'success';
   const isPaymentIdle = paymentStatus === 'idle';
@@ -246,102 +233,6 @@ function PaymentInfo({ setShowPaymentDetails }) {
     setReadyToRefetch(true);
   }, [isPaymentSuccess]);
 
-  useEffect(() => {
-    if (selectedPlanCheckoutData?.owner?.id) getPaymentMethods(selectedPlanCheckoutData.owner.id);
-  }, [isAuthenticated]);
-
-  const handlePaymentErrors = (data, actions = {}, callback = () => { }) => {
-    const silentCode = data?.silent_code;
-    setIsSubmittingPayment(false);
-    actions?.setSubmitting(false);
-    callback();
-    if (silentCode === SILENT_CODE.CARD_ERROR) {
-      setOpenDeclinedModal(true);
-      setDeclinedModalProps({
-        title: t('transaction-denied'),
-        description: t('card-declined'),
-      });
-    }
-    if (SILENT_CODE.LIST_PROCESSING_ERRORS.includes(silentCode)) {
-      setOpenDeclinedModal(true);
-      setDeclinedModalProps({
-        title: t('transaction-denied'),
-        description: t('payment-not-processed'),
-      });
-    }
-    if (silentCode === SILENT_CODE.UNEXPECTED_EXCEPTION) {
-      setOpenDeclinedModal(true);
-      setDeclinedModalProps({
-        title: t('transaction-denied'),
-        description: t('payment-error'),
-      });
-    }
-  };
-
-  const handleSubmit = async (actions, values) => {
-    const resp = await bc.payment().addCard(values);
-    const data = await resp.json();
-    setIsSubmittingCard(false);
-
-    if (resp.ok) {
-      const currency = cohortPlans[0]?.plan?.currency?.code;
-      reportDatalayer({
-        dataLayer: {
-          event: 'add_payment_info',
-          path: '/checkout',
-          value: state?.selectedPlanCheckoutData?.price,
-          currency,
-          payment_type: 'Credit card',
-          plan: state?.selectedPlanCheckoutData?.plan_slug,
-          period_label: state?.selectedPlanCheckoutData?.period_label,
-          agent: getBrowserInfo(),
-        },
-      });
-      await handlePayment({}, true)
-        .then((respPayment) => {
-          if (respPayment.status === 'FULFILLED') {
-            setPaymentStatus('success');
-            setSelectedPlanCheckoutData({
-              ...selectedPlanCheckoutData,
-              payment_success: true,
-            });
-            setIsSubmittingPayment(false);
-          } else {
-            setPaymentStatus('error');
-          }
-        })
-        .finally(() => {
-          actions.setSubmitting(false);
-        });
-    } else {
-      setPaymentStatus('error');
-      setPaymentInfo('cvc', '');
-      handlePaymentErrors(data, actions);
-    }
-  };
-
-  const onSubmitCard = (values, actions, stateCard) => {
-    setIsSubmittingPayment(true);
-    setIsSubmittingCard(true);
-    const monthAndYear = values.exp?.split('/');
-    const expMonth = monthAndYear[0];
-    const expYear = monthAndYear[1];
-
-    const allValues = {
-      card_number: stateCard.card_number,
-      exp_month: expMonth,
-      exp_year: expYear,
-      cvc: values.cvc,
-    };
-
-    handleSubmit(actions, allValues);
-    setShowPaymentDetails(false);
-  };
-
-  const handleTryAgain = () => {
-    setOpenDeclinedModal(false);
-  };
-
   return (
     <Box display="flex" height="100%" flexDirection="column" gridGap="30px" margin={{ base: isPaymentSuccess ? '' : '0 1rem', lg: '0 auto' }} position="relative">
       <Box display="flex" width={{ base: 'auto', lg: '490px' }} height="auto" flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={!isPaymentIdle ? paymentStatusBgColor : backgroundColor} p={{ base: '20px 0', md: '30px 0' }} borderRadius="15px">
@@ -353,85 +244,7 @@ function PaymentInfo({ setShowPaymentDetails }) {
             </Text>
           </Flex>
         ) : (
-          <>
-            <Heading size="18px">{t('payment-methods')}</Heading>
-            <Box
-              as="hr"
-              width="20%"
-              margin="12px 0 18px 0"
-              border="0px"
-              h="1px"
-              background={fontColor}
-            />
-            {loader.paymentMethods && (
-              <LoaderScreen />
-            )}
-            <Flex flexDirection="column" gridGap="4px" width="100%" mt="1rem">
-              <AcordionList
-                width="100%"
-                list={paymentMethods.map((method) => {
-                  if (!method.is_credit_card) {
-                    return {
-                      ...method,
-                      onClick: (e) => {
-                        setTimeout(() => {
-                          e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }, 100);
-                      },
-                      description: (
-                        <Box padding="0 17px">
-                          <Text
-                            size="md"
-                            className="method-description"
-                            sx={{
-                              a: {
-                                color: hexColor.blueDefault,
-                              },
-                              'a:hover': {
-                                opacity: 0.7,
-                              },
-                            }}
-                            dangerouslySetInnerHTML={{ __html: method.description }}
-                          />
-                          {method.third_party_link && (
-                            <Text mt="10px" color={hexColor.blueDefault}>
-                              <NextChakraLink target="_blank" href={method.third_party_link}>
-                                {t('click-here')}
-                              </NextChakraLink>
-                            </Text>
-                          )}
-                        </Box>
-                      ),
-                    };
-                  }
-                  return {
-                    ...method,
-                    description: (
-                      <CardForm
-                        modalCardErrorProps={{
-                          declinedModalProps,
-                          openDeclinedModal,
-                          setOpenDeclinedModal,
-                          handleTryAgain,
-                          disableClose: true,
-                        }}
-                        onSubmit={onSubmitCard}
-                      />
-                    ),
-                  };
-                })}
-                paddingButton="10px 17px"
-                unstyled
-                gridGap="0"
-                containerStyles={{
-                  gridGap: '8px',
-                  allowToggle: true,
-                }}
-                descriptionStyle={{ padding: '10px 0 0 0' }}
-                defaultIndex={paymentMethods?.findIndex((method) => method.is_credit_card)}
-              />
-            </Flex>
-          </>
+          <PaymentMethods setShowPaymentDetails={setShowPaymentDetails} />
         )}
       </Box>
       {!isPaymentIdle && (
