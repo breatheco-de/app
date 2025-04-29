@@ -12,8 +12,6 @@ import {
   getQueryString,
   getStorageItem,
   getBrowserInfo,
-  toCapitalize,
-  unSlugify,
   slugToTitle,
   unSlugifyCapitalize,
 } from '../utils';
@@ -32,7 +30,6 @@ const useSignup = () => {
     setLoader,
     setCheckoutData,
     setPaymentMethods,
-    setPlanProps,
     toggleIfEnrolled,
     setServiceProps,
     setSelfAppliedCoupon,
@@ -521,6 +518,9 @@ const useSignup = () => {
 
     try {
       const requests = getRequests();
+      console.log('data', data);
+      console.log('checkoutData', checkoutData);
+      console.log('requests cursor', requests);
       const response = await bc.payment().pay({
         ...requests,
         conversion_info: {
@@ -605,7 +605,6 @@ const useSignup = () => {
       const currentPlan = data?.plans?.[0];
       const planSlug = encodeURIComponent(currentPlan?.slug);
       const finalData = await generatePlan(planSlug);
-      setPlanProps(finalData?.featured_info);
 
       if (response.status < 400) {
         const result = {
@@ -845,11 +844,6 @@ const useSignup = () => {
       const data = await generatePlan(slug);
 
       onSubscribedToPlan(data);
-      setPlanProps({
-        ...data,
-        title: toCapitalize(unSlugify(data?.slug)),
-        bullets: data?.featured_info || [],
-      });
 
       const respData = await handleChecking({ plan: data });
 

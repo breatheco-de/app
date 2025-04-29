@@ -363,7 +363,7 @@ function Checkout() {
         }]);
         const checkingData = await handleChecking({ plan: data });
         const plans = checkingData?.plans || [];
-        const existsPayablePlan = plans.some((item) => item?.price > 0);
+        const existsPayablePlan = plans.some((item) => item.price > 0);
         const autoSelectedPlan = findAutoSelectedPlan(checkingData);
         console.log('autoSelectedPlan', autoSelectedPlan);
 
@@ -396,7 +396,7 @@ function Checkout() {
       router.push('/pricing');
     }
 
-    if (planFormated && isAuthenticated && accessToken) {
+    if (planFormated && isAuthenticated) {
       getPlanData();
     }
     if (!isAuthenticated && !accessToken) {
