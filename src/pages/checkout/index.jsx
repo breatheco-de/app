@@ -313,7 +313,7 @@ function Checkout() {
   }, [couponValue, checkoutData?.id]);
 
   useEffect(() => {
-    if (isWindow && stepIndex >= stepsEnum.CHOOSE_CLASS && isAuthenticated && !isPaymentSuccess) {
+    if (isWindow && stepIndex >= stepsEnum.SUMMARY && isAuthenticated && !isPaymentSuccess) {
       const handleBeforeUnload = (e) => {
         e.preventDefault();
       };

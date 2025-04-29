@@ -19,11 +19,11 @@ function Stepper({ stepIndex, selectedPlanCheckoutData, isFreeTier }) {
       isActive: stepIndex === stepsEnum.CONTACT,
     },
     {
-      key: 'choose-class',
+      key: 'summary',
       enum: stepsEnum.SUMMARY,
       label: t('summary'),
       show: isFreeTier,
-      isCompleted: stepIndex > stepsEnum.CHOOSE_CLASS || selectedPlanCheckoutData?.payment_success,
+      isCompleted: stepIndex > stepsEnum.CONTACT || selectedPlanCheckoutData?.payment_success,
       isActive: stepIndex === stepsEnum.SUMMARY,
     },
     {
