@@ -46,14 +46,14 @@
 					{
 						"type": "paragraph",
 						"content": {
-							"text": "Do qui enim est eiusmod commodo ut quis anim nisi pariatur labore ipsum aute."
+							"text": "Culpa reprehenderit commodo ullamco ipsum deserunt ex nulla dolor voluptate eiusmod qui elit do sunt."
 						}
 					}
 				]
 			},
 			"highlight_style": {
 				"__TYPE__": "FieldContent",
-				"value": "Colored",
+				"value": "underlined",
 				"type": "Select"
 			},
 			"description": {
@@ -120,6 +120,21 @@
 				"__TYPE__": "FieldContent",
 				"value": "whose",
 				"type": "Text"
+			},
+			"title_style": {
+				"__TYPE__": "FieldContent",
+				"value": "colored",
+				"type": "Select"
+			},
+			"title_weight": {
+				"__TYPE__": "FieldContent",
+				"value": "91",
+				"type": "Number"
+			},
+			"highlight_weight": {
+				"__TYPE__": "FieldContent",
+				"value": "66",
+				"type": "Number"
 			}
 		},
 		"items": [

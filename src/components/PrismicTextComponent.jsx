@@ -9,7 +9,11 @@ import Icon from './Icon';
 
 function Heading1({ children, ...rest }) {
   return (
-    <Heading as="h1" size="xxl" {...rest}>
+    <Heading
+      as="h1"
+      fontSize={{ base: '24px', md: '38px', lg: '45px' }}
+      {...rest}
+    >
       {children}
     </Heading>
   );
@@ -17,22 +21,28 @@ function Heading1({ children, ...rest }) {
 
 function Heading2({ children, ...rest }) {
   return (
-    <Heading size="xl" {...rest}>
+    <Heading
+      as="h2"
+      fontSize={{ base: '18px', md: '24px', lg: '38px' }}
+      {...rest}
+    >
       {children}
     </Heading>
   );
 }
+
 function List({ children, ...rest }) {
   return (
-    <UnorderedList margin="0 1.5em" {...rest}>
+    <UnorderedList margin="0 auto" {...rest}>
       {children}
     </UnorderedList>
   );
 }
+
 function ListItemComponent({ children, color, ...rest }) {
   return (
     <ListItem
-      fontSize="sm"
+      fontSize={{ base: '14px', md: '16px', lg: '18px' }}
       lineHeight="18px"
       margin="15px 0"
       display="flex"
@@ -46,10 +56,11 @@ function ListItemComponent({ children, color, ...rest }) {
     </ListItem>
   );
 }
-function Paragraph({ children, color, fontSize = '14px', descriptionTextAlign, descriptionLineHeight, ...rest }) {
+
+function Paragraph({ children, color, descriptionTextAlign, descriptionLineHeight, ...rest }) {
   return (
     <Text
-      fontSize={fontSize}
+      fontSize={{ base: '14px', md: '16px', lg: '18px' }}
       lineHeight={descriptionLineHeight}
       color={color}
       textAlign={descriptionTextAlign}
@@ -60,6 +71,7 @@ function Paragraph({ children, color, fontSize = '14px', descriptionTextAlign, d
     </Text>
   );
 }
+
 function LinkComponent({ children, href, ...rest }) {
   return (
     <Link

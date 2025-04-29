@@ -31,6 +31,19 @@
             "placeholder": "This is where it all begins..."
           }
         },
+        "title_style": {
+          "type": "Select",
+          "config": {
+            "label": "Title Style",
+            "placeholder": "Default to colored",
+            "options": ["colored", "normal", "underlined"],
+            "default_value": "colored"
+          }
+        },
+        "title_weight": {
+          "type": "Number",
+          "config": { "label": "Title Weight", "placeholder": "" }
+        },
         "buttontext": {
           "type": "StructuredText",
           "config": {
@@ -47,10 +60,10 @@
         "highlight": {
           "type": "StructuredText",
           "config": {
-            "label": "highlight",
+            "label": "Highlight",
             "placeholder": "",
             "allowTargetBlank": true,
-            "single": "em"
+            "single": "paragraph,heading1,heading2,heading3,heading4,heading5,heading6,strong,em"
           }
         },
         "highlight_style": {
@@ -58,8 +71,13 @@
           "config": {
             "label": "Highlight Style",
             "placeholder": "",
-            "options": ["Underlined", "Colored"]
+            "options": ["normal", "underlined", "colored"],
+            "default_value": "normal"
           }
+        },
+        "highlight_weight": {
+          "type": "Number",
+          "config": { "label": "Highlight weight", "placeholder": "" }
         },
         "description": {
           "type": "StructuredText",

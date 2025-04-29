@@ -12,35 +12,103 @@ import Heading from './Heading';
 import Icon from './Icon';
 import Button from './Button';
 import PrismicTextComponent from './PrismicTextComponent';
+import useStyle from '../hooks/useStyle';
+
+// --- Helper function to render the correct media ---
+const renderMediaContent = (slice) => {
+  const videoSourceUrl = slice?.primary?.video_source?.url;
+  const imageUrl = slice?.primary?.image?.url;
+
+  if (videoSourceUrl) {
+    // --- Render Prismic Video ---
+    return (
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{
+          width: '400px', // Consider making width/height dynamic if needed
+          height: '100%',
+          objectFit: 'cover',
+          borderRadius: '7px', // Add border radius for consistency
+        }}
+        key={videoSourceUrl} // Use the variable
+      >
+        {/* Attempt to infer type, add more types or a Prismic field if needed */}
+        <source
+          src={videoSourceUrl}
+          type={videoSourceUrl.endsWith('.webm') ? 'video/webm' : 'video/mp4'}
+        />
+        Your browser does not support the video tag.
+      </video>
+    );
+  }
+
+  // If no videoSourceUrl, check for imageUrl
+  if (imageUrl) {
+    // --- Render Prismic Image ---
+    return (
+      <Box display="flex" height="fit-content" justifyContent="end">
+        <Image
+          src={imageUrl}
+          alt={slice.primary.image.alt || 'Introduction avatars'}
+          width={slice.primary.image.dimensions?.width}
+          height={slice.primary.image.dimensions?.height}
+          style={{ borderRadius: '7px' }}
+        />
+      </Box>
+    );
+  }
+
+  // --- Render Fallback Video ---
+  return (
+    <video
+      autoPlay
+      loop
+      muted
+      playsInline
+      style={{
+        width: '400px',
+        height: '100%',
+        objectFit: 'cover',
+        borderRadius: '7px', // Added border radius
+      }}
+    >
+      <source src="/static/videos/landing-avatars.webm" type="video/webm" />
+    </video>
+  );
+};
 
 function IntroductionSection({
   data, slice, fitContent, fontFamily, ...rest
 }) {
   const colors = useColorModeValue('#000', '#fff');
+  const { fontColor } = useStyle();
 
   const isLeftBigger = slice?.primary?.two_column_size === 'Left is bigger';
   const isRightBigger = slice?.primary?.two_column_size === 'Right is bigger';
   const bothAreEqual = slice?.primary?.two_column_size === 'Both are equal';
 
-  const getHighlightStyle = () => {
-    if (slice?.primary?.highlight_style === 'Colored') {
-      return ({
+  console.log(slice);
+
+  const getStyling = (type) => {
+    const StyleMapping = {
+      colored: {
         color: 'blue.default',
         borderBottom: '0px',
-      });
-    }
-    if (slice?.primary?.highlight_style === 'Underlined') {
-      return ({
+      },
+      underlined: {
         transition: { duration: 3 },
         animate: {
           color: [colors, '#0097CD', colors, '#0097CD', colors, colors],
         },
-      });
-    }
-    return ({
-      color: 'blue.default',
-      borderBottom: '4px solid #0097CD',
-    });
+      },
+      normal: {
+        color: fontColor,
+      },
+    };
+    return StyleMapping[type] || StyleMapping.colored;
   };
 
   const getLeftColumnSize = () => {
@@ -65,33 +133,22 @@ function IntroductionSection({
       {...rest}
     >
       <Box display={{ base: 'block', md: 'grid' }} flex={getLeftColumnSize()}>
-        <Heading fontFamily={fontFamily} as="span" size="xl" fontWeight="700">
+        <Heading fontFamily={fontFamily} as="span" size="xl">
           {slice?.primary?.title ? (
             <>
               <PrismicTextComponent
                 field={slice?.primary?.title}
                 display="initial"
                 size="48px"
-                fontWeight={700}
+                {...getStyling(slice?.primary?.title_style)}
+                fontWeight={slice?.primary?.title_weight}
                 lineHeight="inherit"
                 fontFamily={fontFamily}
               />
               {slice?.primary?.highlight && (
-                <PrismicRichText
+                <PrismicTextComponent
                   field={slice?.primary?.highlight}
-                  components={{
-                    paragraph: ({ children }) => (
-                      <MotionBox
-                        as="strong"
-                        className="highlighted box"
-                        {...getHighlightStyle()}
-                        margin="0 0 0 10px"
-                        display={{ base: 'none', sm: 'initial' }}
-                      >
-                        {children}
-                      </MotionBox>
-                    ),
-                  }}
+                  fontWeight={slice?.primary?.hightlight_weight}
                 />
               )}
             </>
@@ -115,15 +172,6 @@ function IntroductionSection({
             </>
           )}
         </Heading>
-        {slice?.primary?.highlight.length > 0 ? (
-          <Box as="strong" className="highlighted" fontSize="35px" display={{ base: 'initial', sm: 'none' }}>
-            <PrismicRichText field={slice?.primary?.highlight} />
-          </Box>
-        ) : data?.highlight && (
-          <Box as="strong" className="highlighted" fontSize="35px" display={{ base: 'initial', sm: 'none' }}>
-            {data?.highlight}
-          </Box>
-        )}
 
         {slice?.primary?.description.length > 0 ? (
           <Text as="div" fontSize="21px" fontWeight={700} pt="16px">
@@ -137,10 +185,10 @@ function IntroductionSection({
 
         {/* ----------------------- Bullets ----------------------- */}
         {(slice?.primary?.bullets?.[0]?.spans?.length > 0 || slice?.primary?.bullets?.length > 0) && (
-          <Box as="ul" display="flex" flexDirection="column" gridGap="4px" width="fit-content">
+          <Box as="ul" display="flex" flexDirection="column" gridGap="4px" width="fit-content" mt="9px">
             {slice?.primary?.bullets?.length > 0
               ? (
-                <PrismicRichText
+                <PrismicTextComponent
                   field={slice?.primary?.bullets}
                   components={{
                     listItem: ({ children }, index) => (
@@ -167,21 +215,18 @@ function IntroductionSection({
             id={slice.primary.button_id}
             variant="default"
             width="fit-content"
-            minWidth="200px"
             textAlign="center"
-            height="52px"
             to={slice?.primary?.button_link?.url || slice?.primary?.button_link || '#recommended-courses'}
-            fontSize="18px"
-            m="25px 0"
+            fontSize="17px"
+            m="9px 0"
             letterSpacing="0.05em"
-            textTransform="uppercase"
           >
             <PrismicRichText field={slice?.primary?.buttontext} />
           </Button>
         ) : (
           <>
             {data?.callToAction?.title && (
-              <Button variant="default" width="fit-content" minWidth="200px" height="52px" fontSize="18px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" to={data?.callToAction.href || '#recommended-courses'}>
+              <Button variant="default" width="fit-content" fontSize="17px" m="9px 0" letterSpacing="0.05em" textTransform="uppercase" to={data?.callToAction.href || '#recommended-courses'}>
                 {data?.callToAction.title}
               </Button>
             )}
@@ -189,33 +234,10 @@ function IntroductionSection({
         )}
       </Box>
 
-      {/* ----------------------- Image ----------------------- */}
+      {/* ----------------------- Image/Video ----------------------- */}
       <Box display={{ base: 'block', md: 'grid' }} flex={getRightColumnSize()}>
-        {slice?.primary?.image?.url ? (
-          <Box display="flex" height="fit-content" justifyContent="end">
-            <Image
-              src={slice.primary.image.url}
-              alt={slice.primary.image.alt || 'Introduction avatars'}
-              width={slice.primary.image.dimensions?.width}
-              height={slice.primary.image.dimensions?.height}
-              style={{ borderRadius: '7px' }}
-            />
-          </Box>
-        ) : (
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            style={{
-              width: '400px',
-              height: '100%',
-              objectFit: 'cover',
-            }}
-          >
-            <source src="/static/videos/landing-avatars.webm" type="video/webm" />
-          </video>
-        )}
+        {/* Call the helper function */}
+        {renderMediaContent(slice)}
       </Box>
     </Flex>
   );
