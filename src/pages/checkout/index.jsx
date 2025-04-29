@@ -112,7 +112,7 @@ function Checkout() {
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { user, isAuthenticated, isLoading } = useAuth();
-  const { userSession } = useSession();
+  const { userSession, location } = useSession();
   const { createToast } = useCustomToast({ toastId: 'coupon-plan-email-detail' });
   const plan = getQueryString('plan');
   const queryPlans = getQueryString('plans');
@@ -263,7 +263,7 @@ function Checkout() {
     removeStorageItem('redirect');
     const translations = getTranslations(t);
     const defaultPlan = (plan && encodeURIComponent(plan)) || encodeURIComponent(BASE_PLAN);
-    bc.payment().getPlan(defaultPlan).then(async (resp) => {
+    bc.payment({ country_code: location?.countryShort }).getPlan(defaultPlan).then(async (resp) => {
       const processedPlan = await processPlans(resp?.data, {
         quarterly: false,
         halfYearly: false,
@@ -354,7 +354,7 @@ function Checkout() {
     if (queryPlanExists && isAuthenticated && tokenExists && !cohortsData.loading) {
       setLoader('plan', true);
       setShowChooseClass(false);
-      bc.payment().getPlan(planFormated)
+      bc.payment({ country_code: location?.countryShort }).getPlan(planFormated)
         .then((resp) => {
           if (!resp) {
             setLoader('plan', false);
