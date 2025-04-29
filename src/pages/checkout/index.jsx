@@ -354,7 +354,7 @@ function Checkout() {
     if (queryPlanExists && isAuthenticated && tokenExists && !cohortsData.loading) {
       setLoader('plan', true);
       setShowChooseClass(false);
-      bc.payment().getPlan(planFormated)
+      bc.payment({ country_code: location?.countryShort }).getPlan(planFormated)
         .then((resp) => {
           if (!resp) {
             setLoader('plan', false);
