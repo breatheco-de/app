@@ -97,8 +97,9 @@
     "many-payments-left": "Payment: {{qty}} payments left",
     "no-payment-left": "Payment: No payments left",
     "renewal-date": "Renewal date: {{date}}",
-    "yearly-savings": "Save {{months}} months",
-    "yearly-savings-singular": "Save {{months}} month",
+    "yearly-savings": "You are saving {{months}} months",
+    "charged": "Charged",
+    "yearly-savings-singular": "You are saving {{months}} month",
     "payment_unit": {
       "month": "Monthly",
       "year": "Yearly",
