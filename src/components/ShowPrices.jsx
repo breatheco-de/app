@@ -277,9 +277,9 @@ function ShowPrices({
           >
             <Box
               sx={selfAppliedCoupon ? {
-                bg: 'linear-gradient(145deg, #FF0F0F 1%, var(--chakra-colors-blue-default2) 50%)',
+                bg: 'linear-gradient(145deg, #FF0F0F 1%, var(--chakra-colors-blue-default) 50%)',
               } : {
-                bg: 'blue.default2',
+                bg: 'blue.default',
               }}
               p={6}
               color="white"
