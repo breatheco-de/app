@@ -34,7 +34,7 @@ function Summary() {
     state, setSelectedPlanCheckoutData, setLoader,
   } = signupAction();
   const { handlePayment, getPaymentText } = useSignup();
-  const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
+  const { checkoutData, selectedPlanCheckoutData, planProps } = state;
   const { createToast } = useCustomToast({ toastId: 'payment-request-data-detail-error' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
@@ -393,7 +393,7 @@ function Summary() {
                   <Box display="flex" flexDirection="column" gridGap="0px" alignItems="center">
                     <Box display="flex" width={{ base: '100%', md: '' }} flexDirection="column" gridGap="7px">
                       <Heading size="18px">
-                        {dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}
+                        {selectedPlanCheckoutData?.title}
                       </Heading>
                     </Box>
                     <Heading

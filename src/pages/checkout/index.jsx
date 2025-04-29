@@ -27,8 +27,7 @@ import bc from '../../services/breathecode';
 import useAuth from '../../hooks/useAuth';
 import useSession from '../../hooks/useSession';
 import ContactInformation from '../../components/Checkout/ContactInformation';
-import ChooseYourClass from '../../components/Checkout/ChooseYourClass';
-import { isWindow, formatCohortSchedule, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem, getBrowserInfo } from '../../utils';
+import { isWindow, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem, getBrowserInfo } from '../../utils';
 import Summary from '../../components/Checkout/Summary';
 import PaymentInfo from '../../components/Checkout/PaymentInfo';
 import signupAction from '../../store/actions/signupAction';
@@ -82,9 +81,6 @@ function Checkout() {
   const { t, lang } = useTranslation('signup');
   const router = useRouter();
   const { query } = router;
-  const [cohortsData, setCohortsData] = useState({
-    loading: true,
-  });
   const [showPaymentDetails, setShowPaymentDetails] = useState(true);
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [allCoupons, setAllCoupons] = useState([]);
@@ -94,11 +90,11 @@ function Checkout() {
     setSelectedPlanCheckoutData, setCheckoutData,
   } = signupAction();
   const {
-    stepsEnum, isFirstStep, isSecondStep, isThirdStep, isFourthStep, getSelfAppliedCoupon,
+    stepsEnum, isFirstStep, isSecondStep, isThirdStep, getSelfAppliedCoupon,
     handleChecking, getPriceWithDiscount, processPlans,
   } = useSignup();
   const { stepIndex, checkoutData, selectedPlanCheckoutData, alreadyEnrolled, loader, selfAppliedCoupon, cohortPlans } = state;
-  const [showChooseClass, setShowChooseClass] = useState(true);
+  const flexRef = useRef(null);
   const [discountCode, setDiscountCode] = useState('');
   const [discountCoupon, setDiscountCoupon] = useState(null);
   const [couponError, setCouponError] = useState(false);
@@ -106,20 +102,19 @@ function Checkout() {
   const [discountValues, setDiscountValues] = useState(undefined);
   const [checkInfoLoader, setCheckInfoLoader] = useState(false);
   const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
+  const [menuWidth, setMenuWidth] = useState('auto');
+  const [isOpenned, setIsOpenned] = useState(false);
   const { backgroundColor3, hexColor, backgroundColor } = useStyle();
   const currencySymbol = currenciesSymbols[originalPlan?.currency?.code] || '$';
 
-  const cohorts = cohortsData?.cohorts;
-
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
-  const { user, isAuthenticated, isLoading } = useAuth();
-  const { userSession } = useSession();
+  const { isAuthenticated } = useAuth();
+  const { userSession, location } = useSession();
   const { createToast } = useCustomToast({ toastId: 'coupon-plan-email-detail' });
   const { coupon: couponQuery, course } = query;
   const plan = getQueryString('plan');
   const planId = getQueryString('plan_id');
   const planFormated = plan || BASE_PLAN;
-  const accessToken = getStorageItem('accessToken');
 
   const [coupon] = usePersistentBySession('coupon', '');
 
@@ -130,10 +125,6 @@ function Checkout() {
   }, [coupon, couponQuery]);
 
   const isPaymentSuccess = selectedPlanCheckoutData?.payment_success;
-
-  const [menuWidth, setMenuWidth] = useState('auto');
-  const [isOpenned, setIsOpenned] = useState(false);
-  const flexRef = useRef(null);
   const fixedCouponExist = allCoupons.some((coup) => coup.discount_type === 'FIXED_PRICE');
 
   useEffect(() => {
@@ -246,7 +237,7 @@ function Checkout() {
   const findAutoSelectedPlan = (checkingData) => {
     const plans = checkingData?.plans || [];
     const newPlanList = [...plans];
-    const sortedPlans = newPlanList.sort((a, b) => (a?.how_many_months || 0) - (b?.how_many_months || 0));
+    const sortedPlans = newPlanList.sort((a, b) => (a.how_many_months || 0) - (b.how_many_months || 0));
     const defaultAutoSelectedPlan = sortedPlans[0];
     const autoSelectedPlanByQueryString = checkingData?.plans?.length === 1
       ? checkingData?.plans[0]
@@ -265,7 +256,7 @@ function Checkout() {
 
   const initializePlanData = async () => {
     try {
-      const resp = await bc.payment().getPlan(planFormated);
+      const resp = await bc.payment({ country_code: location?.countryShort }).getPlan(planFormated);
       const processedPlan = await processPlans(resp?.data, {
         quarterly: false,
         halfYearly: false,
@@ -341,13 +332,11 @@ function Checkout() {
     return () => { };
   }, [stepIndex, isAuthenticated]);
 
-  console.log('cohorts', cohorts);
-
   const getPlanData = async () => {
     try {
+      console.log('HERE!!');
       setLoader('plan', true);
-      setShowChooseClass(false);
-      const resp = await bc.payment().getPlan(planFormated);
+      const resp = await bc.payment({ country_code: location?.countryShort }).getPlan(planFormated);
 
       if (!resp || resp.status >= 400) {
         setLoader('plan', false);
@@ -370,57 +359,28 @@ function Checkout() {
       if (data.has_waiting_list) {
         return router.push(`/${lang}/thank-you`);
       }
-      if ((!data.is_renewable && !isNotTrial) || data.is_renewable || cohorts?.length === 1) {
-        if (cohorts?.length > 0) {
-          const { kickoffDate, weekDays, availableTime } = formatCohortSchedule(cohorts[0]);
-          const defaultCohortProps = {
-            ...cohorts[0],
-            kickoffDate,
-            weekDays,
-            availableTime,
-          };
-          setCohortPlans([data]);
-          const checkingData = await handleChecking({ ...defaultCohortProps, plan: data });
+      if ((!data.is_renewable && !isNotTrial) || data.is_renewable) {
+        console.log('setting cohortPlans: ', [{
+          plan: data,
+        }]);
+        setCohortPlans([{
+          plan: data,
+        }]);
+        const checkingData = await handleChecking({ plan: data });
+        const plans = checkingData?.plans || [];
+        const existsPayablePlan = plans.some((item) => item?.price > 0);
+        const autoSelectedPlan = findAutoSelectedPlan(checkingData);
 
-          const plans = checkingData?.plans || [];
-          const existsPayablePlan = plans.some((item) => item?.price > 0);
-          const autoSelectedPlan = findAutoSelectedPlan(checkingData);
-          if (existsPayablePlan && autoSelectedPlan) {
+        if (existsPayablePlan && autoSelectedPlan) {
+          setSelectedPlanCheckoutData(autoSelectedPlan);
+          handleStep(stepsEnum.PAYMENT);
+          setLoader('plan', false);
+        } else {
+          if (autoSelectedPlan) {
             setSelectedPlanCheckoutData(autoSelectedPlan);
-            handleStep(stepsEnum.PAYMENT);
-            setLoader('plan', false);
-          } else {
-            if (autoSelectedPlan) {
-              setSelectedPlanCheckoutData(autoSelectedPlan);
-            }
-            handleStep(stepsEnum.SUMMARY);
           }
+          handleStep(stepsEnum.SUMMARY);
         }
-        if (cohorts?.length === 0) {
-          setCohortPlans([{
-            plan: data,
-          }]);
-          const checkingData = await handleChecking({ plan: data });
-          const plans = checkingData?.plans || [];
-          const existsPayablePlan = plans.some((item) => item?.price > 0);
-          const autoSelectedPlan = findAutoSelectedPlan(checkingData);
-
-          if (existsPayablePlan && autoSelectedPlan) {
-            setSelectedPlanCheckoutData(autoSelectedPlan);
-            handleStep(stepsEnum.PAYMENT);
-            setLoader('plan', false);
-          } else {
-            if (autoSelectedPlan) {
-              setSelectedPlanCheckoutData(autoSelectedPlan);
-            }
-            handleStep(stepsEnum.SUMMARY);
-          }
-        }
-      }
-
-      if (!data.is_renewable) {
-        setShowChooseClass(false);
-        handleStep(stepsEnum.CHOOSE_CLASS);
       }
     } catch (error) {
       setLoader('plan', false);
@@ -435,17 +395,18 @@ function Checkout() {
   };
 
   useEffect(() => {
+    const accessToken = getStorageItem('accessToken');
     if (!planFormated && isAuthenticated) {
       router.push('/pricing');
     }
 
-    if (planFormated && isAuthenticated && accessToken && !cohortsData.loading) {
+    if (planFormated && isAuthenticated && accessToken) {
       getPlanData();
     }
     if (!isAuthenticated && !accessToken) {
       setLoader('plan', false);
     }
-  }, [cohortsData.loading, accessToken, isAuthenticated, router.locale]);
+  }, [isAuthenticated, router.locale]);
 
   useEffect(() => {
     if (!userSelectedPlan || !cohortPlans) return;
@@ -462,12 +423,6 @@ function Checkout() {
         setCheckInfoLoader(false);
       });
   }, [userSelectedPlan]);
-
-  useEffect(() => {
-    if (user && !isLoading) {
-      handleStep(stepsEnum.CHOOSE_CLASS);
-    }
-  }, [user]);
 
   useEffect(() => {
     const coupons = [];
@@ -726,16 +681,11 @@ function Checkout() {
             />
           )}
 
-          {/* Second step */}
-          {(showChooseClass || isSecondStep) && (
-            <ChooseYourClass setCohorts={setCohortsData} />
-          )}
-
-          {isThirdStep && (
+          {isSecondStep && (
             <Summary />
           )}
           {/* Fourth step */}
-          {isFourthStep && (
+          {isThirdStep && (
             <PaymentInfo setShowPaymentDetails={setShowPaymentDetails} />
           )}
         </Flex>
@@ -753,16 +703,16 @@ function Checkout() {
           {checkInfoLoader
             ? <LoaderScreen background={backgroundColor3} />
             : (
-              <Flex display={{ base: isPaymentSuccess ? 'none' : 'flex', md: 'flex' }} flexDirection="column" width={{ base: 'auto', md: '100%' }} maxWidth="490px" margin={{ base: '2rem 10px 2rem 10px', md: isFourthStep ? '4rem 0' : '6.2rem 0' }} height="100%" zIndex={10}>
+              <Flex display={{ base: isPaymentSuccess ? 'none' : 'flex', md: 'flex' }} flexDirection="column" width={{ base: 'auto', md: '100%' }} maxWidth="490px" margin={{ base: '2rem 10px 2rem 10px', md: isThirdStep ? '4rem 0' : '6.2rem 0' }} height="100%" zIndex={10}>
                 {originalPlan?.title ? (
-                  <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="16px" borderRadius="22px" background={isFourthStep ? 'transparent' : backgroundColor}>
+                  <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="16px" borderRadius="22px" background={isThirdStep ? 'transparent' : backgroundColor}>
                     <Text size="18px">
                       {t('you-are-getting')}
                     </Text>
                     <Flex gridGap="7px" width="full">
                       <Flex flexDirection="column" gridGap="7px" justifyContent="center" width="100%" ref={flexRef}>
-                        <Heading fontSize={isFourthStep ? '38px' : '24px'} display="flex" alignItems="center" gap="10px">
-                          {!isFourthStep && <Icon icon="4Geeks-avatar" width="35px" height="35px" maxHeight="35px" borderRadius="50%" background="blue.default" />}
+                        <Heading fontSize={isThirdStep ? '38px' : '24px'} display="flex" alignItems="center" gap="10px">
+                          {!isThirdStep && <Icon icon="4Geeks-avatar" width="35px" height="35px" maxHeight="35px" borderRadius="50%" background="blue.default" />}
                           {originalPlan?.title.split(' ').map((word) => {
                             const firstLetter = word.match(/[a-zA-Z]/);
                             if (!firstLetter) return word;
@@ -770,7 +720,7 @@ function Checkout() {
                             return word.slice(0, index) + word.charAt(index).toUpperCase() + word.slice(index + 1);
                           }).join(' ')}
                         </Heading>
-                        {originalPlan?.selectedPlan?.description && isFourthStep && (
+                        {originalPlan?.selectedPlan?.description && isThirdStep && (
                           <Text fontSize="16px" py="10px">{originalPlan.selectedPlan.description}</Text>
                         )}
                         <Flex justifyContent="space-between" width="full" alignItems="center">
@@ -861,7 +811,7 @@ function Checkout() {
                         />
                       </Flex>
                     )}
-                    {isFourthStep && (
+                    {isThirdStep && (
                       <>
                         <Flex justifyContent="space-between" width="100%" padding="3rem 0px 0">
                           <Text size="18px" color="currentColor" lineHeight="normal">

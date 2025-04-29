@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  NEXT_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_PAYMENT_INFO,
+  NEXT_STEP, HANDLE_STEP, SET_CHECKOUT_DATA, SET_PAYMENT_INFO,
   SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED,
   SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
   SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON, SET_SIGNUP_INITIAL_STATE,
@@ -18,10 +18,6 @@ const signupAction = () => {
     payload: step,
   });
 
-  const setDateProps = (payload) => dispatch({
-    type: SET_DATE_PROPS,
-    payload,
-  });
   const setCheckoutData = (payload) => dispatch({
     type: SET_CHECKOUT_DATA,
     payload,
@@ -99,7 +95,6 @@ const signupAction = () => {
     nextStep,
     setLoader,
     handleStep,
-    setDateProps,
     setCheckoutData,
     setPaymentMethods,
     setPaymentStatus,

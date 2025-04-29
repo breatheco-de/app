@@ -16,6 +16,7 @@ import asPrivate from '../../../context/PrivateRouteWrapper';
 import LoaderScreen from '../../../components/LoaderScreen';
 import useStyle from '../../../hooks/useStyle';
 import useSignup from '../../../hooks/useSignup';
+import useSession from '../../../hooks/useSession';
 import useCustomToast from '../../../hooks/useCustomToast';
 
 function ServiceSlug() {
@@ -25,13 +26,14 @@ function ServiceSlug() {
   const {
     state, handleStep, setLoader, restartSignup,
   } = signupAction();
-  const { stepsEnum, handleServiceToConsume, isThirdStep, isFourthStep } = useSignup();
+  const { stepsEnum, handleServiceToConsume, isSecondStep, isThirdStep } = useSignup();
   const [readyToSelectService, setReadyToSelectService] = useState(false);
   const { selectedPlanCheckoutData, serviceProps, loader } = state;
   const { backgroundColor3, backgroundColor } = useStyle();
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { isAuthenticated } = useAuth();
+  const { location } = useSession();
   const { createToast } = useCustomToast({ toastId: 'checkout-error-string' });
 
   const isPaymentSuccess = selectedPlanCheckoutData?.payment_success;
@@ -99,6 +101,7 @@ function ServiceSlug() {
             academy: Number(serviceData?.academy?.id),
             event_type_set: service_type === 'event' ? service_slug : undefined,
             mentorship_service_set: service_type === 'mentorship' ? service_slug : undefined,
+            country_code: location?.countryShort,
           }).service().getAcademyService();
           respData = await resp.json();
           // eslint-disable-next-line prefer-destructuring
@@ -106,6 +109,7 @@ function ServiceSlug() {
         } else {
           resp = await bc.payment({
             academy: allSubscriptions[0].academy.id,
+            country_code: location?.countryShort,
           }).service().getAcademyServiceBySlug(service_slug);
           respData = await resp.json();
           service = respData;
@@ -176,14 +180,14 @@ function ServiceSlug() {
           style={{ flexShrink: 0, flexGrow: 1 }}
           overflow="auto"
         >
-          {!readyToSelectService && isThirdStep && serviceProps?.id && (
+          {!readyToSelectService && isSecondStep && serviceProps?.id && (
             <ServiceSummary service={serviceProps} />
           )}
           {readyToSelectService && (
             <SelectServicePlan />
           )}
-          {/* Fourth step */}
-          {!readyToSelectService && isFourthStep && (
+          {/* Third step */}
+          {!readyToSelectService && isThirdStep && (
             <PaymentInfo />
           )}
         </Flex>

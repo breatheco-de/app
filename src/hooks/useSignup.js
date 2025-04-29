@@ -11,32 +11,28 @@ import {
   getNextDateInMonths,
   getQueryString,
   getStorageItem,
-  formatCohortSchedule,
   getBrowserInfo,
   toCapitalize,
   unSlugify,
   slugToTitle,
   unSlugifyCapitalize,
 } from '../utils';
-import { BREATHECODE_HOST, currenciesSymbols, BASE_PLAN } from '../utils/variables';
+import { currenciesSymbols, BASE_PLAN } from '../utils/variables';
 import { reportDatalayer } from '../utils/requests';
 import { usePersistent } from './usePersistent';
 import useSession from './useSession';
 import useAuth from './useAuth';
 import useCustomToast from './useCustomToast';
-import axiosInstance from '../axios';
 
 const useSignup = () => {
   const { isAuthenticated } = useAuth();
-  const { userSession } = useSession();
+  const { userSession, location } = useSession();
   const state = useSelector((sl) => sl.signupReducer);
   const {
     setLoader,
-    setDateProps,
     setCheckoutData,
     setPaymentMethods,
     setPlanProps,
-    handleStep,
     toggleIfEnrolled,
     setServiceProps,
     setSelfAppliedCoupon,
@@ -55,28 +51,24 @@ const useSignup = () => {
     PREPARING_FOR_COHORT: 'PREPARING_FOR_COHORT',
   };
 
-  const { syllabus, academy } = router.query;
   const nextMonthText = getNextDateInMonths(1).translation[locale];
 
   const {
     stepIndex,
     checkoutData,
-    dateProps,
     cohortPlans,
     selectedPlanCheckoutData,
   } = state;
 
   const stepsEnum = {
     CONTACT: 1,
-    CHOOSE_CLASS: 2,
-    SUMMARY: 3,
-    PAYMENT: 4,
+    SUMMARY: 2,
+    PAYMENT: 3,
   };
 
   const isFirstStep = stepIndex === stepsEnum.CONTACT; // Contact
-  const isSecondStep = stepIndex === stepsEnum.CHOOSE_CLASS; // Choose your class
-  const isThirdStep = stepIndex === stepsEnum.SUMMARY; // Summary
-  const isFourthStep = stepIndex === stepsEnum.PAYMENT; // Payment
+  const isSecondStep = stepIndex === stepsEnum.SUMMARY; // Summary
+  const isThirdStep = stepIndex === stepsEnum.PAYMENT; // Payment
 
   const translations = {
     one_payment: t('signup:one_payment'),
@@ -332,7 +324,7 @@ const useSignup = () => {
  */
   const generatePlan = async (planSlug) => {
     try {
-      const resp = await bc.payment().getPlan(planSlug);
+      const resp = await bc.payment({ country_code: location?.countryShort }).getPlan(planSlug);
       const data = await processPlans(resp?.data);
       return data;
     } catch (error) {
@@ -541,10 +533,6 @@ const useSignup = () => {
       if (transactionData?.status === 'FULFILLED') {
         setSubscriptionProcess({
           status: subscriptionStatusDictionary.PREPARING_FOR_COHORT,
-          id: dateProps?.id,
-          slug: dateProps?.slug,
-          plan_slug: dateProps?.plan?.slug,
-          academy_info: dateProps?.academy,
         });
 
         let currency = 'USD';
@@ -599,31 +587,21 @@ const useSignup = () => {
     }
   };
 
-  const getChecking = async (cohortData) => {
-    const selectedPlan = cohortData?.plan;
-    const cohortPlan = cohortPlans?.length > 0 ? cohortPlans[cohortData?.index || 0] : selectedPlan;
+  const getChecking = async (plansData) => {
+    const selectedPlan = plansData?.plan;
 
     const checkingBody = {
       type: 'PREVIEW',
-      cohort: cohortData?.id || dateProps?.id,
-      academy: cohortData?.academy?.id || dateProps?.academy?.id || (Number(academy) || undefined),
-      syllabus,
-      plans: [selectedPlan?.slug || (cohortPlans?.length > 0 ? cohortPlan?.slug : undefined)],
+      plans: [selectedPlan?.slug],
       coupons: couponsQuery ? [couponsQuery] : undefined,
+      country_code: location?.countryShort,
     };
+    console.log('checkingBody', checkingBody);
 
     try {
-      const accessToken = getStorageItem('accessToken');
-      const response = await fetch(`${BREATHECODE_HOST}/v1/payments/checking`, {
-        method: 'PUT',
-        headers: new Headers({
-          'content-type': 'application/json',
-          Authorization: `Token ${cohortData?.token || accessToken}`,
-        }),
-        body: JSON.stringify(checkingBody),
-      });
+      const response = await bc.payment().checking(checkingBody);
+      const { data } = response;
 
-      const data = await response.json();
       const currentPlan = data?.plans?.[0];
       const planSlug = encodeURIComponent(currentPlan?.slug);
       const finalData = await generatePlan(planSlug);
@@ -688,23 +666,13 @@ const useSignup = () => {
     });
   };
 
-  const handleChecking = async (cohortData) => {
+  const handleChecking = async (plansData) => {
     try {
-      if (cohortData?.id) {
-        const { kickoffDate, weekDays, availableTime } = formatCohortSchedule(cohortData);
-        setDateProps({
-          ...cohortData,
-          kickoffDate,
-          weekDays,
-          availableTime,
-        });
-      }
-      const data = await getChecking(cohortData);
+      const data = await getChecking(plansData);
 
       return data;
     } catch (err) {
       if (err?.status === 400) {
-        handleStep(stepsEnum.CHOOSE_CLASS);
         toggleIfEnrolled(true);
       } else {
         console.err(err);
@@ -713,16 +681,38 @@ const useSignup = () => {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const getPaymentMethods = async (ownerId) => {
     try {
       if (isAuthenticated) {
         setLoader('paymentMethods', false);
         // const ownerId = selectedPlanCheckoutData.owner.id;
         setLoader('paymentMethods', true);
-        const resp = await bc.payment({ academy_id: ownerId, lang: router.locale }).getpaymentMethods();
-        if (resp.status < 400) {
-          setPaymentMethods(resp.data);
-        }
+        // HARDCODE PAYMENT METHODS FOR NOW
+        // const resp = await bc.payment({
+        //   academy_id: ownerId,
+        //   lang: router.locale,
+        //   country_code: location?.countryShort,
+        // }).getpaymentMethods();
+        // if (resp.status < 400) {
+        //   setPaymentMethods(resp.data);
+        // }
+        const mockResponse = [
+          {
+            id: 1,
+            title: 'Credit Card',
+            lang: 'en',
+            is_credit_card: true,
+            description: 'Pay with your card through the stripe secured form',
+            third_party_link: null,
+            academy: {
+              id: 47,
+              name: '4Geeks.com',
+              slug: '4geeks-com',
+            },
+          },
+        ];
+        setPaymentMethods(mockResponse);
         setLoader('paymentMethods', false);
       }
     } catch (e) {
@@ -851,11 +841,8 @@ const useSignup = () => {
     });
   };
 
-  const handleSubscribeToPlan = async ({ slug, accessToken, onSubscribedToPlan = () => {}, disableRedirects = false }) => {
+  const handleSubscribeToPlan = async ({ slug, onSubscribedToPlan = () => {}, disableRedirects = false }) => {
     try {
-      if (accessToken) {
-        axiosInstance.defaults.headers.common.Authorization = `Token ${accessToken}`;
-      }
       const data = await generatePlan(slug);
 
       onSubscribedToPlan(data);
@@ -865,7 +852,7 @@ const useSignup = () => {
         bullets: data?.featured_info || [],
       });
 
-      const respData = await handleChecking({ plan: data, token: accessToken });
+      const respData = await handleChecking({ plan: data });
 
       const respPayment = await handlePayment({
         ...respData,
@@ -892,7 +879,6 @@ const useSignup = () => {
     isFirstStep,
     isSecondStep,
     isThirdStep,
-    isFourthStep,
     handlePayment,
     handleChecking,
     getPaymentText,
