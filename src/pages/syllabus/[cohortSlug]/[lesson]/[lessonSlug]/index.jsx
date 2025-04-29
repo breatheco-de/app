@@ -7,7 +7,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { isWindow, assetTypeValues, getExtensionName, getStorageItem, languageFix } from '../../../../../utils';
+import { isWindow, assetTypeValues, getExtensionName, getStorageItem, languageFix, addQueryToURL } from '../../../../../utils';
 import asPrivate from '../../../../../context/PrivateRouteWrapper';
 import Heading from '../../../../../components/Heading';
 import useModuleHandler from '../../../../../hooks/useModuleHandler';
@@ -43,6 +43,7 @@ import { generateUserContext } from '../../../../../utils/rigobotContext';
 import SubTasks from '../../../../../components/MarkDownParser/SubTasks';
 import useCustomToast from '../../../../../hooks/useCustomToast';
 import ReviewModal from '../../../../../components/ReviewModal';
+import VideoModal from '../../../../../components/VideoModal';
 
 function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
@@ -64,8 +65,6 @@ function SyllabusContent() {
   } = useModuleHandler();
   const mainContainer = useRef(null);
   const [openNextPageModal, setOpenNextPageModal] = useState(false);
-  const [modalIntroOpen, setModalIntroOpen] = useState(false);
-  const [solutionVideoOpen, setSolutionVideoOpen] = useState(false);
   const [readme, setReadme] = useState(null);
   const [ipynbHtmlUrl, setIpynbHtmlUrl] = useState(null);
   const [extendedInstructions, setExtendedInstructions] = useState(null);
@@ -84,6 +83,9 @@ function SyllabusContent() {
   const [currentBlankProps, setCurrentBlankProps] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
   const [currentAsset, setCurrentAsset] = useState(null);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [currentVideoUrl, setCurrentVideoUrl] = useState('');
+  const [videoModalTitle, setVideoModalTitle] = useState('');
   const [grantAccess, setGrantAccess] = useState(false);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [learnpackStart, setLearnpackStart] = useState(false);
@@ -94,6 +96,10 @@ function SyllabusContent() {
   } = useCohortHandler();
   // const isAvailableAsSaas = false;
   const isAvailableAsSaas = cohortSession?.available_as_saas;
+
+  const introButtonRef = useRef(null);
+  const solutionButtonRef = useRef(null);
+  const controlsContainerRef = useRef(null);
 
   const { featuredLight, fontColor, borderColor, backgroundColor, hexColor, featuredColor, colorMode } = useStyle();
 
@@ -837,7 +843,7 @@ function SyllabusContent() {
     if (selectedSyllabus && cohortModule && cohortModule.id !== selectedSyllabus.id) {
       createToast({
         title: t('teacherSidebar.no-need-to-teach-today.title'),
-        description: t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule.id} - ${cohortModule.label}` }),
+        description: t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule.id} - ${languageFix(cohortModule.label, lang)}` }),
         status: 'info',
         duration: 5000,
         isClosable: true,
@@ -1216,7 +1222,7 @@ function SyllabusContent() {
                         )}
                         {isAvailableAsSaas && (
                           <Box className="controls-panel" bottom="0" height="110px" padding="20px 0" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
-                            <Box bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={taskBarBackground} justifyContent="center" display="flex" gridGap="20px">
+                            <Box ref={controlsContainerRef} bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={taskBarBackground} justifyContent="center" display="flex" gridGap="20px">
                               {isRigoInitialized && (isLesson || isProject) && (
                                 <Tooltip label={t('get-help')} placement="top">
                                   <Button
@@ -1259,6 +1265,7 @@ function SyllabusContent() {
                               {isLesson && currentAsset?.intro_video_url && (
                                 <Tooltip label={t('watch-intro')} placement="top">
                                   <Button
+                                    ref={introButtonRef}
                                     display="flex"
                                     flexDirection="column"
                                     justifyContent="center"
@@ -1268,27 +1275,36 @@ function SyllabusContent() {
                                     padding="12px"
                                     borderRadius="full"
                                     variant="default"
-                                    onClick={() => setModalIntroOpen(true)}
+                                    onClick={() => {
+                                      setCurrentVideoUrl(currentAsset?.intro_video_url);
+                                      setVideoModalTitle(currentAsset?.title || t('watch-intro'));
+                                      setIsVideoModalOpen(true);
+                                    }}
                                   >
-                                    <Icon style={{ margin: 'auto', display: 'block' }} icon="youtube" width="30px" height="30px" />
+                                    <Icon style={{ margin: 'auto', display: 'block' }} icon="youtube" width="30px" color={hexColor.blueDefault} height="30px" />
                                   </Button>
                                 </Tooltip>
                               )}
                               {currentAsset?.solution_video_url && (
                                 <Tooltip label={t('solution-video')} placement="top">
                                   <Button
+                                    ref={solutionButtonRef}
                                     display="flex"
                                     flexDirection="column"
                                     justifyContent="center"
                                     width="40px"
                                     height="40px"
-                                    background={hexColor.blueDefault}
+                                    background={backgroundColor}
                                     padding="12px"
                                     borderRadius="full"
                                     variant="default"
-                                    onClick={() => setSolutionVideoOpen(true)}
+                                    onClick={() => {
+                                      setCurrentVideoUrl(currentAsset?.solution_video_url);
+                                      setVideoModalTitle(currentAsset?.title || t('solution-video'));
+                                      setIsVideoModalOpen(true);
+                                    }}
                                   >
-                                    <Icon color="white" style={{ margin: 'auto', display: 'block' }} icon="play" width="30px" height="30px" />
+                                    <Icon style={{ margin: 'auto', display: 'block' }} color={hexColor.blueDefault} icon="play" width="30px" height="30px" />
                                   </Button>
                                 </Tooltip>
                               )}
@@ -1325,17 +1341,13 @@ function SyllabusContent() {
           </Box>
         </Box>
       </Flex>
-      <SimpleModal
-        isOpen={modalIntroOpen}
-        onClose={() => setModalIntroOpen(false)}
-      >
-        <Box padding="20px">
-          <ReactPlayerV2
-            controls={false}
-            url={currentAsset?.intro_video_url}
-          />
-        </Box>
-      </SimpleModal>
+      <VideoModal
+        isOpen={isVideoModalOpen}
+        onClose={() => setIsVideoModalOpen(false)}
+        videoUrl={currentVideoUrl}
+        positioningRef={controlsContainerRef}
+        title={videoModalTitle}
+      />
       <SimpleModal
         size="md"
         isOpen={showRigobotModal}
@@ -1350,17 +1362,6 @@ function SyllabusContent() {
             {t('connect-rigobot-message')}
           </Text>
           <ConnectGithubRigobot width="100%" />
-        </Box>
-      </SimpleModal>
-      <SimpleModal
-        isOpen={solutionVideoOpen}
-        onClose={() => setSolutionVideoOpen(false)}
-      >
-        <Box padding="20px">
-          <ReactPlayerV2
-            controls={false}
-            url={currentAsset?.solution_video_url}
-          />
         </Box>
       </SimpleModal>
       <Modal isOpen={openNextPageModal} size="xl" onClose={() => setOpenNextPageModal(false)}>
@@ -1456,7 +1457,7 @@ function SyllabusContent() {
         title={t('dashboard:modules.target-blank-title')}
         isReadonly
         description={t('dashboard:modules.target-blank-msg', { title: clickedPage?.title || currentBlankProps?.title })}
-        link={inputModalLink}
+        link={addQueryToURL(inputModalLink, { lang })}
         handlerText={t('common:open')}
         closeText={t('common:close')}
         closeButtonVariant="outline"
@@ -1468,7 +1469,7 @@ function SyllabusContent() {
         }}
       />
       {extendedInstructions !== null && (
-        <SimpleModal isOpen={extendedIsEnabled} onClose={() => setExtendedIsEnabled(false)} padding="2rem 0 2rem 0" style={{ margin: '3rem 0' }}>
+        <SimpleModal isOpen={extendedIsEnabled} onClose={() => setExtendedIsEnabled(false)} padding="2rem 0 2rem 0" style={{ margin: '3rem 0' }} size={{ md: '2xl', base: 'xl' }}>
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
             <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
               {`${t('teacherSidebar.instructions')}:`}

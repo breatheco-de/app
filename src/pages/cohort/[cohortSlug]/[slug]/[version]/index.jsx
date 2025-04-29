@@ -87,6 +87,7 @@ function Dashboard() {
     state, getCohortUserCapabilities, getCohortData, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, setCohortSession,
     cohortProgram, taskTodo, addTasks, sortedAssignments, handleOpenReviewModal, handleCloseReviewModal,
+    continueWhereYouLeft,
   } = useCohortHandler();
 
   const { cohortSession, taskCohortNull, cohortsAssignments, reviewModalState } = state;
@@ -129,6 +130,8 @@ function Dashboard() {
 
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const cohortUserDaysCalculated = calculateDifferenceDays(cohortSession?.cohort_user?.created_at);
+
+  const [isVideoVisible, setIsVideoVisible] = useState(true);
 
   if (cohortSession?.academy?.id) {
     axios.defaults.headers.common.Academy = cohortSession.academy.id;
@@ -241,14 +244,10 @@ function Dashboard() {
 
   useEffect(() => {
     if (cohortSession?.cohort_user) {
-      if (cohortSession.cohort_user.finantial_status === 'LATE' || cohortSession.cohort_user.educational_status === 'SUSPENDED') {
-        router.push('/choose-program');
-      } else {
-        const isReadyToShowGithubMessage = cohorts.some(
-          (l) => l.cohort_user.educational_status === 'ACTIVE' && l.available_as_saas === false,
-        );
-        setIsAvailableToShowModalMessage(isReadyToShowGithubMessage);
-      }
+      const isReadyToShowGithubMessage = cohorts.some(
+        (l) => l.cohort_user.educational_status === 'ACTIVE' && l.available_as_saas === false,
+      );
+      setIsAvailableToShowModalMessage(isReadyToShowGithubMessage);
     }
   }, [cohortSession]);
 
@@ -470,6 +469,7 @@ function Dashboard() {
 
   const mandatoryProjects = getMandatoryProjects();
   const mandatoryProjectsCount = mandatoryProjects.length;
+
   useEffect(() => {
     if (isSubscriptionFreeTrial && !hasShownFreeTrialToast.current) {
       hasShownFreeTrialToast.current = true;
@@ -532,9 +532,13 @@ function Dashboard() {
             <span
               role="button"
               tabIndex={0}
-              onClick={() => setShowDeletionOrdersModal(true)}
+              onClick={() => {
+                closeToast();
+                setShowDeletionOrdersModal(true);
+              }}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
+                  closeToast();
                   setShowDeletionOrdersModal(true);
                 }
               }}
@@ -551,10 +555,9 @@ function Dashboard() {
   }, [isSubscriptionFreeTrial, mandatoryProjectsCount, deletionOrders.length]);
 
   const dailyModuleData = getDailyModuleData() || '';
-  // const lastTaskDoneModuleData = getLastDoneTaskModuleData() || '';
 
   const onlyStudentsActive = studentAndTeachers.filter(
-    (x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE',
+    (x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE' && x.finantial_status !== 'LATE',
   ).map((student) => ({
     ...student,
     user: {
@@ -585,9 +588,18 @@ function Dashboard() {
     return 0;
   };
 
+  const openGithubModalHandler = () => setShowWarningModal(true);
+
   return (
     <Container minHeight="93vh" display="flex" flexDirection="column" maxW="none" padding="0">
-      {isAvailableAsSaas && <CohortHeader />}
+      {isAvailableAsSaas && (
+        <CohortHeader
+          onOpenGithubModal={openGithubModalHandler}
+          mainClasses={liveClasses}
+          upcomingEvents={events}
+          isLoadingEvents={isLoadingAssigments}
+        />
+      )}
       <Container flex="1" background={isAvailableAsSaas && hexColor.lightColor4} maxW="none">
         <Box maxW="1280px" width="100%" margin="0 auto">
           <Box width="fit-content" paddingTop="18px" marginBottom="18px">
@@ -598,8 +610,8 @@ function Dashboard() {
               alignItems="center"
               fontWeight="700"
               gridGap="12px"
-              color="#0097CF"
-              _focus={{ boxShadow: 'none', color: '#0097CF' }}
+              color="blue.default"
+              _focus={{ boxShadow: 'none', color: 'blue.default' }}
             >
               <Icon
                 icon="arrowLeft"
@@ -617,15 +629,153 @@ function Dashboard() {
             <>
               {isAvailableAsSaas ? (
                 <Box flex="1 1 auto" pb="20px">
-                  {hasMicroCohorts && (
-                    <Box display="flex" alignItems="center" gap="10px" mb="20px">
-                      <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
-                      <Heading as="h1" size="m">
-                        {cohortSession.name}
-                      </Heading>
-                    </Box>
+                  {cohortSession?.intro_video ? (
+                    <Flex direction="column" mb="20px">
+                      <Flex direction={{ base: 'column', md: isVideoVisible ? 'row' : 'column' }} gap="20px">
+                        <Box flex={1}>
+                          {isVideoVisible ? (
+                            <Flex direction="column" alignItems="center" gap="10px" height="100%">
+                              <Flex direction="column" gap="10px" height="100%" wrap="wrap">
+                                <Flex gap="10px">
+                                  <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
+                                  <Heading as="h1" size="m">
+                                    {cohortSession.name}
+                                  </Heading>
+                                </Flex>
+                                <Text fontSize="16px">
+                                  {t('micro-cohorts-description')}
+                                </Text>
+                                <Button
+                                  display="flex"
+                                  padding="0"
+                                  alignSelf="flex-start"
+                                  flexDirection="row"
+                                  alignItems="center"
+                                  fontWeight="700"
+                                  color="blue.default"
+                                  background="transparent"
+                                  _focus={{ boxShadow: 'none', color: 'blue.default' }}
+                                  _hover={{ background: 'transparent' }}
+                                  onClick={() => {
+                                    continueWhereYouLeft(cohortSession);
+                                  }}
+                                >
+                                  <span>
+                                    {t('saasCohortcallToAction.buttonText')}
+                                  </span>
+                                  <Icon
+                                    icon="longArrowRight"
+                                    width="20px"
+                                    height="20px"
+                                    style={{ marginLeft: '7px' }}
+                                    color="currentColor"
+                                  />
+                                </Button>
+                              </Flex>
+                            </Flex>
+                          ) : (
+                            <Flex direction="column" gap="10px">
+                              <Flex justifyContent="space-between" alignItems="center" wrap="wrap">
+                                <Flex gap="10px" alignItems="center">
+                                  <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
+                                  <Heading as="h1" size="m">
+                                    {cohortSession.name}
+                                  </Heading>
+                                </Flex>
+                                <Button
+                                  display="flex"
+                                  padding="0"
+                                  alignSelf="flex-start"
+                                  flexDirection="row"
+                                  alignItems="center"
+                                  fontWeight="700"
+                                  color="blue.default"
+                                  background="transparent"
+                                  _focus={{ boxShadow: 'none', color: 'blue.default' }}
+                                  _hover={{ background: 'transparent' }}
+                                  onClick={() => {
+                                    continueWhereYouLeft(cohortSession);
+                                  }}
+                                >
+                                  <span>
+                                    {t('saasCohortcallToAction.buttonText')}
+                                  </span>
+                                  <Icon
+                                    icon="longArrowRight"
+                                    width="20px"
+                                    height="20px"
+                                    style={{ marginLeft: '7px' }}
+                                    color="currentColor"
+                                  />
+                                </Button>
+                              </Flex>
+                            </Flex>
+                          )}
+                        </Box>
+                        {isVideoVisible && (
+                          <Box flex={1} borderRadius="12px" overflow="hidden">
+                            <ReactPlayerV2
+                              url={cohortSession.intro_video}
+                              width="100%"
+                              height="100%"
+                              iframeStyle={{ aspectRatio: '16/9', borderRadius: '12px' }}
+                            />
+                          </Box>
+                        )}
+                      </Flex>
+                      {isVideoVisible && (
+                        <Button alignSelf="center" color="auto" display="flex" gap="10px" variant="link" mt="auto" onClick={() => setIsVideoVisible(false)}>
+                          {t('hide-content')}
+                          <Icon icon="arrowUp" width="10px" height="10px" />
+                        </Button>
+                      )}
+                      {!isVideoVisible && (
+                        <Button variant="link" color="auto" onClick={() => setIsVideoVisible(true)}>
+                          {t('show-content')}
+                          <Icon icon="arrowDown" width="15px" height="15px" />
+                        </Button>
+                      )}
+                    </Flex>
+                  ) : (
+                    <Flex direction="column" gap="10px" mb="20px">
+                      <Box display="flex" alignItems="center" gap="10px" justifyContent="space-between">
+                        <Flex gap="10px">
+                          <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
+                          <Heading as="h1" size="m">
+                            {cohortSession.name}
+                          </Heading>
+                        </Flex>
+                        <Button
+                          display="flex"
+                          flexDirection="row"
+                          alignItems="center"
+                          fontWeight="700"
+                          gridGap="12px"
+                          color="blue.default"
+                          background="transparent"
+                          _focus={{ boxShadow: 'none', color: 'blue.default' }}
+                          _hover={{ background: 'transparent' }}
+                          onClick={() => {
+                            continueWhereYouLeft(cohortSession);
+                          }}
+                        >
+                          <span>
+                            {t('saasCohortcallToAction.buttonText')}
+                          </span>
+                          <Icon
+                            icon="longArrowRight"
+                            width="20px"
+                            height="20px"
+                            style={{ marginLeft: '7px' }}
+                            color="currentColor"
+                          />
+                        </Button>
+                      </Box>
+                      <Text fontSize="16px">
+                        {t('micro-cohorts-description')}
+                      </Text>
+                    </Flex>
                   )}
-
                   {!isLoadingAssigments ? (
                     <Box display="flex" flexDirection="column" gap="20px">
                       {hasMicroCohorts
@@ -698,128 +848,128 @@ function Dashboard() {
                       />
                     )}
                     {isBelowTablet && (
-                    <Box
-                      display={{ base: 'flex', md: 'none' }}
-                      flexDirection="column"
-                      gridGap="30px"
-                    >
-                      <OnlyFor onlyTeachers capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
-                        <TeacherSidebar
-                          title={t('teacher-sidebar.actions')}
-                          students={onlyStudentsActive}
-                          width="100%"
-                        />
-                      </OnlyFor>
-                      {academyOwner?.white_labeled && (
                       <Box
-                        className="white-label"
-                        borderRadius="md"
-                        padding="10px"
-                        display="flex"
-                        justifyContent="space-around"
-                        bg={featuredColor}
+                        display={{ base: 'flex', md: 'none' }}
+                        flexDirection="column"
+                        gridGap="30px"
                       >
-                        <Avatar
-                          name={academyOwner.name}
-                          src={academyOwner.icon_url}
+                        <OnlyFor onlyTeachers capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
+                          <TeacherSidebar
+                            title={t('teacher-sidebar.actions')}
+                            students={onlyStudentsActive}
+                            width="100%"
+                          />
+                        </OnlyFor>
+                        {academyOwner?.white_labeled && (
+                          <Box
+                            className="white-label"
+                            borderRadius="md"
+                            padding="10px"
+                            display="flex"
+                            justifyContent="space-around"
+                            bg={featuredColor}
+                          >
+                            <Avatar
+                              name={academyOwner.name}
+                              src={academyOwner.icon_url}
+                            />
+                            <Box className="white-label-text" width="80%">
+                              <Text size="md" fontWeight="700" marginBottom="5px">
+                                {academyOwner.name}
+                              </Text>
+                              <Text size="sm">
+                                {t('whiteLabeledText')}
+                              </Text>
+                            </Box>
+                          </Box>
+                        )}
+                        <LiveEvent
+                          featureLabel={t('common:live-event.title')}
+                          featureReadMoreUrl={t('common:live-event.readMoreUrl')}
+                          mainClasses={liveClasses?.length > 0 ? liveClasses : []}
+                          otherEvents={events}
+                          cohorts={cohortSession ? [{ role: cohortSession.cohort_user.role, cohort: cohortSession }] : []}
                         />
-                        <Box className="white-label-text" width="80%">
-                          <Text size="md" fontWeight="700" marginBottom="5px">
-                            {academyOwner.name}
-                          </Text>
-                          <Text size="sm">
-                            {t('whiteLabeledText')}
-                          </Text>
-                        </Box>
-                      </Box>
-                      )}
-                      <LiveEvent
-                        featureLabel={t('common:live-event.title')}
-                        featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                        mainClasses={liveClasses?.length > 0 ? liveClasses : []}
-                        otherEvents={events}
-                        cohorts={cohortSession ? [{ role: cohortSession.cohort_user.role, cohort: cohortSession }] : []}
-                      />
 
-                      {cohortSession?.kickoff_date && (
-                      <CohortSideBar
-                        teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_user?.role)}
-                        studentAndTeachers={studentAndTeachers}
-                        width="100%"
-                      />
-                      )}
-                      {cohortSession?.cohort_user?.role?.toLowerCase() === 'student' && (
-                      <SupportSidebar
-                        allCohorts={[{
-                          cohort: {
-                            ...cohortSession,
-                            ...cohortSession?.cohort_user,
-                          },
-                        }]}
-                        subscriptions={allSubscriptions}
-                        subscriptionData={subscriptionData}
-                      />
-                      )}
-                    </Box>
+                        {cohortSession?.kickoff_date && (
+                          <CohortSideBar
+                            teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_user?.role)}
+                            studentAndTeachers={studentAndTeachers}
+                            width="100%"
+                          />
+                        )}
+                        {cohortSession?.cohort_user?.role?.toLowerCase() === 'student' && (
+                          <SupportSidebar
+                            allCohorts={[{
+                              cohort: {
+                                ...cohortSession,
+                                ...cohortSession?.cohort_user,
+                              },
+                            }]}
+                            subscriptions={allSubscriptions}
+                            subscriptionData={subscriptionData}
+                          />
+                        )}
+                      </Box>
                     )}
                     {cohortSession?.intro_video && cohortUserDaysCalculated?.isRemainingToExpire === false && (
-                    <>
-                      {grantAccess ? (
-                        <Accordion defaultIndex={cohortUserDaysCalculated?.result <= 3 ? [0] : [1]} allowMultiple>
-                          <AccordionItem background={featuredColor} borderRadius="17px" border="0">
-                            {({ isExpanded }) => (
-                              <>
-                                <span>
-                                  <AccordionButton display="flex" gridGap="16px" padding="10.5px 20px" borderRadius="17px">
-                                    <Icon icon="cameraFilled" width="29px" height="16px" color="#0097CF" />
-                                    <Box as="span" fontSize="21px" fontWeight={700} flex="1" textAlign="left">
-                                      {t('intro-video-title')}
-                                    </Box>
-                                    <Icon icon="arrowRight" width="11px" height="20px" color="currentColor" style={{}} transform={isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'} transition="transform 0.2s ease-in" />
-                                  </AccordionButton>
-                                </span>
-                                <AccordionPanel padding="0px 4px 4px 4px">
-                                  <ReactPlayerV2
-                                    className="intro-video"
-                                    url={cohortSession?.intro_video}
-                                  />
-                                </AccordionPanel>
-                              </>
-                            )}
-                          </AccordionItem>
-                        </Accordion>
-                      ) : (
-                        <SimpleSkeleton
-                          height="450px"
-                          padding="6px 18px 6px 18px"
-                          margin="18px 0"
-                          borderRadius="30px"
-                        />
-                      )}
-                    </>
+                      <>
+                        {grantAccess ? (
+                          <Accordion defaultIndex={cohortUserDaysCalculated?.result <= 3 ? [0] : [1]} allowMultiple>
+                            <AccordionItem background={featuredColor} borderRadius="17px" border="0">
+                              {({ isExpanded }) => (
+                                <>
+                                  <span>
+                                    <AccordionButton display="flex" gridGap="16px" padding="10.5px 20px" borderRadius="17px">
+                                      <Icon icon="cameraFilled" width="29px" height="16px" color="blue.default" />
+                                      <Box as="span" fontSize="21px" fontWeight={700} flex="1" textAlign="left">
+                                        {t('intro-video-title')}
+                                      </Box>
+                                      <Icon icon="arrowRight" width="11px" height="20px" color="currentColor" style={{}} transform={isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'} transition="transform 0.2s ease-in" />
+                                    </AccordionButton>
+                                  </span>
+                                  <AccordionPanel padding="0px 4px 4px 4px">
+                                    <ReactPlayerV2
+                                      className="intro-video"
+                                      url={cohortSession?.intro_video}
+                                    />
+                                  </AccordionPanel>
+                                </>
+                              )}
+                            </AccordionItem>
+                          </Accordion>
+                        ) : (
+                          <SimpleSkeleton
+                            height="450px"
+                            padding="6px 18px 6px 18px"
+                            margin="18px 0"
+                            borderRadius="30px"
+                          />
+                        )}
+                      </>
                     )}
 
                     {!cohortSession?.available_as_saas && cohortSession?.current_module && dailyModuleData && (
-                    <CallToAction
-                      background="blue.default"
-                      margin="40px 0 auto 0"
-                      title={t('callToAction.title')}
-                      href={`#${slugify(dailyModuleData.label)}`}
-                      text={languageFix(dailyModuleData.description, lang)}
-                      buttonText={t('callToAction.buttonText')}
-                      width={{ base: '100%', md: 'fit-content' }}
-                    />
+                      <CallToAction
+                        background="blue.default"
+                        margin="40px 0 auto 0"
+                        title={t('callToAction.title')}
+                        href={`#${slugify(dailyModuleData.label)}`}
+                        text={languageFix(dailyModuleData.description, lang)}
+                        buttonText={t('callToAction.buttonText')}
+                        width={{ base: '100%', md: 'fit-content' }}
+                      />
                     )}
 
                     {(!cohortSession?.intro_video || ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_user?.role) || (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 3)) && (
-                    <Box marginTop="36px">
-                      <ProgressBar
-                        cohortProgram={cohortProgram}
-                        taskTodo={taskTodo}
-                        progressText={t('progressText')}
-                        width="100%"
-                      />
-                    </Box>
+                      <Box marginTop="36px">
+                        <ProgressBar
+                          cohortProgram={cohortProgram}
+                          taskTodo={taskTodo}
+                          progressText={t('progressText')}
+                          width="100%"
+                        />
+                      </Box>
                     )}
 
                     <Box height="2px" bg={borderColor} marginY="32px" />
@@ -856,9 +1006,9 @@ function Dashboard() {
                           </InputRightElement>
                         </InputGroup>
                         {modulesExists && (
-                        <Checkbox onChange={(e) => setShowPendingTasks(e.target.checked)} textAlign="right" gridGap="10px" display="flex" flexDirection="row-reverse" color={lightColor}>
-                          {t('modules.show-pending-tasks')}
-                        </Checkbox>
+                          <Checkbox onChange={(e) => setShowPendingTasks(e.target.checked)} textAlign="right" gridGap="10px" display="flex" flexDirection="row-reverse" color={lightColor}>
+                            {t('modules.show-pending-tasks')}
+                          </Checkbox>
                         )}
                       </Box>
                     </Box>
@@ -907,9 +1057,9 @@ function Dashboard() {
                             );
                           })}
                           {sortedAssignmentsSearched && sortedAssignmentsSearched.length <= 0 && (
-                          <Text size="l">
-                            {t('modules.search-not-found')}
-                          </Text>
+                            <Text size="l">
+                              {t('modules.search-not-found')}
+                            </Text>
                           )}
                         </>
                       ) : <ModuleMapSkeleton />}
@@ -920,78 +1070,78 @@ function Dashboard() {
                   <Box width="5rem" />
 
                   {!isBelowTablet && (
-                  <Box
-                    display={{ base: 'none', md: 'flex' }}
-                    flexDirection="column"
-                    gridGap="30px"
-                    maxWidth="380px"
-                    minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
-                  >
-                    <OnlyFor onlyTeachers capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
-                      <TeacherSidebar
-                        title={t('teacher-sidebar.actions')}
-                        students={onlyStudentsActive}
-                        width="100%"
-                      />
-                    </OnlyFor>
-                    {cohortSession?.stage === 'FINAL_PROJECT' && (
-                    <FinalProject
-                      tasks={taskTodo}
-                      studentAndTeachers={onlyStudentsActive}
-                      isStudent={!profesionalRoles.includes(cohortSession?.cohort_user?.role)}
-                    />
-                    )}
-                    {academyOwner?.white_labeled && (
                     <Box
-                      className="white-label"
-                      borderRadius="md"
-                      padding="10px"
-                      display="flex"
-                      justifyContent="space-around"
-                      bg={featuredColor}
+                      display={{ base: 'none', md: 'flex' }}
+                      flexDirection="column"
+                      gridGap="30px"
+                      maxWidth="380px"
+                      minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
                     >
-                      <Avatar
-                        name={academyOwner.name}
-                        src={academyOwner.icon_url}
+                      <OnlyFor onlyTeachers capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
+                        <TeacherSidebar
+                          title={t('teacher-sidebar.actions')}
+                          students={onlyStudentsActive}
+                          width="100%"
+                        />
+                      </OnlyFor>
+                      {cohortSession?.stage === 'FINAL_PROJECT' && (
+                        <FinalProject
+                          tasks={taskTodo}
+                          studentAndTeachers={onlyStudentsActive}
+                          isStudent={!profesionalRoles.includes(cohortSession?.cohort_user?.role)}
+                        />
+                      )}
+                      {academyOwner?.white_labeled && (
+                        <Box
+                          className="white-label"
+                          borderRadius="md"
+                          padding="10px"
+                          display="flex"
+                          justifyContent="space-around"
+                          bg={featuredColor}
+                        >
+                          <Avatar
+                            name={academyOwner.name}
+                            src={academyOwner.icon_url}
+                          />
+                          <Box className="white-label-text" width="80%">
+                            <Text size="md" fontWeight="700" marginBottom="5px">
+                              {academyOwner.name}
+                            </Text>
+                            <Text size="sm">
+                              {t('whiteLabeledText')}
+                            </Text>
+                          </Box>
+                        </Box>
+                      )}
+                      <LiveEvent
+                        featureLabel={t('common:live-event.title')}
+                        featureReadMoreUrl={t('common:live-event.readMoreUrl')}
+                        mainClasses={liveClasses?.length > 0 ? liveClasses : []}
+                        otherEvents={events}
+                        cohorts={cohortSession ? [cohortSession] : []}
                       />
-                      <Box className="white-label-text" width="80%">
-                        <Text size="md" fontWeight="700" marginBottom="5px">
-                          {academyOwner.name}
-                        </Text>
-                        <Text size="sm">
-                          {t('whiteLabeledText')}
-                        </Text>
-                      </Box>
+                      {cohortSession?.kickoff_date && (
+                        <CohortSideBar
+                          teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_user?.role)}
+                          studentAndTeachers={studentAndTeachers}
+                          width="100%"
+                        />
+                      )}
+                      {cohortSession?.cohort_user?.role?.toLowerCase() === 'student' && (
+                        <SupportSidebar
+                          allCohorts={[{
+                            cohort: {
+                              ...cohortSession,
+                              ...cohortSession?.cohort_user,
+                            },
+                          }]}
+                          subscriptions={allSubscriptions}
+                          subscriptionData={subscriptionData}
+                        />
+                      )}
+                      <Feedback />
                     </Box>
-                    )}
-                    <LiveEvent
-                      featureLabel={t('common:live-event.title')}
-                      featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                      mainClasses={liveClasses?.length > 0 ? liveClasses : []}
-                      otherEvents={events}
-                      cohorts={cohortSession ? [cohortSession] : []}
-                    />
-                    {cohortSession?.kickoff_date && (
-                    <CohortSideBar
-                      teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_user?.role)}
-                      studentAndTeachers={studentAndTeachers}
-                      width="100%"
-                    />
-                    )}
-                    {cohortSession?.cohort_user?.role?.toLowerCase() === 'student' && (
-                    <SupportSidebar
-                      allCohorts={[{
-                        cohort: {
-                          ...cohortSession,
-                          ...cohortSession?.cohort_user,
-                        },
-                      }]}
-                      subscriptions={allSubscriptions}
-                      subscriptionData={subscriptionData}
-                    />
-                    )}
-                    <Feedback />
-                  </Box>
                   )}
                 </Flex>
               )}
@@ -1001,14 +1151,16 @@ function Dashboard() {
           )}
         </Box>
       </Container>
-      {showGithubWarning === 'active' && (
+      {showWarningModal && (
         <Modal
           isOpen={showWarningModal}
           size="md"
           margin="0 10px"
           onClose={() => {
             setShowWarningModal(false);
-            localStorage.setItem('showGithubWarning', 'postponed');
+            if (showGithubWarning === 'active') {
+              localStorage.setItem('showGithubWarning', 'postponed');
+            }
           }}
         >
           <ModalOverlay />
@@ -1070,7 +1222,9 @@ function Dashboard() {
                 color={fontColor2}
                 onClick={() => {
                   setShowWarningModal(false);
-                  localStorage.setItem('showGithubWarning', 'postponed');
+                  if (showGithubWarning === 'active') {
+                    localStorage.setItem('showGithubWarning', 'postponed');
+                  }
                 }}
               >
                 {t('warningModal.skip')}

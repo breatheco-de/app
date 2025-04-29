@@ -393,7 +393,7 @@ function ProgramCard({
                           lineHeight="9.8px"
                           fontWeight="500"
                           marginTop="5px"
-                          color={CustomTheme.colors.blue.default2}
+                          color={CustomTheme.colors.blue.default}
                         >
                           {`${courseProgress}%`}
                         </Text>

@@ -89,7 +89,7 @@ const AvatarUser = memo(({
           </Avatar>
         </WrapItem>
       </PopoverTrigger>
-      <PopoverContent minWidth={{ base: 'none', md: data?.role ? '320px' : '' }} width={data?.role ? '100%' : 'auto'} pr={!data?.role && '20px'}>
+      <PopoverContent display={{ base: 'none', md: 'block' }} minWidth={{ base: 'none', md: data?.role ? '320px' : '' }} width={data?.role ? '100%' : 'auto'} pr={!data?.role && '20px'}>
         {data?.role && (
           <PopoverHeader>
             <Heading
@@ -117,9 +117,11 @@ const AvatarUser = memo(({
             <Heading size="15px">
               {fullNameLabel}
             </Heading>
-            <Text size="sm" fontWeight="400">
-              {`${t('dashboard:member-since', { role: roles[data?.role?.toLowerCase()] || 'member' })} ${dateFormated[router?.locale]}`}
-            </Text>
+            {data?.role && (
+              <Text size="sm" fontWeight="400">
+                {t('dashboard:member-since', { role: roles[data.role.toLowerCase()] || 'member', date: dateFormated[router?.locale] })}
+              </Text>
+            )}
           </Box>
         </PopoverBody>
       </PopoverContent>

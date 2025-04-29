@@ -69,20 +69,79 @@ function ProfilesSection({
 }) {
   const { usersConnected } = useOnline();
 
+  let displayProfiles = profiles || [];
+
+  if (profiles?.length === 1) {
+    const placeholder1 = {
+      id: 'placeholder-1',
+      slug: 'placeholder-mentor-1',
+      status: 'ACTIVE',
+      booking_url: null,
+      created_at: '2024-05-23T21:07:42.286848Z',
+      email: null,
+      one_line_bio: null,
+      online_meeting_url: null,
+      price_per_hour: null,
+      rating: null,
+      services: [],
+      timezone: 'Africa/Abidjan',
+      updated_at: '2024-05-23T21:07:42.286848Z',
+      user: {
+        id: -1,
+        first_name: 'Luis',
+        last_name: 'Doe',
+        email: '',
+        profile: {
+          avatar_url: 'https://randomuser.me/api/portraits/men/1.jpg',
+          github_username: null,
+        },
+      },
+    };
+    const placeholder2 = {
+      id: 'placeholder-2',
+      slug: 'placeholder-mentor-2',
+      status: 'ACTIVE',
+      booking_url: null,
+      created_at: '2024-05-23T21:07:42.286848Z',
+      email: null,
+      one_line_bio: null,
+      online_meeting_url: null,
+      price_per_hour: null,
+      rating: null,
+      services: [],
+      timezone: 'Africa/Abidjan',
+      updated_at: '2024-05-23T21:07:42.286848Z',
+      user: {
+        id: -2,
+        first_name: 'Andrea',
+        last_name: 'Doe',
+        email: '',
+        profile: {
+          avatar_url: 'https://randomuser.me/api/portraits/women/2.jpg',
+          github_username: null,
+        },
+      },
+    };
+    displayProfiles = [profiles[0], placeholder1, placeholder2];
+  }
+
   return (
     <AvatarGroup max={4} justifyContent="center">
-      {profiles?.map((c, i) => {
-        if (!c) return null;
-        const fullName = `${c.user.first_name} ${c.user.last_name}`;
+      {displayProfiles?.map((c, i) => {
+        if (!c || !c.user) return null;
+        const fullName = c.user.first_name && c.user.last_name ? `${c.user.first_name} ${c.user.last_name}` : '';
         const isOnline = usersConnected?.includes(c.user.id);
+        const avatarUrl = c.user.profile?.avatar_url;
+
         return (
           <AvatarUser
             width={size || '48px'}
             height={size || '48px'}
             index={i}
-            key={`${c.id} - ${c.user.first_name}`}
+            key={c.id || `profile-${i}`}
             isWrapped
             fullName={fullName}
+            avatarUrl={avatarUrl}
             data={c}
             isOnline={isOnline}
             badge
