@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { slugToTitle, unSlugifyCapitalize } from '../utils';
 import { BASE_PLAN, currenciesSymbols } from '../utils/variables';
 import bc from '../services/breathecode';
@@ -29,11 +30,12 @@ export const processPlans = (data, {
   halfYearly = true,
   yearly = true,
   planType = '',
+  country_code = undefined,
 } = {}, translations = {}) => new Promise((resolve, reject) => {
   const process = async () => {
     try {
       const slug = encodeURIComponent(data?.slug);
-      const resp = await bc.payment().getPlanProps(slug);
+      const resp = await bc.payment({ country_code }).getPlanProps(slug);
       if (!resp) {
         throw new Error('The plan does not exist');
       }
@@ -229,10 +231,10 @@ export const processPlans = (data, {
  * @param {Object} translationsObj // Object with translations
  * @returns {Promise<object>} // Formated object of data with list of prices
  */
-export const generatePlan = async (planSlug, translationsObj) => {
+export const generatePlan = async (planSlug, translationsObj, country_code) => {
   try {
-    const resp = await bc.payment().getPlan(planSlug);
-    const data = await processPlans(resp?.data, {}, translationsObj);
+    const resp = await bc.payment({ country_code }).getPlan(planSlug);
+    const data = await processPlans(resp?.data, { country_code }, translationsObj);
     return data;
   } catch (error) {
     console.error('Error generating plan:', error);
@@ -298,8 +300,9 @@ export const getTranslations = (t = () => { }) => {
  * @param {boolean} ignoreProcessPlans - Whether to ignore processing the plans (optional)
  * @returns {Promise<object>} - The suggested with formated data data.
  */
-export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = false) => bc.payment({
+export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = false, country_code) => bc.payment({
   original_plan: slug,
+  country_code,
 }).planOffer()
   .then(async (resp) => {
     const data = resp?.data;
@@ -319,11 +322,13 @@ export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = f
         quarterly: false,
         halfYearly: false,
         planType: 'original',
+        country_code,
       }, translations) : {};
       const dataForSuggestedPlan = suggestedPlan.slug ? await processPlans(suggestedPlan, {
         quarterly: false,
         halfYearly: false,
         planType: 'suggested',
+        country_code,
       }, translations) : {};
 
       return ({
@@ -350,12 +355,12 @@ export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = f
  * @param {Function} t Translation function
  * @returns {Promise<object>} Formated original and suggested plan data
  */
-export const fetchSuggestedPlan = async (planSlug, translationsObj = {}, version = 'default') => {
+export const fetchSuggestedPlan = async (planSlug, translationsObj = {}, version = 'default', country_code) => {
   try {
-    const suggestedPlanData = await getSuggestedPlan(planSlug, translationsObj);
+    const suggestedPlanData = await getSuggestedPlan(planSlug, translationsObj, false, country_code);
     if (version === 'default') {
       if (suggestedPlanData?.status_code === 404 || suggestedPlanData?.length === 0) {
-        const originalPlanData = await generatePlan(planSlug, translationsObj);
+        const originalPlanData = await generatePlan(planSlug, translationsObj, country_code);
         return {
           plans: {
             original_plan: originalPlanData,
@@ -380,7 +385,7 @@ export const fetchSuggestedPlan = async (planSlug, translationsObj = {}, version
       const originalPlan = originalPlanProps?.plans || [];
       const suggestedPlan = suggestedPlanProps?.plans || [];
       if (suggestedPlanData?.status_code === 404 || suggestedPlanData?.length === 0) {
-        const originalPlanData = await generatePlan(planSlug, translationsObj);
+        const originalPlanData = await generatePlan(planSlug, translationsObj, country_code);
         return {
           ...originalPlanData,
           planList: originalPlanData?.plans || [],
