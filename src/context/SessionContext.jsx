@@ -25,12 +25,14 @@ const initialUserSession = {
 export const SessionContext = createContext({
   userSession: initialUserSession,
   location: null,
+  isLoadingLocation: true,
 });
 
 function SessionProvider({ children }) {
   const [userSession, setUserSession] = useState(initialUserSession);
   const router = useRouter();
   const [location, setLocation] = useState(null);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(true);
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
   const { gmapStatus, getUserLocation } = useGoogleMaps(
     GOOGLE_KEY,
@@ -43,6 +45,8 @@ function SessionProvider({ children }) {
       setLocation(loc);
     } catch (e) {
       error('function getUserLocation()', e);
+    } finally {
+      setIsLoadingLocation(false);
     }
   };
 
@@ -128,6 +132,7 @@ function SessionProvider({ children }) {
           });
         },
         location,
+        isLoadingLocation,
         setConversionUrl,
       }}
     >

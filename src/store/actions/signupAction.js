@@ -461,7 +461,7 @@ const useSignup = () => {
   const getSelfAppliedCoupon = async (plan) => {
     try {
       if (plan) {
-        const { data } = await bc.payment({ plan }).verifyCoupon();
+        const { data } = await bc.payment({ plan, country_code: location?.countryShort }).verifyCoupon();
         const coupon = data[0];
         if (coupon) {
           setSelfAppliedCoupon({
