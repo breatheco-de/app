@@ -2,6 +2,7 @@ import {
   Box, Flex, IconButton, Avatar, Stack, Collapse, useColorModeValue,
   useDisclosure, useColorMode, Popover, PopoverTrigger,
   PopoverContent, PopoverArrow, Button, Link, Divider,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import {
@@ -49,6 +50,7 @@ function Navbar({ translations, pageProps }) {
   const { isOpen, onToggle } = useDisclosure();
   const { toggleColorMode } = useColorMode();
   const fontColor = useColorModeValue('black', 'gray.200');
+  const isMobile = useBreakpointValue({ base: true, lg: false });
   const { hexColor, colorMode, reverseColorMode, borderColor, lightColor, navbarBackground } = useStyle();
 
   const disableLangSwitcher = pageProps?.disableLangSwitcher || false;
@@ -282,7 +284,7 @@ function Navbar({ translations, pageProps }) {
 
           <Flex display="flex" ml={10}>
             <Stack className="hideOverflowX__" direction="row" width="auto" spacing={4} alignItems="center">
-              {allNavbarItems.map((item) => (
+              {!isMobile && allNavbarItems.map((item) => (
                 <DesktopNavItem key={item.label} item={item} />
               ))}
             </Stack>

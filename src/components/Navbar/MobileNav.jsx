@@ -39,24 +39,42 @@ function MobileNav({
       borderColor={useColorModeValue('gray.200', 'gray.900')}
     >
       {navbarItems.map((item) => {
-        const {
-          label, href, description, icon, subMenu,
-        } = item;
-
         if (item.slug === 'courses' && !prismicRef && !prismicApi) {
           return null;
         }
 
+        // Prepare subMenu for MobileNavItem based on new structure
+        let mobileSubMenu = null;
+        if (Array.isArray(item.mainMenu) && item.mainMenu.length > 0) {
+          mobileSubMenu = [];
+          item.mainMenu.forEach((mainMenuItem) => {
+            if (mainMenuItem.label) {
+              mobileSubMenu.push({ type: 'header', label: mainMenuItem.label });
+            }
+            if (mainMenuItem.description) {
+              mobileSubMenu.push({ type: 'description', label: mainMenuItem.description });
+            }
+
+            if (Array.isArray(mainMenuItem.subMenu)) {
+              mainMenuItem.subMenu.forEach((subMenuItem) => {
+                mobileSubMenu.push({ ...subMenuItem, type: subMenuItem.type || 'item' });
+              });
+            }
+          });
+        } else if (Array.isArray(item.subMenu)) {
+          mobileSubMenu = item.subMenu;
+        }
+
         return (
           <MobileNavItem
-            key={label}
+            key={item.label}
             with_popover={item?.with_popover}
             image={item?.image}
-            description={description}
-            icon={icon}
-            label={label}
-            subMenu={subMenu}
-            href={href}
+            description={item.description}
+            icon={item.icon}
+            label={item.label}
+            subMenu={mobileSubMenu}
+            href={item.href}
             onClickLink={onClickLink}
           />
         );

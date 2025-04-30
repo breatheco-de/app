@@ -29,7 +29,6 @@ function MobileItem({
   const existsSubMenu = subMenu?.length > 0;
   const withPopoverActive = withPopover?.active;
   const existsItemWithPopover = existsSubMenu || withPopoverActive;
-  // manage subMenus in level 2
   const itemSubMenu = existsSubMenu && subMenu.map((l) => {
     const isLessons = l.slug === 'lessons';
     if (isLessons) {
@@ -43,7 +42,6 @@ function MobileItem({
 
   return (
     <Stack spacing={4}>
-      {/* Box is important for popover content trigger */}
       {!subMenu && (
         <Box>
           <NextChakraLink
@@ -113,7 +111,7 @@ function MobileItem({
               {image ? (
                 <Image src={image} width={105} height={35} style={{ objectFit: 'cover', height: '35px' }} />
               ) : (
-                <Icon icon={icon} width="50px" height="50px" color={hexColor.blueDefault} />
+                icon && <Icon icon={icon} width="50px" height="50px" color={hexColor.blueDefault} />
               )}
             </Box>
             <Box display="flex" flexDirection="column">
@@ -140,49 +138,68 @@ function MobileItem({
           </Flex>
 
           {itemSubMenu
-            && itemSubMenu.map((child) => (child.subMenu ? (
-              <Accordion key={child.label} allowMultiple width="100%">
-                <AccordionItem border="0">
-                  <AccordionButton>
-                    <Box flex="1" textAlign="left">
-                      {child.label}
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                  <AccordionPanel pb={4}>
-                    {child.description && (
-                      <Text fontSize="14px" textAlign="left" pb="15px">
-                        {child.description}
-                      </Text>
-                    )}
-                    <Box display="flex" flexDirection="column" gridGap="15px">
-                      {child.subMenu.map((l) => (
-                        <NextChakraLink
-                          key={l.label}
-                          onClick={onClickLink}
-                          color="blue.default"
-                          style={{ textDecoration: 'none' }}
-                          href={l.href}
-                        >
-                          {l.label}
-                        </NextChakraLink>
-                      ))}
-                    </Box>
-                  </AccordionPanel>
-                </AccordionItem>
-              </Accordion>
-            ) : (
-              <NextChakraLink
-                key={child.label}
-                onClick={onClickLink}
-                color="blue.default"
-                style={{ textDecoration: 'none' }}
-                py={2}
-                href={child.href}
-              >
-                {child.label}
-              </NextChakraLink>
-            )))}
+            && itemSubMenu.map((child) => {
+              if (child.type === 'header') {
+                return (
+                  <Text key={child.label} fontWeight="bold" pt={4} pb={2} color={useColorModeValue('gray.600', 'gray.400')}>
+                    {child.label}
+                  </Text>
+                );
+              }
+              if (child.type === 'description') {
+                return (
+                  <Text key={child.label} fontSize="sm" pb={2} color={lightColor}>
+                    {child.label}
+                  </Text>
+                );
+              }
+              if (child.subMenu) {
+                return (
+                  <Accordion key={child.label} allowMultiple width="100%">
+                    <AccordionItem border="0">
+                      <AccordionButton>
+                        <Box flex="1" textAlign="left">
+                          {child.label}
+                        </Box>
+                        <AccordionIcon />
+                      </AccordionButton>
+                      <AccordionPanel pb={4}>
+                        {child.description && (
+                          <Text fontSize="14px" textAlign="left" pb="15px">
+                            {child.description}
+                          </Text>
+                        )}
+                        <Box display="flex" flexDirection="column" gridGap="15px">
+                          {child.subMenu.map((l) => (
+                            <NextChakraLink
+                              key={l.label}
+                              onClick={onClickLink}
+                              color="blue.default"
+                              style={{ textDecoration: 'none' }}
+                              href={l.href}
+                            >
+                              {l.label}
+                            </NextChakraLink>
+                          ))}
+                        </Box>
+                      </AccordionPanel>
+                    </AccordionItem>
+                  </Accordion>
+                );
+              }
+              return (
+                <NextChakraLink
+                  key={child.label}
+                  onClick={onClickLink}
+                  color="blue.default"
+                  style={{ textDecoration: 'none' }}
+                  py={2}
+                  href={child.href}
+                >
+                  {child.label}
+                </NextChakraLink>
+              );
+            })}
         </Stack>
       </Collapse>
     </Stack>
@@ -209,7 +226,7 @@ MobileItem.propTypes = {
 MobileItem.defaultProps = {
   href: '/',
   description: '',
-  icon: 'book',
+  icon: '',
   with_popover: {},
   image: '',
   subMenu: undefined,
