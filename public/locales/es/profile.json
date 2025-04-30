@@ -97,8 +97,9 @@
     "many-payments-left": "Pago: {{qty}} pagos restantes",
     "no-payment-left": "Pago: Sin pagos restantes",
     "renewal-date": "Fecha de renovación: {{date}}",
-    "yearly-savings": "Ahorra {{months}} meses",
-    "yearly-savings-singular": "Ahorra {{months}} mes",
+    "yearly-savings": "Estás ahorrándote {{months}} meses",
+    "charged": "Cobrado",
+    "yearly-savings-singular": "Estás ahorrándote {{months}} mes",
     "payment_unit": {
       "month": "Mensual",
       "year": "Anual",

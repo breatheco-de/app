@@ -16,6 +16,7 @@ import axiosInstance from '../../../axios';
 import asPrivate from '../../../context/PrivateRouteWrapper';
 import LoaderScreen from '../../../components/LoaderScreen';
 import useStyle from '../../../hooks/useStyle';
+import useSession from '../../../hooks/useSession';
 import useCustomToast from '../../../hooks/useCustomToast';
 
 function ServiceSlug() {
@@ -32,6 +33,7 @@ function ServiceSlug() {
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { isAuthenticated } = useAuth();
   const { createToast } = useCustomToast({ toastId: 'checkout-error-string' });
+  const { location } = useSession();
 
   const isPaymentSuccess = selectedPlanCheckoutData?.payment_success;
 
@@ -98,6 +100,7 @@ function ServiceSlug() {
             academy: Number(serviceData?.academy?.id),
             event_type_set: service_type === 'event' ? service_slug : undefined,
             mentorship_service_set: service_type === 'mentorship' ? service_slug : undefined,
+            country_code: location?.countryShort,
           }).service().getAcademyService();
           respData = await resp.json();
           // eslint-disable-next-line prefer-destructuring
@@ -105,6 +108,7 @@ function ServiceSlug() {
         } else {
           resp = await bc.payment({
             academy: allSubscriptions[0].academy.id,
+            country_code: location?.countryShort,
           }).service().getAcademyServiceBySlug(service_slug);
           respData = await resp.json();
           service = respData;
