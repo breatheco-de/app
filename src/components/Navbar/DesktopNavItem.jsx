@@ -19,7 +19,6 @@ import useStyle from '../../hooks/useStyle';
 import { ArrowDown } from '../Icon/components';
 import { getColorVariations } from '../../utils';
 
-// Helper function to generate the navigation URL
 const generateNavItemUrl = (item, parentId = null) => {
   const baseHref = item.asPath || item.href || '#';
   let queryParams = {};

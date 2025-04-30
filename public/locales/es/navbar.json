@@ -26,15 +26,15 @@
           "description": "Transición hacia carreras tecnológicas, con mentoría y soporte ilimitados de por vida. Te equipa con las habilidades necesarias para enfrentar desafíos del mundo real y te conecta con oportunidades de la industria.",
           "subMenu": [
             {
-              "href": "/full-stack",
+              "href": "https://4geeksacademy.com/es/coding-bootcamps/desarrollador-full-stack",
               "label": "Desarrollo full stack"
             },
             {
-              "href": "/data-science",
+              "href": "https://4geeksacademy.com/es/coding-bootcamps/curso-datascience-machine-learning",
               "label": "Ciencia de datos y machine learning"
             },
             {
-              "href": "/cybersecurity",
+              "href": "https://4geeksacademy.com/es/coding-bootcamps/curso-ciberseguridad",
               "label": "Ciberseguridad"
             }
           ]
@@ -49,19 +49,19 @@
               "label": "Recursos Gratuitos"
             },
             {
-              "href": "/interactive-exercises",
+              "href": "/es/interactive-exercises",
               "label": "Empieza a Practicar con desafíos"
             },
             {
-              "href": "/interactive-coding-tutorials",
+              "href": "/es/interactive-coding-tutorials",
               "label": "Construye Proyectos en cualquier tecnología"
             },
             {
-              "href": "/how-to",
+              "href": "/es/how-to",
               "label": "¿Cómo hacer...?"
             },
             {
-              "href": "/lessons",
+              "href": "/es/lessons",
               "label": "Leer y ver"
             }
           ]

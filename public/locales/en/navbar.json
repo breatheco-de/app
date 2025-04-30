@@ -26,15 +26,15 @@
           "description": "Transition into a tech careers, with unlimited mentorship and support for life. It equips you with the skills needed to tackle real-world challenges and connects you with industry opportunities.",
           "subMenu": [
             {
-              "href": "/full-stack",
+              "href": "https://4geeksacademy.com/us/coding-bootcamps/part-time-full-stack-developer",
               "label": "Full stack development"
             },
             {
-              "href": "/data-science",
+              "href": "https://4geeksacademy.com/us/coding-bootcamps/datascience-machine-learning",
               "label": "Data science & machine learning"
             },
             {
-              "href": "/cybersecurity",
+              "href": "https://4geeksacademy.com/us/coding-bootcamps/cybersecurity",
               "label": "Cybersecurity"
             }
           ]

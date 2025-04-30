@@ -124,7 +124,7 @@ function Navbar({ translations, pageProps }) {
         ...item,
         slug: item?.slug,
         label: item?.course_translation?.title,
-        href: `/course/${item?.slug}`,
+        href: `/${locale}/bootcamp/${item?.slug}`,
         icon: item?.icon_url,
       }));
 
