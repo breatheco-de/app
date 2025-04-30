@@ -15,112 +15,114 @@
     },
     {
       "id": "bootcamps",
-      "label": "Self-paced",
+      "label": "Learn",
       "icon": "graduationCap",
-      "description": "Explore our extensive collection of courses designed to help you master various subjects and skills. Whether you're a beginner or an advanced learner, there's something here for everyone.",
-      "asPath": "/bootcamps",
-      "subMenu": [],
-      "position": 1
-    },
-    {
-      "id": "academy",
-      "label": "Bootcamp",
-      "href": "https://4geeksacademy.com",
-      "hide_on_auth": true,
-      "position": 2
-    },
-    {
-      "id": "events",
-      "label": "Learn live",
-      "icon": "calendar",
-      "private": false,
-      "description": "Join us for our free workshops, webinars, and other events to learn more about our programs and get started on your journey to becoming a developer.",
-      "subMenu": [
+      "description": "Change your life/career, get into tech and be free.",
+      "mainMenu": [
         {
-          "label": "Live events",
-          "slug": "live-events",
-          "asPath": "/workshops",
-          "icon": "live-event",
-          "description": "",
+          "label": "Change your life with a bootcamp",
+          "id": "bootcamp-options",
+          "description": "Transition into a tech careers, with unlimited mentorship and support for life. It equips you with the skills needed to tackle real-world challenges and connects you with industry opportunities.",
           "subMenu": [
             {
-              "href": "/workshops",
-              "label": "Upcoming live events"
+              "href": "/full-stack",
+              "label": "Full stack development"
+            },
+            {
+              "href": "/data-science",
+              "label": "Data science & machine learning"
+            },
+            {
+              "href": "/cybersecurity",
+              "label": "Cybersecurity"
             }
           ]
         },
         {
-          "label": "Podcast",
-          "slug": "podcast",
-          "asPath": "/workshops",
-          "icon": "microphone",
-          "description": "A tech-culture podcast where you learn to fight the enemies to become a successful professional in tech.",
+          "label": "Gain new skills at your own pace",
+          "id": "self-paced-options",
+          "description": "Access hundreds of exercises, projects to develop and courses in the most wanted technologies",
           "subMenu": [
             {
-              "href": "/podcast",
-              "label": "List all episodes"
+              "type": "header",
+              "label": "Free Resources"
+            },
+            {
+              "href": "/interactive-exercises",
+              "label": "Start Practicing with challenges"
+            },
+            {
+              "href": "/interactive-coding-tutorials",
+              "label": "Build Projects on any technology"
+            },
+            {
+              "href": "/how-to",
+              "label": "How to's?"
+            },
+            {
+              "href": "/lessons",
+              "label": "Read & watch"
+            }
+          ]
+        }
+      ],
+      "position": 1
+    },
+    {
+      "id": "career-booster",
+      "label": "Career Booster",
+      "icon": "calendar",
+      "private": false,
+      "description": "Join us for our free workshops, webinars, and other events to learn more about our programs and get started on your journey to becoming a developer.",
+      "mainMenu": [
+        {
+          "label": "",
+          "id": "career-booster",
+          "description": "",
+          "subMenu": [
+            {
+              "href": "/workshops",
+              "label": "Beyond the resume"
+            },
+            {
+              "href": "/workshops",
+              "label": "Profile booster"
+            },
+            {
+              "href": "/workshops",
+              "label": "Free resources"
+            }
+          ]
+        }
+      ],
+      "position": 2
+    },
+    {
+      "id": "read",
+      "label": "Workforce development",
+      "description": "For all the self-taught geeks out there, here is our content library with most of the learning materials we have produced throughout the years.",
+      "mainMenu": [
+        {
+          "label": "",
+          "id": "workforce-development",
+          "description": "",
+          "subMenu": [
+            {
+              "href": "https://www.4geeks.works/apprenticeship-landing",
+              "label": "Apprenticeship"
+            },
+            {
+              "href": "https://www.4geeks.works/hire-early-talent",
+              "label": "Find and hire talent"
+            },
+            {
+              "href": "https://www.4geeks.works/copia-de-apprenticeship",
+              "label": "Upskilling your team"
             }
           ]
         }
       ],
       "position": 3
-    },
-    {
-      "id": "read",
-      "label": "Learning library",
-      "icon": "book",
-      "description": "For all the self-taught geeks out there, here is our content library with most of the learning materials we have produced throughout the years.",
-      "asPath": "/read",
-      "subMenu": [
-        {
-          "label": "Read and watch",
-          "slug": "lessons",
-          "asPath": "/read-and-watch",
-          "description": "It makes sense to start learning by reading and watching videos about fundamentals and how things work.",
-          "subMenu": [],
-          "subMenuContent": [
-            {
-              "href": "/lessons",
-              "label": "Search from all Lessons"
-            }
-          ]
-        },
-        {
-          "label": "Practice interactively",
-          "slug": "exercises",
-          "subLabel": "",
-          "description": "Curated list of small interactive and incremental exercises you can take to get better at any coding skill.",
-          "subMenu": [
-            {
-              "href": "/interactive-exercises",
-              "label": "Start practicing"
-            }
-          ]
-        },
-        {
-          "label": "Build projects",
-          "slug": "projects",
-          "description": "Curated section of projects to build while learning with simple instructions, videos, solutions, and more.",
-          "subMenu": [
-            {
-              "href": "/interactive-coding-tutorials",
-              "label": "Start building"
-            }
-          ]
-        },
-        {
-          "label": "How to's?",
-          "slug": "how-tos",
-          "description": "Guides on different topics related to the technologies that we teach in our courses",
-          "subMenu": [
-            {
-              "href": "/how-to",
-              "label": "Browse questions"
-            }
-          ]
-        }
-      ],
-      "position": 4
     }
   ],
   "white-label-version-items": [

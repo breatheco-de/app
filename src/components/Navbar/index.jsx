@@ -122,15 +122,8 @@ function Navbar({ translations, pageProps }) {
         ...item,
         slug: item?.slug,
         label: item?.course_translation?.title,
-        asPath: `/course/${item?.slug}`,
+        href: `/course/${item?.slug}`,
         icon: item?.icon_url,
-        description: item?.course_translation?.description,
-        subMenu: [
-          {
-            href: `/bootcamp/${item?.slug}`,
-            label: t('course-details'),
-          },
-        ],
       }));
 
       setMktCourses(coursesStruct || []);
@@ -151,12 +144,7 @@ function Navbar({ translations, pageProps }) {
         (item) => (isUtmMediumAcademy ? item.id !== 'bootcamps' : true) && (item.id === 'bootcamps' ? location?.countryShort !== 'ES' : true),
       );
       if (!isLoading && user?.id) {
-        const isBootcampStudent = cohorts.some((cohort) => !cohort.available_as_saas);
-        setNavbarItems(
-          preFilteredItems
-            .filter((item) => (item.disabled !== true && item.hide_on_auth !== true)
-              && (item.id !== 'bootcamps' || !isBootcampStudent)),
-        );
+        setNavbarItems(preFilteredItems.filter((item) => (item.disabled !== true && item.hide_on_auth !== true)));
       } else {
         setNavbarItems(preFilteredItems.filter((item) => item.disabled !== true));
       }
@@ -178,12 +166,28 @@ function Navbar({ translations, pageProps }) {
 
   if (pageProps?.previewMode) return null;
 
-  // manage submenus in level 1
-  const prepareSubMenuData = (item) => {
-    if (item.id === 'bootcamps') {
-      return mktCourses;
-    }
-    return item?.subMenu;
+  const prepareMenuData = (item, coursesArray) => {
+    if (item.id !== 'bootcamps' || !Array.isArray(item.mainMenu)) return item;
+    const selfPacedIndex = item.mainMenu.findIndex((sub) => sub.id === 'self-paced-options');
+    if (selfPacedIndex === -1 || !Array.isArray(item.mainMenu[selfPacedIndex]?.subMenu)) return item;
+
+    const newMainMenu = item.mainMenu.map((menuItem, index) => {
+      if (index === selfPacedIndex) {
+        return {
+          ...menuItem,
+          subMenu: [
+            ...coursesArray,
+            ...menuItem.subMenu,
+          ],
+        };
+      }
+      return menuItem;
+    });
+
+    return {
+      ...item,
+      mainMenu: newMainMenu,
+    };
   };
 
   const allItems = navbarItems?.length > 0 ? navbarItems : preDefinedItems;
@@ -191,15 +195,7 @@ function Navbar({ translations, pageProps }) {
   const privateItems = allItems?.filter((item) => (isAuthenticated ? item.private : false)) || [];
   const publicItems = allItems?.filter((item) => !item.private) || [];
   const allNavbarItems = [...privateItems, ...publicItems]
-    .map((item) => {
-      const submenuData = prepareSubMenuData(item);
-      const subMenuLength = item.subMenu?.length;
-
-      return ({
-        ...item,
-        subMenu: subMenuLength > 1 ? item.subMenu : submenuData,
-      });
-    })
+    .map((item) => prepareMenuData(item, mktCourses))
     .sort((a, b) => a.position - b.position);
 
   return (
