@@ -263,7 +263,7 @@ function Navbar({ translations, pageProps }) {
           display={{ base: 'none', lg: 'flex' }}
           justify={{ base: 'center', xl: 'start' }}
         >
-          <NextLink href={isAuthenticated ? '/choose-program' : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
+          <NextLink href={isAuthenticated ? '/choose-program' : '/'} style={{ alignSelf: 'center', display: 'flex' }}>
             {pageProps?.existsWhiteLabel && logoData?.logo_url ? (
               <Image
                 src={logoData.logo_url}
@@ -277,7 +277,7 @@ function Navbar({ translations, pageProps }) {
                 }}
                 alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
               />
-            ) : <Icon icon="4Geeks-logo" secondColor={hexColor.black} width="95px" height="35px" />}
+            ) : <Icon icon="4GeeksIcon" secondColor={hexColor.black} width="90px" height="35px" />}
           </NextLink>
 
           <Flex display="flex" ml={10}>

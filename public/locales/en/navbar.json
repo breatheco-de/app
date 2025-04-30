@@ -16,7 +16,8 @@
     {
       "id": "bootcamps",
       "label": "Learn",
-      "icon": "graduationCap",
+      "bgColor": "#F3FAFE",
+      "titleColor": "#0084FF",
       "description": "Change your life/career, get into tech and be free.",
       "mainMenu": [
         {
@@ -71,9 +72,10 @@
     {
       "id": "career-booster",
       "label": "Career Booster",
-      "icon": "calendar",
+      "bgColor": "#FFE7CC",
+      "titleColor": "#FF8800",
       "private": false,
-      "description": "Join us for our free workshops, webinars, and other events to learn more about our programs and get started on your journey to becoming a developer.",
+      "description": "Stop sending resumes that don't take you anywhere. In Beyond The Resume, we take you to the next level with personalized services and experts for your CV, LinkedIn profile, and interviews. More than a resume, your passport to professional success.",
       "mainMenu": [
         {
           "label": "",
@@ -81,7 +83,7 @@
           "description": "",
           "subMenu": [
             {
-              "href": "/workshops",
+              "href": "/beyond-the-resume",
               "label": "Beyond the resume"
             },
             {
@@ -98,9 +100,11 @@
       "position": 2
     },
     {
-      "id": "read",
-      "label": "Workforce development",
-      "description": "For all the self-taught geeks out there, here is our content library with most of the learning materials we have produced throughout the years.",
+      "id": "workforce-development",
+      "label": "Build your workforce",
+      "bgColor": "#FFF4DC",
+      "titleColor": "#FFB718",
+      "description": "Connect people and companies through learning, talent, and training programs tailored to real market needs. Whether you're building your team or your future, this is where potential meets opportunity.",
       "mainMenu": [
         {
           "label": "",
@@ -123,6 +127,31 @@
         }
       ],
       "position": 3
+    },
+    {
+      "id": "live",
+      "label": "Live",
+      "bgColor": "#DFFFE8",
+      "titleColor": "#06AB52",
+      "description": "Join us for our free workshops, webinars, and other events to learn more about our programs and get started on your journey to becoming a developer.",
+      "mainMenu": [
+        {
+          "label": "",
+          "id": "workforce-development",
+          "description": "",
+          "subMenu": [
+            {
+              "href": "/workshops",
+              "label": "Live events"
+            },
+            {
+              "href": "/podcast",
+              "label": "Podcasts"
+            }
+          ]
+        }
+      ],
+      "position": 4
     }
   ],
   "white-label-version-items": [

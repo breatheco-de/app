@@ -16,8 +16,9 @@
     {
       "id": "bootcamps",
       "label": "Aprender",
-      "icon": "graduationCap",
-      "description": "Explora nuestra extensa colección de cursos diseñados para ayudarte a dominar diversas materias y habilidades. Ya seas principiante o avanzado, aquí hay algo para todos.",
+      "bgColor": "#F3FAFE",
+      "titleColor": "#0084FF",
+      "description": "Cambia tu vida/carrera, entra al mundo tech y vive libre.",
       "mainMenu": [
         {
           "label": "Cambia tu vida con un bootcamp",
@@ -70,10 +71,11 @@
     },
     {
       "id": "career-booster",
-      "label": "Impulsor de Carrera",
-      "icon": "calendar",
+      "label": "Career booster",
+      "bgColor": "#FFE7CC",
+      "titleColor": "#FF8800",
       "private": false,
-      "description": "Únete a nuestros talleres gratuitos, seminarios web y otros eventos para aprender más sobre nuestros programas y comenzar tu viaje para convertirte en desarrollador.",
+      "description": "Deja de enviar currículums que no te llevan a ninguna parte. En Beyond The Resume, te impulsamos al siguiente nivel con servicios personalizados y expertos para tu CV, perfil de LinkedIn y entrevistas. Más que un currículum, tu pasaporte al éxito profesional.",
       "mainMenu": [
         {
           "label": "",
@@ -81,7 +83,7 @@
           "description": "",
           "subMenu": [
             {
-              "href": "/workshops",
+              "href": "es/beyond-the-resume",
               "label": "Más allá del currículum"
             },
             {
@@ -99,8 +101,10 @@
     },
     {
       "id": "read",
-      "label": "Desarrollo de la fuerza laboral",
-      "description": "Para todos los geeks autodidactas, aquí está nuestra biblioteca de contenido con la mayoría de los materiales de aprendizaje que hemos producido a lo largo de los años.",
+      "label": "Talento y Formación",
+      "bgColor": "#FFF4DC",
+      "titleColor": "#FFB718",
+      "description": "Conecta personas y empresas a través de programas de aprendizaje, talento y capacitación adaptados a las necesidades del mercado. Ya sea que estés construyendo tu equipo o tu futuro, este es el lugar donde se encuentra la oportunidad.",
       "mainMenu": [
         {
           "label": "",
@@ -123,6 +127,31 @@
         }
       ],
       "position": 3
+    },
+    {
+      "id": "live",
+      "label": "Aprende en vivo",
+      "bgColor": "#DFFFE8",
+      "titleColor": "#06AB52",
+      "description": "Únete a nosotros para nuestros talleres gratuitos, seminarios web y otros eventos para aprender más sobre nuestros programas y comenzar tu viaje para convertirte en desarrollador.",
+      "mainMenu": [
+        {
+          "label": "",
+          "id": "workforce-development",
+          "description": "",
+          "subMenu": [
+            {
+              "href": "/es/workshops",
+              "label": "Eventos en vivo"
+            },
+            {
+              "href": "/es/podcast",
+              "label": "Podcasts"
+            }
+          ]
+        }
+      ],
+      "position": 4
     }
   ],
   "white-label-version-items": [
