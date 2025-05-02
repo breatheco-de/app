@@ -35,7 +35,6 @@ function ServiceSlug() {
   const { isAuthenticated } = useAuth();
   const { location } = useSession();
   const { createToast } = useCustomToast({ toastId: 'checkout-error-string' });
-  const { location } = useSession();
 
   const isPaymentSuccess = selectedPlanCheckoutData?.payment_success;
 

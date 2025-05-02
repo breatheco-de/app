@@ -111,15 +111,15 @@
   "yearly-savings": "Save {{months}} months",
   "yearly-savings-singular": "Save {{months}} month",
   "payment_unit": {
-      "month": "Monthly",
-      "year": "Yearly",
-      "anual": "Anual"
-    },
-    "payment_unit_short": {
-      "month": "mo",
-      "year": "yr",
-      "anual": "yr"
-    },
+    "month": "Monthly",
+    "year": "Yearly",
+    "anual": "Anual"
+  },
+  "payment_unit_short": {
+    "month": "mo",
+    "year": "yr",
+    "anual": "yr"
+  },
   "join-cohort": {
     "cta": {
       "lesson": "Join cohort to get access to this lesson",

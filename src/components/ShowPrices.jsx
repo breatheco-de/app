@@ -105,17 +105,17 @@ function ShowPrices({
     switch (plan.period) {
       case 'YEAR':
         return {
-          full: t('subscription.payment_unit.anual'),
-          short: t('subscription.payment_unit_short.year'),
+          full: t('payment_unit.anual'),
+          short: t('payment_unit_short.year'),
         };
       case 'MONTH':
         return {
-          full: t('subscription.payment_unit.month'),
-          short: t('subscription.payment_unit_short.month'),
+          full: t('payment_unit.month'),
+          short: t('payment_unit_short.month'),
         };
       case 'ONE_TIME':
         return {
-          full: t('subscription.upgrade-modal.one_payment'),
+          full: t('upgrade-modal.one_payment'),
           short: '',
         };
       case 'FINANCING':
@@ -343,8 +343,8 @@ function ShowPrices({
                   >
                     <Text fontSize="inherit" fontWeight="inherit" color="inherit">
                       {monthsSaved === 1
-                        ? t('subscription.yearly-savings-singular', { months: monthsSaved })
-                        : t('subscription.yearly-savings', { months: monthsSaved })}
+                        ? t('yearly-savings-singular', { months: monthsSaved })
+                        : t('yearly-savings', { months: monthsSaved })}
                     </Text>
                   </Box>
                 )}
