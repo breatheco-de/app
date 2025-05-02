@@ -298,7 +298,7 @@ const breathecode = {
       getPlan: (slug) => axios.get(`${url}/plan/${slug}${qs}`),
       getpaymentMethods: () => axios.get(`${url}/methods${qs}`),
       planOffer: () => axios.get(`${url}/planoffer${qs}`),
-      getServiceItemsByPlan: (id) => axios.get(`${url}/serviceitem?plan=${id}`),
+      getServiceItemsByPlan: (id) => axios.get(`${url}/serviceitem?plan=${id}&${parseQuerys(query, true)}`),
       getServiceInfo: (slug) => axios.get(`${url}/service/${slug}/items${qs}`),
       getCohortPlans: () => axios.get(`${url}/plan${qs}`),
       applyCoupon: (bagId) => axios.put(`${url}/bag/${bagId}/coupon${qs}`),

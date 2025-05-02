@@ -12,6 +12,7 @@ import useSignup from '../hooks/useSignup';
 import useStyle from '../hooks/useStyle';
 import Icon from './Icon';
 import MktTechnologies from './MktTechnologies';
+import { currenciesSymbols } from '../utils/variables';
 import { SessionContext } from '../context/SessionContext';
 
 function PlanButton({
@@ -40,7 +41,7 @@ function PlanButton({
       _hover="none"
       onClick={onClick}
     >
-      {getPlanLabel(plan)}
+      {getPlanLabel(plan).full}
     </Button>
   );
 }
@@ -80,6 +81,18 @@ function ShowPrices({
   const monthsSaved = hasMonthlyAndYearly ? Math.floor((monthlyPlan.price * 12 - yearlyPlan.price) / monthlyPlan.price) : 0;
   const shouldShowSavingsPill = selectedPlan?.period === 'YEAR' && hasMonthlyAndYearly && monthsSaved > 0;
 
+  const getDiscountText = (coupon, plan) => {
+    if (!coupon) return '';
+    if (coupon.discount_type === 'PERCENT_OFF') {
+      return `${coupon.discount_value * 100}% OFF`;
+    }
+    if (coupon.discount_type === 'FIXED') {
+      const currencySymbol = currenciesSymbols[plan?.currency?.code] || '$';
+      return `${currencySymbol}${coupon.discount_value} OFF`;
+    }
+    return '';
+  };
+
   const getSpanishPrice = (plan, priceType) => {
     if (plan.period === 'MONTH' && priceType === 'price') return '€74.99';
     if (plan.period === 'MONTH' && priceType === 'lastPrice') return '€149.99';
@@ -91,15 +104,30 @@ function ShowPrices({
   const getPlanLabel = (plan) => {
     switch (plan.period) {
       case 'YEAR':
-        return t('payment_unit.anual');
+        return {
+          full: t('subscription.payment_unit.anual'),
+          short: t('subscription.payment_unit_short.year'),
+        };
       case 'MONTH':
-        return t('payment_unit.month');
+        return {
+          full: t('subscription.payment_unit.month'),
+          short: t('subscription.payment_unit_short.month'),
+        };
       case 'ONE_TIME':
-        return t('one_payment');
+        return {
+          full: t('subscription.upgrade-modal.one_payment'),
+          short: '',
+        };
       case 'FINANCING':
-        return `${plan.how_many_months} ${t('common:word-connector.months')}`;
+        return {
+          full: `${plan.how_many_months} ${t('common:word-connector.months')}`,
+          short: '',
+        };
       default:
-        return plan.title;
+        return {
+          full: plan.title,
+          short: '',
+        };
     }
   };
 
@@ -133,7 +161,7 @@ function ShowPrices({
 
   return (
     <Flex flexDirection="column" mx="auto">
-      <Box display="flex" flexDirection="column">
+      <Box display="flex" flexDirection="column" mb={4}>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
           <Heading as="h2" size="24px" color="blue.default" flexGrow={1}>
             {title || data?.pricing['choose-plan']}
@@ -172,7 +200,7 @@ function ShowPrices({
 
       {hasValidPrice && (
         <Box position="relative" mt={6}>
-          {shouldShowSavingsPill && (
+          {shouldShowSavingsPill && !selfAppliedCoupon && (
             <Box
               position="absolute"
               top="-14px"
@@ -198,26 +226,61 @@ function ShowPrices({
             </Box>
           )}
           {selfAppliedCoupon && (
-            <Box
+            <Flex
               position="absolute"
-              top="-30px"
-              left="-25px"
-              fontSize="50px"
+              top="-22px"
+              left="10px"
+              alignItems="center"
               zIndex={1}
             >
-              🔥
-            </Box>
+              <Flex
+                bg="#BE0000"
+                borderRadius="full"
+                border="2px solid #EB5757"
+                justifyContent="center"
+                alignItems="center"
+                mr="-12px"
+                padding="3px"
+                zIndex={1}
+              >
+                <Icon icon="fire" width="30px" height="30px" />
+              </Flex>
+              {selfAppliedCoupon && (
+                <Box
+                  bg="#EB5757"
+                  color="white"
+                  pl="18px"
+                  pr={3}
+                  py="3px"
+                  borderRadius="full"
+                  fontSize="14px"
+                  lineHeight="21px"
+                >
+                  {getDiscountText(selfAppliedCoupon, selectedPlan)}
+                </Box>
+              )}
+            </Flex>
           )}
           <Box
             position="relative"
-            borderRadius="20px"
+            borderRadius="8px"
             display="flex"
             flexDirection={{ base: 'column', md: 'row' }}
             border="1px"
-            borderColor={selectedPlan.period === 'YEAR' ? 'black' : backgroundColor}
+            borderColor={(
+              () => {
+                if (selfAppliedCoupon) return backgroundColor;
+                if (selectedPlan.period === 'YEAR') return 'black';
+                return backgroundColor;
+              }
+            )()}
           >
             <Box
-              bg={selfAppliedCoupon ? 'green.500' : 'blue.default'}
+              sx={selfAppliedCoupon ? {
+                bg: 'linear-gradient(145deg, #FF0F0F 1%, var(--chakra-colors-blue-default) 50%)',
+              } : {
+                bg: 'blue.default',
+              }}
               p={6}
               color="white"
               width={{ base: '100%', md: '250px' }}
@@ -225,18 +288,18 @@ function ShowPrices({
               flexDirection="column"
               alignItems="center"
               justifyContent="space-between"
-              borderTopLeftRadius="20px"
-              borderTopRightRadius={{ base: '20px', md: '0' }}
-              borderBottomLeftRadius={{ base: '0', md: '20px' }}
+              borderTopLeftRadius="8px"
+              borderTopRightRadius={{ base: '8px', md: '0' }}
+              borderBottomLeftRadius={{ base: '0', md: '8px' }}
             >
               <Flex alignItems="center" mb={3} gap={2}>
                 <Text fontSize="sm">
                   {t('learn-at-your-pace')}
                 </Text>
                 {selectedPlan.period !== 'FINANCING' && selectedPlan.period !== 'ONE_TIME' && (
-                  <Box bg={selfAppliedCoupon ? 'green.700' : '#0062BD'} px={2} py={0.5} borderRadius="md" border="1px solid" borderColor="white">
-                    <Text fontSize="xs" flexGrow={1} textAlign="center">
-                      {getPlanLabel(selectedPlan)}
+                  <Box bg="#0062BD" px={2} py={0.5} borderRadius="full" border="1px solid" borderColor="white">
+                    <Text fontSize="xs" textWrap="nowrap" flexGrow={1} textAlign="center">
+                      {getPlanLabel(selectedPlan).full}
                     </Text>
                   </Box>
                 )}
@@ -248,6 +311,13 @@ function ShowPrices({
                   fontFamily="Space Grotesk Variable"
                 >
                   {isSpain ? getSpanishPrice(selectedPlan, 'price') : selectedPlan.priceText}
+
+                  {selectedPlan.period !== 'FINANCING' && selectedPlan.period !== 'ONE_TIME' && (
+                    <Text as="span" style={{ fontSize: '12px', fontWeight: 'normal' }}>
+                      /
+                      {getPlanLabel(selectedPlan).short}
+                    </Text>
+                  )}
                 </Text>
                 <Flex gap="10px" alignItems="center" direction="column">
                   <Text as="span" fontSize="md" color="#01455E" textDecoration="line-through">
@@ -259,6 +329,32 @@ function ShowPrices({
                     </Text>
                   )}
                 </Flex>
+                {shouldShowSavingsPill && selfAppliedCoupon && (
+                  <Box
+                    bg="black"
+                    color="white"
+                    px={4}
+                    py={1}
+                    borderRadius="full"
+                    fontSize="13px"
+                    fontWeight="500"
+                    whiteSpace="nowrap"
+                    mt={2}
+                  >
+                    <Text fontSize="inherit" fontWeight="inherit" color="inherit">
+                      {monthsSaved === 1
+                        ? t('subscription.yearly-savings-singular', { months: monthsSaved })
+                        : t('subscription.yearly-savings', { months: monthsSaved })}
+                    </Text>
+                  </Box>
+                )}
+                {!selfAppliedCoupon && (
+                  <Flex gap="10px" alignItems="center" direction="column">
+                    <Text as="span" fontSize="md" color="#01455E" textDecoration="line-through">
+                      {selectedPlan.lastPrice}
+                    </Text>
+                  </Flex>
+                )}
               </Flex>
               <Button
                 width="full"
@@ -269,7 +365,7 @@ function ShowPrices({
                 onClick={handlePlanUpgrade}
               >
                 <Icon icon="graduationCap" color="black" width="20px" height="20px" mr="10px" />
-                {t('common:enroll')}
+                {t('common:get-plan')}
               </Button>
             </Box>
 
@@ -277,9 +373,9 @@ function ShowPrices({
               flex="1"
               p={{ base: 4, md: 6 }}
               bg={backgroundColor}
-              borderBottomLeftRadius={{ base: '20px', md: '0' }}
-              borderBottomRightRadius="20px"
-              borderTopRightRadius={{ base: '0', md: '20px' }}
+              borderBottomLeftRadius={{ base: '8px', md: '0' }}
+              borderBottomRightRadius="8px"
+              borderTopRightRadius={{ base: '0', md: '8px' }}
             >
               <Text fontSize="18px" mb={4}>
                 {selectedPlan?.description || data?.pricing?.description}

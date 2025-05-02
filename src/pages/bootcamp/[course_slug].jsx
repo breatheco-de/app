@@ -1,8 +1,9 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Box, Button, Flex, Image, SkeletonText } from '@chakra-ui/react';
-import { useEffect, useState, useRef, useContext } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -44,7 +45,7 @@ import CustomCarousel from '../../components/CustomCarousel';
 import useCustomToast from '../../hooks/useCustomToast';
 import useSignup from '../../hooks/useSignup';
 import { usePlanPrice } from '../../utils/getPriceWithDiscount';
-import { SessionContext } from '../../context/SessionContext';
+import useSession from '../../hooks/useSession';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -133,7 +134,7 @@ function CoursePage({ data, syllabus }) {
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const { t, lang } = useTranslation('course');
-  const { location } = useContext(SessionContext);
+  const { location, isLoadingLocation } = useSession();
   const router = useRouter();
   const limitViewStudents = 3;
   const cohortId = data?.cohort?.id;
@@ -195,6 +196,7 @@ function CoursePage({ data, syllabus }) {
   const features = getAlternativeTranslation('features', {}, { returnObjects: true }) || {};
   const featuredBullets = getAlternativeTranslation('featured-bullets', {}, { returnObjects: true }) || [];
   const isSpain = location?.country?.toLowerCase() === 'spain' || location?.country?.toLowerCase() === 'españa';
+  const country_code = location?.countryShort;
 
   useEffect(() => {
     if (isRigoInitialized && data.course_translation && !initialDataIsFetching && planData?.slug) {
@@ -428,7 +430,7 @@ function CoursePage({ data, syllabus }) {
 
     await getSelfAppliedCoupon(formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug);
     const couponOnQuery = getQueryString('coupon');
-    const { data: allCouponsApplied } = await bc.payment({ coupons: [couponOnQuery || coupon], plan: formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug }).verifyCoupon();
+    const { data: allCouponsApplied } = await bc.payment({ country_code, coupons: [couponOnQuery || coupon], plan: formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug }).verifyCoupon();
     setAllDiscounts(allCouponsApplied);
 
     setCohortData({
@@ -442,8 +444,8 @@ function CoursePage({ data, syllabus }) {
   };
 
   useEffect(() => {
-    getInitialData();
-  }, [lang, pathname]);
+    if (!isLoadingLocation) getInitialData();
+  }, [lang, pathname, isLoadingLocation]);
 
   useEffect(() => {
     if (isAuthenticated && cohortData?.cohortSyllabus?.cohort?.id) redirectToCohortIfItsReady();

@@ -257,7 +257,6 @@ function Dashboard() {
     bc.events({ upcoming: true, limit: 20 }).meOnlineEvents()
       .then(({ data }) => {
         const results = data?.results || [];
-        console.log('results', data);
         const eventsRemain = results?.length > 0 ? results.filter((l) => {
           if (isValidDate(l?.ended_at)) return new Date(l?.ended_at) - new Date() > 0;
           if (isValidDate(l?.ending_at)) return new Date(l?.ending_at) - new Date() > 0;
@@ -592,7 +591,7 @@ function Dashboard() {
 
   return (
     <Container minHeight="93vh" display="flex" flexDirection="column" maxW="none" padding="0">
-      {false && isAvailableAsSaas && (
+      {isAvailableAsSaas && (
         <CohortHeader
           onOpenGithubModal={openGithubModalHandler}
           mainClasses={liveClasses}
@@ -600,7 +599,7 @@ function Dashboard() {
           isLoadingEvents={isLoadingAssigments}
         />
       )}
-      <Container flex="1" background={false && isAvailableAsSaas && hexColor.lightColor4} maxW="none">
+      <Container flex="1" background={isAvailableAsSaas && hexColor.lightColor4} maxW="none">
         <Box maxW="1280px" width="100%" margin="0 auto">
           <Box width="fit-content" paddingTop="18px" marginBottom="18px">
             <NextChakraLink
@@ -627,7 +626,7 @@ function Dashboard() {
           </Box>
           {cohortSession ? (
             <>
-              {false && isAvailableAsSaas ? (
+              {isAvailableAsSaas ? (
                 <Box flex="1 1 auto" pb="20px">
                   {cohortSession?.intro_video ? (
                     <Flex direction="column" mb="20px">
@@ -778,7 +777,7 @@ function Dashboard() {
                   )}
                   {!isLoadingAssigments ? (
                     <Box display="flex" flexDirection="column" gap="20px">
-                      {false && hasMicroCohorts
+                      {hasMicroCohorts
                         ? cohorts.filter((cohort) => cohortSession.micro_cohorts.some((elem) => elem.slug === cohort.slug))
                           .sort(sortMicroCohorts)
                           .map((microCohort) => (
