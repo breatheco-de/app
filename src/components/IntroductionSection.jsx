@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import {
   Box, useColorModeValue, Text, Flex,
+  AspectRatio,
 } from '@chakra-ui/react';
 import { PrismicRichText } from '@prismicio/react';
 import Image from 'next/image';
@@ -21,31 +22,36 @@ const renderMediaContent = (slice) => {
 
   if (videoSourceUrl) {
     return (
-      <ReactPlayerV2
-        key={videoSourceUrl}
-        url={videoSourceUrl}
-        autoPlay
-        controls={false}
-        height="100%"
-        iframeStyle={{
-          objectFit: 'cover',
-          borderRadius: '7px',
-        }}
-      />
+      <AspectRatio
+        ratio={16 / 9}
+        width="100%"
+        borderRadius="7px"
+        overflow="hidden"
+      >
+        <ReactPlayerV2
+          key={videoSourceUrl}
+          url={videoSourceUrl}
+          autoPlay
+          loop
+          muted
+          playsinline
+          controls={false}
+          width="100%"
+          height="100%"
+        />
+      </AspectRatio>
     );
   }
 
   if (imageUrl) {
     return (
-      <Box display="flex" height="fit-content" justifyContent="end">
-        <Image
-          src={imageUrl}
-          alt={slice.primary.image.alt || 'Introduction avatars'}
-          width={slice.primary.image.dimensions?.width}
-          height={slice.primary.image.dimensions?.height}
-          style={{ borderRadius: '7px' }}
-        />
-      </Box>
+      <Image
+        src={imageUrl}
+        alt={slice.primary.image.alt || 'Introduction avatars'}
+        width={slice.primary.image.dimensions?.width}
+        height={slice.primary.image.dimensions?.height}
+        style={{ borderRadius: '7px' }}
+      />
     );
   }
 
@@ -56,10 +62,9 @@ const renderMediaContent = (slice) => {
       muted
       playsInline
       style={{
-        width: '400px',
+        width: '100%',
         height: '100%',
         objectFit: 'cover',
-        borderRadius: '7px',
       }}
     >
       <source src="/static/videos/landing-avatars.webm" type="video/webm" />
@@ -117,7 +122,6 @@ function IntroductionSection({
   return (
     <Flex
       flexDirection={{ base: 'column', md: 'row' }}
-      px={{ base: '10px', md: '2rem' }}
       id={slice?.primary?.id_key || ''}
       {...rest}
     >
@@ -245,8 +249,14 @@ function IntroductionSection({
         )}
       </Box>
 
-      {/* ----------------------- Image/Video ----------------------- */}
-      <Box display={{ base: 'block', md: 'grid' }} flex={getRightColumnSize()}>
+      <Box
+        display={{ base: 'block', md: 'grid' }}
+        flex={getRightColumnSize()}
+        position="relative"
+        overflow="hidden"
+        borderRadius="7px"
+        placeItems="center"
+      >
         {renderMediaContent(slice)}
       </Box>
     </Flex>

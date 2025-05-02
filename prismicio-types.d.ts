@@ -6,6 +6,7 @@ import type * as prismicClient from "@prismicio/client";
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
 type PageDocumentDataSlicesSlice =
+  | SplitShowcaseSectionSlice
   | FaqsSlice
   | PricingCardsSlice
   | MultipleColumnCardSlice
@@ -1843,6 +1844,76 @@ export type ShowPricesSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *SplitShowcaseSection → Default → Primary*
+ */
+export interface SplitShowcaseSectionSliceDefaultPrimary {
+  /**
+   * Title field in *SplitShowcaseSection → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: split_showcase_section.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  title: prismic.RichTextField;
+
+  /**
+   * Description field in *SplitShowcaseSection → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: split_showcase_section.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  description: prismic.RichTextField;
+}
+
+/**
+ * Primary content in *SplitShowcaseSection → Items*
+ */
+export interface SplitShowcaseSectionSliceDefaultItem {
+  /**
+   * Image field in *SplitShowcaseSection → Items*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: split_showcase_section.items[].image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  image: prismic.ImageField<never>;
+}
+
+/**
+ * Default variation for SplitShowcaseSection Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type SplitShowcaseSectionSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<SplitShowcaseSectionSliceDefaultPrimary>,
+  Simplify<SplitShowcaseSectionSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *SplitShowcaseSection*
+ */
+type SplitShowcaseSectionSliceVariation = SplitShowcaseSectionSliceDefault;
+
+/**
+ * SplitShowcaseSection Shared Slice
+ *
+ * - **API ID**: `split_showcase_section`
+ * - **Description**: SplitShowcaseSection
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type SplitShowcaseSectionSlice = prismic.SharedSlice<
+  "split_showcase_section",
+  SplitShowcaseSectionSliceVariation
+>;
+
+/**
  * Primary content in *Technologies → Default → Primary*
  */
 export interface TechnologiesSliceDefaultPrimary {
@@ -2879,6 +2950,11 @@ declare module "@prismicio/client" {
       ShowPricesSliceDefaultPrimary,
       ShowPricesSliceVariation,
       ShowPricesSliceDefault,
+      SplitShowcaseSectionSlice,
+      SplitShowcaseSectionSliceDefaultPrimary,
+      SplitShowcaseSectionSliceDefaultItem,
+      SplitShowcaseSectionSliceVariation,
+      SplitShowcaseSectionSliceDefault,
       TechnologiesSlice,
       TechnologiesSliceDefaultPrimary,
       TechnologiesSliceVariation,

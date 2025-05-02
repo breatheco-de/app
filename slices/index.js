@@ -14,6 +14,7 @@ export const components = {
   recommended_courses: dynamic(() => import("./RecommendedCourses")),
   road_map: dynamic(() => import("./RoadMap")),
   show_prices: dynamic(() => import("./ShowPrices")),
+  split_showcase_section: dynamic(() => import("./SplitShowcaseSection")),
   technologies: dynamic(() => import("./Technologies")),
   technologies_pills: dynamic(() => import("./TechnologiesPills")),
   testimonials: dynamic(() => import("./Testimonials")),
