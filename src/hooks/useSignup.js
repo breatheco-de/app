@@ -530,7 +530,7 @@ const useSignup = () => {
         },
       });
 
-      const transactionData = await response.json();
+      const transactionData = response.data;
 
       if (transactionData?.status === 'FULFILLED') {
         setSubscriptionProcess({
@@ -617,6 +617,11 @@ const useSignup = () => {
       }
       return response;
     } catch (error) {
+      if (error?.status === 400) {
+        toggleIfEnrolled(true);
+      } else {
+        console.err(error);
+      }
       return error;
     }
   };
@@ -661,21 +666,6 @@ const useSignup = () => {
       ...data,
       list: allItems,
     });
-  };
-
-  const handleChecking = async (plansData) => {
-    try {
-      const data = await getChecking(plansData);
-
-      return data;
-    } catch (err) {
-      if (err?.status === 400) {
-        toggleIfEnrolled(true);
-      } else {
-        console.err(err);
-      }
-      return err;
-    }
   };
 
   const getPaymentMethods = async (ownerId) => {
@@ -826,7 +816,7 @@ const useSignup = () => {
 
       onSubscribedToPlan(data);
 
-      const respData = await handleChecking({ plan: data });
+      const respData = await getChecking({ plan: data });
 
       const respPayment = await handlePayment({
         ...respData,
@@ -854,7 +844,7 @@ const useSignup = () => {
     isSecondStep,
     isThirdStep,
     handlePayment,
-    handleChecking,
+    getChecking,
     getPaymentText,
     handleServiceToConsume,
     getPaymentMethods,

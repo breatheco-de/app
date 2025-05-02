@@ -72,10 +72,10 @@ function PaymentMethods({ setShowPaymentDetails }) {
 
   const handleSubmit = async (actions, values) => {
     const resp = await bc.payment().addCard(values);
-    const data = await resp.json();
+    const { data } = resp;
     setIsSubmittingCard(false);
 
-    if (resp.ok) {
+    if (data.status === 'ok') {
       try {
         const respPayment = await handlePayment({}, true);
         if (respPayment.status === 'FULFILLED') {

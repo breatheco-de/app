@@ -291,8 +291,8 @@ const breathecode = {
     return {
       checking: (data) => axios.put(`${url}/checking${qs}`, data),
       subscriptions: () => axios.get(`${url}/me/subscription${qs}`),
-      pay: (data) => breathecode.post(`${url}/pay${qs}`, data),
-      addCard: (data) => breathecode.post(`${url}/card${qs}`, data),
+      pay: (data) => axios.post(`${url}/pay${qs}`, data),
+      addCard: (data) => axios.post(`${url}/card${qs}`, data),
       cancelSubscription: (id) => axios.put(`${url}/subscription/${id}/cancel${qs}`),
       cancelMySubscription: (id) => axios.put(`${url}/me/subscription/${id}/cancel${qs}`),
       getPlan: (slug) => axios.get(`${url}/plan/${slug}${qs}`),

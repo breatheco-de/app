@@ -169,9 +169,9 @@ function ServiceSummary({ service }) {
       });
     }
     const resp = await bc.payment().addCard(values);
-    const data = await resp.json();
+    const { data } = resp;
     setIsSubmittingCard(false);
-    if (resp.ok) {
+    if (data.status === 'ok') {
       reportDatalayer({
         dataLayer: {
           event: 'add_payment_info',

@@ -91,7 +91,7 @@ function Checkout() {
   } = signupAction();
   const {
     stepsEnum, isFirstStep, isSecondStep, isThirdStep, getSelfAppliedCoupon,
-    handleChecking, getPriceWithDiscount, processPlans,
+    getChecking, getPriceWithDiscount, processPlans,
   } = useSignup();
   const { stepIndex, checkoutData, selectedPlanCheckoutData, alreadyEnrolled, loader, selfAppliedCoupon, planData } = state;
   const flexRef = useRef(null);
@@ -258,16 +258,13 @@ function Checkout() {
         planType: 'original',
       });
 
-      const accordionList = processedPlan?.featured_info?.length > 0
-        ? processedPlan.featured_info.map((info) => ({
-          title: info.features[0]?.title || slugToTitle(info.service?.slug),
-          description: info.features[0]?.description,
-        }))
-        : [];
+      const accordionList = processedPlan?.featured_info?.map((info) => ({
+        title: info.features[0]?.title || slugToTitle(info.service?.slug),
+        description: info.features[0]?.description,
+      })) || [];
 
-      const selectedPlan = processedPlan?.plans?.length > 1
-        ? processedPlan?.plans?.find((item) => item?.plan_id === planId)
-        : (processedPlan?.plans?.[0] || {});
+      const selectedPlan = processedPlan?.plans?.find((item) => item?.plan_id === planId)
+      || processedPlan?.plans?.[0] || {};
 
       const { data: suggestedPlanInfo } = await bc.payment({ original_plan: processedPlan?.slug }).planOffer();
 
@@ -355,11 +352,8 @@ function Checkout() {
         return router.push(`/${lang}/thank-you`);
       }
       if ((!data.is_renewable && !isNotTrial) || data.is_renewable) {
-        // setCohortPlans([{
-        //   plan: data,
-        // }]);
         setPlanData(data);
-        const checkingData = await handleChecking({ plan: data });
+        const checkingData = await getChecking({ plan: data });
         console.log('checkingData', checkingData);
         const plans = checkingData?.plans || [];
         const existsPayablePlan = plans.some((item) => item.price > 0);
@@ -407,7 +401,7 @@ function Checkout() {
   useEffect(() => {
     if (!userSelectedPlan || !planData) return;
     setCheckInfoLoader(true);
-    handleChecking({ plan: planData })
+    getChecking({ plan: planData })
       .then((checkingData) => {
         const autoSelectedPlan = findAutoSelectedPlan(checkingData);
 
