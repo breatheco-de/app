@@ -43,6 +43,7 @@ const useSignup = () => {
   const redirectedFrom = getStorageItem('redirected-from');
   const couponsQuery = getQueryString('coupons');
   const defaultPlan = process.env.BASE_PLAN || 'basic';
+  const country_code = location?.countryShort;
 
   const subscriptionStatusDictionary = {
     PREPARING_FOR_COHORT: 'PREPARING_FOR_COHORT',
@@ -53,7 +54,7 @@ const useSignup = () => {
   const {
     stepIndex,
     checkoutData,
-    cohortPlans,
+    planData,
     selectedPlanCheckoutData,
   } = state;
 
@@ -129,11 +130,11 @@ const useSignup = () => {
   } = {}) => {
     try {
       const slug = encodeURIComponent(data?.slug);
-      const resp = await bc.payment().getServiceItemsByPlan(slug);
+      const resp = await bc.payment({ country_code }).getServiceItemsByPlan(slug);
       if (!resp) {
         throw new Error('The plan does not exist');
       }
-      const planData = Array.isArray(translations.checkout_featured_info(data?.slug)) ? translations.checkout_featured_info(data?.slug) : resp?.data;
+      const featuredInfo = Array.isArray(translations.checkout_featured_info(data?.slug)) ? translations.checkout_featured_info(data?.slug) : resp?.data;
       const owner = data?.owner;
 
       const existsAmountPerHalf = data?.price_per_half > 0;
@@ -148,15 +149,14 @@ const useSignup = () => {
       const isTotallyFree = !hasPayaBleSuscription && singlePlan?.trial_duration === 0 && !financingOptionsExists;
       const hasSubscriptionMethod = hasPayaBleSuscription || isTotallyFree || singlePlan?.trial_duration_unit > 0;
 
-      const financingOptions = data?.financing_options
-        .filter((l) => l.monthly_price > 0 && l.how_many_months > 1)
+      const financingOptions = data?.financing_options?.filter((l) => l.monthly_price > 0 && l.how_many_months > 1)
         .sort((a, b) => a.monthly_price - b.monthly_price) || [];
       const financingOptionsOnePayment = data?.financing_options?.filter((l) => l?.monthly_price > 0 && l?.how_many_months === 1) || [];
 
       const relevantInfo = {
         plan_slug: singlePlan?.slug,
         currency: singlePlan?.currency,
-        featured_info: planData,
+        featured_info: featuredInfo,
         trial_duration: singlePlan?.trial_duration || 0,
         trial_duration_unit: singlePlan?.trial_duration_unit || '',
         planType,
@@ -304,7 +304,7 @@ const useSignup = () => {
         isTotallyFree,
         isTrial: !hasPayaBleSuscription && !financingOptionsExists,
         plans: planList,
-        featured_info: planData || [],
+        featured_info: featuredInfo || [],
         paymentOptions: paymentList,
         financingOptions: financingList,
         hasSubscriptionMethod,
@@ -321,7 +321,7 @@ const useSignup = () => {
  */
   const generatePlan = async (planSlug) => {
     try {
-      const resp = await bc.payment({ country_code: location?.countryShort }).getPlan(planSlug);
+      const resp = await bc.payment({ country_code }).getPlan(planSlug);
       const data = await processPlans(resp?.data);
       return data;
     } catch (error) {
@@ -341,6 +341,7 @@ const useSignup = () => {
     try {
       const { data } = await bc.payment({
         original_plan: slug,
+        country_code,
       }).planOffer();
 
       if (data?.length === 0) {
@@ -522,6 +523,7 @@ const useSignup = () => {
       console.log('checkoutData', checkoutData);
       console.log('requests cursor', requests);
       const response = await bc.payment().pay({
+        country_code,
         ...requests,
         conversion_info: {
           ...userSession,
@@ -537,13 +539,10 @@ const useSignup = () => {
 
         let currency = 'USD';
         let simplePlans = [];
-        if (cohortPlans) {
-          if (cohortPlans[0]?.plan?.currency?.code) currency = cohortPlans[0].plan.currency.code;
-          simplePlans = cohortPlans.map((cohortPlan) => {
-            const { plan } = cohortPlan;
-            const { service_items, ...restOfPlan } = plan;
-            return { plan: { ...restOfPlan } };
-          });
+        if (planData) {
+          if (planData?.currency?.code) currency = planData.currency.code;
+          const { service_items, ...restOfPlan } = planData;
+          simplePlans = [{ plan: restOfPlan }];
         }
 
         reportDatalayer({
@@ -588,13 +587,15 @@ const useSignup = () => {
   };
 
   const getChecking = async (plansData) => {
+    console.log('plansData', plansData);
     const selectedPlan = plansData?.plan;
+    console.log('selectedPlan', selectedPlan);
 
     const checkingBody = {
       type: 'PREVIEW',
       plans: [selectedPlan?.slug],
       coupons: couponsQuery ? [couponsQuery] : undefined,
-      country_code: location?.countryShort,
+      country_code,
     };
     console.log('checkingBody', checkingBody);
 
@@ -617,8 +618,6 @@ const useSignup = () => {
       return response;
     } catch (error) {
       return error;
-    } finally {
-      setLoader('date', false);
     }
   };
 
@@ -679,38 +678,20 @@ const useSignup = () => {
     }
   };
 
-  // eslint-disable-next-line no-unused-vars
   const getPaymentMethods = async (ownerId) => {
     try {
       if (isAuthenticated) {
         setLoader('paymentMethods', false);
         // const ownerId = selectedPlanCheckoutData.owner.id;
         setLoader('paymentMethods', true);
-        // HARDCODE PAYMENT METHODS FOR NOW
-        // const resp = await bc.payment({
-        //   academy_id: ownerId,
-        //   lang: router.locale,
-        //   country_code: location?.countryShort,
-        // }).getpaymentMethods();
-        // if (resp.status < 400) {
-        //   setPaymentMethods(resp.data);
-        // }
-        const mockResponse = [
-          {
-            id: 1,
-            title: 'Credit Card',
-            lang: 'en',
-            is_credit_card: true,
-            description: 'Pay with your card through the stripe secured form',
-            third_party_link: null,
-            academy: {
-              id: 47,
-              name: '4Geeks.com',
-              slug: '4geeks-com',
-            },
-          },
-        ];
-        setPaymentMethods(mockResponse);
+        const resp = await bc.payment({
+          academy_id: ownerId,
+          lang: router.locale,
+          country_code,
+        }).getpaymentMethods();
+        if (resp.status < 400) {
+          setPaymentMethods(resp.data);
+        }
         setLoader('paymentMethods', false);
       }
     } catch (e) {
@@ -810,7 +791,7 @@ const useSignup = () => {
   const getSelfAppliedCoupon = async (plan) => {
     try {
       if (plan) {
-        const { data } = await bc.payment({ plan }).verifyCoupon();
+        const { data } = await bc.payment({ plan, country_code }).verifyCoupon();
         const coupon = data[0];
         if (coupon) {
           setSelfAppliedCoupon({

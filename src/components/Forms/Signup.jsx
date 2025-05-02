@@ -101,15 +101,12 @@ function SignupForm({
 
   const handleSubmit = async (actions, allValues) => {
     try {
-      const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept-Language': router?.locale || 'en',
-        },
-        body: JSON.stringify({ ...allValues, ...subscribeValues, conversion_info: userSession }),
+      const resp = await bc.auth().subscribe({
+        ...allValues,
+        ...subscribeValues,
+        conversion_info: userSession,
       });
-      const data = await resp.json();
+      const data = resp?.data;
       if (data.silent_code === SILENT_CODE.USER_EXISTS) {
         setShowAlreadyMember(true);
       } else if (resp?.status >= 400 && data.silent_code !== SILENT_CODE.USER_EXISTS) {

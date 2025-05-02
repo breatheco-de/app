@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import {
   HANDLE_STEP, SET_CHECKOUT_DATA, SET_PAYMENT_INFO,
-  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED,
+  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, TOGGLE_IF_ENROLLED,
   SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
   SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON, SET_SIGNUP_INITIAL_STATE,
 } from '../types';
@@ -60,10 +60,6 @@ const signupAction = () => {
     type: SET_SUBMITTING_PAYMENT,
     payload,
   });
-  const setCohortPlans = (payload) => dispatch({
-    type: SET_COHORT_PLANS,
-    payload,
-  });
   const toggleIfEnrolled = (payload) => dispatch({
     type: TOGGLE_IF_ENROLLED,
     payload,
@@ -95,7 +91,6 @@ const signupAction = () => {
     setSelfAppliedCoupon,
     setPlanData,
     setSelectedPlanCheckoutData,
-    setCohortPlans,
     setSelectedService,
     restartSignup,
     setServiceProps,

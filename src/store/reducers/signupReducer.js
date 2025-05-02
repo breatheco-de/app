@@ -1,6 +1,6 @@
 import {
   HANDLE_STEP, SET_CHECKOUT_DATA,
-  SET_PAYMENT_INFO, SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_COHORT_PLANS,
+  SET_PAYMENT_INFO, SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA,
   TOGGLE_IF_ENROLLED, SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
   SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON, SET_SIGNUP_INITIAL_STATE,
 } from '../types';
@@ -18,7 +18,6 @@ const initialState = {
   loader: {
     plan: true,
   },
-  cohortPlans: null,
   alreadyEnrolled: false,
   paymentMethods: [],
   paymentStatus: 'idle',
@@ -59,13 +58,6 @@ const signupReducer = (state = initialState, action) => {
       };
     }
 
-    // planData
-    case SET_COHORT_PLANS: {
-      return {
-        ...state,
-        cohortPlans: action.payload,
-      };
-    }
     case SET_PLAN_DATA: {
       return {
         ...state,

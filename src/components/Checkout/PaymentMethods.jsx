@@ -29,7 +29,7 @@ function PaymentMethods({ setShowPaymentDetails }) {
   } = signupAction();
   const { handlePayment, getPaymentMethods } = useSignup();
   const {
-    selectedPlanCheckoutData, cohortPlans, paymentMethods, loader,
+    selectedPlanCheckoutData, planData, paymentMethods, loader,
   } = state;
   const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
   const [declinedModalProps, setDeclinedModalProps] = useState({
@@ -91,7 +91,7 @@ function PaymentMethods({ setShowPaymentDetails }) {
       } finally {
         actions.setSubmitting(false);
       }
-      const currency = cohortPlans[0]?.plan?.currency?.code;
+      const currency = planData?.currency?.code;
       reportDatalayer({
         dataLayer: {
           event: 'add_payment_info',

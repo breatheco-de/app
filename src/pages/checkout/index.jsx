@@ -86,14 +86,14 @@ function Checkout() {
   const [allCoupons, setAllCoupons] = useState([]);
   const [originalPlan, setOriginalPlan] = useState(null);
   const {
-    state, toggleIfEnrolled, handleStep, setCohortPlans, setLoader,
-    setSelectedPlanCheckoutData, setCheckoutData,
+    state, toggleIfEnrolled, handleStep, setLoader,
+    setSelectedPlanCheckoutData, setCheckoutData, setPlanData,
   } = signupAction();
   const {
     stepsEnum, isFirstStep, isSecondStep, isThirdStep, getSelfAppliedCoupon,
     handleChecking, getPriceWithDiscount, processPlans,
   } = useSignup();
-  const { stepIndex, checkoutData, selectedPlanCheckoutData, alreadyEnrolled, loader, selfAppliedCoupon, cohortPlans } = state;
+  const { stepIndex, checkoutData, selectedPlanCheckoutData, alreadyEnrolled, loader, selfAppliedCoupon, planData } = state;
   const flexRef = useRef(null);
   const [discountCode, setDiscountCode] = useState('');
   const [discountCoupon, setDiscountCoupon] = useState(null);
@@ -238,7 +238,7 @@ function Checkout() {
     const plans = checkingData?.plans || [];
     const sortedPlans = plans.sort((a, b) => (a.how_many_months || 0) - (b.how_many_months || 0));
     const defaultAutoSelectedPlan = sortedPlans[0];
-    const autoSelectedPlanByQueryString = checkingData?.plans.find(
+    const autoSelectedPlanByQueryString = checkingData?.plans?.find(
       (item) => item?.plan_id === (planId || userSelectedPlan?.plan_id),
     );
 
@@ -355,13 +355,12 @@ function Checkout() {
         return router.push(`/${lang}/thank-you`);
       }
       if ((!data.is_renewable && !isNotTrial) || data.is_renewable) {
-        console.log('setting cohortPlans: ', [{
-          plan: data,
-        }]);
-        setCohortPlans([{
-          plan: data,
-        }]);
+        // setCohortPlans([{
+        //   plan: data,
+        // }]);
+        setPlanData(data);
         const checkingData = await handleChecking({ plan: data });
+        console.log('checkingData', checkingData);
         const plans = checkingData?.plans || [];
         const existsPayablePlan = plans.some((item) => item.price > 0);
         const autoSelectedPlan = findAutoSelectedPlan(checkingData);
@@ -379,6 +378,7 @@ function Checkout() {
         }
       }
     } catch (error) {
+      console.log('error', error);
       setLoader('plan', false);
       createToast({
         position: 'top',
@@ -405,9 +405,9 @@ function Checkout() {
   }, [isAuthenticated, router.locale]);
 
   useEffect(() => {
-    if (!userSelectedPlan || !cohortPlans) return;
+    if (!userSelectedPlan || !planData) return;
     setCheckInfoLoader(true);
-    handleChecking({ plan: cohortPlans[0]?.plan })
+    handleChecking({ plan: planData })
       .then((checkingData) => {
         const autoSelectedPlan = findAutoSelectedPlan(checkingData);
 
