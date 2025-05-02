@@ -169,7 +169,7 @@ function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID,
             </Button>
           )}
           <Accordion index={expanded} onChange={(val) => setExpanded(val)} allowToggle display="flex" flexDirection="column" gap="10px">
-            {steps.map((step, i) => (
+            {steps && steps.map((step, i) => (
               <AccordionItem display="flex" flexDirection="column" key={step.title} border="1px solid" borderColor={expanded === i ? 'blue.default' : borderColor} borderRadius="8px">
                 <Heading position="relative" as="h3">
                   <Checkbox top="10px" left="16px" position="absolute" />
@@ -313,7 +313,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
 
   //__based on selected option and data previously obtained, get the steps__
   const parseSteps = () => {
-    if (showProvisioningLinks && selectedOption === 'provisioning_vendors') return openInLearnpackAction.steps;
+    if (showProvisioningLinks && selectedOption === 'provisioning_vendors' && !isInteractive) return openInLearnpackAction.steps;
     if (isInteractive) return selectedOs?.steps.concat([finalStep]);
     if (onlyReadme) return selectedOs?.readme_steps;
     return selectedOs?.steps.filter((step) => step.slug === 'download-ide' || step.slug === 'clone' || step.slug === 'create-folders').concat([...dependenciesStepsWithVersions, projectReadme]);
@@ -348,6 +348,21 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
 
     setSelectedOption(null);
   }, [isForOpenLocaly, showProvisioningLinks, onlyReadme, lang]);
+
+  useEffect(() => {
+    let timer;
+    const shouldShowAccordion = selectedOs || (selectedOption === 'provisioning_vendors' && !isInteractive);
+
+    if (isOpen && shouldShowAccordion) {
+      timer = setTimeout(() => {
+        setExpanded(0);
+      }, 100);
+    } else {
+      setExpanded(null);
+    }
+
+    return () => clearTimeout(timer);
+  }, [isOpen, selectedOption, selectedOs, isInteractive]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={(selectedOption === 'provisioning_vendors' && isInteractive) || !selectedOption ? 'lg' : '5xl'}>
@@ -422,7 +437,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
           </Box>
           {selectedOption && (
             <Box width="50%" marginTop="15px" display={{ base: 'none', md: (selectedOption === 'provisioning_vendors' && isInteractive) || !selectedOption ? 'none' : 'block' }}>
-              {selectedOs || selectedOption === 'provisioning_vendors' ? (
+              {(selectedOs || selectedOption === 'provisioning_vendors') ? (
                 <ReactPlayerV2
                   className="react-player-border-radius"
                   containerStyle={{ height: '100%' }}
