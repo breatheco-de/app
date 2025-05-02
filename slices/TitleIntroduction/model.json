@@ -97,6 +97,14 @@
             "single": "list-item"
           }
         },
+        "video_source": {
+          "type": "Link",
+          "config": {
+            "label": "Video Source",
+            "placeholder": "",
+            "select": null
+          }
+        },
         "image": {
           "type": "Image",
           "config": {

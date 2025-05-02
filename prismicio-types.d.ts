@@ -2223,6 +2223,22 @@ export interface TitleIntroductionSliceDefaultPrimary {
   bullets: prismic.RichTextField;
 
   /**
+   * Video Source field in *TitleIntroduction → Default → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: title_introduction.default.primary.video_source
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  video_source: prismic.LinkField<
+    string,
+    string,
+    unknown,
+    prismic.FieldState,
+    never
+  >;
+
+  /**
    * image field in *TitleIntroduction → Default → Primary*
    *
    * - **Field Type**: Image

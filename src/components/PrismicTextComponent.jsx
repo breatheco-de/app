@@ -44,14 +44,14 @@ function ListItemComponent({ children, color, ...rest }) {
     <ListItem
       fontSize={{ base: '14px', md: '16px', lg: '18px' }}
       lineHeight="18px"
-      margin="15px 0"
+      margin="16px 0"
       display="flex"
       gridGap="10px"
       alignItems="center"
       color={color}
       {...rest}
     >
-      <Icon icon="checked2" color="#25BF6C" width="12px" height="12px" />
+      <Icon icon="checked2" color="#25BF6C" width="15px" height="11px" />
       {children}
     </ListItem>
   );

@@ -135,6 +135,13 @@
 				"__TYPE__": "FieldContent",
 				"value": "66",
 				"type": "Number"
+			},
+			"video_source": {
+				"__TYPE__": "LinkContent",
+				"value": {
+					"__TYPE__": "ExternalLink",
+					"url": "http://twitter.com"
+				}
 			}
 		},
 		"items": [
