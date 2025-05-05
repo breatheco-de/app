@@ -2,9 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useColorModeValue, Container, Box } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import { reportDatalayer } from '../../utils/requests';
-import { getBrowserInfo } from '../../utils';
-import useSubscriptionsHandler from '../../store/actions/subscriptionAction';
+import useSubscriptions from '../../hooks/useSubscriptions';
 import useAuth from '../../hooks/useAuth';
 import Icon from '../../components/Icon';
 import Link from '../../components/NextChakraLink';
@@ -14,7 +12,8 @@ import MentoringConsumables from '../../components/SupportSidebar/MentoringConsu
 function MentorshipSchedule() {
   const router = useRouter();
   const { t } = useTranslation('signup');
-  const { fetchSubscriptions } = useSubscriptionsHandler();
+  const { state } = useSubscriptions();
+  const { subscriptions: subscriptionData } = state;
   const { service, mentor } = router.query;
   const { isLoading, user, isAuthenticated, cohorts } = useAuth();
   const [mentorshipServices, setMentorshipServices] = useState({ isLoading: true, data: [] });
@@ -23,7 +22,6 @@ function MentorshipSchedule() {
   const [consumables, setConsumables] = useState([]);
   const [allMentorsAvailable, setAllMentorsAvailable] = useState([]);
   const [mentorsByService, setMentorsByService] = useState([]);
-  const [subscriptionData, setSubscriptionData] = useState([]);
 
   const getServices = async (userRoles) => {
     if (userRoles?.length > 0) {
@@ -123,7 +121,7 @@ function MentorshipSchedule() {
   const getMentorsAndConsumables = async () => {
     const mentors = await getAllMentorsAvailable();
     const reqConsumables = await bc.payment().service().consumable()
-      .then((res) => res?.data?.mentorship_service_sets.map((mentorshipServiceSet) => bc.mentorship()
+      .then((res) => res?.data?.mentorship_service_sets.map((mentorshipServiceSet) => bc.payment()
         .getServiceSet(mentorshipServiceSet?.id)
         .then((rs) => ({
           ...rs?.data,
@@ -167,24 +165,6 @@ function MentorshipSchedule() {
     return [];
   };
   const suscriptionServicesFiltered = filterServices();
-
-  useEffect(() => {
-    if (mentoryProps.serviceSelected) {
-      fetchSubscriptions()
-        .then((data) => {
-          setSubscriptionData(data);
-          reportDatalayer({
-            dataLayer: {
-              event: 'subscriptions_load',
-              method: 'native',
-              plan_financings: data?.plan_financings?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
-              subscriptions: data?.subscriptions?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
-              agent: getBrowserInfo(),
-            },
-          });
-        });
-    }
-  }, [mentoryProps.serviceSelected]);
 
   return !isLoading && user && !mentorshipServices.isLoading && (
     <Container as="div" height="100%" maxWidth="full" minHeight="93vh" display="flex" flexDirection="column" padding={0} background={() => useColorModeValue('gray.light3', 'darkTheme')} overflow="hidden">

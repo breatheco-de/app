@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import FieldForm from '../Forms/FieldForm';
-import useSignup from '../../store/actions/signupAction';
+import signupAction from '../../store/actions/signupAction';
 import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../hooks/useStyle';
 import ModalCardError from './ModalCardError';
@@ -39,7 +39,7 @@ function CardForm({ onSubmit, modalCardErrorProps, buttonText }) {
 
   const {
     state, setPaymentInfo,
-  } = useSignup();
+  } = signupAction();
   const { paymentInfo, checkoutData, selectedPlanCheckoutData, paymentStatus, isSubmittingCard, isSubmittingPayment } = state;
   const [stateCard, setStateCard] = useState({
     card_number: paymentInfo?.card_number || 0,

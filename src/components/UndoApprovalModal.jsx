@@ -38,7 +38,7 @@ function UndoApprovalModal({ isOpen, currentTask, onSuccess, onClose, updpateAss
             isLoading={isRequesting}
             onClick={() => {
               setIsRequesting(true);
-              bc.todo().update({
+              bc.assignments().updateTask({
                 id: currentTask.id,
                 revision_status: 'PENDING',
                 description: '',

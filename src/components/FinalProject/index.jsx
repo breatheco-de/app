@@ -44,9 +44,9 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {
   }));
 
   const refreshFinalProject = async () => {
-    const res = await bc.todo({
+    const res = await bc.assignments({
       visibility_status: 'PRIVATE',
-    }).getFinalProject();
+    }).getMeFinalProject();
 
     const currentProject = res?.data?.find((project) => project?.cohort?.slug === cohortSlug) || null;
 
@@ -63,9 +63,9 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {
 
   useEffect(() => {
     if (!storyConfigExists) {
-      bc.todo({
+      bc.assignments({
         visibility_status: 'PRIVATE',
-      }).getFinalProject()
+      }).getMeFinalProject()
         .then((res) => {
           const currentProject = res?.data?.find((project) => project?.cohort?.slug === cohortSlug);
           if (currentProject !== undefined) {

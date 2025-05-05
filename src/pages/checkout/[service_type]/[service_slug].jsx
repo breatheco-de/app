@@ -7,15 +7,15 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import bc from '../../../services/breathecode';
 import useAuth from '../../../hooks/useAuth';
-import { isWindow } from '../../../utils';
 import PaymentInfo from '../../../components/Checkout/PaymentInfo';
 import ServiceSummary from '../../../components/Checkout/ServiceSummary';
 import SelectServicePlan from '../../../components/Checkout/SelectServicePlan';
-import useSignup from '../../../store/actions/signupAction';
+import signupAction from '../../../store/actions/signupAction';
 import axiosInstance from '../../../axios';
 import asPrivate from '../../../context/PrivateRouteWrapper';
 import LoaderScreen from '../../../components/LoaderScreen';
 import useStyle from '../../../hooks/useStyle';
+import useSignup from '../../../hooks/useSignup';
 import useSession from '../../../hooks/useSession';
 import useCustomToast from '../../../hooks/useCustomToast';
 
@@ -24,16 +24,17 @@ function ServiceSlug() {
   const { query } = router;
   const { service_type, service_slug } = query;
   const {
-    state, handleStep, handleServiceToConsume, isThirdStep, isFourthStep, setLoader, restartSignup,
-  } = useSignup();
+    state, handleStep, setLoader, restartSignup,
+  } = signupAction();
+  const { stepsEnum, handleServiceToConsume, isSecondStep, isThirdStep } = useSignup();
   const [readyToSelectService, setReadyToSelectService] = useState(false);
-  const { stepIndex, selectedPlanCheckoutData, serviceProps, loader } = state;
+  const { selectedPlanCheckoutData, serviceProps, loader } = state;
   const { backgroundColor3, backgroundColor } = useStyle();
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { isAuthenticated } = useAuth();
-  const { createToast } = useCustomToast({ toastId: 'checkout-error-string' });
   const { location } = useSession();
+  const { createToast } = useCustomToast({ toastId: 'checkout-error-string' });
 
   const isPaymentSuccess = selectedPlanCheckoutData?.payment_success;
 
@@ -42,7 +43,7 @@ function ServiceSlug() {
 
   useEffect(() => {
     // Alert before leave the page if the user is in the payment process
-    if (isWindow && stepIndex >= 2 && isAuthenticated && !isPaymentSuccess) {
+    if (!isPaymentSuccess) {
       const handleBeforeUnload = (e) => {
         e.preventDefault();
       };
@@ -54,7 +55,7 @@ function ServiceSlug() {
       };
     }
     return () => {};
-  }, [stepIndex, isAuthenticated]);
+  }, [isPaymentSuccess]);
 
   const getServiceData = async () => {
     // Prepare service data to get consumables
@@ -123,7 +124,7 @@ function ServiceSlug() {
           });
         }
         if (resp.status < 400 && respData !== undefined && service) {
-          handleStep(2);
+          handleStep(stepsEnum.SUMMARY);
           handleServiceToConsume({
             ...service,
             serviceInfo: {
@@ -179,14 +180,14 @@ function ServiceSlug() {
           style={{ flexShrink: 0, flexGrow: 1 }}
           overflow="auto"
         >
-          {!readyToSelectService && isThirdStep && serviceProps?.id && (
+          {!readyToSelectService && isSecondStep && serviceProps?.id && (
             <ServiceSummary service={serviceProps} />
           )}
           {readyToSelectService && (
             <SelectServicePlan />
           )}
-          {/* Fourth step */}
-          {!readyToSelectService && isFourthStep && (
+          {/* Third step */}
+          {!readyToSelectService && isThirdStep && (
             <PaymentInfo />
           )}
         </Flex>

@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+The service breathecode is the api from where we will consume most of our data. Every time we want to communicate with breathecode, it must be done using the service declared in the breathecode.js file in the services folder. Internally, the breathecode service is separated by modules, which corresponds to the modules of the api.

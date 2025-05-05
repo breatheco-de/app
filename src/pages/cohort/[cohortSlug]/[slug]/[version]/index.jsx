@@ -23,6 +23,7 @@ import {
   isValidDate,
   getBrowserInfo,
 } from '../../../../../utils/index';
+import { parseQuerys } from '../../../../../utils/url';
 import ReactPlayerV2 from '../../../../../components/ReactPlayerV2';
 import NextChakraLink from '../../../../../components/NextChakraLink';
 import TagCapsule from '../../../../../components/TagCapsule';
@@ -40,10 +41,8 @@ import asPrivate from '../../../../../context/PrivateRouteWrapper';
 import useAuth from '../../../../../hooks/useAuth';
 import useRigo from '../../../../../hooks/useRigo';
 import { ModuleMapSkeleton, SimpleSkeleton } from '../../../../../components/Skeleton';
-import { parseQuerys } from '../../../../../utils/url';
 import bc from '../../../../../services/breathecode';
 import axios from '../../../../../axios';
-
 import { reportDatalayer } from '../../../../../utils/requests';
 import { BREATHECODE_HOST } from '../../../../../utils/variables';
 import ModalInfo from '../../../../../components/ModalInfo';
@@ -77,9 +76,9 @@ function Dashboard() {
   const { isAuthenticated, cohorts } = useAuth();
   const { rigo, isRigoInitialized } = useRigo();
 
-  const isBelowTablet = getBrowserSize()?.width < 768;
   const [subscriptionData, setSubscriptionData] = useState(null);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
+  const isBelowTablet = getBrowserSize()?.width < 768;
   const [isAvailableToShowWarningModal, setIsAvailableToShowModalMessage] = useState(false);
   const [deletionOrders, setDeletionOrders] = useState([]);
   const [showDeletionOrdersModal, setShowDeletionOrdersModal] = useState(false);
@@ -142,7 +141,7 @@ function Dashboard() {
       id: task.id,
       cohort: cohortSession.id,
     }));
-    await bc.todo().updateBulk(tasksToUpdate)
+    await bc.assignments().updateBulk(tasksToUpdate)
       .then(({ data }) => {
         addTasks(data, cohortSession);
         setModalIsOpen(false);
@@ -161,7 +160,7 @@ function Dashboard() {
 
   const removeUnsyncedTasks = async () => {
     const idsParsed = ((taskCohortNull !== undefined) && taskCohortNull).map((task) => task.id).join(','); // 23,2,45,45
-    await bc.todo({
+    await bc.assignments({
       id: idsParsed,
     }).deleteBulk()
       .then(() => {
@@ -255,7 +254,7 @@ function Dashboard() {
     if (showGithubWarning === 'active') {
       setShowWarningModal(true);
     }
-    bc.payment({ upcoming: true, limit: 20 }).events()
+    bc.events({ upcoming: true, limit: 20 }).meOnlineEvents()
       .then(({ data }) => {
         const results = data?.results || [];
         const eventsRemain = results?.length > 0 ? results.filter((l) => {
@@ -424,7 +423,7 @@ function Dashboard() {
   // Students and Teachers data
   useEffect(() => {
     if (cohortSession?.id) {
-      bc.cohort().getStudents(cohortSlug).then(({ data }) => {
+      bc.admissions().getStudents(cohortSlug).then(({ data }) => {
         if (data && data.length > 0) {
           setSudentAndTeachers(data.sort(
             (a, b) => a.user.first_name.localeCompare(b.user.first_name),

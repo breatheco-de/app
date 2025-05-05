@@ -22,7 +22,6 @@ import useSession from '../../hooks/useSession';
 import { BASE_PLAN, BREATHECODE_HOST, SILENT_CODE } from '../../utils/variables';
 import { getStorageItem, setStorageItem, getQueryString, getBrowserInfo } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
-import useSignup from '../../store/actions/signupAction';
 import ModalInfo from '../ModalInfo';
 import bc from '../../services/breathecode';
 import useCustomToast from '../../hooks/useCustomToast';
@@ -59,10 +58,6 @@ function SignupForm({
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const redirectStorage = getStorageItem('redirect');
   const redirectStorageAlreadyExists = typeof redirectStorage === 'string' && redirectStorage.length > 0;
-  const {
-    state,
-  } = useSignup();
-  const { dateProps } = state;
   const { createToast } = useCustomToast({ toastId: 'signup-error-warning-email' });
   const router = useRouter();
 
@@ -106,15 +101,12 @@ function SignupForm({
 
   const handleSubmit = async (actions, allValues) => {
     try {
-      const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept-Language': router?.locale || 'en',
-        },
-        body: JSON.stringify({ ...allValues, ...subscribeValues, conversion_info: userSession }),
+      const resp = await bc.auth().subscribe({
+        ...allValues,
+        ...subscribeValues,
+        conversion_info: userSession,
       });
-      const data = await resp.json();
+      const data = resp?.data;
       if (data.silent_code === SILENT_CODE.USER_EXISTS) {
         setShowAlreadyMember(true);
       } else if (resp?.status >= 400 && data.silent_code !== SILENT_CODE.USER_EXISTS) {
@@ -217,7 +209,6 @@ function SignupForm({
             phone: values?.phone.includes('undefined') ? '' : values?.phone,
             course: courseChoosed,
             country: location?.country,
-            cohort: dateProps?.id,
             syllabus,
             city: location?.city,
             plan: planFormated,

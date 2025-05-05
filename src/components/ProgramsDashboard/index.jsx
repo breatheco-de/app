@@ -7,9 +7,9 @@ import axiosInstance from '../../axios';
 import Icon from '../Icon';
 import { isPlural } from '../../utils';
 import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { getActiveCohorts, getCohortsFinished } from '../../utils/cohorts';
 import Text from '../Text';
 import bc from '../../services/breathecode';
-import handlers from '../../handlers';
 import Program from './Program';
 import UpgradeAccessModal from '../UpgradeAccessModal';
 import ProgramCard from '../ProgramCard';
@@ -25,8 +25,8 @@ function ProgramsDashboard({ cohorts, setLateModalProps }) {
   const router = useRouter();
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
 
-  const finishedCohorts = handlers.getCohortsFinished(cohorts);
-  const activeCohorts = handlers.getActiveCohorts(cohorts);
+  const finishedCohorts = getCohortsFinished(cohorts);
+  const activeCohorts = getActiveCohorts(cohorts);
 
   const hasNonSaasCourse = cohorts.some((cohort) => !cohort.available_as_saas || cohort.cohort_user.role === 'TEACHER');
 
