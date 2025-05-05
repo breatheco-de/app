@@ -15,14 +15,15 @@ import useSubscriptions from '../../hooks/useSubscriptions';
 import { getCohort } from '../../lib/admissions';
 import useCustomToast from '../../hooks/useCustomToast';
 import useSignup from '../../hooks/useSignup';
+import useAuth from '../../hooks/useAuth';
 
 function Summary() {
   const { t, lang } = useTranslation('signup');
+  const { reSetUserAndCohorts } = useAuth();
   const { getSubscriptions } = useSubscriptions();
   const { cohortsAssignments, startDay, getCohortsModules } = useCohortHandler();
   const [readyToRedirect, setReadyToRedirect] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const [updatedUser, setUpdatedUser] = useState(undefined);
   const [hasMounted, setHasMounted] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [paymentStatus, setPaymentStatus] = useState('idle');
@@ -123,15 +124,12 @@ function Summary() {
     if (cohortFound?.micro_cohorts.length === 0) {
       getCohortsModules([cohortFound]);
     }
-  }, [updatedUser]);
+  }, [cohortFound]);
 
   useEffect(() => {
     const fetchMyCohorts = async () => {
       try {
-        const resp = await bc.admissions().me();
-        const data = resp?.data;
-
-        setUpdatedUser(data);
+        await reSetUserAndCohorts();
       } catch (err) {
         console.error('Error fetching my cohorts:', err);
       }
@@ -139,37 +137,36 @@ function Summary() {
     fetchMyCohorts();
   }, [cohortFound]);
 
-  const joinCohort = (cohort) => {
-    reportDatalayer({
-      dataLayer: {
-        event: 'join_cohort',
-        cohort_id: cohort?.id,
-        agent: getBrowserInfo(),
-      },
-    });
-    bc.admissions().joinCohort(cohort?.id)
-      .then(async (resp) => {
-        const dataRequested = await resp.json();
-        if (resp.status >= 400) {
-          createToast({
-            position: 'top',
-            title: dataRequested?.detail,
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-          });
-          setReadyToRefetch(false);
-        }
-        if (dataRequested?.id) {
-          setCohortFound(cohort);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        setTimeout(() => {
-          setReadyToRefetch(false);
-        }, 600);
+  const joinCohort = async (cohort) => {
+    try {
+      reportDatalayer({
+        dataLayer: {
+          event: 'join_cohort',
+          cohort_id: cohort?.id,
+          agent: getBrowserInfo(),
+        },
       });
+      const resp = await bc.admissions().joinCohort(cohort?.id);
+      const dataRequested = await resp.json();
+      if (resp.status >= 400) {
+        createToast({
+          position: 'top',
+          title: dataRequested?.detail,
+          status: 'info',
+          duration: 5000,
+          isClosable: true,
+        });
+        setReadyToRefetch(false);
+      }
+      if (dataRequested?.status === 'ACTIVE') {
+        setCohortFound(cohort);
+      }
+    } catch (error) {
+      console.error('Error al unirse a la cohorte:', error);
+      setTimeout(() => {
+        setReadyToRefetch(false);
+      }, 600);
+    }
   };
 
   useEffect(() => {
@@ -307,7 +304,7 @@ function Summary() {
   useEffect(() => {
     if (checkoutData && hasMounted) {
       console.log('acaaaaaa');
-      const planFound = checkoutData?.plans?.find((plan) => plan?.plan_id === planId) || checkoutData?.plans?.[0];
+      const planFound = checkoutData?.plans?.find((plan) => plan.plan_id === planId) || checkoutData?.plans?.[0];
       if (planFound) {
         handleSubmit();
       }
