@@ -20,12 +20,12 @@ import AcordionList from '../AcordionList';
 import LoaderScreen from '../LoaderScreen';
 import NextChakraLink from '../NextChakraLink';
 
-function PaymentMethods({ setShowPaymentDetails }) {
+function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
   const { t } = useTranslation('signup');
   const { isAuthenticated } = useAuth();
 
   const {
-    state, setSelectedPlanCheckoutData, setIsSubmittingCard, setIsSubmittingPayment, setPaymentStatus, setPaymentInfo,
+    state, setIsSubmittingCard, setIsSubmittingPayment, setPaymentStatus, setPaymentInfo,
   } = signupAction();
   const { handlePayment, getPaymentMethods } = useSignup();
   const {
@@ -80,11 +80,8 @@ function PaymentMethods({ setShowPaymentDetails }) {
         const respPayment = await handlePayment({}, true);
         if (respPayment.status === 'FULFILLED') {
           setPaymentStatus('success');
-          setSelectedPlanCheckoutData({
-            ...selectedPlanCheckoutData,
-            payment_success: true,
-          });
           setIsSubmittingPayment(false);
+          onPaymentSuccess();
         } else {
           setPaymentStatus('error');
         }
@@ -218,10 +215,12 @@ function PaymentMethods({ setShowPaymentDetails }) {
 
 PaymentMethods.propTypes = {
   setShowPaymentDetails: PropTypes.func,
+  onPaymentSuccess: PropTypes.func,
 };
 
 PaymentMethods.defaultProps = {
   setShowPaymentDetails: () => { },
+  onPaymentSuccess: () => { },
 };
 
 export default PaymentMethods;

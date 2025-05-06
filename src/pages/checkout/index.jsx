@@ -91,9 +91,9 @@ function Checkout() {
   } = signupAction();
   const {
     stepsEnum, isFirstStep, isSecondStep, isThirdStep, getSelfAppliedCoupon,
-    getChecking, getPriceWithDiscount, processPlans,
+    getChecking, getPriceWithDiscount, processPlans, subscribeFreePlan,
   } = useSignup();
-  const { stepIndex, checkoutData, selectedPlanCheckoutData, alreadyEnrolled, loader, selfAppliedCoupon, planData } = state;
+  const { stepIndex, checkoutData, paymentStatus, selectedPlanCheckoutData, alreadyEnrolled, loader, selfAppliedCoupon, planData } = state;
   const flexRef = useRef(null);
   const [discountCode, setDiscountCode] = useState('');
   const [discountCoupon, setDiscountCoupon] = useState(null);
@@ -124,7 +124,7 @@ function Checkout() {
     return couponString || formatedCouponQuery;
   }, [coupon, couponQuery]);
 
-  const isPaymentSuccess = selectedPlanCheckoutData?.payment_success;
+  const isPaymentSuccess = paymentStatus === 'success';
   const fixedCouponExist = allCoupons.some((coup) => coup.discount_type === 'FIXED_PRICE');
 
   useEffect(() => {
@@ -366,10 +366,11 @@ function Checkout() {
 
         if (existsPayablePlan) {
           handleStep(stepsEnum.PAYMENT);
-          setLoader('plan', false);
         } else {
+          await subscribeFreePlan(checkingData);
           handleStep(stepsEnum.SUMMARY);
         }
+        setLoader('plan', false);
       }
     } catch (error) {
       console.log('error', error);
@@ -672,11 +673,11 @@ function Checkout() {
           )}
 
           {isSecondStep && (
-            <Summary />
-          )}
-          {/* Fourth step */}
-          {isThirdStep && (
             <PaymentInfo setShowPaymentDetails={setShowPaymentDetails} />
+          )}
+
+          {isThirdStep && (
+            <Summary />
           )}
         </Flex>
         <Flex

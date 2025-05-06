@@ -4,6 +4,7 @@ import {
   SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, TOGGLE_IF_ENROLLED,
   SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
   SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON, SET_SIGNUP_INITIAL_STATE,
+  SET_DECLINED_PAYMENT,
 } from '../types';
 
 const signupAction = () => {
@@ -73,6 +74,11 @@ const signupAction = () => {
     payload,
   });
 
+  const setDeclinedPayment = (payload) => dispatch({
+    type: SET_DECLINED_PAYMENT,
+    payload,
+  });
+
   const restartSignup = () => dispatch({
     type: SET_SIGNUP_INITIAL_STATE,
   });
@@ -94,6 +100,7 @@ const signupAction = () => {
     setSelectedService,
     restartSignup,
     setServiceProps,
+    setDeclinedPayment,
   };
 };
 

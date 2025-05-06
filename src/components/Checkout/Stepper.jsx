@@ -4,10 +4,14 @@ import PropTypes from 'prop-types';
 import Heading from '../Heading';
 import Icon from '../Icon';
 import useSignup from '../../hooks/useSignup';
+import signupAction from '../../store/actions/signupAction';
 
-function Stepper({ stepIndex, selectedPlanCheckoutData, isFreeTier }) {
+function Stepper({ stepIndex, isFreeTier }) {
   const { t } = useTranslation('signup');
   const { stepsEnum } = useSignup();
+  const { state } = signupAction();
+  const { paymentStatus } = state;
+  const isPaymentSuccess = paymentStatus === 'success';
 
   const steps = [
     {
@@ -23,7 +27,7 @@ function Stepper({ stepIndex, selectedPlanCheckoutData, isFreeTier }) {
       enum: stepsEnum.SUMMARY,
       label: t('summary'),
       show: isFreeTier,
-      isCompleted: stepIndex > stepsEnum.CONTACT || selectedPlanCheckoutData?.payment_success,
+      isCompleted: stepIndex > stepsEnum.CONTACT || isPaymentSuccess,
       isActive: stepIndex === stepsEnum.SUMMARY,
     },
     {
@@ -31,7 +35,7 @@ function Stepper({ stepIndex, selectedPlanCheckoutData, isFreeTier }) {
       enum: stepsEnum.PAYMENT,
       label: t('payment'),
       show: !isFreeTier,
-      isCompleted: selectedPlanCheckoutData?.payment_success,
+      isCompleted: isPaymentSuccess,
       isActive: stepIndex === stepsEnum.PAYMENT,
     },
   ];
@@ -71,11 +75,6 @@ function Stepper({ stepIndex, selectedPlanCheckoutData, isFreeTier }) {
 Stepper.propTypes = {
   stepIndex: PropTypes.number.isRequired,
   isFreeTier: PropTypes.bool.isRequired,
-  selectedPlanCheckoutData: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
-};
-
-Stepper.defaultProps = {
-  selectedPlanCheckoutData: {},
 };
 
 export default Stepper;

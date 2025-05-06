@@ -28,7 +28,7 @@ function ServiceSlug() {
   } = signupAction();
   const { stepsEnum, handleServiceToConsume, isSecondStep, isThirdStep } = useSignup();
   const [readyToSelectService, setReadyToSelectService] = useState(false);
-  const { selectedPlanCheckoutData, serviceProps, loader } = state;
+  const { serviceProps, loader, paymentStatus } = state;
   const { backgroundColor3, backgroundColor } = useStyle();
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
@@ -36,7 +36,7 @@ function ServiceSlug() {
   const { location } = useSession();
   const { createToast } = useCustomToast({ toastId: 'checkout-error-string' });
 
-  const isPaymentSuccess = selectedPlanCheckoutData?.payment_success;
+  const isPaymentSuccess = paymentStatus === 'success';
 
   const voidServices = ['ai-compilation'];
   const allowedServiceTypes = ['compilation', 'mentorship', 'event'];
@@ -180,15 +180,18 @@ function ServiceSlug() {
           style={{ flexShrink: 0, flexGrow: 1 }}
           overflow="auto"
         >
-          {!readyToSelectService && isSecondStep && serviceProps?.id && (
-            <ServiceSummary service={serviceProps} />
-          )}
           {readyToSelectService && (
             <SelectServicePlan />
           )}
-          {/* Third step */}
-          {!readyToSelectService && isThirdStep && (
+
+          {/* Second step */}
+          {!readyToSelectService && isSecondStep && (
             <PaymentInfo />
+          )}
+
+          {/* Third step */}
+          {!readyToSelectService && isThirdStep && serviceProps?.id && (
+            <ServiceSummary service={serviceProps} />
           )}
         </Flex>
       </Flex>

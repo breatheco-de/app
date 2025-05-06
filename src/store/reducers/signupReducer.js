@@ -2,7 +2,7 @@ import {
   HANDLE_STEP, SET_CHECKOUT_DATA,
   SET_PAYMENT_INFO, SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA,
   TOGGLE_IF_ENROLLED, SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
-  SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON, SET_SIGNUP_INITIAL_STATE,
+  SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON, SET_SIGNUP_INITIAL_STATE, SET_DECLINED_PAYMENT,
 } from '../types';
 
 const initialState = {
@@ -24,6 +24,10 @@ const initialState = {
   isSubmittingCard: false,
   isSubmittingPayment: false,
   selfAppliedCoupon: null,
+  declinedPayment: {
+    title: '',
+    description: '',
+  },
 };
 const signupReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -121,6 +125,12 @@ const signupReducer = (state = initialState, action) => {
       return {
         ...state,
         selfAppliedCoupon: action.payload,
+      };
+    }
+    case SET_DECLINED_PAYMENT: {
+      return {
+        ...state,
+        declinedPayment: action.payload,
       };
     }
     case SET_SIGNUP_INITIAL_STATE: {

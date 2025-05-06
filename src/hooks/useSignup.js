@@ -15,7 +15,7 @@ import {
   slugToTitle,
   unSlugifyCapitalize,
 } from '../utils';
-import { currenciesSymbols, BASE_PLAN } from '../utils/variables';
+import { currenciesSymbols, BASE_PLAN, SILENT_CODE } from '../utils/variables';
 import { reportDatalayer } from '../utils/requests';
 import { usePersistent } from './usePersistent';
 import useSession from './useSession';
@@ -33,6 +33,9 @@ const useSignup = () => {
     toggleIfEnrolled,
     setServiceProps,
     setSelfAppliedCoupon,
+    setPaymentStatus,
+    setIsSubmittingPayment,
+    setDeclinedPayment,
   } = signupAction();
   const [, setSubscriptionProcess] = usePersistent('subscription-process', null);
   const { t } = useTranslation('signup');
@@ -56,17 +59,21 @@ const useSignup = () => {
     checkoutData,
     planData,
     selectedPlanCheckoutData,
+    paymentStatus,
+    isSubmittingPayment,
   } = state;
+
+  const isPaymentIdle = paymentStatus === 'idle';
 
   const stepsEnum = {
     CONTACT: 1,
-    SUMMARY: 2,
-    PAYMENT: 3,
+    PAYMENT: 2,
+    SUMMARY: 3,
   };
 
   const isFirstStep = stepIndex === stepsEnum.CONTACT; // Contact
-  const isSecondStep = stepIndex === stepsEnum.SUMMARY; // Summary
-  const isThirdStep = stepIndex === stepsEnum.PAYMENT; // Payment
+  const isSecondStep = stepIndex === stepsEnum.PAYMENT; // Payment
+  const isThirdStep = stepIndex === stepsEnum.SUMMARY; // Summary
 
   const translations = {
     one_payment: t('signup:one_payment'),
@@ -504,24 +511,21 @@ const useSignup = () => {
     const getRequests = () => {
       if (!isTtrial) {
         return {
-          type: data?.type || checkoutData.type,
-          token: data?.token || checkoutData.token,
+          type: data?.type || checkoutData?.type,
+          token: data?.token || checkoutData?.token,
           how_many_installments: data?.installments || selectedPlanCheckoutData?.how_many_months || undefined,
           chosen_period: manyInstallmentsExists ? undefined : (selectedPlanCheckoutData?.period || 'HALF'),
           coupons: checkoutData?.coupons,
         };
       }
       return {
-        type: data?.type || checkoutData.type,
-        token: data?.token || checkoutData.token,
+        type: data?.type || checkoutData?.type,
+        token: data?.token || checkoutData?.token,
       };
     };
 
     try {
       const requests = getRequests();
-      console.log('data', data);
-      console.log('checkoutData', checkoutData);
-      console.log('requests cursor', requests);
       const response = await bc.payment().pay({
         country_code,
         ...requests,
@@ -587,9 +591,7 @@ const useSignup = () => {
   };
 
   const getChecking = async (plansData) => {
-    console.log('plansData', plansData);
     const selectedPlan = plansData?.plan;
-    console.log('selectedPlan', selectedPlan);
 
     const checkingBody = {
       type: 'PREVIEW',
@@ -597,7 +599,6 @@ const useSignup = () => {
       coupons: couponsQuery ? [couponsQuery] : undefined,
       country_code,
     };
-    console.log('checkingBody', checkingBody);
 
     try {
       const response = await bc.payment().checking(checkingBody);
@@ -837,6 +838,67 @@ const useSignup = () => {
     }
   };
 
+  const subscribeFreePlan = async (checkingData) => {
+    if (!isPaymentIdle || isSubmittingPayment || !selectedPlanCheckoutData?.plan_id) return;
+    setIsSubmittingPayment(true);
+
+    try {
+      const respPayment = await handlePayment({
+        ...checkingData,
+        installments: selectedPlanCheckoutData?.how_many_months,
+      }, true);
+
+      if (respPayment?.status_code >= 400) {
+        setPaymentStatus('error');
+        setDeclinedPayment({
+          title: t('transaction-denied'),
+          description: t('payment-not-processed'),
+        });
+      }
+
+      const silentCode = respPayment?.silent_code;
+      if (silentCode) {
+        if (silentCode === SILENT_CODE.CARD_ERROR) {
+          setPaymentStatus('error');
+          setDeclinedPayment({
+            title: t('transaction-denied'),
+            description: t('card-declined'),
+          });
+        }
+        if (SILENT_CODE.LIST_PROCESSING_ERRORS.includes(silentCode)) {
+          setPaymentStatus('error');
+          setDeclinedPayment({
+            title: t('transaction-denied'),
+            description: t('payment-not-processed'),
+          });
+        }
+        if (silentCode === SILENT_CODE.UNEXPECTED_EXCEPTION) {
+          setPaymentStatus('error');
+          setDeclinedPayment({
+            title: t('transaction-denied'),
+            description: t('payment-error'),
+          });
+        }
+      }
+
+      if (respPayment.status === 'FULFILLED') {
+        setPaymentStatus('success');
+      }
+
+      setIsSubmittingPayment(false);
+      setLoader('plan', false);
+    } catch (error) {
+      setLoader('plan', false);
+      createToast({
+        position: 'top',
+        title: t('alert-message:payment-error'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+    }
+  };
+
   return {
     state,
     stepsEnum,
@@ -856,6 +918,7 @@ const useSignup = () => {
     processPlans,
     handleSuggestedPlan,
     validatePlanExistence,
+    subscribeFreePlan,
   };
 };
 
