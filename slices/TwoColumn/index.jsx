@@ -46,6 +46,7 @@ function TwoColumn({ slice }) {
       padding={slice?.primary?.padding}
       contentPosition={slice?.primary?.content_position}
       customTitleWeight={slice?.primary?.custom_title_weight}
+      imageFirstOnMobile={slice?.primary?.image_first_on_mobile}
     />
   );
 }

@@ -21,4 +21,5 @@ export const components = {
   title_introduction: dynamic(() => import("./TitleIntroduction")),
   trust_cards: dynamic(() => import("./TrustCards")),
   two_column: dynamic(() => import("./TwoColumn")),
+  two_column_with_text: dynamic(() => import("./TwoColumnWithText")),
 };

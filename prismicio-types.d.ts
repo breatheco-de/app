@@ -6,6 +6,7 @@ import type * as prismicClient from "@prismicio/client";
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
 type PageDocumentDataSlicesSlice =
+  | TwoColumnWithTextSlice
   | SplitShowcaseSectionSlice
   | FaqsSlice
   | PricingCardsSlice
@@ -3378,6 +3379,17 @@ export interface TwoColumnSliceDefaultPrimary {
   image: prismic.ImageField<never>;
 
   /**
+   * Image First on Mobile field in *TwoColumn → Default → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: two_column.default.primary.image_first_on_mobile
+   * - **Documentation**: https://prismic.io/docs/field#boolean
+   */
+  image_first_on_mobile: prismic.BooleanField;
+
+  /**
    * Students Avatars field in *TwoColumn → Default → Primary*
    *
    * - **Field Type**: Rich Text
@@ -3575,6 +3587,116 @@ export type TwoColumnSlice = prismic.SharedSlice<
   TwoColumnSliceVariation
 >;
 
+/**
+ * Primary content in *TwoColumnWithText → Default → Primary*
+ */
+export interface TwoColumnWithTextSliceDefaultPrimary {
+  /**
+   * Title field in *TwoColumnWithText → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column_with_text.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  title: prismic.RichTextField;
+
+  /**
+   * Left Column Icon field in *TwoColumnWithText → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column_with_text.default.primary.left_column_icon
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  left_column_icon: prismic.ImageField<never>;
+
+  /**
+   * Left Column Title field in *TwoColumnWithText → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column_with_text.default.primary.left_column_title
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  left_column_title: prismic.RichTextField;
+
+  /**
+   * Left column description field in *TwoColumnWithText → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column_with_text.default.primary.left_column_description
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  left_column_description: prismic.RichTextField;
+
+  /**
+   * Right Column Title field in *TwoColumnWithText → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column_with_text.default.primary.right_column_title
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  right_column_title: prismic.RichTextField;
+
+  /**
+   * Right Column Description field in *TwoColumnWithText → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column_with_text.default.primary.right_column_description
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  right_column_description: prismic.RichTextField;
+}
+
+/**
+ * Primary content in *TwoColumnWithText → Items*
+ */
+export interface TwoColumnWithTextSliceDefaultItem {
+  /**
+   * avatar_image field in *TwoColumnWithText → Items*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column_with_text.items[].avatar_image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  avatar_image: prismic.ImageField<never>;
+}
+
+/**
+ * Default variation for TwoColumnWithText Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type TwoColumnWithTextSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<TwoColumnWithTextSliceDefaultPrimary>,
+  Simplify<TwoColumnWithTextSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *TwoColumnWithText*
+ */
+type TwoColumnWithTextSliceVariation = TwoColumnWithTextSliceDefault;
+
+/**
+ * TwoColumnWithText Shared Slice
+ *
+ * - **API ID**: `two_column_with_text`
+ * - **Description**: TwoColumnWithText
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type TwoColumnWithTextSlice = prismic.SharedSlice<
+  "two_column_with_text",
+  TwoColumnWithTextSliceVariation
+>;
+
 declare module "@prismicio/client" {
   interface CreateClient {
     (
@@ -3688,6 +3810,11 @@ declare module "@prismicio/client" {
       TwoColumnSliceDefaultItem,
       TwoColumnSliceVariation,
       TwoColumnSliceDefault,
+      TwoColumnWithTextSlice,
+      TwoColumnWithTextSliceDefaultPrimary,
+      TwoColumnWithTextSliceDefaultItem,
+      TwoColumnWithTextSliceVariation,
+      TwoColumnWithTextSliceDefault,
     };
   }
 }

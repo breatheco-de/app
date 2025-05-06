@@ -136,6 +136,15 @@
           "type": "Image",
           "config": { "label": "image", "constraint": {}, "thumbnails": [] }
         },
+        "image_first_on_mobile": {
+          "type": "Boolean",
+          "config": {
+            "label": "Image First on Mobile",
+            "default_value": false,
+            "placeholder_true": "true",
+            "placeholder_false": "false"
+          }
+        },
         "students_avatars": {
           "type": "StructuredText",
           "config": {

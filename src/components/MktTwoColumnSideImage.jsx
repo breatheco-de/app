@@ -66,6 +66,7 @@ function MktTwoColumnSideImage({
   margin,
   contentPosition,
   customTitleWeight,
+  imageFirstOnMobile,
   ...rest
 }) {
   const videoRef = useRef(null);
@@ -179,7 +180,7 @@ function MktTwoColumnSideImage({
     >
       <Flex
         background={transparent ? 'transparent' : background || backgroundColor}
-        flexDirection={{ base: imagePosition === 'left' ? 'column-reverse' : 'column', md: 'row' }}
+        flexDirection={{ base: imageFirstOnMobile ? 'column-reverse' : 'column', md: 'row' }}
         width="100%"
         margin="0"
         id={id}
@@ -411,6 +412,7 @@ MktTwoColumnSideImage.propTypes = {
   miniTitle: PropTypes.string,
   contentPosition: PropTypes.string,
   customTitleWeight: PropTypes.string,
+  imageFirstOnMobile: PropTypes.bool,
 };
 
 MktTwoColumnSideImage.defaultProps = {
@@ -456,6 +458,7 @@ MktTwoColumnSideImage.defaultProps = {
   miniTitle: '',
   contentPosition: 'center',
   customTitleWeight: '700',
+  imageFirstOnMobile: false,
 };
 
 export default MktTwoColumnSideImage;

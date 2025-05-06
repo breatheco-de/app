@@ -109,6 +109,9 @@ function LabelHandler({ node, children }) {
   if (node.data.label === 'highlight-dark') {
     return <span style={{ color: '#0A3A50', fontWeight: 'bold' }}>{children}</span>;
   }
+  if (node.data.label === 'highlight-blue-default') {
+    return <span style={{ color: '#0084FF' }}>{children}</span>;
+  }
   return children;
 }
 

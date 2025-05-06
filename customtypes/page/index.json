@@ -59,6 +59,7 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "two_column_with_text": { "type": "SharedSlice" },
             "split_showcase_section": { "type": "SharedSlice" },
             "faqs": { "type": "SharedSlice" },
             "pricing_cards": { "type": "SharedSlice" },
