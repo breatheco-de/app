@@ -14,6 +14,7 @@ function ArticleMarkdown({
   const { subTasks } = useModuleHandler();
 
   const assetType = currentData?.asset_type;
+  console.log(content);
 
   return (
     <>
