@@ -11,7 +11,7 @@ function Heading1({ children, ...rest }) {
   return (
     <Heading
       as="h1"
-      fontSize={{ base: '24px', md: '38px', lg: '45px' }}
+      fontSize={{ base: '24px !important', md: '38px !important', lg: '45px !important' }}
       {...rest}
     >
       {children}
@@ -23,7 +23,19 @@ function Heading2({ children, ...rest }) {
   return (
     <Heading
       as="h2"
-      fontSize={{ base: '18px', md: '24px', lg: '38px' }}
+      fontSize={{ base: '18px !important', md: '24px !important', lg: '38px !important' }}
+      {...rest}
+    >
+      {children}
+    </Heading>
+  );
+}
+
+function Heading3({ children, ...rest }) {
+  return (
+    <Heading
+      as="h3"
+      fontSize={{ base: '16px !important', md: '20px !important', lg: '24px !important' }}
       {...rest}
     >
       {children}
@@ -42,7 +54,7 @@ function List({ children, ...rest }) {
 function ListItemComponent({ children, color, ...rest }) {
   return (
     <ListItem
-      fontSize={{ base: '14px', md: '16px', lg: '18px' }}
+      fontSize={{ base: '14px !important', md: '16px !important', lg: '18px !important' }}
       lineHeight="18px"
       margin="16px 0"
       display="flex"
@@ -60,7 +72,7 @@ function ListItemComponent({ children, color, ...rest }) {
 function Paragraph({ children, color, descriptionTextAlign, descriptionLineHeight, ...rest }) {
   return (
     <Text
-      fontSize={{ base: '14px', md: '16px', lg: '18px' }}
+      fontSize={{ base: '14px !important', md: '16px !important', lg: '18px !important' }}
       lineHeight={descriptionLineHeight}
       color={color}
       textAlign={descriptionTextAlign}
@@ -84,6 +96,22 @@ function LinkComponent({ children, href, ...rest }) {
   );
 }
 
+function Preformatted({ children, ...rest }) {
+  return (
+    <Text as="pre" {...rest}>{children}</Text>
+  );
+}
+
+function LabelHandler({ node, children }) {
+  if (node.data.label === 'highlight-blue') {
+    return <span style={{ color: '#A5D9F8' }}>{children}</span>;
+  }
+  if (node.data.label === 'highlight-dark') {
+    return <span style={{ color: '#0A3A50', fontWeight: 'bold' }}>{children}</span>;
+  }
+  return children;
+}
+
 function PrismicTextComponent({ field, ...rest }) {
   const { fontColor2 } = useStyle();
 
@@ -93,10 +121,13 @@ function PrismicTextComponent({ field, ...rest }) {
       components={{
         heading1: ({ children }) => Heading1({ children, ...rest }),
         heading2: ({ children }) => Heading2({ children, ...rest }),
+        heading3: ({ children }) => Heading3({ children, ...rest }),
         list: ({ children }) => List({ children, ...rest }),
         listItem: ({ children }) => ListItemComponent({ children, color: fontColor2, ...rest }),
         paragraph: ({ children }) => Paragraph({ children, color: fontColor2, ...rest }),
         hyperlink: ({ children, href }) => LinkComponent({ children, href, ...rest }),
+        preformatted: ({ children }) => Preformatted({ children, ...rest }),
+        label: LabelHandler,
       }}
     />
   );

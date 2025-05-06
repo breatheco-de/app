@@ -83,7 +83,17 @@ function MktOneColumnKPI({
         maxWidth={maxWidth}
         width={width}
       >
-        <Box display="grid" padding={padding || '50px'} fontFamily={fontFamily} textAlign="center" justifyItems={justifyItems} gridGap="14px" style={{ direction: 'initial' }} gridColumn={gridColumn || '2 / span 8'} px={padding || '10px'}>
+        <Box
+          display="grid"
+          padding={padding || '50px'}
+          fontFamily={fontFamily}
+          textAlign="center"
+          justifyItems={justifyItems}
+          gridGap="14px"
+          style={{ direction: 'initial' }}
+          gridColumn={gridColumn || '2 / span 8'}
+          px={padding || '10px'}
+        >
           {subTitle && (
             <Heading marginBottom="15px" as="h4" fontSize="14px" color={hexColor.blueDefault}>
               {subTitle}
@@ -105,7 +115,7 @@ function MktOneColumnKPI({
               field={slice?.primary?.description}
               fontSize={descriptionFontSize}
               textAlign={descriptionTextAlign}
-              // margin={{ base: '0 20px', md: '0 6% 0 6%', lg: '0 20% 0 20%' }}
+            // margin={{ base: '0 20px', md: '0 6% 0 6%', lg: '0 20% 0 20%' }}
             />
           ) : (
             <Text

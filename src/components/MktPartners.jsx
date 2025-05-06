@@ -47,32 +47,6 @@ function MktPartners({ id, title, titleSize, images, description, imagesContent,
       },
     },
   };
-  // const controls = useAnimation();
-  // const observer = useRef();
-  // const motionRef = useRef(false);
-
-  // const animationSettings = {
-  //   x: [0, -150 * cleanImages.length],
-  //   transition: {
-  //     x: {
-  //       repeat: Infinity,
-  //       repeatType: 'loop',
-  //       duration: 30,
-  //       ease: 'linear',
-  //     },
-  //   },
-  // };
-
-  // const lastElementRef = useCallback((node) => {
-  //   if (observer.current) observer.current.disconnect();
-  //   observer.current = new IntersectionObserver((entries) => {
-  //     if (!entries[0].isIntersecting) {
-  //       motionRef.current = true;
-  //       controls.start(animationSettings);
-  //     } else if (motionRef.current) setTimeout(controls.start, 5000, animationSettings);
-  //   }, { rootMargin: '100% 0% 100% 0%' });
-  //   if (node) observer.current.observe(node);
-  // }, [motionRef]);
 
   return (
     <GridContainer

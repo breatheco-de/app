@@ -54,6 +54,13 @@
           "type": "Color",
           "config": { "label": "Text Background Color", "placeholder": "" }
         },
+        "custom_title_weight": {
+          "type": "Text",
+          "config": {
+            "label": "Custom title weight",
+            "placeholder": "700 as default"
+          }
+        },
         "title": {
           "type": "Text",
           "config": { "label": "Title", "placeholder": "" }
@@ -61,6 +68,15 @@
         "custom_title_size": {
           "type": "Text",
           "config": { "label": "Custom Title Size", "placeholder": "" }
+        },
+        "content_position": {
+          "type": "Select",
+          "config": {
+            "label": "Content position",
+            "placeholder": "",
+            "options": ["center", "start", "end"],
+            "default_value": "center"
+          }
         },
         "fontFamily": {
           "type": "Select",

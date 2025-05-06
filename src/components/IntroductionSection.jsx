@@ -82,8 +82,6 @@ function IntroductionSection({
   const isRightBigger = slice?.primary?.two_column_size === 'Right is bigger';
   const bothAreEqual = slice?.primary?.two_column_size === 'Both are equal';
 
-  console.log(slice);
-
   const getStyling = (type) => {
     const StyleMapping = {
       colored: {
@@ -116,8 +114,6 @@ function IntroductionSection({
     if (bothAreEqual) return 0.5;
     return 0.3;
   };
-
-  console.log(slice?.primary?.title);
 
   return (
     <Flex

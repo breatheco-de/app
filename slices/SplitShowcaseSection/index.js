@@ -9,7 +9,11 @@ import MktSplitShowcaseSection from '../../src/components/MktSplitShowcaseSectio
  */
 const SplitShowcaseSection = ({ slice }) => {
   return (
-    <MktSplitShowcaseSection slice={slice} />
+    <MktSplitShowcaseSection
+      title={slice.primary.title}
+      description={slice.primary.description}
+      images={slice.items}
+    />
   );
 };
 

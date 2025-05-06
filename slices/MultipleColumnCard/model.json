@@ -35,13 +35,275 @@
         "margin_top": {
           "type": "Text",
           "config": { "label": "Margin Top", "placeholder": "" }
-        },
-        "max_width": {
-          "type": "Text",
-          "config": { "label": "Max Width", "placeholder": "" }
         }
       },
       "items": {
+        "column_title": {
+          "type": "Text",
+          "config": { "label": "Column Title", "placeholder": "" }
+        },
+        "column_description": {
+          "type": "Text",
+          "config": { "label": "Column Description", "placeholder": "" }
+        },
+        "font_family_column": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family Column",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"]
+          }
+        },
+        "image": {
+          "type": "Image",
+          "config": { "label": "Image", "constraint": {}, "thumbnails": [] }
+        },
+        "flex_direction": {
+          "type": "Select",
+          "config": {
+            "label": "Flex Direction",
+            "placeholder": "",
+            "options": ["column", "column-reverse"],
+            "default_value": "column"
+          }
+        }
+      }
+    },
+    {
+      "id": "statsCard",
+      "name": "StatsCard",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": { "label": "Title", "placeholder": "" }
+        },
+        "heading_font_size": {
+          "type": "Text",
+          "config": {
+            "label": "Heading font size",
+            "placeholder": "{\"base\": \"18px !important\", \"md\": \"24px !important\", \"lg\": \"38px !important\"} for responsive"
+          }
+        },
+        "heading_font_weight": {
+          "type": "Text",
+          "config": { "label": "Heading font weight", "placeholder": "" }
+        },
+        "title_highlight_word": {
+          "type": "Text",
+          "config": { "label": "Title highlight word", "placeholder": "" }
+        },
+        "id_key": {
+          "type": "Text",
+          "config": { "label": "Id key", "placeholder": "" }
+        },
+        "font_family_title": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family Title",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"]
+          }
+        },
+        "margin_bottom": {
+          "type": "Text",
+          "config": { "label": "Margin Bottom", "placeholder": "" }
+        },
+        "margin_top": {
+          "type": "Text",
+          "config": { "label": "Margin Top", "placeholder": "" }
+        }
+      },
+      "items": {
+        "column_title": {
+          "type": "Text",
+          "config": { "label": "Column Title", "placeholder": "" }
+        },
+        "column_description": {
+          "type": "Text",
+          "config": { "label": "Column Description", "placeholder": "" }
+        },
+        "font_family_column": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family Column",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"]
+          }
+        },
+        "flex_direction": {
+          "type": "Select",
+          "config": {
+            "label": "Flex Direction",
+            "placeholder": "",
+            "options": ["column", "column-reverse"],
+            "default_value": "column"
+          }
+        },
+        "statistic": {
+          "type": "Text",
+          "config": { "label": "statistic", "placeholder": "" }
+        }
+      }
+    },
+    {
+      "id": "smallImageAndLink",
+      "name": "Small Image and Link",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": { "label": "Title", "placeholder": "" }
+        },
+        "subtitle": {
+          "type": "Text",
+          "config": { "label": "Subtitle", "placeholder": "" }
+        },
+        "subtitle_highlight_word": {
+          "type": "Text",
+          "config": { "label": "Subtitle highlight word", "placeholder": "" }
+        },
+        "heading_font_size": {
+          "type": "Text",
+          "config": {
+            "label": "Heading font size",
+            "placeholder": "{\"base\": \"18px !important\", \"md\": \"24px !important\", \"lg\": \"38px !important\"} for responsive"
+          }
+        },
+        "heading_font_weight": {
+          "type": "Text",
+          "config": {
+            "label": "Heading font weight",
+            "placeholder": "default to 700"
+          }
+        },
+        "id_key": {
+          "type": "Text",
+          "config": { "label": "Id key", "placeholder": "" }
+        },
+        "font_family_title": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family Title",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"]
+          }
+        },
+        "margin_bottom": {
+          "type": "Text",
+          "config": { "label": "Margin Bottom", "placeholder": "" }
+        },
+        "margin_top": {
+          "type": "Text",
+          "config": { "label": "Margin Top", "placeholder": "" }
+        }
+      },
+      "items": {
+        "feature_color": {
+          "type": "Color",
+          "config": { "label": "Feature color", "placeholder": "" }
+        },
+        "column_title": {
+          "type": "Text",
+          "config": { "label": "Column Title", "placeholder": "" }
+        },
+        "column_description": {
+          "type": "Text",
+          "config": { "label": "Column Description", "placeholder": "" }
+        },
+        "font_family_column": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family Column",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"]
+          }
+        },
+        "image": {
+          "type": "Image",
+          "config": { "label": "Image", "constraint": {}, "thumbnails": [] }
+        },
+        "flex_direction": {
+          "type": "Select",
+          "config": {
+            "label": "Flex Direction",
+            "placeholder": "",
+            "options": ["column", "column-reverse"],
+            "default_value": "column"
+          }
+        },
+        "link": {
+          "type": "Link",
+          "config": { "label": "Link", "placeholder": "", "select": null }
+        }
+      }
+    },
+    {
+      "id": "sideTagFeature",
+      "name": "Side Tag Feature",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": { "label": "Title", "placeholder": "" }
+        },
+        "subtitle": {
+          "type": "Text",
+          "config": { "label": "Subtitle", "placeholder": "" }
+        },
+        "subtitle_highlight_word": {
+          "type": "Text",
+          "config": { "label": "Subtitle highlight word", "placeholder": "" }
+        },
+        "heading_font_size": {
+          "type": "Text",
+          "config": {
+            "label": "Heading font size",
+            "placeholder": "{\"base\": \"18px !important\", \"md\": \"24px !important\", \"lg\": \"38px !important\"} for responsive"
+          }
+        },
+        "heading_font_weight": {
+          "type": "Text",
+          "config": {
+            "label": "Heading font weight",
+            "placeholder": "default to 700"
+          }
+        },
+        "id_key": {
+          "type": "Text",
+          "config": { "label": "Id key", "placeholder": "" }
+        },
+        "font_family_title": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family Title",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"]
+          }
+        },
+        "margin_bottom": {
+          "type": "Text",
+          "config": { "label": "Margin Bottom", "placeholder": "" }
+        },
+        "margin_top": {
+          "type": "Text",
+          "config": { "label": "Margin Top", "placeholder": "" }
+        }
+      },
+      "items": {
+        "feature_color": {
+          "type": "Color",
+          "config": { "label": "Feature color", "placeholder": "" }
+        },
         "column_title": {
           "type": "Text",
           "config": { "label": "Column Title", "placeholder": "" }

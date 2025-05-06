@@ -129,42 +129,6 @@
             "placeholder": "Color of title and description"
           }
         },
-        "kpi_title_1": {
-          "type": "Text",
-          "config": { "label": "KPI Title 1", "placeholder": "" }
-        },
-        "kpi_description_1": {
-          "type": "Text",
-          "config": { "label": "KPI Description 1", "placeholder": "" }
-        },
-        "kpi_color_1": {
-          "type": "Color",
-          "config": { "label": "KPI Color 1", "placeholder": "" }
-        },
-        "kpi_title_2": {
-          "type": "Text",
-          "config": { "label": "KPI Title 2", "placeholder": "" }
-        },
-        "kpi_description_2": {
-          "type": "Text",
-          "config": { "label": "KPI Description 2", "placeholder": "" }
-        },
-        "kpi_color_2": {
-          "type": "Color",
-          "config": { "label": "KPI Color 2", "placeholder": "" }
-        },
-        "kpi_title_3": {
-          "type": "Text",
-          "config": { "label": "KPI Title 3", "placeholder": "" }
-        },
-        "kpi_description_3": {
-          "type": "Text",
-          "config": { "label": "KPI Description 3", "placeholder": "" }
-        },
-        "kpi_color_3": {
-          "type": "Color",
-          "config": { "label": "KPI Color 3", "placeholder": "" }
-        },
         "background": {
           "type": "Color",
           "config": { "label": "background", "placeholder": "" }
@@ -182,6 +146,128 @@
         }
       },
       "items": {},
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    },
+    {
+      "id": "oneColumnWithKpIs",
+      "name": "one Column with KPIs",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "OneColumn",
+      "primary": {
+        "id_key": {
+          "type": "Text",
+          "config": { "label": "ID Key", "placeholder": "" }
+        },
+        "padding": {
+          "type": "Text",
+          "config": { "label": "padding", "placeholder": "" }
+        },
+        "width": {
+          "type": "Text",
+          "config": { "label": "Width", "placeholder": "" }
+        },
+        "margin_top": {
+          "type": "Text",
+          "config": { "label": "Margin Top", "placeholder": "" }
+        },
+        "margin_bottom": {
+          "type": "Text",
+          "config": { "label": "Margin Bottom", "placeholder": "" }
+        },
+        "max_width": {
+          "type": "Text",
+          "config": { "label": "Max Width", "placeholder": "" }
+        },
+        "border_radius": {
+          "type": "Text",
+          "config": { "label": "Border Radius", "placeholder": "" }
+        },
+        "font_family": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"],
+            "default_value": "Lato"
+          }
+        },
+        "title": {
+          "type": "Text",
+          "config": { "label": "Title", "placeholder": "" }
+        },
+        "title_font_size": {
+          "type": "Text",
+          "config": { "label": "Title Font Size", "placeholder": "" }
+        },
+        "subtitle": {
+          "type": "Text",
+          "config": { "label": "SubTitle", "placeholder": "" }
+        },
+        "description": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Description",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "single": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "description_font_size": {
+          "type": "Text",
+          "config": { "label": "Description Font Size", "placeholder": "" }
+        },
+        "description_text_align": {
+          "type": "Text",
+          "config": { "label": "Description Text Align", "placeholder": "" }
+        },
+        "button_label": {
+          "type": "Text",
+          "config": { "label": "Button label", "placeholder": "" }
+        },
+        "button_url": {
+          "type": "Text",
+          "config": { "label": "Button url", "placeholder": "" }
+        },
+        "link_button": {
+          "type": "Boolean",
+          "config": {
+            "label": "Link Button",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
+          }
+        },
+        "justify_items": {
+          "type": "Text",
+          "config": { "label": "Justify Items", "placeholder": "" }
+        },
+        "font_color": {
+          "type": "Color",
+          "config": {
+            "label": "Font color",
+            "placeholder": "Color of title and description"
+          }
+        },
+        "background": {
+          "type": "Color",
+          "config": { "label": "background", "placeholder": "" }
+        }
+      },
+      "items": {
+        "kpi_title": {
+          "type": "Text",
+          "config": { "label": "KPI Title", "placeholder": "" }
+        },
+        "kpi_description": {
+          "type": "Text",
+          "config": { "label": "KPI Description", "placeholder": "" }
+        },
+        "kpi_color": {
+          "type": "Color",
+          "config": { "label": "KPI Color", "placeholder": "" }
+        }
+      },
       "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
     }
   ]

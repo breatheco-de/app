@@ -20,7 +20,7 @@
 					{
 						"type": "paragraph",
 						"content": {
-							"text": "Ex commodo magna quis et aute qui occaecat."
+							"text": "Proident est culpa tempor sunt elit nulla exercitation ut enim elit sunt aliqua. Pariatur ullamco pariatur magna consequat dolore. Ipsum ipsum ipsum velit anim anim quis pariatur."
 						}
 					}
 				]
@@ -33,7 +33,6 @@
 					[
 						"image",
 						{
-							"__TYPE__": "ImageContent",
 							"origin": {
 								"id": "main",
 								"url": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853",
@@ -51,6 +50,9 @@
 								},
 								"background": "transparent"
 							},
+							"credits": null,
+							"alt": null,
+							"__TYPE__": "ImageContent",
 							"thumbnails": {}
 						}
 					]

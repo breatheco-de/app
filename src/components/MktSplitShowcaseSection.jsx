@@ -3,15 +3,7 @@ import PropTypes from 'prop-types';
 import { Box, Flex, Image, Grid } from '@chakra-ui/react';
 import PrismicTextComponent from './PrismicTextComponent';
 
-// Renamed component to start with Mkt
-function MktSplitShowcaseSection({ slice }) {
-  // Extract data
-  const title = slice?.primary?.title;
-  const description = slice?.primary?.description;
-  const images = slice?.items || [];
-  const textBackgroundColor = slice?.primary?.text_background_color || 'linear(to-b, blue.400, blue.600)';
-  const textColor = slice?.primary?.text_color || 'white';
-
+function MktSplitShowcaseSection({ title, description, images }) {
   return (
     <Flex
       direction={{ base: 'column', md: 'row' }}
@@ -24,8 +16,7 @@ function MktSplitShowcaseSection({ slice }) {
       <Box
         order={{ base: 1, md: 2 }}
         flex={{ md: '0.4' }}
-        bgGradient={textBackgroundColor}
-        color={textColor}
+        bgGradient="linear(135deg,  #0FB7FF, #022CC2 100%)"
         p={{ base: 4, md: 6 }}
         borderRadius="md"
         display="flex"
@@ -33,21 +24,11 @@ function MktSplitShowcaseSection({ slice }) {
         justifyContent="center"
       >
         {title && (
-        <PrismicTextComponent
-          field={title}
-          heading1Props={{
-            fontSize: { base: '2xl', md: '3xl', lg: '4xl' },
-            mb: 4,
-          }}
-        />
+          <PrismicTextComponent field={title} color="white" fontSize={{ base: '24px !important', md: '38px !important' }} />
         )}
+        <br />
         {description && (
-        <PrismicTextComponent
-          field={description}
-          paragraphProps={{
-            fontSize: { base: 'md', lg: 'lg' },
-          }}
-        />
+          <PrismicTextComponent field={description} color="white" fontSize={{ base: '24px !important', md: '38px !important' }} />
         )}
       </Box>
 
@@ -84,35 +65,28 @@ function MktSplitShowcaseSection({ slice }) {
 // Prismic Rich Text fields can be arrays of objects
 const prismicRichTextField = PropTypes.oneOfType([PropTypes.object, PropTypes.array]);
 
-// Updated PropTypes reference
-MktSplitShowcaseSection.propTypes = {
-  slice: PropTypes.shape({
-    primary: PropTypes.shape({
-      title: prismicRichTextField,
-      description: prismicRichTextField,
-      text_background_color: PropTypes.string,
-      text_color: PropTypes.string,
-    }),
-    items: PropTypes.arrayOf(PropTypes.shape({
-      image: PropTypes.shape({
-        url: PropTypes.string,
-        alt: PropTypes.string,
-      }),
-    })),
+const prismicImageShape = PropTypes.shape({
+  image: PropTypes.shape({
+    url: PropTypes.string,
+    alt: PropTypes.string,
   }),
+});
+
+MktSplitShowcaseSection.propTypes = {
+  title: prismicRichTextField,
+  description: prismicRichTextField,
+  images: PropTypes.arrayOf(PropTypes.shape({
+    images: PropTypes.oneOfType([
+      PropTypes.arrayOf(prismicImageShape), // Prismic Format
+      PropTypes.arrayOf(PropTypes.string),
+    ]),
+  })),
 };
 
-// Updated defaultProps reference
 MktSplitShowcaseSection.defaultProps = {
-  slice: {
-    primary: {
-      title: null,
-      description: null,
-      text_background_color: 'linear(to-b, blue.400, blue.600)',
-      text_color: 'white',
-    },
-    items: [],
-  },
+  title: null,
+  description: null,
+  images: [],
 };
 
 // Updated export

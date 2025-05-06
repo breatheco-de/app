@@ -9,7 +9,7 @@ import Link from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
 import PrismicTextComponent from './PrismicTextComponent';
 import ReactPlayerV2 from './ReactPlayerV2';
-// import Head from 'next/head';
+import { parseProp } from '../utils';
 
 const SIZES = {
   SMALL: 'Small',
@@ -64,6 +64,8 @@ function MktTwoColumnSideImage({
   maxWidth,
   borderRadius,
   margin,
+  contentPosition,
+  customTitleWeight,
   ...rest
 }) {
   const videoRef = useRef(null);
@@ -162,6 +164,11 @@ function MktTwoColumnSideImage({
   }, []);
 
   const prismicStyles = prisimicStyles();
+  const finalTitleSize = parseProp(customTitleSize, prismicStyles.titleSize);
+  const finalSubTitleSize = parseProp(customSubTitleSize, prismicStyles.subtitleSize);
+  const finalDescriptionSize = parseProp(descriptionFontSize, prismicStyles.descriptionSize);
+  const finalButtonLabelSize = parseProp(buttonLabelSize, null);
+
   return (
     <Box
       id={id}
@@ -172,15 +179,13 @@ function MktTwoColumnSideImage({
     >
       <Flex
         background={transparent ? 'transparent' : background || backgroundColor}
-        flexDirection={{ base: 'column', md: 'row' }}
+        flexDirection={{ base: imagePosition === 'left' ? 'column-reverse' : 'column', md: 'row' }}
         width="100%"
         margin="0"
         id={id}
         border={border}
         alignItems="center"
         borderRadius="12px"
-        padding={{ base: '20px 10px', md: '24px 20px' }}
-        // px={{ base: '10px', md: '2rem' }}
         gridGap={gridGap}
         marginTop={marginTop}
         marginBottom={marginBottom}
@@ -189,7 +194,16 @@ function MktTwoColumnSideImage({
         }}
         {...containerProps}
       >
-        <Box flex={0.5} height="100%" style={{ direction: 'initial' }} background={sideBackgroundColor} padding={prismicStyles.padding} borderRadius={{ base: '0px', md: '11px' }} {...textSideProps}>
+        <Box
+          flex={0.5}
+          alignSelf={contentPosition || 'center'}
+          height="100%"
+          style={{ direction: 'initial' }}
+          background={sideBackgroundColor}
+          padding={prismicStyles.padding}
+          borderRadius={{ base: '0px', md: '11px' }}
+          {...textSideProps}
+        >
           <Flex color={fontColor} flexDirection="column" gridGap="16px" alignSelf="center">
             {miniTitle && (
               <Heading
@@ -203,11 +217,19 @@ function MktTwoColumnSideImage({
                 {miniTitle}
               </Heading>
             )}
-            <Heading fontFamily={fontFamily} as="h2" size={customTitleSize || prismicStyles.titleSize} lineHeight={prismicStyles.titleLineHeight} color={titleColor || 'currentColor'} style={{ textWrap: 'balance' }}>
+            <Heading
+              fontFamily={fontFamily}
+              fontSize={finalTitleSize}
+              fontWeight={customTitleWeight}
+              as="h2"
+              lineHeight={prismicStyles.titleLineHeight}
+              color={titleColor || 'currentColor'}
+              style={{ textWrap: 'balance' }}
+            >
               {title}
             </Heading>
             {subTitle && (
-              <Heading fontFamily={fontFamilySubtitle} as="h4" fontSize={customSubTitleSize || prismicStyles.subtitleSize} color={subtitleColor || 'currentColor'}>
+              <Heading fontFamily={fontFamilySubtitle} as="h4" fontSize={finalSubTitleSize} color={subtitleColor || 'currentColor'}>
                 {subTitle}
               </Heading>
             )}
@@ -232,13 +254,12 @@ function MktTwoColumnSideImage({
               <PrismicTextComponent
                 field={slice?.primary?.description}
                 color={slice?.primary?.description_color || 'currentColor'}
-                fontSize={descriptionFontSize}
+                fontSize={finalDescriptionSize}
               />
             ) : (
               <Text
-                fontSize={prismicStyles.descriptionSize}
+                fontSize={finalDescriptionSize}
                 lineHeight={prismicStyles.descriptionLineHeight || '14px'}
-                alignItems="center"
                 color={fontColor || fontColor2}
                 fontFamily={fontFamily}
               >
@@ -288,14 +309,13 @@ function MktTwoColumnSideImage({
                   borderColor: linkButton ? 'transparent' : buttonColors?.color,
                 }}
                 textDecoration={linkButton && 'underline'}
-                fontSize={buttonLabelSize}
+                fontSize={finalButtonLabelSize}
                 margin="8px 0 0 0"
                 href={buttonUrl || '#recommended-courses'}
                 textAlign="center"
                 display="inline-block"
                 width="fit-content"
                 fontFamily="Lato"
-              // fontSize={buttonLabelSize}
               >
                 {buttonLabel}
               </Link>
@@ -337,7 +357,6 @@ function MktTwoColumnSideImage({
               src={imageUrl}
               alt={imageAlt}
               title={imageAlt}
-              px={{ base: '10px', md: 'none' }}
               borderRadius="3px"
               width={imageProps?.width}
               {...imageSideProps}
@@ -390,6 +409,8 @@ MktTwoColumnSideImage.propTypes = {
   margin: PropTypes.string,
   borderRadius: PropTypes.string,
   miniTitle: PropTypes.string,
+  contentPosition: PropTypes.string,
+  customTitleWeight: PropTypes.string,
 };
 
 MktTwoColumnSideImage.defaultProps = {
@@ -433,6 +454,8 @@ MktTwoColumnSideImage.defaultProps = {
   margin: '',
   borderRadius: '',
   miniTitle: '',
+  contentPosition: 'center',
+  customTitleWeight: '700',
 };
 
 export default MktTwoColumnSideImage;
