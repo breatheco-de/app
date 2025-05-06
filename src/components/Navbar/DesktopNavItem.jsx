@@ -70,7 +70,7 @@ function DesktopNavItem({ item }) {
                   variant="unstyled"
                   display="flex"
                   flexDirection="row"
-                  fontWeight={400}
+                  fontWeight={700}
                   color={isOpen ? 'blue.default' : lightColor}
                   fontSize="14px"
                   _hover={{
