@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Text, Flex } from '@chakra-ui/react';
 import useModuleHandler from '../../hooks/useModuleHandler';
 import Toc from './toc';
 import ContentHeading from './ContentHeading';
 import SubTasks from './SubTasks';
 import MarkDownParser from './index';
+import Icon from '../Icon';
 import ProjectInstructions from '../GuidedExperience/ProjectInstructions';
 import { languageFix } from '../../utils';
 
@@ -34,13 +35,16 @@ function ArticleMarkdown({
       )}
       {showTeachAlert && cohortModule && (
         <Box bg="blue.100" p="4" mb="4" borderRadius="md" width="100%">
-          <Text color="blue.800" fontWeight="bold">
-            {
-              t('teacherSidebar.no-need-to-teach-today.description', {
-                module_name: `#${cohortModule.id} - ${languageFix(cohortModule.label, lang)}`,
-              })
-            }
-          </Text>
+          <Flex alignItems="center" gap={4}>
+            <Icon icon="warning" height="30px" width="30px" />
+            <Text color="blue.800" fontWeight="bold">
+              {
+                t('teacherSidebar.no-need-to-teach-today.description', {
+                  module_name: `#${cohortModule.id} - ${languageFix(cohortModule.label, lang)}`,
+                })
+              }
+            </Text>
+          </Flex>
         </Box>
       )}
       {withToc && (
