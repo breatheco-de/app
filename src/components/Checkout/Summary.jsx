@@ -36,9 +36,7 @@ function Summary() {
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const cohortId = Number(getQueryString('cohort'));
 
-  const isPaymentIdle = paymentStatus === 'idle';
-  const isPaymentSuccess = paymentStatus === 'success';
-  const paymentStatusBgColor = isPaymentSuccess ? 'green.light' : '#ffefef';
+  const paymentStatusBgColor = paymentStatus === 'success' ? 'green.light' : '#ffefef';
   const successText = selectedPlanCheckoutData?.isFreeTier ? t('plan-is-ready') : t('payment-success');
 
   useEffect(() => {
@@ -160,7 +158,7 @@ function Summary() {
 
   useEffect(() => {
     let interval;
-    if (readyToRefetch && timeElapsed < 10 && isPaymentSuccess) {
+    if (readyToRefetch && timeElapsed < 10 && paymentStatus === 'success') {
       interval = setInterval(async () => {
         try {
           const data = await getSubscriptions();
@@ -213,16 +211,16 @@ function Summary() {
   }, [readyToRefetch, timeElapsed]);
 
   useEffect(() => {
-    if (!isPaymentSuccess) return;
+    if (paymentStatus !== 'success') return;
     setIsSubmittingPayment(true);
     setReadyToRefetch(true);
-  }, [isPaymentSuccess]);
+  }, [paymentStatus]);
 
   return (
     <Box
       display="flex"
       flexDirection="column"
-      gridGap={isPaymentIdle && '30px'}
+      gridGap={paymentStatus === 'idle' && '30px'}
       mb="1rem"
       width={{ base: 'auto', lg: '490px' }}
       margin={{ base: '0 1rem', lg: '0 auto' }}
@@ -231,19 +229,19 @@ function Summary() {
       <Box
         display="flex"
         flexDirection="column"
-        background={!isPaymentIdle ? paymentStatusBgColor : featuredBackground}
+        background={paymentStatus === 'idle' ? featuredBackground : paymentStatusBgColor}
         w="100%"
         height="fit-content"
         p="11px 14px"
         gridGap="8px"
         borderRadius="14px"
       >
-        {!isPaymentIdle && (
+        {paymentStatus !== 'idle' && (
           <Flex flexDirection="column" gridGap="24px" borderRadius="3px" alignItems="center" padding="16px 8px">
-            <Icon icon={isPaymentSuccess ? 'feedback-like' : 'feedback-dislike'} width="60px" height="60px" />
+            <Icon icon={paymentStatus === 'success' ? 'feedback-like' : 'feedback-dislike'} width="60px" height="60px" />
             <Flex flexDirection="column" gridGap="8px">
               <Text size="16px" fontWeight={700} textAlign="center" color="black">
-                {isPaymentSuccess ? successText : (declinedPayment.title || t('payment-failed'))}
+                {paymentStatus === 'success' ? successText : (declinedPayment.title || t('payment-failed'))}
               </Text>
               {declinedPayment.description && (
                 <Text size="14px" fontWeight={400} textAlign="center" color="black">
@@ -254,16 +252,16 @@ function Summary() {
           </Flex>
         )}
       </Box>
-      {!isPaymentIdle && (
+      {paymentStatus !== 'idle' && (
         <Button
           width="100%"
           height="45px"
           variant="default"
-          isDisabled={(isPaymentSuccess && !cohortFound) || !readyToRedirect}
+          isDisabled={(paymentStatus === 'success' && !cohortFound) || !readyToRedirect}
           isLoading={isSubmittingPayment || isRedirecting}
           onClick={startRedirection}
         >
-          {isPaymentSuccess ? t('start-free-course') : t('try-again')}
+          {paymentStatus === 'success' ? t('start-free-course') : t('try-again')}
         </Button>
       )}
 

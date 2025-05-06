@@ -11,7 +11,6 @@ function Stepper({ stepIndex, isFreeTier }) {
   const { stepsEnum } = useSignup();
   const { state } = signupAction();
   const { paymentStatus } = state;
-  const isPaymentSuccess = paymentStatus === 'success';
 
   const steps = [
     {
@@ -27,7 +26,7 @@ function Stepper({ stepIndex, isFreeTier }) {
       enum: stepsEnum.SUMMARY,
       label: t('summary'),
       show: isFreeTier,
-      isCompleted: stepIndex > stepsEnum.CONTACT || isPaymentSuccess,
+      isCompleted: stepIndex > stepsEnum.CONTACT || paymentStatus === 'success',
       isActive: stepIndex === stepsEnum.SUMMARY,
     },
     {
@@ -35,7 +34,7 @@ function Stepper({ stepIndex, isFreeTier }) {
       enum: stepsEnum.PAYMENT,
       label: t('payment'),
       show: !isFreeTier,
-      isCompleted: isPaymentSuccess,
+      isCompleted: paymentStatus === 'success',
       isActive: stepIndex === stepsEnum.PAYMENT,
     },
   ];

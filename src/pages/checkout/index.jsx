@@ -273,7 +273,7 @@ function Checkout() {
 
       setSuggestedPlans(suggestedPlanInfo[0]?.suggested_plan);
       setSelectedPlanCheckoutData(selectedPlan);
-      setOriginalPlan({ ...processedPlan, selectedPlan, accordionList });
+      setOriginalPlan({ ...processedPlan, accordionList });
     } catch (err) {
       createToast({
         position: 'top',
@@ -326,7 +326,6 @@ function Checkout() {
 
   const getPlanData = async () => {
     try {
-      console.log('HERE!!');
       setLoader('plan', true);
       const resp = await bc.payment({ country_code: location?.countryShort }).getPlan(planFormated);
 
@@ -354,11 +353,9 @@ function Checkout() {
       if ((!data.is_renewable && !isNotTrial) || data.is_renewable) {
         setPlanData(data);
         const checkingData = await getChecking({ plan: data });
-        console.log('checkingData', checkingData);
         const plans = checkingData?.plans || [];
         const existsPayablePlan = plans.some((item) => item.price > 0);
         const autoSelectedPlan = findAutoSelectedPlan(checkingData);
-        console.log('autoSelectedPlan', autoSelectedPlan);
 
         if (autoSelectedPlan) {
           setSelectedPlanCheckoutData(autoSelectedPlan);
@@ -373,7 +370,6 @@ function Checkout() {
         setLoader('plan', false);
       }
     } catch (error) {
-      console.log('error', error);
       setLoader('plan', false);
       createToast({
         position: 'top',
@@ -470,7 +466,7 @@ function Checkout() {
       return finalPrice;
     };
 
-    if (originalPlan?.selectedPlan?.isFreeTier) {
+    if (selectedPlanCheckoutData?.isFreeTier) {
       const financingOptions = suggestedPlans?.financing_options || [];
       const monthlyPayment = suggestedPlans?.price_per_month;
       const yearlyPayment = suggestedPlans?.price_per_year;
@@ -484,7 +480,7 @@ function Checkout() {
           const finalPrice = applyDiscounts(financingOptions[0].monthly_price, discountValues);
           financingText = t('free_trial_one_payment', {
             price: finalPrice.toFixed(2),
-            description: originalPlan.selectedPlan.description,
+            description: selectedPlanCheckoutData.description,
             currency: currencySymbol,
           });
         }
@@ -494,7 +490,7 @@ function Checkout() {
           const lastPrice = applyDiscounts(financingOptions[0].monthly_price, discountValues);
 
           financingText = t('free_trial_multiple_payments', {
-            description: originalPlan.selectedPlan.description,
+            description: selectedPlanCheckoutData.description,
             numPayments: financingOptions[financingOptions.length - 1].how_many_months,
             firstPrice: firstPrice.toFixed(2),
             oneTimePrice: lastPrice.toFixed(2),
@@ -503,7 +499,7 @@ function Checkout() {
         }
       }
 
-      if (originalPlan.selectedPlan?.type === 'FREE') {
+      if (selectedPlanCheckoutData?.type === 'FREE') {
         financingText = t('free_plan');
         return <Text size="16px" color="green.400">{financingText}</Text>;
       }
@@ -512,7 +508,7 @@ function Checkout() {
         if (monthlyPayment) {
           const finalMonthlyPrice = applyDiscounts(monthlyPayment, discountValues);
           financingText = t('free_trial_monthly_payment', {
-            description: originalPlan.selectedPlan.description,
+            description: selectedPlanCheckoutData.description,
             monthlyPrice: finalMonthlyPrice.toFixed(2),
             currency: currencySymbol,
           });
@@ -521,7 +517,7 @@ function Checkout() {
         if (yearlyPayment && !monthlyPayment) {
           const finalYearlyPrice = applyDiscounts(yearlyPayment, discountValues);
           financingText = t('free_trial_yearly_payment', {
-            description: originalPlan.selectedPlan.description,
+            description: selectedPlanCheckoutData.description,
             yearlyPrice: finalYearlyPrice.toFixed(2),
             currency: currencySymbol,
           });
@@ -529,7 +525,7 @@ function Checkout() {
       }
 
       if (financingOptions.length === 0 && !monthlyPayment && !yearlyPayment) {
-        financingText = originalPlan?.selectedPlan?.description;
+        financingText = selectedPlanCheckoutData?.description;
       }
 
       if (discountValues.length > 0) {
@@ -539,13 +535,13 @@ function Checkout() {
       return <Text size="16px" color="green.400">{financingText}</Text>;
     }
 
-    if (originalPlan?.selectedPlan?.price > 0 || selectedPlanCheckoutData?.price > 0) {
-      const originalPrice = originalPlan.selectedPlan?.price || selectedPlanCheckoutData?.price;
+    if (selectedPlanCheckoutData?.price > 0 || selectedPlanCheckoutData?.price > 0) {
+      const originalPrice = selectedPlanCheckoutData?.price || selectedPlanCheckoutData?.price;
       const discountedPrice = applyDiscounts(originalPrice, discountValues);
 
       return (
         <Text size="16px" color="green.400">
-          {`${currencySymbol}${discountedPrice.toFixed(2)} / ${originalPlan.selectedPlan?.title || selectedPlanCheckoutData?.title}`}
+          {`${currencySymbol}${discountedPrice.toFixed(2)} / ${selectedPlanCheckoutData?.title || selectedPlanCheckoutData?.title}`}
         </Text>
       );
     }
@@ -661,9 +657,7 @@ function Checkout() {
           {/* Stepper */}
           <Stepper
             stepIndex={stepIndex}
-            checkoutData={checkoutData}
             isFreeTier={Boolean(checkoutData?.isTrial || checkoutData?.isTotallyFree || selectedPlanCheckoutData?.isFreeTier)}
-            selectedPlanCheckoutData={selectedPlanCheckoutData}
           />
           {isFirstStep && (
             <ContactInformation
@@ -711,12 +705,12 @@ function Checkout() {
                             return word.slice(0, index) + word.charAt(index).toUpperCase() + word.slice(index + 1);
                           }).join(' ')}
                         </Heading>
-                        {originalPlan?.selectedPlan?.description && isThirdStep && (
-                          <Text fontSize="16px" py="10px">{originalPlan.selectedPlan.description}</Text>
+                        {selectedPlanCheckoutData?.description && isThirdStep && (
+                          <Text fontSize="16px" py="10px">{selectedPlanCheckoutData.description}</Text>
                         )}
                         <Flex justifyContent="space-between" width="full" alignItems="center">
                           {showPaymentDetails && renderPlanDetails()}
-                          {!planId && originalPlan?.selectedPlan?.type !== 'FREE' && (originalPlan?.financingOptions.length > 0 || originalPlan?.hasSubscriptionMethod) && showPaymentDetails && (
+                          {!planId && selectedPlanCheckoutData?.type !== 'FREE' && (originalPlan?.financingOptions.length > 0 || originalPlan?.hasSubscriptionMethod) && showPaymentDetails && (
                             <Flex flexDirection="column" gap="4px">
                               <Heading as="h3" size="sm" width="100%" position="relative">
                                 <Menu>
@@ -802,7 +796,7 @@ function Checkout() {
                         />
                       </Flex>
                     )}
-                    {isThirdStep && (
+                    {isSecondStep && (
                       <>
                         <Flex justifyContent="space-between" width="100%" padding="3rem 0px 0">
                           <Text size="18px" color="currentColor" lineHeight="normal">
