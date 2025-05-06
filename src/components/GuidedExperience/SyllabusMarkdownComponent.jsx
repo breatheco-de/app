@@ -6,7 +6,7 @@ import { MDSkeleton } from '../Skeleton';
 function SyllabusMarkdownComponent({
   ipynbHtmlUrl, readme, currentBlankProps, currentData, lesson,
   quizSlug, lessonSlug, currentTask, isGuidedExperience,
-  grantSyllabusAccess,
+  grantSyllabusAccess, showTeachAlert, cohortModule,
 }) {
   const { t } = useTranslation('syllabus');
   const blankText = t('blank-page', { url: currentBlankProps?.url });
@@ -24,6 +24,8 @@ function SyllabusMarkdownComponent({
         }}
         currentTask={currentTask}
         currentData={currentData}
+        showTeachAlert={showTeachAlert}
+        cohortModule={cohortModule}
       />
     );
   }
@@ -39,6 +41,8 @@ function SyllabusMarkdownComponent({
           assetType: currentBlankProps?.asset_type,
         }}
         currentData={currentBlankProps}
+        showTeachAlert={showTeachAlert}
+        cohortModule={cohortModule}
       />
     );
   }
