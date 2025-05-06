@@ -14,6 +14,7 @@ import LoaderScreen from '../LoaderScreen';
 import ModalInfo from '../ModalInfo';
 import useStyle from '../../hooks/useStyle';
 import useAuth from '../../hooks/useAuth';
+import useSession from '../../hooks/useSession';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useCustomToast from '../../hooks/useCustomToast';
 import CardForm from './CardForm';
@@ -24,6 +25,7 @@ import { formatPrice, getStorageItem, getBrowserInfo } from '../../utils';
 function ServiceSummary({ service }) {
   const { createToast } = useCustomToast({ toastId: 'service-summary' });
   const { isAuthenticated } = useAuth();
+  const { location } = useSession();
   const { t } = useTranslation('signup');
   const {
     state, setSelectedService, setIsSubmittingCard, setIsSubmittingPayment, getPaymentMethods, setPaymentStatus,
@@ -66,6 +68,7 @@ function ServiceSummary({ service }) {
     how_many: selectedService?.qty,
     mentorship_service_set: service.serviceInfo.type === 'mentorship' ? service.serviceInfo.id : undefined,
     event_type_set: service.serviceInfo.type === 'event' ? service.serviceInfo.id : undefined,
+    country_code: location?.countryShort,
   };
 
   const handlePaymentErrors = (data, actions = {}, callback = () => {}) => {
