@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Box, Button, Flex, Image, SkeletonText } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, SkeletonText, Badge } from '@chakra-ui/react';
 import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -43,6 +43,7 @@ import completions from './completion-jobs.json';
 import Rating from '../../components/Rating';
 import SimpleModal from '../../components/SimpleModal';
 import CustomCarousel from '../../components/CustomCarousel';
+import AssignmentSlide from '../../components/AssignmentSlide';
 import useCustomToast from '../../hooks/useCustomToast';
 import { usePlanPrice } from '../../utils/getPriceWithDiscount';
 import useSession from '../../hooks/useSession';
@@ -121,7 +122,7 @@ function CoursePage({ data, syllabus }) {
   const [isCtaVisible, setIsCtaVisible] = useState(false);
   const [allDiscounts, setAllDiscounts] = useState([]);
   const { isAuthenticated, user, logout, cohorts } = useAuth();
-  const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor, backgroundColor7, backgroundColor8 } = useStyle();
+  const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor, backgroundColor7, backgroundColor8, lightColor } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
   const { createToast } = useCustomToast({ toastId: 'choose-program-pricing-detail' });
@@ -544,6 +545,17 @@ function CoursePage({ data, syllabus }) {
       return existsAvatar || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`;
     });
 
+  useEffect(() => {
+    if (assignmentList && assignmentList.length > 0) {
+      assignmentList.forEach((assignment) => {
+        if (assignment?.preview) {
+          const img = new window.Image();
+          img.src = assignment.preview;
+        }
+      });
+    }
+  }, [assignmentList]);
+
   return (
     <>
       {cleanedStructuredData?.name && (
@@ -837,7 +849,12 @@ function CoursePage({ data, syllabus }) {
               {getAlternativeTranslation('build-connector.description')}
             </Text>
             {assignmentList?.length > 0 && (
-              <CustomCarousel assignmentList={assignmentList} />
+              <CustomCarousel
+                items={assignmentList}
+                renderItem={(item, index) => (
+                  <AssignmentSlide key={item?.id || `assignment-slide-${index}`} assignment={item} />
+                )}
+              />
             )}
           </Flex>
         </GridContainer>

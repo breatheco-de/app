@@ -468,6 +468,22 @@ const getBrowserInfo = () => {
   return browser;
 };
 
+const parseProp = (propString, defaultValue) => {
+  if (!propString) {
+    return defaultValue;
+  }
+  try {
+    const parsedValue = JSON.parse(propString);
+    if (typeof parsedValue === 'object' && parsedValue !== null && Object.keys(parsedValue).length > 0) {
+      return parsedValue;
+    }
+    console.warn(`Parsed prop "${propString}" is not a valid responsive object. Treating as single value.`);
+    return propString;
+  } catch (e) {
+    return propString;
+  }
+};
+
 const isValidEmail = (email) => emailRegex.test(email);
 
 export {
@@ -481,4 +497,5 @@ export {
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, intervalToHours, capitalizeFirstLetter,
   adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle, decodeBase64,
   removeSessionStorageItem, languageFix, getBrowserInfo, isValidEmail, addQueryToURL,
+  parseProp,
 };

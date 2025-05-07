@@ -1,5 +1,6 @@
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Flex, Text, Box, Avatar, SimpleGrid } from '@chakra-ui/react';
+import { Flex, Text, Box, Avatar, SimpleGrid, Button, useBreakpointValue } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useStyle from '../hooks/useStyle';
@@ -20,19 +21,14 @@ function CommentCard({ review, ...rest }) {
       gap="10px"
       {...rest}
     >
-      {/* Avatar y Nombre */}
       <Flex alignItems="center" gap="10px">
         <Avatar src={review.avatar} name={review.name} size="sm" />
         <Box>
-          <Text fontWeight="bold" fontColor={fontColor}>{review.name}</Text>
+          <Text fontWeight="bold" color={fontColor}>{review.name}</Text>
           <Flex gap="10px" alignItems="center">
             <Flex gap="4px">
               {Array.from({ length: 5 }).map((_, index) => (
-                index + 1 <= roundedRating ? (
-                  <Icon icon="star" color="#FFB718" width="12px" />
-                ) : (
-                  <Icon icon="star" color="#FFFFFF" secondColor="#FFB718" width="12px" />
-                )
+                <Icon icon="star" color={index + 1 <= roundedRating ? '#FFB718' : '#FFFFFF'} secondColor="#FFB718" width="12px" />
               ))}
             </Flex>
             <Text fontSize="12px" color="gray.500">{review.date}</Text>
@@ -46,21 +42,33 @@ function CommentCard({ review, ...rest }) {
     </Flex>
   );
 }
+
 function Rating({ variant, totalRatings, totalReviews, rating, reviews, link, cardStyles, ...rest }) {
   const { t } = useTranslation('common');
   const router = useRouter();
-  const roundedRating = Math.round(rating) || 0;
+  const roundedRating = Math.round(parseFloat(rating)) || 0;
+
+  const initialVisibleCount = useBreakpointValue({ base: 3, md: 6 });
+  const [visibleReviewCount, setVisibleReviewCount] = useState(initialVisibleCount);
+
+  useEffect(() => {
+    setVisibleReviewCount(initialVisibleCount);
+  }, [initialVisibleCount]);
+
+  const handleLoadMore = () => {
+    setVisibleReviewCount(reviews.length);
+  };
 
   if (variant === 'inline') {
     return (
       <Flex alignItems="center" gap="8px" {...rest}>
-        {(rating > 0 && roundedRating > 0) && (
+        {(parseFloat(rating) > 0 && roundedRating > 0) && (
           <>
             <Text fontSize="14px">{rating}</Text>
             <Flex gap="4px">
               {Array.from({ length: 5 }).map((_, index) => {
-                const isFullStar = index + 1 <= Math.floor(rating);
-                const isHalfStar = index === Math.floor(rating) && rating % 1 >= 0.5;
+                const isFullStar = index + 1 <= Math.floor(parseFloat(rating));
+                const isHalfStar = index === Math.floor(parseFloat(rating)) && parseFloat(rating) % 1 >= 0.5;
 
                 return (
                   <Icon
@@ -78,30 +86,42 @@ function Rating({ variant, totalRatings, totalReviews, rating, reviews, link, ca
 
         {totalRatings > 0 && (
           <Text onClick={() => router.push(link)} color="blue.default" textDecor="underline" fontWeight="bold" fontSize="14px" cursor="pointer">
-            {`(${totalRatings} ${t('common:reviews')})`}
+            {`(${totalRatings} ${t('reviews')})`}
           </Text>
         )}
       </Flex>
     );
   }
 
+  const reviewsToShow = reviews.slice(0, visibleReviewCount);
+  const showLoadMoreButton = visibleReviewCount < reviews.length;
+
   return (
     <>
       {reviews?.length > 0 && (
         <Flex direction="column" {...rest}>
-          <Flex alignItems="center" gap="14px">
+          <Flex alignItems="center" gap="14px" mb={4}>
             <Icon icon="star" color="#FFB718" width="18px" />
-            <Text fontSize="24px">{`${rating > 0 && rating} ${t('course-rating')} ${totalReviews > 0 && `- ${totalReviews} ${t('comments')}`}`}</Text>
+            <Text fontSize="24px">
+              {`${parseFloat(rating) > 0 ? rating : ''} ${t('course-rating')} ${totalReviews > 0 ? `- ${totalReviews} ${t('comments')}` : ''}`}
+            </Text>
           </Flex>
           <SimpleGrid
             columns={{ base: 1, md: 2, lg: 3 }}
             spacing="16px"
             marginTop="22px"
           >
-            {reviews.map((review) => (
-              <CommentCard review={review} {...cardStyles} />
+            {reviewsToShow.map((reviewItem) => (
+              <CommentCard review={reviewItem} {...cardStyles} />
             ))}
           </SimpleGrid>
+          {showLoadMoreButton && (
+            <Flex justifyContent="center" mt={8}>
+              <Button onClick={handleLoadMore} variant="outline" borderColor="blue.default" color="blue.default" fontWeight="700">
+                {t('load-more')}
+              </Button>
+            </Flex>
+          )}
         </Flex>
       )}
     </>
@@ -110,16 +130,28 @@ function Rating({ variant, totalRatings, totalReviews, rating, reviews, link, ca
 
 Rating.propTypes = {
   variant: PropTypes.string,
-  totalRatings: PropTypes.string,
-  totalReviews: PropTypes.string,
-  rating: PropTypes.string,
-  reviews: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])),
+  totalRatings: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  totalReviews: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  rating: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  reviews: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string,
+    avatar: PropTypes.string,
+    rating: PropTypes.number,
+    date: PropTypes.string,
+    review: PropTypes.string,
+  })),
   link: PropTypes.string,
   cardStyles: PropTypes.objectOf(PropTypes.string),
 };
 
 CommentCard.propTypes = {
-  review: PropTypes.string.isRequired,
+  review: PropTypes.shape({
+    name: PropTypes.string,
+    avatar: PropTypes.string,
+    rating: PropTypes.number,
+    date: PropTypes.string,
+    review: PropTypes.string,
+  }).isRequired,
 };
 
 Rating.defaultProps = {
@@ -131,4 +163,5 @@ Rating.defaultProps = {
   reviews: [],
   cardStyles: {},
 };
+
 export default Rating;
