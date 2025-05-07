@@ -31,7 +31,6 @@ import { isWindow, getQueryString, getStorageItem, removeStorageItem, slugToTitl
 import Summary from '../../components/Checkout/Summary';
 import PaymentInfo from '../../components/Checkout/PaymentInfo';
 import signupAction from '../../store/actions/signupAction';
-import axiosInstance from '../../axios';
 import LoaderScreen from '../../components/LoaderScreen';
 import ModalInfo from '../../components/ModalInfo';
 import useStyle from '../../hooks/useStyle';
@@ -107,7 +106,6 @@ function Checkout() {
   const { backgroundColor3, hexColor, backgroundColor } = useStyle();
   const currencySymbol = currenciesSymbols[originalPlan?.currency?.code] || '$';
 
-  axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { isAuthenticated } = useAuth();
   const { userSession, location } = useSession();
   const { createToast } = useCustomToast({ toastId: 'coupon-plan-email-detail' });
