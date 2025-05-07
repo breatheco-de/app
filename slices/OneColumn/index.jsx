@@ -16,6 +16,8 @@ function OneColumn({ slice }) {
       justifyItems={slice?.primary?.justify_items}
       padding={slice?.primary?.padding}
       fontFamily={slice?.primary?.font_family}
+      marginTop={slice?.primary?.margin_top}
+      marginBottom={slice?.primary?.margin_bottom}
     />
   );
 }

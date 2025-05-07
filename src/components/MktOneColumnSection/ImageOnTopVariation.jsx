@@ -1,17 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, VStack, Text } from '@chakra-ui/react';
+import { Box, VStack, Text, Image } from '@chakra-ui/react';
 import PrismicTextComponent from '../PrismicTextComponent';
 import Link from '../NextChakraLink';
 import Heading from '../Heading';
 import { parseProp } from '../../utils';
 
-function BannerVariation({
+function ImageOnTopVariation({
+  image,
   title,
   subtitle,
   description,
   buttonLabel,
   buttonUrl,
+  fontFamily,
   fontColor,
   titleFontSize: titleFontSizeProp,
   descriptionFontSize,
@@ -19,7 +21,6 @@ function BannerVariation({
   buttonBackgroundColor,
   buttonFontColor,
   buttonFontSize,
-  fontFamily,
 }) {
   const resolveLink = (link) => {
     if (!link) return '#';
@@ -36,11 +37,11 @@ function BannerVariation({
   const commonTextProps = {
     color: fontColor || 'inherit',
     fontSize: descriptionFontSize || 'md',
-    textAlign: descriptionTextAlign || 'center',
+    textAlign: descriptionTextAlign || 'left',
     fontFamily: fontFamily || 'Lato',
   };
 
-  const finalTitleSize = parseProp(titleFontSizeProp, '3xl');
+  const finalTitleSize = parseProp(titleFontSizeProp, '2xl');
 
   const renderSectionTitle = (content, size, as = 'h2') => {
     if (!content) return null;
@@ -49,12 +50,7 @@ function BannerVariation({
       return (
         <PrismicTextComponent
           field={content}
-          as={as}
-          fontSize={size}
-          fontWeight="bold"
-          color={fontColor || null}
-          fontFamily={fontFamily || 'Lato'}
-          marginBottom="4"
+          fontWeight="500"
         />
       );
     }
@@ -65,7 +61,8 @@ function BannerVariation({
         fontWeight="bold"
         color={fontColor || null}
         fontFamily={fontFamily || 'Lato'}
-        marginBottom="4"
+        marginBottom="2"
+        textAlign={descriptionTextAlign || 'left'}
       >
         {content}
       </Heading>
@@ -74,14 +71,27 @@ function BannerVariation({
 
   return (
     <VStack spacing={4} align="stretch" width="100%">
+      {image && image.url && (
+        <Box mb={4} borderRadius="md" overflow="hidden">
+          <Image
+            src={image.url}
+            alt={image.alt || title || 'Section image'}
+            objectFit="cover"
+            width="100%"
+            height={{ base: '271px', md: '365px' }}
+          />
+        </Box>
+      )}
+
       {renderSectionTitle(title, finalTitleSize, 'h2')}
-      {renderSectionTitle(subtitle, 'md', 'h4')}
+      {renderSectionTitle(subtitle, parseProp(null, 'xl'), 'h3')}
+
       {description && (
         <Box>
           {Array.isArray(description) ? (
             <PrismicTextComponent
               field={description}
-              {...commonTextProps}
+              fontWeight="400"
             />
           ) : (
             <Text {...commonTextProps}>
@@ -93,7 +103,7 @@ function BannerVariation({
 
       {buttonLabel && buttonUrl && (
         <Box
-          textAlign={descriptionTextAlign || 'center'}
+          textAlign={descriptionTextAlign || 'left'}
           mt="4"
         >
           <Link
@@ -101,7 +111,6 @@ function BannerVariation({
             variant="buttonDefault"
             isExternal={typeof buttonUrl === 'object' && buttonUrl?.link_type === 'Web' && buttonUrl?.target === '_blank'}
             display="inline-block"
-            margin="2rem 0 0 0"
             backgroundColor={buttonBackgroundColor || undefined}
             color={buttonFontColor || undefined}
             fontSize={buttonFontSize || undefined}
@@ -114,12 +123,17 @@ function BannerVariation({
   );
 }
 
-BannerVariation.propTypes = {
+ImageOnTopVariation.propTypes = {
+  image: PropTypes.shape({
+    url: PropTypes.string,
+    alt: PropTypes.string,
+  }),
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   subtitle: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   description: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   buttonLabel: PropTypes.string,
   buttonUrl: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  fontFamily: PropTypes.string,
   fontColor: PropTypes.string,
   titleFontSize: PropTypes.string,
   descriptionFontSize: PropTypes.string,
@@ -127,23 +141,23 @@ BannerVariation.propTypes = {
   buttonBackgroundColor: PropTypes.string,
   buttonFontColor: PropTypes.string,
   buttonFontSize: PropTypes.string,
-  fontFamily: PropTypes.string,
 };
 
-BannerVariation.defaultProps = {
+ImageOnTopVariation.defaultProps = {
+  image: null,
   title: null,
   subtitle: null,
   description: null,
   buttonLabel: null,
   buttonUrl: null,
+  fontFamily: 'Lato',
   fontColor: null,
-  titleFontSize: '3xl',
+  titleFontSize: '2xl',
   descriptionFontSize: 'md',
-  descriptionTextAlign: 'center',
+  descriptionTextAlign: 'left',
   buttonBackgroundColor: null,
   buttonFontColor: null,
   buttonFontSize: null,
-  fontFamily: 'Lato',
 };
 
-export default BannerVariation;
+export default ImageOnTopVariation;

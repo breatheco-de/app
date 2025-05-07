@@ -59,6 +59,8 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "ratings": { "type": "SharedSlice" },
+            "award_section": { "type": "SharedSlice" },
             "two_column_with_text": { "type": "SharedSlice" },
             "split_showcase_section": { "type": "SharedSlice" },
             "faqs": { "type": "SharedSlice" },

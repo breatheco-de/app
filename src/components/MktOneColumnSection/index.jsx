@@ -1,19 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box } from '@chakra-ui/react';
-import Heading from '../Heading';
 import GridContainer from '../GridContainer';
-import PrismicTextComponent from '../PrismicTextComponent';
-import { parseProp } from '../../utils';
 
 import BannerVariation from './BannerVariation';
 import WithKPIsVariation from './WithKPIsVariation';
+import ImageOnTopVariation from './ImageOnTopVariation';
 
 function MktOneColumnSection({
   slice,
   variation: variationProp = 'default',
+  image: imageProp,
   title: titleProp,
-  subTitle: subtitleProp,
+  subtitle: subtitleProp,
   description: descriptionProp,
   kpiList: kpiListProp = [],
   buttonUrl: buttonUrlProp,
@@ -44,11 +43,13 @@ function MktOneColumnSection({
   let sectionButtonBackgroundColor = null;
   let sectionButtonFontColor = null;
   let sectionButtonFontSize = null;
+  let sectionImage = null;
 
   if (slice) {
     variation = slice.variation || 'default';
+    sectionImage = slice.primary?.image;
     sectionTitle = slice.primary?.title;
-    sectionSubtitle = slice.primary?.subTitle;
+    sectionSubtitle = slice.primary?.subtitle;
     sectionDescription = slice.primary?.description;
     kpiListData = slice.items || [];
     sectionButtonUrl = slice.primary?.button_url;
@@ -63,6 +64,7 @@ function MktOneColumnSection({
     sectionButtonFontSize = slice.primary?.button_font_size;
   } else {
     variation = variationProp;
+    sectionImage = imageProp;
     sectionTitle = titleProp;
     sectionSubtitle = subtitleProp;
     sectionDescription = descriptionProp;
@@ -75,60 +77,36 @@ function MktOneColumnSection({
   }
 
   const commonVariationProps = {
+    image: sectionImage,
+    title: sectionTitle,
+    subtitle: sectionSubtitle,
     description: sectionDescription,
     kpiList: kpiListData,
     buttonUrl: sectionButtonUrl,
     buttonLabel: sectionButtonLabel,
     fontFamily,
     fontColor: sectionFontColor,
+    titleFontSize: sectionTitleFontSize,
     descriptionFontSize: sectionDescriptionFontSize,
-    descriptionTextAlign: slice?.primary?.description_text_align || 'center',
+    descriptionTextAlign: slice?.primary?.description_text_align || (justifyItems === 'center' ? 'center' : 'left'),
     buttonBackgroundColor: sectionButtonBackgroundColor,
     buttonFontColor: sectionButtonFontColor,
     buttonFontSize: sectionButtonFontSize,
   };
 
-  const finalTitleSize = parseProp(sectionTitleFontSize, '3xl');
-
-  const renderSectionTitle = (content, size, as = 'h2') => {
-    if (!content) return null;
-
-    if (Array.isArray(content)) {
-      return (
-        <PrismicTextComponent
-          field={content}
-          as={as}
-          fontSize={size}
-          fontWeight="bold"
-          color={sectionFontColor || null}
-          fontFamily={fontFamily}
-          marginBottom="4"
-        />
-      );
-    }
-    return (
-      <Heading
-        as={as}
-        fontSize={size}
-        fontWeight="bold"
-        color={sectionFontColor || null}
-        fontFamily={fontFamily}
-        marginBottom="4"
-      >
-        {content}
-      </Heading>
-    );
-  };
-
   const renderVariation = () => {
     switch (variation) {
-      case 'oneColumnWithKpIs':
+      case 'oneColumnWithKPIs':
         return <WithKPIsVariation {...commonVariationProps} />;
+      case 'imageOnTop':
+        return <ImageOnTopVariation {...commonVariationProps} />;
       case 'default':
       default:
         return <BannerVariation {...commonVariationProps} />;
     }
   };
+
+  console.log('slice', marginTop);
 
   return (
     <Box
@@ -152,9 +130,6 @@ function MktOneColumnSection({
           gridGap="14px"
           color={sectionFontColor || null}
         >
-          {renderSectionTitle(sectionTitle, finalTitleSize, 'h2')}
-          {renderSectionTitle(sectionSubtitle, 'md', 'h4')}
-
           {renderVariation()}
         </Box>
       </GridContainer>
@@ -166,8 +141,12 @@ MktOneColumnSection.propTypes = {
   slice: PropTypes.shape({
     variation: PropTypes.string,
     primary: PropTypes.shape({
+      image: PropTypes.shape({
+        url: PropTypes.string,
+        alt: PropTypes.string,
+      }),
       title: PropTypes.string,
-      subTitle: PropTypes.string,
+      subtitle: PropTypes.string,
       description: PropTypes.string,
       button_url: PropTypes.string,
       button_label: PropTypes.string,
@@ -187,9 +166,13 @@ MktOneColumnSection.propTypes = {
       color: PropTypes.string,
     })),
   }),
-  variation: PropTypes.oneOf(['default', 'oneColumnWithKPIs']),
+  variation: PropTypes.oneOf(['default', 'oneColumnWithKPIs', 'imageOnTop']),
+  image: PropTypes.shape({
+    url: PropTypes.string,
+    alt: PropTypes.string,
+  }),
   title: PropTypes.string,
-  subTitle: PropTypes.string,
+  subtitle: PropTypes.string,
   description: PropTypes.string,
   kpiList: PropTypes.arrayOf(PropTypes.shape({
     title: PropTypes.string,
@@ -213,8 +196,9 @@ MktOneColumnSection.propTypes = {
 MktOneColumnSection.defaultProps = {
   slice: null,
   variation: 'default',
+  image: null,
   title: null,
-  subTitle: null,
+  subtitle: null,
   description: null,
   kpiList: [],
   buttonUrl: null,
@@ -228,7 +212,7 @@ MktOneColumnSection.defaultProps = {
   maxWidth: '1280px',
   gridColumn: '2 / span 8',
   padding: '50px',
-  justifyItems: 'center',
+  justifyItems: 'start',
 };
 
 export default MktOneColumnSection;

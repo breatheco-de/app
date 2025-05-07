@@ -1,10 +1,8 @@
 /* eslint-disable react/no-array-index-key */
-// import { useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box, Img, Text,
 } from '@chakra-ui/react';
-// import { motion, useAnimation } from 'framer-motion';
 import { useRef } from 'react';
 import Heading from './Heading';
 import GridContainer from './GridContainer';
@@ -14,7 +12,6 @@ import { toCapitalize } from '../utils';
 function MktPartners({ id, title, titleSize, images, description, imagesContent, ...rest }) {
   const scrollContainerRef = useRef(null);
   const { grabToScroll } = useGrabToScroll({ ref: scrollContainerRef, horizontal: true });
-  // const bgColor = useColorModeValue('', 'white');
 
   const cleanImages = images.length > 0 && typeof images[0] === 'string' ? images : images.map((obj) => obj.text);
   const limitedImages = cleanImages.splice(0, 5);

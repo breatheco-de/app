@@ -112,6 +112,9 @@ function LabelHandler({ node, children }) {
   if (node.data.label === 'highlight-blue-default') {
     return <span style={{ color: '#0084FF' }}>{children}</span>;
   }
+  if (node.data.label === 'gray_text') {
+    return <span style={{ color: '#3F3F3F' }}>{children}</span>;
+  }
   return children;
 }
 
