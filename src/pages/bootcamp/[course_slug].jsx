@@ -545,6 +545,17 @@ function CoursePage({ data, syllabus }) {
       return existsAvatar || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`;
     });
 
+  useEffect(() => {
+    if (assignmentList && assignmentList.length > 0) {
+      assignmentList.forEach((assignment) => {
+        if (assignment?.preview) {
+          const img = new window.Image();
+          img.src = assignment.preview;
+        }
+      });
+    }
+  }, [assignmentList]);
+
   return (
     <>
       {cleanedStructuredData?.name && (

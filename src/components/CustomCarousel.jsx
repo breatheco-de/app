@@ -47,17 +47,6 @@ function CustomCarousel({ items, renderItem }) {
     };
   }, [totalSlides]);
 
-  useEffect(() => {
-    if (items && items.length) {
-      items.forEach((item) => {
-        if (item?.preview) {
-          const img = new window.Image();
-          img.src = item.preview;
-        }
-      });
-    }
-  }, [items]);
-
   if (!items || items.length === 0) {
     return null;
   }

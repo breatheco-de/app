@@ -57,7 +57,7 @@ function MktRating({ slice }) {
     }
 
     return (
-      <Box maxW="1280px" mx="auto" py={{ base: 8, md: 12 }} px={{ base: 4, md: 0 }}>
+      <Box maxW="1280px" mx="auto">
         {sectionTitleField && sectionTitleField.length > 0 && (
           <PrismicRichText field={sectionTitleField} components={prismicTitleComponents} />
         )}

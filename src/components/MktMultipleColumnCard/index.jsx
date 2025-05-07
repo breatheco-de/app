@@ -69,7 +69,11 @@ function MktMultipleColumnCard({
     sectionTitleFontSize = sectionTitleFontSizeProp;
   }
 
+  console.log(parseProp(marginBottom));
+
   const finalTitleSize = parseProp(sectionTitleFontSize, '34px !important');
+  const finalMarginTop = parseProp(marginTop);
+  const finalMarginBottom = parseProp(marginBottom);
 
   const limitedColumns = columnsData.slice(0, 6);
   const { navbarBackground } = useStyle();
@@ -95,13 +99,13 @@ function MktMultipleColumnCard({
     }
   };
 
-  console.log(slice);
-
   return (
     <Box
       maxWidth="1280px"
       textAlign="center"
-      margin={`${marginTop || '80px'} auto ${marginBottom || '40px'} auto`}
+      margin="auto"
+      marginTop={finalMarginTop}
+      marginBottom={finalMarginBottom}
       {...rest}
     >
       {sectionTitle && (

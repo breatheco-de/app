@@ -15,6 +15,7 @@ import Button from './Button';
 import PrismicTextComponent from './PrismicTextComponent';
 import useStyle from '../hooks/useStyle';
 import ReactPlayerV2 from './ReactPlayerV2';
+import { parseProp } from '../utils';
 
 const renderMediaContent = (slice) => {
   const videoSourceUrl = slice?.primary?.video_source?.url;
@@ -115,11 +116,20 @@ function IntroductionSection({
     return 0.3;
   };
 
+  const processedRest = Object.entries(rest).reduce((acc, [key, value]) => {
+    if (typeof value === 'string') {
+      acc[key] = parseProp(value, value);
+    } else {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});
+
   return (
     <Flex
       flexDirection={{ base: 'column', md: 'row' }}
       id={slice?.primary?.id_key || ''}
-      {...rest}
+      {...processedRest}
     >
       <Box display={{ base: 'block', md: 'grid' }} flex={getLeftColumnSize()}>
         <Heading fontFamily={fontFamily} as="span">

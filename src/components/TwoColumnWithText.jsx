@@ -15,17 +15,14 @@ function TwoColumnWithText({ slice }) {
     right_column_description: rightColumnDescription,
   } = slice.primary;
 
-  // Avatars are in slice.items
   const avatars = slice.items || [];
-
-  console.log(slice);
 
   return (
     <Box
       as="section"
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}
-      margin="40px auto"
+      margin={{ base: '24px auto 56px', md: '40px auto 90px' }}
       maxWidth="1280px"
     >
       <Box mx="auto">
@@ -61,7 +58,6 @@ function TwoColumnWithText({ slice }) {
             )}
           </Box>
 
-          {/* Right Column */}
           <Box flex={1}>
             {avatars && avatars.length > 0 && (
               <Flex mb={4} justifyContent="flex-start">

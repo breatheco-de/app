@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -40,6 +40,13 @@ const prismicComponents = {
 };
 
 function RenderAwardSlide({ item }) {
+  useEffect(() => {
+    if (item?.image?.url) {
+      const img = new window.Image();
+      img.src = item.image.url;
+    }
+  }, []); // Pre-load on mount
+
   if (!item?.image?.url) return null;
   return (
     <Flex justifyContent="center" alignItems="center" height="100%" width="100%">
@@ -76,7 +83,7 @@ function MktAwardsSection({ slice }) {
   }
 
   return (
-    <Box maxWidth="1280px" mx="auto" py={{ base: 8, md: 16 }}>
+    <Box maxWidth="1280px" mx="auto" margin={{ base: '0px auto 56px', md: '0px auto 90px' }}>
       <Box textAlign="center" mb={{ base: 6, md: 10 }}>
         {(richTitle && richTitle.length > 0 && richTitle.some((block) => block.text && block.text.trim() !== '')) && (
           <PrismicTextComponent

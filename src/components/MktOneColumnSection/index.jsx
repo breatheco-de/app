@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box } from '@chakra-ui/react';
+import {
+  Box,
+} from '@chakra-ui/react';
 import GridContainer from '../GridContainer';
+import { parseProp } from '../../utils';
 
 import BannerVariation from './BannerVariation';
 import WithKPIsVariation from './WithKPIsVariation';
@@ -9,23 +12,23 @@ import ImageOnTopVariation from './ImageOnTopVariation';
 
 function MktOneColumnSection({
   slice,
-  variation: variationProp = 'default',
+  variation: variationProp,
   image: imageProp,
   title: titleProp,
   subtitle: subtitleProp,
   description: descriptionProp,
-  kpiList: kpiListProp = [],
+  kpiList: kpiListProp,
   buttonUrl: buttonUrlProp,
   buttonLabel: buttonLabelProp,
   buttonBackgroundColor: buttonBackgroundColorProp,
   buttonFontColor: buttonFontColorProp,
   buttonFontSize: buttonFontSizeProp,
-  fontFamily = 'Lato',
+  fontFamily,
   marginBottom,
   marginTop,
-  maxWidth = '1280px',
-  padding = '24px',
-  justifyItems = 'center',
+  maxWidth,
+  padding,
+  justifyItems,
   ...rest
 }) {
   let variation = 'default';
@@ -44,6 +47,9 @@ function MktOneColumnSection({
   let sectionButtonFontColor = null;
   let sectionButtonFontSize = null;
   let sectionImage = null;
+
+  const mtProcessed = typeof marginTop === 'string' ? parseProp(marginTop, marginTop) : marginTop;
+  const mbProcessed = typeof marginBottom === 'string' ? parseProp(marginBottom, marginBottom) : marginBottom;
 
   if (slice) {
     variation = slice.variation || 'default';
@@ -109,7 +115,9 @@ function MktOneColumnSection({
   return (
     <Box
       maxWidth={maxWidth}
-      margin={`${marginTop || '80px'} auto ${marginBottom || '40px'} auto`}
+      mt={mtProcessed}
+      mb={mbProcessed}
+      mx="auto"
       borderRadius={borderRadius}
       {...rest}
     >

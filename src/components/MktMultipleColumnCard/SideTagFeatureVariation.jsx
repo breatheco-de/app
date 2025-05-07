@@ -49,6 +49,7 @@ function SideTagFeatureVariation({ columns, fontFamily, navbarBackground }) {
               zIndex={2}
               display="flex"
               flexDirection="column"
+              justifyContent="space-between"
               gap={2}
               flex={1}
               width="100%"
@@ -57,20 +58,22 @@ function SideTagFeatureVariation({ columns, fontFamily, navbarBackground }) {
                 <Image
                   src={column.image.url}
                   alt={column.image.alt || ''}
-                  boxSize={{ base: '46px', md: '76px' }}
+                  width={{ base: '46px', md: '55px', lg: '76px' }}
                   mb={2}
                 />
               )}
-              {column.column_title && (
-                <Heading as="h3" size="sm" fontFamily={fontFamily} textAlign="left">
-                  {column.column_title}
-                </Heading>
-              )}
-              {column.column_description && (
-                <Text fontSize="sm" fontFamily={fontFamily} textAlign="left">
-                  {column.column_description}
-                </Text>
-              )}
+              <Box display="flex" flexDirection="column" gap="8px">
+                {column.column_title && (
+                  <Heading as="h3" size="sm" fontFamily={fontFamily} textAlign="left">
+                    {column.column_title}
+                  </Heading>
+                )}
+                {column.column_description && (
+                  <Text fontSize="sm" fontFamily={fontFamily} textAlign="left">
+                    {column.column_description}
+                  </Text>
+                )}
+              </Box>
             </Box>
           </GridItem>
         );

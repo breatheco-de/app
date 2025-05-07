@@ -169,11 +169,12 @@ function MktTwoColumnSideImage({
   const finalSubTitleSize = parseProp(customSubTitleSize, prismicStyles.subtitleSize);
   const finalDescriptionSize = parseProp(descriptionFontSize, prismicStyles.descriptionSize);
   const finalButtonLabelSize = parseProp(buttonLabelSize, null);
+  const finalMargin = parseProp(margin, '0 auto');
 
   return (
     <Box
       id={id}
-      margin={margin || '0 auto'}
+      margin={finalMargin || '0 auto'}
       maxWidth={maxWidth || '1280px'}
       borderRadius={borderRadius}
       {...rest}

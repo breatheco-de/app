@@ -22,7 +22,11 @@ function SmallImageAndLinkVariation({ columns, fontFamily, navbarBackground }) {
 
   return (
     <Grid
-      templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }}
+      templateColumns={{
+        base: 'repeat(1, 1fr)',
+        md: 'repeat(2, 1fr)',
+        lg: `repeat(${columns?.length > 0 && columns?.length <= 4 ? columns.length : 4}, 1fr)`,
+      }}
       gap={{ base: 4, md: 6 }}
       width="100%"
     >
@@ -40,7 +44,13 @@ function SmallImageAndLinkVariation({ columns, fontFamily, navbarBackground }) {
             gap={{ base: 4, md: 3 }}
           >
             {column.image?.url && (
-              <Image src={column.image.url} alt={column.image.alt || ''} boxSize={{ base: '56px', md: '76px' }} mb={{ base: 0, md: 2 }} flexShrink={0} />
+              <Image
+                src={column.image.url}
+                alt={column.image.alt || ''}
+                boxSize={{ base: '58px', md: '70px', lg: '76px' }}
+                mb={{ base: 0, md: 2 }}
+                flexShrink={0}
+              />
             )}
             <Box display="flex" flexDirection="column" flexGrow={1} alignItems="start" width="100%" gap={1}>
               {column.column_title && (
