@@ -95,6 +95,8 @@ function MktMultipleColumnCard({
     }
   };
 
+  console.log(slice);
+
   return (
     <Box
       maxWidth="1280px"

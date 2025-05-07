@@ -96,7 +96,7 @@ function MktOneColumnSection({
 
   const renderVariation = () => {
     switch (variation) {
-      case 'oneColumnWithKPIs':
+      case 'oneColumnWithKpIs':
         return <WithKPIsVariation {...commonVariationProps} />;
       case 'imageOnTop':
         return <ImageOnTopVariation {...commonVariationProps} />;
@@ -106,12 +106,10 @@ function MktOneColumnSection({
     }
   };
 
-  console.log('slice', marginTop);
-
   return (
     <Box
       maxWidth={maxWidth}
-      margin={`${marginTop || '0px'} auto ${marginBottom || '40px'} auto`}
+      margin={`${marginTop || '80px'} auto ${marginBottom || '40px'} auto`}
       borderRadius={borderRadius}
       {...rest}
     >

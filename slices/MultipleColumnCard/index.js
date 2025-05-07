@@ -11,6 +11,8 @@ function MultipleColumnCard({ slice }) {
     <MktMultipleColumnCard
       id={slice?.primary?.id_key}
       slice={slice}
+      marginTop={slice?.primary?.margin_top}
+      marginBottom={slice?.primary?.margin_bottom}
     />
   );
 }

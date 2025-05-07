@@ -54,6 +54,7 @@ function BannerVariation({
           fontWeight="bold"
           color={fontColor || null}
           fontFamily={fontFamily || 'Lato'}
+          textAlign={descriptionTextAlign || 'center'}
           marginBottom="4"
         />
       );
@@ -65,6 +66,7 @@ function BannerVariation({
         fontWeight="bold"
         color={fontColor || null}
         fontFamily={fontFamily || 'Lato'}
+        textAlign={descriptionTextAlign || 'center'}
         marginBottom="4"
       >
         {content}

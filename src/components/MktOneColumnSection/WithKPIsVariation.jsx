@@ -166,9 +166,6 @@ function WithKPIsVariation({
             backgroundColor={buttonBackgroundColor || undefined}
             color={buttonFontColor || undefined}
             fontSize={buttonFontSize || undefined}
-            _hover={{
-              // Example hover effect
-            }}
           >
             {buttonLabel}
           </Link>

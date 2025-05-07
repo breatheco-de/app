@@ -25,9 +25,10 @@ function TwoColumnWithText({ slice }) {
       as="section"
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}
-      py={{ base: 10, md: 16 }}
+      margin="40px auto"
+      maxWidth="1280px"
     >
-      <Box maxWidth="container.xl" mx="auto" px={{ base: 4, md: 8 }}>
+      <Box mx="auto">
         {title && title.length > 0 && (
           <Box textAlign="center" mb={{ base: 8, md: 12 }}>
             <PrismicTextComponent field={title} fontWeight={400} />
