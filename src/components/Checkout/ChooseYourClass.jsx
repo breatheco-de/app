@@ -56,7 +56,6 @@ function ChooseYourClass({
   const [isLoading, setIsLoading] = useState(false);
   const [coords, setCoords] = useState(null);
   const [addressValue, setAddressValue] = useState('');
-  const { createToast } = useCustomToast({ toastId: 'cohort-google-maps-class' });
   const autoCompleteRef = useRef();
   const inputRef = useRef();
   const buttonRef = useRef();
@@ -110,7 +109,7 @@ function ChooseYourClass({
         setAvailableDates(filteredCohorts);
       })
       .catch((error) => {
-        console.error(t('alert-message:something-went-wrong-fetching-cohorts'));
+        console.error(t('alert-message:something-went-wrong-fetching-cohorts'), error);
       })
       .finally(() => setCohortIsLoading(false));
   }, [coords, isSecondStep]);
