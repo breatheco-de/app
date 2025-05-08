@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { PrismicRichText } from '@prismicio/react';
 import PropTypes from 'prop-types';
-import { Link, ListItem, UnorderedList } from '@chakra-ui/react';
+import { Link, ListItem, UnorderedList, useColorModeValue } from '@chakra-ui/react';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Heading from './Heading';
@@ -103,6 +103,8 @@ function Preformatted({ children, ...rest }) {
 }
 
 function LabelHandler({ node, children }) {
+  const grayTextColor = useColorModeValue('#3F3F3F', '#D1D1D1');
+
   if (node.data.label === 'highlight-blue') {
     return <span style={{ color: '#A5D9F8' }}>{children}</span>;
   }
@@ -113,7 +115,7 @@ function LabelHandler({ node, children }) {
     return <span style={{ color: '#0084FF' }}>{children}</span>;
   }
   if (node.data.label === 'gray_text') {
-    return <span style={{ color: '#3F3F3F' }}>{children}</span>;
+    return <span style={{ color: grayTextColor }}>{children}</span>;
   }
   return children;
 }

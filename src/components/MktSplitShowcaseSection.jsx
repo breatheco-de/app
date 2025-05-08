@@ -21,18 +21,17 @@ function MktSplitShowcaseSection({ title, description, images }) {
         borderRadius="md"
         display="flex"
         flexDirection="column"
-        justifyContent="center"
+        justifyContent="start"
       >
         {title && (
-          <PrismicTextComponent field={title} color="white" fontSize={{ base: '24px !important', md: '38px !important' }} />
+          <PrismicTextComponent field={title} fontWeight="400" color="white" fontSize={{ base: '24px !important', md: '38px !important' }} />
         )}
         <br />
         {description && (
-          <PrismicTextComponent field={description} color="white" fontSize={{ base: '24px !important', md: '38px !important' }} />
+          <PrismicTextComponent field={description} fontWeight="400" color="white" fontSize={{ base: '24px !important', md: '38px !important' }} />
         )}
       </Box>
 
-      {/* --- Image Section (Using Grid) --- */}
       <Grid
         order={{ base: 2, md: 1 }}
         flex={{ md: '0.6' }}
@@ -62,7 +61,6 @@ function MktSplitShowcaseSection({ title, description, images }) {
   );
 }
 
-// Prismic Rich Text fields can be arrays of objects
 const prismicRichTextField = PropTypes.oneOfType([PropTypes.object, PropTypes.array]);
 
 const prismicImageShape = PropTypes.shape({
@@ -89,5 +87,4 @@ MktSplitShowcaseSection.defaultProps = {
   images: [],
 };
 
-// Updated export
 export default MktSplitShowcaseSection;

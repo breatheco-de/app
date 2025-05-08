@@ -34,11 +34,12 @@ const renderMediaContent = (slice) => {
           url={videoSourceUrl}
           autoPlay
           loop
-          muted
-          playsinline
+          muted={false}
+          autoFullScreen
           controls={false}
           width="100%"
           height="100%"
+          preview
         />
       </AspectRatio>
     );
