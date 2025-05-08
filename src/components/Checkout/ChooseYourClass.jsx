@@ -21,7 +21,7 @@ function LoaderContent({ cohortIsLoading }) {
   const hasShownToast = useRef(false);
 
   useEffect(() => {
-    if (!cohortIsLoading && !hasShownToast.current) {
+    if (false && !cohortIsLoading && !hasShownToast.current) {
       createToast({
         position: 'top',
         title: <span dangerouslySetInnerHTML={{ __html: t('no-date-available') }} />,
