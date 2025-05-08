@@ -37,18 +37,14 @@ const prismicComponents = {
 };
 
 function RenderAwardSlide({ item }) {
-  useEffect(() => {
-    if (item?.image?.url) {
-      const img = new window.Image();
-      img.src = item.image.url;
-    }
-  }, []);
-
   if (!item?.image?.url) return null;
   return (
     <Flex justifyContent="center" alignItems="center" height="100%" width="100%">
       <Image
         src={item.image.url}
+        backgroundColor={useColorModeValue('transparent', 'gray.700')}
+        borderRadius="10px"
+        padding="10px"
         alt={item.image.alt || 'Award Image'}
         maxH="150px"
         objectFit="contain"
@@ -79,6 +75,13 @@ function MktAwardsSection({ slice }) {
     return null;
   }
 
+  useEffect(() => {
+    if (items?.image?.url) {
+      const img = new window.Image();
+      img.src = items.image.url;
+    }
+  }, [items]);
+
   return (
     <Box maxWidth="1280px" mx="auto" margin={{ base: '0px auto 56px', md: '0px auto 90px' }}>
       <Box textAlign="center" mb={{ base: 6, md: 10 }}>
@@ -100,7 +103,7 @@ function MktAwardsSection({ slice }) {
         <Flex
           justifyContent="space-between"
           alignItems="center"
-          flexWrap="wrap"
+          flexWrap="nowrap"
           gap={{ base: 4, md: 8 }}
         >
           {items.map((item, index) => {
