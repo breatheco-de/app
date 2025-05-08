@@ -2,6 +2,7 @@
 import { PrismicRichText } from '@prismicio/react';
 import PropTypes from 'prop-types';
 import { Link, ListItem, UnorderedList, useColorModeValue } from '@chakra-ui/react';
+import { useMemo, useCallback } from 'react';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Heading from './Heading';
@@ -102,9 +103,7 @@ function Preformatted({ children, ...rest }) {
   );
 }
 
-function LabelHandler({ node, children }) {
-  const grayTextColor = useColorModeValue('#3F3F3F', '#D1D1D1');
-
+function LabelRenderer({ node, children, grayTextColor }) {
   if (node.data.label === 'highlight-blue') {
     return <span style={{ color: '#A5D9F8' }}>{children}</span>;
   }
@@ -117,32 +116,62 @@ function LabelHandler({ node, children }) {
   if (node.data.label === 'gray_text') {
     return <span style={{ color: grayTextColor }}>{children}</span>;
   }
+
   return children;
 }
 
 function PrismicTextComponent({ field, ...rest }) {
   const { fontColor2 } = useStyle();
+  const grayTextColor = useColorModeValue('#3F3F3F', '#D1D1D1');
+
+  const heading1Serializer = useCallback(({ children }) => Heading1({ children, ...rest }), [JSON.stringify(rest)]);
+  const heading2Serializer = useCallback(({ children }) => Heading2({ children, ...rest }), [JSON.stringify(rest)]);
+  const heading3Serializer = useCallback(({ children }) => Heading3({ children, ...rest }), [JSON.stringify(rest)]);
+  const listSerializer = useCallback(({ children }) => List({ children, ...rest }), [JSON.stringify(rest)]);
+  const listItemSerializer = useCallback(({ children }) => ListItemComponent({ children, color: fontColor2, ...rest }), [fontColor2, JSON.stringify(rest)]);
+  const paragraphSerializer = useCallback(({ children }) => Paragraph({ children, color: fontColor2, ...rest }), [fontColor2, JSON.stringify(rest)]);
+  const hyperlinkSerializer = useCallback(({ node, children }) => LinkComponent({ children, href: node.data.url, ...rest }), [JSON.stringify(rest)]);
+  const preformattedSerializer = useCallback(({ children }) => Preformatted({ children, ...rest }), [JSON.stringify(rest)]);
+  const labelSerializer = useCallback(({ node, children }) => LabelRenderer({ node, children, grayTextColor }), [grayTextColor]);
+
+  const components = useMemo(() => ({
+    heading1: heading1Serializer,
+    heading2: heading2Serializer,
+    heading3: heading3Serializer,
+    list: listSerializer,
+    listItem: listItemSerializer,
+    paragraph: paragraphSerializer,
+    hyperlink: hyperlinkSerializer,
+    preformatted: preformattedSerializer,
+    label: labelSerializer,
+  }), [
+    heading1Serializer,
+    heading2Serializer,
+    heading3Serializer,
+    listSerializer,
+    listItemSerializer,
+    paragraphSerializer,
+    hyperlinkSerializer,
+    preformattedSerializer,
+    labelSerializer,
+  ]);
 
   return (
     <PrismicRichText
       field={field}
-      components={{
-        heading1: ({ children }) => Heading1({ children, ...rest }),
-        heading2: ({ children }) => Heading2({ children, ...rest }),
-        heading3: ({ children }) => Heading3({ children, ...rest }),
-        list: ({ children }) => List({ children, ...rest }),
-        listItem: ({ children }) => ListItemComponent({ children, color: fontColor2, ...rest }),
-        paragraph: ({ children }) => Paragraph({ children, color: fontColor2, ...rest }),
-        hyperlink: ({ children, href }) => LinkComponent({ children, href, ...rest }),
-        preformatted: ({ children }) => Preformatted({ children, ...rest }),
-        label: LabelHandler,
-      }}
+      components={components}
     />
   );
 }
 
 PrismicTextComponent.propTypes = {
   field: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
+};
+
+LabelRenderer.propTypes = {
+  node: PropTypes.shape({ data: PropTypes.shape({ label: PropTypes.string }) }).isRequired,
+  children: PropTypes.node.isRequired,
+  grayTextColor: PropTypes.string.isRequired,
 };
 
 PrismicTextComponent.defaultProps = {

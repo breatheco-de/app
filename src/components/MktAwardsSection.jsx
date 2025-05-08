@@ -36,13 +36,13 @@ const prismicComponents = {
   paragraph: RichTextParagraphAsHeading2,
 };
 
-function RenderAwardSlide({ item }) {
+function RenderAwardSlide({ item, backgroundColor }) {
   if (!item?.image?.url) return null;
   return (
     <Flex justifyContent="center" alignItems="center" height="100%" width="100%">
       <Image
         src={item.image.url}
-        backgroundColor={useColorModeValue('transparent', 'gray.700')}
+        backgroundColor={backgroundColor}
         borderRadius="10px"
         padding="10px"
         alt={item.image.alt || 'Award Image'}
@@ -60,16 +60,20 @@ RenderAwardSlide.propTypes = {
       alt: PropTypes.string,
     }),
   }),
+  backgroundColor: PropTypes.string,
 };
 
 RenderAwardSlide.defaultProps = {
   item: { image: { url: null, alt: null } },
+  backgroundColor: 'transparent',
 };
 
 function MktAwardsSection({ slice }) {
   const richTitle = slice?.primary?.title;
   const items = slice?.items || [];
   const isMobile = useBreakpointValue({ base: true, md: false });
+
+  const awardBgColor = useColorModeValue('transparent', 'gray.700');
 
   if (!items || items.length === 0) {
     return null;
@@ -97,7 +101,13 @@ function MktAwardsSection({ slice }) {
       {isMobile ? (
         <CustomCarousel
           items={items}
-          renderItem={(item, index) => <RenderAwardSlide key={item?.image?.url || `award-${index}`} item={item} />}
+          renderItem={(item, index) => (
+            <RenderAwardSlide
+              key={item?.image?.url || `award-${index}`}
+              item={item}
+              backgroundColor={awardBgColor}
+            />
+          )}
         />
       ) : (
         <Flex
@@ -113,7 +123,7 @@ function MktAwardsSection({ slice }) {
                 key={item?.image?.url || `award-desktop-${index}`}
                 p={2}
                 maxW="200px"
-                backgroundColor={useColorModeValue('transparent', 'gray.700')}
+                backgroundColor={awardBgColor}
                 borderRadius="10px"
               >
                 <Image
