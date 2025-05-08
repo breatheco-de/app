@@ -110,14 +110,7 @@ function ChooseYourClass({
         setAvailableDates(filteredCohorts);
       })
       .catch((error) => {
-        createToast({
-          position: 'top',
-          title: t('alert-message:something-went-wrong-fetching-cohorts'),
-          description: error.message,
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
+        console.error(t('alert-message:something-went-wrong-fetching-cohorts'));
       })
       .finally(() => setCohortIsLoading(false));
   }, [coords, isSecondStep]);
@@ -150,12 +143,7 @@ function ChooseYourClass({
             });
           })
           .catch(() => {
-            createToast({
-              position: 'top',
-              title: t('alert-message:google-maps-no-coincidences'),
-              status: 'warning',
-              duration: 5000,
-            });
+            console.error(t('alert-message:google-maps-no-coincidences'));
           })
           .finally(() => setIsLoading(false));
       });
