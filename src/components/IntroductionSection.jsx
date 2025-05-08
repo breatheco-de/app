@@ -35,7 +35,7 @@ const renderMediaContent = (slice) => {
           autoPlay
           loop
           muted={false}
-          autoFullScreen
+          playsInline
           controls={false}
           width="100%"
           height="100%"

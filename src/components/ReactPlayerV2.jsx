@@ -210,7 +210,7 @@ ModalPlayerContent.defaultProps = {
 
 function ReactPlayerV2({
   url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title,
-  withModal, containerStyle, autoPlay, loop, autoFullScreen, muted, volume, pictureInPicture, playerConfig,
+  withModal, containerStyle, autoPlay, loop, playsInline, muted, volume, pictureInPicture, playerConfig,
   preview, previewDuration, isPlayDisabled = false,
   ...rest
 }) {
@@ -443,7 +443,7 @@ function ReactPlayerV2({
                   volume={volume}
                   muted={isPlayDisabled ? true : muted}
                   pip={pictureInPicture}
-                  playsinline={autoFullScreen}
+                  playsinline={playsInline}
                   fallback={<Skeleton width="100%" height="100%" />}
                   loop={loop}
                   style={{
@@ -494,7 +494,7 @@ ReactPlayerV2.propTypes = {
   title: PropTypes.string,
   autoPlay: PropTypes.bool,
   loop: PropTypes.bool,
-  autoFullScreen: PropTypes.bool,
+  playsInline: PropTypes.bool,
   muted: PropTypes.bool,
   pictureInPicture: PropTypes.bool,
   volume: PropTypes.number,
@@ -518,7 +518,7 @@ ReactPlayerV2.defaultProps = {
   title: '',
   autoPlay: false,
   loop: false,
-  autoFullScreen: false,
+  playsInline: false,
   muted: false,
   pictureInPicture: false,
   volume: null,
