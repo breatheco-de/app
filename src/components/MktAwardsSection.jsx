@@ -5,13 +5,12 @@ import {
   Flex,
   Heading as ChakraHeading,
   Image,
-  // SimpleGrid, // Removed if not using the SimpleGrid example for now
   useBreakpointValue,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import CustomCarousel from './CustomCarousel';
 import PrismicTextComponent from './PrismicTextComponent';
 
-// Component renderers for PrismicRichText, changed to function declarations
 function RichTextHeading2({ children }) {
   return (
     <ChakraHeading as="h2" size="xl">
@@ -32,26 +31,20 @@ function RichTextParagraphAsHeading2({ children }) {
 RichTextParagraphAsHeading2.propTypes = { children: PropTypes.node };
 RichTextParagraphAsHeading2.defaultProps = { children: null };
 
-// Reusable PrismicRichText components map
 const prismicComponents = {
   heading2: RichTextHeading2,
   paragraph: RichTextParagraphAsHeading2,
-  // Add other custom renderers here if needed
 };
 
-function RenderAwardSlide({ item }) {
-  useEffect(() => {
-    if (item?.image?.url) {
-      const img = new window.Image();
-      img.src = item.image.url;
-    }
-  }, []); // Pre-load on mount
-
+function RenderAwardSlide({ item, backgroundColor }) {
   if (!item?.image?.url) return null;
   return (
     <Flex justifyContent="center" alignItems="center" height="100%" width="100%">
       <Image
         src={item.image.url}
+        backgroundColor={backgroundColor}
+        borderRadius="10px"
+        padding="10px"
         alt={item.image.alt || 'Award Image'}
         maxH="150px"
         objectFit="contain"
@@ -67,10 +60,12 @@ RenderAwardSlide.propTypes = {
       alt: PropTypes.string,
     }),
   }),
+  backgroundColor: PropTypes.string,
 };
 
 RenderAwardSlide.defaultProps = {
   item: { image: { url: null, alt: null } },
+  backgroundColor: 'transparent',
 };
 
 function MktAwardsSection({ slice }) {
@@ -78,9 +73,18 @@ function MktAwardsSection({ slice }) {
   const items = slice?.items || [];
   const isMobile = useBreakpointValue({ base: true, md: false });
 
+  const awardBgColor = useColorModeValue('transparent', 'gray.700');
+
   if (!items || items.length === 0) {
     return null;
   }
+
+  useEffect(() => {
+    if (items?.image?.url) {
+      const img = new window.Image();
+      img.src = items.image.url;
+    }
+  }, [items]);
 
   return (
     <Box maxWidth="1280px" mx="auto" margin={{ base: '0px auto 56px', md: '0px auto 90px' }}>
@@ -97,13 +101,19 @@ function MktAwardsSection({ slice }) {
       {isMobile ? (
         <CustomCarousel
           items={items}
-          renderItem={(item, index) => <RenderAwardSlide key={item?.image?.url || `award-${index}`} item={item} />}
+          renderItem={(item, index) => (
+            <RenderAwardSlide
+              key={item?.image?.url || `award-${index}`}
+              item={item}
+              backgroundColor={awardBgColor}
+            />
+          )}
         />
       ) : (
         <Flex
           justifyContent="space-between"
           alignItems="center"
-          flexWrap="wrap"
+          flexWrap="nowrap"
           gap={{ base: 4, md: 8 }}
         >
           {items.map((item, index) => {
@@ -113,6 +123,8 @@ function MktAwardsSection({ slice }) {
                 key={item?.image?.url || `award-desktop-${index}`}
                 p={2}
                 maxW="200px"
+                backgroundColor={awardBgColor}
+                borderRadius="10px"
               >
                 <Image
                   src={item.image.url}
@@ -124,24 +136,6 @@ function MktAwardsSection({ slice }) {
             );
           })}
         </Flex>
-        // If you want to use SimpleGrid, uncomment its import and this block:
-        /*
-        <SimpleGrid columns={{ base: 2, sm: 3, md: 4, lg: items.length > 5 ? 5 : items.length }} spacing={{ base: 4, md: 8 }} placeItems="center">
-          {items.map((item, index) => {
-            if (!item?.image?.url) return null;
-            return (
-              <Image
-                key={item?.image?.url || `award-desktop-${index}`}
-                src={item.image.url}
-                alt={item.image.alt || 'Award Image'}
-                objectFit="contain"
-                maxH="80px"
-                w="auto"
-              />
-            );
-          })}
-        </SimpleGrid>
-        */
       )}
     </Box>
   );
