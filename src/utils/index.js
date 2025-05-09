@@ -499,6 +499,7 @@ const getColorVariations = (colorHex) => {
       mode1: darkShades[0], mode2: darkShades[1], mode3: darkShades[2], mode4: darkShades[3], mode5: darkShades[4],
     },
   };
+};
 
 const parseProp = (propString, defaultValue) => {
   if (!propString) {
