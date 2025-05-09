@@ -25,6 +25,7 @@ const initialState = {
   user: null,
   cohorts: [],
   blockedServices: null,
+  hasNonSaasCohort: false,
 };
 
 const langHelper = {
@@ -36,7 +37,7 @@ const langHelper = {
 const reducer = (state, action) => {
   switch (action.type) {
     case 'INIT': {
-      const { isLoading, isAuthenticated, isAuthenticatedWithRigobot, user, cohorts } = action.payload;
+      const { isLoading, isAuthenticated, isAuthenticatedWithRigobot, user, cohorts, hasNonSaasCohort } = action.payload;
       return {
         ...state,
         isLoading,
@@ -44,6 +45,7 @@ const reducer = (state, action) => {
         isAuthenticatedWithRigobot,
         user,
         cohorts,
+        hasNonSaasCohort,
       };
     }
     case 'LOGIN': {
@@ -61,6 +63,8 @@ const reducer = (state, action) => {
         isLoading: false,
         isAuthenticated: false,
         user: null,
+        cohorts: [],
+        hasNonSaasCohort: false,
       };
     }
     case 'REGISTER': {
@@ -79,17 +83,22 @@ const reducer = (state, action) => {
       };
     }
     case 'SET_COHORTS': {
+      const cohorts = action.payload;
+      const hasNonSaasCohort = cohorts.some((c) => c.available_as_saas === false);
       return {
         ...state,
         cohorts: action.payload,
+        hasNonSaasCohort,
       };
     }
     case 'SET_COHORTS_AND_USER': {
       const { user, cohorts } = action.payload;
+      const hasNonSaasCohort = cohorts.some((c) => c.available_as_saas === false);
       return {
         ...state,
         user,
         cohorts,
+        hasNonSaasCohort,
       };
     }
     case 'LOADING': {
@@ -204,8 +213,9 @@ function AuthProvider({ children, pageProps }) {
       const { data } = await bc.admissions().me();
       const { cohorts: cohortUsers, ...userData } = data;
       const cohorts = cohortUsers.map(parseCohortUser);
+      const hasNonSaasCohort = cohorts.some((c) => c.available_as_saas === false);
 
-      return { cohorts, userData };
+      return { cohorts, userData, hasNonSaasCohort };
     } catch (e) {
       console.log(e);
       return e;
@@ -213,13 +223,13 @@ function AuthProvider({ children, pageProps }) {
   };
 
   const reSetUserAndCohorts = async () => {
-    const { cohorts, userData } = await fetchUserAndCohorts();
+    const { cohorts, userData, hasNonSaasCohort } = await fetchUserAndCohorts();
     dispatch({
       type: 'SET_COHORTS_AND_USER',
       payload: { user: userData, cohorts },
     });
 
-    return { cohorts, userData };
+    return { cohorts, userData, hasNonSaasCohort };
   };
 
   const setCohorts = (cohorts) => {
@@ -265,14 +275,14 @@ function AuthProvider({ children, pageProps }) {
         }
         dispatch({
           type: 'INIT',
-          payload: { user: null, isAuthenticated: false, isLoading: false, cohorts: [] },
+          payload: { user: null, isAuthenticated: false, isLoading: false, cohorts: [], hasNonSaasCohort: false },
         });
       } else {
         handleSession(token);
         try {
           // only fetch user info if it is null
           if (!user) {
-            const { cohorts, userData } = await fetchUserAndCohorts();
+            const { cohorts, userData, hasNonSaasCohort } = await fetchUserAndCohorts();
 
             const [respRigobotAuth] = await Promise.all([
               bc.auth().verifyRigobotConnection(token),
@@ -283,7 +293,7 @@ function AuthProvider({ children, pageProps }) {
 
             dispatch({
               type: 'INIT',
-              payload: { user: userData, cohorts, isAuthenticated: true, isAuthenticatedWithRigobot, isLoading: false },
+              payload: { user: userData, cohorts, isAuthenticated: true, isAuthenticatedWithRigobot, isLoading: false, hasNonSaasCohort },
             });
             const settingsLang = userData?.settings.lang;
 

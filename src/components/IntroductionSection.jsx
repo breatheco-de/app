@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import {
   Box, useColorModeValue, Text, Flex,
+  AspectRatio,
 } from '@chakra-ui/react';
 import { PrismicRichText } from '@prismicio/react';
 import Image from 'next/image';
@@ -12,35 +13,93 @@ import Heading from './Heading';
 import Icon from './Icon';
 import Button from './Button';
 import PrismicTextComponent from './PrismicTextComponent';
+import useStyle from '../hooks/useStyle';
+import ReactPlayerV2 from './ReactPlayerV2';
+import { parseProp } from '../utils';
+
+const renderMediaContent = (slice) => {
+  const videoSourceUrl = slice?.primary?.video_source?.url;
+  const imageUrl = slice?.primary?.image?.url;
+
+  if (videoSourceUrl) {
+    return (
+      <AspectRatio
+        ratio={16 / 9}
+        width="100%"
+        borderRadius="7px"
+        overflow="hidden"
+      >
+        <ReactPlayerV2
+          key={videoSourceUrl}
+          url={videoSourceUrl}
+          autoPlay
+          loop
+          muted
+          playsinline
+          controls={false}
+          width="100%"
+          height="100%"
+        />
+      </AspectRatio>
+    );
+  }
+
+  if (imageUrl) {
+    return (
+      <Image
+        src={imageUrl}
+        alt={slice.primary.image.alt || 'Introduction avatars'}
+        width={slice.primary.image.dimensions?.width}
+        height={slice.primary.image.dimensions?.height}
+        style={{ borderRadius: '7px' }}
+      />
+    );
+  }
+
+  return (
+    <video
+      autoPlay
+      loop
+      muted
+      playsInline
+      style={{
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+      }}
+    >
+      <source src="/static/videos/landing-avatars.webm" type="video/webm" />
+    </video>
+  );
+};
 
 function IntroductionSection({
   data, slice, fitContent, fontFamily, ...rest
 }) {
   const colors = useColorModeValue('#000', '#fff');
+  const { fontColor } = useStyle();
 
   const isLeftBigger = slice?.primary?.two_column_size === 'Left is bigger';
   const isRightBigger = slice?.primary?.two_column_size === 'Right is bigger';
   const bothAreEqual = slice?.primary?.two_column_size === 'Both are equal';
 
-  const getHighlightStyle = () => {
-    if (slice?.primary?.highlight_style === 'Colored') {
-      return ({
+  const getStyling = (type) => {
+    const StyleMapping = {
+      colored: {
         color: 'blue.default',
         borderBottom: '0px',
-      });
-    }
-    if (slice?.primary?.highlight_style === 'Underlined') {
-      return ({
+      },
+      underlined: {
         transition: { duration: 3 },
         animate: {
           color: [colors, '#0097CD', colors, '#0097CD', colors, colors],
         },
-      });
-    }
-    return ({
-      color: 'blue.default',
-      borderBottom: '4px solid #0097CD',
-    });
+      },
+      normal: {
+        color: fontColor,
+      },
+    };
+    return StyleMapping[type] || StyleMapping.colored;
   };
 
   const getLeftColumnSize = () => {
@@ -57,22 +116,31 @@ function IntroductionSection({
     return 0.3;
   };
 
+  const processedRest = Object.entries(rest).reduce((acc, [key, value]) => {
+    if (typeof value === 'string') {
+      acc[key] = parseProp(value, value);
+    } else {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});
+
   return (
     <Flex
       flexDirection={{ base: 'column', md: 'row' }}
-      px={{ base: '10px', md: '2rem' }}
       id={slice?.primary?.id_key || ''}
-      {...rest}
+      {...processedRest}
     >
       <Box display={{ base: 'block', md: 'grid' }} flex={getLeftColumnSize()}>
-        <Heading fontFamily={fontFamily} as="span" size="xl" fontWeight="700">
+        <Heading fontFamily={fontFamily} as="span">
           {slice?.primary?.title ? (
             <>
               <PrismicTextComponent
                 field={slice?.primary?.title}
                 display="initial"
                 size="48px"
-                fontWeight={700}
+                {...getStyling(slice?.primary?.title_style)}
+                fontWeight={slice?.primary?.title_weight}
                 lineHeight="inherit"
                 fontFamily={fontFamily}
               />
@@ -83,10 +151,20 @@ function IntroductionSection({
                     paragraph: ({ children }) => (
                       <MotionBox
                         as="strong"
+                        {...getStyling(slice?.primary?.highlight_style)}
                         className="highlighted box"
-                        {...getHighlightStyle()}
                         margin="0 0 0 10px"
-                        display={{ base: 'none', sm: 'initial' }}
+                        display="initial"
+                        fontSize={{ base: '24px', md: '38px', lg: '45px' }}
+                      >
+                        {children}
+                      </MotionBox>
+                    ),
+                    heading1: ({ children }) => (
+                      <MotionBox
+                        fontWeight={slice?.primary?.highlight_weight}
+                        {...getStyling(slice?.primary?.highlight_style)}
+                        fontSize={{ base: '24px', md: '38px', lg: '45px' }}
                       >
                         {children}
                       </MotionBox>
@@ -115,15 +193,6 @@ function IntroductionSection({
             </>
           )}
         </Heading>
-        {slice?.primary?.highlight.length > 0 ? (
-          <Box as="strong" className="highlighted" fontSize="35px" display={{ base: 'initial', sm: 'none' }}>
-            <PrismicRichText field={slice?.primary?.highlight} />
-          </Box>
-        ) : data?.highlight && (
-          <Box as="strong" className="highlighted" fontSize="35px" display={{ base: 'initial', sm: 'none' }}>
-            {data?.highlight}
-          </Box>
-        )}
 
         {slice?.primary?.description.length > 0 ? (
           <Text as="div" fontSize="21px" fontWeight={700} pt="16px">
@@ -137,18 +206,18 @@ function IntroductionSection({
 
         {/* ----------------------- Bullets ----------------------- */}
         {(slice?.primary?.bullets?.[0]?.spans?.length > 0 || slice?.primary?.bullets?.length > 0) && (
-          <Box as="ul" display="flex" flexDirection="column" gridGap="4px" width="fit-content">
+          <Box as="ul" display="flex" flexDirection="column" gridGap="4px" width="fit-content" mt="9px">
             {slice?.primary?.bullets?.length > 0
               ? (
-                <PrismicRichText
+                <PrismicTextComponent
                   field={slice?.primary?.bullets}
-                  components={{
-                    listItem: ({ children }, index) => (
-                      <MotionBox whileHover={{ scale: 1.05 }} as="li" key={index} display="flex" fontSize="18px" gridGap="10px" alignItems="center">
-                        <Icon icon="checked2" color="#25BF6C" width="14px" height="14px" />
-                        {children}
-                      </MotionBox>
-                    ),
+                  sx={{
+                    '&:first-of-type': {
+                      marginTop: 0,
+                    },
+                    '&:last-of-type': {
+                      marginBottom: '3px',
+                    },
                   }}
                 />
               )
@@ -167,21 +236,18 @@ function IntroductionSection({
             id={slice.primary.button_id}
             variant="default"
             width="fit-content"
-            minWidth="200px"
             textAlign="center"
-            height="52px"
             to={slice?.primary?.button_link?.url || slice?.primary?.button_link || '#recommended-courses'}
-            fontSize="18px"
-            m="25px 0"
+            fontSize="17px"
+            m="9px 0"
             letterSpacing="0.05em"
-            textTransform="uppercase"
           >
             <PrismicRichText field={slice?.primary?.buttontext} />
           </Button>
         ) : (
           <>
             {data?.callToAction?.title && (
-              <Button variant="default" width="fit-content" minWidth="200px" height="52px" fontSize="18px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" to={data?.callToAction.href || '#recommended-courses'}>
+              <Button variant="default" width="fit-content" fontSize="17px" m="9px 0" letterSpacing="0.05em" textTransform="uppercase" to={data?.callToAction.href || '#recommended-courses'}>
                 {data?.callToAction.title}
               </Button>
             )}
@@ -189,33 +255,15 @@ function IntroductionSection({
         )}
       </Box>
 
-      {/* ----------------------- Image ----------------------- */}
-      <Box display={{ base: 'block', md: 'grid' }} flex={getRightColumnSize()}>
-        {slice?.primary?.image?.url ? (
-          <Box display="flex" height="fit-content" justifyContent="end">
-            <Image
-              src={slice.primary.image.url}
-              alt={slice.primary.image.alt || 'Introduction avatars'}
-              width={slice.primary.image.dimensions?.width}
-              height={slice.primary.image.dimensions?.height}
-              style={{ borderRadius: '7px' }}
-            />
-          </Box>
-        ) : (
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            style={{
-              width: '400px',
-              height: '100%',
-              objectFit: 'cover',
-            }}
-          >
-            <source src="/static/videos/landing-avatars.webm" type="video/webm" />
-          </video>
-        )}
+      <Box
+        display={{ base: 'block', md: 'grid' }}
+        flex={getRightColumnSize()}
+        position="relative"
+        overflow="hidden"
+        borderRadius="7px"
+        placeItems="center"
+      >
+        {renderMediaContent(slice)}
       </Box>
     </Flex>
   );

@@ -1,0 +1,52 @@
+{
+  "id": "ratings",
+  "type": "SharedSlice",
+  "name": "Ratings",
+  "description": "Ratings",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "rating": {
+          "type": "Number",
+          "config": { "label": "Rating", "placeholder": "" }
+        },
+        "total_ratings": {
+          "type": "Number",
+          "config": { "label": "Total Ratings", "placeholder": "" }
+        },
+        "reviews_numbers": {
+          "type": "Number",
+          "config": { "label": "Reviews numbers", "placeholder": "" }
+        }
+      },
+      "items": {
+        "name": {
+          "type": "Text",
+          "config": { "label": "Name", "placeholder": "" }
+        },
+        "avatar": {
+          "type": "Image",
+          "config": { "label": "Avatar", "constraint": {}, "thumbnails": [] }
+        },
+        "rating": {
+          "type": "Number",
+          "config": { "label": "Rating", "placeholder": "" }
+        },
+        "date": {
+          "type": "Text",
+          "config": { "label": "Date", "placeholder": "" }
+        },
+        "review": {
+          "type": "Text",
+          "config": { "label": "Review", "placeholder": "" }
+        }
+      }
+    }
+  ]
+}

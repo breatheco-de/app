@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import MktMultipleColumnCard from '../../src/components/MktMultipleColumnCard';
+import MktMultipleColumnCard from '../../src/components/MktMultipleColumnCard/index';
 /**
  * @typedef {import("@prismicio/client").Content.MultipleColumnCardSlice} MultipleColumnCardSlice
  * @typedef {import("@prismicio/react").SliceComponentProps<MultipleColumnCardSlice>} MultipleColumnCardProps
@@ -10,11 +10,9 @@ function MultipleColumnCard({ slice }) {
   return (
     <MktMultipleColumnCard
       id={slice?.primary?.id_key}
-      title={slice?.primary?.title}
-      marginBottom={slice?.primary?.margin_bottom}
+      slice={slice}
       marginTop={slice?.primary?.margin_top}
-      maxWidth={slice?.primary?.max_width}
-      columns={slice.items}
+      marginBottom={slice?.primary?.margin_bottom}
     />
   );
 }

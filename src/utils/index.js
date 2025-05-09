@@ -499,6 +499,21 @@ const getColorVariations = (colorHex) => {
       mode1: darkShades[0], mode2: darkShades[1], mode3: darkShades[2], mode4: darkShades[3], mode5: darkShades[4],
     },
   };
+
+const parseProp = (propString, defaultValue) => {
+  if (!propString) {
+    return defaultValue;
+  }
+  try {
+    const parsedValue = JSON.parse(propString);
+    if (typeof parsedValue === 'object' && parsedValue !== null && Object.keys(parsedValue).length > 0) {
+      return parsedValue;
+    }
+    console.warn(`Parsed prop "${propString}" is not a valid responsive object. Treating as single value.`);
+    return propString;
+  } catch (e) {
+    return propString;
+  }
 };
 
 const isValidEmail = (email) => emailRegex.test(email);
@@ -514,4 +529,5 @@ export {
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, intervalToHours, capitalizeFirstLetter,
   adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle, decodeBase64,
   removeSessionStorageItem, languageFix, getBrowserInfo, isValidEmail, addQueryToURL, getColorVariations,
+  parseProp,
 };

@@ -1,8 +1,9 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Box, Button, Flex, Image, SkeletonText } from '@chakra-ui/react';
-import { useEffect, useState, useRef, useContext } from 'react';
+import { Box, Button, Flex, Image, SkeletonText, Badge } from '@chakra-ui/react';
+import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -42,9 +43,10 @@ import completions from './completion-jobs.json';
 import Rating from '../../components/Rating';
 import SimpleModal from '../../components/SimpleModal';
 import CustomCarousel from '../../components/CustomCarousel';
+import AssignmentSlide from '../../components/AssignmentSlide';
 import useCustomToast from '../../hooks/useCustomToast';
 import { usePlanPrice } from '../../utils/getPriceWithDiscount';
-import { SessionContext } from '../../context/SessionContext';
+import useSession from '../../hooks/useSession';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -120,7 +122,7 @@ function CoursePage({ data, syllabus }) {
   const [isCtaVisible, setIsCtaVisible] = useState(false);
   const [allDiscounts, setAllDiscounts] = useState([]);
   const { isAuthenticated, user, logout, cohorts } = useAuth();
-  const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor, backgroundColor7, backgroundColor8 } = useStyle();
+  const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor, backgroundColor7, backgroundColor8, lightColor } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
   const { createToast } = useCustomToast({ toastId: 'choose-program-pricing-detail' });
@@ -137,7 +139,7 @@ function CoursePage({ data, syllabus }) {
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const { t, lang } = useTranslation('course');
-  const { location } = useContext(SessionContext);
+  const { location, isLoadingLocation } = useSession();
   const router = useRouter();
   const translationsObj = getTranslations(t);
   const limitViewStudents = 3;
@@ -199,6 +201,7 @@ function CoursePage({ data, syllabus }) {
   const features = getAlternativeTranslation('features', {}, { returnObjects: true }) || {};
   const featuredBullets = getAlternativeTranslation('featured-bullets', {}, { returnObjects: true }) || [];
   const isSpain = location?.country?.toLowerCase() === 'spain' || location?.country?.toLowerCase() === 'españa';
+  const country_code = location?.countryShort;
 
   useEffect(() => {
     if (isRigoInitialized && data.course_translation && !initialDataIsFetching && planData?.slug) {
@@ -380,15 +383,15 @@ function CoursePage({ data, syllabus }) {
         });
 
         let combinedFeaturedAssets = [
-          ...filterAssets(projects, true),
           ...filterAssets(exercises, true),
+          ...filterAssets(projects, true),
         ];
 
         if (combinedFeaturedAssets.length < 3) {
           const remainingNeeded = 3 - combinedFeaturedAssets.length;
           const additionalItems = [
-            ...filterAssets(projects, false),
             ...filterAssets(exercises, false),
+            ...filterAssets(projects, false),
           ].slice(-remainingNeeded);
 
           combinedFeaturedAssets = [...combinedFeaturedAssets, ...additionalItems];
@@ -409,7 +412,7 @@ function CoursePage({ data, syllabus }) {
         return { count: {}, assignmentList: [] };
       }
     };
-    const formatedPlanData = await fetchSuggestedPlan(data?.plan_slug, translationsObj, 'mkt_plans').then((finalData) => finalData);
+    const formatedPlanData = await fetchSuggestedPlan(data?.plan_slug, translationsObj, 'mkt_plans', country_code).then((finalData) => finalData);
 
     const modulesInfo = await getModulesInfo();
 
@@ -434,7 +437,7 @@ function CoursePage({ data, syllabus }) {
 
     await getSelfAppliedCoupon(formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug);
     const couponOnQuery = await getQueryString('coupon');
-    const { data: allCouponsApplied } = await bc.payment({ coupons: [couponOnQuery || coupon], plan: formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug }).verifyCoupon();
+    const { data: allCouponsApplied } = await bc.payment({ coupons: [couponOnQuery || coupon], plan: formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug, country_code }).verifyCoupon();
     setAllDiscounts(allCouponsApplied);
 
     setCohortData({
@@ -448,8 +451,8 @@ function CoursePage({ data, syllabus }) {
   };
 
   useEffect(() => {
-    getInitialData();
-  }, [lang, pathname]);
+    if (!isLoadingLocation) getInitialData();
+  }, [lang, pathname, isLoadingLocation]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -541,6 +544,17 @@ function CoursePage({ data, syllabus }) {
       });
       return existsAvatar || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`;
     });
+
+  useEffect(() => {
+    if (assignmentList && assignmentList.length > 0) {
+      assignmentList.forEach((assignment) => {
+        if (assignment?.preview) {
+          const img = new window.Image();
+          img.src = assignment.preview;
+        }
+      });
+    }
+  }, [assignmentList]);
 
   return (
     <>
@@ -835,7 +849,12 @@ function CoursePage({ data, syllabus }) {
               {getAlternativeTranslation('build-connector.description')}
             </Text>
             {assignmentList?.length > 0 && (
-              <CustomCarousel assignmentList={assignmentList} />
+              <CustomCarousel
+                items={assignmentList}
+                renderItem={(item, index) => (
+                  <AssignmentSlide key={item?.id || `assignment-slide-${index}`} assignment={item} />
+                )}
+              />
             )}
           </Flex>
         </GridContainer>
