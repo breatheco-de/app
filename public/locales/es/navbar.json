@@ -15,50 +15,105 @@
     },
     {
       "id": "bootcamps",
-      "label": "A tu propio ritmo",
-      "icon": "graduationCap",
-      "description": "Explora nuestra extensa colección de cursos diseñados para ayudarte a dominar varios temas y habilidades. Ya seas un principiante o un aprendiz avanzado, aquí hay algo para todos.",
-      "asPath": "/bootcamps",
-      "subMenu": [],
-      "position": 1
-    },
-    {
-      "id": "academy",
-      "label": "Bootcamp",
-      "href": "https://4geeksacademy.com",
-      "hide_on_auth": true,
-      "position": 2
-    },
-    {
-      "id": "events",
-      "label": "Aprende en vivo",
-      "icon": "calendar",
-      "private": false,
-      "description": "Únete a nosotros en nuestros talleres gratuitos, webinars y otros eventos para aprender más sobre nuestros programas y comenzar tu camino para convertirte en desarrollador.",
-      "subMenu": [
+      "label": "Aprender",
+      "bgColor": "#F3FAFE",
+      "titleColor": "#0084FF",
+      "description": "Cambia tu vida/carrera, entra al mundo tech y vive libre.",
+      "mainMenu": [
         {
-          "label": "Eventos en vivo",
-          "slug": "live-events",
-          "asPath": "/workshops",
-          "icon": "live-event",
-          "description": "",
+          "label": "Cambia tu vida con un bootcamp",
+          "id": "bootcamp-options",
+          "description": "Transición hacia carreras tecnológicas, con mentoría y soporte ilimitados de por vida. Te equipa con las habilidades necesarias para enfrentar desafíos del mundo real y te conecta con oportunidades de la industria.",
           "subMenu": [
             {
-              "href": "/workshops",
-              "label": "Próximos eventos en vivo"
+              "href": "https://4geeksacademy.com/es/coding-bootcamps/desarrollador-full-stack",
+              "label": "Desarrollo full stack"
+            },
+            {
+              "href": "https://4geeksacademy.com/es/coding-bootcamps/curso-datascience-machine-learning",
+              "label": "Ciencia de datos y machine learning"
+            },
+            {
+              "href": "https://4geeksacademy.com/es/coding-bootcamps/curso-ciberseguridad",
+              "label": "Ciberseguridad"
             }
           ]
         },
         {
-          "label": "Podcast",
-          "slug": "podcast",
-          "asPath": "/workshops",
-          "icon": "microphone",
-          "description": "Un podcast de cultura tecnológica donde aprenderás a luchar contra los enemigos para convertirte en un profesional exitoso en tecnología.",
+          "label": "Adquiere nuevas habilidades a tu propio ritmo",
+          "id": "self-paced-options",
+          "description": "Accede a cientos de ejercicios, proyectos para desarrollar y cursos en las tecnologías más demandadas",
           "subMenu": [
             {
-              "href": "/podcast",
-              "label": "Listar todos los episodios"
+              "type": "header",
+              "label": "Recursos Gratuitos"
+            },
+            {
+              "href": "/es/interactive-exercises",
+              "label": "Empieza a Practicar con desafíos"
+            },
+            {
+              "href": "/es/interactive-coding-tutorials",
+              "label": "Construye Proyectos en cualquier tecnología"
+            },
+            {
+              "href": "/es/how-to",
+              "label": "¿Cómo hacer...?"
+            },
+            {
+              "href": "/es/lessons",
+              "label": "Leer y ver"
+            }
+          ]
+        }
+      ],
+      "position": 1
+    },
+    {
+      "id": "career-booster",
+      "label": "Career booster",
+      "bgColor": "#FFE7CC",
+      "titleColor": "#FF8800",
+      "private": false,
+      "description": "Deja de enviar currículums que no te llevan a ninguna parte. En Beyond The Resume, te impulsamos al siguiente nivel con servicios personalizados y expertos para tu CV, perfil de LinkedIn y entrevistas. Más que un currículum, tu pasaporte al éxito profesional.",
+      "mainMenu": [
+        {
+          "label": "",
+          "id": "career-booster",
+          "description": "",
+          "subMenu": [
+            {
+              "href": "es/beyond-the-resume",
+              "label": "Más allá del currículum"
+            }
+          ]
+        }
+      ],
+      "position": 2
+    },
+    {
+      "id": "read",
+      "label": "Talento y Formación",
+      "bgColor": "#FFF4DC",
+      "titleColor": "#FFB718",
+      "description": "Conecta personas y empresas a través de programas de aprendizaje, talento y capacitación adaptados a las necesidades del mercado. Ya sea que estés construyendo tu equipo o tu futuro, este es el lugar donde se encuentra la oportunidad.",
+      "mainMenu": [
+        {
+          "label": "",
+          "id": "workforce-development",
+          "description": "",
+          "subMenu": [
+            {
+              "href": "https://www.4geeks.works/apprenticeship-landing",
+              "label": "Apprenticeship"
+            },
+            {
+              "href": "https://www.4geeks.works/hire-early-talent",
+              "label": "Find and hire talent"
+            },
+            {
+              "href": "https://www.4geeks.works/copia-de-apprenticeship",
+              "label": "Upskilling your team"
             }
           ]
         }
@@ -66,56 +121,24 @@
       "position": 3
     },
     {
-      "id": "read",
-      "label": "Catálogo de contenidos",
-      "icon": "book",
-      "description": "Para los geeks autodidactas, este es nuestro extenso catálogo de contenido con todos los materiales y tutoriales que hemos desarrollado hasta el día de hoy.",
-      "asPath": "/read",
-      "subMenu": [
+      "id": "live",
+      "label": "Aprende en vivo",
+      "bgColor": "#DFFFE8",
+      "titleColor": "#06AB52",
+      "description": "Únete a nosotros para nuestros talleres gratuitos, seminarios web y otros eventos para aprender más sobre nuestros programas y comenzar tu viaje para convertirte en desarrollador.",
+      "mainMenu": [
         {
-          "label": "Lecturas y videos",
-          "slug": "lessons",
-          "asPath": "/read-and-watch",
-          "description": "Tiene sentido comenzar a aprender leyendo y viendo videos sobre los fundamentos y cómo funcionan las cosas.",
-          "subMenu": [],
-          "subMenuContent": [
-            {
-              "href": "/lessons",
-              "label": "Buscar en lecciones"
-            }
-          ]
-        },
-        {
-          "label": "Prácticas Interactivas",
-          "slug": "exercises",
-          "subLabel": "",
-          "description": "Lista curada de tutoriales interactivos, con soluciones y videos para practicar y mejorar tus habilidades.",
+          "label": "",
+          "id": "workforce-development",
+          "description": "",
           "subMenu": [
             {
-              "href": "/interactive-exercises",
-              "label": "Comenzar a practicar"
-            }
-          ]
-        },
-        {
-          "label": "Construye Projectos",
-          "slug": "projects",
-          "description": "Selección curada de tutoriales y projectos para construir con instrucciones simples y video soluciones",
-          "subMenu": [
+              "href": "/es/workshops",
+              "label": "Eventos en vivo"
+            },
             {
-              "href": "/interactive-coding-tutorials",
-              "label": "Comienza a construir"
-            }
-          ]
-        },
-        {
-          "label": "Preguntas Frecuentes",
-          "slug": "how-tos",
-          "description": "Guías sobre distintos temas relacionados con las tecnologías que enseñamos en nuestros cursos",
-          "subMenu": [
-            {
-              "href": "/how-to",
-              "label": "Ver las preguntas más frecuentes"
+              "href": "/es/podcast",
+              "label": "Podcasts"
             }
           ]
         }
