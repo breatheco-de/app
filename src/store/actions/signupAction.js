@@ -11,7 +11,6 @@ import {
 } from '../types';
 import { formatPrice, getDiscountedPrice, getNextDateInMonths, getQueryString, getStorageItem, getTimeProps, getBrowserInfo } from '../../utils';
 import bc from '../../services/breathecode';
-import { BREATHECODE_HOST } from '../../utils/variables';
 import { usePersistent } from '../../hooks/usePersistent';
 import useSession from '../../hooks/useSession';
 import useAuth from '../../hooks/useAuth';
@@ -29,12 +28,11 @@ const useSignup = () => {
   const router = useRouter();
   const { locale } = router;
   const dispatch = useDispatch();
-  const accessToken = getStorageItem('accessToken');
   const redirect = getStorageItem('redirect');
   const redirectedFrom = getStorageItem('redirected-from');
   const couponsQuery = getQueryString('coupons');
   const planTranslationsObj = getTranslations(t);
-  const defaultPlan = process.env.BASE_PLAN || 'basic';
+  const defaultPlan = process.env.BASE_PLAN || '4geeks-basic-subscription';
 
   const { syllabus, academy } = router.query;
   const nextMonthText = getNextDateInMonths(1).translation[locale];
@@ -184,7 +182,6 @@ const useSignup = () => {
               return { plan: { ...restOfPlan } };
             });
           }
-          console.log('selectedPlanCheckoutData', selectedPlanCheckoutData);
           reportDatalayer({
             dataLayer: {
               event: 'purchase',
@@ -228,7 +225,7 @@ const useSignup = () => {
   });
 
   const getChecking = (cohortData) => new Promise((resolve, reject) => {
-    const selectedPlan = cohortData?.plan ? cohortData?.plan : undefined;
+    const selectedPlan = cohortData?.plan !== undefined ? cohortData?.plan : '4geeks-basic-subscription';
     const cohortPlan = cohortPlans?.length > 0 ? cohortPlans[cohortData?.index || 0] : selectedPlan;
 
     const checkingBody = {
@@ -236,21 +233,14 @@ const useSignup = () => {
       cohort: cohortData?.id || dateProps?.id,
       academy: cohortData?.academy?.id || dateProps?.academy?.id || (Number(academy) || undefined),
       syllabus,
-      plans: [selectedPlan?.slug || (cohortPlans?.length > 0 ? cohortPlan?.slug : undefined)],
+      plans: [selectedPlan?.slug || (cohortPlans?.length > 0 ? cohortPlan?.slug : undefined) || '4geeks-basic-subscription'],
       coupons: couponsQuery ? [couponsQuery] : undefined,
       country_code: location?.countryShort,
     };
 
-    fetch(`${BREATHECODE_HOST}/v1/payments/checking`, {
-      method: 'PUT',
-      headers: new Headers({
-        'content-type': 'application/json',
-        Authorization: `Token ${cohortData?.token || accessToken}`,
-      }),
-      body: JSON.stringify(checkingBody),
-    })
+    bc.payment().checking(checkingBody)
       .then(async (response) => {
-        const data = await response.json();
+        const { data } = response;
         const currentPlan = data?.plans?.[0];
         const planSlug = encodeURIComponent(currentPlan?.slug);
         const finalData = await generatePlan(planSlug, planTranslationsObj).then((respData) => respData);
@@ -342,7 +332,7 @@ const useSignup = () => {
           handleStep(1);
           toggleIfEnrolled(true);
         } else {
-          console.err(err);
+          console.error(err);
         }
       });
   });
