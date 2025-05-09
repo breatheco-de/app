@@ -42,7 +42,7 @@ function Component({ withBanner, children }) {
 function OnlyFor({
   academy, capabilities, children, onlyMember, onlyTeachers, withBanner, cohort, saas,
 }) {
-  const { user } = useAuth();
+  const { user, hasNonSaasCohort } = useAuth();
   const academyNumber = Math.floor(academy);
   const teachers = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const commonUser = ['TEACHER', 'ASSISTANT', 'STUDENT', 'REVIEWER'];
@@ -69,27 +69,42 @@ function OnlyFor({
   const isCohortSaas = currentCohort?.available_as_saas === true;
 
   const haveRequiredCapabilities = () => {
-    if (!currentCohort) return false;
     if (isSaasAllowed) {
-      if (['true', 'True', '1'].includes(String(saas)) && !isCohortSaas) return false;
-      if (['false', 'False', '0'].includes(String(saas)) && isCohortSaas) return false;
+      const isSaasCheck = ['true', 'True', '1'].includes(String(saas));
+      const isNonSaasCheck = ['false', 'False', '0'].includes(String(saas));
+
+      if (currentCohort) {
+        if (isSaasCheck && !isCohortSaas) return false;
+        if (isNonSaasCheck && isCohortSaas) return false;
+      } else {
+        if (isSaasCheck) return false;
+        if (isNonSaasCheck && !hasNonSaasCohort) return false;
+      }
     }
+
     if (onlyTeachers && isTeacher) {
-      if (isCapableRole) return true;
-      if (capabilitiesNotExists) return true;
+      if (isCapableRole || capabilitiesNotExists) return true;
     }
     if (onlyMember && isMember) {
-      if (isCapableRole) return true;
-      if (capabilitiesNotExists) return true;
+      if (isCapableRole || capabilitiesNotExists) return true;
     }
     if (!onlyMember && !onlyTeachers && isCapableRole) return true;
     if (capabilitiesNotExists && isCapableAcademy) return true;
     if (academy && isCapableAcademy && isCapableRole) return true;
 
+    if (isSaasAllowed && !currentCohort) {
+      const isNonSaasCheck = ['false', 'False', '0'].includes(String(saas));
+      if (isNonSaasCheck && hasNonSaasCohort) {
+        return true;
+      }
+    }
+
     return false;
   };
 
-  return haveRequiredCapabilities()
+  const shouldRender = haveRequiredCapabilities();
+
+  return shouldRender
     ? children
     : (
       <Component withBanner={withBanner}>

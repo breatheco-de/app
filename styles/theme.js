@@ -55,8 +55,7 @@ const theme = extendTheme({
     },
 
     blue: {
-      default: '#0097CD',
-      default2: '#0084FF',
+      default: '#0084FF',
       light: '#EEF9FE',
       50: '#E3F2FF',
       100: '#BEE3F8',

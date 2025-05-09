@@ -31,7 +31,7 @@ function Page({ page }) {
   }, []);
 
   return prismicRef && prismicApi && (
-    <Box className="prismic-body" pt="3rem">
+    <Box className="prismic-body" pt="1rem" px={{ base: '10px', md: '2rem' }}>
       <SliceZone slices={page?.data?.slices} components={components} />
     </Box>
   );

@@ -89,7 +89,7 @@ const AvatarUser = memo(({
           </Avatar>
         </WrapItem>
       </PopoverTrigger>
-      <PopoverContent minWidth={{ base: 'none', md: data?.role ? '320px' : '' }} width={data?.role ? '100%' : 'auto'} pr={!data?.role && '20px'}>
+      <PopoverContent display={{ base: 'none', md: 'block' }} minWidth={{ base: 'none', md: data?.role ? '320px' : '' }} width={data?.role ? '100%' : 'auto'} pr={!data?.role && '20px'}>
         {data?.role && (
           <PopoverHeader>
             <Heading

@@ -1,5 +1,6 @@
 {
   "change-language": "Cambiar idioma",
+  "see-more": "Ver más",
   "reviews": "Reseñas",
   "course-rating": "Calificación del curso",
   "connect-with-github": "Conéctate con Github",
@@ -12,6 +13,9 @@
   "hide": "Ocultar",
   "rigo": "Rigo",
   "see-workshops": "Ver todos los workshops",
+  "see-all-events": "Ver todos los eventos",
+  "mentorships": "Mentorías",
+  "mentorship-description": "Programa una sesión de mentoría presencial con un experto en la industria. Las mentorías son la forma más eficiente de aprender.",
   "schedule-mentoring": "Agenda una sesión de mentoria",
   "rigobot-bubble": {
     "greeting": "Hola!"
@@ -89,6 +93,8 @@
   "enroll-totally-free": "Entrar totalmente gratis",
   "enroll-for-connector": "Unete por",
   "start-tutorial": "Empezar tutorial",
+  "see-upcoming-events": "Ver eventos próximos",
+  "see-upcoming-events-description": "Todas las semanas tenemos nuevos eventos, workshops y clases en vivo. ¡Mantente al día!",
   "learn-more": "Aprender más",
   "more-technologies": "Más tecnologías",
   "continue-learning": "Continúa aprendiendo sobre:",
@@ -171,6 +177,37 @@
   "external": {
     "title": "Este es un ejercicio externo",
     "description": "<strong>\"{{projectName}}\"</strong> es un ejercicio externo, serás redireccionado a una nueva pestaña para hacerlo; elige una de las siguientes opciones para comenzar a trabajar en el proyecto:"
+  },
+  "chat-with-rigobot": "Chatea con Rigobot",
+  "rigobot": {
+    "title": "Conoce a Rigobot",
+    "description": "Rigobot es una inteligencia artificial que guía a estudiantes en su camino para aprender a programar. Ofrece explicaciones claras, ejemplos prácticos y apoyo personalizado paso a paso. Ideal para principiantes y curiosos que quieren dominar el mundo del código.",
+    "steps": [
+      {
+        "label": "Conoce a Rigobot, tu mentor de programación con IA.",
+        "description": "Rigobot está diseñado para apoyarte en cada etapa de tu camino como programador. Ve lo que estás leyendo, entiende el código que escribes y te guía como un experto—dándote pistas precisas para que llegues tú mismo a la solución.",
+        "video": "",
+        "source": ""
+      },
+      {
+        "label": "Haz preguntas a Rigobot mientras lees.",
+        "description": "Mientras lees una lección, solo tienes que hacer clic en el ícono de Rigobot en la esquina inferior derecha para hacer preguntas. Responde tus dudas al instante, en contexto, ayudándote a mantenerte enfocado y a entender mejor sin interrumpir tu ritmo.",
+        "video": "",
+        "source": ""
+      },
+      {
+        "label": "Recibe ayuda durante los retos de código.",
+        "description": "Cuando estés haciendo ejercicios, puedes correr tu código y recibir retroalimentación inmediata y amigable. Rigobot no te dará la solución, pero sí te orientará con pistas para mejorar tu lógica y resolver problemas por ti mismo.",
+        "video": "",
+        "source": ""
+      },
+      {
+        "label": "Recibe ayuda en tu propia computadora.",
+        "description": "Rigobot también funciona en tu entorno local, no solo en el navegador. Ya sea que estés construyendo un proyecto o enfrentando un reto real, te acompaña como si fuera un compañero de equipo en un entorno profesional.",
+        "video": "",
+        "source": ""
+      }
+    ]
   },
   "learnpack": {
     "title": "Este es un ejercicio interactivo de Learnpack",

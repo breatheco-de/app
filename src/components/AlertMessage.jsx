@@ -18,7 +18,6 @@ function AlertMessage({
     error: { background: '#fee8e8', borderColor: '#EB5757' },
     info: { background: '#37c0ff', borderColor: '#DADADA' },
   };
-  console.log('alertMessage');
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {

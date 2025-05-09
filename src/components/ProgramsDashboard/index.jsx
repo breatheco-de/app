@@ -30,7 +30,7 @@ function ProgramsDashboard({ cohorts, setLateModalProps }) {
 
   const hasNonSaasCourse = cohorts.some((cohort) => !cohort.available_as_saas || cohort.cohort_user.role === 'TEACHER');
 
-  const marketingCourses = marketingCursesList.filter(
+  const marketingCourses = marketingCursesList?.filter(
     (item) => !activeCohorts.some(
       (cohort) => cohort.slug === item?.cohort?.slug,
     ) && item?.course_translation?.title,
@@ -43,7 +43,9 @@ function ProgramsDashboard({ cohorts, setLateModalProps }) {
   useEffect(() => {
     bc.marketing({ academy: WHITE_LABEL_ACADEMY }).courses()
       .then(({ data }) => {
-        setMarketingCursesList(data);
+        if (Array.isArray(data)) {
+          setMarketingCursesList(data);
+        }
       });
   }, [router?.locale]);
 

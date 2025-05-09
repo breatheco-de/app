@@ -1,5 +1,6 @@
 {
   "change-language": "Change language",
+  "see-more": "See more",
   "reviews": "Ratings",
   "course-rating": "Course rating",
   "connect-with-github": "Connect with Github",
@@ -14,6 +15,9 @@
   "ai-tutor": "AI Tutor",
   "tooltip-ai-tutor": "Never be stuck again, our internally developed AI tutor will help you everywhere, every step of the way.",
   "see-workshops": "See all workshops",
+  "see-all-events": "See all events",
+  "mentorships": "Mentorships",
+  "mentorship-description": "Schedule a face to face mentorship session with an industry expert. Mentorships are the most efficient way to learn.",
   "schedule-mentoring": "Schedule a mentoring session",
   "rigobot-bubble": {
     "greeting": "Hi!"
@@ -89,6 +93,8 @@
   "enroll-totally-free": "Enroll totally free",
   "enroll-for-connector": "Enroll for",
   "start-tutorial": "Start tutorial",
+  "see-upcoming-events": "See upcoming events",
+  "see-upcoming-events-description": "Every week new live classes, workshops & upcoming events are organized. Stay tuned!",
   "learn-more": "Learn more",
   "more-technologies": "More technologies",
   "continue-learning": "Continue learning about:",
@@ -171,6 +177,38 @@
   "external": {
     "title": "This is an external exercise",
     "description": "<strong>\"{{projectName}}\"</strong> is an external exercise you will be redirected to a new tab to do it; choose one of the following options to start working on the project:"
+  },
+  "chat-with-rigobot": "Chat with Rigobot",
+  "rigobot": {
+    "title": "Meet Rigobot",
+    "description": "Rigobot is an AI that guides students on their path to learning to code. It offers clear explanations, practical examples, and personalized step-by-step support. Ideal for beginners and curious students who want to master the world of code.",
+    "commonVideoUrl": "https://www.youtube.com/watch?v=6m1Jyya7eCc",
+    "steps": [
+      {
+        "label": "Meet Rigobot, your AI coding mentor.",
+        "description": "Rigobot is designed to support you through every stage of your coding journey. It sees what you're reading, understands the code you're writing, and gives you expert-level guidance, offering just the right hints so you can find the solution yourself.",
+        "video": "",
+        "source": ""
+      },
+      {
+        "label": "Ask Rigobot as you read.",
+        "description": "While you're reading lessons, simply click the Rigobot icon on the bottom right of your screen to ask questions. It can answer your doubts instantly, in context, as you're learning, helping you stay focused and deepen your understanding without breaking your flow.",
+        "video": "",
+        "source": ""
+      },
+      {
+        "label": "Get help during coding challenges.",
+        "description": "As you work on exercises, you can run your code and get immediate, friendly feedback. Rigobot won’t give you the solution directly, instead, it points you in the right direction, helping you improve your logic and sharpen your problem-solving skills.",
+        "video": "",
+        "source": ""
+      },
+      {
+        "label": "Get help in your own computer.",
+        "description": "Rigobot works not only in the browser but also on your local setup. Whether you're building a project or tackling a real-world task, it can guide you through it, making your development environment feel just like a real job experience.",
+        "video": "",
+        "source": ""
+      }
+    ]
   },
   "learnpack": {
     "title": "This is a Learnpack interactive exercise",

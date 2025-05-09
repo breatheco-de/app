@@ -20,7 +20,7 @@ import useCustomToast from '../../hooks/useCustomToast';
 
 const useSignup = () => {
   const { isAuthenticated } = useAuth();
-  const { userSession } = useSession();
+  const { userSession, location } = useSession();
   const state = useSelector((sl) => sl.signupReducer);
   const [, setSubscriptionProcess] = usePersistent('subscription-process', null);
   const { t } = useTranslation('signup');
@@ -235,6 +235,7 @@ const useSignup = () => {
       syllabus,
       plans: [selectedPlan?.slug || (cohortPlans?.length > 0 ? cohortPlan?.slug : undefined) || '4geeks-basic-subscription'],
       coupons: couponsQuery ? [couponsQuery] : undefined,
+      country_code: location?.countryShort,
     };
 
     bc.payment().checking(checkingBody)
@@ -342,7 +343,7 @@ const useSignup = () => {
         setLoader('paymentMethods', false);
         // const ownerId = selectedPlanCheckoutData.owner.id;
         setLoader('paymentMethods', true);
-        const resp = await bc.payment({ academy_id: ownerId, lang: router.locale }).getpaymentMethods();
+        const resp = await bc.payment({ academy_id: ownerId, lang: router.locale, country_code: location?.countryShort }).getpaymentMethods();
         if (resp.status < 400) {
           setPaymentMethods(resp.data);
         }
@@ -450,7 +451,7 @@ const useSignup = () => {
   const getSelfAppliedCoupon = async (plan) => {
     try {
       if (plan) {
-        const { data } = await bc.payment({ plan }).verifyCoupon();
+        const { data } = await bc.payment({ plan, country_code: location?.countryShort }).verifyCoupon();
         const coupon = data[0];
         if (coupon) {
           setSelfAppliedCoupon({

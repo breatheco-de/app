@@ -45,7 +45,7 @@ function MktShowPrices({ id, externalPlanProps, cohortId, title, description, pr
       />
     </Box>
   ) : (
-    <Box display="flex" padding="32px">
+    <Box maxWidth="1280px" display="flex" padding="32px" borderRadius="10px">
       <Skeleton height="300px" width="100%" />
     </Box>
   );

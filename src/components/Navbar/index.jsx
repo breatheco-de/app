@@ -115,6 +115,7 @@ function Navbar({ translations, pageProps }) {
       const mktQueryString = {
         featured: true,
         academy: WHITE_LABEL_ACADEMY,
+        country_code: location?.countryShort,
       };
       const response = await bc.marketing(mktQueryString).courses();
       const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null && item?.visibility !== 'UNLISTED');
