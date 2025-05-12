@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { Avatar, Box } from '@chakra-ui/react';
 import bc from '../services/breathecode';
+import rigobot from '../services/rigobot';
 import axiosInstance, { cancelAllCurrentRequests } from '../axios';
 import { usePersistentBySession } from '../hooks/usePersistent';
 import useRigo from '../hooks/useRigo';
@@ -285,11 +286,11 @@ function AuthProvider({ children, pageProps }) {
             const { cohorts, userData, hasNonSaasCohort } = await fetchUserAndCohorts();
 
             const [respRigobotAuth] = await Promise.all([
-              bc.auth().verifyRigobotConnection(token),
+              rigobot.auth().meToken(token),
               fetchBlockedServices(),
             ]);
 
-            const isAuthenticatedWithRigobot = respRigobotAuth && respRigobotAuth?.status === 200;
+            const isAuthenticatedWithRigobot = respRigobotAuth?.status === 200;
 
             dispatch({
               type: 'INIT',

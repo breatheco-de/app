@@ -2,12 +2,11 @@
 import axios from '../axios';
 import { parseQuerys } from '../utils/url';
 import modifyEnv from '../../modifyEnv';
-import { RIGOBOT_HOST, BREATHECODE_HOST } from '../utils/variables';
+import { BREATHECODE_HOST } from '../utils/variables';
 
 const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
 const host = `${BREATHECODE_HOST}/v1`;
 const hostV2 = `${BREATHECODE_HOST}/v2`;
-const rigoHostV1 = `${RIGOBOT_HOST}/v1`;
 
 const breathecode = {
   get: (url, config) => fetch(url, {
@@ -38,7 +37,6 @@ const breathecode = {
   auth: () => {
     const url = `${host}/auth`;
     return {
-      login: (payload) => axios.post(`${url}/login/`, { ...payload, user_agent: 'bc/student' }),
       login2: (payload, lang = 'en') => fetch(`${url}/login/`, {
         method: 'POST',
         headers: {
@@ -50,7 +48,6 @@ const breathecode = {
           user_agent: 'bc/student',
         }),
       }),
-      verifyRigobotConnection: (token) => breathecode.get(`${rigoHostV1}/auth/me/token?breathecode_token=${token}`),
       verifyEmail: (email, lang) => breathecode.get(`${url}/emailverification/${email}`, {
         headers: {
           'Content-Type': 'application/json',
@@ -329,14 +326,6 @@ const breathecode = {
       applyEvent: (eventId, payload) => axios.post(`${url}/me/event/${eventId}/checkin${qs}`, payload),
       getUsers: (eventId) => axios.get(`${url}/event/${eventId}/checkin${qs}`),
       getAllEventTypes: () => axios.get(`${url}/eventype${qs}`),
-    };
-  },
-  rigobot: (query = {}) => {
-    const url = `${rigoHostV1}`;
-    const qs = parseQuerys(query);
-    return {
-      completionJob: (data) => axios.post(`${url}/prompting/completion/43${qs}`, data),
-      meToken: (token) => axios.get(`${url}/auth/me/token?breathecode_token=${token}`),
     };
   },
   provisioning: (query = {}) => {
