@@ -16,6 +16,7 @@ import { getQueryString, isWindow, slugToTitle } from '../utils';
 import { WHITE_LABEL_ACADEMY } from '../utils/variables';
 import useStyle from '../hooks/useStyle';
 import useAuth from '../hooks/useAuth';
+import useSession from '../hooks/useSession';
 import useSignup from '../hooks/useSignup';
 import usePlanMktInfo from '../hooks/usePlanMktInfo';
 import bc from '../services/breathecode';
