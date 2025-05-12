@@ -284,7 +284,7 @@ function CoursePage({ data, syllabus }) {
 
     try {
       const resp = await bc.admissions().joinCohort(cohortId);
-      const dataRequested = await resp.json();
+      const dataRequested = resp.data;
 
       if (dataRequested?.status === 'ACTIVE') {
         setReadyToRefetch(true);

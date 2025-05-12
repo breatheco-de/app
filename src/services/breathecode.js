@@ -125,7 +125,7 @@ const breathecode = {
           academy: 4,
         },
       }),
-      joinCohort: (id) => breathecode.post(`${url}/cohort/${id}/join`),
+      joinCohort: (id) => axios.post(`${url}/cohort/${id}/join`),
       getPublicSyllabusVersion: () => axios.get(`${url}/syllabus/version${qs}`),
       getPublicMembers: () => axios.get(`${url}/public/cohort/user${qs}`),
       takeAttendance: (id, activities) => axios.put(`${url}/academy/cohort/${id}/log${qs}`, activities),

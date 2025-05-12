@@ -3,19 +3,19 @@ description:
 globs: 
 alwaysApply: true
 ---
-Components
+##Components
 All of our components are in the src/components folder.
 
-Icons
+###Icons
 We have an Icon component inside the components folder. The Icon has a set of icons inside that folder, which are svg components that can be customized with props (width, height, style, color, etc.).
 
-UI Library
+###UI Library
 Our UI library is Chakra UI. Whe should always use Chakra to build our pages and our components.
 There are some chakra components that are customized with our own styling, so we should use those instead of the ones from chakra:
 - src/components/Text
 - src/components/Heading
 
-Styling
+###Styling
 We have all of our colors defined on the theme.js file inside the styles folder. We must always use the color variables declared in that file.
 
 We also have the useStyle hook which has color modes declared with our defined colors. the object hexColor can be used with the icons, since the icons dont support the color variables natively through strings.

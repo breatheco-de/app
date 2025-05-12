@@ -1,4 +1,3 @@
-/* eslint-disable default-param-last */
 import axios from '../axios';
 import { parseQuerys } from '../utils/url';
 import { RIGOBOT_HOST } from '../utils/variables';

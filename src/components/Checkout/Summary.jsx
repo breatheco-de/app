@@ -135,7 +135,7 @@ function Summary() {
         },
       });
       const resp = await bc.admissions().joinCohort(cohort?.id);
-      const dataRequested = await resp.json();
+      const dataRequested = resp.data;
       if (resp.status >= 400) {
         createToast({
           position: 'top',
