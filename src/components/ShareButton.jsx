@@ -226,7 +226,7 @@ ShareButton.defaultProps = {
   shareText: '',
   message: '',
   withParty: false,
-  onClose: () => {},
+  onClose: () => { },
 };
 
 export default memo(ShareButton);

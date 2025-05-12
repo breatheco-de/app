@@ -750,6 +750,12 @@ function SyllabusContent() {
       color: '#0077B5',
       target: 'popup',
     },
+    {
+      name: 'facebook',
+      label: 'Facebook',
+      href: `https://facebook.com/sharer?u=${shareLink}`,
+      color: '#4267B2',
+    },
   ];
 
   const url = currentAsset?.readme_url || currentAsset?.url;
