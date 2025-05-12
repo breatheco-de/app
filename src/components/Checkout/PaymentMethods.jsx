@@ -29,7 +29,11 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
   } = signupAction();
   const { handlePayment, getPaymentMethods } = useSignup();
   const {
-    selectedPlanCheckoutData, planData, paymentMethods, loader,
+    selectedPlanCheckoutData,
+    planData,
+    paymentMethods,
+    loader,
+    isSubmittingCard,
   } = state;
   const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
   const [declinedModalProps, setDeclinedModalProps] = useState({
@@ -47,6 +51,16 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
     setIsSubmittingPayment(false);
     actions?.setSubmitting(false);
     callback();
+
+    if (!silentCode) {
+      setOpenDeclinedModal(true);
+      setDeclinedModalProps({
+        title: t('transaction-denied'),
+        description: data?.detail || t('payment-not-processed'),
+      });
+      return;
+    }
+
     if (silentCode === SILENT_CODE.CARD_ERROR) {
       setOpenDeclinedModal(true);
       setDeclinedModalProps({
@@ -82,8 +96,10 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
           setPaymentStatus('success');
           setIsSubmittingPayment(false);
           onPaymentSuccess();
+          setShowPaymentDetails(false);
         } else {
           setPaymentStatus('error');
+          handlePaymentErrors(respPayment, actions);
         }
       } finally {
         actions.setSubmitting(false);
@@ -123,7 +139,6 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
     };
 
     handleSubmit(actions, allValues);
-    setShowPaymentDetails(false);
   };
 
   const handleTryAgain = () => {
@@ -192,6 +207,7 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
                     setOpenDeclinedModal,
                     handleTryAgain,
                     disableClose: true,
+                    isSubmitting: isSubmittingCard,
                   }}
                   onSubmit={onSubmitCard}
                 />

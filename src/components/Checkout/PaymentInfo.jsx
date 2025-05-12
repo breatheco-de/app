@@ -39,7 +39,7 @@ function PaymentInfo({ setShowPaymentDetails }) {
   return (
     <Box display="flex" height="100%" flexDirection="column" gridGap="30px" margin={{ base: paymentStatus === 'success' ? '' : '0 1rem', lg: '0 auto' }} position="relative">
       <Box display="flex" width={{ base: 'auto', lg: '490px' }} height="auto" flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={backgroundColor} p={{ base: '20px 0', md: '30px 0' }} borderRadius="15px">
-        {paymentStatus === 'idle' && (
+        {paymentStatus !== 'success' && (
           <PaymentMethods onPaymentSuccess={onPaymentSuccess} setShowPaymentDetails={setShowPaymentDetails} />
         )}
       </Box>
