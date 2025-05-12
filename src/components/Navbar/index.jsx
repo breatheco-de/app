@@ -34,7 +34,7 @@ import { getAllMySubscriptions } from '../../handlers/subscriptions';
 
 function Navbar({ translations, pageProps }) {
   const [uniqueLanguages, setUniqueLanguages] = useState([]);
-  const { userSession, location } = useSession();
+  const { userSession, location, isLoadingLocation } = useSession();
   const isUtmMediumAcademy = userSession?.utm_medium === 'academy';
   const { isAuthenticated, isLoading, user, logout, cohorts } = useAuth();
   const [navbarItems, setNavbarItems] = useState([]);
@@ -141,8 +141,10 @@ function Navbar({ translations, pageProps }) {
   };
 
   useEffect(() => {
-    fetchMktCourses();
-  }, [locale]);
+    if (!isLoadingLocation) {
+      fetchMktCourses();
+    }
+  }, [locale, isLoadingLocation]);
 
   useEffect(() => {
     if (pageProps?.existsWhiteLabel) {
