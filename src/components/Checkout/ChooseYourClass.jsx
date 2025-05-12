@@ -21,7 +21,7 @@ function LoaderContent({ cohortIsLoading }) {
   const hasShownToast = useRef(false);
 
   useEffect(() => {
-    if (!cohortIsLoading && !hasShownToast.current) {
+    if (false && !cohortIsLoading && !hasShownToast.current) {
       createToast({
         position: 'top',
         title: <span dangerouslySetInnerHTML={{ __html: t('no-date-available') }} />,
@@ -56,7 +56,6 @@ function ChooseYourClass({
   const [isLoading, setIsLoading] = useState(false);
   const [coords, setCoords] = useState(null);
   const [addressValue, setAddressValue] = useState('');
-  const { createToast } = useCustomToast({ toastId: 'cohort-google-maps-class' });
   const autoCompleteRef = useRef();
   const inputRef = useRef();
   const buttonRef = useRef();
@@ -110,14 +109,7 @@ function ChooseYourClass({
         setAvailableDates(filteredCohorts);
       })
       .catch((error) => {
-        createToast({
-          position: 'top',
-          title: t('alert-message:something-went-wrong-fetching-cohorts'),
-          description: error.message,
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
+        console.error(t('alert-message:something-went-wrong-fetching-cohorts'), error);
       })
       .finally(() => setCohortIsLoading(false));
   }, [coords, isSecondStep]);
@@ -150,12 +142,7 @@ function ChooseYourClass({
             });
           })
           .catch(() => {
-            createToast({
-              position: 'top',
-              title: t('alert-message:google-maps-no-coincidences'),
-              status: 'warning',
-              duration: 5000,
-            });
+            console.error(t('alert-message:google-maps-no-coincidences'));
           })
           .finally(() => setIsLoading(false));
       });

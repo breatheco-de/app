@@ -65,13 +65,8 @@
           "config": { "label": "SubTitle", "placeholder": "" }
         },
         "description": {
-          "type": "StructuredText",
-          "config": {
-            "label": "Description",
-            "placeholder": "",
-            "allowTargetBlank": true,
-            "single": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
-          }
+          "type": "Text",
+          "config": { "label": "Description", "placeholder": "" }
         },
         "description_font_size": {
           "type": "Text",
@@ -129,41 +124,286 @@
             "placeholder": "Color of title and description"
           }
         },
-        "kpi_title_1": {
-          "type": "Text",
-          "config": { "label": "KPI Title 1", "placeholder": "" }
-        },
-        "kpi_description_1": {
-          "type": "Text",
-          "config": { "label": "KPI Description 1", "placeholder": "" }
-        },
-        "kpi_color_1": {
+        "background": {
           "type": "Color",
-          "config": { "label": "KPI Color 1", "placeholder": "" }
+          "config": { "label": "background", "placeholder": "" }
         },
-        "kpi_title_2": {
+        "paddingMd": {
           "type": "Text",
-          "config": { "label": "KPI Title 2", "placeholder": "" }
+          "config": { "label": "padding-md", "placeholder": "" }
         },
-        "kpi_description_2": {
+        "margin": {
           "type": "Text",
-          "config": { "label": "KPI Description 2", "placeholder": "" }
+          "config": {
+            "label": "Margin",
+            "placeholder": "top, right, bottom, left"
+          }
+        }
+      },
+      "items": {},
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    },
+    {
+      "id": "oneColumnWithKpIs",
+      "name": "one Column with KPIs",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "OneColumn",
+      "primary": {
+        "id_key": {
+          "type": "Text",
+          "config": { "label": "ID Key", "placeholder": "" }
         },
-        "kpi_color_2": {
+        "padding": {
+          "type": "Text",
+          "config": { "label": "padding", "placeholder": "" }
+        },
+        "width": {
+          "type": "Text",
+          "config": { "label": "Width", "placeholder": "" }
+        },
+        "margin_top": {
+          "type": "Text",
+          "config": { "label": "Margin Top", "placeholder": "" }
+        },
+        "margin_bottom": {
+          "type": "Text",
+          "config": { "label": "Margin Bottom", "placeholder": "" }
+        },
+        "max_width": {
+          "type": "Text",
+          "config": { "label": "Max Width", "placeholder": "" }
+        },
+        "border_radius": {
+          "type": "Text",
+          "config": { "label": "Border Radius", "placeholder": "" }
+        },
+        "font_family": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"],
+            "default_value": "Lato"
+          }
+        },
+        "title": {
+          "type": "Text",
+          "config": { "label": "Title", "placeholder": "" }
+        },
+        "title_font_size": {
+          "type": "Text",
+          "config": { "label": "Title Font Size", "placeholder": "" }
+        },
+        "subtitle": {
+          "type": "Text",
+          "config": { "label": "SubTitle", "placeholder": "" }
+        },
+        "description": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Description",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "single": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "description_font_size": {
+          "type": "Text",
+          "config": { "label": "Description Font Size", "placeholder": "" }
+        },
+        "description_text_align": {
+          "type": "Text",
+          "config": { "label": "Description Text Align", "placeholder": "" }
+        },
+        "button_label": {
+          "type": "Text",
+          "config": { "label": "Button label", "placeholder": "" }
+        },
+        "button_url": {
+          "type": "Text",
+          "config": { "label": "Button url", "placeholder": "" }
+        },
+        "link_button": {
+          "type": "Boolean",
+          "config": {
+            "label": "Link Button",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
+          }
+        },
+        "justify_items": {
+          "type": "Text",
+          "config": { "label": "Justify Items", "placeholder": "" }
+        },
+        "font_color": {
           "type": "Color",
-          "config": { "label": "KPI Color 2", "placeholder": "" }
+          "config": {
+            "label": "Font color",
+            "placeholder": "Color of title and description"
+          }
         },
-        "kpi_title_3": {
-          "type": "Text",
-          "config": { "label": "KPI Title 3", "placeholder": "" }
-        },
-        "kpi_description_3": {
-          "type": "Text",
-          "config": { "label": "KPI Description 3", "placeholder": "" }
-        },
-        "kpi_color_3": {
+        "background": {
           "type": "Color",
-          "config": { "label": "KPI Color 3", "placeholder": "" }
+          "config": { "label": "background", "placeholder": "" }
+        }
+      },
+      "items": {
+        "kpi_title": {
+          "type": "Text",
+          "config": { "label": "KPI Title", "placeholder": "" }
+        },
+        "kpi_description": {
+          "type": "Text",
+          "config": { "label": "KPI Description", "placeholder": "" }
+        },
+        "kpi_color": {
+          "type": "Color",
+          "config": { "label": "KPI Color", "placeholder": "" }
+        }
+      },
+      "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+    },
+    {
+      "id": "imageOnTop",
+      "name": "Image on Top",
+      "docURL": "...",
+      "version": "sktwi1xtmkfgx8626",
+      "description": "OneColumn",
+      "primary": {
+        "id_key": {
+          "type": "Text",
+          "config": { "label": "ID Key", "placeholder": "" }
+        },
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Title",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "subtitle": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Subtitle",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "description": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Description",
+            "labels": ["gray_text"],
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "single": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "button_label": {
+          "type": "Text",
+          "config": { "label": "Button label", "placeholder": "" }
+        },
+        "button_url": {
+          "type": "Text",
+          "config": { "label": "Button url", "placeholder": "" }
+        },
+        "link_button": {
+          "type": "Boolean",
+          "config": {
+            "label": "Link Button",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
+          }
+        },
+        "image": {
+          "type": "Image",
+          "config": { "label": "Image", "constraint": {}, "thumbnails": [] }
+        },
+        "padding": {
+          "type": "Text",
+          "config": { "label": "padding", "placeholder": "" }
+        },
+        "grid_column": {
+          "type": "Text",
+          "config": { "label": "Grid Column", "placeholder": "" }
+        },
+        "width": {
+          "type": "Text",
+          "config": { "label": "Width", "placeholder": "" }
+        },
+        "margin_top": {
+          "type": "Text",
+          "config": { "label": "Margin Top", "placeholder": "" }
+        },
+        "margin_bottom": {
+          "type": "Text",
+          "config": { "label": "Margin Bottom", "placeholder": "" }
+        },
+        "max_width": {
+          "type": "Text",
+          "config": { "label": "Max Width", "placeholder": "" }
+        },
+        "border_radius": {
+          "type": "Text",
+          "config": { "label": "Border Radius", "placeholder": "" }
+        },
+        "font_family": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"],
+            "default_value": "Lato"
+          }
+        },
+        "title_font_size": {
+          "type": "Text",
+          "config": { "label": "Title Font Size", "placeholder": "" }
+        },
+        "description_font_size": {
+          "type": "Text",
+          "config": { "label": "Description Font Size", "placeholder": "" }
+        },
+        "description_text_align": {
+          "type": "Text",
+          "config": { "label": "Description Text Align", "placeholder": "" }
+        },
+        "description_justify_items": {
+          "type": "Text",
+          "config": { "label": "Description Justify Items", "placeholder": "" }
+        },
+        "description_line_height": {
+          "type": "Text",
+          "config": { "label": "Description Line Height", "placeholder": "" }
+        },
+        "button_background_color": {
+          "type": "Color",
+          "config": { "label": "Button Background Color", "placeholder": "" }
+        },
+        "button_font_color": {
+          "type": "Color",
+          "config": { "label": "Button Font Color", "placeholder": "" }
+        },
+        "justify_items": {
+          "type": "Text",
+          "config": { "label": "Justify Items", "placeholder": "" }
+        },
+        "button_font_size": {
+          "type": "Text",
+          "config": { "label": "Button Font Size", "placeholder": "" }
+        },
+        "font_color": {
+          "type": "Color",
+          "config": {
+            "label": "Font color",
+            "placeholder": "Color of title and description"
+          }
         },
         "background": {
           "type": "Color",

@@ -81,7 +81,7 @@ function Page({ page }) {
       {loggedInWorkshopsView && !isLoading ? (
         <WorkshopsLoggedLanding />
       ) : (
-        <Box className="prismic-body" pt="3rem" px={{ base: '10px', md: '2rem' }} pb="5rem" background={backgroundByMode}>
+        <Box className="prismic-body" pt="1rem" px={{ base: '10px', md: '2rem' }} pb="5rem" background={backgroundByMode}>
           <SliceZone slices={page?.data?.slices} components={components} />
         </Box>
       )}

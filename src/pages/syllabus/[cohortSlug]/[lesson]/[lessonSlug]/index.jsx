@@ -89,6 +89,8 @@ function SyllabusContent() {
   const [grantAccess, setGrantAccess] = useState(false);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [learnpackStart, setLearnpackStart] = useState(false);
+  const [showTeachAlert, setShowTeachAlert] = useState(false);
+  const [alertedModuleId, setAlertedModuleId] = useState(null);
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
     getCohortUserCapabilities, getCohortData, cohortSession, sortedAssignments, setCohortSession, taskTodo,
@@ -153,24 +155,6 @@ function SyllabusContent() {
 
   useEffect(() => {
     setLearnpackStart(false);
-    if (currentAsset?.solution_url) {
-      createToast({
-        title: t('solution-title'),
-        description: (
-          <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
-            {t('solution-message')}
-            {' '}
-            <Link fontSize="15px" textDecoration="underline" href={currentAsset.solution_url} target="_blank">
-              You can see it here
-            </Link>
-          </Text>
-        ),
-        status: 'warning',
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-
     if (currentAsset?.superseded_by?.slug) {
       createToast({
         title: t('superseded-message'),
@@ -840,19 +824,18 @@ function SyllabusContent() {
   };
 
   useEffect(() => {
-    if (selectedSyllabus && cohortModule && cohortModule.id !== selectedSyllabus.id) {
-      createToast({
-        title: t('teacherSidebar.no-need-to-teach-today.title'),
-        description: t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule.id} - ${languageFix(cohortModule.label, lang)}` }),
-        status: 'info',
-        duration: 5000,
-        isClosable: true,
-      });
+    if (selectedSyllabus && cohortModule && cohortModule.id !== selectedSyllabus.id && professionalRoles.includes(cohortSession?.cohort_user?.role)) {
+      if (alertedModuleId !== selectedSyllabus.id) {
+        setShowTeachAlert(true);
+        setAlertedModuleId(selectedSyllabus.id);
+      }
+    } else {
+      setShowTeachAlert(false);
     }
   }, [selectedSyllabus, cohortModule]);
 
   useEffect(() => {
-    if (selectedSyllabus && defaultSelectedSyllabus?.id !== selectedSyllabus.id) {
+    if (professionalRoles.includes(cohortSession?.cohort_user?.role) && selectedSyllabus && defaultSelectedSyllabus?.id !== selectedSyllabus.id) {
       createToast({
         title: t('teacherSidebar.alert-updated-module-instructions'),
         status: 'warning',
@@ -1137,6 +1120,8 @@ function SyllabusContent() {
                             currentTask={currentTask}
                             isGuidedExperience={isAvailableAsSaas}
                             grantSyllabusAccess={grantAccess}
+                            showTeachAlert={showTeachAlert}
+                            cohortModule={sortedAssignments.find((module) => module?.id === cohortSession?.current_module)}
                           />
                         )}
                         {!isQuiz && !isAvailableAsSaas && (
