@@ -4,7 +4,7 @@ globs:
 alwaysApply: true
 ---
 ##Components
-All of our components are in the src/components folder.
+All of our components are in the folder @/src/components.
 
 ###Icons
 We have an Icon component inside the components folder. The Icon has a set of icons inside that folder, which are svg components that can be customized with props (width, height, style, color, etc.).
