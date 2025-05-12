@@ -383,15 +383,15 @@ function CoursePage({ data, syllabus }) {
         });
 
         let combinedFeaturedAssets = [
-          ...filterAssets(exercises, true),
           ...filterAssets(projects, true),
+          ...filterAssets(exercises, true),
         ];
 
         if (combinedFeaturedAssets.length < 3) {
           const remainingNeeded = 3 - combinedFeaturedAssets.length;
           const additionalItems = [
-            ...filterAssets(exercises, false),
             ...filterAssets(projects, false),
+            ...filterAssets(exercises, false),
           ].slice(-remainingNeeded);
 
           combinedFeaturedAssets = [...combinedFeaturedAssets, ...additionalItems];
