@@ -529,6 +529,5 @@ export {
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, intervalToHours, capitalizeFirstLetter,
   adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle, decodeBase64,
-  removeSessionStorageItem, languageFix, getBrowserInfo, isValidEmail, addQueryToURL, getColorVariations,
-  parseProp,
+  removeSessionStorageItem, languageFix, getBrowserInfo, isValidEmail, addQueryToURL, getColorVariations, parseProp,
 };

@@ -70,7 +70,7 @@ function DesktopNavItem({ item }) {
                   variant="unstyled"
                   display="flex"
                   flexDirection="row"
-                  fontWeight={400}
+                  fontWeight={700}
                   color={isOpen ? 'blue.default' : lightColor}
                   fontSize="14px"
                   _hover={{
@@ -196,7 +196,7 @@ function DesktopNavItem({ item }) {
           target={!item.asPath && isAbsoluteUrl(item.href) ? '_blank' : undefined}
           rel={!item.asPath && isAbsoluteUrl(item.href) ? 'noopener noreferrer' : undefined}
           fontSize="sm"
-          fontWeight={400}
+          fontWeight={700}
           _hover={{
             textDecoration: 'none',
           }}
