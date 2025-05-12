@@ -1,14 +1,12 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-vars */
-import axios from 'axios';
-import PropTypes from 'prop-types';
 import { Box, Button, Flex, Image, SkeletonText, Badge } from '@chakra-ui/react';
 import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { parseQuerys } from '../../utils/url';
-import { BREATHECODE_HOST, ORIGIN_HOST, WHITE_LABEL_ACADEMY, BASE_COURSE } from '../../utils/variables';
+import { BREATHECODE_HOST, ORIGIN_HOST, BASE_COURSE } from '../../utils/variables';
 import Icon from '../../components/Icon';
 import Text from '../../components/Text';
 import GridContainer from '../../components/GridContainer';
@@ -48,75 +46,10 @@ import useCustomToast from '../../hooks/useCustomToast';
 import { usePlanPrice } from '../../utils/getPriceWithDiscount';
 import useSession from '../../hooks/useSession';
 
-export async function getStaticPaths({ locales }) {
-  const mktQueryString = parseQuerys({
-    featured: true,
-    academy: WHITE_LABEL_ACADEMY,
-  });
-
-  const getAllCourses = await Promise.all(locales.map(async (locale) => {
-    const resp = await axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQueryString}&lang=${locale}`);
-    return resp?.data;
-  }));
-
-  const filterByTranslations = getAllCourses.flat().filter((item) => item?.course_translation !== null);
-  const paths = filterByTranslations.flatMap((course) => {
-    const locale = course?.course_translation?.lang?.split('-')[0];
-    return course?.slug && ({
-      params: {
-        course_slug: course?.slug,
-      },
-      locale,
-    });
-  });
-
-  return {
-    fallback: false,
-    paths,
-  };
-}
-export async function getStaticProps({ locale, locales, params }) {
-  const { course_slug: courseSlug } = params;
-
-  const endpoint = `/v1/marketing/course/${courseSlug}?lang=${locale}`;
-  const resp = await axios.get(`${BREATHECODE_HOST}${endpoint}`);
-  const data = resp?.data;
-
-  if (resp?.status >= 400) {
-    console.error(`ERROR with /bootcamp/course/${courseSlug}: something went wrong fetching "${endpoint}"`);
-    return {
-      notFound: true,
-    };
-  }
-
-  const syllabusSlug = data.syllabus[0]?.slug;
-
-  const respSyll = await axios.get(`${BREATHECODE_HOST}/v1/admissions/syllabus/version?slug=${syllabusSlug}`);
-  const syllabus = respSyll?.data[0];
-
-  return {
-    props: {
-      seo: {
-        title: data.course_translation.title,
-        description: data.course_translation.description,
-        image: data?.course_translation?.preview_url || `${ORIGIN_HOST}/static/images/4geeks.png`,
-        locales,
-        locale,
-        disableStaticCanonical: true,
-        disableHreflangs: true,
-        url: `/bootcamp/${data.slug}`,
-        pathConnector: '/bootcamp',
-        card: 'default',
-      },
-      data,
-      syllabus,
-    },
-  };
-}
-
-function CoursePage({ data, syllabus }) {
+function CoursePage() {
   const { state, getPriceWithDiscount, getSelfAppliedCoupon, applyDiscountCouponsToPlans } = useSignup();
   const [coupon] = usePersistentBySession('coupon', '');
+  const [data, setData] = useState({});
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);
   const [isCtaVisible, setIsCtaVisible] = useState(false);
@@ -146,6 +79,7 @@ function CoursePage({ data, syllabus }) {
   const cohortId = data?.cohort?.id;
   const isVisibilityPublic = data.visibility === 'PUBLIC';
   const courseColor = data?.color;
+  const { course_slug: courseSlug } = router.query;
 
   const structuredData = data?.course_translation ? {
     '@context': 'https://schema.org',
@@ -204,7 +138,7 @@ function CoursePage({ data, syllabus }) {
   const country_code = location?.countryShort;
 
   useEffect(() => {
-    if (isRigoInitialized && data.course_translation && !initialDataIsFetching && planData?.slug) {
+    if (isRigoInitialized && data?.course_translation && !initialDataIsFetching && planData?.slug) {
       // const context = document.body.innerText;
 
       const plans = applyDiscountCouponsToPlans(planData.planList, selfAppliedCoupon);
@@ -216,8 +150,8 @@ function CoursePage({ data, syllabus }) {
         period: ${plan.period_label}
         ${plan.lastPrice ? `original price: ${isSpain && plan.type !== 'FREE' ? '199.99€' : plan.lastPrice}\n discount: ${discount}\n` : ''}
       `);
-      const syllabusContext = syllabus?.json
-        ? syllabus.json.days
+      const syllabusContext = cohortData?.cohortSyllabus?.syllabus?.json
+        ? cohortData.cohortSyllabus.syllabus.json.days
           .map(({ label, description }) => `- Title: ${typeof label === 'object' ? (label[lang] || label.us) : label}, Description: ${typeof description === 'object' ? (description[lang] || description.us) : description}`)
         : '';
 
@@ -356,7 +290,10 @@ function CoursePage({ data, syllabus }) {
 
   const getInitialData = async () => {
     setInitialDataIsFetching(true);
-    const cohortSyllabus = await generateCohortSyllabusModules(cohortId);
+    const { data: courseData } = await bc.marketing({ lang, country_code }).getCourse(courseSlug);
+    setData(courseData);
+
+    const cohortSyllabus = await generateCohortSyllabusModules(courseData?.cohort?.id);
 
     const getModulesInfo = async () => {
       try {
@@ -1093,15 +1030,5 @@ function CoursePage({ data, syllabus }) {
     </>
   );
 }
-
-CoursePage.propTypes = {
-  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.array])),
-  syllabus: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-};
-
-CoursePage.defaultProps = {
-  data: {},
-  syllabus: null,
-};
 
 export default CoursePage;
