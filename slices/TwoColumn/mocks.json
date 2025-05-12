@@ -210,6 +210,20 @@
 				"__TYPE__": "FieldContent",
 				"value": "sets",
 				"type": "Text"
+			},
+			"custom_title_weight": {
+				"__TYPE__": "FieldContent",
+				"value": "ants",
+				"type": "Text"
+			},
+			"content_position": {
+				"__TYPE__": "FieldContent",
+				"value": "start",
+				"type": "Select"
+			},
+			"image_first_on_mobile": {
+				"__TYPE__": "BooleanContent",
+				"value": false
 			}
 		},
 		"items": [

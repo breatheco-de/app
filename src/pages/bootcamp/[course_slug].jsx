@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Box, Button, Flex, Image, SkeletonText } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, SkeletonText, Badge } from '@chakra-ui/react';
 import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -42,6 +42,7 @@ import completions from './completion-jobs.json';
 import Rating from '../../components/Rating';
 import SimpleModal from '../../components/SimpleModal';
 import CustomCarousel from '../../components/CustomCarousel';
+import AssignmentSlide from '../../components/AssignmentSlide';
 import useCustomToast from '../../hooks/useCustomToast';
 import useSignup from '../../hooks/useSignup';
 import { usePlanPrice } from '../../utils/getPriceWithDiscount';
@@ -122,7 +123,7 @@ function CoursePage({ data, syllabus }) {
   const [isCtaVisible, setIsCtaVisible] = useState(false);
   const [allDiscounts, setAllDiscounts] = useState([]);
   const { isAuthenticated, user, logout, cohorts } = useAuth();
-  const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor, backgroundColor7, backgroundColor8 } = useStyle();
+  const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor, backgroundColor7, backgroundColor8, lightColor } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
   const { createToast } = useCustomToast({ toastId: 'choose-program-pricing-detail' });
@@ -207,9 +208,9 @@ function CoursePage({ data, syllabus }) {
 
       const plansContext = plans.map((plan) => `
         - ${plan.title}
-        price: ${isSpain ? '€74.99' : plan.priceText}
+        price: ${isSpain && plan.type !== 'FREE' ? '99.99€' : plan.priceText}
         period: ${plan.period_label}
-        ${plan.lastPrice ? `original price: ${isSpain ? '€149.99' : plan.lastPrice}\n discount: ${discount}\n` : ''}
+        ${plan.lastPrice ? `original price: ${isSpain && plan.type !== 'FREE' ? '199.99€' : plan.lastPrice}\n discount: ${discount}\n` : ''}
       `);
       const syllabusContext = syllabus?.json
         ? syllabus.json.days
@@ -379,15 +380,15 @@ function CoursePage({ data, syllabus }) {
         });
 
         let combinedFeaturedAssets = [
-          ...filterAssets(projects, true),
           ...filterAssets(exercises, true),
+          ...filterAssets(projects, true),
         ];
 
         if (combinedFeaturedAssets.length < 3) {
           const remainingNeeded = 3 - combinedFeaturedAssets.length;
           const additionalItems = [
-            ...filterAssets(projects, false),
             ...filterAssets(exercises, false),
+            ...filterAssets(projects, false),
           ].slice(-remainingNeeded);
 
           combinedFeaturedAssets = [...combinedFeaturedAssets, ...additionalItems];
@@ -519,6 +520,17 @@ function CoursePage({ data, syllabus }) {
       });
       return existsAvatar || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`;
     });
+
+  useEffect(() => {
+    if (assignmentList && assignmentList.length > 0) {
+      assignmentList.forEach((assignment) => {
+        if (assignment?.preview) {
+          const img = new window.Image();
+          img.src = assignment.preview;
+        }
+      });
+    }
+  }, [assignmentList]);
 
   return (
     <>
@@ -703,7 +715,7 @@ function CoursePage({ data, syllabus }) {
                           <Flex flexDirection="column" alignItems="center">
                             <Text fontSize={!featuredPlanToEnroll?.isFreeTier ? '16px' : '14px'}>
                               {allDiscounts.length > 0 && '🔥'}
-                              {capitalizeFirstLetter(isSpain ? '€74.99' : featurePrice)}
+                              {capitalizeFirstLetter(featuredPlanToEnroll?.type !== 'FREE' && isSpain ? '99.99€' : featurePrice)}
                             </Text>
                             {!featuredPlanToEnroll?.isFreeTier && (
                               <Flex alignItems="center" marginTop="5px" gap="5px" justifyContent="center">
@@ -812,7 +824,12 @@ function CoursePage({ data, syllabus }) {
               {getAlternativeTranslation('build-connector.description')}
             </Text>
             {assignmentList?.length > 0 && (
-              <CustomCarousel assignmentList={assignmentList} />
+              <CustomCarousel
+                items={assignmentList}
+                renderItem={(item, index) => (
+                  <AssignmentSlide key={item?.id || `assignment-slide-${index}`} assignment={item} />
+                )}
+              />
             )}
           </Flex>
         </GridContainer>

@@ -64,6 +64,14 @@ function OnlyForComponent({ ...props }) {
   return (<OnlyForBanner {...props} />);
 }
 
+function HowToStartComponent({ ...props }) {
+  return (
+    <OnlyForComponent {...props} saas={false} withbanner={false}>
+      {props.children}
+    </OnlyForComponent>
+  );
+}
+
 function CodeViewerComponent(props) {
   const { preParsedContent, node, fileContext } = props;
   const nodeStartOffset = node.position.start.offset;
@@ -275,14 +283,10 @@ function MarkDownParser({
           BeforeAfter,
           'before-after': BeforeAfter,
           iframe: IframeComponent,
-          // table: {
-          //   component: MDTable,
-          // },
           onlyfor: ({ ...props }) => OnlyForComponent({ ...props }),
+          'how-to-start': ({ ...props }) => HowToStartComponent({ ...props, preParsedContent, fileContext }),
           codeviewer: ({ ...props }) => CodeViewerComponent({ ...props, preParsedContent, fileContext }),
           calltoaction: ({ ...props }) => MdCallToAction({ ...props, assetData }),
-          // Component for list of checkbox
-          // children[1].props.node.children[0].properties.type
           li: ({ ...props }) => ListComponent({ subtaskFirstLoad, newSubTasks, setNewSubTasks, subTasks, updateSubTask, currentTask, ...props }),
           quote: Quote,
         }}

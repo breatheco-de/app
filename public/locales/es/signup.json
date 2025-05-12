@@ -255,7 +255,7 @@
     "already-have-plan": "Ya lo tienes",
     "monthly-plans": [
       {
-        "plan_slug": "basic",
+        "plan_slug": "4geeks-basic-subscription",
         "plan_id": "p-0-trial",
         "title": "Basic",
         "currency": {
@@ -273,7 +273,7 @@
         "type": "FREE"
       },
       {
-        "plan_slug": "with-feedback",
+        "plan_slug": "4geeks-basic-subscription",
         "plan_id": "p-50",
         "title": "Monthly payment",
         "currency": {
@@ -294,7 +294,7 @@
     ],
     "yearly-plans": [
       {
-        "plan_slug": "basic",
+        "plan_slug": "4geeks-basic-subscription",
         "plan_id": "p-0-trial",
         "title": "Basic",
         "currency": {
@@ -312,7 +312,7 @@
         "type": "FREE"
       },
       {
-        "plan_slug": "with-feedback",
+        "plan_slug": "4geeks-plus-subscription",
         "plan_id": "p-480",
         "title": "Yearly payment",
         "currency": {

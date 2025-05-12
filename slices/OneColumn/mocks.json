@@ -13,19 +13,6 @@
 				"value": "silence",
 				"type": "Text"
 			},
-			"description": {
-				"__TYPE__": "StructuredTextContent",
-				"value": [
-					{
-						"type": "paragraph",
-						"content": {
-							"text": "Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi. Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi. Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi. Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi. Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi.",
-							"spans": []
-						},
-						"direction": "ltr"
-					}
-				]
-			},
 			"button_label": {
 				"__TYPE__": "FieldContent",
 				"value": "foot",
@@ -39,51 +26,6 @@
 				"__TYPE__": "FieldContent",
 				"value": "excited",
 				"type": "Text"
-			},
-			"kpi_title_1": {
-				"__TYPE__": "FieldContent",
-				"value": "yard",
-				"type": "Text"
-			},
-			"kpi_description_1": {
-				"__TYPE__": "FieldContent",
-				"value": "me",
-				"type": "Text"
-			},
-			"kpi_color_1": {
-				"__TYPE__": "FieldContent",
-				"value": "#8da89b",
-				"type": "Color"
-			},
-			"kpi_title_2": {
-				"__TYPE__": "FieldContent",
-				"value": "bar",
-				"type": "Text"
-			},
-			"kpi_description_2": {
-				"__TYPE__": "FieldContent",
-				"value": "religious",
-				"type": "Text"
-			},
-			"kpi_color_2": {
-				"__TYPE__": "FieldContent",
-				"value": "#25bf6c",
-				"type": "Color"
-			},
-			"kpi_title_3": {
-				"__TYPE__": "FieldContent",
-				"value": "ago",
-				"type": "Text"
-			},
-			"kpi_description_3": {
-				"__TYPE__": "FieldContent",
-				"value": "tried",
-				"type": "Text"
-			},
-			"kpi_color_3": {
-				"__TYPE__": "FieldContent",
-				"value": "#ffb718",
-				"type": "Color"
 			},
 			"background": {
 				"__TYPE__": "FieldContent",
@@ -189,6 +131,345 @@
 				"__TYPE__": "FieldContent",
 				"value": "reason",
 				"type": "Text"
+			},
+			"description": {
+				"__TYPE__": "FieldContent",
+				"value": "bank",
+				"type": "Text"
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
+	},
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "oneColumnWithKpIs",
+		"primary": {
+			"id_key": {
+				"__TYPE__": "FieldContent",
+				"value": "average",
+				"type": "Text"
+			},
+			"padding": {
+				"__TYPE__": "FieldContent",
+				"value": "here",
+				"type": "Text"
+			},
+			"width": {
+				"__TYPE__": "FieldContent",
+				"value": "train",
+				"type": "Text"
+			},
+			"margin_top": {
+				"__TYPE__": "FieldContent",
+				"value": "pile",
+				"type": "Text"
+			},
+			"margin_bottom": {
+				"__TYPE__": "FieldContent",
+				"value": "remember",
+				"type": "Text"
+			},
+			"max_width": {
+				"__TYPE__": "FieldContent",
+				"value": "pale",
+				"type": "Text"
+			},
+			"border_radius": {
+				"__TYPE__": "FieldContent",
+				"value": "plate",
+				"type": "Text"
+			},
+			"font_family": {
+				"__TYPE__": "FieldContent",
+				"value": "Lato",
+				"type": "Select"
+			},
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "product",
+				"type": "Text"
+			},
+			"title_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "if",
+				"type": "Text"
+			},
+			"subtitle": {
+				"__TYPE__": "FieldContent",
+				"value": "mathematics",
+				"type": "Text"
+			},
+			"description": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Deserunt ullamco eu non. Non laboris mollit qui consequat cupidatat non voluptate culpa non et sit officia consectetur qui."
+						}
+					}
+				]
+			},
+			"description_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "interior",
+				"type": "Text"
+			},
+			"description_text_align": {
+				"__TYPE__": "FieldContent",
+				"value": "golden",
+				"type": "Text"
+			},
+			"button_label": {
+				"__TYPE__": "FieldContent",
+				"value": "pick",
+				"type": "Text"
+			},
+			"button_url": {
+				"__TYPE__": "FieldContent",
+				"value": "expression",
+				"type": "Text"
+			},
+			"link_button": {
+				"__TYPE__": "BooleanContent",
+				"value": true
+			},
+			"justify_items": {
+				"__TYPE__": "FieldContent",
+				"value": "tropical",
+				"type": "Text"
+			},
+			"font_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#677438",
+				"type": "Color"
+			},
+			"background": {
+				"__TYPE__": "FieldContent",
+				"value": "#e9d059",
+				"type": "Color"
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": [
+					[
+						"kpi_title",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "east",
+							"type": "Text"
+						}
+					],
+					[
+						"kpi_description",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "land",
+							"type": "Text"
+						}
+					],
+					[
+						"kpi_color",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "#43b14d",
+							"type": "Color"
+						}
+					]
+				]
+			}
+		]
+	},
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "imageOnTop",
+		"primary": {
+			"id_key": {
+				"__TYPE__": "FieldContent",
+				"value": "close",
+				"type": "Text"
+			},
+			"padding": {
+				"__TYPE__": "FieldContent",
+				"value": "growth",
+				"type": "Text"
+			},
+			"grid_column": {
+				"__TYPE__": "FieldContent",
+				"value": "feature",
+				"type": "Text"
+			},
+			"width": {
+				"__TYPE__": "FieldContent",
+				"value": "hit",
+				"type": "Text"
+			},
+			"margin_top": {
+				"__TYPE__": "FieldContent",
+				"value": "element",
+				"type": "Text"
+			},
+			"margin_bottom": {
+				"__TYPE__": "FieldContent",
+				"value": "storm",
+				"type": "Text"
+			},
+			"max_width": {
+				"__TYPE__": "FieldContent",
+				"value": "card",
+				"type": "Text"
+			},
+			"border_radius": {
+				"__TYPE__": "FieldContent",
+				"value": "bright",
+				"type": "Text"
+			},
+			"font_family": {
+				"__TYPE__": "FieldContent",
+				"value": "Lato",
+				"type": "Select"
+			},
+			"title_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "magic",
+				"type": "Text"
+			},
+			"description": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Eiusmod tempor non aute voluptate duis ipsum sit consectetur adipisicing cillum ullamco."
+						}
+					}
+				]
+			},
+			"description_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "engine",
+				"type": "Text"
+			},
+			"description_text_align": {
+				"__TYPE__": "FieldContent",
+				"value": "sheep",
+				"type": "Text"
+			},
+			"description_justify_items": {
+				"__TYPE__": "FieldContent",
+				"value": "ice",
+				"type": "Text"
+			},
+			"description_line_height": {
+				"__TYPE__": "FieldContent",
+				"value": "driven",
+				"type": "Text"
+			},
+			"button_label": {
+				"__TYPE__": "FieldContent",
+				"value": "clothes",
+				"type": "Text"
+			},
+			"button_background_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#681de2",
+				"type": "Color"
+			},
+			"button_font_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#8526b1",
+				"type": "Color"
+			},
+			"button_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "wide",
+				"type": "Text"
+			},
+			"button_url": {
+				"__TYPE__": "FieldContent",
+				"value": "climb",
+				"type": "Text"
+			},
+			"link_button": {
+				"__TYPE__": "BooleanContent",
+				"value": true
+			},
+			"justify_items": {
+				"__TYPE__": "FieldContent",
+				"value": "dawn",
+				"type": "Text"
+			},
+			"font_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#808e26",
+				"type": "Color"
+			},
+			"background": {
+				"__TYPE__": "FieldContent",
+				"value": "#49524f",
+				"type": "Color"
+			},
+			"paddingMd": {
+				"__TYPE__": "FieldContent",
+				"value": "health",
+				"type": "Text"
+			},
+			"margin": {
+				"__TYPE__": "FieldContent",
+				"value": "nails",
+				"type": "Text"
+			},
+			"image": {
+				"origin": {
+					"id": "main",
+					"url": "https://images.unsplash.com/photo-1537498425277-c283d32ef9db",
+					"width": 4380,
+					"height": 2895
+				},
+				"url": "https://images.unsplash.com/photo-1537498425277-c283d32ef9db",
+				"width": 4380,
+				"height": 2895,
+				"edit": {
+					"zoom": 1,
+					"crop": {
+						"x": 0,
+						"y": 0
+					},
+					"background": "transparent"
+				},
+				"credits": null,
+				"alt": null,
+				"__TYPE__": "ImageContent",
+				"thumbnails": {}
+			},
+			"title": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Deserunt consectetur elit esse sint consequat adipisicing veniam."
+						}
+					}
+				]
+			},
+			"subtitle": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Deserunt labore adipisicing Lorem laboris exercitation veniam occaecat minim qui aliqua. Qui occaecat id aute qui proident."
+						}
+					}
+				]
 			}
 		},
 		"items": [

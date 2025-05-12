@@ -11,7 +11,6 @@ import { setStorageItem } from '../utils';
 import { BREATHECODE_HOST } from '../utils/variables';
 import ModalInfo from './ModalInfo';
 import useSignup from '../hooks/useSignup';
-import signupAction from '../store/actions/signupAction';
 
 function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, footerContent, submitText, padding, isLive,
@@ -20,7 +19,7 @@ function ShowOnSignUp({
   onLastAttempt, maxAttemptsToRefetch, showVerifyEmail, onSubmit, ...rest
 }) {
   const { isAuthenticated, user, logout } = useAuth();
-  const { handleSubscribeToPlan } = useSignup();
+  const { handleSubscribeToPlan, setSelectedPlanCheckoutData } = useSignup();
   const { backgroundColor, featuredColor, hexColor } = useStyle();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const [alreadyLogged, setAlreadyLogged] = useState(false);
@@ -30,8 +29,7 @@ function ShowOnSignUp({
   const router = useRouter();
   const isLogged = alreadyLogged || isAuthenticated;
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
-  const defaultPlan = process.env.BASE_PLAN || 'basic';
-  const { setSelectedPlanCheckoutData } = signupAction();
+  const defaultPlan = process.env.BASE_PLAN || '4geeks-basic-subscription';
 
   useEffect(() => {
     let intervalId;

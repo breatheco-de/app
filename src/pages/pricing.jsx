@@ -2,7 +2,6 @@
 import { Box, Flex, Container, Button, Img, Link, Image } from '@chakra-ui/react';
 import { useEffect, useState, useMemo } from 'react';
 import useTranslation from 'next-translate/useTranslation';
-import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import Heading from '../components/Heading';
@@ -14,8 +13,7 @@ import MktTrustCards from '../components/MktTrustCards';
 import DraggableContainer from '../components/DraggableContainer';
 import Icon from '../components/Icon';
 import { getQueryString, isWindow, slugToTitle } from '../utils';
-import { parseQuerys } from '../utils/url';
-import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../utils/variables';
+import { WHITE_LABEL_ACADEMY } from '../utils/variables';
 import useStyle from '../hooks/useStyle';
 import useAuth from '../hooks/useAuth';
 import useSignup from '../hooks/useSignup';
@@ -45,6 +43,7 @@ function PricingView() {
   const { getPlanFeatures } = usePlanMktInfo();
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated, cohorts } = useAuth();
+  const { location } = useSession();
   const { hexColor, modal } = useStyle();
   const [relatedSubscription, setRelatedSubscription] = useState({});
   const [selectedPlanData, setSelectedPlanData] = useState({});
@@ -162,30 +161,37 @@ function PricingView() {
     if (hasActiveBootcamp) router.push('/choose-program');
   }, [cohorts]);
 
+  const fetchCourses = async () => {
+    try {
+      const response = await bc.marketing({
+        featured: true,
+        academy: WHITE_LABEL_ACADEMY,
+        country_code: location?.countryShort,
+      }).courses();
+      const { data } = response;
+
+      const publicCourses = data?.filter((course) => course?.visibility === 'PUBLIC' && course?.plan_slug !== 'basic' && course?.plan_slug !== 'free-trial-deep-dive-into-python');
+      setPublicMktCourses(publicCourses);
+
+      const selectedCourseByQueryString = publicCourses.find((course) => course?.slug === courseFormated);
+
+      if (selectedCourseByQueryString || planFormated) {
+        setSelectedCourseData((prev) => ({ ...prev, ...selectedCourseByQueryString }));
+      } else {
+        router.push({
+          pathname: '/pricing',
+          query: {},
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching marketing courses:', error);
+    } finally {
+      setIsFetching((prev) => ({ ...prev, courses: false }));
+    }
+  };
+
   useEffect(() => {
-    const mktQueryString = parseQuerys({
-      featured: true,
-      academy: WHITE_LABEL_ACADEMY,
-    });
-    axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQueryString}&lang=${lang}`)
-      .then(({ data }) => {
-        const publicCourses = data?.filter((course) => course?.visibility === 'PUBLIC' && course?.plan_slug !== 'basic' && course?.plan_slug !== 'free-trial-deep-dive-into-python');
-        setPublicMktCourses(publicCourses);
-
-        const selectedCourseByQueryString = publicCourses.find((course) => course?.slug === courseFormated);
-
-        if (selectedCourseByQueryString || planFormated) {
-          setSelectedCourseData((prev) => ({ ...prev, ...selectedCourseByQueryString }));
-        } else {
-          router.push({
-            pathname: '/pricing',
-            query: {},
-          });
-        }
-      })
-      .finally(() => {
-        setIsFetching((prev) => ({ ...prev, courses: false }));
-      });
+    fetchCourses();
   }, [lang]);
 
   const verifyIfUserAlreadyHaveThisPlan = (userPlan, featuredPlans) => featuredPlans.some(
