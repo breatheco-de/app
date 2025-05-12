@@ -379,8 +379,9 @@ function AuthProvider({ children, pageProps }) {
     const redirect = isWindow && localStorage.getItem('redirect');
     try {
       if (payload) {
-        const response = await bc.auth().login2(payload, lang);
-        const responseData = await response.json();
+        const response = await bc.auth().login(payload);
+        const responseData = response.data;
+        // const responseData = await response.json();
 
         if (responseData?.silent_code === SILENT_CODE.EMAIL_NOT_VALIDATED) {
           setModalState({

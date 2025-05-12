@@ -37,23 +37,8 @@ const breathecode = {
   auth: () => {
     const url = `${host}/auth`;
     return {
-      login2: (payload, lang = 'en') => fetch(`${url}/login/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept-Language': lang,
-        },
-        body: JSON.stringify({
-          ...payload,
-          user_agent: 'bc/student',
-        }),
-      }),
-      verifyEmail: (email, lang) => breathecode.get(`${url}/emailverification/${email}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept-Language': lang,
-        },
-      }),
+      login: (payload) => axios.post(`${url}/login/`, { ...payload, user_agent: 'bc/student' }),
+      verifyEmail: (email) => axios.get(`${url}/emailverification/${email}`),
       resendConfirmationEmail: (inviteId) => axios.put(`${url}/invite/resend/${inviteId}`),
       me: () => axios.get(`${url}/user/me`),
       updateProfile: (arg) => axios.put(`${url}/user/me`, { ...arg }),
@@ -69,24 +54,7 @@ const breathecode = {
       isValidToken: (token) => axios.get(`${url}/token/${token}`),
       register: (payload) => axios.post(`${url}/user/register`, payload),
       subscribe: (payload) => axios.post(`${url}/subscribe/`, { ...payload }),
-      subscribeToken: (token) => axios.post(`${url}/subscribe/${token}`),
       removeGithub: () => axios.delete(`${url}/github/me`),
-      temporalToken: () => axios({
-        method: 'post',
-        url: `${url}/token/me`,
-        // headers: {},
-        data: {
-          token_type: 'one_time',
-        },
-      }),
-      getUser: ({ userId }) => axios({
-        method: 'get',
-        url: `${url}/academy/member/${userId}`,
-        headers: {
-          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
-          academy: 4,
-        },
-      }),
     };
   },
 
