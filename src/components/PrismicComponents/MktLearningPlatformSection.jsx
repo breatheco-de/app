@@ -14,8 +14,6 @@ function MktLearningPlatformSection({ slice }) {
   const buttonUrl = slice?.primary?.button_url.url;
   const items = (slice?.items || []).filter((item) => item?.image?.url);
 
-  console.log(buttonUrl);
-
   return (
     <Box width="100%" mb={{ base: '65px', md: '90px' }}>
       <Flex direction="column" maxW="1280px" mx="auto">
@@ -74,7 +72,6 @@ function MktLearningPlatformSection({ slice }) {
               fontSize="17px"
               fontWeight="700"
               alignSelf={{ base: 'center', md: 'flex-end' }}
-              target="_blank"
               rel="noopener noreferrer"
               _hover="none"
             >

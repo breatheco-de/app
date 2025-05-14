@@ -61,9 +61,7 @@ function RenderAwardSlide({ item, backgroundColor, variant }) {
           {item.link && (
             <Box mt={1}>
               <Link
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={item.link.url}
                 color="blue.default"
                 style={{ textDecoration: 'none' }}
               >
@@ -163,17 +161,15 @@ function MktAwardsSection({ slice }) {
                       {item.text}
                     </Box>
                   )}
-                  {item.link && (
+                  {item?.link?.url && item?.link_label && (
                     <Box>
                       <Link
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href={item?.link?.url}
                         color="blue.default"
                         fontSize="12px"
                         style={{ textDecoration: 'none' }}
                       >
-                        {item.link_label || 'Ver más'}
+                        {item.link_label}
                       </Link>
                     </Box>
                   )}
