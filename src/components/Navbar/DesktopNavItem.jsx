@@ -196,7 +196,7 @@ function DesktopNavItem({ item }) {
           target={!item.asPath && isAbsoluteUrl(item.href) ? '_blank' : undefined}
           rel={!item.asPath && isAbsoluteUrl(item.href) ? 'noopener noreferrer' : undefined}
           fontSize="sm"
-          fontWeight={400}
+          fontWeight={700}
           _hover={{
             textDecoration: 'none',
           }}
