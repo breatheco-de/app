@@ -11,7 +11,7 @@ import Faq from '../components/Faq';
 import PricingCard from '../components/PricingCard';
 import LoaderScreen from '../components/LoaderScreen';
 import useSignup from '../store/actions/signupAction';
-import MktTrustCards from '../components/MktTrustCards';
+import MktTrustCards from '../components/PrismicComponents/MktTrustCards';
 import DraggableContainer from '../components/DraggableContainer';
 import Icon from '../components/Icon';
 import { fetchSuggestedPlan, getTranslations } from '../handlers/subscriptions';

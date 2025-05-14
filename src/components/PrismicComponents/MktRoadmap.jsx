@@ -4,14 +4,14 @@ import {
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import axios from '../axios';
-import Icon from './Icon';
-import { CustomTab } from './Animated';
-import Heading from './Heading';
-import Text from './Text';
-import useStyle from '../hooks/useStyle';
-import GridContainer from './GridContainer';
-import { BREATHECODE_HOST } from '../utils/variables';
+import axios from '../../axios';
+import Icon from '../Icon';
+import { CustomTab } from '../Animated';
+import Heading from '../Heading';
+import Text from '../Text';
+import useStyle from '../../hooks/useStyle';
+import GridContainer from '../GridContainer';
+import { BREATHECODE_HOST } from '../../utils/variables';
 
 function MktRoadmap({ id, title, course, ...rest }) {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);

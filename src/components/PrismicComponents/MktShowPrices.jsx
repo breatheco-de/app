@@ -3,10 +3,10 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { Box, Skeleton } from '@chakra-ui/react';
-import ShowPrices from './ShowPrices';
-import { generatePlan, getTranslations } from '../handlers/subscriptions';
-import { usePersistentBySession } from '../hooks/usePersistent';
-import { getQueryString } from '../utils';
+import ShowPrices from '../ShowPrices';
+import { generatePlan, getTranslations } from '../../handlers/subscriptions';
+import { usePersistentBySession } from '../../hooks/usePersistent';
+import { getQueryString } from '../../utils';
 
 function MktShowPrices({ id, externalPlanProps, cohortId, title, description, pricingMktInfo, plan, ...rest }) {
   const { t } = useTranslation('course');

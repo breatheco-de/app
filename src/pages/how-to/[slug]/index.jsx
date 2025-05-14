@@ -15,15 +15,15 @@ import Heading from '../../../components/Heading';
 import Text from '../../../components/Text';
 import Icon from '../../../components/Icon';
 import TagCapsule from '../../../components/TagCapsule';
-import MktRecommendedCourses from '../../../components/MktRecommendedCourses';
+import MktRecommendedCourses from '../../../components/PrismicComponents/MktRecommendedCourses';
 import GridContainer from '../../../components/GridContainer';
-import MktSideRecommendations from '../../../components/MktSideRecommendations';
+import MktSideRecommendations from '../../../components/PrismicComponents/MktSideRecommendations';
 import { cleanObject } from '../../../utils/index';
 import { ORIGIN_HOST, categoriesFor } from '../../../utils/variables';
 import useAuth from '../../../hooks/useAuth';
 import useStyle from '../../../hooks/useStyle';
 import RelatedContent from '../../../components/RelatedContent';
-import MktEventCards from '../../../components/MktEventCards';
+import MktEventCards from '../../../components/PrismicComponents/MktEventCards';
 import AssetsBreadcrumbs from '../../../components/AssetsBreadcrumbs';
 import { getMarkdownFromCache } from '../../../utils/requests';
 

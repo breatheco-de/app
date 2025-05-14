@@ -11,7 +11,7 @@ import Text from './Text';
 import useSignup from '../store/actions/signupAction';
 import useStyle from '../hooks/useStyle';
 import Icon from './Icon';
-import MktTechnologies from './MktTechnologies';
+import MktTechnologies from './PrismicComponents/MktTechnologies';
 import { currenciesSymbols } from '../utils/variables';
 import { SessionContext } from '../context/SessionContext';
 
