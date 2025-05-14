@@ -69,8 +69,6 @@ function MktMultipleColumnCard({
     sectionTitleFontSize = sectionTitleFontSizeProp;
   }
 
-  console.log(parseProp(marginBottom));
-
   const finalTitleSize = parseProp(sectionTitleFontSize, '34px !important');
   const finalMarginTop = parseProp(marginTop);
   const finalMarginBottom = parseProp(marginBottom);

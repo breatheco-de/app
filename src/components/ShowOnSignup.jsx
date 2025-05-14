@@ -30,7 +30,7 @@ function ShowOnSignUp({
   const router = useRouter();
   const isLogged = alreadyLogged || isAuthenticated;
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
-  const defaultPlan = process.env.BASE_PLAN || 'basic';
+  const defaultPlan = process.env.BASE_PLAN || '4geeks-basic-subscription';
   const { setSelectedPlanCheckoutData } = useSignup();
 
   useEffect(() => {

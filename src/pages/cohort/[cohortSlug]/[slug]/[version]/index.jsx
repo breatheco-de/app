@@ -165,13 +165,6 @@ function Dashboard() {
       id: idsParsed,
     }).deleteBulk()
       .then(() => {
-        createToast({
-          position: 'top',
-          title: t('alert-message:unsynced-tasks-removed'),
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
         setModalIsOpen(false);
       })
       .catch(() => {

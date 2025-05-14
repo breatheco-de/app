@@ -33,6 +33,7 @@ import Text from './Text';
 import Icon from './Icon';
 import Progress from './ProgressBar/Progress';
 import { stages } from './ReviewModal';
+import { getColorVariations } from '../utils';
 
 const locales = { es, en };
 
@@ -168,38 +169,6 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
       console.log(e);
       setLoadingStartCourse(false);
     }
-  };
-
-  const getColorVariations = (colorHex) => {
-    if (!colorHex) return {};
-    const lightRange = [0.2, 0.3, 0.5, 0.8, 0.9];
-    const darkRange = [0.2, 0.3, 0.4, 0.7, 0.8];
-    const r = parseInt(colorHex.slice(1, 3), 16);
-    const g = parseInt(colorHex.slice(3, 5), 16);
-    const b = parseInt(colorHex.slice(5, 7), 16);
-
-    const lightShades = lightRange.map((variation) => {
-      const tintR = Math.round(Math.min(255, r + (255 - r) * variation));
-      const tintG = Math.round(Math.min(255, g + (255 - g) * variation));
-      const tintB = Math.round(Math.min(255, b + (255 - b) * variation));
-      return `#${[tintR, tintG, tintB].map((x) => x.toString(16).padStart(2, '0')).join('')}`;
-    });
-
-    const darkShades = darkRange.map((variation) => {
-      const shadeR = Math.round(Math.max(0, r - r * variation));
-      const shadeG = Math.round(Math.max(0, g - g * variation));
-      const shadeB = Math.round(Math.max(0, b - b * variation));
-      return `#${[shadeR, shadeG, shadeB].map((x) => x.toString(16).padStart(2, '0')).join('')}`;
-    });
-
-    return {
-      light: {
-        mode1: lightShades[0], mode2: lightShades[1], mode3: lightShades[2], mode4: lightShades[3], mode5: lightShades[4],
-      },
-      dark: {
-        mode1: darkShades[0], mode2: darkShades[1], mode3: darkShades[2], mode4: darkShades[3], mode5: darkShades[4],
-      },
-    };
   };
 
   const colorVariations = getColorVariations(cohortColor);

@@ -143,6 +143,16 @@ function MktOneColumnSection({
   );
 }
 
+const richTextPropType = PropTypes.arrayOf(PropTypes.shape({
+  type: PropTypes.string,
+  text: PropTypes.string,
+  spans: PropTypes.arrayOf(PropTypes.shape({
+    type: PropTypes.string,
+    start: PropTypes.number,
+    end: PropTypes.number,
+  })),
+}));
+
 MktOneColumnSection.propTypes = {
   slice: PropTypes.shape({
     variation: PropTypes.string,
@@ -151,9 +161,9 @@ MktOneColumnSection.propTypes = {
         url: PropTypes.string,
         alt: PropTypes.string,
       }),
-      title: PropTypes.string,
-      subtitle: PropTypes.string,
-      description: PropTypes.string,
+      title: richTextPropType,
+      subtitle: richTextPropType,
+      description: richTextPropType,
       button_url: PropTypes.string,
       button_label: PropTypes.string,
       background: PropTypes.string,

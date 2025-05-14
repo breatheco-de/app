@@ -1089,6 +1089,7 @@ function Workshop({ eventData, asset }) {
                     getCurrentConsumables();
                   }}
                   onLastAttempt={() => {
+                    handleJoin();
                     setIsRefetching(false);
                   }}
                   headContent={readyToJoinEvent ? (

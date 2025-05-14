@@ -331,7 +331,7 @@ function MktTwoColumnSideImage({
               borderRadius="20px"
               controls={false}
               loop
-              autoFullScreen={false}
+              playsInline={false}
               muted
               volume={0}
               width="100%"

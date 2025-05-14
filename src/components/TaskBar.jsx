@@ -76,7 +76,7 @@ function TaskBar({
                 height="30px"
                 rounded="full"
                 align="center"
-                background={isDone ? '#0097CF' : '#BFBFBF'}
+                background={isDone ? 'blue.default' : '#BFBFBF'}
               >
                 <Text fontWeight="bold" margin="0" size="sm" color="#FFFFFF">
                   {currIndex + 1}
@@ -89,7 +89,7 @@ function TaskBar({
           <Box display={{ base: 'none', sm: 'flex' }} mr="20px" ml="20px" minWidth="22px" width="22px">
             <Icon
               icon={data.icon || 'book'}
-              color={isDone ? '#0097CF' : '#A4A4A4'}
+              color={isDone ? '#0084FF' : '#A4A4A4'}
             />
           </Box>
         )}
@@ -98,7 +98,7 @@ function TaskBar({
             <Box display={{ base: 'none', sm: 'flex' }} style={data.iconProp.style} minWidth={data.iconProp.width || '22px'} width={data.iconProp.width || '22px'}>
               <Icon
                 icon={data.iconProp.icon || 'book'}
-                color={data.iconProp.color || isDone ? '#0097CF' : '#A4A4A4'}
+                color={data.iconProp.color || isDone ? '#0084FF' : '#A4A4A4'}
                 width={data.iconProp.width}
                 height={data.iconProp.height}
               />

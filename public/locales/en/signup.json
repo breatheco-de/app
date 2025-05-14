@@ -242,7 +242,7 @@
     "already-have-plan": "You already have it",
     "monthly-plans": [
       {
-        "plan_slug": "basic",
+        "plan_slug": "4geeks-basic-subscription",
         "plan_id": "p-0-trial",
         "title": "Basic",
         "currency": {
@@ -281,7 +281,7 @@
     ],
     "yearly-plans": [
       {
-        "plan_slug": "basic",
+        "plan_slug": "4geeks-basic-subscription",
         "plan_id": "p-0-trial",
         "title": "Basic",
         "currency": {
