@@ -44,6 +44,7 @@ import SubTasks from '../../../../../components/MarkDownParser/SubTasks';
 import useCustomToast from '../../../../../hooks/useCustomToast';
 import ReviewModal from '../../../../../components/ReviewModal';
 import VideoModal from '../../../../../components/VideoModal';
+import useSocialShare from '../../../../../hooks/useSocialShare';
 
 function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
@@ -718,27 +719,11 @@ function SyllabusContent() {
   };
   const shareLink = currentTask ? `${pathConnector[lesson]}/${currentTask.associated_slug}` : '';
 
-  const socials = [
-    {
-      name: 'x',
-      label: 'X',
-      href: `https://x.com/share?url=&text=${encodeURIComponent(t('share-social-message', { title: currentTask?.title }))} %23100DaysOfCode%0A%0A${shareLink}`,
-      color: '#000',
-    },
-    {
-      name: 'linkedin',
-      label: 'LinkedIn',
-      href: `https://linkedin.com/sharing/share-offsite/?url=${shareLink}`,
-      color: '#0077B5',
-      target: 'popup',
-    },
-    {
-      name: 'facebook',
-      label: 'Facebook',
-      href: `https://facebook.com/sharer?u=${shareLink}`,
-      color: '#4267B2',
-    },
-  ];
+  const { socials } = useSocialShare({
+    link: shareLink,
+    title: currentTask?.title,
+    shareMessage: t('dashboard:share-message', { title: currentTask?.title }),
+  });
 
   const url = currentAsset?.readme_url || currentAsset?.url;
   const repoUrl = (ipynbHtmlUrl && url) ? `${url.replace('.inpynb', `${router.locale === 'en' ? '' : `.${router.locale}`}.inpynb`)}` : url;

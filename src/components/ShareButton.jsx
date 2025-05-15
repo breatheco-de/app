@@ -12,10 +12,11 @@ import Icon from './Icon';
 import Text from './Text';
 import Link from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
+import useSocialShare from '../hooks/useSocialShare';
 import { getBrowserInfo } from '../utils';
 
 function ShareButton({
-  variant, title, shareText, message, link, socials, withParty, onlyModal, currentTask, onClose,
+  variant, title, shareText, message, link, socials: propSocials, withParty, onlyModal, currentTask, onClose,
 }) {
   const { t } = useTranslation('profile');
   const [party, setParty] = useState(true);
@@ -25,6 +26,14 @@ function ShareButton({
     borderColor, lightColor, modal,
   } = useStyle();
   const { featuredBackground, background, hoverBackground } = modal;
+
+  const { socials: hookSocials } = useSocialShare({
+    link,
+    title: currentTask?.title,
+    type: currentTask?.task_type === 'CERTIFICATE' ? 'certificate' : 'default',
+  });
+
+  const socialList = propSocials || hookSocials;
 
   useEffect(() => {
     if (copied) {
@@ -46,30 +55,6 @@ function ShareButton({
     setCopied(true);
     navigator.clipboard.writeText(link);
   };
-
-  const defaultSocial = [
-    {
-      name: 'x',
-      label: 'X',
-      href: 'https://www.x.com',
-      color: '#040404',
-    },
-    {
-      name: 'facebook',
-      label: 'Facebook',
-      href: 'https://www.facebook.com',
-      color: '#4267B2',
-      target: 'popup',
-    },
-    {
-      name: 'linkedin',
-      label: 'LinkedIn',
-      href: 'https://www.linkedin.com',
-      color: '#0077B5',
-      target: 'popup',
-    },
-  ];
-  const socialList = socials || defaultSocial;
 
   return (
     <>

@@ -9,6 +9,7 @@ import Text from '../Text';
 import ShareButton from '../ShareButton';
 import useStyle from '../../hooks/useStyle';
 import { location } from '../../utils';
+import useSocialShare from '../../hooks/useSocialShare';
 
 function Certificates({ certificates }) {
   const { t, lang } = useTranslation('profile');
@@ -34,7 +35,12 @@ function Certificates({ certificates }) {
         const certfToken = l?.preview_url && l.preview_url?.split('/')?.pop();
         const certfLink = certfToken ? `https://certificate.4geeks.com/${certfToken}` : '#';
         const profession = l.specialty.name;
-        const socials = t('share-certificate.socials', { certfLink, profession }, { returnObjects: true });
+
+        const { socials } = useSocialShare({
+          link: certfLink,
+          title: profession,
+          type: 'certificate',
+        });
 
         return (
           <Box key={index} display="flex" flexDirection={{ base: 'column', md: 'row' }} justifyContent="space-between" alignItems="center" gridGap="26px" border="1px solid" borderColor={borderColor2} p="23px 28px" borderRadius="18px">
@@ -57,15 +63,21 @@ function Certificates({ certificates }) {
                   {t('view-certificate')}
                 </Link>
               </Tooltip>
-              <ShareButton withParty title={t('share-certificate.title')} shareText={t('share-certificate.shareText')} link={certfLink} socials={socials} />
+              <ShareButton
+                withParty
+                title={t('share-certificate.title')}
+                shareText={t('share-certificate.shareText')}
+                link={certfLink}
+                socials={socials}
+              />
             </Box>
           </Box>
         );
       })}
       {certificates.length === 0 && (
-      <Text fontSize="15px" fontWeight="400" pb="6px">
-        {t('no-certificates')}
-      </Text>
+        <Text fontSize="15px" fontWeight="400" pb="6px">
+          {t('no-certificates')}
+        </Text>
       )}
     </>
   );
