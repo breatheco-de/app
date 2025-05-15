@@ -980,7 +980,7 @@ function CoursePage({ data, syllabus }) {
           }}
         />
         {/* Pricing */}
-        {data?.plan_slug && (
+        {data?.plan_slug && featuredPlanToEnroll?.type !== 'FREE' && (
           <MktShowPrices
             id="pricing"
             externalPlanProps={planData}

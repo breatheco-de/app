@@ -1,5 +1,5 @@
 {
-  "course-content-text": "Prepárate para obtener un trabajo con nuestro syllabus",
+  "course-content-text": "Prepárate para obtener un trabajo con nuestro curriculum",
   "course-content-description": "Hemos ajustado nuestro contenido del curso con cientos de posiciones laborales para prepararte para una entrada exitosa en el mundo de la tecnología.",
   "students-enrolled-count": "+{{count}} estudiantes inscritos",
   "students-enrolled": "cientos de estudiantes inscritos",
@@ -110,7 +110,7 @@
   },
   "build-connector": {
     "what-you-will": "Aprende construyendo",
-    "description": "Cuando aprendes a programar a tu propio ritmo, tener acceso a tutoriales en video, ejemplos de código y retroalimentación continua en tiempo real es crucial para tener éxito. Las tareas que abordarás se asemejarán estrechamente a las encontradas en una posición tecnológica del mundo real. Aquí tienes un vistazo de en qué estarás trabajando:",
+    "description": "Cuando aprendes a tu propio ritmo, tener acceso a tutoriales en video, ejemplos de código y retroalimentación continua en tiempo real es crucial para tener éxito. Las tareas que abordarás se asemejarán estrechamente a las encontradas en una posición tecnológica del mundo real. Aquí tienes un vistazo de en qué estarás trabajando:",
     "build": "proyectos de la vida real",
     "link": "#pricing"
   },
