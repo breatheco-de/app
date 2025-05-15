@@ -34,6 +34,7 @@ import Icon from './Icon';
 import Progress from './ProgressBar/Progress';
 import { stages } from './ReviewModal';
 import { getColorVariations } from '../utils';
+import useSocialShare from '../hooks/useSocialShare';
 
 const locales = { es, en };
 
@@ -222,9 +223,12 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
   const certfToken = certificate?.preview_url?.split('/')?.pop();
   const certfLink = certfToken ? `https://certificate.4geeks.com/${certfToken}` : '#';
   const profession = certificate?.specialty?.name;
-  const socials = certfLink !== '#' && profession
-    ? t('profile:share-certificate.socials', { certfLink, profession }, { returnObjects: true })
-    : [];
+
+  const { socials } = useSocialShare({
+    link: certfLink,
+    title: profession,
+    type: 'certificate',
+  });
 
   const share = (e) => {
     e.stopPropagation();
