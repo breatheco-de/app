@@ -385,7 +385,7 @@
     "image": "/static/images/certificate-preview.webp",
     "title": "Certifícate en tu tecnología favorita",
     "description": "Tu certificado de 4Geeks abrirá puertas a oportunidades profesionales con nuestra extensa red de empresas en todo el mundo. Respaldado por instituciones internacionales, representa un estándar reconocido a nivel global, desbloqueando diversos caminos profesionales.",
-    "button": "Ver precios",
+    "button": "Empieza ahora",
     "button-link": "#pricing"
   },
   "havent-decided": {
@@ -400,8 +400,8 @@
     "image": "/static/images/happy-male-with-laptop.png",
     "title": "Prepárate para una carrera nueva",
     "subtitle": "Mejora tu CV, portafolio, perfil de GitHub, y el perfil de tus redes sociales.",
-    "description": "Obtén acceso a ejercicios que simulan entrevistas de la vida real, obtenidas de empresas que están contratando activamente. Por ningún costo adicional para ti y sin quitarte nada del salario de la oferta de trabajo que obtengas.",
-    "button": "Únete ahora",
+    "description": "Obtén un descuento exclusivo en Beyond the Resume al completar el curso, un programa diseñado para ayudarte con temas de carrera, desde optimizar tu perfil profesional hasta destacar en entrevistas.",
+    "button": "Empieza ahora",
     "button-link": "#pricing"
   }
 }
