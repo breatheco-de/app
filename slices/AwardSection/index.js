@@ -1,4 +1,4 @@
-import MktAwardsSection from '../../src/components/MktAwardsSection';
+import MktAwardsSection from '../../src/components/PrismicComponents/MktAwardsSection';
 
 /**
  * @typedef {import("@prismicio/client").Content.AwardSectionSlice} AwardSectionSlice

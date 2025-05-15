@@ -3,17 +3,17 @@ import { useMemo, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import Heading from './Heading';
-import Text from './Text';
-import TagCapsule from './TagCapsule';
-import { CardSkeleton } from './Skeleton';
-import { getBrowserSize, setStorageItem, getBrowserInfo } from '../utils';
-import { ORIGIN_HOST } from '../utils/variables';
-import { reportDatalayer } from '../utils/requests';
-import useStyle from '../hooks/useStyle';
-import useSession from '../hooks/useSession';
-import useRecommendations from '../hooks/useRecommendations';
-import ReactPlayerV2 from './ReactPlayerV2';
+import Heading from '../Heading';
+import Text from '../Text';
+import TagCapsule from '../TagCapsule';
+import { CardSkeleton } from '../Skeleton';
+import { getBrowserSize, setStorageItem, getBrowserInfo } from '../../utils';
+import { ORIGIN_HOST } from '../../utils/variables';
+import { reportDatalayer } from '../../utils/requests';
+import useStyle from '../../hooks/useStyle';
+import useSession from '../../hooks/useSession';
+import useRecommendations from '../../hooks/useRecommendations';
+import ReactPlayerV2 from '../ReactPlayerV2';
 
 const defaultEndpoint = '/v1/marketing/course';
 

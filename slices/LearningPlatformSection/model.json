@@ -1,0 +1,60 @@
+{
+  "id": "learning_platform_section",
+  "type": "SharedSlice",
+  "name": "LearningPlatformSection",
+  "description": "LearningPlatformSection",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Title",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "description": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Description",
+            "labels": [
+              "highlight-blue",
+              "highlight-dark",
+              "highlight-blue-default",
+              "gray_text"
+            ],
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "button_url": {
+          "type": "Link",
+          "config": { "label": "Button url", "placeholder": "", "select": null }
+        },
+        "button_label": {
+          "type": "Text",
+          "config": { "label": "Button Label", "placeholder": "" }
+        }
+      },
+      "items": {
+        "image": {
+          "type": "Image",
+          "config": { "label": "Image", "constraint": {}, "thumbnails": [] }
+        },
+        "alt": {
+          "type": "Text",
+          "config": { "label": "Alt", "placeholder": "" }
+        }
+      }
+    }
+  ]
+}

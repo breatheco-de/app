@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, VStack, Text } from '@chakra-ui/react';
-import PrismicTextComponent from '../PrismicTextComponent';
-import Link from '../NextChakraLink';
-import Heading from '../Heading';
-import { parseProp } from '../../utils';
+import PrismicTextComponent from '../../PrismicTextComponent';
+import Link from '../../NextChakraLink';
+import Heading from '../../Heading';
+import { parseProp } from '../../../utils';
 
 function BannerVariation({
   title,

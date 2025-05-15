@@ -1,10 +1,10 @@
 import useTranslation from 'next-translate/useTranslation';
 import { useColorModeValue } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import MktEventCards from './MktEventCards';
-import MktSearchBar from './MktSearchBar';
-import MktTechnologiesPills from './MktTechnologiesPills';
-import MktTechnologies from './MktTechnologies';
+import MktEventCards from './PrismicComponents/MktEventCards';
+import MktSearchBar from './PrismicComponents/MktSearchBar';
+import MktTechnologiesPills from './PrismicComponents/MktTechnologiesPills';
+import MktTechnologies from './PrismicComponents/MktTechnologies';
 import Heading from './Heading';
 import bc from '../services/breathecode';
 

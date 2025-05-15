@@ -3,12 +3,12 @@ import {
   Box,
 } from '@chakra-ui/react';
 import Image from 'next/image';
-import PrismicTextComponent from './PrismicTextComponent';
-import useStyle from '../hooks/useStyle';
-import Heading from './Heading';
-import Text from './Text';
-import Icon from './Icon';
-import { isAbsoluteUrl } from '../utils/url';
+import PrismicTextComponent from '../PrismicTextComponent';
+import useStyle from '../../hooks/useStyle';
+import Heading from '../Heading';
+import Text from '../Text';
+import Icon from '../Icon';
+import { isAbsoluteUrl } from '../../utils/url';
 
 function Card({ title, description, icon, color }) {
   const { hexColor } = useStyle();

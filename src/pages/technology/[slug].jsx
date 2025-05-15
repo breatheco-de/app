@@ -16,7 +16,7 @@ import Heading from '../../components/Heading';
 import ProjectList from '../../components/Assets/ProjectList';
 import DraggableContainer from '../../components/DraggableContainer';
 import GridContainer from '../../components/GridContainer';
-import MktEventCards from '../../components/MktEventCards';
+import MktEventCards from '../../components/PrismicComponents/MktEventCards';
 import ProjectsLoader from '../../components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
 import useCustomToast from '../../hooks/useCustomToast';
