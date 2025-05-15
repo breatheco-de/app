@@ -2,6 +2,7 @@ import {
   Box, Flex, IconButton, Avatar, Stack, Collapse, useColorModeValue,
   useDisclosure, useColorMode, Popover, PopoverTrigger,
   PopoverContent, PopoverArrow, Button, Link, Divider,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import {
@@ -34,8 +35,7 @@ import { getAllMySubscriptions } from '../../handlers/subscriptions';
 
 function Navbar({ translations, pageProps }) {
   const [uniqueLanguages, setUniqueLanguages] = useState([]);
-  const { userSession, location, isLoadingLocation } = useSession();
-  const isUtmMediumAcademy = userSession?.utm_medium === 'academy';
+  const { location, isLoadingLocation } = useSession();
   const { isAuthenticated, isLoading, user, logout, cohorts } = useAuth();
   const [navbarItems, setNavbarItems] = useState([]);
   const [mktCourses, setMktCourses] = useState([]);
@@ -49,6 +49,7 @@ function Navbar({ translations, pageProps }) {
   const { isOpen, onToggle } = useDisclosure();
   const { toggleColorMode } = useColorMode();
   const fontColor = useColorModeValue('black', 'gray.200');
+  const isMobile = useBreakpointValue({ base: true, lg: false });
   const { hexColor, colorMode, reverseColorMode, borderColor, lightColor, navbarBackground } = useStyle();
 
   const disableLangSwitcher = pageProps?.disableLangSwitcher || false;
@@ -123,20 +124,13 @@ function Navbar({ translations, pageProps }) {
         ...item,
         slug: item?.slug,
         label: item?.course_translation?.title,
-        asPath: `/course/${item?.slug}`,
+        href: `/${locale}/bootcamp/${item?.slug}`,
         icon: item?.icon_url,
-        description: item?.course_translation?.description,
-        subMenu: [
-          {
-            href: `/bootcamp/${item?.slug}`,
-            label: t('course-details'),
-          },
-        ],
       }));
 
       setMktCourses(coursesStruct || []);
     } catch (error) {
-      console.error(error);
+      console.error(`Error fetching mkt courses: ${error}`);
     }
   };
 
@@ -149,20 +143,10 @@ function Navbar({ translations, pageProps }) {
   useEffect(() => {
     if (pageProps?.existsWhiteLabel) {
       setNavbarItems(whiteLabelitems);
+    } else if (!isLoading && user?.id) {
+      setNavbarItems(preDefinedItems.filter((item) => (item.disabled !== true && item.hide_on_auth !== true)));
     } else {
-      const preFilteredItems = preDefinedItems.filter(
-        (item) => (isUtmMediumAcademy ? item.id !== 'bootcamps' : true) && (item.id === 'bootcamps' ? location?.countryShort !== 'ES' : true),
-      );
-      if (!isLoading && user?.id) {
-        const isBootcampStudent = cohorts.some((cohort) => !cohort.available_as_saas);
-        setNavbarItems(
-          preFilteredItems
-            .filter((item) => (item.disabled !== true && item.hide_on_auth !== true)
-              && (item.id !== 'bootcamps' || !isBootcampStudent)),
-        );
-      } else {
-        setNavbarItems(preFilteredItems.filter((item) => item.disabled !== true));
-      }
+      setNavbarItems(preDefinedItems.filter((item) => item.disabled !== true));
     }
   }, [user, cohorts, isLoading, cohortSession, mktCourses, router.locale, location]);
 
@@ -181,12 +165,28 @@ function Navbar({ translations, pageProps }) {
 
   if (pageProps?.previewMode) return null;
 
-  // manage submenus in level 1
-  const prepareSubMenuData = (item) => {
-    if (item.id === 'bootcamps') {
-      return mktCourses;
-    }
-    return item?.subMenu;
+  const prepareMenuData = (item, coursesArray) => {
+    if (item.id !== 'bootcamps' || !Array.isArray(item.mainMenu)) return item;
+    const selfPacedIndex = item.mainMenu.findIndex((sub) => sub.id === 'self-paced-options');
+    if (selfPacedIndex === -1 || !Array.isArray(item.mainMenu[selfPacedIndex]?.subMenu)) return item;
+
+    const newMainMenu = item.mainMenu.map((menuItem, index) => {
+      if (index === selfPacedIndex) {
+        return {
+          ...menuItem,
+          subMenu: [
+            ...coursesArray,
+            ...menuItem.subMenu,
+          ],
+        };
+      }
+      return menuItem;
+    });
+
+    return {
+      ...item,
+      mainMenu: newMainMenu,
+    };
   };
 
   const allItems = navbarItems?.length > 0 ? navbarItems : preDefinedItems;
@@ -194,15 +194,7 @@ function Navbar({ translations, pageProps }) {
   const privateItems = allItems?.filter((item) => (isAuthenticated ? item.private : false)) || [];
   const publicItems = allItems?.filter((item) => !item.private) || [];
   const allNavbarItems = [...privateItems, ...publicItems]
-    .map((item) => {
-      const submenuData = prepareSubMenuData(item);
-      const subMenuLength = item.subMenu?.length;
-
-      return ({
-        ...item,
-        subMenu: subMenuLength > 1 ? item.subMenu : submenuData,
-      });
-    })
+    .map((item) => prepareMenuData(item, mktCourses))
     .sort((a, b) => a.position - b.position);
 
   return (
@@ -270,7 +262,7 @@ function Navbar({ translations, pageProps }) {
           display={{ base: 'none', lg: 'flex' }}
           justify={{ base: 'center', xl: 'start' }}
         >
-          <NextLink href={isAuthenticated ? '/choose-program' : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
+          <NextLink href={isAuthenticated ? '/choose-program' : '/'} style={{ alignSelf: 'center', display: 'flex' }}>
             {pageProps?.existsWhiteLabel && logoData?.logo_url ? (
               <Image
                 src={logoData.logo_url}
@@ -284,12 +276,12 @@ function Navbar({ translations, pageProps }) {
                 }}
                 alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
               />
-            ) : <Icon icon="4Geeks-logo" secondColor={hexColor.black} width="95px" height="35px" />}
+            ) : <Icon icon="4GeeksIcon" secondColor={hexColor.black} width="90px" height="35px" />}
           </NextLink>
 
           <Flex display="flex" ml={10}>
             <Stack className="hideOverflowX__" direction="row" width="auto" spacing={4} alignItems="center">
-              {allNavbarItems.map((item) => (
+              {!isMobile && allNavbarItems.map((item) => (
                 <DesktopNavItem key={item.label} item={item} />
               ))}
             </Stack>
