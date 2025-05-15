@@ -270,7 +270,7 @@ function PaymentInfo({ setShowPaymentDetails }) {
   };
 
   const handleSubmit = async (actions, values) => {
-    const resp = await bc.payment().addCard(values);
+    const resp = await bc.payment().addCard({ ...values, academy: selectedPlanCheckoutData.owner.id });
     const data = await resp.json();
     setIsSubmittingCard(false);
 
