@@ -13,6 +13,7 @@ import tomorrow from '../syntaxHighlighter/tomorrow';
 import { slugify } from '../../../utils';
 import Text from '../../Text';
 import Image from '../../Image';
+import MermaidRenderer from '../MermaidRenderer';
 
 export function generateId(children) {
   const text = children ? children
@@ -86,6 +87,13 @@ export function MDLink({ children, href }) {
 
 export function Code({ inline, showLineNumbers, showInlineLineNumbers, className, children }) {
   const match = /language-(\w+)/.exec(className || '');
+
+  console.log('LENGUAGE ', match);
+
+  if (match && match.includes('mermaid')) {
+    console.log(children, 'Children');
+    return <MermaidRenderer code={children[0]} />;
+  }
 
   return !inline && match ? (
     <SyntaxHighlighter
