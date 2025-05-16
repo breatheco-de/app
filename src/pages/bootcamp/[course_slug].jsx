@@ -834,6 +834,8 @@ function CoursePage({ data, syllabus }) {
               {/* CourseContent comopnent */}
               {cohortData?.cohortSyllabus?.syllabus && (
                 <CourseContent
+                  courseContentText={getAlternativeTranslation('course-content-text')}
+                  courseContentDescription={getAlternativeTranslation('course-content-description')}
                   data={courseContentList}
                   assetCount={assetCount}
                   backgroundColor={backgroundColor}
