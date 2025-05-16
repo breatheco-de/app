@@ -48,11 +48,15 @@ function PhoneInput({
   const dropdownMenuRef = useRef();
   const [validStatus, setValidStatus] = useState({ valid: true });
   const regex = {
-    phone: /^(?!(\d{2,})\1+)(?!(\d+)\2{3,})(\+\d{1,3})?(\d{8,10})$/,
+    phone: /^(?!(\d{2,})\1+)(?!(\d+)\2{3,})(\+\d{1,3})?(\d{8,15})$/,
   };
   const highlightCountryIndex = 0;
 
   const getCountryPhoneMask = () => {
+    if (selectedCountry.dialCode === '54') {
+      // Argentina needs a longer mask with parentheses around area code
+      return `+${selectedCountry.dialCode} (99) 9999 9999 9999`;
+    }
     const getMask = countriesList.find(
       (mask) => mask.iso === selectedCountry?.iso2?.toUpperCase(),
     );
@@ -169,7 +173,7 @@ function PhoneInput({
     const prefixCode = prefix + selectedCountry.dialCode;
 
     // Gets the character of the formatted phone number
-    const formatOfCharacters = e.target.value.match(/[^A-Za-z0-9 ]/g);
+    const formatOfCharacters = e.target.value.match(/[^A-Za-z0-9 ]/g) || [];
     const prefixLength = selectedCountry.isAreaCode
       ? prefixCode.length + formatOfCharacters.length
       : prefixCode.length;
@@ -178,10 +182,30 @@ function PhoneInput({
     const input = e.target.value.substr(prefixLength);
     setPhoneNumber(prefixCode + input);
 
-    const cleanedPhoneInput = `+${(prefixCode + input).match(/\d+/g).join('')}`;
+    const cleanedPhoneInput = `+${(prefixCode + input).match(/\d+/g)?.join('') || ''}`;
 
-    isValid = required === false ? true : regex.phone.test(cleanedPhoneInput);
-    if (isValid !== validStatus) {
+    // Special handling for Argentina (country code 54)
+    if (selectedCountry.dialCode === '54') {
+      // Argentina phone numbers: +54 (area code) local number
+      const digitsOnly = cleanedPhoneInput.replace(/\D/g, '');
+      // Length limits: country code + area code + number
+      const MIN_LENGTH = 3; // At least country code + 1 digit
+      const MAX_LENGTH = 15; // Reasonable maximum for Argentine numbers
+      if (required === false) {
+        isValid = true;
+      } else if (digitsOnly.length <= 2) {
+        // Too short (just country code or less)
+        isValid = false;
+      } else if (digitsOnly.length > MAX_LENGTH) {
+        // Too long (unreasonable number)
+        isValid = false;
+      } else {
+        isValid = true;
+      }
+    } else {
+      isValid = required === false ? true : regex.phone.test(cleanedPhoneInput);
+    }
+    if (isValid !== validStatus.valid) {
       setValidStatus({
         valid: isValid,
         msg: isValid ? 'Ok' : errorMsg,
@@ -189,7 +213,6 @@ function PhoneInput({
     }
     setVal({
       ...formData,
-      // phone: { ...phoneFormValues, value: cleanedPhoneInput, valid: true },
       phone: cleanedPhoneInput,
     });
   };
@@ -241,14 +264,8 @@ function PhoneInput({
               value={phoneNumber}
               type="phone"
               id={id || 'phone'}
-              // mask="+1\(999) 999-9999"/
               mask={getCountryPhoneMask()}
               maskChar=""
-              // formatChars={{
-              //   "9": "[0-9]",
-              //   "a": "[A-Za-z]",
-              //   "*": "[A-Za-z0-9]"
-              // }}
             />
             <FormErrorMessage>{form.errors.phone}</FormErrorMessage>
           </FormControl>

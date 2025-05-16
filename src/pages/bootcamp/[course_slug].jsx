@@ -134,7 +134,6 @@ function CoursePage() {
   const faqList = getAlternativeTranslation('faq', {}, { returnObjects: true }) || [];
   const features = getAlternativeTranslation('features', {}, { returnObjects: true }) || {};
   const featuredBullets = getAlternativeTranslation('featured-bullets', {}, { returnObjects: true }) || [];
-  const isSpain = location?.country?.toLowerCase() === 'spain' || location?.country?.toLowerCase() === 'españa';
   const country_code = location?.countryShort;
 
   useEffect(() => {
@@ -146,9 +145,9 @@ function CoursePage() {
 
       const plansContext = plans.map((plan) => `
         - ${plan.title}
-        price: ${isSpain && plan.type !== 'FREE' ? '99.99€' : plan.priceText}
+        price: ${plan.priceText}
         period: ${plan.period_label}
-        ${plan.lastPrice ? `original price: ${isSpain && plan.type !== 'FREE' ? '199.99€' : plan.lastPrice}\n discount: ${discount}\n` : ''}
+        ${plan.lastPrice ? `original price: ${plan.lastPrice}\n discount: ${discount}\n` : ''}
       `);
       const syllabusContext = cohortData?.cohortSyllabus?.syllabus?.json
         ? cohortData.cohortSyllabus.syllabus.json.days
@@ -606,6 +605,16 @@ function CoursePage() {
               <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => setShowModal(true)} />
 
             </Flex>
+
+            {data?.course_translation?.description && (
+              <Text
+                size={{ base: '14', md: '16px' }}
+                color="currentColor"
+                fontWeight={400}
+                lineHeight="normal"
+                dangerouslySetInnerHTML={{ __html: data.course_translation.description }}
+              />
+            )}
           </Flex>
           <Flex flexDirection="column" gridColumn="9 / span 4" mt={{ base: '2rem', md: '0' }} ref={showBottomCTA}>
             <ShowOnSignUp
@@ -676,7 +685,7 @@ function CoursePage() {
                           <Flex flexDirection="column" alignItems="center">
                             <Text fontSize={!featuredPlanToEnroll?.isFreeTier ? '16px' : '14px'}>
                               {allDiscounts.length > 0 && '🔥'}
-                              {capitalizeFirstLetter(featuredPlanToEnroll?.type !== 'FREE' && isSpain ? '99.99€' : featurePrice)}
+                              {capitalizeFirstLetter(featurePrice)}
                             </Text>
                             {!featuredPlanToEnroll?.isFreeTier && (
                               <Flex alignItems="center" marginTop="5px" gap="5px" justifyContent="center">
@@ -762,6 +771,8 @@ function CoursePage() {
               {/* CourseContent comopnent */}
               {cohortData?.cohortSyllabus?.syllabus && (
                 <CourseContent
+                  courseContentText={getAlternativeTranslation('course-content-text')}
+                  courseContentDescription={getAlternativeTranslation('course-content-description')}
                   data={courseContentList}
                   assetCount={assetCount}
                   backgroundColor={backgroundColor}
@@ -918,7 +929,7 @@ function CoursePage() {
           }}
         />
         {/* Pricing */}
-        {data?.plan_slug && (
+        {data?.plan_slug && featuredPlanToEnroll?.type !== 'FREE' && (
           <MktShowPrices
             id="pricing"
             externalPlanProps={planData}

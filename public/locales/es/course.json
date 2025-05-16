@@ -1,5 +1,5 @@
 {
-  "course-content-text": "Prepárate para obtener un trabajo con nuestro syllabus",
+  "course-content-text": "Prepárate para obtener un trabajo con nuestro curriculum",
   "course-content-description": "Hemos ajustado nuestro contenido del curso con cientos de posiciones laborales para prepararte para una entrada exitosa en el mundo de la tecnología.",
   "students-enrolled-count": "+{{count}} estudiantes inscritos",
   "students-enrolled": "cientos de estudiantes inscritos",
@@ -110,7 +110,7 @@
   },
   "build-connector": {
     "what-you-will": "Aprende construyendo",
-    "description": "Cuando aprendes a programar a tu propio ritmo, tener acceso a tutoriales en video, ejemplos de código y retroalimentación continua en tiempo real es crucial para tener éxito. Las tareas que abordarás se asemejarán estrechamente a las encontradas en una posición tecnológica del mundo real. Aquí tienes un vistazo de en qué estarás trabajando:",
+    "description": "Cuando aprendes a tu propio ritmo, tener acceso a tutoriales en video, ejemplos de código y retroalimentación continua en tiempo real es crucial para tener éxito. Las tareas que abordarás se asemejarán estrechamente a las encontradas en una posición tecnológica del mundo real. Aquí tienes un vistazo de en qué estarás trabajando:",
     "build": "proyectos de la vida real",
     "link": "#pricing"
   },
@@ -329,19 +329,16 @@
       {
         "type": "lesson",
         "title": "Lecturas",
-        "qty": 45,
         "icon": "book"
       },
       {
         "type": "exercise",
         "title": "Ejercicios interactivos",
-        "qty": 584,
         "icon": "strength"
       },
       {
         "type": "project",
         "title": "Proyectos interactivos",
-        "qty": 28,
         "icon": "laptop-code"
       },
       {
@@ -385,7 +382,7 @@
     "image": "/static/images/certificate-preview.webp",
     "title": "Certifícate en tu tecnología favorita",
     "description": "Tu certificado de 4Geeks abrirá puertas a oportunidades profesionales con nuestra extensa red de empresas en todo el mundo. Respaldado por instituciones internacionales, representa un estándar reconocido a nivel global, desbloqueando diversos caminos profesionales.",
-    "button": "Ver precios",
+    "button": "Empieza ahora",
     "button-link": "#pricing"
   },
   "havent-decided": {
@@ -398,10 +395,10 @@
   },
   "job-section": {
     "image": "/static/images/happy-male-with-laptop.png",
-    "title": "Prepárate para una carrera nueva",
+    "title": "Obtén un descuento exclusivo de 30% en Beyond the Resume",
     "subtitle": "Mejora tu CV, portafolio, perfil de GitHub, y el perfil de tus redes sociales.",
-    "description": "Obtén acceso a ejercicios que simulan entrevistas de la vida real, obtenidas de empresas que están contratando activamente. Por ningún costo adicional para ti y sin quitarte nada del salario de la oferta de trabajo que obtengas.",
-    "button": "Únete ahora",
+    "description": "Obtén un descuento exclusivo en Beyond the Resume al completar el curso, un programa diseñado para ayudarte con temas de carrera, desde optimizar tu perfil profesional hasta destacar en entrevistas.",
+    "button": "Empieza ahora",
     "button-link": "#pricing"
   }
 }
