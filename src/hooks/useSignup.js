@@ -31,7 +31,7 @@ const useSignup = () => {
     setCheckoutData,
     setPaymentMethods,
     toggleIfEnrolled,
-    setServiceProps,
+    setService,
     setSelfAppliedCoupon,
     setPaymentStatus,
     setIsSubmittingPayment,
@@ -662,8 +662,7 @@ const useSignup = () => {
         });
       }
     }
-
-    setServiceProps({
+    setService({
       ...data,
       list: allItems,
     });

@@ -49,12 +49,12 @@ function ServiceSummary({ service }) {
   const serviceTypes = {
     mentorship: {
       name: t('consumables.sessions'),
-      quantityOfConsumables: (item) => t('consumables.qty-mentorship-sessions', { qty: item.qty }),
+      quantityOfConsumables: (item) => t('consumables.qty-mentorship-to-consume', { qty: item.qty }),
       pricePerUnit: (item) => t('consumables.price-mentorship-per-qty', { price: formatPrice(item.pricePerUnit, true) }),
     },
     event: {
       name: t('consumables.events'),
-      quantityOfConsumables: (item) => t('consumables.qty-events-sessions', { qty: item.qty }),
+      quantityOfConsumables: (item) => t('consumables.qty-events-to-consume', { qty: item.qty }),
       pricePerUnit: (item) => t('consumables.price-event-per-qty', { price: formatPrice(item.pricePerUnit, true) }),
     },
     compilation: {
@@ -86,6 +86,10 @@ function ServiceSummary({ service }) {
         isClosable: true,
         duration: 6000,
       });
+      setDeclinedModalProps({
+        title: t('transaction-denied'),
+        description: data?.detail || t('payment-not-processed'),
+      });
     }
     if (silentCode === SILENT_CODE.CARD_ERROR) {
       setOpenDeclinedModal(true);
@@ -112,8 +116,9 @@ function ServiceSummary({ service }) {
 
   const handlePayConsumable = async () => {
     try {
+      console.log('dataToAssign', dataToAssign);
       const res = await bc.payment().service().payConsumable(dataToAssign);
-      const data = await res.json();
+      const { data } = res;
       if (res?.status < 400) {
         reportDatalayer({
           dataLayer: {
@@ -168,7 +173,7 @@ function ServiceSummary({ service }) {
         },
       });
     }
-    const resp = await bc.payment().addCard(values);
+    const resp = await bc.payment().addCard({ ...values, academy: service.academy.id });
     const { data } = resp;
     setIsSubmittingCard(false);
     if (data.status === 'ok') {

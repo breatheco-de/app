@@ -271,9 +271,9 @@ const breathecode = {
       getServiceSet: (mentorshipServiceSetId) => axios.get(`${url}/mentorshipserviceset/${mentorshipServiceSetId}`),
       service: () => ({
         consumable: () => axios.get(`${url}/me/service/consumable${qs}`),
-        getAcademyServiceBySlug: (serviceSlug) => breathecode.get(`${url}/academy/academyservice/${serviceSlug}${qs}`),
-        getAcademyService: () => breathecode.get(`${url}/academy/academyservice${qs}`),
-        payConsumable: (data) => breathecode.post(`${url}/consumable/checkout${qs}`, data),
+        getAcademyServiceBySlug: (serviceSlug) => axios.get(`${url}/academy/academyservice/${serviceSlug}${qs}`),
+        getAcademyService: () => axios.get(`${url}/academy/academyservice${qs}`),
+        payConsumable: (data) => axios.post(`${url}/consumable/checkout${qs}`, data),
       }),
       getAllEventTypeSets: () => axios.get(`${url}/eventtypeset`),
       getEventTypeSet: (eventTypeSetId) => axios.get(`${url}/eventtypeset/${eventTypeSetId}`),

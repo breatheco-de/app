@@ -85,7 +85,7 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
   };
 
   const handleSubmit = async (actions, values) => {
-    const resp = await bc.payment().addCard(values);
+    const resp = await bc.payment().addCard({ ...values, academy: selectedPlanCheckoutData.owner.id });
     const { data } = resp;
     setIsSubmittingCard(false);
 

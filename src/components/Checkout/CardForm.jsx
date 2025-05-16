@@ -40,7 +40,7 @@ function CardForm({ onSubmit, modalCardErrorProps, buttonText }) {
   const {
     state, setPaymentInfo,
   } = signupAction();
-  const { paymentInfo, checkoutData, selectedPlanCheckoutData, paymentStatus, isSubmittingCard, isSubmittingPayment } = state;
+  const { paymentInfo, checkoutData, selectedPlanCheckoutData, isSubmittingCard, isSubmittingPayment } = state;
   const [stateCard, setStateCard] = useState({
     card_number: paymentInfo?.card_number || 0,
     exp_month: 0,
@@ -48,9 +48,6 @@ function CardForm({ onSubmit, modalCardErrorProps, buttonText }) {
     cvc: 0,
   });
 
-  const isPaymentSuccess = paymentStatus === 'success';
-  const isPaymentIdle = paymentStatus === 'idle';
-  const paymentStatusBgColor = isPaymentSuccess ? 'green.light' : '#ffefef';
   const isNotTrial = selectedPlanCheckoutData?.type !== 'TRIAL';
 
   const getPrice = (planProp) => {
@@ -92,7 +89,7 @@ function CardForm({ onSubmit, modalCardErrorProps, buttonText }) {
         isSubmitting={isSubmittingCard}
         {...modalCardErrorProps}
       />
-      <Box display="flex" width={{ base: 'auto', lg: '490px' }} height="auto" flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={!isPaymentIdle ? paymentStatusBgColor : backgroundColor} p={{ base: '20px 0', md: '30px 0' }} borderRadius="15px">
+      <Box display="flex" width={{ base: 'auto', lg: '490px' }} height="auto" flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={backgroundColor} p={{ base: '20px 0', md: '30px 0' }} borderRadius="15px">
         <Formik
           initialValues={{
             owner_name: paymentInfo.owner_name || '',
@@ -217,23 +214,21 @@ function CardForm({ onSubmit, modalCardErrorProps, buttonText }) {
             </Form>
           )}
         </Formik>
-        {isPaymentIdle && (
-          <Flex flexDirection="column" gridGap="1.5rem" margin="1.5rem 0 0 0" background={backgroundColor3} padding="1rem" borderRadius="6px">
-            <Flex justifyContent="space-between" alignItems="center">
-              <Flex gridGap="10px" alignItems="center">
-                <Icon icon="padlock" width="20px" height="20px" color={hexColor.black} />
-                <Text
-                  size="18px"
-                  letterSpacing="auto"
-                  dangerouslySetInnerHTML={{ __html: t('secure-checkout') }}
-                />
-              </Flex>
-              <Image draggable={false} userSelect="none" src="/static/images/powered-by-stripe.png" width="auto" height="40px" objectFit="contain" />
+        <Flex flexDirection="column" gridGap="1.5rem" margin="1.5rem 0 0 0" background={backgroundColor3} padding="1rem" borderRadius="6px">
+          <Flex justifyContent="space-between" alignItems="center">
+            <Flex gridGap="10px" alignItems="center">
+              <Icon icon="padlock" width="20px" height="20px" color={hexColor.black} />
+              <Text
+                size="18px"
+                letterSpacing="auto"
+                dangerouslySetInnerHTML={{ __html: t('secure-checkout') }}
+              />
             </Flex>
-            <Divider />
-            <Image draggable={false} userSelect="none" src="/static/images/payment-cards.png" width="100%" height="auto" objectFit="contain" />
+            <Image draggable={false} userSelect="none" src="/static/images/powered-by-stripe.png" width="auto" height="40px" objectFit="contain" />
           </Flex>
-        )}
+          <Divider />
+          <Image draggable={false} userSelect="none" src="/static/images/payment-cards.png" width="100%" height="auto" objectFit="contain" />
+        </Flex>
       </Box>
     </Box>
   );
