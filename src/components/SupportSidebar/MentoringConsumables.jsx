@@ -12,7 +12,6 @@ import ModalToGetAccess, { stageType } from '../ModalToGetAccess';
 import Link from '../NextChakraLink';
 import bc from '../../services/breathecode';
 import useAuth from '../../hooks/useAuth';
-import useOnline from '../../hooks/useOnline';
 import AvatarUser from '../AvatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped, CardSkeleton } from '../Skeleton';
@@ -67,8 +66,6 @@ function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mento
 function ProfilesSection({
   profiles, size,
 }) {
-  const { usersConnected } = useOnline();
-
   let displayProfiles = profiles || [];
 
   if (profiles?.length === 1) {
@@ -130,7 +127,6 @@ function ProfilesSection({
       {displayProfiles?.map((c, i) => {
         if (!c || !c.user) return null;
         const fullName = c.user.first_name && c.user.last_name ? `${c.user.first_name} ${c.user.last_name}` : '';
-        const isOnline = usersConnected?.includes(c.user.id);
         const avatarUrl = c.user.profile?.avatar_url;
 
         return (
@@ -143,7 +139,6 @@ function ProfilesSection({
             fullName={fullName}
             avatarUrl={avatarUrl}
             data={c}
-            isOnline={isOnline}
             badge
           />
         );

@@ -65,7 +65,6 @@ function Dashboard() {
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
-  // const [grantAccess, setGrantAccess] = useState(false);
 
   const [searchValue, setSearchValue] = useState(router.query.search || '');
   const [showPendingTasks, setShowPendingTasks] = useState(false);
@@ -175,59 +174,6 @@ function Dashboard() {
       });
     }
   };
-
-  // const checkNavigationAvailability = () => {
-  //   const showToastAndRedirect = (programSlug) => {
-  //     router.push({
-  //       pathname: '/checkout',
-  //       locale: lang,
-  //       query: {
-  //         plan: programSlug,
-  //       },
-  //     });
-  //     createToast({
-  //       position: 'top',
-  //       title: t('alert-message:access-denied'),
-  //       status: 'error',
-  //       duration: 5000,
-  //       isClosable: true,
-  //     });
-  //   };
-
-  //   if (allSubscriptions) {
-  //     const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
-  //     const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
-  //     const currentCohortSlug = cohortSubscriptions[0]?.selected_cohort_set?.slug;
-
-  //     if (cohortSubscriptions.length === 0) {
-  //       showToastAndRedirect(currentCohortSlug);
-  //       return;
-  //     }
-
-  //     const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED' || sub.status === 'ERROR');
-  //     const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
-  //     if (expiredCourse && !fullyPaidSub) {
-  //       showToastAndRedirect(currentCohortSlug);
-  //       return;
-  //     }
-
-  //     if (fullyPaidSub) {
-  //       setGrantAccess(true);
-  //       return;
-  //     }
-
-  //     const freeTrialSub = cohortSubscriptions.find((sub) => sub.status === 'FREE_TRIAL');
-  //     const freeTrialExpDate = new Date(freeTrialSub?.valid_until);
-  //     const todayDate = new Date();
-
-  //     if (todayDate > freeTrialExpDate) {
-  //       showToastAndRedirect(currentCohortSlug);
-  //       return;
-  //     }
-
-  //     setGrantAccess(true);
-  //   }
-  // };
 
   useEffect(() => {
     if (areSubscriptionsFetched && cohortSession?.available_as_saas === true && cohortSession.cohort_user.role === 'STUDENT') {

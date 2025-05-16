@@ -18,7 +18,6 @@ import Navbar from '../components/Navbar';
 import RigoProvider from '../context/RigoContext';
 import AuthProvider from '../context/AuthContext';
 import SessionProvider from '../context/SessionContext';
-import ConnectionProvider from '../context/ConnectionContext';
 import Footer from '../components/Footer';
 import Helmet from '../components/Helmet';
 import InterceptionLoader from '../components/InterceptionLoader';
@@ -92,18 +91,16 @@ function App({ Component, pageProps }) {
         >
           <AuthProvider pageProps={pageProps}>
             <SessionProvider>
-              <ConnectionProvider>
-                <Navbar pageProps={pageProps} translations={pageProps?.translations} />
-                <InterceptionLoader />
+              <Navbar pageProps={pageProps} translations={pageProps?.translations} />
+              <InterceptionLoader />
 
-                <PrismicProvider internalLinkComponent={InternalLinkComponent}>
-                  <PrismicPreview repositoryName={repositoryName}>
-                    <Component {...pagePropsData} />
-                  </PrismicPreview>
-                </PrismicProvider>
+              <PrismicProvider internalLinkComponent={InternalLinkComponent}>
+                <PrismicPreview repositoryName={repositoryName}>
+                  <Component {...pagePropsData} />
+                </PrismicPreview>
+              </PrismicProvider>
 
-                <Footer pageProps={pagePropsData} />
-              </ConnectionProvider>
+              <Footer pageProps={pagePropsData} />
             </SessionProvider>
           </AuthProvider>
         </ChakraProvider>

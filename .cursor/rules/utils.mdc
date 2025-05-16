@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+In the utils folder we will only store pure functions that are reused in may sections of the project
