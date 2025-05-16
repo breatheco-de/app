@@ -329,19 +329,16 @@
       {
         "type": "lesson",
         "title": "Lecturas",
-        "qty": 45,
         "icon": "book"
       },
       {
         "type": "exercise",
         "title": "Ejercicios interactivos",
-        "qty": 584,
         "icon": "strength"
       },
       {
         "type": "project",
         "title": "Proyectos interactivos",
-        "qty": 28,
         "icon": "laptop-code"
       },
       {
