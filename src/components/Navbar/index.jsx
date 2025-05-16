@@ -35,8 +35,7 @@ import { getAllMySubscriptions } from '../../handlers/subscriptions';
 
 function Navbar({ translations, pageProps }) {
   const [uniqueLanguages, setUniqueLanguages] = useState([]);
-  const { userSession, location } = useSession();
-  const isUtmMediumAcademy = userSession?.utm_medium === 'academy';
+  const { location, isLoadingLocation } = useSession();
   const { isAuthenticated, isLoading, user, logout, cohorts } = useAuth();
   const [navbarItems, setNavbarItems] = useState([]);
   const [mktCourses, setMktCourses] = useState([]);
@@ -131,26 +130,23 @@ function Navbar({ translations, pageProps }) {
 
       setMktCourses(coursesStruct || []);
     } catch (error) {
-      console.error(error);
+      console.error(`Error fetching mkt courses: ${error}`);
     }
   };
 
   useEffect(() => {
-    fetchMktCourses();
-  }, [locale]);
+    if (!isLoadingLocation) {
+      fetchMktCourses();
+    }
+  }, [locale, isLoadingLocation]);
 
   useEffect(() => {
     if (pageProps?.existsWhiteLabel) {
       setNavbarItems(whiteLabelitems);
+    } else if (!isLoading && user?.id) {
+      setNavbarItems(preDefinedItems.filter((item) => (item.disabled !== true && item.hide_on_auth !== true)));
     } else {
-      const preFilteredItems = preDefinedItems.filter(
-        (item) => (isUtmMediumAcademy ? item.id !== 'bootcamps' : true) && (item.id === 'bootcamps' ? location?.countryShort !== 'ES' : true),
-      );
-      if (!isLoading && user?.id) {
-        setNavbarItems(preFilteredItems.filter((item) => (item.disabled !== true && item.hide_on_auth !== true)));
-      } else {
-        setNavbarItems(preFilteredItems.filter((item) => item.disabled !== true));
-      }
+      setNavbarItems(preDefinedItems.filter((item) => item.disabled !== true));
     }
   }, [user, cohorts, isLoading, cohortSession, mktCourses, router.locale, location]);
 

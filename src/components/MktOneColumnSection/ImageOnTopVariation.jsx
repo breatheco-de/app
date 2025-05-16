@@ -77,6 +77,7 @@ function ImageOnTopVariation({
             src={image.url}
             alt={image.alt || title || 'Section image'}
             objectFit="cover"
+            objectPosition="50% 10%"
             width="100%"
             height={{ base: '271px', md: '365px' }}
           />
