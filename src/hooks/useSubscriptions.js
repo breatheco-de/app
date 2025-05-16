@@ -1,12 +1,10 @@
-import { useRouter } from 'next/router';
 import subscriptionAction from '../store/actions/subscriptionAction';
 import bc from '../services/breathecode';
 import useCustomToast from './useCustomToast';
 import { toCapitalize, unSlugify } from '../utils';
 
 const useSubscriptions = () => {
-  const router = useRouter();
-  const { state, setAreSubscriptionsFetched, setSubscriptionsLoading, setSubscriptions, setCancelSubscription, setPaymentStatus } = subscriptionAction();
+  const { state, setAreSubscriptionsFetched, setSubscriptionsLoading, setSubscriptions, setCancelSubscription } = subscriptionAction();
   const { subscriptions } = state;
   const { createToast } = useCustomToast({ toastId: 'canceling-subscription-error-action' });
 
@@ -40,9 +38,6 @@ const useSubscriptions = () => {
         return {
           title: toCapitalize(unSlugify(String(offerData.slug))),
           slug: offerData.slug,
-          details: offerData.details,
-          expires_at: offerData.expires_at,
-          show_modal: currentOffer.show_modal,
           outOfConsumables,
         };
       }
@@ -57,13 +52,6 @@ const useSubscriptions = () => {
       status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED,ERROR',
     }).subscriptions();
     return data;
-  };
-
-  const reactivatePlan = (planSlug, planStatus) => {
-    if (planStatus === 'CANCELLED') {
-      setPaymentStatus('idle');
-      router.push(`/checkout?plan=${planSlug}`);
-    }
   };
 
   const initializeSubscriptionsData = async () => {
@@ -126,7 +114,6 @@ const useSubscriptions = () => {
     allSubscriptions,
     SUBS_STATUS,
     getPlanOffer,
-    reactivatePlan,
     initializeSubscriptionsData,
     cancelSubscription,
     getSubscriptions,

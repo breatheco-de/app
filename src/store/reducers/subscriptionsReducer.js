@@ -3,7 +3,7 @@ import {
 } from '../types';
 
 const initialState = {
-  subscriptions: [],
+  subscriptions: null,
   isLoading: false,
   areSubscriptionsFetched: false,
 };

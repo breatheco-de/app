@@ -31,13 +31,13 @@ import SyllabusMarkdownComponent from '../../../../../components/GuidedExperienc
 import Topbar from '../../../../../components/GuidedExperience/Topbar';
 import bc from '../../../../../services/breathecode';
 import useCohortHandler from '../../../../../hooks/useCohortHandler';
+import useSubscriptions from '../../../../../hooks/useSubscriptions';
 import SimpleModal from '../../../../../components/SimpleModal';
 import ReactSelect from '../../../../../components/ReactSelect';
 import ConnectGithubRigobot from '../../../../../components/ConnectGithubRigobot';
 import useStyle from '../../../../../hooks/useStyle';
 import { ORIGIN_HOST, BREATHECODE_HOST } from '../../../../../utils/variables';
 import { log } from '../../../../../utils/logging';
-import { parseQuerys } from '../../../../../utils/url';
 import completions from './completion-jobs.json';
 import { generateUserContext } from '../../../../../utils/rigobotContext';
 import SubTasks from '../../../../../components/MarkDownParser/SubTasks';
@@ -50,7 +50,7 @@ function SyllabusContent() {
   const router = useRouter();
   const { createToast } = useCustomToast({ toastId: 'ai-chat-access-error' });
 
-  const { isOpen, onToggle } = useDisclosure();
+  const { isOpen, onToggle } = useDisclosure({ defaultIsOpen: true });
   const { user, isLoading, isAuthenticatedWithRigobot } = useAuth();
   const { rigo, isRigoInitialized } = useRigo();
   const {
@@ -86,16 +86,15 @@ function SyllabusContent() {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [currentVideoUrl, setCurrentVideoUrl] = useState('');
   const [videoModalTitle, setVideoModalTitle] = useState('');
-  const [grantAccess, setGrantAccess] = useState(false);
-  const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [learnpackStart, setLearnpackStart] = useState(false);
   const [showTeachAlert, setShowTeachAlert] = useState(false);
   const [alertedModuleId, setAlertedModuleId] = useState(null);
-  const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
     getCohortUserCapabilities, getCohortData, cohortSession, sortedAssignments, setCohortSession, taskTodo,
     updateAssignment, startDay, updateTask, reviewModalState, handleCloseReviewModal,
+    grantAccess, setGrantAccess, checkNavigationAvailability,
   } = useCohortHandler();
+  const { areSubscriptionsFetched } = useSubscriptions();
   // const isAvailableAsSaas = false;
   const isAvailableAsSaas = cohortSession?.available_as_saas;
 
@@ -114,7 +113,6 @@ function SyllabusContent() {
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const taskBarBackground = useColorModeValue('#DCE9FF', 'gray.dark');
 
-  const Open = !isOpen;
   const { label, teacherInstructions, keyConcepts } = selectedSyllabus;
 
   const firstTask = nextModule?.content[0];
@@ -316,67 +314,13 @@ function SyllabusContent() {
   }, [currentAsset, isRigoInitialized]);
 
   useEffect(() => {
-    bc.payment({
-      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED,ERROR',
-    }).subscriptions()
-      .then(async ({ data }) => {
-        const planFinancings = data?.plan_financings?.length > 0 ? data?.plan_financings : [];
-        const subscriptions = data?.subscriptions?.length > 0 ? data?.subscriptions : [];
-
-        setAllSubscriptions([...planFinancings, ...subscriptions]);
-      });
-  }, []);
-
-  const showToastAndRedirect = (programSlug) => {
-    const querys = parseQuerys({
-      plan: programSlug,
-    });
-    router.push(`/${lang}/checkout${querys}`);
-    createToast({
-      position: 'top',
-      title: t('alert-message:access-denied'),
-      status: 'error',
-      duration: 5000,
-      isClosable: true,
-    });
-  };
-
-  useEffect(() => {
-    if (allSubscriptions && cohortSession && cohortSession.available_as_saas === true && cohortSession.cohort_user.role === 'STUDENT') {
-      const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
-      const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
-      const currentCohortSlug = cohortSubscriptions[0]?.selected_cohort_set?.slug;
-
-      if (!(cohortSubscriptions.length > 0)) {
-        showToastAndRedirect(currentCohortSlug);
-        return;
-      }
-
-      const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED' || sub.status === 'ERROR');
-      if (expiredCourse) {
-        showToastAndRedirect(currentCohortSlug);
-        return;
-      }
-
-      const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
-      if (fullyPaidSub) {
-        setGrantAccess(true);
-        return;
-      }
-
-      const freeTrialSub = cohortSubscriptions.find((sub) => sub.status === 'FREE_TRIAL');
-      const freeTrialExpDate = new Date(freeTrialSub?.valid_until);
-      const todayDate = new Date();
-
-      if (todayDate > freeTrialExpDate) {
-        showToastAndRedirect(currentCohortSlug);
-        return;
-      }
+    if (areSubscriptionsFetched && cohortSession && cohortSession.available_as_saas === true && cohortSession.cohort_user.role === 'STUDENT') {
+      checkNavigationAvailability();
 
       setGrantAccess(true);
     }
     if (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
-  }, [cohortSession, allSubscriptions]);
+  }, [cohortSession, areSubscriptionsFetched]);
 
   const sendProject = async ({ task, githubUrl, taskStatus }) => {
     setShowModal(true);
@@ -687,7 +631,7 @@ function SyllabusContent() {
   };
 
   const nextPage = () => {
-    if (taskIsNotDone) {
+    if (currentTask && currentTask.task_status !== 'DONE') {
       setOpenNextPageModal(true);
     } else if (nextAssignment !== null || !!firstTask) {
       setClickedPage(nextAssignment);
@@ -911,7 +855,7 @@ function SyllabusContent() {
               <Box margin="10px 0" display="flex" alignItems="center" justifyContent="space-between">
                 <Button
                   size="sm"
-                  aria-label={t(Open ? 'hide-menu' : 'show-menu')}
+                  aria-label={t(isOpen ? 'hide-menu' : 'show-menu')}
                   display="flex"
                   gap="10px"
                   fontSize="12px"
@@ -921,8 +865,8 @@ function SyllabusContent() {
                   color={hexColor.blueDefault}
                   onClick={onToggle}
                 >
-                  <Icon style={Open && { transform: 'rotate(180deg)' }} width="12px" height="12px" icon={Open ? 'close' : 'list'} />
-                  {t(Open ? 'hide-menu' : 'show-menu')}
+                  <Icon style={isOpen && { transform: 'rotate(180deg)' }} width="12px" height="12px" icon={isOpen ? 'close' : 'list'} />
+                  {t(isOpen ? 'hide-menu' : 'show-menu')}
                 </Button>
                 {!learnpackStart
                   && (
@@ -1030,10 +974,10 @@ function SyllabusContent() {
                         flexGrow={1}
                         marginLeft={0}
                         padding={!isQuiz && isAvailableAsSaas && { base: '0px 10px 0 10px', md: '0px 2rem 0 2rem' }}
-                        transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
+                        transition={isOpen ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
                         transitionProperty="margin"
-                        transitionDuration={Open ? '225ms' : '195ms'}
-                        transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
+                        transitionDuration={isOpen ? '225ms' : '195ms'}
+                        transitionTimingFunction={isOpen ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
                         transitionDelay="0ms"
                         position="relative"
                         {...getStyles()}

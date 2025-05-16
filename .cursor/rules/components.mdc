@@ -18,4 +18,4 @@ There are some chakra components that are customized with our own styling, so we
 ###Styling
 We have all of our colors defined on the theme.js file inside the styles folder. We must always use the color variables declared in that file.
 
-We also have the useStyle hook which has color modes declared with our defined colors. the object hexColor can be used with the icons, since the icons dont support the color variables natively through strings.
+We also have the useStyle hook which has color modes declared with our defined colors. The object hexColor can be used with the icons, since the icons dont support the color variables natively through strings.

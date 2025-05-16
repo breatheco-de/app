@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import axios from 'axios';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -11,9 +11,11 @@ import { reportDatalayer } from '../utils/requests';
 import bc from '../services/breathecode';
 import { BREATHECODE_HOST, DOMAIN_NAME } from '../utils/variables';
 import useCustomToast from './useCustomToast';
+import useSubscriptions from './useSubscriptions';
 
 function useCohortHandler() {
   const router = useRouter();
+  const [grantAccess, setGrantAccess] = useState(false);
   const { user, cohorts: myCohorts, fetchUserAndCohorts, setCohorts } = useAuth();
   const { t, lang } = useTranslation('dashboard');
   const {
@@ -24,6 +26,7 @@ function useCohortHandler() {
     setReviewModalState,
     state,
   } = useCohortAction();
+  const { allSubscriptions } = useSubscriptions();
 
   const {
     cohortSession,
@@ -764,6 +767,59 @@ function useCohortHandler() {
     });
   };
 
+  const checkNavigationAvailability = () => {
+    const showToastAndRedirect = (programSlug) => {
+      router.push({
+        pathname: '/checkout',
+        locale: lang,
+        query: {
+          plan: programSlug,
+        },
+      });
+      createToast({
+        position: 'top',
+        title: t('alert-message:access-denied'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    };
+
+    if (allSubscriptions) {
+      const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
+      const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
+      const currentCohortSlug = cohortSubscriptions[0]?.selected_cohort_set?.slug;
+
+      if (cohortSubscriptions.length === 0) {
+        showToastAndRedirect(currentCohortSlug);
+        return;
+      }
+
+      const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED' || sub.status === 'ERROR');
+      const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
+      if (expiredCourse && !fullyPaidSub) {
+        showToastAndRedirect(currentCohortSlug);
+        return;
+      }
+
+      if (fullyPaidSub) {
+        setGrantAccess(true);
+        return;
+      }
+
+      const freeTrialSub = cohortSubscriptions.find((sub) => sub.status === 'FREE_TRIAL');
+      const freeTrialExpDate = new Date(freeTrialSub?.valid_until);
+      const todayDate = new Date();
+
+      if (todayDate > freeTrialExpDate) {
+        showToastAndRedirect(currentCohortSlug);
+        return;
+      }
+
+      setGrantAccess(true);
+    }
+  };
+
   return {
     setCohortSession,
     getCohortUserCapabilities,
@@ -789,6 +845,9 @@ function useCohortHandler() {
     changeStatusAssignment,
     getLastActiveModule,
     continueWhereYouLeft,
+    grantAccess,
+    setGrantAccess,
+    checkNavigationAvailability,
     ...state,
   };
 }

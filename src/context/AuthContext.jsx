@@ -381,7 +381,6 @@ function AuthProvider({ children, pageProps }) {
       if (payload) {
         const response = await bc.auth().login(payload);
         const responseData = response.data;
-        // const responseData = await response.json();
 
         if (responseData?.silent_code === SILENT_CODE.EMAIL_NOT_VALIDATED) {
           setModalState({

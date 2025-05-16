@@ -5,6 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useSubscriptions from '../../../hooks/useSubscriptions';
+import useSignup from '../../../hooks/useSignup';
 import useCustomToast from '../../../hooks/useCustomToast';
 import { reportDatalayer } from '../../../utils/requests';
 import { getBrowserInfo } from '../../../utils';
@@ -29,7 +30,8 @@ function SubsriptionButton({
   const isExpired = status === 'EXPIRED';
   const isPaymentIssue = status === 'PAYMENT_ISSUE';
 
-  const { getPlanOffer, reactivatePlan } = useSubscriptions();
+  const { getPlanOffer } = useSubscriptions();
+  const { reactivatePlan } = useSignup();
   const handlePlanOffer = async () => {
     try {
       setIsLoading(true);
