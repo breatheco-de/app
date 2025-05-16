@@ -1,6 +1,5 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { HYDRATE, createWrapper } from 'next-redux-wrapper';
-import counterReducer from './reducers/counterReducer';
 import moduleMapReducer from './reducers/moduleMapReducer';
 import filterReducer from './reducers/filterReducer';
 import assignmentsReducer from './reducers/assignmentsReducer';
@@ -11,7 +10,6 @@ import subscriptionsReducer from './reducers/subscriptionsReducer';
 import cohortReducer from './reducers/cohortReducer';
 
 const combinedReducer = combineReducers({
-  counterReducer,
   moduleMapReducer,
   filterReducer,
   assignmentsReducer,
