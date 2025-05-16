@@ -668,6 +668,16 @@ function CoursePage({ data, syllabus }) {
               <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => setShowModal(true)} />
 
             </Flex>
+
+            {data?.course_translation?.description && (
+              <Text
+                size={{ base: '14', md: '16px' }}
+                color="currentColor"
+                fontWeight={400}
+                lineHeight="normal"
+                dangerouslySetInnerHTML={{ __html: data.course_translation.description }}
+              />
+            )}
           </Flex>
           <Flex flexDirection="column" gridColumn="9 / span 4" mt={{ base: '2rem', md: '0' }} ref={showBottomCTA}>
             <ShowOnSignUp
