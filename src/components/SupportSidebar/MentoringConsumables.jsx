@@ -12,19 +12,18 @@ import ModalToGetAccess, { stageType } from '../ModalToGetAccess';
 import Link from '../NextChakraLink';
 import bc from '../../services/breathecode';
 import useAuth from '../../hooks/useAuth';
-import useOnline from '../../hooks/useOnline';
 import AvatarUser from '../AvatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped, CardSkeleton } from '../Skeleton';
-import { validatePlanExistence } from '../../handlers/subscriptions';
 import { getStorageItem, getBrowserInfo } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
 import { BREATHECODE_HOST } from '../../utils/variables';
 import CanAccess from '../CanAccess';
+import useSignup from '../../hooks/useSignup';
 import useCanAccess from '../../hooks/useCanAccess';
 import useCustomToast from '../../hooks/useCustomToast';
 
-function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mentoryProps, subscriptionData, disableBackButton = false, ...rest }) {
+function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mentoryProps, disableBackButton = false, ...rest }) {
   return (
     <Box display="flex" flexDirection="column" alignItems="center" {...rest}>
       <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
@@ -67,8 +66,6 @@ function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mento
 function ProfilesSection({
   profiles, size,
 }) {
-  const { usersConnected } = useOnline();
-
   let displayProfiles = profiles || [];
 
   if (profiles?.length === 1) {
@@ -130,7 +127,6 @@ function ProfilesSection({
       {displayProfiles?.map((c, i) => {
         if (!c || !c.user) return null;
         const fullName = c.user.first_name && c.user.last_name ? `${c.user.first_name} ${c.user.last_name}` : '';
-        const isOnline = usersConnected?.includes(c.user.id);
         const avatarUrl = c.user.profile?.avatar_url;
 
         return (
@@ -143,7 +139,6 @@ function ProfilesSection({
             fullName={fullName}
             avatarUrl={avatarUrl}
             data={c}
-            isOnline={isOnline}
             badge
           />
         );
@@ -160,6 +155,7 @@ function MentoringConsumables({
 }) {
   const { t } = useTranslation('dashboard');
   const { user } = useAuth();
+  const { validatePlanExistence } = useSignup();
   const [open, setOpen] = useState(false);
   const accessToken = getStorageItem('accessToken');
   const [existsMentors, setExistsMentors] = useState(true);
@@ -480,7 +476,7 @@ function MentoringConsumables({
         )}
 
         {mentoryProps?.service && open && !mentoryProps?.mentor && !existConsumablesOnCurrentService ? (
-          <NoConsumablesCard t={t} isLoading={isFetchingDataForModal} mentoryProps={mentoryProps} handleGetMoreMentorships={handleGetMoreMentorships} subscriptionData={subscriptionData} setMentoryProps={setMentoryProps} mt="30px" />
+          <NoConsumablesCard t={t} isLoading={isFetchingDataForModal} mentoryProps={mentoryProps} handleGetMoreMentorships={handleGetMoreMentorships} setMentoryProps={setMentoryProps} mt="30px" />
         ) : open
         && (
           <>

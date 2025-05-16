@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+##Promises
+When using promises we wont use the chaining event syntax, we will use async/await and try/catch to avoid the callback hell.
+
+##Linting
+
+We are using ESLint to improve the higene of our code. Make sure to follow its recommendations and fix linting errors if they arise.

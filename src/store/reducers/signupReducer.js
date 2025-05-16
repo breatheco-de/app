@@ -1,13 +1,12 @@
 import {
-  NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA,
-  SET_PAYMENT_INFO, SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS,
-  TOGGLE_IF_ENROLLED, SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
-  SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON, SET_SIGNUP_INITIAL_STATE,
+  HANDLE_STEP, SET_CHECKOUT_DATA,
+  SET_PAYMENT_INFO, SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA,
+  TOGGLE_IF_ENROLLED, SET_SERVICE, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
+  SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON, SET_SIGNUP_INITIAL_STATE, SET_DECLINED_PAYMENT,
 } from '../types';
 
 const initialState = {
-  stepIndex: 0,
-  dateProps: null,
+  stepIndex: 1,
   checkoutData: null,
   paymentInfo: {
     card_number: '',
@@ -16,18 +15,20 @@ const initialState = {
   },
   planData: null,
   selectedPlanCheckoutData: null,
-  planProps: null,
   loader: {
-    date: false,
     plan: true,
   },
-  cohortPlans: null,
   alreadyEnrolled: false,
   paymentMethods: [],
   paymentStatus: 'idle',
   isSubmittingCard: false,
   isSubmittingPayment: false,
   selfAppliedCoupon: null,
+  service: null,
+  declinedPayment: {
+    title: '',
+    description: '',
+  },
 };
 const signupReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -36,18 +37,6 @@ const signupReducer = (state = initialState, action) => {
       return {
         ...state,
         alreadyEnrolled: action.payload,
-      };
-    }
-    case NEXT_STEP: {
-      return {
-        ...state,
-        stepIndex: state.stepIndex + 1,
-      };
-    }
-    case PREV_STEP: {
-      return {
-        ...state,
-        stepIndex: state.stepIndex - 1,
       };
     }
     case HANDLE_STEP: {
@@ -66,14 +55,6 @@ const signupReducer = (state = initialState, action) => {
       };
     }
 
-    // dateProps
-    case SET_DATE_PROPS: {
-      return {
-        ...state,
-        dateProps: action.payload,
-      };
-    }
-
     // checkoutData
     case SET_CHECKOUT_DATA: {
       return {
@@ -82,13 +63,6 @@ const signupReducer = (state = initialState, action) => {
       };
     }
 
-    // planData
-    case SET_COHORT_PLANS: {
-      return {
-        ...state,
-        cohortPlans: action.payload,
-      };
-    }
     case SET_PLAN_DATA: {
       return {
         ...state,
@@ -101,22 +75,16 @@ const signupReducer = (state = initialState, action) => {
         selectedPlanCheckoutData: action.payload,
       };
     }
-    case SET_SERVICE_PROPS: {
+    case SET_SERVICE: {
       return {
         ...state,
-        serviceProps: action.payload,
+        service: action.payload,
       };
     }
     case SET_SELECTED_SERVICE: {
       return {
         ...state,
         selectedService: action.payload,
-      };
-    }
-    case SET_PLAN_PROPS: {
-      return {
-        ...state,
-        planProps: action.payload,
       };
     }
 
@@ -158,6 +126,12 @@ const signupReducer = (state = initialState, action) => {
       return {
         ...state,
         selfAppliedCoupon: action.payload,
+      };
+    }
+    case SET_DECLINED_PAYMENT: {
+      return {
+        ...state,
+        declinedPayment: action.payload,
       };
     }
     case SET_SIGNUP_INITIAL_STATE: {

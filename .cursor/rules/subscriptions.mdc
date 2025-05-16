@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+The subscriptions of the user are managed through the hook [useSubscriptions.js](mdc:src/hooks/useSubscriptions.js) and they are loaded after the user is authenticated.
