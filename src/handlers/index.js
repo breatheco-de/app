@@ -197,10 +197,9 @@ const handlers = {
       'STARTED',
       'ACTIVE',
       'FINAL_PROJECT',
-      'NOT_COMPLETING',
     ].includes(programCohortStage);
 
-    const cohortIsAvailable = showCohort && !hasEnded;
+    const cohortIsAvailable = (showCohort && !hasEnded) || educationalStatus === 'NOT_COMPLETING';
     const isNotHiddenOnPrework = programCohortStage === 'PREWORK'
       && cohort.is_hidden_on_prework === false
       && !hasEnded;
