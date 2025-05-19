@@ -140,7 +140,7 @@ StickyBottomCta.propTypes = {
   couponApplied: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   onClick: PropTypes.func.isRequired,
   isCtaVisible: PropTypes.bool.isRequired,
-  financingAvailable: PropTypes.string,
+  financingAvailable: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   isAuthenticated: PropTypes.bool,
   isFetching: PropTypes.bool,
   paymentOptions: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),

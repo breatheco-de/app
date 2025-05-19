@@ -12,6 +12,7 @@ import { useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import NextChakraLink from '../NextChakraLink';
+import signupAction from '../../store/actions/signupAction';
 import FieldForm from './FieldForm';
 import { email as emailRe, phone as phoneRe } from '../../utils/regex';
 import useEmailValidation from './useEmailValidation';
@@ -22,7 +23,6 @@ import useSession from '../../hooks/useSession';
 import { BASE_PLAN, BREATHECODE_HOST, SILENT_CODE } from '../../utils/variables';
 import { getStorageItem, setStorageItem, getQueryString, getBrowserInfo } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
-import useSignup from '../../store/actions/signupAction';
 import ModalInfo from '../ModalInfo';
 import bc from '../../services/breathecode';
 import useCustomToast from '../../hooks/useCustomToast';
@@ -59,12 +59,10 @@ function SignupForm({
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const redirectStorage = getStorageItem('redirect');
   const redirectStorageAlreadyExists = typeof redirectStorage === 'string' && redirectStorage.length > 0;
-  const {
-    state,
-  } = useSignup();
-  const { dateProps } = state;
   const { createToast } = useCustomToast({ toastId: 'signup-error-warning-email' });
   const router = useRouter();
+  const { state } = signupAction();
+  const { planData } = state;
 
   const { syllabus } = router.query;
 
@@ -106,18 +104,15 @@ function SignupForm({
 
   const handleSubmit = async (actions, allValues) => {
     try {
-      const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept-Language': router?.locale || 'en',
-        },
-        body: JSON.stringify({ ...allValues, ...subscribeValues, conversion_info: userSession }),
+      const resp = await bc.auth().subscribe({
+        ...allValues,
+        ...subscribeValues,
+        conversion_info: userSession,
       });
-      const data = await resp.json();
+      const { data } = resp;
       if (data.silent_code === SILENT_CODE.USER_EXISTS) {
         setShowAlreadyMember(true);
-      } else if (resp?.status >= 400 && data.silent_code !== SILENT_CODE.USER_EXISTS) {
+      } else if (resp.status >= 400) {
         createToast({
           position: 'top',
           title: data?.detail,
@@ -149,10 +144,14 @@ function SignupForm({
       }
       setStorageItem('subscriptionId', data?.id);
 
-      const respPlan = await bc.payment().getPlan(planFormated);
-      const dataOfPlan = respPlan?.data;
-      if (resp.status < 400 && typeof data?.id === 'number') {
-        if (dataOfPlan?.has_waiting_list === true || data?.status === 'WAITING_LIST') {
+      let dataOfPlan = planData;
+
+      if (!dataOfPlan) {
+        const respPlan = await bc.payment({ country_code: location?.countryShort }).getPlan(planFormated);
+        dataOfPlan = respPlan?.data;
+      }
+      if (typeof data?.id === 'number') {
+        if (dataOfPlan?.has_waiting_list || data?.status === 'WAITING_LIST') {
           setStorageItem('subscriptionId', data.id);
           router.push('/thank-you');
         }
@@ -192,7 +191,7 @@ function SignupForm({
       actions.setSubmitting(false);
       createToast({
         position: 'top',
-        title: e.message,
+        title: t('alert-message:error-signup'),
         status: 'error',
         isClosable: true,
         duration: 6000,
@@ -217,7 +216,6 @@ function SignupForm({
             phone: values?.phone.includes('undefined') ? '' : values?.phone,
             course: courseChoosed,
             country: location?.country,
-            cohort: dateProps?.id,
             syllabus,
             city: location?.city,
             plan: planFormated,

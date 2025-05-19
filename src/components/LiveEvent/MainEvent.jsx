@@ -31,7 +31,7 @@ function MainEvent({
   const liveEndsAtDate = new Date(event?.ended_at || event?.ending_at);
   const isCurrentEventLive = isLive(liveStartsAtDate, liveEndsAtDate);
 
-  const isTeacher = cohorts.some(({ slug, cohort_user }) => slug === event.cohort?.slug && ['TEACHER', 'ASSISTANT'].includes(cohort_user.role));
+  const isTeacher = cohorts.some(({ slug, cohort_user }) => slug === event.cohort?.slug && ['TEACHER', 'ASSISTANT'].includes(cohort_user?.role));
   const joinMessage = () => (isTeacher ? t('start-class') : event?.cohort?.name);
 
   const isClickable = (!event?.hash || isLiveOrStarting(liveStartsAtDate, liveEndsAtDate));

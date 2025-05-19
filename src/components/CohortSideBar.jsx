@@ -14,7 +14,6 @@ import Icon from './Icon';
 import Text from './Text';
 import AvatarUser from './AvatarUser';
 import { AvatarSkeleton } from './Skeleton';
-import useOnline from '../hooks/useOnline';
 import useStyle from '../hooks/useStyle';
 import useCohortHandler from '../hooks/useCohortHandler';
 import useProgramList from '../store/actions/programListAction';
@@ -26,7 +25,6 @@ function ProfilesSection({
 }) {
   const { t } = useTranslation('dashboard');
   const [showMoreStudents, setShowMoreStudents] = useState(false);
-  const { usersConnected } = useOnline();
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const { hexColor } = useStyle();
 
@@ -88,7 +86,6 @@ function ProfilesSection({
               key={`${teacherData.id} - ${teacherData.user.first_name}`}
               fullName={teacherfullName}
               data={teacherData}
-              isOnline={usersConnected?.includes(teacherData.user.id)}
               badge
               customBadge={(
                 <Box position="absolute" bottom="-6px" right="-8px" background="blue.default" borderRadius="50px" p="5px" border="2px solid white">
@@ -101,7 +98,6 @@ function ProfilesSection({
             {
               studentsToShow?.map((c, i) => {
                 const fullName = `${c.user.first_name} ${c.user.last_name}`;
-                const isOnline = usersConnected?.includes(c.user.id);
                 return (
                   <AvatarUser
                     width="48px"
@@ -111,7 +107,6 @@ function ProfilesSection({
                     isWrapped
                     fullName={fullName}
                     data={c}
-                    isOnline={isOnline}
                     badge
                   />
                 );
@@ -132,14 +127,12 @@ function ProfilesSection({
           {
             studentsToShow?.map((c) => {
               const fullName = `${c.user.first_name} ${c.user.last_name}`;
-              const isOnline = usersConnected?.includes(c.user.id);
               return (
                 <AvatarUser
                   key={`${c.id} - ${c.user.first_name}`}
                   fullName={fullName}
                   data={c}
                   isTeacherVersion={isTeacherVersion}
-                  isOnline={isOnline}
                   badge
                   withoutPopover={withoutPopover}
                 />
@@ -247,12 +240,12 @@ function CohortSideBar({
   // Alumni Geeks data
   useEffect(() => {
     if (slug) {
-      bc.cohort({
+      bc.admissions({
         limit: 60,
         roles: 'STUDENT',
         syllabus: slug,
         distinct: true,
-      }).getFilterStudents()
+      }).getAcademyCohortUsers()
         .then(({ data }) => {
           setAlumniGeeksList({
             ...data,

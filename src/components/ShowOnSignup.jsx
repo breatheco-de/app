@@ -10,8 +10,7 @@ import useStyle from '../hooks/useStyle';
 import { setStorageItem } from '../utils';
 import { BREATHECODE_HOST } from '../utils/variables';
 import ModalInfo from './ModalInfo';
-import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
-import useSignup from '../store/actions/signupAction';
+import useSignup from '../hooks/useSignup';
 
 function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, footerContent, submitText, padding, isLive,
@@ -20,7 +19,7 @@ function ShowOnSignUp({
   onLastAttempt, maxAttemptsToRefetch, showVerifyEmail, onSubmit, ...rest
 }) {
   const { isAuthenticated, user, logout } = useAuth();
-  const { handleSubscribeToPlan } = useSubscribeToPlan();
+  const { handleSubscribeToPlan, setSelectedPlan } = useSignup();
   const { backgroundColor, featuredColor, hexColor } = useStyle();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const [alreadyLogged, setAlreadyLogged] = useState(false);
@@ -31,7 +30,6 @@ function ShowOnSignUp({
   const isLogged = alreadyLogged || isAuthenticated;
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
   const defaultPlan = process.env.BASE_PLAN || '4geeks-basic-subscription';
-  const { setSelectedPlanCheckoutData } = useSignup();
 
   useEffect(() => {
     let intervalId;
@@ -125,15 +123,15 @@ function ShowOnSignUp({
                 label: '',
                 error: t('validators.invalid-phone'),
               }]}
-              onHandleSubmit={(data) => {
+              onHandleSubmit={() => {
                 onSubmit();
-                handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token, disableRedirects: true })
+                handleSubscribeToPlan({ slug: defaultPlan, disableRedirects: true })
                   .then((respData) => {
                     if (respData.status === 'FULFILLED') {
                       setIsReadyToRefetch(true);
                       setAlreadyLogged(true);
                       refetchAfterSuccess();
-                      setSelectedPlanCheckoutData({
+                      setSelectedPlan({
                         plan_slug: defaultPlan,
                         price: respData.data?.price || 0,
                         period_label: respData.data?.period_label || 'one-time',

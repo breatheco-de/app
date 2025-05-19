@@ -2,7 +2,7 @@ import {
   Box, Flex, Heading,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import handlers from '../../handlers';
+import { getAssignmentsCount } from '../../utils/cohorts';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 import Counter from '../ProgressCircle/Counter';
@@ -13,10 +13,10 @@ function ProgressBar({
   progressText, cohortProgram, taskTodo, width,
 }) {
   const { fontColor } = useStyle();
-  const { assignmentsProgress, percentage } = handlers.getAssignmentsCount({ data: cohortProgram, taskTodo });
+  const { assignmentsProgress, percentage } = getAssignmentsCount({ syllabus: cohortProgram, tasks: taskTodo });
 
   return (
-    <Box width={width || '100%'}>
+    <Box width={width}>
       <Flex marginBottom="15px" gridGap="10px" align="center">
         <Heading fontSize="22px" marginY="0">
           <Counter valueTo={percentage} totalDuration={2} />

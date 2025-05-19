@@ -18,8 +18,7 @@ function TimelineSidebar({
 }) {
   const { t } = useTranslation('syllabus');
   const { cohortSession, sortedAssignments } = useCohortHandler();
-  const Open = !isOpen;
-  const slide = getSlideProps(Open);
+  const slide = getSlideProps(isOpen);
 
   const { fontColor3, featuredCard, colorMode, backgroundColor, lightColor, borderColor } = useStyle();
   const { existContentToShow = false } = teacherInstructions;
@@ -30,7 +29,7 @@ function TimelineSidebar({
         style={{ zIndex: 20 }}
         aria-label="Open Timeline"
         variant="default"
-        display={Open ? 'none' : 'initial'}
+        display={isOpen ? 'none' : 'initial'}
         onClick={onToggle}
         width="17px"
         height="36px"
@@ -46,7 +45,7 @@ function TimelineSidebar({
           />
         )}
       />
-      <Box position={{ base: 'fixed', lg: Open ? 'initial' : 'fixed' }} display={Open ? 'initial' : 'none'} flex="0 0 auto" minWidth="290px" width={{ base: '74.6vw', md: '46.6vw', lg: '26.6vw' }} zIndex={{ base: 100, lg: Open ? 10 : 0 }}>
+      <Box position={{ base: 'fixed', lg: isOpen ? 'initial' : 'fixed' }} display={isOpen ? 'initial' : 'none'} flex="0 0 auto" minWidth="290px" width={{ base: '74.6vw', md: '46.6vw', lg: '26.6vw' }} zIndex={{ base: 100, lg: isOpen ? 10 : 0 }}>
         <Box
           style={slide}
           background={backgroundColor}
@@ -83,10 +82,10 @@ function TimelineSidebar({
             height="36px"
             minW={0}
             position="absolute"
-            transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
+            transition={isOpen ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
             transitionProperty="margin"
-            transitionDuration={Open ? '225ms' : '195ms'}
-            transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
+            transitionDuration={isOpen ? '225ms' : '195ms'}
+            transitionTimingFunction={isOpen ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
             top="50%"
             right="-20px"
             padding={0}

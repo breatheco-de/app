@@ -150,7 +150,7 @@ Content.propTypes = {
     icon_url: PropTypes.string.isRequired,
     title: PropTypes.string,
   })).isRequired,
-  justifyContent: PropTypes.string,
+  justifyContent: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   alignItems: PropTypes.string,
   gridSpacing: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   maxTechnologies: PropTypes.number,

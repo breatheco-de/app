@@ -6,7 +6,7 @@ import Icon from '../../Icon';
 import useStyle from '../../../hooks/useStyle';
 import profileHandlers from './handlers';
 import { toCapitalize, unSlugify } from '../../../utils';
-import ButtonHandler from './ButtonHandler';
+import SubsriptionButton from './SubsriptionButton';
 
 function SubscriptionInfo({ subscription }) {
   const { lang } = useTranslation('profile');
@@ -66,7 +66,7 @@ function SubscriptionInfo({ subscription }) {
   );
 }
 
-function SubscriptionCard({ subscription, allSubscriptions, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription }) {
+function SubscriptionCard({ subscription, allSubscriptions, setSubscriptionProps, onOpenCancelSubscription }) {
   const { borderColor2 } = useStyle();
   const { statusStyles, statusLabel } = profileHandlers();
   const status = subscription?.status?.toLowerCase();
@@ -88,10 +88,9 @@ function SubscriptionCard({ subscription, allSubscriptions, onOpenUpgrade, setSu
           </Text>
         </Flex>
         <SubscriptionInfo subscription={subscription} />
-        <ButtonHandler
+        <SubsriptionButton
           subscription={subscription}
           allSubscriptions={allSubscriptions}
-          onOpenUpgrade={onOpenUpgrade}
           setSubscriptionProps={setSubscriptionProps}
           onOpenCancelSubscription={onOpenCancelSubscription}
         />
@@ -203,7 +202,6 @@ SubscriptionCard.propTypes = {
     valid_until: PropTypes.string,
   }).isRequired,
   allSubscriptions: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  onOpenUpgrade: PropTypes.func.isRequired,
   setSubscriptionProps: PropTypes.func.isRequired,
   onOpenCancelSubscription: PropTypes.func.isRequired,
 };

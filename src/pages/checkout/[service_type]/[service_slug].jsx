@@ -2,47 +2,54 @@
 import {
   Box,
   Flex,
+  UnorderedList,
+  ListItem,
+  Avatar,
+  Image,
+  Button,
 } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import bc from '../../../services/breathecode';
 import useAuth from '../../../hooks/useAuth';
-import { isWindow } from '../../../utils';
-import PaymentInfo from '../../../components/Checkout/PaymentInfo';
 import ServiceSummary from '../../../components/Checkout/ServiceSummary';
-import SelectServicePlan from '../../../components/Checkout/SelectServicePlan';
-import useSignup from '../../../store/actions/signupAction';
-import axiosInstance from '../../../axios';
+import signupAction from '../../../store/actions/signupAction';
 import asPrivate from '../../../context/PrivateRouteWrapper';
 import LoaderScreen from '../../../components/LoaderScreen';
+import Text from '../../../components/Text';
+import { toCapitalize, unSlugify } from '../../../utils';
+import { BREATHECODE_HOST } from '../../../utils/variables';
 import useStyle from '../../../hooks/useStyle';
+import useSignup from '../../../hooks/useSignup';
 import useSession from '../../../hooks/useSession';
-import useCustomToast from '../../../hooks/useCustomToast';
+import useSubscriptions from '../../../hooks/useSubscriptions';
 
 function ServiceSlug() {
   const router = useRouter();
+  const { t } = useTranslation('signup');
   const { query } = router;
   const { service_type, service_slug } = query;
+  const { isAuthenticated, isLoading } = useAuth();
+  const { areSubscriptionsFetched, allSubscriptions, isLoading: isSubscriptionsLoading } = useSubscriptions();
   const {
-    state, handleStep, handleServiceToConsume, isThirdStep, isFourthStep, setLoader, restartSignup,
-  } = useSignup();
-  const [readyToSelectService, setReadyToSelectService] = useState(false);
-  const { stepIndex, selectedPlanCheckoutData, serviceProps, loader } = state;
-  const { backgroundColor3, backgroundColor } = useStyle();
+    state, setLoader, restartSignup,
+  } = signupAction();
+  const { handleServiceToConsume } = useSignup();
+  const { service, loader, paymentStatus } = state;
+  const { backgroundColor } = useStyle();
+  const [serviceError, setServiceError] = useState(null);
 
-  axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
-  const { isAuthenticated } = useAuth();
-  const { createToast } = useCustomToast({ toastId: 'checkout-error-string' });
   const { location } = useSession();
 
-  const isPaymentSuccess = selectedPlanCheckoutData?.payment_success;
+  const isPaymentSuccess = paymentStatus === 'success';
 
   const voidServices = ['ai-compilation'];
   const allowedServiceTypes = ['compilation', 'mentorship', 'event'];
 
   useEffect(() => {
     // Alert before leave the page if the user is in the payment process
-    if (isWindow && stepIndex >= 2 && isAuthenticated && !isPaymentSuccess) {
+    if (!isPaymentSuccess) {
       const handleBeforeUnload = (e) => {
         e.preventDefault();
       };
@@ -54,32 +61,20 @@ function ServiceSlug() {
       };
     }
     return () => {};
-  }, [stepIndex, isAuthenticated]);
+  }, [isPaymentSuccess]);
 
   const getServiceData = async () => {
     // Prepare service data to get consumables
     try {
       setLoader('plan', true);
-      const { data } = await bc.payment({
-        status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
-      }).subscriptions();
+      setServiceError(null);
 
-      const { subscriptions, plan_financings } = data;
-
-      const subscription = subscriptions?.find(
+      const currentSubscription = allSubscriptions?.find(
         (item) => (
           item?.selected_mentorship_service_set?.slug === service_slug
           || item?.selected_event_type_set?.slug === service_slug
         ),
       );
-      const planFinanncing = plan_financings?.find(
-        (item) => (
-          item?.selected_mentorship_service_set?.slug === service_slug
-          || item?.selected_event_type_set?.slug === service_slug
-        ),
-      );
-
-      const currentSubscription = subscription || planFinanncing;
 
       const serviceTypesFields = {
         event: 'selected_event_type_set',
@@ -88,12 +83,9 @@ function ServiceSlug() {
 
       const serviceData = currentSubscription?.[serviceTypesFields[service_type]];
 
-      const allSubscriptions = [...subscriptions, ...plan_financings];
-
       if (serviceData || (voidServices.includes(service_slug) && allSubscriptions.length > 0)) {
-        let service;
+        let data;
         let resp;
-        let respData;
 
         if (serviceData) {
           resp = await bc.payment({
@@ -102,49 +94,43 @@ function ServiceSlug() {
             mentorship_service_set: service_type === 'mentorship' ? service_slug : undefined,
             country_code: location?.countryShort,
           }).service().getAcademyService();
-          respData = await resp.json();
-          // eslint-disable-next-line prefer-destructuring
-          [service] = respData;
+
+          [data] = resp.data;
         } else {
           resp = await bc.payment({
             academy: allSubscriptions[0].academy.id,
             country_code: location?.countryShort,
           }).service().getAcademyServiceBySlug(service_slug);
-          respData = await resp.json();
-          service = respData;
+          data = resp.data;
         }
 
-        if (resp.status > 400) {
-          createToast({
-            title: respData.detail,
-            status: 'error',
-            duration: 6000,
-            position: 'top',
-          });
+        if (resp.status >= 400) {
+          const errorMessage = resp?.data?.detail || t('alert-message:something-went-wrong');
+          throw new Error(errorMessage);
         }
-        if (resp.status < 400 && respData !== undefined && service) {
-          handleStep(2);
+        if (resp.data !== undefined && data) {
           handleServiceToConsume({
-            ...service,
+            ...data,
             serviceInfo: {
               type: service_type,
               ...serviceData,
             },
           });
         }
-      } else {
-        setReadyToSelectService(true);
       }
+    } catch (error) {
+      const errorMessage = error?.message || t('alert-message:something-went-wrong');
+      setServiceError(errorMessage);
     } finally {
       setLoader('plan', false);
     }
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && areSubscriptionsFetched) {
       getServiceData();
     }
-  }, [isAuthenticated, router.locale]);
+  }, [isAuthenticated, areSubscriptionsFetched, router.locale]);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
@@ -154,11 +140,16 @@ function ServiceSlug() {
     };
   }, []);
 
-  return (
-    <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
-      {loader.plan && (
+  if (loader.plan || isLoading || isSubscriptionsLoading) {
+    return (
+      <Box p={{ base: '0 0', md: '0' }} position="relative" height="100vh">
         <LoaderScreen />
-      )}
+      </Box>
+    );
+  }
+
+  return (
+    <Box p={{ base: '0 0', md: '0' }} minHeight="auto">
       <Flex
         display="flex"
         flexDirection={{
@@ -179,16 +170,52 @@ function ServiceSlug() {
           style={{ flexShrink: 0, flexGrow: 1 }}
           overflow="auto"
         >
-          {!readyToSelectService && isThirdStep && serviceProps?.id && (
-            <ServiceSummary service={serviceProps} />
+          {serviceError && (
+            <Box display="flex" flexDirection="column" gridGap="24px" width="100%" padding="1rem 1.5rem" alignItems="center" justifyContent="center">
+              <Image src="/static/images/avatar-for-transaction-failed.png" width={60} height={60} alt="Error" />
+              <Text fontSize="18px" fontWeight="700" textAlign="center">
+                {serviceError}
+              </Text>
+
+              <Flex gridGap="24px">
+                <Button
+                  variant="default"
+                  onClick={() => {
+                    setServiceError(null);
+                    getServiceData();
+                  }}
+                >
+                  {t('common:try-again')}
+                </Button>
+              </Flex>
+            </Box>
           )}
-          {readyToSelectService && (
-            <SelectServicePlan />
+
+          {service && (
+            <ServiceSummary service={service} />
           )}
-          {/* Fourth step */}
-          {!readyToSelectService && isFourthStep && (
-            <PaymentInfo />
+
+          {allSubscriptions.length === 0 && (
+            <Box display="flex" flexDirection="column" gridGap="12px" width="100%">
+              <Box display="flex" gridGap="12px" flexDirection="column" alignItems="center">
+                <Text size="21px" fontWeight={700}>
+                  {t('select-service-of-plan.subscription-not-found')}
+                </Text>
+                <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-7.png`} border="3px solid" borderColor="blue.default" width="91px" height="91px" borderRadius="50px" />
+                <Box display="flex" flexDirection="column" gridGap="10px">
+                  <Text size="16px">
+                    {t('select-service-of-plan.no-plan-found-for-service')}
+                  </Text>
+                  <UnorderedList display="flex" mb="14px" flexDirection="column" gridGap="4px" width="100%">
+                    <ListItem fontSize="14px">
+                      {toCapitalize(unSlugify(service_slug))}
+                    </ListItem>
+                  </UnorderedList>
+                </Box>
+              </Box>
+            </Box>
           )}
+
         </Flex>
       </Flex>
     </Box>

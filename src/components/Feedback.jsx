@@ -19,7 +19,7 @@ import useCustomToast from '../hooks/useCustomToast';
 
 const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
 
-function Feedback({ storyConfig }) {
+function Feedback({ storyConfig, ...rest }) {
   const { t, lang } = useTranslation('choose-program');
   const { isAuthenticated, isAuthenticatedWithRigobot, user, conntectToRigobot } = useAuth();
   const accessToken = getStorageItem('accessToken');
@@ -146,7 +146,7 @@ function Feedback({ storyConfig }) {
   }, [storyConfig, isAuthenticatedWithRigobot, isConnectedWithGithub, accessToken]);
 
   return (isAuthenticated || isStorybookView) && (
-    <Box width="100%" maxWidth="400px" zIndex={10} borderRadius="17px" padding="0 2px 2px 2px" background={featuredColor}>
+    <Box width="100%" maxWidth="400px" zIndex={10} borderRadius="17px" padding="0 2px 2px 2px" background={featuredColor} {...rest}>
       <Heading size="16px" textAlign="center" p="12px 8px" width="100%" background={featuredColor} borderTopLeftRadius="13px" borderTopRightRadius="13px">
         {t('feedback.title')}
       </Heading>

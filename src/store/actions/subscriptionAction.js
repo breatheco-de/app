@@ -1,96 +1,37 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { CANCEL_SUBSCRIPTION, FETCH_SUBSCRIPTIONS, IS_LOADING } from '../types';
-import bc from '../../services/breathecode';
-import useCustomToast from '../../hooks/useCustomToast';
-import profileHandlers from '../../components/Profile/Subscriptions/handlers';
+import { CANCEL_SUBSCRIPTION, SET_SUBSCRIPTIONS, SET_SUBSCRIPTIONS_LOADING, SET_ARE_SUBSCRIPTIONS_FECHED } from '../types';
 
-const useSubscriptionsHandler = () => {
+const subscriptionAction = () => {
   const state = useSelector((st) => st.subscriptionsReducer);
-  const { subscriptions } = state;
-  const { createToast } = useCustomToast({ toastId: 'canceling-subscription-error-action' });
   const dispatch = useDispatch();
-  const {
-    getPlanOffer,
-  } = profileHandlers();
 
-  const fetchSubscriptions = async () => {
-    let result;
-    try {
-      dispatch({
-        type: IS_LOADING,
-        payload: true,
-      });
+  const setSubscriptionsLoading = (payload) => dispatch({
+    type: SET_SUBSCRIPTIONS_LOADING,
+    payload,
+  });
 
-      const { data } = await bc.payment({
-        status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED,ERROR',
-      }).subscriptions();
+  const setSubscriptions = (payload) => dispatch({
+    type: SET_SUBSCRIPTIONS,
+    payload,
+  });
 
-      const subscriptionsDataWithPlanOffer = data?.subscriptions?.length > 0
-        ? await Promise.all(data.subscriptions.map(async (s) => {
-          const planOffer = await getPlanOffer({ slug: s?.plans[0]?.slug, disableRedirects: true });
-          return { ...s, type: 'subscription', planOffer };
-        }))
-        : [];
+  const setCancelSubscription = (payload) => dispatch({
+    type: CANCEL_SUBSCRIPTION,
+    payload,
+  });
 
-      const planFinancingsDataWithPlanOffer = data?.plan_financings?.length > 0
-        ? await Promise.all(data.plan_financings.map(async (f) => {
-          const planOffer = await getPlanOffer({ slug: f?.plans[0]?.slug, disableRedirects: true });
-          return { ...f, type: 'plan_financing', planOffer };
-        }))
-        : [];
-
-      result = {
-        subscriptions: subscriptionsDataWithPlanOffer,
-        plan_financings: planFinancingsDataWithPlanOffer,
-      };
-
-      dispatch({
-        type: FETCH_SUBSCRIPTIONS,
-        payload: result,
-      });
-    } catch (error) {
-      result = error;
-    } finally {
-      dispatch({
-        type: IS_LOADING,
-        payload: false,
-      });
-      // eslint-disable-next-line no-unsafe-finally
-      return result;
-    }
-  };
-
-  const cancelSubscription = async (id) => {
-    try {
-      const { data } = await bc.payment().cancelMySubscription(id);
-      dispatch({
-        type: CANCEL_SUBSCRIPTION,
-        payload: data,
-      });
-      return data;
-    } catch (err) {
-      createToast({
-        position: 'top',
-        title: 'Error while cancelling subscription',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-      return err;
-    }
-  };
-
-  const allSubscriptions = (subscriptions?.subscriptions
-    && subscriptions?.plan_financings
-    && [...subscriptions.subscriptions, ...subscriptions.plan_financings]) || [];
+  const setAreSubscriptionsFetched = (payload) => dispatch({
+    type: SET_ARE_SUBSCRIPTIONS_FECHED,
+    payload,
+  });
 
   return {
-    ...state,
     state,
-    allSubscriptions,
-    fetchSubscriptions,
-    cancelSubscription,
+    setSubscriptionsLoading,
+    setSubscriptions,
+    setCancelSubscription,
+    setAreSubscriptionsFetched,
   };
 };
 
-export default useSubscriptionsHandler;
+export default subscriptionAction;

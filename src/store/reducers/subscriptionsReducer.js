@@ -1,20 +1,21 @@
 import {
-  FETCH_SUBSCRIPTIONS, CANCEL_SUBSCRIPTION, IS_LOADING,
+  SET_SUBSCRIPTIONS, CANCEL_SUBSCRIPTION, SET_SUBSCRIPTIONS_LOADING, SET_ARE_SUBSCRIPTIONS_FECHED,
 } from '../types';
 
 const initialState = {
-  subscriptions: [],
+  subscriptions: null,
   isLoading: false,
+  areSubscriptionsFetched: false,
 };
 
 const subscriptionsReducer = (state = initialState, action) => {
   switch (action.type) {
-    case IS_LOADING:
+    case SET_SUBSCRIPTIONS_LOADING:
       return {
         ...state,
         isLoading: action.payload,
       };
-    case FETCH_SUBSCRIPTIONS:
+    case SET_SUBSCRIPTIONS:
       return {
         ...state,
         subscriptions: action.payload,
@@ -35,7 +36,11 @@ const subscriptionsReducer = (state = initialState, action) => {
         },
       };
     }
-
+    case SET_ARE_SUBSCRIPTIONS_FECHED:
+      return {
+        ...state,
+        areSubscriptionsFetched: action.payload,
+      };
     default:
       return state;
   }

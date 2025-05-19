@@ -44,12 +44,12 @@ function AssignmentReport() {
       const foundStudent = res.data.find((user) => user.cohort.slug === cohortSlug);
       setCohortUser(foundStudent);
 
-      const { data } = await bc.todo({
+      const { data } = await bc.assignments({
         academy,
         limit: 1000,
         task_type: 'EXERCISE',
         student: studentId,
-      }).getAssignments({ id: foundStudent.cohort.id, academy });
+      }).getCohortAssignments({ id: foundStudent.cohort.id, academy });
 
       const sortedTasks = data.results.sort((a, b) => {
         if (a.title < b.title) return -1;

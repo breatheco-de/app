@@ -10,8 +10,6 @@ import {
   PopoverBody,
   Box,
   useMediaQuery,
-  AvatarBadge,
-  useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -20,29 +18,23 @@ import { es } from 'date-fns/locale';
 import { format } from 'date-fns';
 import Heading from './Heading';
 import Text from './Text';
-import useOnline from '../hooks/useOnline';
 import useCohortHandler from '../hooks/useCohortHandler';
 
 const AvatarUser = memo(({
-  data, fullName, isTeacherVersion, containerStyle, width, height, badge, customBadge, isWrapped, index, withoutPopover, avatarUrl,
+  data, fullName, isTeacherVersion, containerStyle, width, height, customBadge, isWrapped, index, withoutPopover, avatarUrl,
 }) => {
   const { user } = data;
   const { t } = useTranslation('dashboard');
   const fullNameLabel = fullName || `${user?.first_name} ${user?.last_name}`;
   const router = useRouter();
-  const { usersConnected } = useOnline();
   const { state } = useCohortHandler();
   const { cohortSession } = state;
-
-  const isOnlineUser = usersConnected?.some((id) => id === user?.id);
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const dateFormated = {
     en: data?.created_at && format(new Date(data?.created_at), 'MMMM dd, yyyy'),
     es: data?.created_at && format(new Date(data?.created_at), "dd 'de' MMMM, yyyy", { locale: es }),
   };
   const { cohortSlug } = router.query;
-
-  const borderColor = useColorModeValue('white', 'featuredDark');
 
   const roles = {
     teacher: t('common:teacher'),
@@ -76,16 +68,6 @@ const AvatarUser = memo(({
             alt={`${fullNameLabel} - image`}
           >
             {customBadge && (customBadge)}
-            {badge && isOnlineUser && (
-              <AvatarBadge
-                boxSize="11px"
-                bg="success"
-                top="-4px"
-                right={isWrapped ? '6px' : '4px'}
-                border="2px solid"
-                borderColor={borderColor}
-              />
-            )}
           </Avatar>
         </WrapItem>
       </PopoverTrigger>
@@ -145,16 +127,6 @@ const AvatarUser = memo(({
         zIndex={index}
       >
         {customBadge && (customBadge)}
-        {badge && isOnlineUser && (
-          <AvatarBadge
-            boxSize="11px"
-            bg="success"
-            top="-4px"
-            right={isWrapped ? '6px' : '4px'}
-            border="2px solid"
-            borderColor={borderColor}
-          />
-        )}
       </Avatar>
     </WrapItem>
   );
@@ -166,7 +138,6 @@ AvatarUser.propTypes = {
   containerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   width: PropTypes.string,
   height: PropTypes.string,
-  badge: PropTypes.bool,
   customBadge: PropTypes.node,
   isWrapped: PropTypes.bool,
   index: PropTypes.number,
@@ -179,7 +150,6 @@ AvatarUser.defaultProps = {
   containerStyle: {},
   width: '39px',
   height: '39px',
-  badge: false,
   customBadge: null,
   isWrapped: false,
   index: 0,

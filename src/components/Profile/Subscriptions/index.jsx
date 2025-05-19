@@ -20,8 +20,8 @@ import Icon from '../../Icon';
 import Heading from '../../Heading';
 import Text from '../../Text';
 import useStyle from '../../../hooks/useStyle';
+import useSubscriptions from '../../../hooks/useSubscriptions';
 import { location, slugToTitle, unSlugify } from '../../../utils';
-import useSubscriptionsHandler from '../../../store/actions/subscriptionAction';
 import { CardSkeleton, SimpleSkeleton } from '../../Skeleton';
 import bc from '../../../services/breathecode';
 import SubscriptionCard from './SubscriptionCard';
@@ -31,7 +31,7 @@ const ModalInfo = lazy(() => import('../../ModalInfo'));
 
 function Subscriptions({ cohorts }) {
   const { t } = useTranslation('profile');
-  const { state, isLoading, fetchSubscriptions, cancelSubscription } = useSubscriptionsHandler();
+  const { state, isLoading, cancelSubscription } = useSubscriptions();
   const { hexColor, fontColor } = useStyle();
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
   const [servicesModal, setServicesModal] = useState(null);
@@ -72,7 +72,7 @@ function Subscriptions({ cohorts }) {
         const { data } = res;
         setConsumables(data);
         const promiseMentorship = data.mentorship_service_sets.map(async (elem) => {
-          const mentRes = await bc.mentorship().getServiceSet(elem.id);
+          const mentRes = await bc.payment().getServiceSet(elem.id);
 
           return mentRes.data.mentorship_services.map((service) => ({ ...service, unit: elem.balance.unit }));
         });
@@ -112,7 +112,6 @@ function Subscriptions({ cohorts }) {
   };
 
   useEffect(() => {
-    fetchSubscriptions();
     getConsumables();
   }, []);
 

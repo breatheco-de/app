@@ -40,16 +40,15 @@ import asPrivate from '../../../../../context/PrivateRouteWrapper';
 import useAuth from '../../../../../hooks/useAuth';
 import useRigo from '../../../../../hooks/useRigo';
 import { ModuleMapSkeleton, SimpleSkeleton } from '../../../../../components/Skeleton';
-import { parseQuerys } from '../../../../../utils/url';
 import bc from '../../../../../services/breathecode';
 import axios from '../../../../../axios';
-
 import { reportDatalayer } from '../../../../../utils/requests';
 import { BREATHECODE_HOST } from '../../../../../utils/variables';
 import ModalInfo from '../../../../../components/ModalInfo';
 import Text from '../../../../../components/Text';
 import OnlyFor from '../../../../../components/OnlyFor';
 import useCohortHandler from '../../../../../hooks/useCohortHandler';
+import useSubscriptions from '../../../../../hooks/useSubscriptions';
 import LiveEvent from '../../../../../components/LiveEvent';
 import FinalProject from '../../../../../components/FinalProject';
 import useStyle from '../../../../../hooks/useStyle';
@@ -66,7 +65,6 @@ function Dashboard() {
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
-  const [grantAccess, setGrantAccess] = useState(false);
 
   const [searchValue, setSearchValue] = useState(router.query.search || '');
   const [showPendingTasks, setShowPendingTasks] = useState(false);
@@ -78,8 +76,6 @@ function Dashboard() {
   const { rigo, isRigoInitialized } = useRigo();
 
   const isBelowTablet = getBrowserSize()?.width < 768;
-  const [subscriptionData, setSubscriptionData] = useState(null);
-  const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [isAvailableToShowWarningModal, setIsAvailableToShowModalMessage] = useState(false);
   const [deletionOrders, setDeletionOrders] = useState([]);
   const [showDeletionOrdersModal, setShowDeletionOrdersModal] = useState(false);
@@ -87,14 +83,17 @@ function Dashboard() {
     state, getCohortUserCapabilities, getCohortData, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, setCohortSession,
     cohortProgram, taskTodo, addTasks, sortedAssignments, handleOpenReviewModal, handleCloseReviewModal,
-    continueWhereYouLeft,
+    continueWhereYouLeft, checkNavigationAvailability, grantAccess, setGrantAccess,
   } = useCohortHandler();
+  const { allSubscriptions, areSubscriptionsFetched } = useSubscriptions();
 
   const { cohortSession, taskCohortNull, cohortsAssignments, reviewModalState } = state;
 
   const {
     featuredColor, hexColor, modal, featuredLight, borderColor, disabledColor2, fontColor2, fontColor3, lightColor, backgroundColor2, backgroundColor3,
   } = useStyle();
+
+  const { cohortSlug } = router.query;
 
   const isAvailableAsSaas = cohortSession?.available_as_saas;
   const hasMicroCohorts = cohortSession?.micro_cohorts?.length > 0;
@@ -103,11 +102,10 @@ function Dashboard() {
     ? cohortProgram.main_technologies.split(',').map((el) => el.trim())
     : [];
 
-  const isSubscriptionFreeTrial = subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists;
+  const currentSubscription = allSubscriptions.find((s) => s?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === cohortSlug));
+  const isSubscriptionFreeTrial = currentSubscription?.id && currentSubscription?.status === 'FREE_TRIAL' && currentSubscription?.planOffer;
 
   const academyOwner = cohortProgram?.academy_owner;
-
-  const { cohortSlug } = router.query;
 
   const prefersReducedMotion = usePrefersReducedMotion();
   const slideLeft = keyframes`
@@ -142,98 +140,47 @@ function Dashboard() {
       id: task.id,
       cohort: cohortSession.id,
     }));
-    await bc.todo().updateBulk(tasksToUpdate)
-      .then(({ data }) => {
-        addTasks(data, cohortSession);
-        setModalIsOpen(false);
-      })
-      .catch(() => {
-        setModalIsOpen(false);
-        createToast({
-          position: 'top',
-          title: t('alert-message:task-cant-sync-with-cohort'),
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      });
-  };
 
-  const removeUnsyncedTasks = async () => {
-    const idsParsed = ((taskCohortNull !== undefined) && taskCohortNull).map((task) => task.id).join(','); // 23,2,45,45
-    await bc.todo({
-      id: idsParsed,
-    }).deleteBulk()
-      .then(() => {
-        setModalIsOpen(false);
-      })
-      .catch(() => {
-        createToast({
-          position: 'top',
-          title: t('alert-message:unsynced-tasks-cant-be-removed'),
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      });
-  };
-
-  const checkNavigationAvailability = () => {
-    const showToastAndRedirect = (programSlug) => {
-      const querys = parseQuerys({
-        plan: programSlug,
-      });
-      router.push(`/${lang}/checkout${querys}`);
+    try {
+      const { data } = await bc.assignments().updateBulk(tasksToUpdate);
+      addTasks(data, cohortSession);
+      setModalIsOpen(false);
+    } catch (error) {
+      setModalIsOpen(false);
       createToast({
         position: 'top',
-        title: t('alert-message:access-denied'),
+        title: t('alert-message:task-cant-sync-with-cohort'),
         status: 'error',
         duration: 5000,
         isClosable: true,
       });
-    };
+    }
+  };
 
-    if (allSubscriptions) {
-      const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
-      const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
-      const currentCohortSlug = cohortSubscriptions[0]?.selected_cohort_set?.slug;
-
-      if (cohortSubscriptions.length === 0) {
-        showToastAndRedirect(currentCohortSlug);
-        return;
-      }
-
-      const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED' || sub.status === 'ERROR');
-      const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
-      if (expiredCourse && !fullyPaidSub) {
-        showToastAndRedirect(currentCohortSlug);
-        return;
-      }
-
-      if (fullyPaidSub) {
-        setGrantAccess(true);
-        return;
-      }
-
-      const freeTrialSub = cohortSubscriptions.find((sub) => sub.status === 'FREE_TRIAL');
-      const freeTrialExpDate = new Date(freeTrialSub?.valid_until);
-      const todayDate = new Date();
-
-      if (todayDate > freeTrialExpDate) {
-        showToastAndRedirect(currentCohortSlug);
-        return;
-      }
-
-      setGrantAccess(true);
+  const removeUnsyncedTasks = async () => {
+    const idsParsed = ((taskCohortNull !== undefined) && taskCohortNull).map((task) => task.id).join(','); // 23,2,45,45
+    try {
+      await bc.assignments({
+        id: idsParsed,
+      }).deleteBulk();
+      setModalIsOpen(false);
+    } catch (err) {
+      createToast({
+        position: 'top',
+        title: t('alert-message:unsynced-tasks-cant-be-removed'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
   useEffect(() => {
-    if (cohortSession?.available_as_saas === true && cohortSession.cohort_user.role === 'STUDENT') {
+    if (areSubscriptionsFetched && cohortSession?.available_as_saas === true && cohortSession.cohort_user.role === 'STUDENT') {
       checkNavigationAvailability();
     }
     if (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
-  }, [cohortSession, allSubscriptions]);
+  }, [cohortSession, areSubscriptionsFetched]);
 
   useEffect(() => {
     if (cohortSession?.cohort_user) {
@@ -248,7 +195,7 @@ function Dashboard() {
     if (showGithubWarning === 'active') {
       setShowWarningModal(true);
     }
-    bc.payment({ upcoming: true, limit: 20 }).events()
+    bc.events({ upcoming: true, limit: 20 }).meOnlineEvents()
       .then(({ data }) => {
         const results = data?.results || [];
         const eventsRemain = results?.length > 0 ? results.filter((l) => {
@@ -270,42 +217,6 @@ function Dashboard() {
         const sortDateToLiveClass = sortToNearestTodayDate(validatedEventList, TwelveHours);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         setLiveClasses(existentLiveClasses);
-      });
-
-    bc.payment({
-      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED,ERROR',
-    }).subscriptions()
-      .then(async ({ data }) => {
-        const currentPlanFinancing = data?.plan_financings?.find((s) => s?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === cohortSlug));
-        const currentSubscription = data?.subscriptions?.find((s) => s?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === cohortSlug));
-        const planData = currentPlanFinancing || currentSubscription;
-        const planSlug = planData?.plans?.[0]?.slug;
-        const planOffer = await bc.payment({
-          original_plan: planSlug,
-        }).planOffer().then((res) => res?.data);
-
-        const currentPlanOffer = planOffer?.find((p) => p?.original_plan?.slug === planSlug);
-
-        const finalData = {
-          ...planData,
-          planOfferExists: currentPlanOffer !== undefined,
-        };
-
-        const planFinancings = data?.plan_financings?.length > 0 ? data?.plan_financings : [];
-        const subscriptions = data?.subscriptions?.length > 0 ? data?.subscriptions : [];
-
-        setAllSubscriptions([...planFinancings, ...subscriptions]);
-        setSubscriptionData(finalData);
-
-        reportDatalayer({
-          dataLayer: {
-            event: 'subscriptions_load',
-            method: 'native',
-            plan_financings: data?.plan_financings?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
-            subscriptions: data?.subscriptions?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
-            agent: getBrowserInfo(),
-          },
-        });
       });
   }, []);
 
@@ -417,7 +328,7 @@ function Dashboard() {
   // Students and Teachers data
   useEffect(() => {
     if (cohortSession?.id) {
-      bc.cohort().getStudents(cohortSlug).then(({ data }) => {
+      bc.admissions().getStudents(cohortSlug).then(({ data }) => {
         if (data && data.length > 0) {
           setSudentAndTeachers(data.sort(
             (a, b) => a.user.first_name.localeCompare(b.user.first_name),
@@ -900,7 +811,7 @@ function Dashboard() {
                               },
                             }]}
                             subscriptions={allSubscriptions}
-                            subscriptionData={subscriptionData}
+                            subscriptionData={currentSubscription}
                           />
                         )}
                       </Box>
@@ -1130,7 +1041,7 @@ function Dashboard() {
                             },
                           }]}
                           subscriptions={allSubscriptions}
-                          subscriptionData={subscriptionData}
+                          subscriptionData={currentSubscription}
                         />
                       )}
                       <Feedback />

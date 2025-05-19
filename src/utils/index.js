@@ -6,7 +6,6 @@ import { parseQuerys } from './url';
 
 const isWindow = typeof window !== 'undefined';
 
-const HAVE_SESSION = isWindow ? localStorage.getItem('accessToken') !== null : false;
 /** @const isDevMode
  * principal use for dibuging for another issues and prevent
  * to create unused console.logs in production
@@ -169,23 +168,23 @@ const getNextDateInMonths = (months = 1) => {
   };
 };
 
-const getTimeProps = (date) => {
+const formatCohortSchedule = (cohort) => {
   const kickoffDate = {
-    en: date?.kickoff_date && format(new Date(date.kickoff_date), 'MMMM do YYY'),
+    en: cohort?.kickoff_date && format(new Date(cohort.kickoff_date), 'MMMM do YYY'),
     es:
-      date?.kickoff_date
-      && format(new Date(date.kickoff_date), "d 'de' MMMM YYY", { locale: es }),
+      cohort?.kickoff_date
+      && format(new Date(cohort.kickoff_date), "d 'de' MMMM YYY", { locale: es }),
   };
   const weekDays = {
-    en: date.timeslots?.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE'))),
-    es: date.timeslots?.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE', { locale: es }))),
+    en: cohort.timeslots?.length > 0 && cohort.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE'))),
+    es: cohort.timeslots?.length > 0 && cohort.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEEE', { locale: es }))),
   };
   const shortWeekDays = {
-    en: date.timeslots?.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE'))),
-    es: date.timeslots?.length > 0 && date.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE', { locale: es }))),
+    en: cohort.timeslots?.length > 0 && cohort.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE'))),
+    es: cohort.timeslots?.length > 0 && cohort.timeslots.map((l) => (l.starting_at && format(new Date(l.starting_at), 'EEE', { locale: es }))),
   };
   const getHours = (time) => new Date(time).toLocaleTimeString([], { timeZone: 'UTC', hour: '2-digit', minute: '2-digit' });
-  const availableTime = date.timeslots.length > 0 && `${getHours(date.timeslots[0].starting_at)} - ${getHours(date.timeslots[0].ending_at)}`;
+  const availableTime = cohort.timeslots.length > 0 && `${getHours(cohort.timeslots[0].starting_at)} - ${getHours(cohort.timeslots[0].ending_at)}`;
 
   return {
     kickoffDate,
@@ -520,11 +519,11 @@ const parseProp = (propString, defaultValue) => {
 const isValidEmail = (email) => emailRegex.test(email);
 
 export {
-  isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify, unSlugifyCapitalize, location,
+  isWindow, assetTypeValues, slugify, unSlugify, unSlugifyCapitalize, location,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
   removeStorageItem, isDevMode, devLogTable, devLog, languageLabel,
   objectAreNotEqual, cleanQueryStrings, removeURLParameter,
-  setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
+  setStorageItem, toCapitalize, tokenExists, formatCohortSchedule, formatBytes,
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, intervalToHours, capitalizeFirstLetter,
