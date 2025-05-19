@@ -26,7 +26,7 @@ function PaymentInfo({ setShowPaymentDetails }) {
     reportDatalayer({
       dataLayer: {
         event: 'checkout_payment_info_rendered',
-        value: state?.selectedPlanCheckoutData?.price,
+        value: state?.selectedPlan?.price,
         agent: getBrowserInfo(),
       },
     });

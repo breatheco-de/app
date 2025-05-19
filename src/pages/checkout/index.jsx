@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 /* eslint-disable camelcase */
 import {
   Avatar,
@@ -77,7 +76,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 };
 
 function Checkout() {
-  const { t, lang } = useTranslation('signup');
+  const { t } = useTranslation('signup');
   const router = useRouter();
   const { query } = router;
   const [showPaymentDetails, setShowPaymentDetails] = useState(true);
@@ -86,13 +85,13 @@ function Checkout() {
   const [originalPlan, setOriginalPlan] = useState(null);
   const {
     state, toggleIfEnrolled, handleStep, setLoader,
-    setSelectedPlanCheckoutData, setCheckoutData, setPlanData,
+    setSelectedPlan, setCheckingData, setPlanData,
   } = signupAction();
   const {
     stepsEnum, isFirstStep, isSecondStep, isThirdStep, getSelfAppliedCoupon,
     getChecking, getPriceWithDiscount, processPlans, subscribeFreePlan,
   } = useSignup();
-  const { stepIndex, checkoutData, paymentStatus, selectedPlanCheckoutData, alreadyEnrolled, loader, selfAppliedCoupon, planData } = state;
+  const { stepIndex, checkingData, paymentStatus, selectedPlan, alreadyEnrolled, loader, selfAppliedCoupon, planData } = state;
   const flexRef = useRef(null);
   const [discountCode, setDiscountCode] = useState('');
   const [discountCoupon, setDiscountCoupon] = useState(null);
@@ -107,7 +106,7 @@ function Checkout() {
   const currencySymbol = currenciesSymbols[originalPlan?.currency?.code] || '$';
 
   const { isAuthenticated } = useAuth();
-  const { userSession, location } = useSession();
+  const { userSession, location, isLoadingLocation } = useSession();
   const { createToast } = useCustomToast({ toastId: 'coupon-plan-email-detail' });
   const { coupon: couponQuery, course } = query;
   const plan = getQueryString('plan');
@@ -155,8 +154,8 @@ function Checkout() {
           setDiscountCoupon({
             ...couponData,
           });
-          setCheckoutData({
-            ...checkoutData,
+          setCheckingData({
+            ...checkingData,
             coupons,
           });
         }
@@ -204,7 +203,7 @@ function Checkout() {
       const correctCoupon = resp.data.find((c) => c.slug === couponToApply);
       if (correctCoupon) {
         const allCouponsToApply = [...allCoupons.map((c) => c.slug), couponToApply];
-        await saveCouponToBag(allCouponsToApply, checkoutData?.id, couponToApply);
+        await saveCouponToBag(allCouponsToApply, checkingData?.id, couponToApply);
       } else {
         setDiscountCoupon(null);
         setCouponError(true);
@@ -232,11 +231,11 @@ function Checkout() {
     }
   };
 
-  const findAutoSelectedPlan = (checkingData) => {
-    const plans = checkingData?.plans || [];
+  const findAutoSelectedPlan = (checking) => {
+    const plans = checking?.plans || [];
     const sortedPlans = plans.sort((a, b) => (a.how_many_months || 0) - (b.how_many_months || 0));
     const defaultAutoSelectedPlan = sortedPlans[0];
-    const autoSelectedPlanByQueryString = checkingData?.plans?.find(
+    const autoSelectedPlanByQueryString = checking?.plans?.find(
       (item) => item?.plan_id === (planId || userSelectedPlan?.plan_id),
     );
 
@@ -250,7 +249,9 @@ function Checkout() {
   const initializePlanData = async () => {
     try {
       const resp = await bc.payment({ country_code: location?.countryShort }).getPlan(planFormated);
-      const processedPlan = await processPlans(resp?.data, {
+      const { data } = resp;
+      setPlanData(data);
+      const processedPlan = await processPlans(data, {
         quarterly: false,
         halfYearly: false,
         planType: 'original',
@@ -261,7 +262,7 @@ function Checkout() {
         description: info.features[0]?.description,
       })) || [];
 
-      const selectedPlan = processedPlan?.plans?.find((item) => item?.plan_id === planId)
+      const defaultPlan = processedPlan?.plans?.find((item) => item?.plan_id === planId)
       || processedPlan?.plans?.[0] || {};
 
       const { data: suggestedPlanInfo } = await bc.payment({ original_plan: processedPlan?.slug }).planOffer();
@@ -270,7 +271,8 @@ function Checkout() {
       setDiscountValues(allCouponsApplied);
 
       setSuggestedPlans(suggestedPlanInfo[0]?.suggested_plan);
-      setSelectedPlanCheckoutData(selectedPlan);
+
+      setSelectedPlan(defaultPlan);
       setOriginalPlan({ ...processedPlan, accordionList });
     } catch (err) {
       createToast({
@@ -287,7 +289,9 @@ function Checkout() {
   useEffect(() => {
     removeStorageItem('redirect');
 
-    initializePlanData();
+    if (!isLoadingLocation) {
+      initializePlanData();
+    }
 
     reportDatalayer({
       dataLayer: {
@@ -298,14 +302,14 @@ function Checkout() {
         agent: getBrowserInfo(),
       },
     });
-  }, [router.locale]);
+  }, [router.locale, isLoadingLocation]);
 
   useEffect(() => {
-    if (checkoutData?.id && !checkoutData?.isTrial) {
+    if (checkingData?.id && !checkingData?.isTrial) {
       if (couponValue) setDiscountCode(couponValue);
       handleCoupon(couponValue);
     }
-  }, [couponValue, checkoutData?.id]);
+  }, [couponValue, checkingData?.id]);
 
   useEffect(() => {
     if (isWindow && stepIndex >= stepsEnum.SUMMARY && isAuthenticated && !isPaymentSuccess) {
@@ -322,51 +326,26 @@ function Checkout() {
     return () => { };
   }, [stepIndex, isAuthenticated]);
 
-  const getPlanData = async () => {
+  const getCheckingData = async () => {
     try {
       setLoader('plan', true);
-      const resp = await bc.payment({ country_code: location?.countryShort }).getPlan(planFormated);
 
-      if (!resp || resp.status >= 400) {
-        setLoader('plan', false);
-        router.push('/pricing');
-        return createToast({
-          position: 'top',
-          title: t('alert-message:no-plan-configuration'),
-          status: 'error',
-          duration: 4000,
-          isClosable: true,
-        });
+      const checking = await getChecking(planData);
+      const plans = checking?.plans || [];
+      const existsPayablePlan = plans.some((item) => item.price > 0);
+      const autoSelectedPlan = findAutoSelectedPlan(checking);
+
+      if (autoSelectedPlan) {
+        setSelectedPlan(autoSelectedPlan);
       }
-      const { data } = resp;
-      const existsAmountPerHalf = data.price_per_half > 0;
-      const existsAmountPerMonth = data.price_per_month > 0;
-      const existsAmountPerQuarter = data.price_per_quarter > 0;
-      const existsAmountPerYear = data.price_per_year > 0;
-      const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
 
-      if (data.has_waiting_list) {
-        return router.push(`/${lang}/thank-you`);
+      if (existsPayablePlan) {
+        handleStep(stepsEnum.PAYMENT);
+      } else {
+        await subscribeFreePlan(checking);
+        handleStep(stepsEnum.SUMMARY);
       }
-      if ((!data.is_renewable && !isNotTrial) || data.is_renewable) {
-        setPlanData(data);
-        const checkingData = await getChecking({ plan: data });
-        const plans = checkingData?.plans || [];
-        const existsPayablePlan = plans.some((item) => item.price > 0);
-        const autoSelectedPlan = findAutoSelectedPlan(checkingData);
-
-        if (autoSelectedPlan) {
-          setSelectedPlanCheckoutData(autoSelectedPlan);
-        }
-
-        if (existsPayablePlan) {
-          handleStep(stepsEnum.PAYMENT);
-        } else {
-          await subscribeFreePlan(checkingData);
-          handleStep(stepsEnum.SUMMARY);
-        }
-        setLoader('plan', false);
-      }
+      setLoader('plan', false);
     } catch (error) {
       setLoader('plan', false);
       createToast({
@@ -385,8 +364,8 @@ function Checkout() {
       router.push('/pricing');
     }
 
-    if (planFormated && isAuthenticated) {
-      getPlanData();
+    if (planFormated && isAuthenticated && planData) {
+      getCheckingData();
     }
     if (!isAuthenticated && !accessToken) {
       setLoader('plan', false);
@@ -396,11 +375,11 @@ function Checkout() {
   useEffect(() => {
     if (!userSelectedPlan || !planData) return;
     setCheckInfoLoader(true);
-    getChecking({ plan: planData })
-      .then((checkingData) => {
-        const autoSelectedPlan = findAutoSelectedPlan(checkingData);
+    getChecking(planData)
+      .then((checking) => {
+        const autoSelectedPlan = findAutoSelectedPlan(checking);
 
-        setSelectedPlanCheckoutData(autoSelectedPlan);
+        setSelectedPlan(autoSelectedPlan);
         handleStep(stepsEnum.PAYMENT);
         setCheckInfoLoader(false);
       })
@@ -418,7 +397,7 @@ function Checkout() {
   }, [selfAppliedCoupon, discountCoupon]);
 
   const processedPrice = useMemo(() => {
-    let pricingData = { ...selectedPlanCheckoutData };
+    let pricingData = { ...selectedPlan };
     const discounts = [];
 
     allCoupons.forEach((c) => {
@@ -426,7 +405,7 @@ function Checkout() {
       discounts.push(pricingData);
     });
     return pricingData;
-  }, [allCoupons, selectedPlanCheckoutData]);
+  }, [allCoupons, selectedPlan]);
 
   const getDiscountValue = (coup) => {
     if (!coup?.discount_value || !coup?.discount_type) return '';
@@ -440,7 +419,7 @@ function Checkout() {
   };
 
   const calculateTotalPrice = () => {
-    const months = selectedPlanCheckoutData.how_many_months || 1;
+    const months = selectedPlan.how_many_months || 1;
 
     if (processedPrice.discountType === 'FIXED_PRICE') {
       const firstMonthPrice = processedPrice.price;
@@ -448,7 +427,7 @@ function Checkout() {
       return (firstMonthPrice + remainingMonthsPrice).toFixed(2);
     }
 
-    return (processedPrice.price * (selectedPlanCheckoutData.how_many_months ? selectedPlanCheckoutData.how_many_months : 1)).toFixed(2);
+    return (processedPrice.price * (selectedPlan.how_many_months ? selectedPlan.how_many_months : 1)).toFixed(2);
   };
 
   const renderPlanDetails = () => {
@@ -464,7 +443,7 @@ function Checkout() {
       return finalPrice;
     };
 
-    if (selectedPlanCheckoutData?.isFreeTier) {
+    if (selectedPlan?.isFreeTier) {
       const financingOptions = suggestedPlans?.financing_options || [];
       const monthlyPayment = suggestedPlans?.price_per_month;
       const yearlyPayment = suggestedPlans?.price_per_year;
@@ -478,7 +457,7 @@ function Checkout() {
           const finalPrice = applyDiscounts(financingOptions[0].monthly_price, discountValues);
           financingText = t('free_trial_one_payment', {
             price: finalPrice.toFixed(2),
-            description: selectedPlanCheckoutData.description,
+            description: selectedPlan.description,
             currency: currencySymbol,
           });
         }
@@ -488,7 +467,7 @@ function Checkout() {
           const lastPrice = applyDiscounts(financingOptions[0].monthly_price, discountValues);
 
           financingText = t('free_trial_multiple_payments', {
-            description: selectedPlanCheckoutData.description,
+            description: selectedPlan.description,
             numPayments: financingOptions[financingOptions.length - 1].how_many_months,
             firstPrice: firstPrice.toFixed(2),
             oneTimePrice: lastPrice.toFixed(2),
@@ -497,16 +476,15 @@ function Checkout() {
         }
       }
 
-      if (selectedPlanCheckoutData?.type === 'FREE') {
-        financingText = t('free_plan');
-        return <Text size="16px" color="green.400">{financingText}</Text>;
+      if (selectedPlan?.type === 'FREE') {
+        return t('free_plan');
       }
 
       if (financingOptions.length === 0) {
         if (monthlyPayment) {
           const finalMonthlyPrice = applyDiscounts(monthlyPayment, discountValues);
           financingText = t('free_trial_monthly_payment', {
-            description: selectedPlanCheckoutData.description,
+            description: selectedPlan.description,
             monthlyPrice: finalMonthlyPrice.toFixed(2),
             currency: currencySymbol,
           });
@@ -515,7 +493,7 @@ function Checkout() {
         if (yearlyPayment && !monthlyPayment) {
           const finalYearlyPrice = applyDiscounts(yearlyPayment, discountValues);
           financingText = t('free_trial_yearly_payment', {
-            description: selectedPlanCheckoutData.description,
+            description: selectedPlan.description,
             yearlyPrice: finalYearlyPrice.toFixed(2),
             currency: currencySymbol,
           });
@@ -523,24 +501,22 @@ function Checkout() {
       }
 
       if (financingOptions.length === 0 && !monthlyPayment && !yearlyPayment) {
-        financingText = selectedPlanCheckoutData?.description;
+        financingText = selectedPlan?.description;
       }
 
       if (discountValues.length > 0) {
         financingText += ` ${t('limited_time_offer')}`;
       }
 
-      return <Text size="16px" color="green.400">{financingText}</Text>;
+      return financingText;
     }
 
-    if (selectedPlanCheckoutData?.price > 0 || selectedPlanCheckoutData?.price > 0) {
-      const originalPrice = selectedPlanCheckoutData?.price || selectedPlanCheckoutData?.price;
+    if (selectedPlan?.price > 0 || selectedPlan?.price > 0) {
+      const originalPrice = selectedPlan?.price || selectedPlan?.price;
       const discountedPrice = applyDiscounts(originalPrice, discountValues);
 
       return (
-        <Text size="16px" color="green.400">
-          {`${currencySymbol}${discountedPrice.toFixed(2)} / ${selectedPlanCheckoutData?.title || selectedPlanCheckoutData?.title}`}
-        </Text>
+        `${currencySymbol}${discountedPrice.toFixed(2)} / ${selectedPlan?.title || selectedPlan?.title}`
       );
     }
 
@@ -548,9 +524,7 @@ function Checkout() {
       const discountedPrice = applyDiscounts(userSelectedPlan?.price, discountValues);
 
       return (
-        <Text size="16px" color="green.400">
-          {`${currencySymbol}${discountedPrice.toFixed(2)} / ${userSelectedPlan?.title}`}
-        </Text>
+        `${currencySymbol}${discountedPrice.toFixed(2)} / ${userSelectedPlan?.title}`
       );
     }
 
@@ -655,7 +629,7 @@ function Checkout() {
           {/* Stepper */}
           <Stepper
             stepIndex={stepIndex}
-            isFreeTier={Boolean(checkoutData?.isTrial || checkoutData?.isTotallyFree || selectedPlanCheckoutData?.isFreeTier)}
+            isFreeTier={Boolean(checkingData?.isTrial || checkingData?.isTotallyFree || selectedPlan?.isFreeTier)}
           />
           {isFirstStep && (
             <ContactInformation
@@ -703,12 +677,16 @@ function Checkout() {
                             return word.slice(0, index) + word.charAt(index).toUpperCase() + word.slice(index + 1);
                           }).join(' ')}
                         </Heading>
-                        {selectedPlanCheckoutData?.description && isThirdStep && (
-                          <Text fontSize="16px" py="10px">{selectedPlanCheckoutData.description}</Text>
+                        {selectedPlan?.description && isThirdStep && (
+                          <Text fontSize="16px" py="10px">{selectedPlan.description}</Text>
                         )}
                         <Flex justifyContent="space-between" width="full" alignItems="center">
-                          {showPaymentDetails && renderPlanDetails()}
-                          {!planId && selectedPlanCheckoutData?.type !== 'FREE' && (originalPlan?.financingOptions.length > 0 || originalPlan?.hasSubscriptionMethod) && showPaymentDetails && (
+                          {showPaymentDetails && renderPlanDetails() && (
+                            <Text size="16px" color="green.400">
+                              {renderPlanDetails()}
+                            </Text>
+                          )}
+                          {!planId && selectedPlan?.type !== 'FREE' && (originalPlan?.financingOptions.length > 0 || originalPlan?.hasSubscriptionMethod) && showPaymentDetails && (
                             <Flex flexDirection="column" gap="4px">
                               <Heading as="h3" size="sm" width="100%" position="relative">
                                 <Menu>
@@ -743,12 +721,12 @@ function Checkout() {
                                         onClick={() => setUserSelectedPlan(option)}
                                         fontSize="md"
                                         color="auto"
-                                        background={option.plan_id === selectedPlanCheckoutData?.plan_id && useColorModeValue('green.50', 'green.200')}
-                                        _hover={option.plan_id === selectedPlanCheckoutData?.plan_id ? { backgrorund: useColorModeValue('green.50', 'green.200') } : { background: 'none' }}
+                                        background={option.plan_id === selectedPlan?.plan_id && useColorModeValue('green.50', 'green.200')}
+                                        _hover={option.plan_id === selectedPlan?.plan_id ? { backgrorund: useColorModeValue('green.50', 'green.200') } : { background: 'none' }}
                                         padding="10px"
                                       >
                                         <Flex justifyContent="space-between" alignItems="center" width="100%">
-                                          <Text fontSize="md" flex="1" color={option.plan_id === selectedPlanCheckoutData?.plan_id ? useColorModeValue('#25BF6C', 'green') : 'auto'}>
+                                          <Text fontSize="md" flex="1" color={option.plan_id === selectedPlan?.plan_id ? useColorModeValue('#25BF6C', 'green') : 'auto'}>
                                             {originalPlan.hasSubscriptionMethod
                                               ? (
                                                 `${handlePriceTextWithCoupon(option.priceText, allCoupons, originalPlan.plans)} / ${option.title}${
@@ -759,7 +737,7 @@ function Checkout() {
                                               )
                                               : `${handlePriceTextWithCoupon(option.priceText, allCoupons, originalPlan.plans)} / ${option.title}`}
                                           </Text>
-                                          {option.plan_id === selectedPlanCheckoutData?.plan_id
+                                          {option.plan_id === selectedPlan?.plan_id
                                             && (
                                               <Icon icon="checked2" width="12px" height="12" color={useColorModeValue('#25BF6C', 'green')} />
                                             )}
@@ -801,9 +779,9 @@ function Checkout() {
                             Subtotal:
                           </Text>
                           <Text size="18px" color="currentColor" lineHeight="normal">
-                            {selectedPlanCheckoutData?.price <= 0
-                              ? selectedPlanCheckoutData?.priceText
-                              : `${currencySymbol}${selectedPlanCheckoutData?.price?.toFixed(2)} ${selectedPlanCheckoutData?.currency?.code}`}
+                            {selectedPlan?.price <= 0
+                              ? selectedPlan?.priceText
+                              : `${currencySymbol}${selectedPlan?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
                           </Text>
                         </Flex>
                         <Divider margin="6px 0" />
@@ -849,7 +827,7 @@ function Checkout() {
                                           padding="10px"
                                           height="auto"
                                           onClick={() => {
-                                            saveCouponToBag([''], checkoutData?.id);
+                                            saveCouponToBag([''], checkingData?.id);
                                             removeSessionStorageItem('coupon');
                                             setDiscountCode('');
                                             setDiscountCoupon(null);
@@ -894,30 +872,30 @@ function Checkout() {
                         <Divider margin="6px 0" />
                         <Flex justifyContent="space-between" width="100%">
                           <Text size="18px" color="currentColor" lineHeight="normal">
-                            {selectedPlanCheckoutData?.period !== 'ONE_TIME' ? t('total-now') : t('total')}
+                            {selectedPlan?.period !== 'ONE_TIME' ? t('total-now') : t('total')}
                           </Text>
                           <Flex gridGap="1rem">
                             {allCoupons?.length > 0 && (
                               <Text size="18px" color="currentColor" textDecoration="line-through" opacity="0.5" lineHeight="normal">
-                                {`${currencySymbol}${selectedPlanCheckoutData?.price?.toFixed(2)}`}
+                                {`${currencySymbol}${selectedPlan?.price?.toFixed(2)}`}
                               </Text>
                             )}
                             <Text size="18px" color="currentColor" lineHeight="normal">
-                              {selectedPlanCheckoutData?.price <= 0
-                                ? selectedPlanCheckoutData?.priceText
-                                : `${currencySymbol}${processedPrice?.price?.toFixed(2)} ${selectedPlanCheckoutData?.currency?.code}`}
+                              {selectedPlan?.price <= 0
+                                ? selectedPlan?.priceText
+                                : `${currencySymbol}${processedPrice?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
                             </Text>
                           </Flex>
                         </Flex>
-                        {selectedPlanCheckoutData?.period !== 'ONE_TIME' && selectedPlanCheckoutData?.price > 0 && (
+                        {selectedPlan?.period !== 'ONE_TIME' && selectedPlan?.price > 0 && (
                           <Flex justifyContent="space-between" width="100%">
                             <Text size="18px" color="currentColor" lineHeight="normal">
                               {t('after-all-payments')}
                             </Text>
                             <Text size="18px" color="currentColor" lineHeight="normal">
-                              {selectedPlanCheckoutData.price <= 0
-                                ? selectedPlanCheckoutData.priceText
-                                : `${currencySymbol}${calculateTotalPrice()} ${selectedPlanCheckoutData.currency?.code}`}
+                              {selectedPlan.price <= 0
+                                ? selectedPlan.priceText
+                                : `${currencySymbol}${calculateTotalPrice()} ${selectedPlan.currency?.code}`}
                             </Text>
                           </Flex>
                         )}

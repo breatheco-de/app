@@ -26,7 +26,7 @@ function Summary() {
   const {
     state, setIsSubmittingPayment,
   } = signupAction();
-  const { paymentStatus, checkoutData, selectedPlanCheckoutData, isSubmittingPayment, declinedPayment } = state;
+  const { paymentStatus, checkingData, selectedPlan, isSubmittingPayment, declinedPayment } = state;
   const { createToast } = useCustomToast({ toastId: 'payment-request-data-detail-error' });
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [cohortFound, setCohortFound] = useState(undefined);
@@ -37,13 +37,13 @@ function Summary() {
   const cohortId = Number(getQueryString('cohort'));
 
   const paymentStatusBgColor = paymentStatus === 'success' ? 'green.light' : '#ffefef';
-  const successText = selectedPlanCheckoutData?.isFreeTier ? t('plan-is-ready') : t('payment-success');
+  const successText = selectedPlan?.isFreeTier ? t('plan-is-ready') : t('payment-success');
 
   useEffect(() => {
     reportDatalayer({
       dataLayer: {
         event: 'checkout_summary',
-        plan: checkoutData?.plans[0].plan_slug,
+        plan: checkingData?.plans[0].plan_slug,
         agent: getBrowserInfo(),
       },
     });
@@ -168,10 +168,10 @@ function Summary() {
             && [...data.subscriptions, ...data.plan_financings]) || [];
 
           const currentSubscription = subscriptions?.find(
-            (subscription) => checkoutData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
+            (subscription) => checkingData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
           );
           const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
-            (subscription) => checkoutData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
+            (subscription) => checkingData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
           );
           const cohortsForSubscription = currentSubscription?.selected_cohort_set.cohorts;
           const foundCohort = cohortsForSubscription?.find(

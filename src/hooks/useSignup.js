@@ -28,7 +28,7 @@ const useSignup = () => {
   const state = useSelector((sl) => sl.signupReducer);
   const {
     setLoader,
-    setCheckoutData,
+    setCheckingData,
     setPaymentMethods,
     toggleIfEnrolled,
     setService,
@@ -56,9 +56,9 @@ const useSignup = () => {
 
   const {
     stepIndex,
-    checkoutData,
+    checkingData,
     planData,
-    selectedPlanCheckoutData,
+    selectedPlan,
     paymentStatus,
     isSubmittingPayment,
   } = state;
@@ -505,22 +505,22 @@ const useSignup = () => {
   };
 
   const handlePayment = async (data, disableRedirects = false) => {
-    const manyInstallmentsExists = selectedPlanCheckoutData?.how_many_months > 0 || selectedPlanCheckoutData?.period === 'FINANCING';
-    const isTtrial = ['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
+    const manyInstallmentsExists = selectedPlan?.how_many_months > 0 || selectedPlan?.period === 'FINANCING';
+    const isTtrial = ['FREE', 'TRIAL'].includes(selectedPlan?.type);
 
     const getRequests = () => {
       if (!isTtrial) {
         return {
-          type: data?.type || checkoutData?.type,
-          token: data?.token || checkoutData?.token,
-          how_many_installments: data?.installments || selectedPlanCheckoutData?.how_many_months || undefined,
-          chosen_period: manyInstallmentsExists ? undefined : (selectedPlanCheckoutData?.period || 'HALF'),
-          coupons: checkoutData?.coupons,
+          type: data?.type || checkingData?.type,
+          token: data?.token || checkingData?.token,
+          how_many_installments: data?.installments || selectedPlan?.how_many_months || undefined,
+          chosen_period: manyInstallmentsExists ? undefined : (selectedPlan?.period || 'HALF'),
+          coupons: checkingData?.coupons,
         };
       }
       return {
-        type: data?.type || checkoutData?.type,
-        token: data?.token || checkoutData?.token,
+        type: data?.type || checkingData?.type,
+        token: data?.token || checkingData?.token,
       };
     };
 
@@ -552,11 +552,11 @@ const useSignup = () => {
         reportDatalayer({
           dataLayer: {
             event: 'purchase',
-            value: selectedPlanCheckoutData?.price || 0,
+            value: selectedPlan?.price || 0,
             currency,
             payment_type: 'Credit card',
-            plan: selectedPlanCheckoutData?.plan_slug || transactionData?.plan?.slug || defaultPlan,
-            period_label: selectedPlanCheckoutData?.period_label || 'one-time',
+            plan: selectedPlan?.plan_slug || transactionData?.plan?.slug || defaultPlan,
+            period_label: selectedPlan?.period_label || 'one-time',
             items: simplePlans,
             agent: getBrowserInfo(),
           },
@@ -591,11 +591,9 @@ const useSignup = () => {
   };
 
   const getChecking = async (plansData) => {
-    const selectedPlan = plansData?.plan;
-
     const checkingBody = {
       type: 'PREVIEW',
-      plans: [selectedPlan?.slug],
+      plans: [plansData?.slug],
       coupons: couponsQuery ? [couponsQuery] : undefined,
       country_code,
     };
@@ -613,7 +611,7 @@ const useSignup = () => {
           ...data,
           ...finalData,
         };
-        setCheckoutData(result);
+        setCheckingData(result);
         return result;
       }
       return response;
@@ -672,7 +670,7 @@ const useSignup = () => {
     try {
       if (isAuthenticated) {
         setLoader('paymentMethods', false);
-        // const ownerId = selectedPlanCheckoutData.owner.id;
+        // const ownerId = selectedPlan.owner.id;
         setLoader('paymentMethods', true);
         const resp = await bc.payment({
           academy_id: ownerId,
@@ -691,55 +689,55 @@ const useSignup = () => {
   };
 
   const getPaymentText = () => {
-    const planIsNotTrial = selectedPlanCheckoutData?.type !== 'TRIAL';
-    const period = selectedPlanCheckoutData?.period;
+    const planIsNotTrial = selectedPlan?.type !== 'TRIAL';
+    const period = selectedPlan?.period;
     if (planIsNotTrial) {
       if (period === 'FINANCING') {
-        const totalAmount = selectedPlanCheckoutData?.price * selectedPlanCheckoutData?.how_many_months;
+        const totalAmount = selectedPlan?.price * selectedPlan?.how_many_months;
         return t('info.will-pay-month', {
-          price: selectedPlanCheckoutData?.price,
-          qty_months: selectedPlanCheckoutData?.how_many_months,
+          price: selectedPlan?.price,
+          qty_months: selectedPlan?.how_many_months,
           total_amount: Math.round(totalAmount * 100) / 100,
         });
       }
       if (
-        selectedPlanCheckoutData?.financing_options?.length > 0
-        && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
-        && selectedPlanCheckoutData?.financing_options[0]?.how_many_months === 1
+        selectedPlan?.financing_options?.length > 0
+        && selectedPlan?.financing_options[0]?.monthly_price > 0
+        && selectedPlan?.financing_options[0]?.how_many_months === 1
       ) {
-        const totalAmount = selectedPlanCheckoutData?.financing_options[0]?.monthly_price * selectedPlanCheckoutData?.financing_options[0]?.how_many_months;
+        const totalAmount = selectedPlan?.financing_options[0]?.monthly_price * selectedPlan?.financing_options[0]?.how_many_months;
         return t('info.will-pay-month', {
-          price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price,
-          qty_months: selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
+          price: selectedPlan?.financing_options[0]?.monthly_price,
+          qty_months: selectedPlan?.financing_options[0]?.how_many_months,
           total_amount: Math.round(totalAmount * 100) / 100,
         });
       }
       if (
-        selectedPlanCheckoutData?.financing_options?.length > 0
-        && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
-        && selectedPlanCheckoutData?.financing_options[0]?.how_many_months > 0
+        selectedPlan?.financing_options?.length > 0
+        && selectedPlan?.financing_options[0]?.monthly_price > 0
+        && selectedPlan?.financing_options[0]?.how_many_months > 0
       ) {
-        const totalAmount = selectedPlanCheckoutData?.financing_options[0]?.monthly_price * selectedPlanCheckoutData?.financing_options[0]?.how_many_months;
+        const totalAmount = selectedPlan?.financing_options[0]?.monthly_price * selectedPlan?.financing_options[0]?.how_many_months;
         return t('info.will-pay-monthly', {
-          price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price,
-          qty_months: selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
+          price: selectedPlan?.financing_options[0]?.monthly_price,
+          qty_months: selectedPlan?.financing_options[0]?.how_many_months,
           total_amount: Math.round(totalAmount * 100) / 100,
           next_month: nextMonthText,
         });
       }
 
       if (
-        selectedPlanCheckoutData?.financing_options?.length > 0
-        && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
-        && selectedPlanCheckoutData?.financing_options[0]?.how_many_months === 0
-      ) return t('info.will-pay-now', { price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price });
+        selectedPlan?.financing_options?.length > 0
+        && selectedPlan?.financing_options[0]?.monthly_price > 0
+        && selectedPlan?.financing_options[0]?.how_many_months === 0
+      ) return t('info.will-pay-now', { price: selectedPlan?.financing_options[0]?.monthly_price });
 
       const periodPayments = {
-        MONTH: t('info.will-pay-per-month', { price: selectedPlanCheckoutData?.price }),
-        QUARTER: t('info.will-pay-per-quarter', { price: selectedPlanCheckoutData?.price }),
-        HALF: t('info.will-pay-per-half-year', { price: selectedPlanCheckoutData?.price }),
-        YEAR: t('info.will-pay-per-year', { price: selectedPlanCheckoutData?.price }),
-        ONE_TIME: t('info.one-time-connector', { value: selectedPlanCheckoutData?.price }),
+        MONTH: t('info.will-pay-per-month', { price: selectedPlan?.price }),
+        QUARTER: t('info.will-pay-per-quarter', { price: selectedPlan?.price }),
+        HALF: t('info.will-pay-per-half-year', { price: selectedPlan?.price }),
+        YEAR: t('info.will-pay-per-year', { price: selectedPlan?.price }),
+        ONE_TIME: t('info.one-time-connector', { value: selectedPlan?.price }),
       };
 
       if (periodPayments[period]) {
@@ -816,7 +814,7 @@ const useSignup = () => {
 
       onSubscribedToPlan(data);
 
-      const respData = await getChecking({ plan: data });
+      const respData = await getChecking(data);
 
       const respPayment = await handlePayment({
         ...respData,
@@ -837,14 +835,14 @@ const useSignup = () => {
     }
   };
 
-  const subscribeFreePlan = async (checkingData) => {
-    if (!isPaymentIdle || isSubmittingPayment || !selectedPlanCheckoutData?.plan_id) return;
+  const subscribeFreePlan = async (checking) => {
+    if (!isPaymentIdle || isSubmittingPayment || !selectedPlan?.plan_id) return;
     setIsSubmittingPayment(true);
 
     try {
       const respPayment = await handlePayment({
-        ...checkingData,
-        installments: selectedPlanCheckoutData?.how_many_months,
+        ...checking,
+        installments: selectedPlan?.how_many_months,
       }, true);
 
       if (respPayment?.status_code >= 400) {

@@ -40,7 +40,7 @@ function CardForm({ onSubmit, modalCardErrorProps, buttonText }) {
   const {
     state, setPaymentInfo,
   } = signupAction();
-  const { paymentInfo, checkoutData, selectedPlanCheckoutData, isSubmittingCard, isSubmittingPayment } = state;
+  const { paymentInfo, checkingData, selectedPlan, isSubmittingCard, isSubmittingPayment } = state;
   const [stateCard, setStateCard] = useState({
     card_number: paymentInfo?.card_number || 0,
     exp_month: 0,
@@ -48,20 +48,20 @@ function CardForm({ onSubmit, modalCardErrorProps, buttonText }) {
     cvc: 0,
   });
 
-  const isNotTrial = selectedPlanCheckoutData?.type !== 'TRIAL';
+  const isNotTrial = selectedPlan?.type !== 'TRIAL';
 
   const getPrice = (planProp) => {
     if (isNotTrial) {
       if (planProp?.financing_options?.length > 0 && planProp?.financing_options[0]?.monthly_price > 0) return planProp?.financing_options[0]?.monthly_price;
-      if (checkoutData?.amount_per_half > 0) return checkoutData?.amount_per_half;
-      if (checkoutData?.amount_per_month > 0) return checkoutData?.amount_per_month;
-      if (checkoutData?.amount_per_quarter > 0) return checkoutData?.amount_per_quarter;
-      if (checkoutData?.amount_per_year > 0) return checkoutData?.amount_per_year;
+      if (checkingData?.amount_per_half > 0) return checkingData?.amount_per_half;
+      if (checkingData?.amount_per_month > 0) return checkingData?.amount_per_month;
+      if (checkingData?.amount_per_quarter > 0) return checkingData?.amount_per_quarter;
+      if (checkingData?.amount_per_year > 0) return checkingData?.amount_per_year;
     }
     return t('free-trial');
   };
 
-  const priceIsNotNumber = Number.isNaN(Number(getPrice(selectedPlanCheckoutData)));
+  const priceIsNotNumber = Number.isNaN(Number(getPrice(selectedPlan)));
 
   const { backgroundColor, hexColor, backgroundColor3 } = useStyle();
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');

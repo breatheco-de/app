@@ -19,7 +19,7 @@ function ShowOnSignUp({
   onLastAttempt, maxAttemptsToRefetch, showVerifyEmail, onSubmit, ...rest
 }) {
   const { isAuthenticated, user, logout } = useAuth();
-  const { handleSubscribeToPlan, setSelectedPlanCheckoutData } = useSignup();
+  const { handleSubscribeToPlan, setSelectedPlan } = useSignup();
   const { backgroundColor, featuredColor, hexColor } = useStyle();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const [alreadyLogged, setAlreadyLogged] = useState(false);
@@ -131,7 +131,7 @@ function ShowOnSignUp({
                       setIsReadyToRefetch(true);
                       setAlreadyLogged(true);
                       refetchAfterSuccess();
-                      setSelectedPlanCheckoutData({
+                      setSelectedPlan({
                         plan_slug: defaultPlan,
                         price: respData.data?.price || 0,
                         period_label: respData.data?.period_label || 'one-time',

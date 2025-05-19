@@ -29,8 +29,7 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
   } = signupAction();
   const { handlePayment, getPaymentMethods } = useSignup();
   const {
-    selectedPlanCheckoutData,
-    planData,
+    selectedPlan,
     paymentMethods,
     loader,
     isSubmittingCard,
@@ -43,7 +42,7 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
   const { fontColor, hexColor } = useStyle();
 
   useEffect(() => {
-    if (selectedPlanCheckoutData?.owner?.id) getPaymentMethods(selectedPlanCheckoutData.owner.id);
+    if (selectedPlan?.owner?.id) getPaymentMethods(selectedPlan.owner.id);
   }, [isAuthenticated]);
 
   const handlePaymentErrors = (data, actions = {}, callback = () => { }) => {
@@ -85,7 +84,7 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
   };
 
   const handleSubmit = async (actions, values) => {
-    const resp = await bc.payment().addCard({ ...values, academy: selectedPlanCheckoutData.owner.id });
+    const resp = await bc.payment().addCard({ ...values, academy: selectedPlan.owner.id });
     const { data } = resp;
     setIsSubmittingCard(false);
 
@@ -104,16 +103,16 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
       } finally {
         actions.setSubmitting(false);
       }
-      const currency = planData?.currency?.code;
+      const currency = selectedPlan?.currency?.code;
       reportDatalayer({
         dataLayer: {
           event: 'add_payment_info',
           path: '/checkout',
-          value: selectedPlanCheckoutData?.price,
+          value: selectedPlan?.price,
           currency,
           payment_type: 'Credit card',
-          plan: selectedPlanCheckoutData?.plan_slug,
-          period_label: selectedPlanCheckoutData?.period_label,
+          plan: selectedPlan?.plan_slug,
+          period_label: selectedPlan?.period_label,
           agent: getBrowserInfo(),
         },
       });

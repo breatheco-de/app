@@ -1,20 +1,20 @@
 import {
-  HANDLE_STEP, SET_CHECKOUT_DATA,
-  SET_PAYMENT_INFO, SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA,
+  HANDLE_STEP, SET_CHECKING_DATA,
+  SET_PAYMENT_INFO, SET_PLAN_DATA, SET_LOADER, SET_SELECTED_PLAN,
   TOGGLE_IF_ENROLLED, SET_SERVICE, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
   SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON, SET_SIGNUP_INITIAL_STATE, SET_DECLINED_PAYMENT,
 } from '../types';
 
 const initialState = {
   stepIndex: 1,
-  checkoutData: null,
+  checkingData: null,
   paymentInfo: {
     card_number: '',
     exp: '',
     cvc: '',
   },
   planData: null,
-  selectedPlanCheckoutData: null,
+  selectedPlan: null,
   loader: {
     plan: true,
   },
@@ -55,11 +55,11 @@ const signupReducer = (state = initialState, action) => {
       };
     }
 
-    // checkoutData
-    case SET_CHECKOUT_DATA: {
+    // checkingData
+    case SET_CHECKING_DATA: {
       return {
         ...state,
-        checkoutData: action.payload,
+        checkingData: action.payload,
       };
     }
 
@@ -69,10 +69,10 @@ const signupReducer = (state = initialState, action) => {
         planData: action.payload,
       };
     }
-    case SET_PLAN_CHECKOUT_DATA: {
+    case SET_SELECTED_PLAN: {
       return {
         ...state,
-        selectedPlanCheckoutData: action.payload,
+        selectedPlan: action.payload,
       };
     }
     case SET_SERVICE: {

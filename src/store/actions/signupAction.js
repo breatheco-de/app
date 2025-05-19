@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  HANDLE_STEP, SET_CHECKOUT_DATA, SET_PAYMENT_INFO,
-  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, TOGGLE_IF_ENROLLED,
+  HANDLE_STEP, SET_CHECKING_DATA, SET_PAYMENT_INFO,
+  SET_PLAN_DATA, SET_LOADER, SET_SELECTED_PLAN, TOGGLE_IF_ENROLLED,
   SET_SERVICE, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
   SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON, SET_SIGNUP_INITIAL_STATE,
   SET_DECLINED_PAYMENT,
@@ -16,8 +16,8 @@ const signupAction = () => {
     payload: step,
   });
 
-  const setCheckoutData = (payload) => dispatch({
-    type: SET_CHECKOUT_DATA,
+  const setCheckingData = (payload) => dispatch({
+    type: SET_CHECKING_DATA,
     payload,
   });
 
@@ -35,8 +35,8 @@ const signupAction = () => {
     type: SET_PLAN_DATA,
     payload,
   });
-  const setSelectedPlanCheckoutData = (payload) => dispatch({
-    type: SET_PLAN_CHECKOUT_DATA,
+  const setSelectedPlan = (payload) => dispatch({
+    type: SET_SELECTED_PLAN,
     payload,
   });
 
@@ -88,7 +88,7 @@ const signupAction = () => {
     toggleIfEnrolled,
     setLoader,
     handleStep,
-    setCheckoutData,
+    setCheckingData,
     setPaymentMethods,
     setPaymentStatus,
     setIsSubmittingCard,
@@ -96,7 +96,7 @@ const signupAction = () => {
     setPaymentInfo,
     setSelfAppliedCoupon,
     setPlanData,
-    setSelectedPlanCheckoutData,
+    setSelectedPlan,
     setSelectedService,
     restartSignup,
     setService,

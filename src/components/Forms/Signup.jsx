@@ -12,6 +12,7 @@ import { useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import NextChakraLink from '../NextChakraLink';
+import signupAction from '../../store/actions/signupAction';
 import FieldForm from './FieldForm';
 import { email as emailRe, phone as phoneRe } from '../../utils/regex';
 import useEmailValidation from './useEmailValidation';
@@ -60,6 +61,8 @@ function SignupForm({
   const redirectStorageAlreadyExists = typeof redirectStorage === 'string' && redirectStorage.length > 0;
   const { createToast } = useCustomToast({ toastId: 'signup-error-warning-email' });
   const router = useRouter();
+  const { state } = signupAction();
+  const { planData } = state;
 
   const { syllabus } = router.query;
 
@@ -106,10 +109,10 @@ function SignupForm({
         ...subscribeValues,
         conversion_info: userSession,
       });
-      const data = resp?.data;
+      const { data } = resp;
       if (data.silent_code === SILENT_CODE.USER_EXISTS) {
         setShowAlreadyMember(true);
-      } else if (resp?.status >= 400 && data.silent_code !== SILENT_CODE.USER_EXISTS) {
+      } else if (resp.status >= 400) {
         createToast({
           position: 'top',
           title: data?.detail,
@@ -141,10 +144,14 @@ function SignupForm({
       }
       setStorageItem('subscriptionId', data?.id);
 
-      const respPlan = await bc.payment().getPlan(planFormated);
-      const dataOfPlan = respPlan?.data;
-      if (resp.status < 400 && typeof data?.id === 'number') {
-        if (dataOfPlan?.has_waiting_list === true || data?.status === 'WAITING_LIST') {
+      let dataOfPlan = planData;
+
+      if (!dataOfPlan) {
+        const respPlan = await bc.payment({ country_code: location?.countryShort }).getPlan(planFormated);
+        dataOfPlan = respPlan?.data;
+      }
+      if (typeof data?.id === 'number') {
+        if (dataOfPlan?.has_waiting_list || data?.status === 'WAITING_LIST') {
           setStorageItem('subscriptionId', data.id);
           router.push('/thank-you');
         }
