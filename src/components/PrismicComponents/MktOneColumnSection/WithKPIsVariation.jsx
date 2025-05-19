@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, VStack, Divider, Flex, Text } from '@chakra-ui/react';
-import PrismicTextComponent from '../PrismicTextComponent';
-import Link from '../NextChakraLink';
-import Heading from '../Heading';
-import useStyle from '../../hooks/useStyle';
-import { parseProp } from '../../utils';
+import PrismicTextComponent from '../../PrismicTextComponent';
+import Link from '../../NextChakraLink';
+import Heading from '../../Heading';
+import useStyle from '../../../hooks/useStyle';
+import { parseProp } from '../../../utils';
 
 function MktKPI({ kpiTitle, kpiDescription, color }) {
   const { fontColor, hexColor, backgroundColor } = useStyle();

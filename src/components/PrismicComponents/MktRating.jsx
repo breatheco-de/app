@@ -5,7 +5,7 @@ import {
   Heading as ChakraHeading,
 } from '@chakra-ui/react';
 import { PrismicRichText } from '@prismicio/react';
-import Rating from './Rating';
+import Rating from '../Rating';
 
 function RichTextTitleH2({ children }) {
   return (

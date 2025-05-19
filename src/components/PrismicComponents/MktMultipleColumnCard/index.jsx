@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Heading } from '@chakra-ui/react';
-import useStyle from '../../hooks/useStyle';
-import { parseProp } from '../../utils';
+import useStyle from '../../../hooks/useStyle';
+import { parseProp } from '../../../utils';
 
 import DefaultVariation from './DefaultVariation';
 import StatsCardVariation from './StatsCardVariation';

@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import {
   Container, Box, useColorModeValue,
 } from '@chakra-ui/react';
-import Text from './Text';
-import CustomTheme from '../../styles/theme';
+import Text from '../Text';
+import CustomTheme from '../../../styles/theme';
 
 function MktTechnologiesPills({ id, technologies, background, ...rest }) {
   const ref = useRef();
