@@ -166,7 +166,7 @@ function ServiceSummary({ service }) {
         },
       });
     }
-    const resp = await bc.payment().addCard(values);
+    const resp = await bc.payment().addCard({ ...values, academy: service.academy.id });
     const data = await resp.json();
     setIsSubmittingCard(false);
     if (resp.ok) {
