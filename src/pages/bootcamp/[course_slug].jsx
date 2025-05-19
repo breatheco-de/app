@@ -299,7 +299,7 @@ function CoursePage() {
         const assetTypeCount = { lesson: 0, project: 0, quiz: 0, exercise: 0 };
         const projects = [];
         const exercises = [];
-        const featuredAssetSlugs = data?.course_translation?.featured_assets?.split(',') || [];
+        const featuredAssetSlugs = courseData?.course_translation?.featured_assets?.split(',') || [];
         const language = lang === 'en' ? 'us' : lang;
 
         cohortSyllabus?.syllabus?.modules?.forEach((module) => {
@@ -348,7 +348,8 @@ function CoursePage() {
         return { count: {}, assignmentList: [] };
       }
     };
-    const formatedPlanData = await fetchSuggestedPlan(data?.plan_slug, translationsObj, 'mkt_plans', country_code).then((finalData) => finalData);
+
+    const formatedPlanData = await fetchSuggestedPlan(courseData?.plan_slug, translationsObj, 'mkt_plans', country_code).then((finalData) => finalData);
 
     const modulesInfo = await getModulesInfo();
 
@@ -364,7 +365,7 @@ function CoursePage() {
 
     const instructorsList = await bc.cohort({
       roles: 'TEACHER,ASSISTANT',
-      cohort_id: cohortId,
+      cohort_id: courseData?.cohort?.id,
     }).getPublicMembers()
       .then((respMembers) => respMembers.data);
     const uniqueInstructors = instructorsList?.length > 0 ? instructorsList?.filter((instructor, index, self) => self.findIndex((l) => (
