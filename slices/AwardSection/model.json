@@ -20,12 +20,75 @@
             "allowTargetBlank": true,
             "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
           }
+        },
+        "mobile_carousel_variant": {
+          "type": "Select",
+          "config": {
+            "label": "Mobile Carousel Variant",
+            "placeholder": "",
+            "options": ["default", "stretch"],
+            "default_value": "default"
+          }
         }
       },
       "items": {
         "image": {
           "type": "Image",
           "config": { "label": "Image", "constraint": {}, "thumbnails": [] }
+        }
+      }
+    },
+    {
+      "id": "withTextAndLink",
+      "name": "With Text And Link",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Title",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "mobile_carousel_variant": {
+          "type": "Select",
+          "config": {
+            "label": "Mobile Carousel Variant",
+            "placeholder": "",
+            "options": ["default", "stretch"],
+            "default_value": "default"
+          }
+        }
+      },
+      "items": {
+        "image": {
+          "type": "Image",
+          "config": { "label": "Image", "constraint": {}, "thumbnails": [] }
+        },
+        "text": {
+          "type": "Text",
+          "config": { "label": "Text", "placeholder": "" }
+        },
+        "link": {
+          "type": "Link",
+          "config": { "label": "Link", "placeholder": "", "select": null }
+        },
+        "link_label": {
+          "type": "Text",
+          "config": { "label": "Link Label", "placeholder": "" }
+        },
+        "image_max_height": {
+          "type": "Text",
+          "config": { "label": "Image max height", "placeholder": "" }
+        },
+        "image_max_width": {
+          "type": "Text",
+          "config": { "label": "Image max width", "placeholder": "" }
         }
       }
     }

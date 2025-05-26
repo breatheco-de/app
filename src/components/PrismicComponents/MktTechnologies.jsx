@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Box, Img } from '@chakra-ui/react';
 import axios from 'axios';
-import GridContainer from './GridContainer';
-import DraggableContainer from './DraggableContainer';
+import GridContainer from '../GridContainer';
+import DraggableContainer from '../DraggableContainer';
 // import modifyEnv from '../../../modifyEnv';
-import { BREATHECODE_HOST } from '../utils/variables';
-import { log } from '../utils/logging';
+import { BREATHECODE_HOST } from '../../utils/variables';
+import { log } from '../../utils/logging';
 
 const defaultEndpoint = `${BREATHECODE_HOST}/v1/registry/technology?sort_priority=1`;
 

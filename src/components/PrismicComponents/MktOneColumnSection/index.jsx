@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import {
   Box,
 } from '@chakra-ui/react';
-import GridContainer from '../GridContainer';
-import { parseProp } from '../../utils';
+import GridContainer from '../../GridContainer';
+import { parseProp } from '../../../utils';
 
 import BannerVariation from './BannerVariation';
 import WithKPIsVariation from './WithKPIsVariation';

@@ -6,14 +6,14 @@ import {
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import Heading from './Heading';
-import Text from './Text';
-import DraggableContainer from './DraggableContainer';
-import useStyle from '../hooks/useStyle';
-import StarRating from './StarRating';
-import { lengthOfString } from '../utils';
-import axios from '../axios';
-import { BREATHECODE_HOST } from '../utils/variables';
+import Heading from '../Heading';
+import Text from '../Text';
+import DraggableContainer from '../DraggableContainer';
+import useStyle from '../../hooks/useStyle';
+import StarRating from '../StarRating';
+import { lengthOfString } from '../../utils';
+import axios from '../../axios';
+import { BREATHECODE_HOST } from '../../utils/variables';
 
 function TestimonialBox({ picture, name, rating, description, version }) {
   const { fontColor2, backgroundColor, backgroundColor2, backgroundColor5, hexColor } = useStyle();

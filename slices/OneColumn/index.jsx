@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 // import { SliderFilledTrack } from '@chakra-ui/react';
-import MktOneColumnSection from '../../src/components/MktOneColumnSection';
+import MktOneColumnSection from '../../src/components/PrismicComponents/MktOneColumnSection';
 
 /**
  * @typedef {import("@prismicio/client").Content.OneColumnSlice} OneColumnSlice
