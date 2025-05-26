@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Flex, Image, Grid } from '@chakra-ui/react';
-import PrismicTextComponent from './PrismicTextComponent';
+import PrismicTextComponent from '../PrismicTextComponent';
 
 function MktSplitShowcaseSection({ title, description, images }) {
   return (

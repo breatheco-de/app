@@ -7,11 +7,11 @@ import {
 } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
-import Heading from './Heading';
-import Text from './Text';
-import Link from './NextChakraLink';
-import useStyle from '../hooks/useStyle';
-import PrismicTextComponent from './PrismicTextComponent';
+import Heading from '../Heading';
+import Text from '../Text';
+import Link from '../NextChakraLink';
+import useStyle from '../../hooks/useStyle';
+import PrismicTextComponent from '../PrismicTextComponent';
 
 function Card({ card, ...rest }) {
   const { t } = useTranslation('common');

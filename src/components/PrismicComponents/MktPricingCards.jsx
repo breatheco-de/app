@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Flex, Text } from '@chakra-ui/react';
-import PricingCard from './PricingCard';
+import PricingCard from '../PricingCard';
 
 function MktPricingCards({ margin, maxWidth, url, id, title }) {
   const [plans, setPlans] = useState([]);

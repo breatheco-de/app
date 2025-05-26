@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import {
   Box, Flex, Img, useColorModeValue, Image,
 } from '@chakra-ui/react';
-import Heading from './Heading';
-import Text from './Text';
-import Link from './NextChakraLink';
-import useStyle from '../hooks/useStyle';
-import PrismicTextComponent from './PrismicTextComponent';
-import ReactPlayerV2 from './ReactPlayerV2';
-import { parseProp } from '../utils';
+import Heading from '../Heading';
+import Text from '../Text';
+import Link from '../NextChakraLink';
+import useStyle from '../../hooks/useStyle';
+import PrismicTextComponent from '../PrismicTextComponent';
+import ReactPlayerV2 from '../ReactPlayerV2';
+import { parseProp } from '../../utils';
 
 const SIZES = {
   SMALL: 'Small',

@@ -4,7 +4,7 @@
  * @param {RatingsProps}
  */
 import PropTypes from 'prop-types';
-import MktRating from '../../src/components/MktRating';
+import MktRating from '../../src/components/PrismicComponents/MktRating';
 
 function Ratings({ slice }) {
   return <MktRating slice={slice} />;
