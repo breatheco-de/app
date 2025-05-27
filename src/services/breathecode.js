@@ -387,6 +387,7 @@ const breathecode = {
       getEventTypeSet: (eventTypeSetId) => axios.get(`${url}/eventtypeset/${eventTypeSetId}`),
       events: () => axios.get(`${host}/events/me?online_event=true${parseQuerys(query, true)}`),
       getBlockedServices: () => axios.get(`${url}/me/service/blocked${qs}`),
+      getMyCoupon: () => axios.get(`${url}/me/coupon${qs}`),
     };
   },
   events: (query = {}) => {
