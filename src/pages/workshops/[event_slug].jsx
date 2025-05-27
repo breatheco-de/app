@@ -976,7 +976,7 @@ function Workshop({ eventData, asset }) {
                         <Text textAlign="center">{t('form.joined-description-in-person')}</Text>
                       </>
                     )}
-                    {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
+                    {(isFreeForConsumables || existsConsumables) ? (
                       <Box display="flex" gap="10px">
                         <Button
                           fontSize="17px"
@@ -984,7 +984,7 @@ function Workshop({ eventData, asset }) {
                           background="white"
                           width="100%"
                           display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
-                          isDisabled={((finishedEvent && !recordingUrl) || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
+                          isDisabled={!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                           _disabled={{
                             background: buttonEnabled ? '' : 'gray.350',
                             cursor: buttonEnabled ? 'pointer' : 'not-allowed',
@@ -998,10 +998,11 @@ function Workshop({ eventData, asset }) {
                             cursor: buttonEnabled ? 'pointer' : 'not-allowed',
                           }}
                           onClick={() => {
-                            if (finishedEvent && recordingUrl) {
-                              setIsVideoModalOpen(true);
-                            } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
-                            else handleJoin();
+                            if (!event?.online_event && isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
+                              setIsModalConfirmOpen(true);
+                            } else {
+                              handleJoin();
+                            }
                           }}
                         >
                           {getWording()}
@@ -1041,13 +1042,33 @@ function Workshop({ eventData, asset }) {
                   </>
                 ) : (
                   <>
-                    <Box marginBottom="10px" padding="5px" textAlign="center">
+                    <Box textAlign="center">
                       <Heading size="sm">
                         {formInfo?.title}
                       </Heading>
                       <Text>
                         {eventRecap || formInfo?.description}
                       </Text>
+                      <Button
+                        type="submit"
+                        variant="default"
+                        margin="0 auto"
+                        mt="10px"
+                        display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
+                        className={readyToJoinEvent && !finishedEvent ? 'pulse-blue' : ''}
+                        background={buttonEnabled ? 'white' : 'gray.350'}
+                        color={buttonEnabled ? hexColor.greenLight : 'white'}
+                        textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
+                        isDisabled={((finishedEvent && !recordingUrl) || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
+                        onClick={() => {
+                          if (finishedEvent && recordingUrl) {
+                            setIsVideoModalOpen(true);
+                          } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
+                          else handleJoin();
+                        }}
+                      >
+                        {getWording()}
+                      </Button>
                     </Box>
                   </>
                 )}
