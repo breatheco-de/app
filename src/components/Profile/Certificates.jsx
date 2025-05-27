@@ -24,7 +24,7 @@ function Certificates({ certificates }) {
       <Text fontSize="15px" fontWeight="700" pb="6px">
         {t('my-certificates')}
       </Text>
-      {certificates && certificates?.map((l, i) => {
+      {certificates && Array.isArray(certificates) && certificates?.map((l, i) => {
         const index = `${i} - ${l.created_at} - ${l.specialty.name}`;
         const createdAt = l.created_at;
         const dateCreated = {
@@ -62,7 +62,7 @@ function Certificates({ certificates }) {
           </Box>
         );
       })}
-      {certificates.length === 0 && (
+      {(!certificates || !Array.isArray(certificates) || certificates.length === 0) && (
       <Text fontSize="15px" fontWeight="400" pb="6px">
         {t('no-certificates')}
       </Text>
