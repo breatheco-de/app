@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import MktTechnologiesPills from '../../src/components/MktTechnologiesPills';
+import MktTechnologiesPills from '../../src/components/PrismicComponents/MktTechnologiesPills';
 
 /**
  * @typedef {import("@prismicio/client").Content.TechnologiesPillsSlice} TechnologiesPillsSlice

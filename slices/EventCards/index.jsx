@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import MktEventCards from '../../src/components/MktEventCards';
+import MktEventCards from '../../src/components/PrismicComponents/MktEventCards';
 
 /**
  * @typedef {import("@prismicio/client").Content.EventCardsSlice} EventCardsSlice

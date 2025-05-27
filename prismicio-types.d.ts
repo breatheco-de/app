@@ -6,6 +6,7 @@ import type * as prismicClient from "@prismicio/client";
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
 type PageDocumentDataSlicesSlice =
+  | LearningPlatformSectionSlice
   | RatingsSlice
   | AwardSectionSlice
   | TwoColumnWithTextSlice
@@ -171,6 +172,17 @@ export interface AwardSectionSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#rich-text-title
    */
   title: prismic.RichTextField;
+
+  /**
+   * Mobile Carousel Variant field in *AwardSection → Default → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: default
+   * - **API ID Path**: award_section.default.primary.mobile_carousel_variant
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  mobile_carousel_variant: prismic.SelectField<"default" | "stretch", "filled">;
 }
 
 /**
@@ -202,9 +214,115 @@ export type AwardSectionSliceDefault = prismic.SharedSliceVariation<
 >;
 
 /**
+ * Primary content in *AwardSection → With Text And Link → Primary*
+ */
+export interface AwardSectionSliceWithTextAndLinkPrimary {
+  /**
+   * Title field in *AwardSection → With Text And Link → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: award_section.withTextAndLink.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  title: prismic.RichTextField;
+
+  /**
+   * Mobile Carousel Variant field in *AwardSection → With Text And Link → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: default
+   * - **API ID Path**: award_section.withTextAndLink.primary.mobile_carousel_variant
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  mobile_carousel_variant: prismic.SelectField<"default" | "stretch", "filled">;
+}
+
+/**
+ * Primary content in *AwardSection → Items*
+ */
+export interface AwardSectionSliceWithTextAndLinkItem {
+  /**
+   * Image field in *AwardSection → Items*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: award_section.items[].image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  image: prismic.ImageField<never>;
+
+  /**
+   * Text field in *AwardSection → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: award_section.items[].text
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  text: prismic.KeyTextField;
+
+  /**
+   * Link field in *AwardSection → Items*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: award_section.items[].link
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  link: prismic.LinkField<string, string, unknown, prismic.FieldState, never>;
+
+  /**
+   * Link Label field in *AwardSection → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: award_section.items[].link_label
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  link_label: prismic.KeyTextField;
+
+  /**
+   * Image max height field in *AwardSection → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: award_section.items[].image_max_height
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  image_max_height: prismic.KeyTextField;
+
+  /**
+   * Image max width field in *AwardSection → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: award_section.items[].image_max_width
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  image_max_width: prismic.KeyTextField;
+}
+
+/**
+ * With Text And Link variation for AwardSection Slice
+ *
+ * - **API ID**: `withTextAndLink`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type AwardSectionSliceWithTextAndLink = prismic.SharedSliceVariation<
+  "withTextAndLink",
+  Simplify<AwardSectionSliceWithTextAndLinkPrimary>,
+  Simplify<AwardSectionSliceWithTextAndLinkItem>
+>;
+
+/**
  * Slice variation for *AwardSection*
  */
-type AwardSectionSliceVariation = AwardSectionSliceDefault;
+type AwardSectionSliceVariation =
+  | AwardSectionSliceDefault
+  | AwardSectionSliceWithTextAndLink;
 
 /**
  * AwardSection Shared Slice
@@ -795,6 +913,113 @@ type InfoCardsSliceVariation = InfoCardsSliceDefault;
 export type InfoCardsSlice = prismic.SharedSlice<
   "info_cards",
   InfoCardsSliceVariation
+>;
+
+/**
+ * Primary content in *LearningPlatformSection → Default → Primary*
+ */
+export interface LearningPlatformSectionSliceDefaultPrimary {
+  /**
+   * Title field in *LearningPlatformSection → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: learning_platform_section.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  title: prismic.RichTextField;
+
+  /**
+   * Description field in *LearningPlatformSection → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: learning_platform_section.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  description: prismic.RichTextField;
+
+  /**
+   * Button url field in *LearningPlatformSection → Default → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: learning_platform_section.default.primary.button_url
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  button_url: prismic.LinkField<
+    string,
+    string,
+    unknown,
+    prismic.FieldState,
+    never
+  >;
+
+  /**
+   * Button Label field in *LearningPlatformSection → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: learning_platform_section.default.primary.button_label
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  button_label: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *LearningPlatformSection → Items*
+ */
+export interface LearningPlatformSectionSliceDefaultItem {
+  /**
+   * Image field in *LearningPlatformSection → Items*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: learning_platform_section.items[].image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  image: prismic.ImageField<never>;
+
+  /**
+   * Alt field in *LearningPlatformSection → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: learning_platform_section.items[].alt
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  alt: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for LearningPlatformSection Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type LearningPlatformSectionSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<LearningPlatformSectionSliceDefaultPrimary>,
+  Simplify<LearningPlatformSectionSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *LearningPlatformSection*
+ */
+type LearningPlatformSectionSliceVariation =
+  LearningPlatformSectionSliceDefault;
+
+/**
+ * LearningPlatformSection Shared Slice
+ *
+ * - **API ID**: `learning_platform_section`
+ * - **Description**: LearningPlatformSection
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type LearningPlatformSectionSlice = prismic.SharedSlice<
+  "learning_platform_section",
+  LearningPlatformSectionSliceVariation
 >;
 
 /**
@@ -4218,8 +4443,11 @@ declare module "@prismicio/client" {
       AwardSectionSlice,
       AwardSectionSliceDefaultPrimary,
       AwardSectionSliceDefaultItem,
+      AwardSectionSliceWithTextAndLinkPrimary,
+      AwardSectionSliceWithTextAndLinkItem,
       AwardSectionSliceVariation,
       AwardSectionSliceDefault,
+      AwardSectionSliceWithTextAndLink,
       EventCardsSlice,
       EventCardsSliceDefaultPrimary,
       EventCardsSliceVariation,
@@ -4233,6 +4461,11 @@ declare module "@prismicio/client" {
       InfoCardsSliceDefaultPrimary,
       InfoCardsSliceVariation,
       InfoCardsSliceDefault,
+      LearningPlatformSectionSlice,
+      LearningPlatformSectionSliceDefaultPrimary,
+      LearningPlatformSectionSliceDefaultItem,
+      LearningPlatformSectionSliceVariation,
+      LearningPlatformSectionSliceDefault,
       MarkdownSlice,
       MarkdownSliceDefaultPrimary,
       MarkdownSliceVariation,

@@ -9,7 +9,7 @@ import Text from '../components/Text';
 import Faq from '../components/Faq';
 import PricingCard from '../components/PricingCard';
 import LoaderScreen from '../components/LoaderScreen';
-import MktTrustCards from '../components/MktTrustCards';
+import MktTrustCards from '../components/PrismicComponents/MktTrustCards';
 import DraggableContainer from '../components/DraggableContainer';
 import Icon from '../components/Icon';
 import { getQueryString, isWindow, slugToTitle } from '../utils';

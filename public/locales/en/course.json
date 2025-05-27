@@ -110,7 +110,7 @@
   },
   "build-connector": {
     "what-you-will": "Learn by building",
-    "description": "When learning to code at your own pace, having access to video tutorials, code examples, and continuous, real-time feedback is crucial to succeed. The tasks you'll tackle will closely resemble those encountered in a real-world tech position. Here's a glimpse of what you'll be working on:",
+    "description": "When learning at your own pace, having access to video tutorials, code examples, and continuous, real-time feedback is crucial to succeed. The tasks you'll tackle will closely resemble those encountered in a real-world tech position. Here's a glimpse of what you'll be working on:",
     "build": "real-life projects"
   },
   "why-learn-4geeks-connector": {
@@ -394,9 +394,9 @@
   },
   "job-section": {
     "image": "/static/images/happy-male-with-laptop.png",
-    "title": "Get prepared for a new career",
+    "title": "Get an exclusive 30% discount on Beyond the Resume",
     "subtitle": "Improve your CV, portfolio, GitHub profile, and social media profiles.",
-    "description": "Get access to exercises that simulate real-life interviews curated from the companies actively hiring. At no additional cost to you and without deducting anything from the salary of the job offer you get.",
+    "description": "Earn an exclusive discount on Beyond the Resume after completing the course, a program designed to help you with career topics, from optimizing your professional profile to excelling in interviews.",
     "button": "Join now!",
     "button-link": "#pricing"
   }

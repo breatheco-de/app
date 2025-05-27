@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import MktSplitShowcaseSection from '../../src/components/MktSplitShowcaseSection';
+import MktSplitShowcaseSection from '../../src/components/PrismicComponents/MktSplitShowcaseSection';
 
 /**
  * @typedef {import("@prismicio/client").Content.SplitShowcaseSectionSlice} SplitShowcaseSectionSlice

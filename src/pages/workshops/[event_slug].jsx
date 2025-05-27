@@ -26,7 +26,7 @@ import Link from '../../components/NextChakraLink';
 import { categoriesFor, BREATHECODE_HOST } from '../../utils/variables';
 import ComponentOnTime from '../../components/ComponentOnTime';
 import MarkDownParser from '../../components/MarkDownParser';
-import MktEventCards from '../../components/MktEventCards';
+import MktEventCards from '../../components/PrismicComponents/MktEventCards';
 import ModalToGetAccess, { stageType } from '../../components/ModalToGetAccess';
 import SmallCardsCarousel from '../../components/SmallCardsCarousel';
 import { SessionContext } from '../../context/SessionContext';

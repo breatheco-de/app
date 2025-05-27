@@ -1,8 +1,8 @@
 import styles from '../../styles/Home.module.css';
 import { isDevMode } from '../utils';
-import MktInfoCards from '../components/MktInfoCards';
-import MktTrustCards from '../components/MktTrustCards';
-import MktTestimonials from '../components/MktTestimonials';
+import MktInfoCards from '../components/PrismicComponents/MktInfoCards';
+import MktTrustCards from '../components/PrismicComponents/MktTrustCards';
+import MktTestimonials from '../components/PrismicComponents/MktTestimonials';
 
 export const getStaticProps = () => {
   if (!isDevMode) {

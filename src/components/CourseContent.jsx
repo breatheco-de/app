@@ -1,22 +1,20 @@
 import PropTypes from 'prop-types';
 import { Flex } from '@chakra-ui/react';
-import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import AcordionList from './AcordionList';
 
-function CourseContent({ data, ...rest }) {
+function CourseContent({ data, courseContentText, courseContentDescription, ...rest }) {
   const { hexColor } = useStyle();
-  const { t } = useTranslation('course');
 
   return (
     <Flex gridGap="12px" flexDirection="column">
       <Heading as="h2" size={{ base: '20px', md: '34px' }}>
-        {t('course-content-text')}
+        {courseContentText}
       </Heading>
       <Text size={{ base: '16px', md: '18px' }} color={hexColor.fontColor2}>
-        {t('course-content-description')}
+        {courseContentDescription}
       </Text>
 
       <AcordionList defaultIndex={0} list={data} {...rest} />
@@ -24,9 +22,13 @@ function CourseContent({ data, ...rest }) {
   );
 }
 CourseContent.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object])),
+  courseContentText: PropTypes.string,
+  courseContentDescription: PropTypes.string,
 };
 CourseContent.defaultProps = {
-  data: [],
+  data: {},
+  courseContentText: '',
+  courseContentDescription: '',
 };
 export default CourseContent;

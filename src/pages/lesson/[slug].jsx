@@ -12,15 +12,15 @@ import TagCapsule from '../../components/TagCapsule';
 import getMarkDownContent from '../../components/MarkDownParser/markdown';
 import { MDSkeleton } from '../../components/Skeleton';
 import GridContainer from '../../components/GridContainer';
-import MktRecommendedCourses from '../../components/MktRecommendedCourses';
-import MktSideRecommendations from '../../components/MktSideRecommendations';
+import MktRecommendedCourses from '../../components/PrismicComponents/MktRecommendedCourses';
+import MktSideRecommendations from '../../components/PrismicComponents/MktSideRecommendations';
 import IpynbHtmlParser from '../../components/IpynbHtmlParser';
 import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
 import Heading from '../../components/Heading';
 import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
 import RelatedContent from '../../components/RelatedContent';
-import MktEventCards from '../../components/MktEventCards';
+import MktEventCards from '../../components/PrismicComponents/MktEventCards';
 import AssetsBreadcrumbs from '../../components/AssetsBreadcrumbs';
 import { getMarkdownFromCache } from '../../utils/requests';
 

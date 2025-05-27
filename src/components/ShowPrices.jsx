@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Box, Button, Flex, Grid,
 } from '@chakra-ui/react';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
@@ -11,9 +11,8 @@ import Text from './Text';
 import useSignup from '../hooks/useSignup';
 import useStyle from '../hooks/useStyle';
 import Icon from './Icon';
-import MktTechnologies from './MktTechnologies';
+import MktTechnologies from './PrismicComponents/MktTechnologies';
 import { currenciesSymbols } from '../utils/variables';
-import { SessionContext } from '../context/SessionContext';
 
 function PlanButton({
   plan,
@@ -62,8 +61,6 @@ function ShowPrices({
   const router = useRouter();
   const { applyDiscountCouponsToPlans, state } = useSignup();
   const { selfAppliedCoupon } = state;
-  const { location } = useContext(SessionContext);
-  const isSpain = location?.country?.toLowerCase() === 'spain' || location?.country?.toLowerCase() === 'españa';
 
   const tiersTypes = {
     subscriptions: applyDiscountCouponsToPlans(list, selfAppliedCoupon) || data?.pricing.list || [],
@@ -91,14 +88,6 @@ function ShowPrices({
       return `${currencySymbol}${coupon.discount_value} OFF`;
     }
     return '';
-  };
-
-  const getSpanishPrice = (plan, priceType) => {
-    if (plan.period === 'MONTH' && priceType === 'price') return '99.99€';
-    if (plan.period === 'MONTH' && priceType === 'lastPrice') return '199.99€';
-    if (plan.period === 'YEAR' && priceType === 'price') return '749.99€';
-    if (plan.period === 'YEAR' && priceType === 'lastPrice') return '1499.99€';
-    return '749.99€';
   };
 
   const getPlanLabel = (plan) => {
@@ -310,7 +299,7 @@ function ShowPrices({
                   fontWeight="bold"
                   fontFamily="Space Grotesk Variable"
                 >
-                  {isSpain ? getSpanishPrice(selectedPlan, 'price') : selectedPlan.priceText}
+                  {selectedPlan.priceText}
 
                   {selectedPlan.period !== 'FINANCING' && selectedPlan.period !== 'ONE_TIME' && (
                     <Text as="span" style={{ fontSize: '12px', fontWeight: 'normal' }}>
@@ -321,7 +310,7 @@ function ShowPrices({
                 </Text>
                 <Flex gap="10px" alignItems="center" direction="column">
                   <Text as="span" fontSize="md" color="#01455E" textDecoration="line-through">
-                    {isSpain ? getSpanishPrice(selectedPlan, 'lastPrice') : selectedPlan.lastPrice}
+                    {selectedPlan.lastPrice}
                   </Text>
                   {selfAppliedCoupon && (
                     <Text as="span" fontSize="xs" color="#01455E">
