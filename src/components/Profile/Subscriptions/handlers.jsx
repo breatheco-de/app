@@ -183,7 +183,7 @@ function profileHandlers() {
             const onePaymentFinancing = financingOptionsOnePaymentExists ? financingOptionsOnePayment.map((item) => ({
               title: t('subscription.upgrade-modal.one_payment'),
               price: item?.monthly_price,
-              priceText: `$${item?.monthly_price}`,
+              priceText: `$${Number(item?.monthly_price) % 1 === 0 ? Number(item?.monthly_price).toFixed(0) : Number(item?.monthly_price).toFixed(2)}`,
               period: 'FINANCING',
               description: t('subscription.upgrade-modal.full_access'),
               plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
@@ -210,7 +210,7 @@ function profileHandlers() {
             const monthPlan = !financingOptionsOnePaymentExists && existsAmountPerMonth ? [{
               title: t('subscription.upgrade-modal.monthly_payment'),
               price: planData?.price_per_month,
-              priceText: `$${planData?.price_per_month}`,
+              priceText: `$${Number(planData?.price_per_month) % 1 === 0 ? Number(planData?.price_per_month).toFixed(0) : Number(planData?.price_per_month).toFixed(2)}`,
               period: 'MONTH',
               description: t('subscription.upgrade-modal.full_access'),
               plan_id: `p-${planData?.price_per_month}`,
@@ -222,7 +222,7 @@ function profileHandlers() {
             const yearPlan = existsAmountPerYear ? {
               title: t('subscription.upgrade-modal.yearly_payment'),
               price: planData?.price_per_year,
-              priceText: `$${planData?.price_per_year}`,
+              priceText: `$${Number(planData?.price_per_year) % 1 === 0 ? Number(planData?.price_per_year).toFixed(0) : Number(planData?.price_per_year).toFixed(2)}`,
               period: 'YEAR',
               description: t('subscription.upgrade-modal.full_access'),
               plan_id: `p-${planData?.price_per_year}`,
@@ -234,7 +234,7 @@ function profileHandlers() {
             const financingOption = financingOptionsManyMonthsExists ? financingOptionsManyMonths.map((item) => ({
               title: t('subscription.upgrade-modal.many_months_payment', { qty: item?.how_many_months }),
               price: item?.monthly_price,
-              priceText: `$${item?.monthly_price} x ${item?.how_many_months}`,
+              priceText: `$${Number(item?.monthly_price) % 1 === 0 ? Number(item?.monthly_price).toFixed(0) : Number(item?.monthly_price).toFixed(2)} x ${item?.how_many_months}`,
               period: 'FINANCING',
               description: t('subscription.upgrade-modal.many_months_description', { monthly_price: item?.monthly_price, many_months: item?.how_many_months }),
               plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
@@ -365,7 +365,7 @@ function profileHandlers() {
             const onePaymentFinancing = financingOptionsOnePaymentExists ? financingOptionsOnePayment.map((item) => ({
               title: t('subscription.upgrade-modal.one_payment'),
               price: item?.monthly_price,
-              priceText: `$${item?.monthly_price}`,
+              priceText: `$${Number(item?.monthly_price) % 1 === 0 ? Number(item?.monthly_price).toFixed(0) : Number(item?.monthly_price).toFixed(2)}`,
               period: 'FINANCING',
               description: t('subscription.upgrade-modal.full_access'),
               plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
@@ -392,7 +392,7 @@ function profileHandlers() {
             const monthPlan = !financingOptionsOnePaymentExists && existsAmountPerMonth ? [{
               title: t('subscription.upgrade-modal.monthly_payment'),
               price: offerData?.price_per_month,
-              priceText: `$${offerData?.price_per_month}`,
+              priceText: `$${Number(offerData?.price_per_month) % 1 === 0 ? Number(offerData?.price_per_month).toFixed(0) : Number(offerData?.price_per_month).toFixed(2)}`,
               period: 'MONTH',
               description: t('subscription.upgrade-modal.full_access'),
               plan_id: `p-${offerData?.price_per_month}`,
@@ -404,7 +404,7 @@ function profileHandlers() {
             const yearPlan = existsAmountPerYear ? {
               title: t('subscription.upgrade-modal.yearly_payment'),
               price: offerData?.price_per_year,
-              priceText: `$${offerData?.price_per_year}`,
+              priceText: `$${Number(offerData?.price_per_year) % 1 === 0 ? Number(offerData?.price_per_year).toFixed(0) : Number(offerData?.price_per_year).toFixed(2)}`,
               period: 'YEAR',
               description: t('subscription.upgrade-modal.full_access'),
               plan_id: `p-${offerData?.price_per_year}`,
@@ -416,7 +416,7 @@ function profileHandlers() {
             const financingOption = financingOptionsManyMonthsExists ? financingOptionsManyMonths.map((item) => ({
               title: t('subscription.upgrade-modal.many_months_payment', { qty: item?.how_many_months }),
               price: item?.monthly_price,
-              priceText: `$${item?.monthly_price} x ${item?.how_many_months}`,
+              priceText: `$${Number(item?.monthly_price) % 1 === 0 ? Number(item?.monthly_price).toFixed(0) : Number(item?.monthly_price).toFixed(2)} x ${item?.how_many_months}`,
               period: 'FINANCING',
               description: t('subscription.upgrade-modal.many_months_description', { monthly_price: item?.monthly_price, many_months: item?.how_many_months }),
               plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,

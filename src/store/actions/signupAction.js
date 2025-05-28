@@ -471,10 +471,15 @@ const useSignup = () => {
       const { price } = item;
       if (price < 1) return item;
       const discountOperation = getPriceWithDiscount(price, coupon);
+
+      // Format both old and new prices consistently
+      const oldPriceFormatted = Number(item.price) % 1 === 0 ? Number(item.price).toFixed(0) : Number(item.price).toFixed(2);
+      const newPriceFormatted = Number(discountOperation.price) % 1 === 0 ? Number(discountOperation.price).toFixed(0) : Number(discountOperation.price).toFixed(2);
+
       return {
         ...item,
         price: discountOperation.price,
-        priceText: item.priceText.replace(item.price, discountOperation.price),
+        priceText: item.priceText.replace(oldPriceFormatted, newPriceFormatted),
         lastPrice: item.priceText,
       };
     });
