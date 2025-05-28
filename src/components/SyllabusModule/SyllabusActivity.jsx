@@ -33,26 +33,8 @@ function SyllabusActivity({
     type, title, icon, target, url,
   } = data;
 
-  const pathConnector = {
-    lesson: `${lang === 'en' ? '4geeks.com/lesson' : `4geeks.com/${lang}/lesson`}`,
-    exercise: `${lang === 'en' ? '4geeks.com/interactive-exercise' : `4geeks.com/${lang}/interactive-exercise`}`,
-    project: `${lang === 'en' ? '4geeks.com/project' : `4geeks.com/${lang}/project`}`,
-    quiz: 'https://assessment.4geeks.com/asset',
-  };
-
-  const shareLink = () => {
-    if (currentTask?.slug) {
-      if (target?.toLowerCase() === 'blank') {
-        return url;
-      }
-      return `${pathConnector[currentTask?.task_type?.toLowerCase()]}/${currentTask.associated_slug}`;
-    }
-    return '';
-  };
-
-  const { socials } = useSocialShare({
-    link: shareLink(),
-    title: currentTask?.title,
+  const { socials, shareLink } = useSocialShare({
+    info: currentTask,
     shareMessage: t('dashboard:share-message', { title: currentTask?.title }),
   });
 
@@ -138,7 +120,7 @@ function SyllabusActivity({
           variant="outline"
           title={t('projects:share-certificate.title')}
           shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
-          link={shareLink()}
+          link={shareLink}
           socials={socials}
           currentTask={currentTask}
           onlyModal

@@ -45,26 +45,7 @@
   "share-certificate": {
     "title": "Comparte tu nuevo título profesional",
     "shareText": "Comparte tu nuevo certificado a través de:",
-    "socials": [
-      {
-        "name": "twitter",
-        "label": "Twitter",
-        "href": "https://twitter.com/share?url=&text=Obtuve un nuevo certificado como {{profession}} en 4Geeks.com {{certfLink}}",
-        "color": "#1DA1F2"
-      },
-      {
-        "name": "facebook",
-        "label": "Facebook",
-        "href": "https://facebook.com/sharer?u={{certfLink}}",
-        "color": "#4267B2"
-      },
-      {
-        "name": "linkedin",
-        "label": "LinkedIn",
-        "href": "https://linkedin.com/sharing/share-offsite/?url={{certfLink}}",
-        "color": "#0077B5"
-      }
-    ]
+    "shareMessage": "Obtuve un nuevo certificado \"{{profession}}\" en 4Geeks"
   },
   "update-profile-image": {
     "tooltip-label": "Sube tu imagen de perfil",

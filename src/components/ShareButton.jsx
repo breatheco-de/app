@@ -12,11 +12,10 @@ import Icon from './Icon';
 import Text from './Text';
 import Link from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
-import useSocialShare from '../hooks/useSocialShare';
 import { getBrowserInfo } from '../utils';
 
 function ShareButton({
-  variant, title, shareText, message, link, socials: propSocials, withParty, onlyModal, currentTask, onClose,
+  variant, title, shareText, message, link, socials, withParty, onlyModal, currentTask, onClose,
 }) {
   const { t } = useTranslation('profile');
   const [party, setParty] = useState(true);
@@ -27,13 +26,7 @@ function ShareButton({
   } = useStyle();
   const { featuredBackground, background, hoverBackground } = modal;
 
-  const { socials: hookSocials } = useSocialShare({
-    link,
-    title: currentTask?.title,
-    type: currentTask?.task_type === 'CERTIFICATE' ? 'certificate' : 'default',
-  });
-
-  const socialList = propSocials || hookSocials;
+  const socialList = socials || [];
 
   useEffect(() => {
     if (copied) {
@@ -52,6 +45,7 @@ function ShareButton({
   }, [isOpen]);
 
   const onCopy = () => {
+    console.log('LINK', link);
     setCopied(true);
     navigator.clipboard.writeText(link);
   };

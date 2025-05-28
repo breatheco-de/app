@@ -221,13 +221,11 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
   };
 
   const certfToken = certificate?.preview_url?.split('/')?.pop();
-  const certfLink = certfToken ? `https://certificate.4geeks.com/${certfToken}` : '#';
-  const profession = certificate?.specialty?.name;
 
-  const { socials } = useSocialShare({
-    link: certfLink,
-    title: profession,
+  const { socials, shareLink: certfLink } = useSocialShare({
+    info: certfToken,
     type: 'certificate',
+    shareMessage: t('profile:share-certificate.shareMessage', { profession: certificate?.specialty?.name }),
   });
 
   const share = (e) => {
