@@ -45,7 +45,6 @@ function ShareButton({
   }, [isOpen]);
 
   const onCopy = () => {
-    console.log('LINK', link);
     setCopied(true);
     navigator.clipboard.writeText(link);
   };
