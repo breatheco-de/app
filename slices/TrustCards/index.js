@@ -1,4 +1,4 @@
-import MktTrustCards from '../../src/components/MktTrustCards';
+import MktTrustCards from '../../src/components/PrismicComponents/MktTrustCards';
 
 /**
  * @typedef {import("@prismicio/client").Content.TrustCardsSlice} TrustCardsSlice

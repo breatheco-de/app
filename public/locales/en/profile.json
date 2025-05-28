@@ -156,5 +156,14 @@
   "months": "months",
   "month": "month",
   "expired": "Expired",
-  "no-subscriptions": "There are no subscriptions to show yet, subscribe to a cohort and get it immediately"
+  "no-subscriptions": "There are no subscriptions to show yet, subscribe to a cohort and get it immediately",
+  "referral-program": "Referral Program",
+  "referral-coupon": "Your Referral Coupon",
+  "copy-coupon": "Copy Coupon",
+  "coupon-copied": "Coupon copied to clipboard!",
+  "how-it-works": "How it works:",
+  "referral-step-1": "1. Share your coupon code with friends and family",
+  "referral-step-2": "2. When someone uses your coupon and makes a payment for self-paced programs on 4Geeks.com, you'll get a 10% discount on your next payment",
+  "referral-step-3": "3. The more people use your coupon, the more discounts you'll receive!",
+  "referral-step-4": "4. This referral program only applies to self-paced programs at 4Geeks.com"
 }

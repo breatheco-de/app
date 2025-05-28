@@ -86,6 +86,7 @@
     "js-md5": "^0.8.3",
     "katex": "^0.16.8",
     "markdown-to-jsx": "7.2.0",
+    "mermaid": "^11.6.0",
     "next": "^13.4.1",
     "next-redux-wrapper": "8.1.0",
     "next-remove-imports": "^1.0.11",

@@ -156,5 +156,14 @@
   "months": "meses",
   "month": "mes",
   "expired": "Expirado",
-  "no-subscriptions": "Todavía no hay suscripciones para mostrar, suscríbete a una cohorte y obténgala de inmediato"
+  "no-subscriptions": "Todavía no hay suscripciones para mostrar, suscríbete a una cohorte y obténgala de inmediato",
+  "referral-program": "Programa de Referidos",
+  "referral-coupon": "Tu Cupón de Referido",
+  "copy-coupon": "Copiar Cupón",
+  "coupon-copied": "¡Cupón copiado al portapapeles!",
+  "how-it-works": "Cómo funciona:",
+  "referral-step-1": "1. Comparte tu código de cupón con amigos y familiares",
+  "referral-step-2": "2. Cuando alguien use tu cupón y haga un pago por programas autodidactas en 4Geeks.com, obtendrás un 10% de descuento en tu próximo pago",
+  "referral-step-3": "3. ¡Mientras más personas usen tu cupón, más descuentos recibirás!",
+  "referral-step-4": "4. Este programa de referidos solo aplica para programas a tu propio ritmo en 4Geeks.com"
 }

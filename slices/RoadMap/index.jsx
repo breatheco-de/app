@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import MktRoadmap from '../../src/components/MktRoadmap';
+import MktRoadmap from '../../src/components/PrismicComponents/MktRoadmap';
 
 /**
  * @typedef {import("@prismicio/client").Content.ShowPricesSlice} ShowPricesSlice

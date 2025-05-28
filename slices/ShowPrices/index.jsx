@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import MktShowPrices from '../../src/components/MktShowPrices';
+import MktShowPrices from '../../src/components/PrismicComponents/MktShowPrices';
 
 /**
  * @typedef {import("@prismicio/client").Content.ShowPricesSlice} ShowPricesSlice

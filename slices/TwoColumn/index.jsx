@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import MktTwoColumnSideImage from '../../src/components/MktTwoColumnSideImage';
+import MktTwoColumnSideImage from '../../src/components/PrismicComponents/MktTwoColumnSideImage';
 
 /**
  * @typedef {import("@prismicio/client").Content.TwoColumnSlice} TwoColumnSlice
