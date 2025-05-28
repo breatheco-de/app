@@ -2,13 +2,11 @@
 import axios from '../axios';
 import { parseQuerys } from '../utils/url';
 import modifyEnv from '../../modifyEnv';
-import { cleanObject } from '../utils';
-import { RIGOBOT_HOST, BREATHECODE_HOST } from '../utils/variables';
+import { BREATHECODE_HOST } from '../utils/variables';
 
 const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
 const host = `${BREATHECODE_HOST}/v1`;
 const hostV2 = `${BREATHECODE_HOST}/v2`;
-const rigoHostV1 = `${RIGOBOT_HOST}/v1`;
 
 const breathecode = {
   get: (url, config) => fetch(url, {
@@ -40,24 +38,7 @@ const breathecode = {
     const url = `${host}/auth`;
     return {
       login: (payload) => axios.post(`${url}/login/`, { ...payload, user_agent: 'bc/student' }),
-      login2: (payload, lang = 'en') => fetch(`${url}/login/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept-Language': lang,
-        },
-        body: JSON.stringify({
-          ...payload,
-          user_agent: 'bc/student',
-        }),
-      }),
-      verifyRigobotConnection: (token) => breathecode.get(`${rigoHostV1}/auth/me/token?breathecode_token=${token}`),
-      verifyEmail: (email, lang) => breathecode.get(`${url}/emailverification/${email}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept-Language': lang,
-        },
-      }),
+      verifyEmail: (email) => axios.get(`${url}/emailverification/${email}`),
       resendConfirmationEmail: (inviteId) => axios.put(`${url}/invite/resend/${inviteId}`),
       me: () => axios.get(`${url}/user/me`),
       updateProfile: (arg) => axios.put(`${url}/user/me`, { ...arg }),
@@ -73,24 +54,7 @@ const breathecode = {
       isValidToken: (token) => axios.get(`${url}/token/${token}`),
       register: (payload) => axios.post(`${url}/user/register`, payload),
       subscribe: (payload) => axios.post(`${url}/subscribe/`, { ...payload }),
-      subscribeToken: (token) => axios.post(`${url}/subscribe/${token}`),
       removeGithub: () => axios.delete(`${url}/github/me`),
-      temporalToken: () => axios({
-        method: 'post',
-        url: `${url}/token/me`,
-        // headers: {},
-        data: {
-          token_type: 'one_time',
-        },
-      }),
-      getUser: ({ userId }) => axios({
-        method: 'get',
-        url: `${url}/academy/member/${userId}`,
-        headers: {
-          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
-          academy: 4,
-        },
-      }),
     };
   },
 
@@ -113,9 +77,9 @@ const breathecode = {
     };
   },
 
-  admissions: (query = {}) => {
+  admissions: (query = {}, isQueryConnector = false) => {
     const url = `${host}/admissions`;
-    const qs = parseQuerys(query);
+    const qs = parseQuerys(query, isQueryConnector);
     return {
       me: () => axios.get(`${url}/user/me`),
       cohort: (id, academy) => axios.get(`${url}/academy/cohort/${id}${qs}`, {
@@ -124,6 +88,18 @@ const breathecode = {
         },
       }),
       cohorts: () => axios.get(`${url}/cohort/all${qs}`),
+      getAcademyCohortUsers: () => axios.get(`${url}/academy/cohort/user${qs}`),
+      getAllCohortUsers: (cohortSlug) => axios.get(`${url}/cohort/user?cohorts=${cohortSlug}${qs}`),
+      getStudents: (cohortId, academy) => axios.get(`${url}/academy/cohort/user?roles=STUDENT&cohorts=${cohortId}${parseQuerys(query, true)}`, {
+        headers: academy && {
+          academy,
+        },
+      }),
+      getStudentsWithTasks: (cohortId, academyId) => axios.get(`${url}/academy/cohort/user?tasks=True&roles=STUDENT&cohorts=${cohortId}${parseQuerys(query, true)}`, {
+        headers: {
+          academy: academyId,
+        },
+      }),
       singleCohortUser: (cohortId, userId, academy) => axios.get(`${url}/academy/cohort/${cohortId}/user/${userId}${qs}`, {
         headers: academy && {
           academy,
@@ -139,122 +115,25 @@ const breathecode = {
           academy,
         },
       }),
-      publicSyllabus: (slug, version) => breathecode.get(`${url}/syllabus/${slug}/version/${version || '1'}${qs}`, {
-        headers: {
-          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
-          academy: 4,
-        },
-      }),
-    };
-  },
-
-  syllabus: (query = {}) => {
-    const url = `${host}/admissions`;
-    const qs = parseQuerys(query);
-    return {
-      get: (academyVersion = '4', slug, version = '1') => {
+      academySyllabus: (academyId, slug, version) => {
         if (!slug) throw new Error('Missing slug');
-        else return axios.get(`${url}/academy/${academyVersion}/syllabus/${slug}/version/${version}`);
+        else return axios.get(`${url}/academy/${academyId}/syllabus/${slug}/version/${version}`);
       },
-      getPublicVersion: () => axios.get(`${url}/syllabus/version${qs}`),
-    };
-  },
-
-  todo: (query = {}) => {
-    const url = `${host}/assignment`;
-    // .map((key) => (query[key] !== null ? `${key}=${query[key]}` : ''))
-    const qs = parseQuerys(query);
-    return {
-      get: () => axios.get(`${url}/task/${qs}`),
-      getAssignments: (args) => axios.get(`${url}/academy/cohort/${args.id}/task${qs}`, {
-        headers: args?.academy && {
-          academy: args?.academy,
-        },
-      }),
-      deliver: (args) => axios.get(`${url}/task/${args.id}/deliver`, {
-        headers: args?.academy && {
-          academy: args?.academy,
-        },
-      }),
-      getFinalProject: () => axios.get(`${url}/user/me/final_project${qs}`),
-      createFinalProject: (args) => axios.post(`${url}/user/me/final_project`, args),
-      sendScreenshot: (args) => axios.post(`${url}/user/me/final_project/screenshot`, args),
-      updateFinalProject: (args) => breathecode.put(`${url}/user/me/final_project`, args),
-      uploadFile: (id, args) => axios.put(`${url}/task/${id}/attachment${qs}`, args),
-      getFile: (args) => axios.get(`${url}/task/${args.id}/attachment`, {
-        headers: args.academyId && {
-          academy: args.academyId,
-        },
-      }),
-      subtask: () => ({
-        get: (id) => axios.get(`${url}/user/me/task/${id}/subtasks`),
-        update: (id, args) => axios.put(`${url}/user/me/task/${id}/subtasks`, args),
-      }),
-      // getTaskByStudent: (cohortId) => axios.get(`${url}/user/me/task?cohort=${cohortId}`),
-      getTaskByStudent: () => axios.get(`${url}/user/me/task${qs}`),
-      add: (args) => axios.post(`${url}/user/me/task`, args),
-      postCompletionJob: (taskId) => axios.post(`${url}/completion_job/${taskId}`),
-      // delete: (id, args) => axios.delete(`${url}/user/${id}/task/${args.id}`, args),
-      update: (args) => axios.put(`${url}/task/${args.id}`, args),
-      updateBulk: (args) => axios.put(`${url}/user/me/task`, args),
-      deleteBulk: (args) => axios.delete(`${url}/user/me/task${qs}`, args),
-    };
-  },
-
-  cohort: (query = {}, isQueryConnector = false) => {
-    const url = `${host}/admissions/academy`;
-    const qs = parseQuerys(query, isQueryConnector);
-    return {
-      get: (id) => axios.get(`${url}/cohort/${id}`),
-      join: (id) => breathecode.post(`${host}/admissions/cohort/${id}/join`),
-      takeAttendance: (id, activities) => axios.put(`${url}/cohort/${id}/log${qs}`, activities),
-      getAttendance: (id) => axios.get(`${url}/cohort/${id}/log${qs}`),
-      getPublic: (id) => axios.get(`${url}/cohort/${id}`, {
+      publicSyllabus: (slug, version) => axios.get(`${url}/syllabus/${slug}/version/${version || '1'}${qs}`, {
         headers: {
           Authorization: `Token ${BC_ACADEMY_TOKEN}`,
           academy: 4,
         },
       }),
-      getFilterStudents: () => axios.get(`${url}/cohort/user${qs}`),
-      getMembers: () => axios.get(`${url}/cohort/user${qs}`),
-      getStudents: (cohortId, academyId, withDefaultToken = false) => {
-        const headers = cleanObject({
-          academy: academyId,
-          Authorization: withDefaultToken ? `Token ${BC_ACADEMY_TOKEN}` : undefined,
-          ...axios.defaults.headers.common,
-        });
-
-        return axios.get(`${url}/cohort/user?roles=STUDENT&cohorts=${cohortId}${parseQuerys(query, true)}`, {
-          headers,
-        });
-      },
-      getPublicMembers: () => axios.get(`${host}/admissions/public/cohort/user${qs}`),
-      // get students without academy header
-      getStudents2: (cohortSlug, withDefaultToken = false) => {
-        const headers = cleanObject({
-          Authorization: withDefaultToken ? `Token ${BC_ACADEMY_TOKEN}` : undefined,
-          ...axios.defaults.headers.common,
-        });
-        return axios.get(`${host}/admissions/cohort/user?cohorts=${cohortSlug}${qs}`, {
-          headers,
-        });
-      },
-      getStudentsWithTasks: (cohortId, academyId) => axios.get(`${url}/cohort/user?tasks=True&roles=STUDENT&cohorts=${cohortId}${qs.replace('?', '&')}`, {
-        headers: academyId && {
-          academy: academyId,
-        },
-      }),
-      update: (id, args) => axios.put(`${url}/cohort/${id}`, args),
-      user: ({ cohortId, userId }) => axios({
-        method: 'get',
-        url: `${url}/cohort/${cohortId}/user/${userId}`,
-        headers: {
-          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
-          academy: 4,
-        },
-      }),
+      joinCohort: (id) => axios.post(`${url}/cohort/${id}/join`),
+      getPublicSyllabusVersion: () => axios.get(`${url}/syllabus/version${qs}`),
+      getPublicMembers: () => axios.get(`${url}/public/cohort/user${qs}`),
+      takeAttendance: (id, activities) => axios.put(`${url}/academy/cohort/${id}/log${qs}`, activities),
+      getAttendance: (id) => axios.get(`${url}/academy/cohort/${id}/log${qs}`),
+      updateCohort: (id, args) => axios.put(`${url}/academy/cohort/${id}`, args),
     };
   },
+
   activity: (query = {}) => {
     const url = `${hostV2}/activity`;
     const qs = parseQuerys(query);
@@ -279,11 +158,34 @@ const breathecode = {
     const url = `${host}/assignment`;
     const qs = parseQuerys(query);
     return {
-      get: () => axios.get(`${url}/user/me/task`),
+      get: () => axios.get(`${url}/task/${qs}`),
+      getCohortAssignments: (args) => axios.get(`${url}/academy/cohort/${args.id}/task${qs}`, {
+        headers: args?.academy && {
+          academy: args?.academy,
+        },
+      }),
+      deliver: (args) => axios.get(`${url}/task/${args.id}/deliver`, {
+        headers: args?.academy && {
+          academy: args?.academy,
+        },
+      }),
+      getMeFinalProject: () => axios.get(`${url}/user/me/final_project${qs}`),
+      createFinalProject: (args) => axios.post(`${url}/user/me/final_project`, args),
+      sendScreenshot: (args) => axios.post(`${url}/user/me/final_project/screenshot`, args),
+      updateMeFinalProject: (args) => breathecode.put(`${url}/user/me/final_project`, args),
+      getMeTasks: () => axios.get(`${url}/user/me/task${qs}`),
+      updateTask: (args) => axios.put(`${url}/task/${args.id}`, args),
+      addTasks: (args) => axios.post(`${url}/user/me/task`, args),
       getDeletionOrders: () => axios.get(`${url}/me/deletion_order${qs}`),
       getCodeRevisions: (taskId) => breathecode.get(`${url}/academy/task/${taskId}/coderevision`),
       getFinalProjects: (cohortId) => axios.get(`${url}/academy/cohort/${cohortId}/final_project`),
       putFinalProject: (cohortId, projectId, data) => breathecode.put(`${url}/academy/cohort/${cohortId}/final_project/${projectId}`, data),
+      uploadFile: (id, args) => axios.put(`${url}/task/${id}/attachment${qs}`, args),
+      getFile: (args) => axios.get(`${url}/task/${args.id}/attachment`, {
+        headers: args.academyId && {
+          academy: args.academyId,
+        },
+      }),
       files: (taskId) => breathecode.get(`${url}/academy/task/${taskId}/commitfile${qs}`),
       file: (taskId, commitId) => axios.get(`${url}/academy/task/${taskId}/commitfile/${commitId}`),
       createCodeRevision: (taskId, data) => axios.post(`${url}/academy/task/${taskId}/coderevision`, data),
@@ -293,6 +195,12 @@ const breathecode = {
       personalFile: (commitId) => breathecode.get(`${url}/me/commitfile/${commitId}${qs}`),
       rateCodeRevision: (coderevisionId, data) => axios.post(`${url}/me/coderevision/${coderevisionId}/rate`, data),
       syncCohort: (cohortId) => axios.get(`${url}/academy/cohort/${cohortId}/synctasks`),
+      updateBulk: (args) => axios.put(`${url}/user/me/task`, args),
+      deleteBulk: (args) => axios.delete(`${url}/user/me/task${qs}`, args),
+      subtask: () => ({
+        get: (id) => axios.get(`${url}/user/me/task/${id}/subtasks`),
+        update: (id, args) => axios.put(`${url}/user/me/task/${id}/subtasks`, args),
+      }),
     };
   },
   feedback: () => {
@@ -303,15 +211,12 @@ const breathecode = {
     };
   },
   mentorship: (query = {}, connector = false) => {
-    const url = `${host}/mentorship/academy`;
-    const urlNoAcademy = `${host}/mentorship`;
+    const url = `${host}/mentorship`;
     const qs = parseQuerys(query, connector);
     return {
-      getService: () => axios.get(`${url}/service?status=ACTIVE${qs}`),
-      getMentorshipServiceSets: () => axios.get(`${host}/payments/mentorshipserviceset`),
-      getServiceSet: (mentorshipServiceSetId) => axios.get(`${host}/payments/mentorshipserviceset/${mentorshipServiceSetId}`),
-      getMentor: () => axios.get(`${url}/mentor${qs}`),
-      getMySessions: () => axios.get(`${urlNoAcademy}/user/me/session${qs}`),
+      getService: () => axios.get(`${url}/academy/service?status=ACTIVE${qs}`),
+      getMentor: () => axios.get(`${url}/academy/mentor${qs}`),
+      getMySessions: () => axios.get(`${url}/user/me/session${qs}`),
     };
   },
 
@@ -325,7 +230,7 @@ const breathecode = {
     };
   },
 
-  lesson: (query = {}) => {
+  registry: (query = {}) => {
     const url = `${host}/registry`;
     const qs = parseQuerys(query);
     return {
@@ -346,70 +251,51 @@ const breathecode = {
     };
   },
 
-  public: (query = {}, isQueryConnector = false) => {
-    const url = `${host}/admissions/public`;
-
-    const qs = parseQuerys(query, isQueryConnector);
-    return {
-      mentors: () => axios.get(`${url}/cohort/user${qs}`),
-      events: () => axios.get(`${host}/events/all${qs}`),
-      singleEvent: (slug) => axios.get(`${host}/events/event/${slug}${qs}`),
-      cohorts: () => axios.get(`${host}/admissions/cohort/all${qs}`),
-      syllabusMembers: (courseSyllabus) => axios.get(`${url}/cohort/user?syllabus=${courseSyllabus}${qs}`),
-    };
-  },
   payment: (query = {}) => {
     const url = `${host}/payments`;
     const qs = parseQuerys(query);
     return {
       checking: (data) => axios.put(`${url}/checking${qs}`, data),
       subscriptions: () => axios.get(`${url}/me/subscription${qs}`),
-      pay: (data) => breathecode.post(`${url}/pay${qs}`, data),
-      addCard: (data) => breathecode.post(`${url}/card${qs}`, data),
+      pay: (data) => axios.post(`${url}/pay${qs}`, data),
+      addCard: (data) => axios.post(`${url}/card${qs}`, data),
       cancelSubscription: (id) => axios.put(`${url}/subscription/${id}/cancel${qs}`),
       cancelMySubscription: (id) => axios.put(`${url}/me/subscription/${id}/cancel${qs}`),
       getPlan: (slug) => axios.get(`${url}/plan/${slug}${qs}`),
       getpaymentMethods: () => axios.get(`${url}/methods${qs}`),
       planOffer: () => axios.get(`${url}/planoffer${qs}`),
-      getPlanProps: (id) => axios.get(`${url}/serviceitem?plan=${id}&${parseQuerys(query, true)}`),
+      getServiceItemsByPlan: (id) => axios.get(`${url}/serviceitem?plan=${id}&${parseQuerys(query, true)}`),
       getServiceInfo: (slug) => axios.get(`${url}/service/${slug}/items${qs}`),
       getCohortPlans: () => axios.get(`${url}/plan${qs}`),
       applyCoupon: (bagId) => axios.put(`${url}/bag/${bagId}/coupon${qs}`),
       verifyCoupon: () => axios.get(`${url}/coupon${qs}`),
+      getServiceSet: (mentorshipServiceSetId) => axios.get(`${url}/mentorshipserviceset/${mentorshipServiceSetId}`),
       service: () => ({
         consumable: () => axios.get(`${url}/me/service/consumable${qs}`),
-        getAcademyServiceBySlug: (serviceSlug) => breathecode.get(`${url}/academy/academyservice/${serviceSlug}${qs}`),
-        getAcademyService: () => breathecode.get(`${url}/academy/academyservice${qs}`),
-        payConsumable: (data) => breathecode.post(`${url}/consumable/checkout${qs}`, data),
+        getAcademyServiceBySlug: (serviceSlug) => axios.get(`${url}/academy/academyservice/${serviceSlug}${qs}`),
+        getAcademyService: () => axios.get(`${url}/academy/academyservice${qs}`),
+        payConsumable: (data) => axios.post(`${url}/consumable/checkout${qs}`, data),
       }),
-      getEvent: (eventId) => axios.get(`${host}/events/academy/event/${eventId}${qs}`),
-      getAllEventTypeSets: () => axios.get(`${host}/payments/eventtypeset`),
+      getAllEventTypeSets: () => axios.get(`${url}/eventtypeset`),
       getEventTypeSet: (eventTypeSetId) => axios.get(`${url}/eventtypeset/${eventTypeSetId}`),
-      events: () => axios.get(`${host}/events/me?online_event=true${parseQuerys(query, true)}`),
       getBlockedServices: () => axios.get(`${url}/me/service/blocked${qs}`),
       getMyCoupon: () => axios.get(`${url}/me/coupon${qs}`),
     };
   },
   events: (query = {}) => {
-    const url = `${host}/events/me`;
+    const url = `${host}/events`;
     const qs = parseQuerys(query);
     return {
-      // get: () => axios.get(`${url}/event${qs}`),
-      meCheckin: () => axios.get(`${url}/event/checkin${qs}`),
-      liveClass: () => axios.get(`${url}/event/liveclass${qs}`),
-      joinLiveClass: (liveClassHash) => axios.get(`${url}/event/liveclass/join/${liveClassHash}${qs}`),
-      joinLiveClass2: (liveClassHash) => axios.get(`${host}/me/event/liveclass/join/${liveClassHash}${qs}`),
-      applyEvent: (eventId, payload) => axios.post(`${url}/event/${eventId}/checkin${qs}`, payload),
-      getUsers: (eventId) => axios.get(`${host}/events/event/${eventId}/checkin${qs}`),
-      getAllEventTypes: () => axios.get(`${host}/events/eventype${qs}`),
-    };
-  },
-  rigobot: (query = {}) => {
-    const url = `${rigoHostV1}`;
-    const qs = parseQuerys(query);
-    return {
-      completionJob: (data) => axios.post(`${url}/prompting/completion/43${qs}`, data),
-      meToken: (token) => axios.get(`${url}/auth/me/token?breathecode_token=${token}`),
+      allEvents: () => axios.get(`${url}/all${qs}`),
+      getEvent: (slug) => axios.get(`${url}/event/${slug}${qs}`),
+      getAcademyEvent: (eventId) => axios.get(`${url}/academy/event/${eventId}${qs}`),
+      meOnlineEvents: () => axios.get(`${url}/me?online_event=true${parseQuerys(query, true)}`),
+      meCheckin: () => axios.get(`${url}/me/event/checkin${qs}`),
+      liveClass: () => axios.get(`${url}/me/event/liveclass${qs}`),
+      joinLiveClass: (liveClassHash) => axios.get(`${url}/me/event/liveclass/join/${liveClassHash}${qs}`),
+      applyEvent: (eventId, payload) => axios.post(`${url}/me/event/${eventId}/checkin${qs}`, payload),
+      getUsers: (eventId) => axios.get(`${url}/event/${eventId}/checkin${qs}`),
+      getAllEventTypes: () => axios.get(`${url}/eventype${qs}`),
     };
   },
   provisioning: (query = {}) => {

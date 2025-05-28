@@ -21,8 +21,8 @@ function ChangeCardPage() {
   const handleCardSubmit = async (values, actions, stateCard = {}) => {
     try {
       const response = await bc.payment().addCard(stateCard);
-      const data = await response.json();
-      if (response.ok) {
+      const { data } = response;
+      if (data.status === 'ok') {
         setIsSuccess(true);
       } else {
         const errorMessage = data?.detail || 'Payment failed';

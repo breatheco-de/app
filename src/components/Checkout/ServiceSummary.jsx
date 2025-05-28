@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Avatar, Box, Button, Link, Flex } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import bc from '../../services/breathecode';
-import useSignup from '../../store/actions/signupAction';
+import signupAction from '../../store/actions/signupAction';
 import Heading from '../Heading';
 import Icon from '../Icon';
 import Text from '../Text';
@@ -17,6 +17,7 @@ import useAuth from '../../hooks/useAuth';
 import useSession from '../../hooks/useSession';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useCustomToast from '../../hooks/useCustomToast';
+import useSignup from '../../hooks/useSignup';
 import CardForm from './CardForm';
 import { reportDatalayer } from '../../utils/requests';
 import { BREATHECODE_HOST, SILENT_CODE } from '../../utils/variables';
@@ -28,8 +29,9 @@ function ServiceSummary({ service }) {
   const { location } = useSession();
   const { t } = useTranslation('signup');
   const {
-    state, setSelectedService, setIsSubmittingCard, setIsSubmittingPayment, getPaymentMethods, setPaymentStatus,
-  } = useSignup();
+    state, setSelectedService, setIsSubmittingCard, setIsSubmittingPayment, setPaymentStatus,
+  } = signupAction();
+  const { getPaymentMethods } = useSignup();
   const { selectedService, paymentMethods, paymentStatus, loader } = state;
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const { state: cohortState } = useCohortHandler();
@@ -47,12 +49,12 @@ function ServiceSummary({ service }) {
   const serviceTypes = {
     mentorship: {
       name: t('consumables.sessions'),
-      quantityOfConsumables: (item) => t('consumables.qty-mentorship-sessions', { qty: item.qty }),
+      quantityOfConsumables: (item) => t('consumables.qty-mentorship-to-consume', { qty: item.qty }),
       pricePerUnit: (item) => t('consumables.price-mentorship-per-qty', { price: formatPrice(item.pricePerUnit, true) }),
     },
     event: {
       name: t('consumables.events'),
-      quantityOfConsumables: (item) => t('consumables.qty-events-sessions', { qty: item.qty }),
+      quantityOfConsumables: (item) => t('consumables.qty-events-to-consume', { qty: item.qty }),
       pricePerUnit: (item) => t('consumables.price-event-per-qty', { price: formatPrice(item.pricePerUnit, true) }),
     },
     compilation: {
@@ -84,6 +86,10 @@ function ServiceSummary({ service }) {
         isClosable: true,
         duration: 6000,
       });
+      setDeclinedModalProps({
+        title: t('transaction-denied'),
+        description: data?.detail || t('payment-not-processed'),
+      });
     }
     if (silentCode === SILENT_CODE.CARD_ERROR) {
       setOpenDeclinedModal(true);
@@ -110,8 +116,9 @@ function ServiceSummary({ service }) {
 
   const handlePayConsumable = async () => {
     try {
+      console.log('dataToAssign', dataToAssign);
       const res = await bc.payment().service().payConsumable(dataToAssign);
-      const data = await res.json();
+      const { data } = res;
       if (res?.status < 400) {
         reportDatalayer({
           dataLayer: {
@@ -167,9 +174,9 @@ function ServiceSummary({ service }) {
       });
     }
     const resp = await bc.payment().addCard({ ...values, academy: service.academy.id });
-    const data = await resp.json();
+    const { data } = resp;
     setIsSubmittingCard(false);
-    if (resp.ok) {
+    if (data.status === 'ok') {
       reportDatalayer({
         dataLayer: {
           event: 'add_payment_info',

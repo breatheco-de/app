@@ -13,7 +13,7 @@ import GridContainer from '../../components/GridContainer';
 import Heading from '../../components/Heading';
 import { error } from '../../utils/logging';
 import bc from '../../services/breathecode';
-import { generateCohortSyllabusModules } from '../../handlers/cohorts';
+import { generateCohortSyllabusModules } from '../../lib/admissions';
 import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow, getBrowserInfo, getQueryString } from '../../utils';
 import useStyle from '../../hooks/useStyle';
 import useRigo from '../../hooks/useRigo';
@@ -28,8 +28,7 @@ import MktTrustCards from '../../components/PrismicComponents/MktTrustCards';
 import MktShowPrices from '../../components/PrismicComponents/MktShowPrices';
 import NextChakraLink from '../../components/NextChakraLink';
 import useAuth from '../../hooks/useAuth';
-import useSignup from '../../store/actions/signupAction';
-import { SUBS_STATUS, fetchSuggestedPlan, getAllMySubscriptions, getTranslations } from '../../handlers/subscriptions';
+import useSubscriptions from '../../hooks/useSubscriptions';
 import axiosInstance from '../../axios';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import { reportDatalayer } from '../../utils/requests';
@@ -43,11 +42,13 @@ import SimpleModal from '../../components/SimpleModal';
 import CustomCarousel from '../../components/CustomCarousel';
 import AssignmentSlide from '../../components/AssignmentSlide';
 import useCustomToast from '../../hooks/useCustomToast';
+import useSignup from '../../hooks/useSignup';
 import { usePlanPrice } from '../../utils/getPriceWithDiscount';
 import useSession from '../../hooks/useSession';
 
 function CoursePage() {
-  const { state, getPriceWithDiscount, getSelfAppliedCoupon, applyDiscountCouponsToPlans } = useSignup();
+  const { allSubscriptions, SUBS_STATUS } = useSubscriptions();
+  const { handleSuggestedPlan, getPriceWithDiscount, getSelfAppliedCoupon, applyDiscountCouponsToPlans, state } = useSignup();
   const [coupon] = usePersistentBySession('coupon', '');
   const [data, setData] = useState({});
   const { selfAppliedCoupon } = state;
@@ -62,11 +63,6 @@ function CoursePage() {
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
-  const [financeSelected, setFinanceSelected] = useState({
-    selectedFinanceIndex: 0,
-    selectedIndex: 0,
-  });
-  const [relatedSubscription, setRelatedSubscription] = useState(null);
   const [cohortData, setCohortData] = useState({});
   const [planData, setPlanData] = useState({});
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
@@ -74,7 +70,6 @@ function CoursePage() {
   const { t, lang } = useTranslation('course');
   const { location, isLoadingLocation } = useSession();
   const router = useRouter();
-  const translationsObj = getTranslations(t);
   const limitViewStudents = 3;
   const cohortId = data?.cohort?.id;
   const isVisibilityPublic = data.visibility === 'PUBLIC';
@@ -101,6 +96,7 @@ function CoursePage() {
   const cleanedStructuredData = cleanObject(structuredData);
   const students = cohortData.students || [];
   const instructors = cohortData.instructors || [];
+  const relatedSubscription = allSubscriptions?.find((sbs) => sbs?.selected_cohort_set?.cohorts.some((elmnt) => elmnt?.id === cohortId));
   const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
   const planList = planData?.planList || [];
   const payableList = planList.filter((plan) => plan?.type === 'PAYMENT');
@@ -203,52 +199,53 @@ function CoursePage() {
     };
   }, []);
 
-  const joinCohort = () => {
-    if (isAuthenticated && existsRelatedSubscription) {
-      reportDatalayer({
-        dataLayer: {
-          event: 'join_cohort',
-          cohort_id: cohortId,
-          agent: getBrowserInfo(),
-        },
-      });
-      setIsFetching(true);
-      bc.cohort().join(cohortId)
-        .then(async (resp) => {
-          const dataRequested = await resp.json();
-          if (dataRequested?.status === 'ACTIVE') {
-            setReadyToRefetch(true);
-          }
-          if (dataRequested?.status_code === 400) {
-            createToast({
-              position: 'top',
-              title: dataRequested?.detail,
-              status: 'info',
-              duration: 5000,
-              isClosable: true,
-            });
-            setTimeout(() => {
-              router.push('/choose-program');
-            }, 600);
-          }
-          if (dataRequested?.status_code > 400) {
-            createToast({
-              position: 'top',
-              title: dataRequested?.detail,
-              status: 'error',
-              duration: 5000,
-              isClosable: true,
-            });
-            router.push('#pricing');
-          }
-        })
-        .catch(() => {
-          setTimeout(() => {
-            setIsFetching(false);
-          }, 600);
-        });
-    } else {
+  const joinCohort = async () => {
+    if (!isAuthenticated || !existsRelatedSubscription) {
       router.push('#pricing');
+      return;
+    }
+
+    reportDatalayer({
+      dataLayer: {
+        event: 'join_cohort',
+        cohort_id: cohortId,
+        agent: getBrowserInfo(),
+      },
+    });
+
+    setIsFetching(true);
+
+    try {
+      const resp = await bc.admissions().joinCohort(cohortId);
+      const dataRequested = resp.data;
+
+      if (dataRequested?.status === 'ACTIVE') {
+        setReadyToRefetch(true);
+      } else if (dataRequested?.status_code === 400) {
+        createToast({
+          position: 'top',
+          title: dataRequested?.detail,
+          status: 'info',
+          duration: 5000,
+          isClosable: true,
+        });
+        setTimeout(() => {
+          router.push('/choose-program');
+        }, 600);
+      } else if (dataRequested?.status_code > 400) {
+        createToast({
+          position: 'top',
+          title: dataRequested?.detail,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+        router.push('#pricing');
+      }
+    } catch (err) {
+      setTimeout(() => {
+        setIsFetching(false);
+      }, 600);
     }
   };
 
@@ -334,8 +331,8 @@ function CoursePage() {
         }
 
         const assignmentsFetch = await Promise.all(
-          combinedFeaturedAssets.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[language]?.slug || item?.slug}`)
-            .then((assignmentResp) => assignmentResp.json())
+          combinedFeaturedAssets.map((item) => bc.registry().getAsset(item?.translations?.[language]?.slug || item?.slug)
+            .then(({ data: assignmentsData }) => assignmentsData)
             .catch(() => [])),
         );
 
@@ -348,33 +345,29 @@ function CoursePage() {
         return { count: {}, assignmentList: [] };
       }
     };
-
-    const formatedPlanData = await fetchSuggestedPlan(courseData?.plan_slug, translationsObj, 'mkt_plans', country_code).then((finalData) => finalData);
+    const formatedPlanData = await handleSuggestedPlan(data?.plan_slug, 'mkt_plans');
 
     const modulesInfo = await getModulesInfo();
 
-    const studentList = await bc.public({ roles: 'STUDENT' }, true).syllabusMembers(cohortSyllabus.syllabus?.slug)
-      .then((respMembers) => respMembers.data)
-      .catch((err) => {
-        error('Error fetching cohort users:', err);
-        return [];
-      });
-    const uniqueStudents = studentList?.length > 0 ? studentList?.filter((student, index, self) => self.findIndex((l) => (
+    const respStudents = await bc.admissions({ roles: 'STUDENT', syllabus: cohortSyllabus.syllabus?.slug }).getPublicMembers();
+    const studentList = respStudents.data;
+
+    const uniqueStudents = studentList?.length > 0 ? studentList.filter((student, index, self) => self.findIndex((l) => (
       l.user.id === student.user.id
     )) === index) : [];
 
-    const instructorsList = await bc.cohort({
+    const respMembers = await bc.admissions({
       roles: 'TEACHER,ASSISTANT',
       cohort_id: courseData?.cohort?.id,
-    }).getPublicMembers()
-      .then((respMembers) => respMembers.data);
-    const uniqueInstructors = instructorsList?.length > 0 ? instructorsList?.filter((instructor, index, self) => self.findIndex((l) => (
+    }).getPublicMembers();
+    const instructorsList = respMembers.data;
+    const uniqueInstructors = instructorsList?.length > 0 ? instructorsList.filter((instructor, index, self) => self.findIndex((l) => (
       l.user.id === instructor.user.id
     )) === index) : [];
 
     await getSelfAppliedCoupon(formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug);
-    const couponOnQuery = await getQueryString('coupon');
-    const { data: allCouponsApplied } = await bc.payment({ coupons: [couponOnQuery || coupon], plan: formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug, country_code }).verifyCoupon();
+    const couponOnQuery = getQueryString('coupon');
+    const { data: allCouponsApplied } = await bc.payment({ country_code, coupons: [couponOnQuery || coupon], plan: formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug }).verifyCoupon();
     setAllDiscounts(allCouponsApplied);
 
     setCohortData({
@@ -390,19 +383,6 @@ function CoursePage() {
   useEffect(() => {
     if (!isLoadingLocation) getInitialData();
   }, [lang, pathname, isLoadingLocation]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      getAllMySubscriptions().then((subscriptions) => {
-        const subscriptionRelatedToThisCohort = subscriptions?.length > 0 ? subscriptions?.find((sbs) => {
-          const isRelated = sbs?.selected_cohort_set?.cohorts.some((elmnt) => elmnt?.id === cohortId);
-          return isRelated;
-        }) : null;
-
-        setRelatedSubscription(subscriptionRelatedToThisCohort);
-      });
-    }
-  }, [isAuthenticated]);
 
   useEffect(() => {
     if (isAuthenticated && cohortData?.cohortSyllabus?.cohort?.id) redirectToCohortIfItsReady();
@@ -433,16 +413,15 @@ function CoursePage() {
     project: assetCount?.project || 0,
   };
 
-  const courseContentList = data?.course_translation?.course_modules?.length > 0
-    ? data?.course_translation?.course_modules.map((module) => ({
-      certificate: module.certificate,
-      time: module.time,
-      exercises: module.exercises,
-      projects: module.projects,
-      readings: module.readings,
-      title: module.name,
-      description: module.description,
-    })) : [];
+  const courseContentList = data?.course_translation?.course_modules?.map((module) => ({
+    certificate: module.certificate,
+    time: module.time,
+    exercises: module.exercises,
+    projects: module.projects,
+    readings: module.readings,
+    title: module.name,
+    description: module.description,
+  }));
 
   const tryRigobot = (targetId) => {
     rigo.updateOptions({
@@ -457,10 +436,6 @@ function CoursePage() {
 
   const goToFinancingOptions = () => {
     router.push('#pricing');
-    setFinanceSelected({
-      selectedFinanceIndex: 1,
-      selectedIndex: 0,
-    });
   };
 
   const adjustFontSizeForMobile = (html) => {
@@ -564,6 +539,7 @@ function CoursePage() {
                 ) : (
                   imageSource.map((imageUrl, index) => (
                     <Image
+                      key={imageUrl}
                       margin={index < limitViewStudents - 1 ? '0 -21px 0 0' : '0'}
                       src={imageUrl}
                       width={{ base: '30px', md: '40px' }}
@@ -662,7 +638,7 @@ function CoursePage() {
                         variant="default"
                         isLoading={isFetching}
                         textTransform="uppercase"
-                        onClick={() => joinCohort()}
+                        onClick={joinCohort}
                       >
                         {getAlternativeTranslation('join-cohort')}
                       </Button>
@@ -679,7 +655,6 @@ function CoursePage() {
                           color="white"
                           width="100%"
                           whiteSpace="normal"
-                          wordWrap="break-word"
                           padding="10px"
                           onClick={() => { router.push(`/checkout${enrollQuerys}`); }}
                         >
@@ -775,7 +750,6 @@ function CoursePage() {
                   courseContentText={getAlternativeTranslation('course-content-text')}
                   courseContentDescription={getAlternativeTranslation('course-content-description')}
                   data={courseContentList}
-                  assetCount={assetCount}
                   backgroundColor={backgroundColor}
                   titleStyle={{ textTransform: 'capitalize', fontSize: '18px', fontWeight: 'bold', fontFamily: 'Space Grotesk Variable' }}
                   featuresStyle={{ background: backgroundColor8, padding: '4px', borderRadius: '4px' }}
@@ -934,7 +908,6 @@ function CoursePage() {
           <MktShowPrices
             id="pricing"
             externalPlanProps={planData}
-            externalSelection={financeSelected}
             title={getAlternativeTranslation('show-prices.title')}
             description={getAlternativeTranslation('show-prices.description')}
             plan={data?.plan_slug}

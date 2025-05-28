@@ -19,7 +19,7 @@ import Icon from './Icon';
 import { isNumber, isValidDate } from '../utils';
 import useStyle from '../hooks/useStyle';
 import ProjectsSection from './ProjectsSection';
-import ButtonHandler from './Profile/Subscriptions/ButtonHandler';
+import SubsriptionButton from './Profile/Subscriptions/SubsriptionButton';
 
 function FreeTagCapsule({ isExpired, freeTrialExpireDateValue, now, lang }) {
   const { t } = useTranslation('program-card');
@@ -325,7 +325,7 @@ function ProgramCard({
                     subscriptionStatus={subscriptionStatus}
                   />
                   {isFreeTrial && isExpired ? (
-                    <ButtonHandler
+                    <SubsriptionButton
                       subscription={subscription}
                       onOpenCancelSubscription={() => {}}
                       // ------------------
@@ -341,7 +341,7 @@ function ProgramCard({
                     >
                       <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
                       {t('upgrade')}
-                    </ButtonHandler>
+                    </SubsriptionButton>
                   ) : (
                     <Button
                       marginTop="20px"
@@ -459,7 +459,7 @@ function ProgramCard({
                   </Text>
 
                   {((isAvailableAsSaas && isFreeTrial) || (isAvailableAsSaas && !statusActive)) && (
-                    <ButtonHandler
+                    <SubsriptionButton
                       subscription={subscription}
                       onOpenCancelSubscription={() => {}}
                       // ------------------
@@ -475,7 +475,7 @@ function ProgramCard({
                     >
                       <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
                       {t('upgrade')}
-                    </ButtonHandler>
+                    </SubsriptionButton>
                   )}
                 </Box>
               )}

@@ -168,7 +168,7 @@ function DeliverHandler({
         isLoading={isLoading}
         onClick={() => {
           setIsLoading(true);
-          bc.todo().deliver({
+          bc.assignments().deliver({
             id: currentTask.id,
             academy,
           })
@@ -338,7 +338,7 @@ function ReviewHandler({ currentTask, projectLink, updpateAssignment }) {
   );
 }
 
-function ButtonHandler({
+function ReviewButton({
   currentTask, updpateAssignment,
 }) {
   const [openUndoApproval, setOpenUndoApproval] = useState(false);
@@ -406,11 +406,11 @@ function ButtonHandler({
   );
 }
 
-ButtonHandler.propTypes = {
+ReviewButton.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   updpateAssignment: PropTypes.func.isRequired,
 };
-ButtonHandler.defaultProps = {
+ReviewButton.defaultProps = {
   currentTask: null,
 };
 DeliverHandler.propTypes = {
@@ -471,4 +471,4 @@ DetailsModal.defaultProps = {
   readOnly: false,
 };
 
-export default memo(ButtonHandler);
+export default memo(ReviewButton);

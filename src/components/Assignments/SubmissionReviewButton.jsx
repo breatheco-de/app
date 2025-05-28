@@ -31,14 +31,14 @@ function SubmissionReviewButton({ task, githubUrl, haveGithubDomain }) {
   const handleOpen = async (currentTask) => {
     if (currentTask && currentTask?.task_type === 'PROJECT' && currentTask.task_status === 'DONE') {
       setIsFetching(true);
-      const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
+      const assetResp = await bc.registry().getAsset(currentTask.associated_slug);
       if (assetResp && assetResp.status < 400) {
         setIsFetching(false);
         const data = await assetResp.data;
         setAssetData(data);
 
         if (!data?.delivery_formats.includes('url')) {
-          const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
+          const fileResp = await bc.assignments().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
           if (fileResp && fileResp.status < 400) {
             const respData = await fileResp.data;
             setFileData(respData);

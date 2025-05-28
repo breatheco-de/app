@@ -14,7 +14,8 @@ import bc from '../../services/breathecode';
 import ModalInfo from '../ModalInfo';
 import useStyle from '../../hooks/useStyle';
 import useCohortHandler from '../../hooks/useCohortHandler';
-import handlers from '../../handlers';
+import { getAttendanceList, saveCohortAttendancy } from '../../lib/admissions';
+import { getAttendance } from '../../utils/cohorts';
 import useCustomToast from '../../hooks/useCustomToast';
 
 function AttendanceModal({
@@ -53,7 +54,7 @@ function AttendanceModal({
 
   useEffect(() => {
     setIsLoading(true);
-    handlers.getAttendanceList({ cohortSlug: cohortSession?.slug })
+    getAttendanceList({ cohortSlug: cohortSession?.slug })
       .then((data) => {
         setAttendanceList(data);
       })
@@ -118,8 +119,8 @@ function AttendanceModal({
     return false;
   };
 
-  const saveCohortAttendancy = () => {
-    handlers.saveCohortAttendancy({ cohortSlug: cohortSession.slug, students, checked, currentModule })
+  const saveAttendancy = () => {
+    saveCohortAttendancy({ cohortSlug: cohortSession.slug, students, checked, currentModule })
       .then((data) => {
         setAttendanceList(data);
         createToast({
@@ -145,10 +146,10 @@ function AttendanceModal({
   const updateCohortDay = () => {
     setIsLoading(true);
     if (currentModule > 0) {
-      bc.cohort()
-        .update(cohortSession.id, { current_day: Number(day), current_module: currentModule })
+      bc.admissions()
+        .updateCohort(cohortSession.id, { current_day: Number(day), current_module: currentModule })
         .then(({ data }) => {
-          saveCohortAttendancy();
+          saveAttendancy();
           setCohortSession({
             ...cohortSession,
             current_module: data.current_module,
@@ -208,11 +209,9 @@ function AttendanceModal({
   };
   useEffect(() => {
     if (attendanceList[1] && students.length > 0) {
-      handlers.getAttendance({ attendanceList, students, day })
-        .then((data) => {
-          setAttendanceTaken(data);
-        })
-        .finally(() => setIsLoading(false));
+      const data = getAttendance({ attendanceList, students, day });
+      setAttendanceTaken(data);
+      setIsLoading(false);
     }
   }, [attendanceList, students, currModuleData, day]);
 

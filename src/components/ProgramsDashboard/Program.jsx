@@ -2,16 +2,16 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { subMinutes } from 'date-fns';
 import { memo, useState } from 'react';
-import handlers from '../../handlers';
+import { getAssignmentsCount } from '../../utils/cohorts';
 import ProgramCard from '../ProgramCard';
 import useCohortHandler from '../../hooks/useCohortHandler';
-import useSubscriptionsHandler from '../../store/actions/subscriptionAction';
+import useSubscriptions from '../../hooks/useSubscriptions';
 import axios from '../../axios';
 import useProgramList from '../../store/actions/programListAction';
 
 function Program({ cohort, onOpenModal, setLateModalProps }) {
   const { setCohortSession, cohortsAssignments } = useCohortHandler();
-  const { state } = useSubscriptionsHandler();
+  const { state } = useSubscriptions();
   const { isLoading } = state;
   const [isLoadingPageContent, setIsLoadingPageContent] = useState(false);
   const { state: programsList } = useProgramList();
@@ -19,7 +19,7 @@ function Program({ cohort, onOpenModal, setLateModalProps }) {
   const currentCohort = programsList?.[cohort.slug];
   const tasks = cohortsAssignments[cohort.slug]?.tasks;
   const syllabus = cohortsAssignments[cohort.slug]?.syllabus;
-  const assignmentsData = handlers.getAssignmentsCount({ data: syllabus, taskTodo: tasks });
+  const assignmentsData = getAssignmentsCount({ syllabus, tasks });
 
   const isAvailableAsSaas = cohort.cohort_user?.role === 'TEACHER' ? false : cohort.available_as_saas;
 

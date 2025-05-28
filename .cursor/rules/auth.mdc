@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+The authentication of the user is managed through the [AuthContext.jsx](mdc:src/context/AuthContext.jsx). This context provides the basic functions to login, logout and validate the current session.
+
+
+To get information regarding the authentication and the user we use the [useAuth.js](mdc:src/hooks/useAuth.js) hook, which consumes from the AuthContext.

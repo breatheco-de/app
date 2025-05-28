@@ -283,8 +283,8 @@ function ReviewModal({
         ...prevState,
         isApprovingOrRejecting: true,
       }));
-      bc.todo()
-        .update({
+      bc.assignments()
+        .updateTask({
           id: currentTask.id,
           revision_status: revisionStatusUpperCase[reviewStatus],
           description: comment,

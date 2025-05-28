@@ -16,7 +16,7 @@ function WorkshopsLoggedLanding() {
   useEffect(() => {
     const fetchTechnologies = async () => {
       try {
-        const res = await bc.lesson({ sort_priority: 1 }).techsBySort();
+        const res = await bc.registry({ sort_priority: 1 }).techsBySort();
         const { data } = res;
         setTechs(data);
       } catch (err) {

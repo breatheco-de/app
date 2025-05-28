@@ -125,7 +125,7 @@ function AssignmentReview({
   };
 
   const getAssetData = async () => {
-    const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
+    const assetResp = await bc.registry().getAsset(currentTask.associated_slug);
     if (assetResp.status < 400) {
       setLoaders((prevState) => ({
         ...prevState,
@@ -135,7 +135,7 @@ function AssignmentReview({
       setCurrentAssetData(assetData);
 
       if (typeof assetData?.delivery_formats === 'string' && !assetData?.delivery_formats.includes('url')) {
-        const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
+        const fileResp = await bc.assignments().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
         const respData = fileResp.data;
         setFileData(respData);
       }

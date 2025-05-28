@@ -95,7 +95,7 @@ function AcordionList({
 }
 
 AcordionList.propTypes = {
-  defaultIndex: PropTypes.arrayOf(PropTypes.number),
+  defaultIndex: PropTypes.number,
   allowMultiple: PropTypes.bool,
   list: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   color: PropTypes.string,

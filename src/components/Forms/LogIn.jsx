@@ -72,7 +72,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
       const response = await bc.auth().verifyEmail(email, lang);
 
       if (response.status && response.status >= 400) {
-        const result = await response.json();
+        const result = response.data;
         setEmailValidation({
           valid: false,
           loading: false,

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useState, useMemo } from 'react';
 import useStyle from '../hooks/useStyle';
-import useSignup from '../store/actions/signupAction';
+import useSignup from '../hooks/useSignup';
 import Text from './Text';
 import Icon from './Icon';
 import { parseQuerys } from '../utils/url';
