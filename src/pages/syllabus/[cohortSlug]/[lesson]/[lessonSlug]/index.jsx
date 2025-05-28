@@ -44,6 +44,7 @@ import SubTasks from '../../../../../components/MarkDownParser/SubTasks';
 import useCustomToast from '../../../../../hooks/useCustomToast';
 import ReviewModal from '../../../../../components/ReviewModal';
 import VideoModal from '../../../../../components/VideoModal';
+import useSocialShare from '../../../../../hooks/useSocialShare';
 
 function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
@@ -654,29 +655,10 @@ function SyllabusContent() {
     }
   };
 
-  const pathConnector = {
-    read: router.locale === 'en' ? '4geeks.com/lesson' : `4geeks.com/${router.locale}/lesson`,
-    practice: router.locale === 'en' ? '4geeks.com/interactive-exercise' : `4geeks.com/${router.locale}/interactive-exercise`,
-    project: router.locale === 'en' ? '4geeks.com/project' : `4geeks.com/${router.locale}/project`,
-    answer: 'https://assessment.4geeks.com/quiz',
-  };
-  const shareLink = currentTask ? `${pathConnector[lesson]}/${currentTask.associated_slug}` : '';
-
-  const socials = [
-    {
-      name: 'x',
-      label: 'X',
-      href: `https://x.com/share?url=&text=${encodeURIComponent(t('share-social-message', { title: currentTask?.title }))} %23100DaysOfCode%0A%0A${shareLink}`,
-      color: '#000',
-    },
-    {
-      name: 'linkedin',
-      label: 'LinkedIn',
-      href: `https://linkedin.com/sharing/share-offsite/?url=${shareLink}`,
-      color: '#0077B5',
-      target: 'popup',
-    },
-  ];
+  const { socials, shareLink } = useSocialShare({
+    info: currentTask,
+    shareMessage: t('dashboard:share-message', { title: currentTask?.title }),
+  });
 
   const url = currentAsset?.readme_url || currentAsset?.url;
   const repoUrl = (ipynbHtmlUrl && url) ? `${url.replace('.inpynb', `${router.locale === 'en' ? '' : `.${router.locale}`}.inpynb`)}` : url;

@@ -26,6 +26,8 @@ function ShareButton({
   } = useStyle();
   const { featuredBackground, background, hoverBackground } = modal;
 
+  const socialList = socials || [];
+
   useEffect(() => {
     if (copied) {
       setTimeout(() => {
@@ -46,30 +48,6 @@ function ShareButton({
     setCopied(true);
     navigator.clipboard.writeText(link);
   };
-
-  const defaultSocial = [
-    {
-      name: 'x',
-      label: 'X',
-      href: 'https://www.x.com',
-      color: '#040404',
-    },
-    {
-      name: 'facebook',
-      label: 'Facebook',
-      href: 'https://www.facebook.com',
-      color: '#4267B2',
-      target: 'popup',
-    },
-    {
-      name: 'linkedin',
-      label: 'LinkedIn',
-      href: 'https://www.linkedin.com',
-      color: '#0077B5',
-      target: 'popup',
-    },
-  ];
-  const socialList = socials || defaultSocial;
 
   return (
     <>
@@ -226,7 +204,7 @@ ShareButton.defaultProps = {
   shareText: '',
   message: '',
   withParty: false,
-  onClose: () => {},
+  onClose: () => { },
 };
 
 export default memo(ShareButton);

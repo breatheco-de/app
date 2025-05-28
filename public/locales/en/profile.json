@@ -45,26 +45,7 @@
   "share-certificate": {
     "title": "Share your new career title",
     "shareText": "Share your new certificate via:",
-    "socials": [
-      {
-        "name": "twitter",
-        "label": "Twitter",
-        "href": "https://twitter.com/share?url=&text=I have successfully finished the {{profession}} certification at 4Geeks.com {{certfLink}}",
-        "color": "#1DA1F2"
-      },
-      {
-        "name": "facebook",
-        "label": "Facebook",
-        "href": "https://facebook.com/sharer?u={{certfLink}}",
-        "color": "#4267B2"
-      },
-      {
-        "name": "linkedin",
-        "label": "LinkedIn",
-        "href": "https://linkedin.com/sharing/share-offsite/?url={{certfLink}}",
-        "color": "#0077B5"
-      }
-    ]
+    "shareMessage": "I have successfully finished the \"{{profession}}\" certification at 4Geeks"
   },
   "update-profile-image": {
     "tooltip-label": "Upload your profile image",
