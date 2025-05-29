@@ -176,8 +176,10 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
   const redirectToModule = async (module) => {
     try {
       const { isStarted: moduleIsStarted } = modulesProgress?.[module.id] || {};
-      //start module
-      if (!moduleIsStarted) {
+      // Verificar si hay nuevas actividades
+      const hasNewActivities = module?.content?.length > (module?.filteredContent?.length || 0);
+      // Si hay nuevas actividades o el módulo no ha comenzado, actualizar las tareas
+      if (hasNewActivities || !moduleIsStarted) {
         const moduleToUpdate = module?.content;
         const newTasks = moduleToUpdate?.map((l) => ({
           ...l,
