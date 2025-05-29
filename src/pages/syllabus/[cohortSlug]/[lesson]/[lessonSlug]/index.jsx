@@ -133,7 +133,6 @@ function SyllabusContent() {
     : section.filteredContent));
 
   const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug || l.translations?.[language]?.slug === lessonSlug || (currentAsset?.id && l.translations?.[language]?.slug === currentAsset.slug)));
-
   const currentModule = sortedAssignments[currentModuleIndex];
 
   const buildLearnpackUrl = () => {
@@ -614,28 +613,36 @@ function SyllabusContent() {
     }
   };
 
-  const prevPage = () => {
-    setClickedPage(previousAssignment);
-    if (previousAssignment?.target === 'blank') {
-      setCurrentBlankProps(previousAssignment);
-      router.push({
-        query: {
-          ...router.query,
-          cohortSlug,
-          lesson: previousAssignment?.type?.toLowerCase(),
-          lessonSlug: previousAssignment?.slug,
-        },
+  const checkAndUpdateModule = async (module) => {
+    if (!module || !user?.id) return false;
+
+    const hasNewActivities = module?.content?.length > (module?.filteredContent?.length || 0);
+    if (hasNewActivities) {
+      const moduleToUpdate = module?.content;
+      const updatedTasks = moduleToUpdate?.map((l) => ({
+        ...l,
+        associated_slug: l.slug,
+        cohort: cohortSession.id,
+      }));
+
+      await startDay({
+        cohort: cohortSession,
+        newTasks: updatedTasks,
       });
-    } else {
-      handlePrevPage();
+      return true;
     }
+    return false;
   };
 
-  const nextPage = () => {
+  const nextPage = async () => {
     if (currentTask && currentTask.task_status !== 'DONE') {
       setOpenNextPageModal(true);
     } else if (nextAssignment !== null || !!firstTask) {
       setClickedPage(nextAssignment);
+      // Determinar qué módulo verificar basado en la posición actual
+      const moduleToCheck = !nextAssignment && firstTask ? nextModule : sortedAssignments[currentModuleIndex];
+      await checkAndUpdateModule(moduleToCheck);
+
       if (nextAssignment?.target === 'blank') {
         setCurrentBlankProps(nextAssignment);
         router.push({
@@ -653,6 +660,35 @@ function SyllabusContent() {
     } else {
       setOpenNextModuleModal(true);
     }
+  };
+
+  const prevPage = async () => {
+    setClickedPage(previousAssignment);
+
+    // Determinar qué módulo verificar basado en la posición actual
+    const moduleToCheck = !previousAssignment && lastPrevTask ? prevModule : sortedAssignments[currentModuleIndex];
+    await checkAndUpdateModule(moduleToCheck);
+
+    if (previousAssignment?.target === 'blank') {
+      setCurrentBlankProps(previousAssignment);
+      router.push({
+        query: {
+          ...router.query,
+          cohortSlug,
+          lesson: previousAssignment?.type?.toLowerCase(),
+          lessonSlug: previousAssignment?.slug,
+        },
+      });
+    } else {
+      handlePrevPage();
+    }
+  };
+
+  const handleMarkLater = async () => {
+    const moduleToCheck = !nextAssignment && firstTask ? nextModule : sortedAssignments[currentModuleIndex];
+    await checkAndUpdateModule(moduleToCheck);
+    handleNextPage();
+    setOpenNextPageModal(false);
   };
 
   const { socials, shareLink } = useSocialShare({
@@ -1290,10 +1326,7 @@ function SyllabusContent() {
             <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="12px" justifyContent="space-between">
               <Button
                 variant="outline"
-                onClick={() => {
-                  handleNextPage();
-                  setOpenNextPageModal(false);
-                }}
+                onClick={handleMarkLater}
                 textTransform="uppercase"
                 fontSize="13px"
               >
@@ -1306,8 +1339,10 @@ function SyllabusContent() {
                 sendProject={sendProject}
                 togglePendingSubtasks={handleNavigateToLastPendingSubtask}
                 currentAssetData={currentAsset}
-                onClickHandler={() => {
+                onClickHandler={async () => {
                   setShowModal(false);
+                  const moduleToCheck = !nextAssignment && firstTask ? nextModule : sortedAssignments[currentModuleIndex];
+                  await checkAndUpdateModule(moduleToCheck);
                   if (nextAssignment?.target === 'blank') {
                     setTimeout(() => {
                       setCurrentBlankProps(nextAssignment);

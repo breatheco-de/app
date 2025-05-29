@@ -173,12 +173,13 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
   };
 
   const colorVariations = getColorVariations(cohortColor);
-
   const redirectToModule = async (module) => {
     try {
       const { isStarted: moduleIsStarted } = modulesProgress?.[module.id] || {};
-      //start module
-      if (!moduleIsStarted) {
+      const hasNewActivities = module.content.length > (module.filteredContent?.length || 0);
+
+      // Si el módulo no está iniciado o tiene nuevas actividades, actualizamos
+      if (!moduleIsStarted || hasNewActivities) {
         const moduleToUpdate = module?.content;
         const newTasks = moduleToUpdate?.map((l) => ({
           ...l,
@@ -195,7 +196,7 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
       if (!moduleFirstAssignment) return;
 
       let syllabusRoute = `/syllabus/${cohort.slug}/${moduleFirstAssignment.type.toLowerCase()}/${moduleFirstAssignment.slug}`;
-      if (mainCohort) syllabusRoute = `/main-cohort/${mainCohort.slug}/${syllabusRoute}`;
+      if (mainCohort) syllabusRoute = `/main-cohort/${mainCohort.slug}${syllabusRoute}`;
 
       router.push(syllabusRoute);
     } catch (e) {

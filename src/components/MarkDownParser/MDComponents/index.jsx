@@ -88,10 +88,7 @@ export function MDLink({ children, href }) {
 export function Code({ inline, showLineNumbers, showInlineLineNumbers, className, children }) {
   const match = /language-(\w+)/.exec(className || '');
 
-  console.log('LENGUAGE ', match);
-
   if (match && match.includes('mermaid')) {
-    console.log(children, 'Children');
     return <MermaidRenderer code={children[0]} />;
   }
 
