@@ -23,7 +23,7 @@ import useAuth from '../../hooks/useAuth';
 
 function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentModuleIndex, handleStartDay, grantSyllabusAccess }) {
   const router = useRouter();
-  const { cohorts } = useAuth();
+  const { cohorts, user } = useAuth();
   const { mainCohortSlug } = router.query;
   const { t, lang } = useTranslation('syllabus');
   const [moduleLoading, setModuleLoading] = useState(false);
@@ -37,25 +37,41 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
   const nextModule = sortedAssignments[currentModuleIndex + 1];
   const prevModule = sortedAssignments[currentModuleIndex - 1];
 
+  const checkAndUpdateModule = async (module) => {
+    if (!module || !user?.id) return false;
+
+    const hasNewActivities = module?.content?.length > (module?.filteredContent?.length || 0);
+    if (hasNewActivities) {
+      await handleStartDay(module, true);
+      return true;
+    }
+    return false;
+  };
+
   const openNextModule = async () => {
     try {
-      const nextAssignments = nextModule.filteredContent;
-      if (nextAssignments.length === 0) {
-        setModuleLoading(true);
-        await handleStartDay(nextModule, true);
-        setModuleLoading(false);
-      }
+      setModuleLoading(true);
+      await checkAndUpdateModule(nextModule);
       const assignment = nextModule.content[0];
       onClickAssignment(null, assignment);
     } catch (e) {
       console.log(e);
+    } finally {
       setModuleLoading(false);
     }
   };
 
-  const openPrevModule = () => {
-    const assignment = prevModule.content[0];
-    onClickAssignment(null, assignment);
+  const openPrevModule = async () => {
+    try {
+      setModuleLoading(true);
+      await checkAndUpdateModule(prevModule);
+      const assignment = prevModule.content[0];
+      onClickAssignment(null, assignment);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setModuleLoading(false);
+    }
   };
 
   const getCohortDashboardUrl = () => {
