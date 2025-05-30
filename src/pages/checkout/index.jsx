@@ -870,11 +870,14 @@ function Checkout() {
                           )}
                         </Flex>
                         {!originalPlan?.isTrial && (
-                          <Flex alignItems="center" marginTop="5px" gap="5px">
-                            <Icon icon="shield" width="23px" />
-                            <Text fontSize="13px" fontWeight="medium" paddingTop="2px" color="green.400" lineHeight="normal">
-                              {t('common:money-back-guarantee-short')}
-                            </Text>
+                          <Flex flexDirection="column" alignItems="flex-start" marginTop="5px" gap="5px">
+                            <Flex alignItems="center" gap="5px">
+                              <Icon icon="shield" width="23px" />
+                              <Text fontSize="13px" fontWeight="medium" paddingTop="2px" color="green.400" lineHeight="normal">
+                                {t('common:money-back-guarantee-no-link')}
+                              </Text>
+                            </Flex>
+                            <Text fontSize="11px" color="gray.500" marginLeft="28px" marginTop="2px" dangerouslySetInnerHTML={{ __html: t('common:money-back-guarantee-conditions-link') }} />
                           </Flex>
                         )}
                       </Flex>

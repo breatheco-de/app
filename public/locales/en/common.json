@@ -198,7 +198,7 @@
       },
       {
         "label": "Get help during coding challenges.",
-        "description": "As you work on exercises, you can run your code and get immediate, friendly feedback. Rigobot won’t give you the solution directly, instead, it points you in the right direction, helping you improve your logic and sharpen your problem-solving skills.",
+        "description": "As you work on exercises, you can run your code and get immediate, friendly feedback. Rigobot won't give you the solution directly, instead, it points you in the right direction, helping you improve your logic and sharpen your problem-solving skills.",
         "video": "",
         "source": ""
       },
@@ -372,7 +372,7 @@
             {
               "slug": "read-readme",
               "label": "Read the content of the readme",
-              "description": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It’s like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
+              "description": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It's like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
               "video": "",
               "source": "#markdown-body",
               "source-label": "Take me to the readme!"
@@ -450,7 +450,7 @@
             {
               "slug": "read-readme",
               "label": "Read the content of the readme",
-              "description": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It’s like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
+              "description": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It's like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
               "video": "",
               "source": "#markdown-body",
               "source-label": "Take me to the readme!"
@@ -534,7 +534,7 @@
             {
               "slug": "read-readme",
               "label": "Read the content of the readme",
-              "description": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It’s like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
+              "description": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It's like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
               "video": "https://www.youtube.com/watch?v=bphlMjXZpLg",
               "source": "#markdown-body",
               "source-label": "Take me to the readme!"
@@ -576,6 +576,9 @@
   "senior": "Senior",
   "money-back-guarantee": "Get a full refund within 30 days if it's not what you expected",
   "money-back-guarantee-short": "100% Money back guarantee",
+  "money-back-guarantee-with-link": "<a style=\"color: inherit; text-decoration: underline;\" target=\"_blank\" href=\"https://4geeks.com/money-back-guarantee-self-paced\">100% Money back guarantee</a>",
+  "money-back-guarantee-conditions-link": "Check the <a style=\"color: inherit; text-decoration: underline;\" target=\"_blank\" href=\"https://4geeks.com/money-back-guarantee-self-paced\">money back guarantee conditions</a>",
+  "money-back-guarantee-no-link": "100% Money back guarantee",
   "start-free-trial": "Start free trial",
   "proceed-to-payment": "Proceed to payment",
   "select-cohort": "Select a cohort",

@@ -80,6 +80,7 @@ const getCommonTaskStatusConfig = (currentTask, taskIsApproved, hexColor, t) => 
 export function textByTaskStatus(currentTask, isGuidedExperience, hasPendingSubtasks) {
   const { t } = useTranslation('dashboard');
   const { hexColor } = useStyle();
+  console.log('currentTask', currentTask);
   const taskIsApproved = currentTask?.revision_status === 'APPROVED';
 
   if (currentTask?.task_type === 'PROJECT') {
