@@ -17,7 +17,7 @@ function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, footerContent, submitText, padding, isLive,
   subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables,
   conversionTechnologies, setNoConsumablesFound, invertHandlerPosition, formContainerStyle, buttonStyles,
-  onLastAttempt, maxAttemptsToRefetch, showVerifyEmail, onSubmit, ...rest
+  onLastAttempt, maxAttemptsToRefetch, showVerifyEmail, onSubmit, isJoiningEvent, ...rest
 }) {
   const { isAuthenticated, user, logout } = useAuth();
   const { handleSubscribeToPlan } = useSubscribeToPlan();
@@ -32,6 +32,7 @@ function ShowOnSignUp({
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
   const defaultPlan = process.env.BASE_PLAN || '4geeks-basic-subscription';
   const { setSelectedPlanCheckoutData } = useSignup();
+  const joiningEventText = t('joining-event');
 
   useEffect(() => {
     let intervalId;
@@ -117,6 +118,8 @@ function ShowOnSignUp({
               subscribeValues={subscribeValues}
               conversionTechnologies={conversionTechnologies}
               buttonStyles={{ background: hexColor.greenLight, ...buttonStyles }}
+              submitText={isJoiningEvent ? joiningEventText : undefined}
+              isJoiningEvent={isJoiningEvent}
               textAlign="left"
               extraFields={[{
                 name: 'phone',
@@ -203,6 +206,7 @@ ShowOnSignUp.propTypes = {
   onLastAttempt: PropTypes.func,
   showVerifyEmail: PropTypes.bool,
   onSubmit: PropTypes.func,
+  isJoiningEvent: PropTypes.bool,
 };
 
 ShowOnSignUp.defaultProps = {
@@ -231,6 +235,7 @@ ShowOnSignUp.defaultProps = {
   onLastAttempt: () => {},
   showVerifyEmail: true,
   onSubmit: () => {},
+  isJoiningEvent: false,
 };
 
 export default ShowOnSignUp;

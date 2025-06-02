@@ -1,7 +1,7 @@
 import {
   Box, Button, Grid, useColorModeValue, Image, Avatar, Skeleton, Flex, Portal, IconButton,
 } from '@chakra-ui/react';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, useRef } from 'react';
 import { intervalToDuration, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
@@ -14,7 +14,7 @@ import SimpleModal from '../../components/SimpleModal';
 import GridContainer from '../../components/GridContainer';
 import Heading from '../../components/Heading';
 import Text from '../../components/Text';
-import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate, getBrowserInfo } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate, getBrowserInfo, isWindow } from '../../utils';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../../components/Icon';
 import PublicProfile from '../../components/PublicProfile';
@@ -36,6 +36,7 @@ import ReactPlayerV2 from '../../components/ReactPlayerV2';
 import DynamicContentCard from '../../components/DynamicContentCard';
 import useAuth from '../../hooks/useAuth';
 import useCustomToast from '../../hooks/useCustomToast';
+import FixedBottomCta from '../../components/Assets/FixedBottomCta';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -167,6 +168,9 @@ function Workshop({ eventData, asset }) {
   const [noConsumablesFound, setNoConsumablesFound] = useState(false);
   const [denyAccessToEvent, setDenyAccessToEvent] = useState(false);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const stickyCtaRefTarget = useRef(null);
+  const [isCtaVisible, setIsCtaVisible] = useState(true);
+  const [isJoiningEvent, setIsJoiningEvent] = useState(false);
 
   const router = useRouter();
   const { locale } = router;
@@ -401,6 +405,12 @@ function Workshop({ eventData, asset }) {
     else setDenyAccessToEvent(false);
   }, [subscriptionsForCurrentEvent]);
 
+  const getDescriptionForAuthUser = () => {
+    if (isJoiningEvent) return t('form.joining-event');
+    if (readyToJoinEvent) return t('form.ready-to-join-description-logged');
+    return t('form.joined-description');
+  };
+
   const dynamicFormInfo = () => {
     if (!isAuth) {
       if (finishedEvent && recordingUrl) {
@@ -476,7 +486,7 @@ function Workshop({ eventData, asset }) {
       }
       return ({
         title: t('greetings', { name: user?.first_name }),
-        description: t('suggest-join-event'),
+        description: isJoiningEvent ? t('form.joining-event') : t('suggest-join-event'),
       });
     }
     if (isAuth) {
@@ -498,18 +508,18 @@ function Workshop({ eventData, asset }) {
       }
       return ({
         title: readyToJoinEvent ? t('form.ready-to-join-title') : t('form.joined-title'),
-        description: readyToJoinEvent ? t('form.ready-to-join-description-logged') : t('form.joined-description'),
+        description: getDescriptionForAuthUser(),
       });
     }
     if (!isAuth && readyToJoinEvent) {
       return ({
         title: t('form.ready-to-join-title'),
-        description: t('form.ready-to-join-description'),
+        description: isJoiningEvent ? t('form.joining-event') : t('form.ready-to-join-description'),
       });
     }
     return ({
       title: t('form.title'),
-      description: t('form.description'),
+      description: isJoiningEvent ? t('form.joining-event') : t('form.description'),
     });
   };
   const formInfo = dynamicFormInfo();
@@ -550,9 +560,22 @@ function Workshop({ eventData, asset }) {
     utm_term: userSession?.utm_term,
   };
 
-  const handleJoin = () => {
+  const applyAndRedirectToEvent = async ({ eventId, signupData }) => {
+    try {
+      const resp = await bc.events().applyEvent(eventId, utms);
+      if (resp && resp.status === 200) {
+        const token = signupData?.access_token ? signupData.access_token : getStorageItem('accessToken');
+        router.push(`${BREATHECODE_HOST}/v1/events/me/event/${eventId}/join?token=${token}`);
+      }
+    } catch (e) {
+      setIsJoiningEvent(false);
+    }
+  };
+
+  const handleJoin = async () => {
     if (!finishedEvent) {
       if ((readyToJoinEvent && alreadyApplied) || readyToJoinEvent) {
+        setIsJoiningEvent(true);
         reportDatalayer({
           dataLayer: {
             event: 'join_event',
@@ -569,6 +592,7 @@ function Workshop({ eventData, asset }) {
         router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
       }
       if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
+        setIsJoiningEvent(true);
         bc.events().applyEvent(event?.id, utms)
           .then((resp) => {
             if (resp !== undefined) {
@@ -604,7 +628,9 @@ function Workshop({ eventData, asset }) {
                 duration: 6000,
               });
             }
-          });
+            setIsJoiningEvent(false);
+          })
+          .catch(() => setIsJoiningEvent(false));
         setIsModalConfirmOpen(false);
       }
     }
@@ -616,6 +642,36 @@ function Workshop({ eventData, asset }) {
     else assetType = assetTypeDict[myAsset?.asset_type];
 
     return assetType;
+  };
+
+  const getElementTopOffset = (elem) => {
+    if (elem && isWindow) {
+      const rect = elem.getBoundingClientRect();
+      const { scrollY } = window;
+      return rect.top + scrollY;
+    }
+    return 0;
+  };
+
+  useEffect(() => {
+    if (isWindow) {
+      const handleScroll = () => {
+        if (stickyCtaRefTarget.current) {
+          const { scrollY } = window;
+          const top = getElementTopOffset(stickyCtaRefTarget.current);
+          setIsCtaVisible(top - scrollY > 700);
+        }
+      };
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+    return undefined;
+  }, [stickyCtaRefTarget]);
+
+  const handleCtaClick = () => {
+    if (stickyCtaRefTarget.current) {
+      stickyCtaRefTarget.current.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -984,7 +1040,10 @@ function Workshop({ eventData, asset }) {
                           background="white"
                           width="100%"
                           display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
-                          isDisabled={!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated))}
+                          isDisabled={(
+                            (!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated)))
+                            || (!finishedEvent && isJoiningEvent)
+                          )}
                           _disabled={{
                             background: buttonEnabled ? '' : 'gray.350',
                             cursor: buttonEnabled ? 'pointer' : 'not-allowed',
@@ -1003,6 +1062,13 @@ function Workshop({ eventData, asset }) {
                             } else {
                               handleJoin();
                             }
+                          }}
+                          isLoading={!finishedEvent && isJoiningEvent}
+                          loadingText={t('joining-event')}
+                          spinnerPlacement="center"
+                          _loading={{
+                            opacity: 0.7,
+                            cursor: 'not-allowed',
                           }}
                         >
                           {getWording()}
@@ -1027,14 +1093,14 @@ function Workshop({ eventData, asset }) {
                           fontSize="14px"
                           fontWeight={700}
                           onClick={handleGetMoreEventConsumables}
-                          isLoading={!hasFetchedAndNoConsumablesToUse || isFetchingDataForModal}
+                          isLoading={isFetchingDataForModal}
                           alignItems="center"
                           gridGap="10px"
                           width="100%"
                           isDisabled={denyAccessToEvent}
                           background={hexColor.greenLight}
                         >
-                          {denyAccessToEvent ? t('no-consumables.get-more-workshops') : t('denny-access.button')}
+                          {!denyAccessToEvent ? t('no-consumables.get-more-workshops') : t('denny-access.button')}
                           {!denyAccessToEvent && <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />}
                         </Button>
                       </Box>
@@ -1059,12 +1125,22 @@ function Workshop({ eventData, asset }) {
                         background={buttonEnabled ? 'white' : 'gray.350'}
                         color={buttonEnabled ? hexColor.greenLight : 'white'}
                         textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
-                        isDisabled={((finishedEvent && !recordingUrl) || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
+                        isDisabled={(
+                          (!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated)))
+                          || (!finishedEvent && isJoiningEvent)
+                        )}
                         onClick={() => {
                           if (finishedEvent && recordingUrl) {
                             setIsVideoModalOpen(true);
                           } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
                           else handleJoin();
+                        }}
+                        isLoading={!finishedEvent && isJoiningEvent}
+                        loadingText={t('joining-event')}
+                        spinnerPlacement="center"
+                        _loading={{
+                          opacity: 0.7,
+                          cursor: 'not-allowed',
                         }}
                       >
                         {getWording()}
@@ -1084,13 +1160,13 @@ function Workshop({ eventData, asset }) {
           margin={{ base: '20px 0 0 auto', lg: '-13.42rem 0 0 auto' }}
           flexDirection="column"
           transition="background 0.2s ease-in-out"
-          // width={{ base: '320px', md: 'auto' }}
           width={{ base: '100%', md: '320px' }}
           textAlign="center"
           height="fit-content"
           borderWidth="0px"
           gridGap="10px"
           overflow={{ base: 'inherit', md: 'hidden' }}
+          ref={stickyCtaRefTarget}
         >
           {event?.id && (
             <>
@@ -1103,7 +1179,17 @@ function Workshop({ eventData, asset }) {
                   isLive={readyToJoinEvent && !finishedEvent}
                   setNoConsumablesFound={setNoConsumablesFound}
                   subscribeValues={{ event_slug: event.slug }}
-                  onSubmit={() => setIsRefetching(true)}
+                  isJoiningEvent={!finishedEvent && isJoiningEvent}
+                  onSubmit={async (signupData) => {
+                    setIsRefetching(true);
+                    if (!finishedEvent) {
+                      setIsJoiningEvent(true);
+                      await applyAndRedirectToEvent({
+                        eventId: event.id,
+                        signupData,
+                      });
+                    }
+                  }}
                   refetchAfterSuccess={() => {
                     setIsRefetching(true);
                     getMySubscriptions();
@@ -1164,7 +1250,10 @@ function Workshop({ eventData, asset }) {
                       className={readyToJoinEvent && !finishedEvent ? 'pulse-blue' : ''}
                       background={buttonEnabled ? hexColor.greenLight : 'gray.350'}
                       textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
-                      isDisabled={((finishedEvent && !recordingUrl) || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
+                      isDisabled={(
+                        (!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated)))
+                        || (!finishedEvent && isJoiningEvent)
+                      )}
                       _disabled={{
                         background: buttonEnabled ? '' : 'gray.350',
                         cursor: buttonEnabled ? 'pointer' : 'not-allowed',
@@ -1182,6 +1271,13 @@ function Workshop({ eventData, asset }) {
                           setIsVideoModalOpen(true);
                         } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
                         else handleJoin();
+                      }}
+                      isLoading={!finishedEvent && isJoiningEvent}
+                      loadingText={t('joining-event')}
+                      spinnerPlacement="center"
+                      _loading={{
+                        opacity: 0.7,
+                        cursor: 'not-allowed',
                       }}
                     >
                       {getWording()}
@@ -1263,6 +1359,18 @@ function Workshop({ eventData, asset }) {
         </Box>
       </GridContainer>
       {finishedEvent && (<MktEventCards gridTemplateColumns="2fr repeat(12, 1fr) 2fr" gridColumn="2 / span 12" margin="2rem auto 0 auto" maxWidth="1440px" padding="0 10px" />)}
+      {!isAuthenticated && !isJoiningEvent && (
+        <FixedBottomCta
+          event={event}
+          isCtaVisible={isCtaVisible}
+          onClick={handleCtaClick}
+          isAuthenticated={isAuthenticated}
+          background={hexColor.greenLight}
+          eventWording={getWording()}
+          eventTitle={formInfo?.title}
+          eventDescription={formInfo?.description}
+        />
+      )}
     </Box>
   );
 }

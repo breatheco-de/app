@@ -30,7 +30,7 @@ import useCustomToast from '../../hooks/useCustomToast';
 function SignupForm({
   planSlug, courseChoosed, showVerifyEmail, subscribeValues, buttonStyles,
   onHandleSubmit, containerGap, extraFields, columnLayout, conversionTechnologies, showLoginLink,
-  invertHandlerPosition, formContainerStyle, ...rest
+  invertHandlerPosition, formContainerStyle, submitText, isJoiningEvent, ...rest
 }) {
   const { userSession, location } = useSession();
   const { t, lang } = useTranslation('signup');
@@ -330,12 +330,12 @@ function SignupForm({
                 width="100%"
                 type="submit"
                 variant="default"
-                isDisabled={isDisabled}
-                isLoading={isSubmitting}
+                isDisabled={isDisabled || isJoiningEvent}
+                isLoading={isSubmitting || isJoiningEvent}
                 alignSelf="flex-end"
                 {...buttonStyles}
               >
-                {t('create-account')}
+                {submitText || t('create-account')}
               </Button>
               <Text size="10px" textAlign="left">
                 {t('agree-terms-and-conditions')}
@@ -460,6 +460,8 @@ SignupForm.propTypes = {
   buttonStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   invertHandlerPosition: PropTypes.bool,
   formContainerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  submitText: PropTypes.string,
+  isJoiningEvent: PropTypes.bool,
 };
 SignupForm.defaultProps = {
   onHandleSubmit: () => { },
@@ -475,6 +477,8 @@ SignupForm.defaultProps = {
   buttonStyles: {},
   invertHandlerPosition: false,
   formContainerStyle: {},
+  submitText: undefined,
+  isJoiningEvent: false,
 };
 
 export default SignupForm;
