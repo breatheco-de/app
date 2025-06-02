@@ -32,7 +32,6 @@ function ShowOnSignUp({
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
   const defaultPlan = process.env.BASE_PLAN || '4geeks-basic-subscription';
   const { setSelectedPlanCheckoutData } = useSignup();
-  const joiningEventText = t('joining-event');
 
   useEffect(() => {
     let intervalId;
@@ -118,7 +117,6 @@ function ShowOnSignUp({
               subscribeValues={subscribeValues}
               conversionTechnologies={conversionTechnologies}
               buttonStyles={{ background: hexColor.greenLight, ...buttonStyles }}
-              submitText={isJoiningEvent ? joiningEventText : undefined}
               isJoiningEvent={isJoiningEvent}
               textAlign="left"
               extraFields={[{
