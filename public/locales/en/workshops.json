@@ -48,6 +48,7 @@
   "search-your-fav-tech": "Search your favorite technology",
   "upcoming-events": "Upcoming events",
   "events-joined": "Events you have joined",
+  "past-events": "Past events",
   "tech-event": "{{tech}} events",
   "searching-for": "Searching events with {{search}}",
   "search-not-found": "No events have been found for \"{{search}}\"",
