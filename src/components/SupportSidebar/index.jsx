@@ -13,18 +13,6 @@ function SupportSidebar({ allCohorts, allSyllabus, services, subscriptions, subs
     isFetching: true,
   });
 
-  // const filterByFinantialStatus = (list) => list.filter((service) => {
-  //   if (allCohorts.length > 0) {
-  //     return allCohorts.some((elem) => {
-  //       if (elem?.academy?.id === service?.academy?.id && (elem?.cohort_user.finantial_status === 'LATE' || elem?.cohort_user.educational_status === 'SUSPENDED')) {
-  //         return false;
-  //       }
-  //       return true;
-  //     });
-  //   }
-  //   return true;
-  // });
-
   useEffect(() => {
     if (services?.length === 0) {
       bc.mentorship().getService().then(({ data }) => {
