@@ -79,6 +79,11 @@ function chooseProgram() {
   const TwelveHoursInMinutes = 720;
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
 
+  const allSubscriptions = useMemo(() => [
+    ...subscriptions?.subscriptions || [],
+    ...subscriptions?.plan_financings || [],
+  ], [subscriptions]);
+
   const allSyllabus = useMemo(() => {
     const syllabus = [];
 
@@ -123,8 +128,8 @@ function chooseProgram() {
       const cohortIsReady = cohorts?.length > 0 && cohorts?.some((cohort) => {
         const academy = cohort?.academy;
         if (cohort?.id === subscriptionProcess?.id
-        && cohort?.slug === subscriptionProcess?.slug
-        && academy?.id === subscriptionProcess?.academy_info?.id) return true;
+          && cohort?.slug === subscriptionProcess?.slug
+          && academy?.id === subscriptionProcess?.academy_info?.id) return true;
 
         return false;
       });
@@ -167,12 +172,6 @@ function chooseProgram() {
 
     return () => clearTimeout(revalidate);
   }, [user, cohorts]);
-
-  const allSubscriptions = [
-    ...subscriptions?.subscriptions || [],
-    ...subscriptions?.plan_financings || [],
-  ];
-  // .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
 
   useEffect(() => {
     if (subscriptionLoading === false && cohorts.length > 0 && Object.values(cohortMembers)?.length > 0) {
@@ -612,16 +611,16 @@ function chooseProgram() {
               cohorts={cohorts}
             />
           </Box>
-          <Box zIndex={10}>
-            {!mentorshipServices.isLoading && mentorshipServices?.data?.length > 0 && (
+          {!mentorshipServices.isLoading && mentorshipServices?.data?.length > 0 && (
+            <Box zIndex={10}>
               <SupportSidebar
                 allCohorts={cohorts}
                 allSyllabus={allSyllabus}
                 services={mentorshipServices.data}
                 subscriptions={allSubscriptions}
               />
-            )}
-          </Box>
+            </Box>
+          )}
           <Feedback />
 
           {cohorts.every((elem) => elem.available_as_saas) && (
