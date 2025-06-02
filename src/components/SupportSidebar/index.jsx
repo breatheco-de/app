@@ -13,25 +13,24 @@ function SupportSidebar({ allCohorts, allSyllabus, services, subscriptions, subs
     isFetching: true,
   });
 
-  const filterByFinantialStatus = (list) => list.filter((service) => {
-    if (allCohorts.length > 0) {
-      return allCohorts.some((elem) => {
-        if (elem?.academy?.id === service?.academy?.id && (elem?.cohort_user.finantial_status === 'LATE' || elem?.cohort_user.educational_status === 'SUSPENDED')) {
-          return false;
-        }
-        return true;
-      });
-    }
-    return true;
-  });
+  // const filterByFinantialStatus = (list) => list.filter((service) => {
+  //   if (allCohorts.length > 0) {
+  //     return allCohorts.some((elem) => {
+  //       if (elem?.academy?.id === service?.academy?.id && (elem?.cohort_user.finantial_status === 'LATE' || elem?.cohort_user.educational_status === 'SUSPENDED')) {
+  //         return false;
+  //       }
+  //       return true;
+  //     });
+  //   }
+  //   return true;
+  // });
 
   useEffect(() => {
     if (services?.length === 0) {
       bc.mentorship().getService().then(({ data }) => {
-        const servicesFiltered = filterByFinantialStatus(data);
-        if (servicesFiltered && servicesFiltered.length > 0) {
+        if (data && data.length > 0) {
           setProgramServices({
-            list: servicesFiltered,
+            list: data,
             isFetching: false,
           });
         }
@@ -46,9 +45,8 @@ function SupportSidebar({ allCohorts, allSyllabus, services, subscriptions, subs
         });
       });
     } else {
-      const servicesFiltered = filterByFinantialStatus(services);
       setProgramServices({
-        list: servicesFiltered,
+        list: services,
         isFetching: false,
       });
     }

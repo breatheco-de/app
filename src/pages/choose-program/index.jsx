@@ -30,6 +30,7 @@ import SupportSidebar from '../../components/SupportSidebar';
 import Feedback from '../../components/Feedback';
 import axios from '../../axios';
 import LanguageSelector from '../../components/LanguageSelector';
+import useConsumables from '../../hooks/useConsumables';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -78,6 +79,7 @@ function chooseProgram() {
   const isClosedLateModal = getStorageItem('isClosedLateModal');
   const TwelveHoursInMinutes = 720;
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
+  const { consumables } = useConsumables(cohorts);
 
   const allSubscriptions = useMemo(() => [
     ...subscriptions?.subscriptions || [],
@@ -92,6 +94,28 @@ function chooseProgram() {
     });
     return syllabus;
   }, [cohorts]);
+
+  const hasValidCohorts = useMemo(() => cohorts.some((cohort) => {
+    const validEducationalStatus = ['ACTIVE', 'GRADUATED', 'POSTPONED', 'NOT_COMPLETING'].includes(cohort.cohort_user?.educational_status);
+    const validFinancialStatus = cohort.cohort_user?.finantial_status !== 'LATE';
+    return validEducationalStatus && validFinancialStatus;
+  }), [cohorts]);
+
+  const showMentorshipWidget = useMemo(() => {
+    const hasMentorshipConsumables = consumables.mentorship_service_sets?.some(
+      (set) => set.balance.unit > 0 || set.balance.unit === -1,
+    );
+
+    return hasValidCohorts || hasMentorshipConsumables;
+  }, [hasValidCohorts, consumables]);
+
+  const showEventWidget = useMemo(() => {
+    const hasEventConsumables = consumables.event_type_sets?.some(
+      (set) => set.balance.unit > 0 || set.balance.unit === -1,
+    );
+
+    return hasValidCohorts || hasEventConsumables;
+  }, [hasValidCohorts, consumables]);
 
   const getServices = async (userRoles) => {
     if (userRoles?.length > 0) {
@@ -185,7 +209,7 @@ function chooseProgram() {
           subscription: subscriptions?.subscriptions?.find(
             (sub) => sub?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === value.slug),
           ) || null,
-          all_subscriptions: allSubscriptions,
+          all_subscriptions: JSON.parse(JSON.stringify(allSubscriptions)),
           slug: value.slug,
         };
         return acc;
@@ -601,17 +625,19 @@ function chooseProgram() {
           )}
         </Box>
         <Flex flexDirection="column" gridGap="42px" flex={{ base: 1, md: 0.3 }}>
-          <Box zIndex={10}>
-            <LiveEvent
-              featureLabel={t('common:live-event.title')}
-              featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-              mainClasses={liveClasses?.length > 0 ? liveClasses : []}
-              otherEvents={events}
-              margin="0 auto"
-              cohorts={cohorts}
-            />
-          </Box>
-          {!mentorshipServices.isLoading && mentorshipServices?.data?.length > 0 && (
+          {showEventWidget && (
+            <Box zIndex={10}>
+              <LiveEvent
+                featureLabel={t('common:live-event.title')}
+                featureReadMoreUrl={t('common:live-event.readMoreUrl')}
+                mainClasses={liveClasses?.length > 0 ? liveClasses : []}
+                otherEvents={events}
+                margin="0 auto"
+                cohorts={cohorts}
+              />
+            </Box>
+          )}
+          {showMentorshipWidget && !mentorshipServices.isLoading && mentorshipServices?.data?.length > 0 && (
             <Box zIndex={10}>
               <SupportSidebar
                 allCohorts={cohorts}
