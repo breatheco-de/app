@@ -87,8 +87,6 @@ function CoursePage() {
     setStorageItem,
   } = useBootcamp();
 
-  // console.log(planData);
-
   return (
     <>
       {cleanedStructuredData?.name && (
