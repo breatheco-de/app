@@ -1,0 +1,249 @@
+---
+description: 
+globs: src/pages/**
+alwaysApply: false
+---
+# Pages Structure Rules
+
+## Overview
+Every page in this website should follow a consistent structure that separates logic from presentation. This ensures maintainability, testability, and code reusability.
+
+## File Structure
+Each page should consist of two main files in the same directory:
+
+1. **Custom Hook** (`use[PageName].js`) - Contains all business logic in plain JavaScript
+2. **Page Component** (`index.jsx` or `[slug].jsx`) - Contains only the presentation layer
+
+### Example Structure:
+```
+pages/
+├── home/
+│   ├── useHome.js          # Custom hook with all logic
+│   └── index.jsx           # Page component (presentation only)
+├── about/
+│   ├── useAbout.js         # Custom hook with all logic
+│   └── index.jsx           # Page component (presentation only)
+├── blog/
+│   ├── useBlog.js          # Custom hook with all logic
+│   └── [slug].jsx          # Dynamic page component (presentation only)
+```
+
+## Custom Hook Rules (`use[PageName].js`)
+
+### Purpose
+Contains ALL business logic, state management, data fetching, and side effects for the page.
+
+### Structure and Order
+The hook must follow this specific order of declarations:
+
+```javascript
+// use[PageName].js
+import { useState, useEffect, useContext } from 'react';
+// Other necessary imports...
+
+export const use[PageName] = () => {
+  // 1. State Declarations
+  // All useState declarations must be at the top
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  const [formData, setFormData] = useState({});
+
+  // 2. Context Usage
+  // All useContext hooks come after state
+  const theme = useContext(ThemeContext);
+  const user = useContext(UserContext);
+
+  // 3. Effects
+  // All useEffect hooks grouped together
+  useEffect(() => {
+    // Initial data fetching
+  }, []);
+
+  useEffect(() => {
+    // Other side effects
+  }, [data]);
+
+  // 4. Functions
+  // All function declarations grouped together
+  const handleSubmit = (event) => {
+    // Handle form submission
+  };
+
+  const handleInputChange = (event) => {
+    // Handle input changes
+  };
+
+  const fetchData = async () => {
+    // Fetch data logic
+  };
+
+  // 5. Variables and Computed Values
+  // All variables and computed values (including useMemo) at the end
+  const isFormValid = formData.title && formData.description;
+  const displayName = `${user?.firstName} ${user?.lastName}`;
+  const computedValue = useMemo(() => {
+    // Complex computations
+    return result;
+  }, [data]);
+
+  // 6. Return object
+  // Group related values together in the return object
+  return {
+    // States
+    loading,
+    data,
+    error,
+    formData,
+
+    // Context values
+    theme,
+    user,
+
+    // Functions
+    handleSubmit,
+    handleInputChange,
+    fetchData,
+
+    // Computed values
+    isFormValid,
+    displayName,
+    computedValue,
+  };
+};
+```
+
+### Hook Organization Guidelines:
+1. **States (Top)**
+   - All useState declarations
+   - Group related states together
+   - Clear, descriptive state names
+
+2. **Context (Second)**
+   - All useContext hooks
+   - Keep context usage minimal and purposeful
+   - Document context dependencies
+
+3. **Effects (Third)**
+   - All useEffect hooks
+   - Clear dependency arrays
+   - Group related effects together
+   - Document effect purposes
+
+4. **Functions (Fourth)**
+   - Event handlers
+   - Data fetching functions
+   - Helper/utility functions
+   - Group related functions together
+
+5. **Variables and Computed Values (Fifth)**
+   - Regular variables
+   - useMemo computations
+   - Derived state
+   - Constants
+
+6. **Return Object (Last)**
+   - Group related values together
+   - Clear, descriptive property names
+   - Document complex return values
+
+### Guidelines for Custom Hooks:
+- Use plain JavaScript (no JSX)
+- Follow the strict ordering of declarations
+- Document complex logic or business rules
+- Keep functions pure when possible
+- Use meaningful names for all declarations
+- Group related functionality together
+- Export a single function that returns an object with all needed values
+- Name the hook with the `use` prefix followed by the page name in PascalCase
+
+## Page Component Rules (`index.jsx` or `[slug].jsx`)
+
+### Purpose
+Contains ONLY the presentation layer - what gets rendered to the user.
+
+### Structure
+```jsx
+// index.jsx or [slug].jsx
+import React from 'react';
+import { use[PageName] } from './use[PageName]';
+// Import UI components only
+
+const [PageName]Page = () => {
+  // Import all logic from the custom hook
+  const {
+    loading,
+    data,
+    error,
+    handleSubmit,
+    handleClick,
+    computedValue,
+  } = use[PageName]();
+
+  // Early returns for loading/error states
+  if (loading) return <LoadingComponent />;
+  if (error) return <ErrorComponent error={error} />;
+
+  // Main render - ONLY JSX and presentation logic
+  return (
+    <div>
+      <h1>{data?.title}</h1>
+      <button onClick={handleClick}>
+        Click me
+      </button>
+      <form onSubmit={handleSubmit}>
+        {/* Form fields */}
+      </form>
+      <p>{computedValue}</p>
+    </div>
+  );
+};
+
+export default [PageName]Page;
+```
+
+### Guidelines for Page Components:
+- NO business logic - only presentation
+- NO state management (except for pure UI state like modals, dropdowns)
+- NO API calls or data fetching
+- NO complex event handlers (delegate to custom hook)
+- Import and destructure everything needed from the custom hook
+- Focus on JSX structure and user interface
+- Use semantic HTML and proper accessibility attributes
+
+## Implementation Rules
+
+### When Creating a New Page:
+1. Create the directory under `pages/`
+2. Create the custom hook file first (`use[PageName].js`)
+3. Implement all logic in the custom hook
+4. Create the page component (`index.jsx` or `[slug].jsx`)
+5. Import and use the custom hook in the component
+6. Test both the hook and component separately
+
+### When Modifying Existing Pages:
+1. Move all existing logic to a new custom hook
+2. Update the page component to only handle presentation
+3. Ensure all state and functions are properly exposed by the hook
+4. Test that functionality remains the same after refactoring
+
+### Best Practices:
+- Keep custom hooks focused on a single page's concerns
+- Use TypeScript types for better development experience (optional)
+- Write unit tests for custom hooks separately from component tests
+- Document complex logic within the custom hook
+- Use meaningful names for returned values and functions
+- Consider extracting shared logic into separate utility hooks
+
+### File Naming Conventions:
+- Custom hooks: `use[PageName].js` (camelCase after 'use')
+- Page components: `index.jsx` for static pages, `[slug].jsx` for dynamic pages
+- Use PascalCase for page names in hook names
+- Keep directory names lowercase and descriptive
+
+This structure promotes:
+- ✅ Separation of concerns
+- ✅ Reusability of logic
+- ✅ Easier testing
+- ✅ Better maintainability
+- ✅ Cleaner code organization

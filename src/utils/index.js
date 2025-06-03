@@ -412,10 +412,11 @@ function getDiscountedPrice({ numItems, maxItems, discountRatio, bundleSize, pri
 }
 
 const formatPrice = (price = 0, hideDecimals = false) => {
-  if (price % 1 === 0) {
-    return hideDecimals ? `$${price.toFixed(0)}` : `$${price.toFixed(2)}`;
+  const numPrice = Number(price);
+  if (hideDecimals || numPrice % 1 === 0) {
+    return `$${numPrice.toFixed(0)}`;
   }
-  return `$${price.toFixed(2)}`;
+  return `$${numPrice.toFixed(2)}`;
 };
 
 const location = isWindow && window.location;

@@ -15,9 +15,11 @@ export const handlePriceTextWithCoupon = (priceText, allDiscounts, plan) => {
     }
   });
 
-  discountedPrice = Math.floor(discountedPrice * 100) / 100;
+  discountedPrice = parseFloat(discountedPrice.toFixed(2));
 
-  return currencySymbol + discountedPrice;
+  // Only show decimals if they're not .00
+  const formattedPrice = discountedPrice % 1 === 0 ? discountedPrice.toFixed(0) : discountedPrice.toFixed(2);
+  return currencySymbol + formattedPrice;
 };
 
 const getPlanPrice = (plan, planList, allDiscounts, t) => {

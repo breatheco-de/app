@@ -39,23 +39,36 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
 
   const openNextModule = async () => {
     try {
-      const nextAssignments = nextModule.filteredContent;
-      if (nextAssignments.length === 0) {
-        setModuleLoading(true);
+      setModuleLoading(true);
+      // Verificar si hay nuevas actividades en el siguiente módulo
+      const hasNewActivities = nextModule?.content?.length > (nextModule?.filteredContent?.length || 0);
+      if (hasNewActivities) {
         await handleStartDay(nextModule, true);
-        setModuleLoading(false);
       }
       const assignment = nextModule.content[0];
       onClickAssignment(null, assignment);
     } catch (e) {
       console.log(e);
+    } finally {
       setModuleLoading(false);
     }
   };
 
-  const openPrevModule = () => {
-    const assignment = prevModule.content[0];
-    onClickAssignment(null, assignment);
+  const openPrevModule = async () => {
+    try {
+      setModuleLoading(true);
+      // Verificar si hay nuevas actividades en el módulo anterior
+      const hasNewActivities = prevModule?.content?.length > (prevModule?.filteredContent?.length || 0);
+      if (hasNewActivities) {
+        await handleStartDay(prevModule, true);
+      }
+      const assignment = prevModule.content[0];
+      onClickAssignment(null, assignment);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setModuleLoading(false);
+    }
   };
 
   const getCohortDashboardUrl = () => {
