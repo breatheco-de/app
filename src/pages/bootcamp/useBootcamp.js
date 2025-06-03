@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import useAuth from '../../hooks/useAuth';
-import useSignup from '../../store/actions/signupAction';
+import useSignup from '../../hooks/useSignup';
 import useStyle from '../../hooks/useStyle';
 import useRigo from '../../hooks/useRigo';
 import useCohortHandler from '../../hooks/useCohortHandler';
@@ -22,6 +22,7 @@ import axiosInstance from '../../axios';
 import completions from './completion-jobs.json';
 
 export const useBootcamp = () => {
+  const { t, lang } = useTranslation('course');
   const { state, getPriceWithDiscount, getSelfAppliedCoupon, applyDiscountCouponsToPlans } = useSignup();
   const [coupon] = usePersistentBySession('coupon', '');
   const [data, setData] = useState({});
@@ -46,7 +47,6 @@ export const useBootcamp = () => {
   const [planData, setPlanData] = useState({});
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const { t, lang } = useTranslation('course');
   const { location, isLoadingLocation } = useSession();
   const router = useRouter();
   const translationsObj = getTranslations(t);
@@ -254,7 +254,7 @@ export const useBootcamp = () => {
 
     const modulesInfo = await getModulesInfo();
 
-    const studentList = await bc.public({ roles: 'STUDENT' }, true).syllabusMembers(cohortSyllabus.syllabus?.slug)
+    const studentList = await bc.admissions({ roles: 'STUDENT' }).getPublicMembers()
       .then((respMembers) => respMembers.data)
       .catch((err) => {
         error('Error fetching cohort users:', err);
@@ -264,7 +264,7 @@ export const useBootcamp = () => {
       l.user.id === student.user.id
     )) === index) : [];
 
-    const instructorsList = await bc.cohort({
+    const instructorsList = await bc.admissions({
       roles: 'TEACHER,ASSISTANT',
       cohort_id: courseData?.cohort?.id,
     }).getPublicMembers()
