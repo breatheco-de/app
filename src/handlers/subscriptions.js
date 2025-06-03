@@ -42,7 +42,7 @@ export const processPlans = (data, {
       };
 
       const slug = encodeURIComponent(data?.slug);
-      const resp = await bc.payment({ country_code }).getPlanProps(slug);
+      const resp = await bc.payment({ country_code }).getServiceItemsByPlan(slug);
       if (!resp) {
         throw new Error('The plan does not exist');
       }
@@ -227,6 +227,7 @@ export const processPlans = (data, {
         hasSubscriptionMethod,
       });
     } catch (error) {
+      console.log('asdadasd', error);
       console.error('Error processing plans:', error);
       reject(error);
     }
@@ -242,6 +243,7 @@ export const processPlans = (data, {
 export const generatePlan = async (planSlug, translationsObj, country_code) => {
   try {
     const resp = await bc.payment({ country_code }).getPlan(planSlug);
+    console.log('asdadasd', resp);
     const data = await processPlans(resp?.data, { country_code }, translationsObj);
     return data;
   } catch (error) {
@@ -394,6 +396,7 @@ export const fetchSuggestedPlan = async (planSlug, translationsObj = {}, version
       const suggestedPlan = suggestedPlanProps?.plans || [];
       if (suggestedPlanData?.status_code === 404 || suggestedPlanData?.length === 0) {
         const originalPlanData = await generatePlan(planSlug, translationsObj, country_code);
+        console.log('asdadasd', originalPlanData);
         return {
           ...originalPlanData,
           planList: originalPlanData?.plans || [],
