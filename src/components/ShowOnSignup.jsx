@@ -16,7 +16,7 @@ function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, footerContent, submitText, padding, isLive,
   subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables,
   conversionTechnologies, setNoConsumablesFound, invertHandlerPosition, formContainerStyle, buttonStyles,
-  onLastAttempt, maxAttemptsToRefetch, showVerifyEmail, onSubmit, ...rest
+  onLastAttempt, maxAttemptsToRefetch, showVerifyEmail, onSubmit, isJoiningEvent, ...rest
 }) {
   const { isAuthenticated, user, logout } = useAuth();
   const { handleSubscribeToPlan, setSelectedPlan } = useSignup();
@@ -115,6 +115,7 @@ function ShowOnSignUp({
               subscribeValues={subscribeValues}
               conversionTechnologies={conversionTechnologies}
               buttonStyles={{ background: hexColor.greenLight, ...buttonStyles }}
+              isJoiningEvent={isJoiningEvent}
               textAlign="left"
               extraFields={[{
                 name: 'phone',
@@ -201,6 +202,7 @@ ShowOnSignUp.propTypes = {
   onLastAttempt: PropTypes.func,
   showVerifyEmail: PropTypes.bool,
   onSubmit: PropTypes.func,
+  isJoiningEvent: PropTypes.bool,
 };
 
 ShowOnSignUp.defaultProps = {
@@ -229,6 +231,7 @@ ShowOnSignUp.defaultProps = {
   onLastAttempt: () => {},
   showVerifyEmail: true,
   onSubmit: () => {},
+  isJoiningEvent: false,
 };
 
 export default ShowOnSignUp;
