@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box, Flex, Img, useColorModeValue, Image,
@@ -67,10 +67,10 @@ function MktTwoColumnSideImage({
   contentPosition,
   customTitleWeight,
   imageFirstOnMobile,
+  autoPlay,
   ...rest
 }) {
   const videoRef = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
   const { fontColor2, hexColor, backgroundColor } = useStyle();
   const flexDirection = {
     right: 'ltr',
@@ -145,24 +145,6 @@ function MktTwoColumnSideImage({
       padding: '24px 14px',
     };
   };
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        requestAnimationFrame(() => {
-          setIsVisible(true);
-        });
-      } else {
-        setIsVisible(false);
-      }
-    }, { threshold: 0.2 });
-
-    if (videoRef.current) observer.observe(videoRef.current);
-
-    return () => {
-      if (videoRef.current) observer.unobserve(videoRef.current);
-    };
-  }, []);
 
   const prismicStyles = prisimicStyles();
   const finalTitleSize = parseProp(customTitleSize, prismicStyles.titleSize);
@@ -331,24 +313,15 @@ function MktTwoColumnSideImage({
               borderRadius="20px"
               controls={false}
               loop
-              playsInline={false}
+              playsInline
               muted
               volume={0}
               width="100%"
               height="auto"
               pictureInPicture={false}
-              autoPlay={isVisible}
+              autoPlay
               iframeStyle={{
                 background: 'transparent',
-              }}
-              playerConfig={{
-                file: {
-                  attributes: {
-                    playsInline: true,
-                    disablePictureInPicture: true,
-                    controlsList: 'nodownload',
-                  },
-                },
               }}
             />
           ) : (
@@ -414,6 +387,7 @@ MktTwoColumnSideImage.propTypes = {
   contentPosition: PropTypes.string,
   customTitleWeight: PropTypes.string,
   imageFirstOnMobile: PropTypes.bool,
+  autoPlay: PropTypes.bool,
 };
 
 MktTwoColumnSideImage.defaultProps = {
@@ -460,6 +434,7 @@ MktTwoColumnSideImage.defaultProps = {
   contentPosition: 'center',
   customTitleWeight: '700',
   imageFirstOnMobile: false,
+  autoPlay: true,
 };
 
 export default MktTwoColumnSideImage;
