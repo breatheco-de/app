@@ -109,7 +109,7 @@
     "payment_unit": {
       "month": "Monthly",
       "year": "Yearly",
-      "anual": "Anual"
+      "anual": "Yearly"
     },
     "payment_unit_short": {
       "month": "mo",
