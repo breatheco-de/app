@@ -51,26 +51,7 @@
   "share-certificate": {
     "title": "Comparte tu nuevo título profesional",
     "shareText": "Comparte tu nuevo certificado a través de:",
-    "socials": [
-      {
-        "name": "twitter",
-        "label": "Twitter",
-        "href": "https://twitter.com/share?url=&text=Obtuve un nuevo certificado como {{profession}} en 4Geeks.com {{certfLink}}",
-        "color": "#1DA1F2"
-      },
-      {
-        "name": "facebook",
-        "label": "Facebook",
-        "href": "https://facebook.com/sharer?u={{certfLink}}",
-        "color": "#4267B2"
-      },
-      {
-        "name": "linkedin",
-        "label": "LinkedIn",
-        "href": "https://linkedin.com/sharing/share-offsite/?url={{certfLink}}",
-        "color": "#0077B5"
-      }
-    ]
+    "shareMessage": "Obtuve un nuevo certificado \"{{profession}}\" en 4Geeks"
   },
   "update-profile-image": {
     "tooltip-label": "Sube tu imagen de perfil",
@@ -103,19 +84,6 @@
     "many-payments-left": "Pago: {{qty}} pagos restantes",
     "no-payment-left": "Pago: Sin pagos restantes",
     "renewal-date": "Fecha de renovación: {{date}}",
-    "yearly-savings": "Estás ahorrándote {{months}} meses",
-    "charged": "Cobrado",
-    "yearly-savings-singular": "Estás ahorrándote {{months}} mes",
-    "payment_unit": {
-      "month": "Mensual",
-      "year": "Anual",
-      "anual": "Anual"
-    },
-    "payment_unit_short": {
-      "month": "mes",
-      "year": "año",
-      "anual": "año"
-    },
     "renewal-date-unknown": "Fecha de renovación: Desconocida",
     "payment-trial": "Pago: Prueba",
     "payment-free": "Pago: Libre",
@@ -139,30 +107,6 @@
     "manage-subscription": "Administrar suscripción",
     "contact-support": "Chatea con soporte",
     "duration-cancelled": "Duración: Cancelada",
-    "upgrade-modal": {
-      "choose_your_plan": "Elige tu plan",
-      "choose_how_much": "Elige cuanto",
-      "not_ready_to_commit": "¿No estás listo para comprometerte?",
-      "no_card_needed": "No se requiere tarjeta. Acceso completo a todas las funciones por",
-      "duration_days": "{{duration}} dias",
-      "duration_month": "{{duration}} mes",
-      "connector_duration_trial": "gratis",
-      "subscription": "Suscripción",
-      "one_payment": "Pago único",
-      "free-course": "Curso gratuito",
-      "finance": "Financiado",
-      "buy_mentorships": "Ha consumido todas las mentorías disponibles, compre más mentorías",
-      "free_trial": "Prueba gratuita",
-      "upgrade_free_trial": "Actualizar prueba gratuita",
-      "price_remaining_to_pay": "${{price}} restantes para pagar",
-      "monthly_payment": "Pago mensual",
-      "yearly_payment": "Pago anual",
-      "many_months_payment": "{{qty}} pagos mensuales",
-      "many_months_description": "Pagaras ${{monthly_price}} durante {{many_months}} meses y obtendras Acceso completo a todas las funciones durante la duración del curso.",
-      "full_access": "Acceso completo a todas las funciones durante la duración del curso.",
-      "free_trial_description": "Mejora tu plan para acceder a este y muchos otros beneficios.",
-      "upgrade_access": "Actualice su membresía para acceder a todos los beneficios de la comunidad 4Geeks"
-    },
     "cancel-modal": {
       "title": "Cancelar suscripción",
       "description": "¿Estás seguro de que desea cancelar su suscripción a {{cohort}}?",

@@ -11,7 +11,7 @@ import Icon from '../Icon';
 import Text from '../Text';
 import TaskLabel from '../taskLabel';
 import { isGithubUrl } from '../../utils/regex';
-import ButtonHandler from './index';
+import ReviewButton from './index';
 import useAssignments from '../../store/actions/assignmentsAction';
 import SubmissionReviewButton from './SubmissionReviewButton';
 import LoaderScreen from '../LoaderScreen';
@@ -102,7 +102,7 @@ const ProjectsRows = forwardRef(({
               />
 
               <Box width="auto" minWidth="160px" textAlign="end">
-                <ButtonHandler
+                <ReviewButton
                   currentTask={task}
                   contextState={contextState}
                   updpateAssignment={updpateAssignment}

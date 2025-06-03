@@ -25,7 +25,7 @@ import useStyle from '../../../hooks/useStyle';
 import Icon from '../../../components/Icon';
 import DottedTimeline from '../../../components/DottedTimeline';
 import GridContainer from '../../../components/GridContainer';
-import handlers from '../../../handlers';
+import { getAttendanceList, getStudents } from '../../../lib/admissions';
 import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../components/Skeleton';
 import Sparkline from '../../../components/Sparkline';
 import KPI from '../../../components/KPI';
@@ -130,7 +130,7 @@ function Attendance() {
 
     // setSelectedCohort(findSelectedCohort);
     if (academyId) {
-      handlers.getActivities(slug, academyId)
+      getAttendanceList({ cohortSlug: slug, academy: academyId })
         .then((daysLog) => {
           if (Object.keys(daysLog).length <= 0) {
             setCurrentDaysLog({});
@@ -154,7 +154,7 @@ function Attendance() {
             isClosable: true,
           });
         });
-      handlers.getStudents(slug, academyId)
+      getStudents(slug, academyId)
         .then((students) => {
           setCurrentStudentList(students);
         })

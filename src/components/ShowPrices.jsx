@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
 import Text from './Text';
-import useSignup from '../store/actions/signupAction';
+import useSignup from '../hooks/useSignup';
 import useStyle from '../hooks/useStyle';
 import Icon from './Icon';
 import MktTechnologies from './PrismicComponents/MktTechnologies';
@@ -56,7 +56,7 @@ function ShowPrices({
   bullets,
 }) {
   const [selectedPlanId, setSelectedPlanId] = useState('');
-  const { t } = useTranslation('profile');
+  const { t } = useTranslation('signup');
   const { backgroundColor, lightColor } = useStyle();
   const router = useRouter();
   const { applyDiscountCouponsToPlans, state } = useSignup();
@@ -94,17 +94,17 @@ function ShowPrices({
     switch (plan.period) {
       case 'YEAR':
         return {
-          full: t('subscription.payment_unit.anual'),
-          short: t('subscription.payment_unit_short.year'),
+          full: t('payment_unit.anual'),
+          short: t('payment_unit_short.year'),
         };
       case 'MONTH':
         return {
-          full: t('subscription.payment_unit.month'),
-          short: t('subscription.payment_unit_short.month'),
+          full: t('payment_unit.month'),
+          short: t('payment_unit_short.month'),
         };
       case 'ONE_TIME':
         return {
-          full: t('subscription.upgrade-modal.one_payment'),
+          full: t('upgrade-modal.one_payment'),
           short: '',
         };
       case 'FINANCING':
@@ -209,8 +209,8 @@ function ShowPrices({
             >
               <Text fontSize="inherit" fontWeight="inherit" color="inherit">
                 {monthsSaved === 1
-                  ? t('subscription.yearly-savings-singular', { months: monthsSaved })
-                  : t('subscription.yearly-savings', { months: monthsSaved })}
+                  ? t('yearly-savings-singular', { months: monthsSaved })
+                  : t('yearly-savings', { months: monthsSaved })}
               </Text>
             </Box>
           )}
@@ -314,7 +314,7 @@ function ShowPrices({
                   </Text>
                   {selfAppliedCoupon && (
                     <Text as="span" fontSize="xs" color="#01455E">
-                      {t('signup:discount-applied')}
+                      {t('discount-applied')}
                     </Text>
                   )}
                 </Flex>
@@ -332,8 +332,8 @@ function ShowPrices({
                   >
                     <Text fontSize="inherit" fontWeight="inherit" color="inherit">
                       {monthsSaved === 1
-                        ? t('subscription.yearly-savings-singular', { months: monthsSaved })
-                        : t('subscription.yearly-savings', { months: monthsSaved })}
+                        ? t('yearly-savings-singular', { months: monthsSaved })
+                        : t('yearly-savings', { months: monthsSaved })}
                     </Text>
                   </Box>
                 )}

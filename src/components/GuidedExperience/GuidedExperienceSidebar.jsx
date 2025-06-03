@@ -31,8 +31,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
   const { hexColor, colorMode, backgroundColor, backgroundColor4, fontColor2 } = useStyle();
   const background = useColorModeValue('#E4E8EE', '#283340');
 
-  const Open = !isOpen;
-  const { display, zIndex, ...slideStyles } = getSlideProps(Open);
+  const { display, zIndex, ...slideStyles } = getSlideProps(isOpen);
 
   const currentModule = sortedAssignments[currentModuleIndex];
   const nextModule = sortedAssignments[currentModuleIndex + 1];
@@ -83,12 +82,12 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
   return (
     <>
       <Box
-        position={{ base: 'fixed', lg: Open ? 'initial' : 'fixed' }}
-        display={Open ? 'flex' : 'none'}
+        position={{ base: 'fixed', lg: isOpen ? 'initial' : 'fixed' }}
+        display={isOpen ? 'flex' : 'none'}
         flex="0 0 auto"
         minWidth="290px"
         width={{ base: '74.6vw', md: '46.6vw', lg: '26.6vw' }}
-        zIndex={{ base: 100, lg: Open ? 10 : 0 }}
+        zIndex={{ base: 100, lg: isOpen ? 10 : 0 }}
         maxWidth="240px"
         maxHeight={{ base: 'none', lg: '93vh' }}
         height={{ base: '100vh', lg: 'auto' }}
@@ -114,7 +113,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
 
           <Button
             size="sm"
-            aria-label={t(Open ? 'hide-menu' : 'show-menu')}
+            aria-label={t(isOpen ? 'hide-menu' : 'show-menu')}
             gap="10px"
             fontSize="12px"
             fontWeight="500"
@@ -126,8 +125,8 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
             width="fit-content"
             marginLeft="16px"
           >
-            <Icon style={Open && { transform: 'rotate(180deg)' }} width="14px" height="14px" icon={Open ? 'arrowRight' : 'list'} />
-            {t(Open ? 'hide-menu' : 'show-menu')}
+            <Icon style={isOpen && { transform: 'rotate(180deg)' }} width="14px" height="14px" icon={isOpen ? 'arrowRight' : 'list'} />
+            {t(isOpen ? 'hide-menu' : 'show-menu')}
           </Button>
           {prevModule && (
             <Box paddingX="15px">

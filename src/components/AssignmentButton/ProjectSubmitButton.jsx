@@ -131,7 +131,7 @@ function ProjectSubmitButton({
     Array.from(fileProps).forEach(({ file }) => {
       formdata.append('file', file);
     });
-    const resp = await bc.todo({ academy: cohortSession?.academy.id }).uploadFile(currentTask.id, formdata);
+    const resp = await bc.assignments({ academy: cohortSession?.academy.id }).uploadFile(currentTask.id, formdata);
 
     if (resp?.status < 400) {
       const respData = resp.data[0];

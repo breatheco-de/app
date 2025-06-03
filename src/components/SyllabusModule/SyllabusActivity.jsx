@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { useState, memo } from 'react';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useStyle from '../../hooks/useStyle';
+import useSocialShare from '../../hooks/useSocialShare';
 import AssignmentButton from '../AssignmentButton';
 import TaskBar from '../TaskBar';
 import ShareButton from '../ShareButton';
@@ -25,45 +26,17 @@ function SyllabusActivity({
   const currentSlug = data.slug || '';
   const tasks = cohortSlug ? cohortsAssignments[cohortSlug]?.tasks : taskTodo;
   const currentTask = tasks?.length > 0 ? tasks.find((el) => el?.task_type === data?.task_type
-  && el.associated_slug === currentSlug) : {};
+    && el.associated_slug === currentSlug) : {};
   const taskTypeLowerCase = data?.task_type.toLowerCase();
 
   const {
     type, title, icon, target, url,
   } = data;
 
-  const pathConnector = {
-    lesson: `${lang === 'en' ? '4geeks.com/lesson' : `4geeks.com/${lang}/lesson`}`,
-    exercise: `${lang === 'en' ? '4geeks.com/interactive-exercise' : `4geeks.com/${lang}/interactive-exercise`}`,
-    project: `${lang === 'en' ? '4geeks.com/project' : `4geeks.com/${lang}/project`}`,
-    quiz: 'https://assessment.4geeks.com/asset',
-  };
-
-  const shareLink = () => {
-    if (currentTask?.slug) {
-      if (target?.toLowerCase() === 'blank') {
-        return url;
-      }
-      return `${pathConnector[currentTask?.task_type?.toLowerCase()]}/${currentTask.associated_slug}`;
-    }
-    return '';
-  };
-
-  const socials = [
-    {
-      name: 'x',
-      label: 'X',
-      href: `https://x.com/share?url=&text=${encodeURIComponent(t('share-message', { title: currentTask?.title }))} %23100DaysOfCode%0A%0A${shareLink()}`,
-      color: '#000',
-    },
-    {
-      name: 'linkedin',
-      label: 'LinkedIn',
-      href: `https://linkedin.com/sharing/share-offsite/?url=${shareLink()}`,
-      color: '#0077B5',
-      target: 'popup',
-    },
-  ];
+  const { socials, shareLink } = useSocialShare({
+    info: currentTask,
+    shareMessage: t('dashboard:share-message', { title: currentTask?.title }),
+  });
 
   const sendProject = async ({
     task, githubUrl, taskStatus,
@@ -147,7 +120,7 @@ function SyllabusActivity({
           variant="outline"
           title={t('projects:share-certificate.title')}
           shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
-          link={shareLink()}
+          link={shareLink}
           socials={socials}
           currentTask={currentTask}
           onlyModal
@@ -173,7 +146,7 @@ SyllabusActivity.defaultProps = {
   data: {},
   currIndex: 0,
   isDisabled: false,
-  onDisabledClick: () => {},
+  onDisabledClick: () => { },
   variant: 'default',
   showWarning: true,
   cohortSlug: null,

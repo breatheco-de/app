@@ -16,34 +16,27 @@ import {
   MenuItem,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import { Form, Formik } from 'formik';
+import useCheckout from './useCheckout';
 import { getDataContentProps } from '../../utils/file';
 import bc from '../../services/breathecode';
-import useAuth from '../../hooks/useAuth';
-import useSession from '../../hooks/useSession';
 import ContactInformation from '../../components/Checkout/ContactInformation';
-import ChooseYourClass from '../../components/Checkout/ChooseYourClass';
-import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem, getBrowserInfo } from '../../utils';
 import Summary from '../../components/Checkout/Summary';
 import PaymentInfo from '../../components/Checkout/PaymentInfo';
-import useSignup from '../../store/actions/signupAction';
-import axiosInstance from '../../axios';
+import Stepper from '../../components/Checkout/Stepper';
+import { removeSessionStorageItem } from '../../utils';
+import signupAction from '../../store/actions/signupAction';
 import LoaderScreen from '../../components/LoaderScreen';
 import ModalInfo from '../../components/ModalInfo';
 import useStyle from '../../hooks/useStyle';
-import Stepper from '../../components/Checkout/Stepper';
-import ServiceSummary from '../../components/Checkout/ServiceSummary';
+import useSignup from '../../hooks/useSignup';
 import Text from '../../components/Text';
-import SelectServicePlan from '../../components/Checkout/SelectServicePlan';
-import { BASE_PLAN, ORIGIN_HOST, BREATHECODE_HOST, currenciesSymbols } from '../../utils/variables';
-import { reportDatalayer } from '../../utils/requests';
-import { getTranslations, processPlans } from '../../handlers/subscriptions';
+import { ORIGIN_HOST, BREATHECODE_HOST } from '../../utils/variables';
 import Icon from '../../components/Icon';
-import { usePersistentBySession } from '../../hooks/usePersistent';
 import AcordionList from '../../components/AcordionList';
 import useCustomToast from '../../hooks/useCustomToast';
 import { handlePriceTextWithCoupon } from '../../utils/getPriceWithDiscount';
@@ -80,67 +73,50 @@ export const getStaticProps = async ({ locale, locales }) => {
 };
 
 function Checkout() {
-  const { t, lang } = useTranslation('signup');
+  const { t } = useTranslation('signup');
   const router = useRouter();
+  const {
+    couponError,
+    setCouponError,
+    checkInfoLoader,
+    getDiscountValue,
+    renderPlanDetails,
+    calculateTotalPrice,
+    handleCoupon,
+    setUserSelectedPlan,
+    saveCouponToBag,
+    processedPrice,
+    allCoupons,
+    originalPlan,
+    discountCode,
+    setDiscountCode,
+    currencySymbol,
+    couponValue,
+    planFormated,
+    planId,
+    fixedCouponExist,
+    discountCoupon,
+    setDiscountCoupon,
+  } = useCheckout();
   const { query } = router;
-  const [cohortsData, setCohortsData] = useState({
-    loading: true,
-  });
   const [showPaymentDetails, setShowPaymentDetails] = useState(true);
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
-  const [allCoupons, setAllCoupons] = useState([]);
-  const [originalPlan, setOriginalPlan] = useState(null);
   const {
-    state, toggleIfEnrolled, handleStep, handleChecking, setCohortPlans,
-    isFirstStep, isSecondStep, isThirdStep, isFourthStep, setLoader,
-    setSelectedPlanCheckoutData, setCheckoutData, getPriceWithDiscount, getSelfAppliedCoupon,
+    state, toggleIfEnrolled,
+  } = signupAction();
+  const {
+    isFirstStep, isSecondStep, isThirdStep,
   } = useSignup();
-  const { stepIndex, checkoutData, selectedPlanCheckoutData, alreadyEnrolled, serviceProps, loader, selfAppliedCoupon, cohortPlans } = state;
-  const [readyToSelectService, setReadyToSelectService] = useState(false);
-  const [showChooseClass, setShowChooseClass] = useState(true);
-  const [discountCode, setDiscountCode] = useState('');
-  const [discountCoupon, setDiscountCoupon] = useState(null);
-  const [couponError, setCouponError] = useState(false);
-  const [suggestedPlans, setSuggestedPlans] = useState(undefined);
-  const [discountValues, setDiscountValues] = useState(undefined);
-  const [checkInfoLoader, setCheckInfoLoader] = useState(false);
-  const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
-  const { backgroundColor3, hexColor, backgroundColor } = useStyle();
-  const currencySymbol = currenciesSymbols[originalPlan?.currency?.code] || '$';
-
-  const cohorts = cohortsData?.cohorts;
-
-  axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
-  const { user, isAuthenticated, isLoading } = useAuth();
-  const { userSession, location } = useSession();
-  const { createToast } = useCustomToast({ toastId: 'coupon-plan-email-detail' });
-  const plan = getQueryString('plan');
-  const queryPlans = getQueryString('plans');
-  const queryPlanId = getQueryString('plan_id');
-  const planFormated = (plan && encodeURIComponent(plan)) || '';
-  const accessToken = getStorageItem('accessToken');
-  const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
-  const { coupon: couponQuery } = query;
-  const { course } = router.query;
-  const courseChoosed = course;
-
-  const [coupon] = usePersistentBySession('coupon', '');
-
-  const couponValue = useMemo(() => {
-    const formatedCouponQuery = couponQuery && couponQuery.replace(/[^a-zA-Z0-9-\s]/g, '');
-    const couponString = coupon?.replaceAll('"', '') || '';
-    return couponString || formatedCouponQuery;
-  }, [coupon, couponQuery]);
-
-  const queryPlanExists = planFormated !== undefined && planFormated?.length > 0;
-  const queryPlansExists = queryPlans && queryPlans?.length > 0;
-  const showPriceInformation = !readyToSelectService && isFourthStep;
-  const isPaymentSuccess = selectedPlanCheckoutData?.payment_success;
-
+  const { stepIndex, checkingData, paymentStatus, selectedPlan, alreadyEnrolled, loader } = state;
+  const flexRef = useRef(null);
   const [menuWidth, setMenuWidth] = useState('auto');
   const [isOpenned, setIsOpenned] = useState(false);
-  const flexRef = useRef(null);
-  const fixedCouponExist = allCoupons.some((coup) => coup.discount_type === 'FIXED_PRICE');
+  const { backgroundColor3, hexColor, backgroundColor } = useStyle();
+
+  const { createToast } = useCustomToast({ toastId: 'coupon-plan-email-detail' });
+  const { course } = query;
+
+  const isPaymentSuccess = paymentStatus === 'success';
 
   useEffect(() => {
     const updateWidth = () => {
@@ -155,491 +131,6 @@ function Checkout() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [isOpenned]);
-
-  const saveCouponToBag = (coupons, bagId = '', specificCoupon = '') => {
-    bc.payment({
-      coupons,
-      plan: planFormated,
-    }).applyCoupon(bagId)
-      .then((resp) => {
-        const couponsList = resp?.data?.coupons;
-        if (couponsList?.length > 0) {
-          const couponToFind = specificCoupon || discountCode;
-          const couponData = couponsList.find(({ slug }) => slug === couponToFind);
-
-          if (couponData) {
-            setDiscountCoupon({
-              ...couponData,
-            });
-            setCheckoutData({
-              ...checkoutData,
-              coupons,
-            });
-          }
-          setCouponError(false);
-        } else {
-          setCouponError(true);
-        }
-      }).catch((e) => {
-        console.log(e);
-      });
-  };
-
-  const handleCoupon = (coup, actions) => {
-    const couponToApply = coup || discountCode;
-
-    const isCouponAlreadyApplied = allCoupons.some((existingCoupon) => existingCoupon?.slug === couponToApply);
-
-    if (isCouponAlreadyApplied) {
-      createToast({
-        position: 'top',
-        title: t('signup:alert-message.coupon-already-applied'),
-        status: 'info',
-        duration: 4000,
-        isClosable: true,
-      });
-      if (actions) {
-        actions.setSubmitting(false);
-      }
-      return;
-    }
-
-    if (!coup && !discountCode) {
-      if (actions) {
-        actions.setSubmitting(false);
-      }
-      return;
-    }
-
-    bc.payment({
-      coupons: [couponToApply],
-      plan: planFormated,
-    }).verifyCoupon()
-      .then((resp) => {
-        const correctCoupon = resp.data.find((c) => c.slug === couponToApply);
-        if (correctCoupon) {
-          const allCouponsToApply = [...allCoupons.map((c) => c.slug), couponToApply];
-          saveCouponToBag(allCouponsToApply, checkoutData?.id, couponToApply);
-        } else {
-          setDiscountCoupon(null);
-          setCouponError(true);
-          createToast({
-            position: 'top',
-            title: t('signup:coupon-error'),
-            status: 'error',
-            duration: 4000,
-            isClosable: true,
-          });
-        }
-      })
-      .finally(() => {
-        if (actions) {
-          actions.setSubmitting(false);
-        }
-      });
-  };
-
-  const findAutoSelectedPlan = (checkingData) => {
-    const plans = checkingData?.plans || [];
-    const newPlanList = [...plans];
-    const sortedPlans = newPlanList.sort((a, b) => (a?.how_many_months || 0) - (b?.how_many_months || 0));
-    const defaultAutoSelectedPlan = sortedPlans[0];
-    const autoSelectedPlanByQueryString = checkingData?.plans?.length === 1
-      ? checkingData?.plans[0]
-      : checkingData?.plans.find(
-        (item) => item?.plan_id === (queryPlanId !== undefined ? queryPlanId : userSelectedPlan?.plan_id),
-      );
-    const autoSelectedPlan = autoSelectedPlanByQueryString?.plan_id
-      ? autoSelectedPlanByQueryString
-      : defaultAutoSelectedPlan;
-    return autoSelectedPlan;
-  };
-
-  useEffect(() => {
-    getSelfAppliedCoupon(planFormated);
-  }, []);
-
-  useEffect(() => {
-    removeStorageItem('redirect');
-    const translations = getTranslations(t);
-    const defaultPlan = (plan && encodeURIComponent(plan)) || encodeURIComponent(BASE_PLAN);
-    bc.payment({ country_code: location?.countryShort }).getPlan(defaultPlan).then(async (resp) => {
-      const processedPlan = await processPlans(resp?.data, {
-        quarterly: false,
-        halfYearly: false,
-        planType: 'original',
-      }, translations);
-
-      const accordionList = processedPlan?.featured_info?.length > 0
-        ? processedPlan?.featured_info.map((info) => ({
-          title: info?.features[0]?.title || slugToTitle(info?.service?.slug),
-          description: info.features[0]?.description,
-        }))
-        : [];
-
-      const selectedPlan = processedPlan?.plans?.length > 1
-        ? processedPlan?.plans?.find((item) => item?.plan_id === queryPlanId)
-        : (processedPlan?.plans?.[0] || {});
-
-      const res = await bc.payment({ original_plan: processedPlan?.slug }).planOffer();
-      const suggestedPlanInfo = res.data;
-
-      const couponOnQuery = await getQueryString('coupon');
-      const { data: allCouponsApplied } = await bc.payment({ coupons: [couponOnQuery || coupon], plan: suggestedPlanInfo[0]?.suggested_plan.slug || processedPlan?.slug }).verifyCoupon();
-      setDiscountValues(allCouponsApplied);
-
-      setSuggestedPlans(suggestedPlanInfo[0]?.suggested_plan);
-      setSelectedPlanCheckoutData(selectedPlan);
-      setOriginalPlan({ ...processedPlan, selectedPlan, accordionList });
-    })
-      .catch((err) => {
-        if (err) {
-          createToast({
-            position: 'top',
-            title: t('alert-message:no-plan-configuration'),
-            status: 'info',
-            duration: 4000,
-            isClosable: true,
-          });
-          router.push('/pricing');
-        }
-      });
-    reportDatalayer({
-      dataLayer: {
-        event: 'begin_checkout',
-        plan: defaultPlan,
-        path: '/checkout',
-        conversion_info: userSession,
-        agent: getBrowserInfo(),
-      },
-    });
-  }, [router.locale]);
-
-  useEffect(() => {
-    if (checkoutData?.id && !checkoutData?.isTrial) {
-      if (couponValue) setDiscountCode(couponValue);
-      handleCoupon(couponValue);
-    }
-  }, [couponValue, checkoutData?.id]);
-
-  useEffect(() => {
-    if (isWindow && stepIndex >= 2 && isAuthenticated && !isPaymentSuccess) {
-      const handleBeforeUnload = (e) => {
-        e.preventDefault();
-      };
-
-      window.addEventListener('beforeunload', handleBeforeUnload);
-
-      return () => {
-        window.removeEventListener('beforeunload', handleBeforeUnload);
-      };
-    }
-    return () => { };
-  }, [stepIndex, isAuthenticated]);
-
-  useEffect(() => {
-    const isAvailableToSelectPlan = queryPlansExists && queryPlans?.split(',')?.length > 0;
-    if (!isAuthenticated && !tokenExists) {
-      setLoader('plan', false);
-    }
-    if (!queryPlanExists && !queryPlansExists && isAuthenticated) {
-      router.push('/pricing');
-    }
-    if (isAuthenticated && isAvailableToSelectPlan) {
-      // If exists plan to select show the select service plan view
-      setReadyToSelectService(true);
-      setShowChooseClass(false);
-    }
-
-    if (queryPlanExists && isAuthenticated && tokenExists && !cohortsData.loading) {
-      setLoader('plan', true);
-      setShowChooseClass(false);
-      bc.payment({ country_code: location?.countryShort }).getPlan(planFormated)
-        .then((resp) => {
-          if (!resp) {
-            setLoader('plan', false);
-            router.push('/pricing');
-            createToast({
-              position: 'top',
-              title: t('alert-message:no-plan-configuration'),
-              status: 'error',
-              duration: 4000,
-              isClosable: true,
-            });
-          } else {
-            const data = resp?.data;
-            const existsAmountPerHalf = data?.price_per_half > 0;
-            const existsAmountPerMonth = data?.price_per_month > 0;
-            const existsAmountPerQuarter = data?.price_per_quarter > 0;
-            const existsAmountPerYear = data?.price_per_year > 0;
-            const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
-
-            if ((resp && resp?.status >= 400) || resp?.data.length === 0) {
-              setShowChooseClass(true);
-              createToast({
-                position: 'top',
-                title: t('alert-message:no-plan-configuration'),
-                status: 'info',
-                duration: 4000,
-                isClosable: true,
-              });
-            }
-            if (data?.has_waiting_list === true) {
-              router.push(`/${lang}/thank-you`);
-            }
-            if (data?.has_waiting_list === false && ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || cohorts?.length === 1)) {
-              if (resp.status < 400 && cohorts?.length > 0) {
-                const { kickoffDate, weekDays, availableTime } = cohorts && cohorts.length > 0 ? getTimeProps(cohorts[0]) : {};
-                const defaultCohortProps = {
-                  ...cohorts[0],
-                  kickoffDate,
-                  weekDays,
-                  availableTime,
-                };
-                setCohortPlans([data]);
-                handleChecking({ ...defaultCohortProps, plan: data })
-                  .then((checkingData) => {
-                    const plans = checkingData?.plans || [];
-                    const existsPayablePlan = plans.some((item) => item?.price > 0);
-                    const autoSelectedPlan = findAutoSelectedPlan(checkingData);
-                    if (existsPayablePlan && autoSelectedPlan) {
-                      setSelectedPlanCheckoutData(autoSelectedPlan);
-                      handleStep(3);
-                      setLoader('plan', false);
-                    } else {
-                      if (autoSelectedPlan) {
-                        setSelectedPlanCheckoutData(autoSelectedPlan);
-                      }
-                      handleStep(2);
-                    }
-                  })
-                  .catch(() => {
-                    setLoader('plan', false);
-                  });
-              }
-              if (cohorts?.length === 0) {
-                setCohortPlans([{
-                  plan: data,
-                }]);
-                handleChecking({ plan: data })
-                  .then((checkingData) => {
-                    const plans = checkingData?.plans || [];
-                    const existsPayablePlan = plans.some((item) => item?.price > 0);
-                    const autoSelectedPlan = findAutoSelectedPlan(checkingData);
-
-                    if (existsPayablePlan && autoSelectedPlan) {
-                      setSelectedPlanCheckoutData(autoSelectedPlan);
-                      handleStep(3);
-                      setLoader('plan', false);
-                    } else {
-                      if (autoSelectedPlan) {
-                        setSelectedPlanCheckoutData(autoSelectedPlan);
-                      }
-                      handleStep(2);
-                    }
-                  })
-                  .catch(() => {
-                    setLoader('plan', false);
-                  });
-              }
-            }
-
-            if (data?.is_renewable === false || data?.is_renewable === undefined) {
-              setShowChooseClass(false);
-              handleStep(1);
-            }
-          }
-        })
-        .catch(() => {
-          setLoader('plan', false);
-          createToast({
-            position: 'top',
-            title: t('alert-message:no-plan-configuration'),
-            status: 'info',
-            duration: 4000,
-            isClosable: true,
-          });
-        });
-    }
-    if (!isAuthenticated && !tokenExists) {
-      setLoader('plan', false);
-    }
-  }, [cohortsData.loading, accessToken, isAuthenticated, router.locale]);
-
-  useEffect(() => {
-    if (!userSelectedPlan || !cohortPlans) return;
-    setCheckInfoLoader(true);
-    handleChecking({ plan: cohortPlans[0]?.plan })
-      .then((checkingData) => {
-        const autoSelectedPlan = findAutoSelectedPlan(checkingData);
-
-        setSelectedPlanCheckoutData(autoSelectedPlan);
-        handleStep(3);
-        setCheckInfoLoader(false);
-      })
-      .catch(() => {
-        setCheckInfoLoader(false);
-      });
-  }, [userSelectedPlan]);
-
-  useEffect(() => {
-    if (user?.id && !isLoading) {
-      if (router.query.token) {
-        const cleanTokenQuery = isWindow && removeURLParameter(window.location.href, 'token');
-        router.push(cleanTokenQuery);
-      }
-
-      handleStep(1);
-    }
-  }, [user?.id]);
-
-  useEffect(() => {
-    const coupons = [];
-    if (selfAppliedCoupon) coupons.push(selfAppliedCoupon);
-    if (discountCoupon) coupons.push(discountCoupon);
-
-    setAllCoupons(coupons);
-  }, [selfAppliedCoupon, discountCoupon]);
-
-  const processedPrice = useMemo(() => {
-    let pricingData = { ...selectedPlanCheckoutData };
-    const discounts = [];
-
-    allCoupons.forEach((c) => {
-      pricingData = getPriceWithDiscount(pricingData.price, c);
-      discounts.push(pricingData);
-    });
-    return pricingData;
-  }, [allCoupons, selectedPlanCheckoutData]);
-
-  const getDiscountValue = (coup) => {
-    if (!coup?.discount_value || !coup?.discount_type) return '';
-    if (coup.discount_type === 'PERCENT_OFF') {
-      return t('discount-value-off', { value: `${coup.discount_value * 100}%` });
-    }
-    if (coup.discount_type === 'FIXED_PRICE') {
-      return t('discount-value-off', { value: `$${coup.discount_value}` });
-    }
-    return '';
-  };
-
-  const calculateTotalPrice = () => {
-    const months = selectedPlanCheckoutData.how_many_months || 1;
-
-    if (processedPrice.discountType === 'FIXED_PRICE') {
-      const firstMonthPrice = processedPrice.price;
-      const remainingMonthsPrice = processedPrice.originalPrice * (months - 1);
-      return (firstMonthPrice + remainingMonthsPrice).toFixed(2);
-    }
-
-    return (processedPrice.price * (selectedPlanCheckoutData.how_many_months ? selectedPlanCheckoutData.how_many_months : 1)).toFixed(2);
-  };
-
-  const renderPlanDetails = () => {
-    const applyDiscounts = (price, discountList) => {
-      let finalPrice = price;
-      discountList?.forEach(({ discount_value, discount_type }) => {
-        if (discount_value > 0) {
-          finalPrice = discount_type === 'PERCENT_OFF'
-            ? finalPrice * (1 - discount_value)
-            : finalPrice - discount_value;
-        }
-      });
-      return finalPrice;
-    };
-
-    if (originalPlan?.selectedPlan?.isFreeTier) {
-      const financingOptions = suggestedPlans?.financing_options || [];
-      const monthlyPayment = suggestedPlans?.price_per_month;
-      const yearlyPayment = suggestedPlans?.price_per_year;
-
-      let financingText = '';
-
-      if (financingOptions.length > 0) {
-        financingOptions.sort((a, b) => a.months - b.months);
-
-        if (financingOptions.length === 1) {
-          const finalPrice = applyDiscounts(financingOptions[0].monthly_price, discountValues);
-          financingText = t('free_trial_one_payment', {
-            price: finalPrice.toFixed(2),
-            description: originalPlan.selectedPlan.description,
-            currency: currencySymbol,
-          });
-        }
-
-        if (financingOptions.length > 1) {
-          const firstPrice = applyDiscounts(financingOptions[financingOptions.length - 1].monthly_price, discountValues);
-          const lastPrice = applyDiscounts(financingOptions[0].monthly_price, discountValues);
-
-          financingText = t('free_trial_multiple_payments', {
-            description: originalPlan.selectedPlan.description,
-            numPayments: financingOptions[financingOptions.length - 1].how_many_months,
-            firstPrice: firstPrice.toFixed(2),
-            oneTimePrice: lastPrice.toFixed(2),
-            currency: currencySymbol,
-          });
-        }
-      }
-
-      if (originalPlan?.selectedPlan?.type === 'FREE') {
-        financingText = t('free_plan');
-        return <Text size="16px" color="green.400">{financingText}</Text>;
-      }
-
-      if (financingOptions.length === 0) {
-        if (monthlyPayment) {
-          const finalMonthlyPrice = applyDiscounts(monthlyPayment, discountValues);
-          financingText = t('free_trial_monthly_payment', {
-            description: originalPlan.selectedPlan.description,
-            monthlyPrice: finalMonthlyPrice.toFixed(2),
-            currency: currencySymbol,
-          });
-        }
-
-        if (yearlyPayment && !monthlyPayment) {
-          const finalYearlyPrice = applyDiscounts(yearlyPayment, discountValues);
-          financingText = t('free_trial_yearly_payment', {
-            description: originalPlan.selectedPlan.description,
-            yearlyPrice: finalYearlyPrice.toFixed(2),
-            currency: currencySymbol,
-          });
-        }
-      }
-
-      if (financingOptions.length === 0 && !monthlyPayment && !yearlyPayment) {
-        financingText = originalPlan?.selectedPlan?.description;
-      }
-
-      if (discountValues.length > 0) {
-        financingText += ` ${t('limited_time_offer')}`;
-      }
-
-      return <Text size="16px" color="green.400">{financingText}</Text>;
-    }
-
-    if (originalPlan?.selectedPlan?.price > 0 || selectedPlanCheckoutData?.price > 0) {
-      const originalPrice = originalPlan?.selectedPlan?.price || selectedPlanCheckoutData?.price;
-      const discountedPrice = applyDiscounts(originalPrice, discountValues);
-
-      return (
-        <Text size="16px" color="green.400">
-          {`${currencySymbol}${discountedPrice.toFixed(2)} / ${originalPlan?.selectedPlan?.title || selectedPlanCheckoutData?.title}`}
-        </Text>
-      );
-    }
-
-    if (userSelectedPlan && !isAuthenticated) {
-      const discountedPrice = applyDiscounts(userSelectedPlan?.price, discountValues);
-
-      return (
-        <Text size="16px" color="green.400">
-          {`${currencySymbol}${discountedPrice.toFixed(2)} / ${userSelectedPlan?.title}`}
-        </Text>
-      );
-    }
-
-    return null;
-  };
 
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
@@ -662,31 +153,30 @@ function Checkout() {
             />
           </Box>
         )}
-        isOpen={(verifyEmailProps.state) || (queryPlanExists && verifyEmailProps.state)}
+        isOpen={(verifyEmailProps.state) || (planFormated && verifyEmailProps.state)}
         buttonHandlerStyles={{ variant: 'default' }}
-        actionHandler={() => {
+        actionHandler={async () => {
           const inviteId = verifyEmailProps?.data?.id;
-          bc.auth().resendConfirmationEmail(inviteId)
-            .then((resp) => {
-              const data = resp?.data;
-              if (data === undefined) {
-                createToast({
-                  position: 'top',
-                  status: 'info',
-                  title: t('signup:alert-message.email-already-sent'),
-                  isClosable: true,
-                  duration: 6000,
-                });
-              } else {
-                createToast({
-                  position: 'top',
-                  status: 'success',
-                  title: t('signup:alert-message.email-sent-to', { email: data?.email }),
-                  isClosable: true,
-                  duration: 6000,
-                });
-              }
+          const resp = await bc.auth().resendConfirmationEmail(inviteId);
+
+          const data = resp?.data;
+          if (data === undefined) {
+            createToast({
+              position: 'top',
+              status: 'info',
+              title: t('signup:alert-message.email-already-sent'),
+              isClosable: true,
+              duration: 6000,
             });
+          } else {
+            createToast({
+              position: 'top',
+              status: 'success',
+              title: t('signup:alert-message.email-sent-to', { email: data?.email }),
+              isClosable: true,
+              duration: 6000,
+            });
+          }
         }}
         handlerText={t('signup:resend')}
         forceHandlerAndClose
@@ -738,43 +228,23 @@ function Checkout() {
           overflow="auto"
         >
           {/* Stepper */}
-          {!readyToSelectService && (
-            <Stepper
-              hideIndexList={showChooseClass ? [] : [1]}
-              stepIndex={stepIndex}
-              checkoutData={checkoutData}
-              isFreeTier={Boolean(checkoutData?.isTrial || checkoutData?.isTotallyFree || selectedPlanCheckoutData?.isFreeTier)}
-              selectedPlanCheckoutData={selectedPlanCheckoutData}
-              isFirstStep={isFirstStep}
-              isSecondStep={isSecondStep}
-              isThirdStep={isThirdStep}
-              isFourthStep={isFourthStep}
-            />
-          )}
-          {!readyToSelectService && isFirstStep && (
+          <Stepper
+            stepIndex={stepIndex}
+            isFreeTier={Boolean(checkingData?.isTrial || checkingData?.isTotallyFree || selectedPlan?.isFreeTier)}
+          />
+          {isFirstStep && (
             <ContactInformation
-              courseChoosed={courseChoosed}
+              courseChoosed={course}
               setVerifyEmailProps={setVerifyEmailProps}
             />
           )}
 
-          {/* Second step */}
-          {((!readyToSelectService && showChooseClass) || isSecondStep) && (
-            <ChooseYourClass setCohorts={setCohortsData} />
+          {isSecondStep && (
+            <PaymentInfo setShowPaymentDetails={setShowPaymentDetails} />
           )}
 
-          {!readyToSelectService && isThirdStep && !serviceProps?.id && (
+          {isThirdStep && (
             <Summary />
-          )}
-          {!readyToSelectService && isThirdStep && serviceProps?.id && (
-            <ServiceSummary service={serviceProps} />
-          )}
-          {readyToSelectService && (
-            <SelectServicePlan />
-          )}
-          {/* Fourth step */}
-          {!readyToSelectService && isFourthStep && (
-            <PaymentInfo setShowPaymentDetails={setShowPaymentDetails} />
           )}
         </Flex>
         <Flex
@@ -791,16 +261,16 @@ function Checkout() {
           {checkInfoLoader
             ? <LoaderScreen background={backgroundColor3} />
             : (
-              <Flex display={{ base: isPaymentSuccess ? 'none' : 'flex', md: 'flex' }} flexDirection="column" width={{ base: 'auto', md: '100%' }} maxWidth="490px" margin={{ base: '2rem 10px 2rem 10px', md: showPriceInformation ? '4rem 0' : '6.2rem 0' }} height="100%" zIndex={10}>
+              <Flex display={{ base: isPaymentSuccess ? 'none' : 'flex', md: 'flex' }} flexDirection="column" width={{ base: 'auto', md: '100%' }} maxWidth="490px" margin={{ base: '2rem 10px 2rem 10px', md: isThirdStep ? '4rem 0' : '6.2rem 0' }} height="100%" zIndex={10}>
                 {originalPlan?.title ? (
-                  <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="16px" borderRadius="22px" background={showPriceInformation ? 'transparent' : backgroundColor}>
+                  <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="16px" borderRadius="22px" background={isThirdStep ? 'transparent' : backgroundColor}>
                     <Text size="18px">
                       {t('you-are-getting')}
                     </Text>
                     <Flex gridGap="7px" width="full">
                       <Flex flexDirection="column" gridGap="7px" justifyContent="center" width="100%" ref={flexRef}>
-                        <Heading fontSize={showPriceInformation ? '38px' : '24px'} display="flex" alignItems="center" gap="10px">
-                          {!showPriceInformation && <Icon icon="4Geeks-avatar" width="35px" height="35px" maxHeight="35px" borderRadius="50%" background="blue.default" />}
+                        <Heading fontSize={isThirdStep ? '38px' : '24px'} display="flex" alignItems="center" gap="10px">
+                          {!isThirdStep && <Icon icon="4Geeks-avatar" width="35px" height="35px" maxHeight="35px" borderRadius="50%" background="blue.default" />}
                           {originalPlan?.title.split(' ').map((word) => {
                             const firstLetter = word.match(/[a-zA-Z]/);
                             if (!firstLetter) return word;
@@ -808,12 +278,16 @@ function Checkout() {
                             return word.slice(0, index) + word.charAt(index).toUpperCase() + word.slice(index + 1);
                           }).join(' ')}
                         </Heading>
-                        {originalPlan?.selectedPlan?.description && showPriceInformation && (
-                          <Text fontSize="16px" py="10px">{originalPlan?.selectedPlan?.description}</Text>
+                        {selectedPlan?.description && isThirdStep && (
+                          <Text fontSize="16px" py="10px">{selectedPlan.description}</Text>
                         )}
                         <Flex justifyContent="space-between" width="full" alignItems="center">
-                          {showPaymentDetails && renderPlanDetails()}
-                          {!queryPlanId && originalPlan?.selectedPlan?.type !== 'FREE' && (originalPlan?.financingOptions.length > 0 || originalPlan?.hasSubscriptionMethod) && showPaymentDetails && (
+                          {showPaymentDetails && renderPlanDetails() && (
+                            <Text size="16px" color="green.400">
+                              {renderPlanDetails()}
+                            </Text>
+                          )}
+                          {!planId && selectedPlan?.type !== 'FREE' && (originalPlan?.financingOptions.length > 0 || originalPlan?.hasSubscriptionMethod) && showPaymentDetails && (
                             <Flex flexDirection="column" gap="4px">
                               <Heading as="h3" size="sm" width="100%" position="relative">
                                 <Menu>
@@ -848,15 +322,23 @@ function Checkout() {
                                         onClick={() => setUserSelectedPlan(option)}
                                         fontSize="md"
                                         color="auto"
-                                        background={option.plan_id === selectedPlanCheckoutData?.plan_id && useColorModeValue('green.50', 'green.200')}
-                                        _hover={option.plan_id === selectedPlanCheckoutData?.plan_id ? { backgrorund: useColorModeValue('green.50', 'green.200') } : { background: 'none' }}
+                                        background={option.plan_id === selectedPlan?.plan_id && useColorModeValue('green.50', 'green.200')}
+                                        _hover={option.plan_id === selectedPlan?.plan_id ? { backgrorund: useColorModeValue('green.50', 'green.200') } : { background: 'none' }}
                                         padding="10px"
                                       >
                                         <Flex justifyContent="space-between" alignItems="center" width="100%">
-                                          <Text fontSize="md" flex="1" color={option.plan_id === selectedPlanCheckoutData?.plan_id ? useColorModeValue('#25BF6C', 'green') : 'auto'}>
-                                            {originalPlan?.hasSubscriptionMethod ? `${handlePriceTextWithCoupon(option?.priceText, allCoupons, originalPlan?.plans)} / ${option?.title}${option?.pricePerMonthText ? `, (${handlePriceTextWithCoupon(option?.pricePerMonthText, allCoupons, originalPlan?.plans)}${t('signup:info.per-month')})` : ''}` : `${handlePriceTextWithCoupon(option?.priceText, allCoupons, originalPlan?.plans)} / ${option?.title}`}
+                                          <Text fontSize="md" flex="1" color={option.plan_id === selectedPlan?.plan_id ? useColorModeValue('#25BF6C', 'green') : 'auto'}>
+                                            {originalPlan.hasSubscriptionMethod
+                                              ? (
+                                                `${handlePriceTextWithCoupon(option.priceText, allCoupons, originalPlan.plans)} / ${option.title}${
+                                                  option.pricePerMonthText
+                                                    ? `, (${handlePriceTextWithCoupon(option.pricePerMonthText, allCoupons, originalPlan.plans)}${t('signup:info.per-month')})`
+                                                    : ''
+                                                }`
+                                              )
+                                              : `${handlePriceTextWithCoupon(option.priceText, allCoupons, originalPlan.plans)} / ${option.title}`}
                                           </Text>
-                                          {option.plan_id === selectedPlanCheckoutData?.plan_id
+                                          {option.plan_id === selectedPlan?.plan_id
                                             && (
                                               <Icon icon="checked2" width="12px" height="12" color={useColorModeValue('#25BF6C', 'green')} />
                                             )}
@@ -894,16 +376,16 @@ function Checkout() {
                         />
                       </Flex>
                     )}
-                    {showPriceInformation && (
+                    {isSecondStep && (
                       <>
                         <Flex justifyContent="space-between" width="100%" padding="3rem 0px 0">
                           <Text size="18px" color="currentColor" lineHeight="normal">
                             Subtotal:
                           </Text>
                           <Text size="18px" color="currentColor" lineHeight="normal">
-                            {selectedPlanCheckoutData?.price <= 0
-                              ? selectedPlanCheckoutData?.priceText
-                              : `${currencySymbol}${selectedPlanCheckoutData?.price?.toFixed(2)} ${selectedPlanCheckoutData?.currency?.code}`}
+                            {selectedPlan?.price <= 0
+                              ? selectedPlan?.priceText
+                              : `${currencySymbol}${selectedPlan?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
                           </Text>
                         </Flex>
                         <Divider margin="6px 0" />
@@ -949,7 +431,7 @@ function Checkout() {
                                           padding="10px"
                                           height="auto"
                                           onClick={() => {
-                                            saveCouponToBag([''], checkoutData?.id);
+                                            saveCouponToBag([''], checkingData?.id);
                                             removeSessionStorageItem('coupon');
                                             setDiscountCode('');
                                             setDiscountCoupon(null);
@@ -994,30 +476,30 @@ function Checkout() {
                         <Divider margin="6px 0" />
                         <Flex justifyContent="space-between" width="100%">
                           <Text size="18px" color="currentColor" lineHeight="normal">
-                            {selectedPlanCheckoutData?.period !== 'ONE_TIME' ? t('total-now') : t('total')}
+                            {selectedPlan?.period !== 'ONE_TIME' ? t('total-now') : t('total')}
                           </Text>
                           <Flex gridGap="1rem">
                             {allCoupons?.length > 0 && (
                               <Text size="18px" color="currentColor" textDecoration="line-through" opacity="0.5" lineHeight="normal">
-                                {`${currencySymbol}${selectedPlanCheckoutData?.price?.toFixed(2)}`}
+                                {`${currencySymbol}${selectedPlan?.price?.toFixed(2)}`}
                               </Text>
                             )}
                             <Text size="18px" color="currentColor" lineHeight="normal">
-                              {selectedPlanCheckoutData?.price <= 0
-                                ? selectedPlanCheckoutData?.priceText
-                                : `${currencySymbol}${processedPrice?.price?.toFixed(2)} ${selectedPlanCheckoutData?.currency?.code}`}
+                              {selectedPlan?.price <= 0
+                                ? selectedPlan?.priceText
+                                : `${currencySymbol}${processedPrice?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
                             </Text>
                           </Flex>
                         </Flex>
-                        {selectedPlanCheckoutData?.period !== 'ONE_TIME' && selectedPlanCheckoutData?.price > 0 && (
+                        {selectedPlan?.period !== 'ONE_TIME' && selectedPlan?.price > 0 && (
                           <Flex justifyContent="space-between" width="100%">
                             <Text size="18px" color="currentColor" lineHeight="normal">
                               {t('after-all-payments')}
                             </Text>
                             <Text size="18px" color="currentColor" lineHeight="normal">
-                              {selectedPlanCheckoutData.price <= 0
-                                ? selectedPlanCheckoutData.priceText
-                                : `${currencySymbol}${calculateTotalPrice()} ${selectedPlanCheckoutData.currency?.code}`}
+                              {selectedPlan.price <= 0
+                                ? selectedPlan.priceText
+                                : `${currencySymbol}${calculateTotalPrice()} ${selectedPlan.currency?.code}`}
                             </Text>
                           </Flex>
                         )}

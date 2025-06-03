@@ -51,26 +51,7 @@
   "share-certificate": {
     "title": "Share your new career title",
     "shareText": "Share your new certificate via:",
-    "socials": [
-      {
-        "name": "twitter",
-        "label": "Twitter",
-        "href": "https://twitter.com/share?url=&text=I have successfully finished the {{profession}} certification at 4Geeks.com {{certfLink}}",
-        "color": "#1DA1F2"
-      },
-      {
-        "name": "facebook",
-        "label": "Facebook",
-        "href": "https://facebook.com/sharer?u={{certfLink}}",
-        "color": "#4267B2"
-      },
-      {
-        "name": "linkedin",
-        "label": "LinkedIn",
-        "href": "https://linkedin.com/sharing/share-offsite/?url={{certfLink}}",
-        "color": "#0077B5"
-      }
-    ]
+    "shareMessage": "I have successfully finished the \"{{profession}}\" certification at 4Geeks"
   },
   "update-profile-image": {
     "tooltip-label": "Upload your profile image",
@@ -139,30 +120,6 @@
     "contact-support": "Chat with support",
     "manage-subscription": "Manage subscription",
     "duration-cancelled": "Duration: Cancelled",
-    "upgrade-modal": {
-      "choose_your_plan": "Choose your plan",
-      "choose_how_much": "Choose how much",
-      "not_ready_to_commit": "Not ready to commit?",
-      "no_card_needed": "No card needed. Full access to all features for",
-      "duration_days": "{{duration}} days",
-      "duration_month": "{{duration}} month",
-      "connector_duration_trial": "trial",
-      "subscription": "Subscription",
-      "one_payment": "One payment",
-      "free-course": "Free course",
-      "finance": "Financed",
-      "buy_mentorships": "You have consumed all the available mentorships, buy more menthorships",
-      "free_trial": "Free trial",
-      "upgrade_free_trial": "Upgrade free trial",
-      "price_remaining_to_pay": "${{price}} remaining to pay",
-      "monthly_payment": "Monthly payment",
-      "yearly_payment": "Yearly payment",
-      "many_months_payment": "{{qty}} months payment",
-      "many_months_description": "You will pay ${{monthly_price}} for {{many_months}} months and get full access to all features for the duration of the course.",
-      "full_access": "Full access to all features for the duration of the course.",
-      "free_trial_description": "Upgrade your plan to access this and many other benefits.",
-      "upgrade_access": "Upgrade your membership to access all the benefits of the 4Geeks community"
-    },
     "cancel-modal": {
       "title": "Cancel subscription",
       "description": "Are you sure you want to cancel your subscription to {{cohort}}",

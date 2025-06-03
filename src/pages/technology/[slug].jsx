@@ -120,7 +120,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   };
   const normalizedLocale = langMap[locale] || locale;
 
-  const currentTechResp = await bc.lesson().techMktInfo(slug);
+  const currentTechResp = await bc.registry().techMktInfo(slug);
   const currentTech = currentTechResp?.data || {};
   const marketingInfo = currentTech?.marketing_information || {};
   const featuredCourse = currentTech?.featured_course || {};
@@ -131,7 +131,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   if (!marketingInfoExist) contentPerPage = 20;
   else contentPerPage = 10;
 
-  const response = await bc.lesson({ sort_priority: 1, visibility: 'PUBLIC', is_deprecated: false }).techsBySort();
+  const response = await bc.registry({ sort_priority: 1, visibility: 'PUBLIC', is_deprecated: false }).techsBySort();
   const technologiesFetched = response?.data || [];
 
   const isSortPriorityOne = technologiesFetched.some((tech) => tech.slug === slug);
@@ -151,7 +151,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     return tech.lang === locale;
   });
 
-  const workshopResp = await bc.public({ technologies: slug }).events();
+  const workshopResp = await bc.events({ technologies: slug }).allEvents();
   const workShopsForTech = workshopResp.data || [];
 
   const coursesForTechResponse = await bc.marketing({ technologies: slug }).courses();

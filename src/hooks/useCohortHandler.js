@@ -1,19 +1,21 @@
 /* eslint-disable camelcase */
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import axios from 'axios';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useAuth from './useAuth';
 import { getStorageItem, getBrowserInfo } from '../utils';
 import useCohortAction from '../store/actions/cohortAction';
-import { processRelatedAssignments } from '../handlers/cohorts';
+import { processRelatedAssignments } from '../utils/cohorts';
 import { reportDatalayer } from '../utils/requests';
 import bc from '../services/breathecode';
 import { BREATHECODE_HOST, DOMAIN_NAME } from '../utils/variables';
 import useCustomToast from './useCustomToast';
+import useSubscriptions from './useSubscriptions';
 
 function useCohortHandler() {
   const router = useRouter();
+  const [grantAccess, setGrantAccess] = useState(false);
   const { user, cohorts: myCohorts, fetchUserAndCohorts, setCohorts } = useAuth();
   const { t, lang } = useTranslation('dashboard');
   const {
@@ -24,6 +26,7 @@ function useCohortHandler() {
     setReviewModalState,
     state,
   } = useCohortAction();
+  const { allSubscriptions } = useSubscriptions();
 
   const {
     cohortSession,
@@ -120,8 +123,8 @@ function useCohortHandler() {
 
       const cohortsToFetch = cohorts.filter((cohort) => !preFechedCohorts.some(({ slug }) => slug === cohort.slug));
 
-      const syllabusPromises = cohortsToFetch.map((cohort) => bc.syllabus().get(cohort.academy.id, cohort.syllabus_version.slug, cohort.syllabus_version.version).then((res) => ({ cohort: cohort.id, ...res })));
-      const tasksPromises = cohortsToFetch.map((cohort) => bc.todo({ cohort: cohort.id, limit: 1000 }).getTaskByStudent().then((res) => ({ cohort: cohort.id, ...res })));
+      const syllabusPromises = cohortsToFetch.map((cohort) => bc.admissions().academySyllabus(cohort.academy.id, cohort.syllabus_version.slug, cohort.syllabus_version.version).then((res) => ({ cohort: cohort.id, ...res })));
+      const tasksPromises = cohortsToFetch.map((cohort) => bc.assignments({ cohort: cohort.id, limit: 1000 }).getMeTasks().then((res) => ({ cohort: cohort.id, ...res })));
       const allResults = await Promise.all([
         ...syllabusPromises,
         ...tasksPromises,
@@ -307,7 +310,7 @@ function useCohortHandler() {
 
   const updateTaskReadAt = async (task) => {
     try {
-      const response = await bc.todo().update({
+      const response = await bc.assignments().updateTask({
         id: task.id,
         read_at: new Date().toISOString(),
       });
@@ -378,7 +381,7 @@ function useCohortHandler() {
         };
       }
 
-      const response = await bc.todo().update(taskToUpdate);
+      const response = await bc.assignments().updateTask(taskToUpdate);
       if (response.status < 400) {
         updateTask(response.data, cohort);
         reportDatalayer({
@@ -445,7 +448,7 @@ function useCohortHandler() {
     newTasks, cohort, label, customHandler = () => { }, updateContext = true,
   }) => {
     try {
-      const response = await bc.todo().add(newTasks);
+      const response = await bc.assignments().addTasks(newTasks);
 
       if (response.status < 400) {
         createToast({
@@ -477,7 +480,7 @@ function useCohortHandler() {
   const getTasksWithoutCohort = ({ setModalIsOpen }) => {
     // Tasks with cohort null
     if (router.asPath === cohortSession?.selectedProgramSlug) {
-      bc.todo({ cohort: null }).getTaskByStudent()
+      bc.assignments({ cohort: null }).getMeTasks()
         .then(({ data }) => {
           const filteredUnsyncedCohortTasks = sortedAssignments.flatMap(
             (module) => data.filter(
@@ -764,6 +767,59 @@ function useCohortHandler() {
     });
   };
 
+  const checkNavigationAvailability = () => {
+    const showToastAndRedirect = (programSlug) => {
+      router.push({
+        pathname: '/checkout',
+        locale: lang,
+        query: {
+          plan: programSlug,
+        },
+      });
+      createToast({
+        position: 'top',
+        title: t('alert-message:access-denied'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    };
+
+    if (allSubscriptions) {
+      const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
+      const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
+      const currentCohortSlug = cohortSubscriptions[0]?.selected_cohort_set?.slug;
+
+      if (cohortSubscriptions.length === 0) {
+        showToastAndRedirect(currentCohortSlug);
+        return;
+      }
+
+      const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED' || sub.status === 'ERROR');
+      const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
+      if (expiredCourse && !fullyPaidSub) {
+        showToastAndRedirect(currentCohortSlug);
+        return;
+      }
+
+      if (fullyPaidSub) {
+        setGrantAccess(true);
+        return;
+      }
+
+      const freeTrialSub = cohortSubscriptions.find((sub) => sub.status === 'FREE_TRIAL');
+      const freeTrialExpDate = new Date(freeTrialSub?.valid_until);
+      const todayDate = new Date();
+
+      if (todayDate > freeTrialExpDate) {
+        showToastAndRedirect(currentCohortSlug);
+        return;
+      }
+
+      setGrantAccess(true);
+    }
+  };
+
   return {
     setCohortSession,
     getCohortUserCapabilities,
@@ -789,6 +845,9 @@ function useCohortHandler() {
     changeStatusAssignment,
     getLastActiveModule,
     continueWhereYouLeft,
+    grantAccess,
+    setGrantAccess,
+    checkNavigationAvailability,
     ...state,
   };
 }

@@ -14,7 +14,7 @@ const getProjectStatusConfig = (currentTask, isGuidedExperience, hasPendingSubta
       PENDING: {
         icon: {
           icon: isGuidedExperience ? 'send-2' : 'longArrowRight',
-          color: hexColor.blueDefault,
+          color: isGuidedExperience ? hexColor.blueDefault : hexColor.white,
           width: '20px',
         },
         text: hasPendingSubtasks
@@ -54,12 +54,13 @@ const getProjectStatusConfig = (currentTask, isGuidedExperience, hasPendingSubta
   return projectStatusMap[currentTask?.task_status]?.[currentTask?.revision_status] || projectStatusMap.PENDING.PENDING;
 };
 
-const getCommonTaskStatusConfig = (currentTask, taskIsApproved, hexColor, t) => {
+const getCommonTaskStatusConfig = (currentTask, isGuidedExperience, taskIsApproved, hexColor, t) => {
+  const checkedColor = isGuidedExperience ? hexColor.blueDefault : hexColor.white;
   const commonStatusMap = {
     DONE: {
       icon: {
         icon: 'close',
-        color: hexColor.blueDefault,
+        color: checkedColor,
         width: '12px',
       },
       text: t('common:taskStatus.mark-as-not-done'),
@@ -67,7 +68,7 @@ const getCommonTaskStatusConfig = (currentTask, taskIsApproved, hexColor, t) => 
     PENDING: {
       icon: {
         icon: 'checked2',
-        color: taskIsApproved ? hexColor.gray['600'] : hexColor.blueDefault,
+        color: taskIsApproved ? hexColor.gray['600'] : checkedColor,
         width: '14px',
       },
       text: t('common:taskStatus.mark-as-done'),
@@ -80,14 +81,13 @@ const getCommonTaskStatusConfig = (currentTask, taskIsApproved, hexColor, t) => 
 export function textByTaskStatus(currentTask, isGuidedExperience, hasPendingSubtasks) {
   const { t } = useTranslation('dashboard');
   const { hexColor } = useStyle();
-  console.log('currentTask', currentTask);
   const taskIsApproved = currentTask?.revision_status === 'APPROVED';
 
   if (currentTask?.task_type === 'PROJECT') {
     return getProjectStatusConfig(currentTask, isGuidedExperience, hasPendingSubtasks, hexColor, t);
   }
 
-  return getCommonTaskStatusConfig(currentTask, taskIsApproved, hexColor, t);
+  return getCommonTaskStatusConfig(currentTask, isGuidedExperience, taskIsApproved, hexColor, t);
 }
 
 const getProjectIconConfig = (currentTask, hasDeliveryFormat, hexColor) => {

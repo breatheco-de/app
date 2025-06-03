@@ -27,7 +27,6 @@ import { categoriesFor, BREATHECODE_HOST } from '../../utils/variables';
 import ComponentOnTime from '../../components/ComponentOnTime';
 import MarkDownParser from '../../components/MarkDownParser';
 import MktEventCards from '../../components/PrismicComponents/MktEventCards';
-import { validatePlanExistence } from '../../handlers/subscriptions';
 import ModalToGetAccess, { stageType } from '../../components/ModalToGetAccess';
 import SmallCardsCarousel from '../../components/SmallCardsCarousel';
 import { SessionContext } from '../../context/SessionContext';
@@ -35,6 +34,7 @@ import LoaderScreen from '../../components/LoaderScreen';
 import ReactPlayerV2 from '../../components/ReactPlayerV2';
 import DynamicContentCard from '../../components/DynamicContentCard';
 import useAuth from '../../hooks/useAuth';
+import useSignup from '../../hooks/useSignup';
 import useCustomToast from '../../hooks/useCustomToast';
 
 const arrayOfImages = [
@@ -58,7 +58,7 @@ const assetTypeDict = {
 };
 
 export const getStaticPaths = async ({ locales }) => {
-  const { data } = await bc.public().events();
+  const { data } = await bc.events().allEvents();
 
   const paths = data.filter((ev) => ev?.slug && ['ACTIVE', 'FINISHED'].includes(data.status))
     .flatMap((res) => locales.map((locale) => ({
@@ -76,7 +76,7 @@ export const getStaticPaths = async ({ locales }) => {
 
 export const getStaticProps = async ({ params, locale }) => {
   const { event_slug: slug } = params;
-  const resp = await bc.public({ context: 'true' }).singleEvent(slug).catch(() => ({
+  const resp = await bc.events({ context: 'true' }).getEvent(slug).catch(() => ({
     statusText: 'not-found',
   }));
   const data = resp?.data;
@@ -112,7 +112,7 @@ export const getStaticProps = async ({ params, locale }) => {
 
   let asset = null;
   if (data?.asset_slug) {
-    const assetResp = await bc.lesson().getAsset(data?.asset_slug);
+    const assetResp = await bc.registry().getAsset(data?.asset_slug);
     asset = assetResp?.data;
   }
 
@@ -144,6 +144,7 @@ export const getStaticProps = async ({ params, locale }) => {
 function Workshop({ eventData, asset }) {
   const { t } = useTranslation('workshops');
   const { userSession } = useContext(SessionContext);
+  const { validatePlanExistence } = useSignup();
   const [users, setUsers] = useState([]);
   const [event, setEvent] = useState(eventData);
   const [subscriptions, setSubscriptions] = useState([]);
@@ -178,12 +179,12 @@ function Workshop({ eventData, asset }) {
   const eventRecap = event?.recap;
 
   const getDefaultData = async () => {
-    const resp = await bc.public().singleEvent(eventData?.slug || eventSlug).catch(() => ({
+    const resp = await bc.events().getEvent(eventData?.slug || eventSlug).catch(() => ({
       statusText: 'not-found',
     }));
     const data = resp?.data;
     if (data?.asset_slug) {
-      const assetResp = await bc.lesson().getAsset(data?.asset_slug);
+      const assetResp = await bc.registry().getAsset(data?.asset_slug);
       setAssetData(assetResp?.data);
     }
     setEvent(data);
@@ -976,7 +977,7 @@ function Workshop({ eventData, asset }) {
                         <Text textAlign="center">{t('form.joined-description-in-person')}</Text>
                       </>
                     )}
-                    {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
+                    {(isFreeForConsumables || existsConsumables) ? (
                       <Box display="flex" gap="10px">
                         <Button
                           fontSize="17px"
@@ -984,7 +985,7 @@ function Workshop({ eventData, asset }) {
                           background="white"
                           width="100%"
                           display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
-                          isDisabled={((finishedEvent && !recordingUrl) || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
+                          isDisabled={!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                           _disabled={{
                             background: buttonEnabled ? '' : 'gray.350',
                             cursor: buttonEnabled ? 'pointer' : 'not-allowed',
@@ -998,10 +999,11 @@ function Workshop({ eventData, asset }) {
                             cursor: buttonEnabled ? 'pointer' : 'not-allowed',
                           }}
                           onClick={() => {
-                            if (finishedEvent && recordingUrl) {
-                              setIsVideoModalOpen(true);
-                            } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
-                            else handleJoin();
+                            if (!event?.online_event && isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
+                              setIsModalConfirmOpen(true);
+                            } else {
+                              handleJoin();
+                            }
                           }}
                         >
                           {getWording()}
@@ -1041,13 +1043,33 @@ function Workshop({ eventData, asset }) {
                   </>
                 ) : (
                   <>
-                    <Box marginBottom="10px" padding="5px" textAlign="center">
+                    <Box textAlign="center">
                       <Heading size="sm">
                         {formInfo?.title}
                       </Heading>
                       <Text>
                         {eventRecap || formInfo?.description}
                       </Text>
+                      <Button
+                        type="submit"
+                        variant="default"
+                        margin="0 auto"
+                        mt="10px"
+                        display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
+                        className={readyToJoinEvent && !finishedEvent ? 'pulse-blue' : ''}
+                        background={buttonEnabled ? 'white' : 'gray.350'}
+                        color={buttonEnabled ? hexColor.greenLight : 'white'}
+                        textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
+                        isDisabled={((finishedEvent && !recordingUrl) || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
+                        onClick={() => {
+                          if (finishedEvent && recordingUrl) {
+                            setIsVideoModalOpen(true);
+                          } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
+                          else handleJoin();
+                        }}
+                      >
+                        {getWording()}
+                      </Button>
                     </Box>
                   </>
                 )}

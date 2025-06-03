@@ -5,10 +5,12 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { Avatar, Box } from '@chakra-ui/react';
 import bc from '../services/breathecode';
+import rigobot from '../services/rigobot';
 import axiosInstance, { cancelAllCurrentRequests } from '../axios';
 import { usePersistentBySession } from '../hooks/usePersistent';
 import useRigo from '../hooks/useRigo';
 import useCustomToast from '../hooks/useCustomToast';
+import useSubscriptions from '../hooks/useSubscriptions';
 import ModalInfo from '../components/ModalInfo';
 import Text from '../components/Text';
 import { getPrismicPagesUrls } from '../utils/url';
@@ -153,13 +155,14 @@ export const AuthContext = createContext({
 
 function AuthProvider({ children, pageProps }) {
   const router = useRouter();
+  const { initializeSubscriptionsData } = useSubscriptions();
   const { t, lang } = useTranslation('footer');
   const { createToast } = useCustomToast({ toastId: 'auth-context-email-sent' });
   const { rigo, isRigoInitialized } = useRigo();
   const queryCoupon = getQueryString('coupon');
   const [, setCoupon] = usePersistentBySession('coupon', []);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { user } = state;
+  const { user, isAuthenticated } = state;
   const [modalState, setModalState] = useState({
     state: false,
     user: null,
@@ -198,21 +201,19 @@ function AuthProvider({ children, pageProps }) {
     }
   }, [state.isAuthenticated, router.pathname]);
 
-  const parseCohortUser = (elem) => {
-    const { cohort, ...cohort_user } = elem;
-    const { syllabus_version } = cohort;
-    return {
-      ...cohort,
-      selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
-      cohort_user,
-    };
-  };
-
   const fetchUserAndCohorts = async () => {
     try {
       const { data } = await bc.admissions().me();
       const { cohorts: cohortUsers, ...userData } = data;
-      const cohorts = cohortUsers.map(parseCohortUser);
+      const cohorts = cohortUsers.map((elem) => {
+        const { cohort, ...cohort_user } = elem;
+        const { syllabus_version } = cohort;
+        return {
+          ...cohort,
+          selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
+          cohort_user,
+        };
+      });
       const hasNonSaasCohort = cohorts.some((c) => c.available_as_saas === false);
 
       return { cohorts, userData, hasNonSaasCohort };
@@ -285,11 +286,11 @@ function AuthProvider({ children, pageProps }) {
             const { cohorts, userData, hasNonSaasCohort } = await fetchUserAndCohorts();
 
             const [respRigobotAuth] = await Promise.all([
-              bc.auth().verifyRigobotConnection(token),
+              rigobot.auth().meToken(token),
               fetchBlockedServices(),
             ]);
 
-            const isAuthenticatedWithRigobot = respRigobotAuth && respRigobotAuth?.status === 200;
+            const isAuthenticatedWithRigobot = respRigobotAuth?.status === 200;
 
             dispatch({
               type: 'INIT',
@@ -357,12 +358,29 @@ function AuthProvider({ children, pageProps }) {
     }
   }, [user, isRigoInitialized]);
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      initializeSubscriptionsData()
+        .then((data) => {
+          reportDatalayer({
+            dataLayer: {
+              event: 'subscriptions_load',
+              method: 'native',
+              plan_financings: data?.plan_financings?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
+              subscriptions: data?.subscriptions?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
+              agent: getBrowserInfo(),
+            },
+          });
+        });
+    }
+  }, [isAuthenticated]);
+
   const login = async (payload = null, disableRedirect = false) => {
     const redirect = isWindow && localStorage.getItem('redirect');
     try {
       if (payload) {
-        const response = await bc.auth().login2(payload, lang);
-        const responseData = await response.json();
+        const response = await bc.auth().login(payload);
+        const responseData = response.data;
 
         if (responseData?.silent_code === SILENT_CODE.EMAIL_NOT_VALIDATED) {
           setModalState({

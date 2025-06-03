@@ -4,12 +4,13 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { Box, Skeleton } from '@chakra-ui/react';
 import ShowPrices from '../ShowPrices';
-import { generatePlan, getTranslations } from '../../handlers/subscriptions';
 import { usePersistentBySession } from '../../hooks/usePersistent';
+import useSignup from '../../hooks/useSignup';
 import { getQueryString } from '../../utils';
 
 function MktShowPrices({ id, externalPlanProps, cohortId, title, description, pricingMktInfo, plan, ...rest }) {
   const { t } = useTranslation('course');
+  const { generatePlan } = useSignup();
   const router = useRouter();
   const [planProps, setPlanProps] = useState({});
   const queryCoupon = getQueryString('coupon');
@@ -19,7 +20,7 @@ function MktShowPrices({ id, externalPlanProps, cohortId, title, description, pr
     if (externalPlanProps) {
       setPlanProps(externalPlanProps);
     } else {
-      generatePlan(plan, getTranslations(t)).then(setPlanProps);
+      generatePlan(plan).then(setPlanProps);
     }
   }, [router, externalPlanProps]);
 
@@ -58,7 +59,7 @@ MktShowPrices.propTypes = {
   id: PropTypes.string,
   cohortId: PropTypes.number,
   pricingMktInfo: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
-  externalPlanProps: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.any)),
+  externalPlanProps: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
 };
 
 MktShowPrices.defaultProps = {

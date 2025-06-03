@@ -1,7 +1,0 @@
-{
-  "baseUrl": "http://localhost:3080",
-  "video": false,
-  "screenshotOnRunFailure": false,
-  "watchForFileChanges":	true,
-  "chromeWebSecurity": false
-}

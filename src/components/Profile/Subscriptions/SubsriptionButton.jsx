@@ -4,14 +4,17 @@ import { Button } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import profileHandlers from './handlers';
+import useSubscriptions from '../../../hooks/useSubscriptions';
+import useSignup from '../../../hooks/useSignup';
+import useCustomToast from '../../../hooks/useCustomToast';
 import { reportDatalayer } from '../../../utils/requests';
 import { getBrowserInfo } from '../../../utils';
 
-function ButtonHandler({
-  subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, allSubscriptions, ...restStyles
+function SubsriptionButton({
+  subscription, setSubscriptionProps, onOpenCancelSubscription, children, allSubscriptions, ...restStyles
 }) {
   const { t } = useTranslation('profile');
+  const { createToast } = useCustomToast({ toastId: 'subscription-button' });
   const status = subscription?.status;
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -27,10 +30,24 @@ function ButtonHandler({
   const isExpired = status === 'EXPIRED';
   const isPaymentIssue = status === 'PAYMENT_ISSUE';
 
-  const { getPlanOffer, reactivatePlan } = profileHandlers({});
-  const handlePlanOffer = () => {
-    setIsLoading(true);
-    getPlanOffer({ slug: planSlug, onOpenUpgrade }).finally(() => setIsLoading(false));
+  const { getPlanOffer } = useSubscriptions();
+  const { reactivatePlan } = useSignup();
+  const handlePlanOffer = async () => {
+    try {
+      setIsLoading(true);
+      const planOffer = await getPlanOffer(planSlug);
+      router.push(`/checkout?plan=${planOffer.suggested_plan.slug}`);
+    } catch (error) {
+      createToast({
+        position: 'top',
+        title: t('alert-message:error-getting-offer'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleReactivatePlan = () => {
@@ -71,7 +88,7 @@ function ButtonHandler({
       };
     }
 
-    if (isFreeTrial || (subscription?.type !== 'plan_financing' && (isActive || isFullyPaid) && subscription?.planOffer.slug)) {
+    if (isFreeTrial || (subscription?.type !== 'plan_financing' && (isActive || isFullyPaid) && subscription?.planOffer?.slug)) {
       return {
         text: t('subscription.upgrade'),
         style: {
@@ -103,7 +120,7 @@ function ButtonHandler({
       };
     }
 
-    if ((isPaymentIssue || isError || isExpired) && !subscription?.planOffer.slug) {
+    if ((isPaymentIssue || isError || isExpired) && !subscription?.planOffer?.slug) {
       return {
         text: t('subscription.contact-support'),
         isComponent: true,
@@ -137,8 +154,8 @@ function ButtonHandler({
           isLoading={isLoading}
           onClick={() => {
             if (isPlanFinancingExpired) handlePlanOffer();
-            if ((['FREE_TRIAL', 'PAYMENT_ISSUE'].includes(status)) || (['ACTIVE', 'FULLY_PAID'].includes(status) && subscription?.planOffer.slug)) handlePlanOffer();
-            if (['ACTIVE', 'FULLY_PAID'].includes(status) && subscription?.type !== 'plan_financing' && !subscription?.planOffer.slug) onOpenCancelSubscription();
+            if ((['FREE_TRIAL', 'PAYMENT_ISSUE'].includes(status)) || (['ACTIVE', 'FULLY_PAID'].includes(status) && subscription?.planOffer?.slug)) handlePlanOffer();
+            if (['ACTIVE', 'FULLY_PAID'].includes(status) && subscription?.type !== 'plan_financing' && !subscription?.planOffer?.slug) onOpenCancelSubscription();
             if (['CANCELLED'].includes(status)) handleReactivatePlan();
             setSubscriptionProps(subscription);
           }}
@@ -154,9 +171,8 @@ function ButtonHandler({
   );
 }
 
-ButtonHandler.propTypes = {
+SubsriptionButton.propTypes = {
   subscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  onOpenUpgrade: PropTypes.func,
   setSubscriptionProps: PropTypes.func,
   onOpenCancelSubscription: PropTypes.func,
   restStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
@@ -164,9 +180,8 @@ ButtonHandler.propTypes = {
   allSubscriptions: PropTypes.arrayOf(PropTypes.objectOf([PropTypes.any])),
 };
 
-ButtonHandler.defaultProps = {
+SubsriptionButton.defaultProps = {
   subscription: {},
-  onOpenUpgrade: () => { },
   setSubscriptionProps: () => { },
   onOpenCancelSubscription: () => { },
   restStyles: {},
@@ -174,4 +189,4 @@ ButtonHandler.defaultProps = {
   allSubscriptions: [],
 };
 
-export default ButtonHandler;
+export default SubsriptionButton;

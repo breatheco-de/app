@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+In the lib folder we are storing functions that reuse calls to the API and dont involve hooks.

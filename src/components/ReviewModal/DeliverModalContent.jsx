@@ -170,7 +170,7 @@ function DeliverModalContent({
           <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={borderColor2}>
             <Button
               onClick={() => {
-                bc.todo().update({
+                bc.assignments().updateTask({
                   id: currentTask.id,
                   revision_status: taskIsIgnored ? 'PENDING' : 'IGNORED',
                 })

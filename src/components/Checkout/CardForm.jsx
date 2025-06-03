@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import FieldForm from '../Forms/FieldForm';
-import useSignup from '../../store/actions/signupAction';
+import signupAction from '../../store/actions/signupAction';
 import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../hooks/useStyle';
 import ModalCardError from './ModalCardError';
@@ -39,8 +39,8 @@ function CardForm({ onSubmit, modalCardErrorProps, buttonText }) {
 
   const {
     state, setPaymentInfo,
-  } = useSignup();
-  const { paymentInfo, checkoutData, selectedPlanCheckoutData, paymentStatus, isSubmittingCard, isSubmittingPayment } = state;
+  } = signupAction();
+  const { paymentInfo, checkingData, selectedPlan, isSubmittingCard, isSubmittingPayment } = state;
   const [stateCard, setStateCard] = useState({
     card_number: paymentInfo?.card_number || 0,
     exp_month: 0,
@@ -48,23 +48,20 @@ function CardForm({ onSubmit, modalCardErrorProps, buttonText }) {
     cvc: 0,
   });
 
-  const isPaymentSuccess = paymentStatus === 'success';
-  const isPaymentIdle = paymentStatus === 'idle';
-  const paymentStatusBgColor = isPaymentSuccess ? 'green.light' : '#ffefef';
-  const isNotTrial = selectedPlanCheckoutData?.type !== 'TRIAL';
+  const isNotTrial = selectedPlan?.type !== 'TRIAL';
 
   const getPrice = (planProp) => {
     if (isNotTrial) {
       if (planProp?.financing_options?.length > 0 && planProp?.financing_options[0]?.monthly_price > 0) return planProp?.financing_options[0]?.monthly_price;
-      if (checkoutData?.amount_per_half > 0) return checkoutData?.amount_per_half;
-      if (checkoutData?.amount_per_month > 0) return checkoutData?.amount_per_month;
-      if (checkoutData?.amount_per_quarter > 0) return checkoutData?.amount_per_quarter;
-      if (checkoutData?.amount_per_year > 0) return checkoutData?.amount_per_year;
+      if (checkingData?.amount_per_half > 0) return checkingData?.amount_per_half;
+      if (checkingData?.amount_per_month > 0) return checkingData?.amount_per_month;
+      if (checkingData?.amount_per_quarter > 0) return checkingData?.amount_per_quarter;
+      if (checkingData?.amount_per_year > 0) return checkingData?.amount_per_year;
     }
     return t('free-trial');
   };
 
-  const priceIsNotNumber = Number.isNaN(Number(getPrice(selectedPlanCheckoutData)));
+  const priceIsNotNumber = Number.isNaN(Number(getPrice(selectedPlan)));
 
   const { backgroundColor, hexColor, backgroundColor3 } = useStyle();
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
@@ -92,7 +89,7 @@ function CardForm({ onSubmit, modalCardErrorProps, buttonText }) {
         isSubmitting={isSubmittingCard}
         {...modalCardErrorProps}
       />
-      <Box display="flex" width={{ base: 'auto', lg: '490px' }} height="auto" flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={!isPaymentIdle ? paymentStatusBgColor : backgroundColor} p={{ base: '20px 0', md: '30px 0' }} borderRadius="15px">
+      <Box display="flex" width={{ base: 'auto', lg: '490px' }} height="auto" flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={backgroundColor} p={{ base: '20px 0', md: '30px 0' }} borderRadius="15px">
         <Formik
           initialValues={{
             owner_name: paymentInfo.owner_name || '',
@@ -217,23 +214,21 @@ function CardForm({ onSubmit, modalCardErrorProps, buttonText }) {
             </Form>
           )}
         </Formik>
-        {isPaymentIdle && (
-          <Flex flexDirection="column" gridGap="1.5rem" margin="1.5rem 0 0 0" background={backgroundColor3} padding="1rem" borderRadius="6px">
-            <Flex justifyContent="space-between" alignItems="center">
-              <Flex gridGap="10px" alignItems="center">
-                <Icon icon="padlock" width="20px" height="20px" color={hexColor.black} />
-                <Text
-                  size="18px"
-                  letterSpacing="auto"
-                  dangerouslySetInnerHTML={{ __html: t('secure-checkout') }}
-                />
-              </Flex>
-              <Image draggable={false} userSelect="none" src="/static/images/powered-by-stripe.png" width="auto" height="40px" objectFit="contain" />
+        <Flex flexDirection="column" gridGap="1.5rem" margin="1.5rem 0 0 0" background={backgroundColor3} padding="1rem" borderRadius="6px">
+          <Flex justifyContent="space-between" alignItems="center">
+            <Flex gridGap="10px" alignItems="center">
+              <Icon icon="padlock" width="20px" height="20px" color={hexColor.black} />
+              <Text
+                size="18px"
+                letterSpacing="auto"
+                dangerouslySetInnerHTML={{ __html: t('secure-checkout') }}
+              />
             </Flex>
-            <Divider />
-            <Image draggable={false} userSelect="none" src="/static/images/payment-cards.png" width="100%" height="auto" objectFit="contain" />
+            <Image draggable={false} userSelect="none" src="/static/images/powered-by-stripe.png" width="auto" height="40px" objectFit="contain" />
           </Flex>
-        )}
+          <Divider />
+          <Image draggable={false} userSelect="none" src="/static/images/payment-cards.png" width="100%" height="auto" objectFit="contain" />
+        </Flex>
       </Box>
     </Box>
   );

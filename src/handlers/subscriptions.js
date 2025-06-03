@@ -42,7 +42,7 @@ export const processPlans = (data, {
       };
 
       const slug = encodeURIComponent(data?.slug);
-      const resp = await bc.payment({ country_code }).getPlanProps(slug);
+      const resp = await bc.payment({ country_code }).getServiceItemsByPlan(slug);
       if (!resp) {
         throw new Error('The plan does not exist');
       }

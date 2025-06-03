@@ -85,11 +85,11 @@ function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues
       const formdata = new FormData();
       formdata.append('file', allValues[0].screenshot);
 
-      result = await bc.todo().sendScreenshot(formdata);
+      result = await bc.assignments().sendScreenshot(formdata);
     }
     const screenshot = result?.data?.url || prefillImage || null;
     const val = [{ ...allValues[0], screenshot }];
-    bc.todo().updateFinalProject(val)
+    bc.assignments().updateMeFinalProject(val)
       .then(async (res) => {
         const data = await res.json();
         if (Array.isArray(data)) {
@@ -135,11 +135,11 @@ function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues
       const formdata = new FormData();
       formdata.append('file', allValues.screenshot);
 
-      result = await bc.todo().sendScreenshot(formdata);
+      result = await bc.assignments().sendScreenshot(formdata);
     }
     const screenshot = result?.data?.url || null;
 
-    bc.todo().createFinalProject({ ...allValues, screenshot })
+    bc.assignments().createFinalProject({ ...allValues, screenshot })
       .then((res) => {
         if (res) {
           setFinalProjectData(res.data[0]);
@@ -179,7 +179,7 @@ function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues
 
   useEffect(() => {
     if (studentsData?.length > 0) return;
-    bc.cohort().getStudents(cohortSlug, cohortAcademy)
+    bc.admissions().getStudents(cohortSlug, cohortAcademy)
       .then((res) => {
         const studentsFiltered = res?.data.filter((student) => student?.role === 'STUDENT')
           .map((student) => ({

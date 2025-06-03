@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import bc from '../../../services/breathecode';
-import { processRelatedAssignments } from '../../../handlers/cohorts';
+import { processRelatedAssignments } from '../../../utils/cohorts';
 import GridContainer from '../../../components/GridContainer';
 import { MDSkeleton } from '../../../components/Skeleton';
 import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
@@ -43,7 +43,7 @@ const formatSyllabus = (syllabus) => syllabus.json.days.filter((assignment) => {
 });
 
 export const getStaticPaths = async ({ locales }) => {
-  const { data } = await bc.syllabus({ is_documentation: 'True', version: 1, academy: WHITE_LABEL_ACADEMY }).getPublicVersion();
+  const { data } = await bc.admissions({ is_documentation: 'True', version: 1, academy: WHITE_LABEL_ACADEMY }).getPublicSyllabusVersion();
   const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
       syllabusSlug: res.slug,
@@ -61,7 +61,7 @@ export const getStaticProps = async ({ params, locale }) => {
   const { syllabusSlug } = params;
 
   try {
-    const result = await bc.syllabus({ is_documentation: 'True', version: 1, academy: WHITE_LABEL_ACADEMY, slug: syllabusSlug }).getPublicVersion();
+    const result = await bc.admissions({ is_documentation: 'True', version: 1, academy: WHITE_LABEL_ACADEMY, slug: syllabusSlug }).getPublicSyllabusVersion();
     const syllabus = result.data.find((syll) => syll.slug === syllabusSlug);
     if (!syllabus) throw new Error('syllabus not found');
 
