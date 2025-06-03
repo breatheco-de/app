@@ -15,6 +15,8 @@
   "profile-updated": "Profile Updated",
   "update-failed": "Something went wrong updating your profile",
   "connect-github": "Connect with GitHub",
+  "connect-google": "Connect with Google",
+  "connected-with-google": "Connected with Google",
   "connect-rigobot": "Connect with Rigo AI",
   "connected-with-rigobot": "You are connected to Rigo AI",
   "rigobot-requires-github-connection": "You must sync with GitHub to use Rigobot",
@@ -42,29 +44,14 @@
     "title": "Remove Github account",
     "description": "By removing your Github account, any Github login will be unlinked; however, you will be able to sync it again, if you wish"
   },
+  "remove-google-modal": {
+    "title": "Remove Google account",
+    "description": "By removing your Google account, any Google login will be unlinked; however, you will be able to sync it again, if you wish"
+  },
   "share-certificate": {
     "title": "Share your new career title",
     "shareText": "Share your new certificate via:",
-    "socials": [
-      {
-        "name": "twitter",
-        "label": "Twitter",
-        "href": "https://twitter.com/share?url=&text=I have successfully finished the {{profession}} certification at 4Geeks.com {{certfLink}}",
-        "color": "#1DA1F2"
-      },
-      {
-        "name": "facebook",
-        "label": "Facebook",
-        "href": "https://facebook.com/sharer?u={{certfLink}}",
-        "color": "#4267B2"
-      },
-      {
-        "name": "linkedin",
-        "label": "LinkedIn",
-        "href": "https://linkedin.com/sharing/share-offsite/?url={{certfLink}}",
-        "color": "#0077B5"
-      }
-    ]
+    "shareMessage": "I have successfully finished the \"{{profession}}\" certification at 4Geeks"
   },
   "update-profile-image": {
     "tooltip-label": "Upload your profile image",
@@ -103,7 +90,7 @@
     "payment_unit": {
       "month": "Monthly",
       "year": "Yearly",
-      "anual": "Anual"
+      "anual": "Yearly"
     },
     "payment_unit_short": {
       "month": "mo",
@@ -133,30 +120,6 @@
     "contact-support": "Chat with support",
     "manage-subscription": "Manage subscription",
     "duration-cancelled": "Duration: Cancelled",
-    "upgrade-modal": {
-      "choose_your_plan": "Choose your plan",
-      "choose_how_much": "Choose how much",
-      "not_ready_to_commit": "Not ready to commit?",
-      "no_card_needed": "No card needed. Full access to all features for",
-      "duration_days": "{{duration}} days",
-      "duration_month": "{{duration}} month",
-      "connector_duration_trial": "trial",
-      "subscription": "Subscription",
-      "one_payment": "One payment",
-      "free-course": "Free course",
-      "finance": "Financed",
-      "buy_mentorships": "You have consumed all the available mentorships, buy more menthorships",
-      "free_trial": "Free trial",
-      "upgrade_free_trial": "Upgrade free trial",
-      "price_remaining_to_pay": "${{price}} remaining to pay",
-      "monthly_payment": "Monthly payment",
-      "yearly_payment": "Yearly payment",
-      "many_months_payment": "{{qty}} months payment",
-      "many_months_description": "You will pay ${{monthly_price}} for {{many_months}} months and get full access to all features for the duration of the course.",
-      "full_access": "Full access to all features for the duration of the course.",
-      "free_trial_description": "Upgrade your plan to access this and many other benefits.",
-      "upgrade_access": "Upgrade your membership to access all the benefits of the 4Geeks community"
-    },
     "cancel-modal": {
       "title": "Cancel subscription",
       "description": "Are you sure you want to cancel your subscription to {{cohort}}",
@@ -175,5 +138,14 @@
   "months": "months",
   "month": "month",
   "expired": "Expired",
-  "no-subscriptions": "There are no subscriptions to show yet, subscribe to a cohort and get it immediately"
+  "no-subscriptions": "There are no subscriptions to show yet, subscribe to a cohort and get it immediately",
+  "referral-program": "Referral Program",
+  "referral-coupon": "Your Referral Coupon",
+  "copy-coupon": "Copy Coupon",
+  "coupon-copied": "Coupon copied to clipboard!",
+  "how-it-works": "How it works:",
+  "referral-step-1": "1. Share your coupon code with friends and family",
+  "referral-step-2": "2. When someone uses your coupon and makes a payment for self-paced programs on 4Geeks.com, you'll get a 10% discount on your next payment",
+  "referral-step-3": "3. The more people use your coupon, the more discounts you'll receive!",
+  "referral-step-4": "4. This referral program only applies to self-paced programs at 4Geeks.com"
 }
