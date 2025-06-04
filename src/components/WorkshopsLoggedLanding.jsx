@@ -71,6 +71,7 @@ function WorkshopsLoggedLanding() {
       <MktEventCards margin="50px auto" searchSensitive sortPrioOneTechs={techs} />
       <MktEventCards margin="50px auto" title={t('upcoming-events')} sortPrioOneTechs={techs} />
       <MktEventCards margin="50px auto" title={t('events-joined')} showCheckedInEvents sortPrioOneTechs={techs} />
+      <MktEventCards margin="50px auto" title={t('past-events')} showPastEvents sortPrioOneTechs={techs} />
       <Heading textAlign="center" margin="40px 0">{t('search-your-fav-tech')}</Heading>
       <MktTechnologies />
       <MktEventCards margin="50px auto" techFilter="Javascript" sortPrioOneTechs={techs} />
