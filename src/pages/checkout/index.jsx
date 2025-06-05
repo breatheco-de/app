@@ -384,7 +384,7 @@ function Checkout() {
                             initialValues={{ coupons: couponValue || '' }}
                             onSubmit={(_, actions) => {
                               setCouponError(false);
-                              handleCoupon(discountCode, actions, true);
+                              handleCoupon(discountCode, actions);
                             }}
                           >
                             {({ isSubmitting }) => (
@@ -421,6 +421,7 @@ function Checkout() {
                                           padding="10px"
                                           height="auto"
                                           onClick={() => {
+                                            console.log('checkingData', checkingData);
                                             saveCouponToBag([''], checkingData?.id);
                                             removeSessionStorageItem('coupon');
                                             setDiscountCode('');
