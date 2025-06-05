@@ -112,7 +112,7 @@ function Certificates({ certificates }) {
           certificate={certificate}
         />
       ))}
-      {Array.isArray(certificates) && certificates.length === 0 && (
+      {(!Array.isArray(certificates) || certificates.length === 0) && (
         <Text fontSize="15px" fontWeight="400" pb="6px">
           {t('no-certificates')}
         </Text>
