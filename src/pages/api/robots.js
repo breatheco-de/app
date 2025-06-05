@@ -6,6 +6,8 @@ export default function handler(req, res) {
   if (vercelEnv === 'production') {
     res.end(`User-agent: *
 Allow: /
+Disallow: /ask.4geeks.com/
+Disallow: /ask2.4geeks.com/
 Disallow: /static/
 Disallow: /_next/
 Disallow: /*.json$
