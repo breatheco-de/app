@@ -283,19 +283,8 @@ function CoursePage() {
                               {allDiscounts.length > 0 && '🔥'}
                               {featurePrice}
                             </Text>
-                            {!featuredPlanToEnroll?.isFreeTier && (
-                              <Flex alignItems="center" marginTop="5px" gap="5px" justifyContent="center">
-                                <Icon icon="shield" color="#ffffff" secondColor={courseColor || '#00b765'} width="23px" />
-                                <Text fontSize="13px" fontWeight="medium" paddingTop="2px">
-                                  {t('common:money-back-guarantee-no-link')}
-                                </Text>
-                              </Flex>
-                            )}
                           </Flex>
                         </Button>
-                        {!featuredPlanToEnroll?.isFreeTier && (
-                          <Text fontSize="11px" color="gray.500" textAlign="center" marginTop="6px" dangerouslySetInnerHTML={{ __html: t('common:money-back-guarantee-conditions-link') }} />
-                        )}
                         {isAuthenticated ? (
                           <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                             {t('signup:switch-user-connector', { name: user?.first_name })}
