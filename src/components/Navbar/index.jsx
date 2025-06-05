@@ -382,7 +382,7 @@ function Navbar({ translations, pageProps }) {
                     {disableLangSwitcher !== true && (
                       <Box display="flex" flexDirection="row">
                         {uniqueLanguages.map((l, i) => {
-                          const lang = languages.find((language) => language?.value === l?.lang);
+                          const lang = languages?.find((language) => language?.value === l?.lang);
                           const value = translationsPropsExists ? lang?.value : l.value;
                           const path = translationsPropsExists ? l?.link : router.asPath;
 
