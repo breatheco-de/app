@@ -106,13 +106,13 @@ function Certificates({ certificates }) {
       <Text fontSize="15px" fontWeight="700" pb="6px">
         {t('my-certificates')}
       </Text>
-      {certificates && certificates.map((certificate) => (
+      {Array.isArray(certificates) && certificates.map((certificate) => (
         <CertificateItem
           key={`${certificate.created_at} - ${certificate.specialty.name}`}
           certificate={certificate}
         />
       ))}
-      {certificates.length === 0 && (
+      {Array.isArray(certificates) && certificates.length === 0 && (
         <Text fontSize="15px" fontWeight="400" pb="6px">
           {t('no-certificates')}
         </Text>
