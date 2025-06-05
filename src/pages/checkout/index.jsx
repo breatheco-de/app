@@ -384,7 +384,7 @@ function Checkout() {
                             initialValues={{ coupons: couponValue || '' }}
                             onSubmit={(_, actions) => {
                               setCouponError(false);
-                              handleCoupon(discountCode, actions, true);
+                              handleCoupon(discountCode, actions);
                             }}
                           >
                             {({ isSubmitting }) => (
