@@ -1,22 +1,10 @@
 /* eslint-disable camelcase */
-/* eslint-disable no-unused-vars */
-import { Box, Button, Flex, Image, SkeletonText, Badge } from '@chakra-ui/react';
-import { useEffect, useState, useRef } from 'react';
-import useTranslation from 'next-translate/useTranslation';
-import { useRouter } from 'next/router';
+import { Box, Button, Flex, Image, SkeletonText } from '@chakra-ui/react';
 import Head from 'next/head';
-import { parseQuerys } from '../../utils/url';
-import { BREATHECODE_HOST, ORIGIN_HOST, BASE_COURSE } from '../../utils/variables';
 import Icon from '../../components/Icon';
 import Text from '../../components/Text';
 import GridContainer from '../../components/GridContainer';
 import Heading from '../../components/Heading';
-import { error } from '../../utils/logging';
-import bc from '../../services/breathecode';
-import { generateCohortSyllabusModules } from '../../lib/admissions';
-import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow, getBrowserInfo, getQueryString } from '../../utils';
-import useStyle from '../../hooks/useStyle';
-import useRigo from '../../hooks/useRigo';
 import OneColumnWithIcon from '../../components/OneColumnWithIcon';
 import CourseContent from '../../components/CourseContent';
 import ShowOnSignUp from '../../components/ShowOnSignup';
@@ -27,446 +15,77 @@ import FixedBottomCta from '../../components/Assets/FixedBottomCta';
 import MktTrustCards from '../../components/PrismicComponents/MktTrustCards';
 import MktShowPrices from '../../components/PrismicComponents/MktShowPrices';
 import NextChakraLink from '../../components/NextChakraLink';
-import useAuth from '../../hooks/useAuth';
-import useSubscriptions from '../../hooks/useSubscriptions';
-import axiosInstance from '../../axios';
-import useCohortHandler from '../../hooks/useCohortHandler';
-import { reportDatalayer } from '../../utils/requests';
 import MktTwoColumnSideImage from '../../components/PrismicComponents/MktTwoColumnSideImage';
 import { AvatarSkeletonWrapped } from '../../components/Skeleton';
-import { usePersistentBySession } from '../../hooks/usePersistent';
 import CouponTopBar from '../../components/CouponTopBar';
-import completions from './completion-jobs.json';
 import Rating from '../../components/Rating';
 import SimpleModal from '../../components/SimpleModal';
 import CustomCarousel from '../../components/CustomCarousel';
 import AssignmentSlide from '../../components/AssignmentSlide';
-import useCustomToast from '../../hooks/useCustomToast';
-import useSignup from '../../hooks/useSignup';
-import { usePlanPrice } from '../../utils/getPriceWithDiscount';
-import useSession from '../../hooks/useSession';
+import { useBootcamp } from './useBootcamp';
+
+const limitViewStudents = 3;
 
 function CoursePage() {
-  const { allSubscriptions, SUBS_STATUS } = useSubscriptions();
-  const { handleSuggestedPlan, getPriceWithDiscount, getSelfAppliedCoupon, applyDiscountCouponsToPlans, state } = useSignup();
-  const [coupon] = usePersistentBySession('coupon', '');
-  const [data, setData] = useState({});
-  const { selfAppliedCoupon } = state;
-  const showBottomCTA = useRef(null);
-  const [isCtaVisible, setIsCtaVisible] = useState(false);
-  const [allDiscounts, setAllDiscounts] = useState([]);
-  const { isAuthenticated, user, logout, cohorts } = useAuth();
-  const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor, backgroundColor7, backgroundColor8, lightColor } = useStyle();
-  const { isRigoInitialized, rigo } = useRigo();
-  const { setCohortSession } = useCohortHandler();
-  const { createToast } = useCustomToast({ toastId: 'choose-program-pricing-detail' });
-  const [isFetching, setIsFetching] = useState(false);
-  const [readyToRefetch, setReadyToRefetch] = useState(false);
-  const [timeElapsed, setTimeElapsed] = useState(0);
-  const [cohortData, setCohortData] = useState({});
-  const [planData, setPlanData] = useState({});
-  const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const { t, lang } = useTranslation('course');
-  const { location, isLoadingLocation } = useSession();
-  const router = useRouter();
-  const limitViewStudents = 3;
-  const cohortId = data?.cohort?.id;
-  const isVisibilityPublic = data.visibility === 'PUBLIC';
-  const courseColor = data?.color;
-  const { course_slug: courseSlug } = router.query;
+  const {
+    // State
+    data,
+    cohortData,
+    planData,
+    showModal,
+    isCtaVisible,
+    isFetching,
+    initialDataIsFetching,
+    financeSelected,
+    allDiscounts,
+    imageSource,
+    assignmentList,
+    assetCountByType,
+    courseContentList,
+    faqList,
+    features,
+    featuredBullets,
+    reviewsForCurrentCourse,
+    cleanedStructuredData,
+    showBottomCTA,
 
-  const structuredData = data?.course_translation ? {
-    '@context': 'https://schema.org',
-    '@type': 'Course',
-    name: data.course_translation.title,
-    description: data.course_translation.description,
-    url: `${ORIGIN_HOST}${lang === 'en' ? '' : lang}/bootcamp/${router.query.courseSlug}`,
-    image: `${ORIGIN_HOST}/static/images/4geeks.png`,
-    provider: {
-      '@type': 'Organization',
-      name: '4Geeks Academy',
-      sameAs: 'https://www.4geeksacademy.com/',
-    },
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${ORIGIN_HOST}${lang === 'en' ? '' : lang}/bootcamp/${router.query.courseSlug}`,
-    },
-  } : {};
-  const cleanedStructuredData = cleanObject(structuredData);
-  const students = cohortData.students || [];
-  const instructors = cohortData.instructors || [];
-  const relatedSubscription = allSubscriptions?.find((sbs) => sbs?.selected_cohort_set?.cohorts.some((elmnt) => elmnt?.id === cohortId));
-  const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
-  const planList = planData?.planList || [];
-  const payableList = planList.filter((plan) => plan?.type === 'PAYMENT');
-  const freePlan = planList?.find((plan) => plan?.type === 'TRIAL' || plan?.type === 'FREE');
-  const featuredPlanToEnroll = freePlan?.plan_slug ? freePlan : payableList?.[0];
-  const pathname = router.asPath.split('#')[0];
+    // Computed values
+    isAuthenticated,
+    existsRelatedSubscription,
+    isVisibilityPublic,
+    courseColor,
+    featurePrice,
+    featuredPlanToEnroll,
+    enrollQuerys,
+    benefitsBullets,
+    students,
+    instructors,
+    cohortId,
+    selfAppliedCoupon,
+    user,
+    hexColor,
+    backgroundColor,
+    fontColor,
+    borderColor,
+    complementaryBlue,
+    featuredColor,
+    backgroundColor7,
+    backgroundColor8,
+    assetCount,
+    BASE_COURSE,
 
-  const reviewsData = t('course:reviews', {}, { returnObjects: true });
-  const reviewsForCurrentCourse = reviewsData[data?.slug] || reviewsData[data?.plan_slug];
-
-  const enrollQuerys = payableList?.length > 0 ? parseQuerys({
-    plan: featuredPlanToEnroll?.plan_slug,
-    has_available_cohorts: planData?.has_available_cohorts,
-    cohort: cohortId,
-    coupon: getQueryString('coupon'),
-  }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
-
-  const planPriceFormatter = usePlanPrice();
-  const featurePrice = planPriceFormatter(featuredPlanToEnroll, planList, allDiscounts).toLocaleLowerCase();
-
-  const getAlternativeTranslation = (slug, params = {}, options = {}) => {
-    const keys = slug.split('.');
-    const result = keys.reduce((acc, key) => {
-      if (acc && acc[key] !== undefined) return acc[key];
-      return null;
-    }, data?.course_translation?.landing_variables);
-
-    return result !== null ? result : t(slug, params, options);
-  };
-
-  const faqList = getAlternativeTranslation('faq', {}, { returnObjects: true }) || [];
-  const features = getAlternativeTranslation('features', {}, { returnObjects: true }) || {};
-  const featuredBullets = getAlternativeTranslation('featured-bullets', {}, { returnObjects: true }) || [];
-  const country_code = location?.countryShort;
-
-  useEffect(() => {
-    if (isRigoInitialized && data?.course_translation && !initialDataIsFetching && planData?.slug) {
-      // const context = document.body.innerText;
-
-      const plans = applyDiscountCouponsToPlans(planData.planList, selfAppliedCoupon);
-      const { discount } = getPriceWithDiscount(0, selfAppliedCoupon);
-
-      const plansContext = plans.map((plan) => `
-        - ${plan.title}
-        price: ${plan.priceText}
-        period: ${plan.period_label}
-        ${plan.lastPrice ? `original price: ${plan.lastPrice}\n discount: ${discount}\n` : ''}
-      `);
-      const syllabusContext = cohortData?.cohortSyllabus?.syllabus?.json
-        ? cohortData.cohortSyllabus.syllabus.json.days
-          .map(({ label, description }) => `- Title: ${typeof label === 'object' ? (label[lang] || label.us) : label}, Description: ${typeof description === 'object' ? (description[lang] || description.us) : description}`)
-        : '';
-
-      let context = `
-        description: ${data.course_translation?.description}
-        ${syllabusContext ? `Modules: ${syllabusContext}` : ''}
-        plans: ${plansContext}
-        payment-methods: ${getAlternativeTranslation('rigobot.payment-methods')},
-      `;
-
-      if (selfAppliedCoupon) {
-        context += `\n coupon: ${discount} off`;
-      }
-
-      rigo.updateOptions({
-        showBubble: false,
-        completions,
-        context,
-      });
-    }
-  }, [isRigoInitialized, lang, initialDataIsFetching, planData]);
-
-  const getElementTopOffset = (elem) => {
-    if (elem && isWindow) {
-      const rect = elem.getBoundingClientRect();
-      const { scrollY } = window;
-      return rect.top + scrollY;
-    }
-    return 0;
-  };
-
-  useEffect(() => {
-    const checkCtaVisibility = () => {
-      if (showBottomCTA.current) {
-        const { scrollY } = window;
-        const top = getElementTopOffset(showBottomCTA.current);
-        setIsCtaVisible(top - scrollY > 700);
-      }
-    };
-
-    checkCtaVisibility();
-
-    const handleScroll = () => {
-      checkCtaVisibility();
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  const joinCohort = async () => {
-    if (!isAuthenticated || !existsRelatedSubscription) {
-      router.push('#pricing');
-      return;
-    }
-
-    reportDatalayer({
-      dataLayer: {
-        event: 'join_cohort',
-        cohort_id: cohortId,
-        agent: getBrowserInfo(),
-      },
-    });
-
-    setIsFetching(true);
-
-    try {
-      const resp = await bc.admissions().joinCohort(cohortId);
-      const dataRequested = resp.data;
-
-      if (dataRequested?.status === 'ACTIVE') {
-        setReadyToRefetch(true);
-      } else if (dataRequested?.status_code === 400) {
-        createToast({
-          position: 'top',
-          title: dataRequested?.detail,
-          status: 'info',
-          duration: 5000,
-          isClosable: true,
-        });
-        setTimeout(() => {
-          router.push('/choose-program');
-        }, 600);
-      } else if (dataRequested?.status_code > 400) {
-        createToast({
-          position: 'top',
-          title: dataRequested?.detail,
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        router.push('#pricing');
-      }
-    } catch (err) {
-      setTimeout(() => {
-        setIsFetching(false);
-      }, 600);
-    }
-  };
-
-  const redirectTocohort = () => {
-    const cohort = cohortData?.cohortSyllabus?.cohort;
-    axiosInstance.defaults.headers.common.Academy = cohort.academy.id;
-
-    const joinedCohort = cohorts.find(({ slug }) => slug === cohort?.slug);
-    setCohortSession({
-      ...joinedCohort,
-    });
-    router.push(joinedCohort.selectedProgramSlug);
-  };
-
-  const redirectToCohortIfItsReady = ({ withAlert = true, callback = () => { } } = {}) => {
-    const alreadyHaveThisCohort = cohorts?.some((cohort) => cohort?.id === cohortId);
-
-    if (alreadyHaveThisCohort) {
-      callback();
-
-      setIsFetching(false);
-      if (withAlert) {
-        createToast({
-          position: 'top',
-          title: t('dashboard:already-have-this-cohort'),
-          status: 'success',
-          duration: 5000,
-        });
-      }
-      redirectTocohort();
-    }
-  };
-
-  const assetCount = cohortData?.modulesInfo?.count;
-  const assignmentList = cohortData?.modulesInfo?.assignmentList;
-  const studentsImages = t(`students-course-images.${data?.slug}`, {}, { returnObjects: true });
-  const benefitsBullets = t('course-default-bullets', {}, { returnObjects: true });
-
-  const getInitialData = async () => {
-    setInitialDataIsFetching(true);
-    const { data: courseData } = await bc.marketing({ lang, country_code }).getCourse(courseSlug);
-    setData(courseData);
-
-    const cohortSyllabus = await generateCohortSyllabusModules(courseData?.cohort?.id);
-
-    const getModulesInfo = async () => {
-      try {
-        const assetTypeCount = { lesson: 0, project: 0, quiz: 0, exercise: 0 };
-        const projects = [];
-        const exercises = [];
-        const featuredAssetSlugs = courseData?.course_translation?.featured_assets?.split(',') || [];
-        const language = lang === 'en' ? 'us' : lang;
-
-        cohortSyllabus?.syllabus?.modules?.forEach((module) => {
-          module?.content.forEach((task) => {
-            if (task?.task_type) {
-              const taskType = task.task_type.toLowerCase();
-              assetTypeCount[taskType] += 1;
-              if (taskType === 'project') projects.push(task);
-              if (taskType === 'exercise') exercises.push(task);
-            }
-          });
-        });
-
-        const filterAssets = (assets, isFeatured) => assets.filter((asset) => {
-          const assetSlug = asset?.translations?.[language]?.slug || asset?.slug;
-          return isFeatured ? featuredAssetSlugs.includes(assetSlug) : !featuredAssetSlugs.includes(assetSlug);
-        });
-
-        let combinedFeaturedAssets = [
-          ...filterAssets(exercises, true),
-          ...filterAssets(projects, true),
-        ];
-
-        if (combinedFeaturedAssets.length < 3) {
-          const remainingNeeded = 3 - combinedFeaturedAssets.length;
-          const additionalItems = [
-            ...filterAssets(exercises, false),
-            ...filterAssets(projects, false),
-          ].slice(-remainingNeeded);
-
-          combinedFeaturedAssets = [...combinedFeaturedAssets, ...additionalItems];
-        }
-
-        const assignmentsFetch = await Promise.all(
-          combinedFeaturedAssets.map((item) => bc.registry().getAsset(item?.translations?.[language]?.slug || item?.slug)
-            .then(({ data: assignmentsData }) => assignmentsData)
-            .catch(() => [])),
-        );
-
-        return {
-          count: assetTypeCount,
-          assignmentList: assignmentsFetch.filter(Boolean),
-        };
-      } catch (errorMsg) {
-        error('Error fetching module info:', errorMsg);
-        return { count: {}, assignmentList: [] };
-      }
-    };
-    const formatedPlanData = await handleSuggestedPlan(data?.plan_slug, 'mkt_plans');
-
-    const modulesInfo = await getModulesInfo();
-
-    const respStudents = await bc.admissions({ roles: 'STUDENT', syllabus: cohortSyllabus.syllabus?.slug }).getPublicMembers();
-    const studentList = respStudents.data;
-
-    const uniqueStudents = studentList?.length > 0 ? studentList.filter((student, index, self) => self.findIndex((l) => (
-      l.user.id === student.user.id
-    )) === index) : [];
-
-    const respMembers = await bc.admissions({
-      roles: 'TEACHER,ASSISTANT',
-      cohort_id: courseData?.cohort?.id,
-    }).getPublicMembers();
-    const instructorsList = respMembers.data;
-    const uniqueInstructors = instructorsList?.length > 0 ? instructorsList.filter((instructor, index, self) => self.findIndex((l) => (
-      l.user.id === instructor.user.id
-    )) === index) : [];
-
-    await getSelfAppliedCoupon(formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug);
-    const couponOnQuery = getQueryString('coupon');
-    const { data: allCouponsApplied } = await bc.payment({ country_code, coupons: [couponOnQuery || coupon], plan: formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug }).verifyCoupon();
-    setAllDiscounts(allCouponsApplied);
-
-    setCohortData({
-      cohortSyllabus,
-      students: uniqueStudents,
-      instructors: uniqueInstructors,
-      modulesInfo,
-    });
-    setPlanData(formatedPlanData);
-    setInitialDataIsFetching(false);
-  };
-
-  useEffect(() => {
-    if (!isLoadingLocation) getInitialData();
-  }, [lang, pathname, isLoadingLocation]);
-
-  useEffect(() => {
-    if (isAuthenticated && cohortData?.cohortSyllabus?.cohort?.id) redirectToCohortIfItsReady();
-  }, [isAuthenticated, cohortData]);
-
-  useEffect(() => {
-    let interval;
-    if (readyToRefetch && timeElapsed < 10) {
-      interval = setInterval(() => {
-        setTimeElapsed((prevTime) => prevTime + 1);
-        redirectToCohortIfItsReady({
-          withAlert: false,
-          callback: () => clearInterval(interval),
-        });
-      }, 1500);
-    }
-    if (readyToRefetch === false) {
-      setTimeElapsed(0);
-      clearInterval(interval);
-    }
-  }, [readyToRefetch]);
-
-  const randomMultiplier = Math.floor(Math.random() * 2) + 20;
-
-  const assetCountByType = {
-    lesson: assetCount?.lesson || 0,
-    exercise: assetCount?.exercise ? assetCount.exercise * randomMultiplier : 0,
-    project: assetCount?.project || 0,
-  };
-
-  const courseContentList = data?.course_translation?.course_modules?.map((module) => ({
-    certificate: module.certificate,
-    time: module.time,
-    exercises: module.exercises,
-    projects: module.projects,
-    readings: module.readings,
-    title: module.name,
-    description: module.description,
-  }));
-
-  const tryRigobot = (targetId) => {
-    rigo.updateOptions({
-      showBubble: true,
-      target: targetId,
-      highlight: true,
-      welcomeMessage: getAlternativeTranslation('rigobot.message', { title: data?.course_translation?.title }),
-      collapsed: false,
-      purposeSlug: '4geekscom-public-agent',
-    });
-  };
-
-  const goToFinancingOptions = () => {
-    router.push('#pricing');
-  };
-
-  const adjustFontSizeForMobile = (html) => {
-    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
-      return html?.replace(/font-size:\s*\d+px;?/gi, 'font-size: 36px;');
-    }
-    return html;
-  };
-
-  const imageSource = Array.isArray(studentsImages) && studentsImages.length > 0
-    ? studentsImages.slice(0, limitViewStudents)
-    : students.slice(0, limitViewStudents).map((student) => {
-      const existsAvatar = student.user.profile?.avatar_url;
-      const avatarNumber = adjustNumberBeetwenMinMax({
-        number: student.user?.id,
-        min: 1,
-        max: 20,
-      });
-      return existsAvatar || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`;
-    });
-
-  useEffect(() => {
-    if (assignmentList && assignmentList.length > 0) {
-      assignmentList.forEach((assignment) => {
-        if (assignment?.preview) {
-          const img = new window.Image();
-          img.src = assignment.preview;
-        }
-      });
-    }
-  }, [assignmentList]);
+    // Functions
+    setShowModal,
+    joinCohort,
+    goToFinancingOptions,
+    getAlternativeTranslation,
+    adjustFontSizeForMobile,
+    logout,
+    router,
+    t,
+    lang,
+    setStorageItem,
+  } = useBootcamp();
 
   return (
     <>
@@ -638,7 +257,7 @@ function CoursePage() {
                         variant="default"
                         isLoading={isFetching}
                         textTransform="uppercase"
-                        onClick={joinCohort}
+                        onClick={() => joinCohort()}
                       >
                         {getAlternativeTranslation('join-cohort')}
                       </Button>
@@ -648,31 +267,35 @@ function CoursePage() {
                           height="auto"
                           id="bootcamp-enroll-button"
                           variant="default"
-                          isLoading={initialDataIsFetching || (planList?.length === 0 && !featuredPlanToEnroll?.price)}
+                          isLoading={initialDataIsFetching || (planData?.planList?.length === 0 && !featuredPlanToEnroll?.price)}
                           background={courseColor || 'green.500'}
                           display="flex"
                           flexDirection="column"
                           color="white"
                           width="100%"
                           whiteSpace="normal"
+                          wordWrap="break-word"
                           padding="10px"
                           onClick={() => { router.push(`/checkout${enrollQuerys}`); }}
                         >
                           <Flex flexDirection="column" alignItems="center">
                             <Text fontSize={!featuredPlanToEnroll?.isFreeTier ? '16px' : '14px'}>
                               {allDiscounts.length > 0 && '🔥'}
-                              {capitalizeFirstLetter(featurePrice)}
+                              {featurePrice}
                             </Text>
                             {!featuredPlanToEnroll?.isFreeTier && (
                               <Flex alignItems="center" marginTop="5px" gap="5px" justifyContent="center">
                                 <Icon icon="shield" color="#ffffff" secondColor={courseColor || '#00b765'} width="23px" />
                                 <Text fontSize="13px" fontWeight="medium" paddingTop="2px">
-                                  {t('common:money-back-guarantee-short')}
+                                  {t('common:money-back-guarantee-no-link')}
                                 </Text>
                               </Flex>
                             )}
                           </Flex>
                         </Button>
+                        {!featuredPlanToEnroll?.isFreeTier && (
+                          <Text fontSize="11px" color="gray.500" textAlign="center" marginTop="6px" dangerouslySetInnerHTML={{ __html: t('common:money-back-guarantee-conditions-link') }} />
+                        )}
                         {isAuthenticated ? (
                           <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                             {t('signup:switch-user-connector', { name: user?.first_name })}
@@ -750,6 +373,7 @@ function CoursePage() {
                   courseContentText={getAlternativeTranslation('course-content-text')}
                   courseContentDescription={getAlternativeTranslation('course-content-description')}
                   data={courseContentList}
+                  assetCount={assetCount}
                   backgroundColor={backgroundColor}
                   titleStyle={{ textTransform: 'capitalize', fontSize: '18px', fontWeight: 'bold', fontFamily: 'Space Grotesk Variable' }}
                   featuresStyle={{ background: backgroundColor8, padding: '4px', borderRadius: '4px' }}
@@ -842,6 +466,7 @@ function CoursePage() {
                   gridGap: '32px',
                   alignItems: 'start',
                 }}
+                autoPlay
               />
             </Flex>
           </GridContainer>
@@ -908,6 +533,7 @@ function CoursePage() {
           <MktShowPrices
             id="pricing"
             externalPlanProps={planData}
+            externalSelection={financeSelected}
             title={getAlternativeTranslation('show-prices.title')}
             description={getAlternativeTranslation('show-prices.description')}
             plan={data?.plan_slug}
