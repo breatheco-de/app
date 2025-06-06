@@ -51,7 +51,6 @@ function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, optio
         {locales.map((language) => (['default', 'en'].includes(language) ? (
           <React.Fragment key={`${language} - ${pathname}`}>
             <link rel="alternate" hrefLang="x-default" href={`https://4geeks.com${pathname}`} />
-{/*             <link rel="alternate" hrefLang={locationLang[language]} href={`https://4geeks.com${pathname}`} /> */}
           </React.Fragment>
         ) : (
           <link key={`${language} - ${pathname} alternate`} rel="alternate" hrefLang={locationLang[language]} href={`https://4geeks.com/${language}${pathname}`} />
