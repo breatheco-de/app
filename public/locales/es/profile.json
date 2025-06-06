@@ -15,6 +15,8 @@
   "profile-updated": "Perfil actualizado",
   "update-failed": "Algo salió mal al actualizar tu perfil",
   "connect-github": "Conectar con GitHub",
+  "connect-google": "Conectar con Google",
+  "connected-with-google": "Conectado con Google",
   "connect-rigobot": "Conectar con Rigo AI",
   "connected-with-rigobot": "Estás conectado a Rigo AI",
   "rigobot-requires-github-connection": "Debes sincronizar con GitHub para usar Rigobot",
@@ -41,6 +43,10 @@
   "remove-github-modal": {
     "title": "Remover cuenta Github",
     "description": "Al remover tu cuenta GitHub, cualquier inicio de sesión con GitHub se desvinculará; sin embargo, podrá sincronizarlo nuevamente, si así lo desea"
+  },
+  "remove-google-modal": {
+    "title": "Remover cuenta Google",
+    "description": "Al remover tu cuenta Google, cualquier inicio de sesión con Google se desvinculará; sin embargo, podrá sincronizarlo nuevamente, si así lo desea"
   },
   "share-certificate": {
     "title": "Comparte tu nuevo título profesional",

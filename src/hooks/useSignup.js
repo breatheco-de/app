@@ -606,6 +606,9 @@ const useSignup = () => {
       const planSlug = encodeURIComponent(currentPlan?.slug);
       const finalData = await generatePlan(planSlug);
 
+      // Remove plan id to avoid conflict with the plan id in the checking data
+      delete finalData.id;
+
       if (response.status < 400) {
         const result = {
           ...data,

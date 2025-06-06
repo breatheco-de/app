@@ -7,7 +7,7 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { getStorageItem } from '../utils';
+import { getStorageItem, isWindow } from '../utils';
 import { RIGOBOT_HOST, BREATHECODE_HOST } from '../utils/variables';
 import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
@@ -28,6 +28,7 @@ function ConnectGithubRigobot({ ...rest }) {
   } = useStyle();
 
   const hasGithub = user?.github && user.github.username !== '';
+  const hasGoogle = user?.google && user.email !== '';
 
   return (
     <>
@@ -85,6 +86,45 @@ function ConnectGithubRigobot({ ...rest }) {
                 }}
               >
                 {t('connect-github')}
+              </Text>
+            )}
+          </Box>
+        </InputGroup>
+        <InputGroup>
+          <InputLeftAddon background={backgroundColor} border="1px solid" borderRadius="3px" borderColor="gray.default" height="3.125rem">
+            <Icon icon="google" width="24px" height="24px" />
+          </InputLeftAddon>
+          <Box
+            w="100%"
+            h="3.125rem"
+            border="1px solid"
+            borderRightRadius="3px"
+            display="flex"
+            borderColor="gray.default"
+            alignItems="center"
+          >
+            {hasGoogle ? (
+              <Text
+                margin={{ base: '0 14px 0 14px', sm: '0 0 0 24px' }}
+                textAlign="start"
+                cursor="default"
+              >
+                {user.email}
+              </Text>
+            ) : (
+              <Text
+                margin={{ base: '0 14px 0 14px', sm: '0 0 0 24px' }}
+                textAlign="start"
+                color="blue.default"
+                cursor="pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (isWindow) {
+                    window.location.href = `${BREATHECODE_HOST}/v1/auth/google?url=${window.location.href}&scopes=userinfo.profile,userinfo.email`;
+                  }
+                }}
+              >
+                {t('connect-google')}
               </Text>
             )}
           </Box>

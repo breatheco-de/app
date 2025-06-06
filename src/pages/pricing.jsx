@@ -446,7 +446,7 @@ function PricingView() {
               onClick={() => {
                 if (isWindow) {
                   const langPath = lang === 'en' ? '' : `/${lang}`;
-                  window.location.href = `${langPath}/checkout?plan=basic&plan_id=p-0-trial`;
+                  window.location.href = `${langPath}/checkout?plan=4geeks-basic-subscription&plan_id=p-0-trial`;
                 }
               }}
               textTransform="uppercase"
