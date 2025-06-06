@@ -78,7 +78,7 @@ function Helmet({
         return (['default', 'en'].includes(lang) ? (
           <React.Fragment key={`${lang} - ${pathConnector}`}>
             <link rel="alternate" hrefLang="x-default" href={`https://4geeks.com${pathConnector}`} />
-            <link rel="alternate" hrefLang={locationLang[lang]} href={`https://4geeks.com${pathConnector}`} />
+{/*             <link rel="alternate" hrefLang={locationLang[lang]} href={`https://4geeks.com${pathConnector}`} /> */}
           </React.Fragment>
         ) : (
           <link key={`${lang} - ${pathConnector} alternate`} rel="alternate" hrefLang={locationLang[lang]} href={`https://4geeks.com/${lang}${pathConnector}`} />
@@ -103,7 +103,7 @@ function Helmet({
         return ['default', 'us', 'en'].includes(lang) ? (
           <React.Fragment key={`${language} - ${urlAlternate}`}>
             <link rel="alternate" hrefLang="x-default" href={urlAlternate} />
-            <link rel="alternate" hrefLang={locationLang[lang] || 'en'} href={urlAlternate} />
+{/*             <link rel="alternate" hrefLang={locationLang[lang] || 'en'} href={urlAlternate} /> */}
           </React.Fragment>
         ) : (
           <link key={`${language} - ${urlAlternate}`} rel="alternate" hrefLang={locationLang[lang]} href={urlAlternate} />
