@@ -275,6 +275,7 @@ function Workshop({ eventData, asset }) {
   const isAuth = isAuthenticated && user?.id;
   const recordingUrl = event?.recording_url;
   const alreadyApplied = users.some((l) => l?.attendee?.id === user?.id) || applied;
+  const eventNotStarted = event?.starting_at && new Date(event.starting_at) > new Date();
 
   const getWording = () => {
     if (!finishedEvent && (alreadyApplied || readyToJoinEvent)) {
@@ -619,8 +620,6 @@ function Workshop({ eventData, asset }) {
 
     return assetType;
   };
-
-  const eventNotStarted = event?.starting_at && new Date(event.starting_at) > new Date();
 
   return (
     <Box as="div">
