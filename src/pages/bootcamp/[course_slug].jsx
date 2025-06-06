@@ -407,7 +407,7 @@ function CoursePage() {
                   <Heading size={{ base: '24px', md: '34px' }} textAlign="center">
                     {getAlternativeTranslation('why-learn-4geeks-connector.why-learn-with')}
                     {' '}
-                    <Box as="span" color="blue.default">4Geeks</Box>
+                    <Box as="span" color="blue.default">{getAlternativeTranslation('why-learn-4geeks-connector.who') || '4Geeks'}</Box>
                     ?
                   </Heading>
                   <Text size="18px" margin={{ base: 'auto', md: '0 8vw' }} textAlign="center" style={{ textWrap: 'balance' }}>
