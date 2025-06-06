@@ -36,6 +36,7 @@ import DynamicContentCard from '../../components/DynamicContentCard';
 import useAuth from '../../hooks/useAuth';
 import useSignup from '../../hooks/useSignup';
 import useCustomToast from '../../hooks/useCustomToast';
+import AddToCalendar from '../../components/addToCalendar';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -619,6 +620,8 @@ function Workshop({ eventData, asset }) {
     return assetType;
   };
 
+  const eventNotStarted = event?.starting_at && new Date(event.starting_at) > new Date();
+
   return (
     <Box as="div">
       <ModalToGetAccess
@@ -1078,14 +1081,12 @@ function Workshop({ eventData, asset }) {
             </>
           )}
         </Box>
-
         <Box
           display="flex"
           gridColumn={{ base: '8 / span 4', lg: '10 / span 4' }}
           margin={{ base: '20px 0 0 auto', lg: '-13.42rem 0 0 auto' }}
           flexDirection="column"
           transition="background 0.2s ease-in-out"
-          // width={{ base: '320px', md: 'auto' }}
           width={{ base: '100%', md: '320px' }}
           textAlign="center"
           height="fit-content"
@@ -1226,6 +1227,27 @@ function Workshop({ eventData, asset }) {
                 </ShowOnSignUp>
               </Box>
             </>
+          )}
+
+          {alreadyApplied && eventNotStarted && (
+            <Box my="10px">
+              <Text mb="16px" fontSize="14px" fontWeight={700}>{t('add-to-calendar-title')}</Text>
+              <AddToCalendar
+                event={{
+                  title: event?.title || '',
+                  description: event?.description || '',
+                  startTime: event?.starting_at || '',
+                  endTime: event?.ending_at || '',
+                  location: event?.online_event ? 'online' : '',
+                }}
+                buttonLabel={t('add-to-calendar')}
+                buttonProps={{
+                  variant: 'outline',
+                  borderColor: 'blue.default',
+                  color: 'blue.default',
+                }}
+              />
+            </Box>
           )}
 
           {users?.length > 0 && (
