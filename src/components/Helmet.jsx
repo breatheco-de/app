@@ -102,7 +102,6 @@ function Helmet({
         return ['default', 'us', 'en'].includes(lang) ? (
           <React.Fragment key={`${language} - ${urlAlternate}`}>
             <link rel="alternate" hrefLang="x-default" href={urlAlternate} />
-{/*             <link rel="alternate" hrefLang={locationLang[lang] || 'en'} href={urlAlternate} /> */}
           </React.Fragment>
         ) : (
           <link key={`${language} - ${urlAlternate}`} rel="alternate" hrefLang={locationLang[lang]} href={urlAlternate} />
