@@ -103,7 +103,7 @@ function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFu
         {locales.map((lang) => (['default', 'en'].includes(lang) ? (
           <React.Fragment key={`${lang} - ${currentPagePath}`}>
             <link rel="alternate" hrefLang="x-default" href={`https://4geeks.com${currentPagePath}`} />
-            <link rel="alternate" hrefLang={locationLang[lang]} href={`https://4geeks.com${currentPagePath}`} />
+{/*             <link rel="alternate" hrefLang={locationLang[lang]} href={`https://4geeks.com${currentPagePath}`} /> */}
           </React.Fragment>
         ) : (
           <link key={`${lang} - ${currentPagePath} alternate`} rel="alternate" hrefLang={locationLang[lang]} href={`https://4geeks.com/${lang}${currentPagePath}`} />
