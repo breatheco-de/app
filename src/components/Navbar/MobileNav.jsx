@@ -30,7 +30,7 @@ function MobileNav({
       flexDirection="column"
       position="absolute"
       width="100%"
-      zIndex="99"
+      zIndex="100"
       gridGap="8px"
       bg={navbarBackground}
       p={4}

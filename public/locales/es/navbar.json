@@ -83,7 +83,7 @@
           "description": "",
           "subMenu": [
             {
-              "href": "es/beyond-the-resume",
+              "href": "/es/beyond-the-resume",
               "label": "Más allá del currículum"
             }
           ]

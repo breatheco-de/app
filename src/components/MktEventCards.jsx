@@ -3,18 +3,18 @@ import PropTypes from 'prop-types';
 import { Flex, Skeleton } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import useStyle from '../../hooks/useStyle';
-import GridContainer from '../GridContainer';
-import Heading from '../Heading';
-import Icon from '../Icon';
-import axios from '../../axios';
-import { getQueryString, sortToNearestTodayDate } from '../../utils';
-import DraggableContainer from '../DraggableContainer';
-import DynamicContentCard from '../DynamicContentCard';
-import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../utils/variables';
-import bc from '../../services/breathecode';
-import useAuth from '../../hooks/useAuth';
-import { parseQuerys } from '../../utils/url';
+import useStyle from '../hooks/useStyle';
+import GridContainer from './GridContainer';
+import Heading from './Heading';
+import Icon from './Icon';
+import axios from '../axios';
+import { getQueryString, sortToNearestTodayDate } from '../utils';
+import DraggableContainer from './DraggableContainer';
+import DynamicContentCard from './DynamicContentCard';
+import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../utils/variables';
+import bc from '../services/breathecode';
+import useAuth from '../hooks/useAuth';
+import { parseQuerys } from '../utils/url';
 
 function MktEventCards({
   isSmall,
@@ -27,7 +27,6 @@ function MktEventCards({
   techFilter,
   searchSensitive,
   showCheckedInEvents,
-  showPastEvents,
   sortPrioOneTechs,
   ...rest
 }) {
@@ -48,10 +47,7 @@ function MktEventCards({
     is_public: true,
   };
 
-  if (showPastEvents) {
-    queryParams.status = 'FINISHED';
-    queryParams.past = true;
-  } else if (searchSensitive) {
+  if (searchSensitive) {
     queryParams.status = 'ACTIVE,FINISHED';
     queryParams.all_time = true;
   } else if (techFilter) {
@@ -106,7 +102,7 @@ function MktEventCards({
 
         if (data && data.length > 0) {
           const englishLang = lang === 'en' && 'us';
-          const sortDateToLiveClass = techFilter || searchSensitive || showPastEvents ? sortToNearestTodayDate(data, hoursLimited, true) : sortToNearestTodayDate(data, hoursLimited);
+          const sortDateToLiveClass = techFilter || searchSensitive ? sortToNearestTodayDate(data, hoursLimited, true) : sortToNearestTodayDate(data, hoursLimited);
           const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && (l?.ended_at || l?.ending_at) && l?.slug);
           const isMoreThanAnyEvents = sortDateToLiveClass?.length > maxEvents;
           const filteredByLang = existentLiveClasses?.filter((l) => l?.lang === englishLang || l?.lang === lang);
@@ -274,7 +270,6 @@ MktEventCards.propTypes = {
   searchSensitive: PropTypes.bool,
   techFilter: PropTypes.string,
   showCheckedInEvents: PropTypes.bool,
-  showPastEvents: PropTypes.bool,
 };
 
 MktEventCards.defaultProps = {
@@ -289,7 +284,6 @@ MktEventCards.defaultProps = {
   searchSensitive: false,
   techFilter: null,
   showCheckedInEvents: false,
-  showPastEvents: false,
 };
 
 export default MktEventCards;

@@ -104,7 +104,7 @@ function ShowPrices({
         };
       case 'ONE_TIME':
         return {
-          full: t('upgrade-modal.one_payment'),
+          full: '',
           short: '',
         };
       case 'FINANCING':
@@ -156,7 +156,7 @@ function ShowPrices({
             {title || data?.pricing['choose-plan']}
           </Heading>
           <Box display={{ base: 'none', md: 'flex' }} alignItems="center" bg="transparent" border="none">
-            {availablePlans.map((plan, index) => (
+            {availablePlans.length > 1 && availablePlans.map((plan, index) => (
               <PlanButton
                 key={plan.plan_id}
                 plan={plan}
@@ -173,7 +173,7 @@ function ShowPrices({
           {subtitle || data?.pricing?.subtitle}
         </Text>
         <Box display={{ base: 'flex', md: 'none' }} alignItems="center" bg="transparent" mt={4} justifyContent="center">
-          {availablePlans.map((plan, index) => (
+          {availablePlans.length > 1 && availablePlans.map((plan, index) => (
             <PlanButton
               key={plan.plan_id}
               plan={plan}

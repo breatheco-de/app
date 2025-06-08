@@ -786,8 +786,7 @@ function useCohortHandler() {
     };
 
     if (allSubscriptions) {
-      const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
-      const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
+      const cohortSubscriptions = allSubscriptions?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
       const currentCohortSlug = cohortSubscriptions[0]?.selected_cohort_set?.slug;
 
       if (cohortSubscriptions.length === 0) {

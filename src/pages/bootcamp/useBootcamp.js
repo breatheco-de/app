@@ -145,9 +145,9 @@ export const useBootcamp = () => {
         },
       });
       setIsFetching(true);
-      bc.cohort().join(cohortId)
+      bc.admissions().joinCohort(cohortId)
         .then(async (resp) => {
-          const dataRequested = await resp.json();
+          const dataRequested = await resp.data;
           if (dataRequested?.status === 'ACTIVE') {
             setReadyToRefetch(true);
           }
@@ -174,7 +174,8 @@ export const useBootcamp = () => {
             router.push('#pricing');
           }
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err);
           setTimeout(() => {
             setIsFetching(false);
           }, 600);
