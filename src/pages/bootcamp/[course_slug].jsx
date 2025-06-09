@@ -407,7 +407,7 @@ function CoursePage() {
                   <Heading size={{ base: '24px', md: '34px' }} textAlign="center">
                     {getAlternativeTranslation('why-learn-4geeks-connector.why-learn-with')}
                     {' '}
-                    <Box as="span" color="blue.default">{getAlternativeTranslation('why-learn-4geeks-connector.who') || '4Geeks'}</Box>
+                    <Box as="span" color="blue.default">{getAlternativeTranslation('why-learn-4geeks-connector.who')}</Box>
                     ?
                   </Heading>
                   <Text size="18px" margin={{ base: 'auto', md: '0 8vw' }} textAlign="center" style={{ textWrap: 'balance' }}>
@@ -481,7 +481,7 @@ function CoursePage() {
 
         <GridContainer padding="0 10px" maxWidth="1280px" width="100%" mt="6.25rem" withContainer childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} gridTemplateColumns="repeat(12, 1fr)" gridColumn="1 / 12 span">
           <MktTrustCards
-            title={getAlternativeTranslation('why-learn-with-4geeks.title')}
+            title={`${getAlternativeTranslation('why-learn-with-4geeks.title')} ${getAlternativeTranslation('why-learn-with-4geeks.who')}?`}
             description={getAlternativeTranslation('why-learn-with-4geeks.description')}
             cardStyles={{
               border: 'none',
