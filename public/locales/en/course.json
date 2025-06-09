@@ -401,5 +401,7 @@
     "description": "Earn an exclusive discount on Beyond the Resume after completing the course, a program designed to help you with career topics, from optimizing your professional profile to excelling in interviews.",
     "button": "Join now!",
     "button-link": "#pricing"
-  }
+  },
+  "show-free-course": "true",
+  "show-pricing-section": "true"
 }

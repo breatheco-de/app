@@ -289,7 +289,7 @@
     }
   ],
   "why-learn-with-4geeks": {
-    "title": "¿Por qué debería aprender con ",
+    "title": "¿Por qué debería aprender con",
     "who": "4Geeks",
     "description": "Únete a un líder comprobado en educación tecnológica: ¡Más de 9 años de excelencia reconocida, más de 4000 graduados exitosos, y una tasa de colocación laboral del 84%!"
   },
@@ -402,5 +402,7 @@
     "description": "Obtén un descuento exclusivo en Beyond the Resume al completar el curso, un programa diseñado para ayudarte con temas de carrera, desde optimizar tu perfil profesional hasta destacar en entrevistas.",
     "button": "Empieza ahora",
     "button-link": "#pricing"
-  }
+  },
+  "show-free-course": "true",
+  "show-pricing-section": "true"
 }
