@@ -81,10 +81,10 @@ function chooseProgram() {
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
   const { consumables } = useConsumables(cohorts);
 
-  const allSubscriptions = useMemo(() => [
+  const allSubscriptions = [
     ...subscriptions?.subscriptions || [],
     ...subscriptions?.plan_financings || [],
-  ], [subscriptions]);
+  ];
 
   const allSyllabus = useMemo(() => {
     const syllabus = [];
