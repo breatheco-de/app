@@ -30,7 +30,7 @@ export const useBootcamp = () => {
   const showBottomCTA = useRef(null);
   const [isCtaVisible, setIsCtaVisible] = useState(false);
   const [allDiscounts, setAllDiscounts] = useState([]);
-  const { isAuthenticated, user, logout, cohorts } = useAuth();
+  const { isAuthenticated, user, logout, cohorts, reSetUserAndCohorts } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor, backgroundColor7, backgroundColor8 } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
@@ -116,12 +116,12 @@ export const useBootcamp = () => {
     router.push(joinedCohort.selectedProgramSlug);
   };
 
-  const redirectToCohortIfItsReady = ({ withAlert = true, callback = () => { } } = {}) => {
+  const redirectToCohortIfItsReady = async ({ withAlert = true, callback = () => {} } = {}) => {
+    await reSetUserAndCohorts();
     const alreadyHaveThisCohort = cohorts?.some((cohort) => cohort?.id === cohortId);
 
     if (alreadyHaveThisCohort) {
       callback();
-
       setIsFetching(false);
       if (withAlert) {
         createToast({
