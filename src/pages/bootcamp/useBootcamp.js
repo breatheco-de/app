@@ -417,7 +417,7 @@ export const useBootcamp = () => {
         setRelatedSubscription(subscriptionRelatedToThisCohort);
       });
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, cohortId]);
 
   useEffect(() => {
     if (isAuthenticated && cohortData?.cohortSyllabus?.cohort?.id) redirectToCohortIfItsReady();
