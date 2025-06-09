@@ -421,6 +421,7 @@ function Checkout() {
                                           padding="10px"
                                           height="auto"
                                           onClick={() => {
+                                            console.log('checkingData', checkingData);
                                             saveCouponToBag([''], checkingData?.id);
                                             removeSessionStorageItem('coupon');
                                             setDiscountCode('');

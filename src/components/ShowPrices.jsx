@@ -104,7 +104,7 @@ function ShowPrices({
         };
       case 'ONE_TIME':
         return {
-          full: t('upgrade-modal.one_payment'),
+          full: '',
           short: '',
         };
       case 'FINANCING':
