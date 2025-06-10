@@ -134,7 +134,7 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, compareMode, .
   const [tabIndex, setTabIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [languages, setLanguages] = useState(languagesData);
-  const defaultPlan = process.env.BASE_PLAN || 'basic';
+  const defaultPlan = process.env.BASE_PLAN || '4geeks-basic-subscription';
 
   const isCodeForPreview = languages.some(({ language }) => language.toLowerCase() === 'html');
   const isNotExecutable = notExecutables.includes(languages[tabIndex]?.language);

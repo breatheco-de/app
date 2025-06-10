@@ -12,20 +12,25 @@ import useStyle from '../../hooks/useStyle';
 import ReactPlayerV2 from '../ReactPlayerV2';
 import CouponTopBar from '../CouponTopBar';
 
-function StickyBottomCta({
+function FixedBottomCta({
   asset,
+  course,
+  event,
   onClick,
   isCtaVisible,
-  course,
   videoUrl,
   couponApplied,
   financingAvailable,
   isFetching,
   isAuthenticated,
   paymentOptions,
+  eventWording,
+  eventTitle,
+  eventDescription,
   ...rest
 }) {
   const { t } = useTranslation('exercises');
+  const { t: tWorkshops } = useTranslation('workshops');
   const { hexColor } = useStyle();
 
   if (!isCtaVisible) return null;
@@ -67,7 +72,6 @@ function StickyBottomCta({
       {...rest}
     >
       <Box paddingBottom={couponApplied || isFetching ? '0' : '5px'}>
-
         {videoUrl && (
           <ReactPlayerV2
             title={asset ? 'Video tutorial' : ''}
@@ -98,7 +102,6 @@ function StickyBottomCta({
                 {t('course:create-account-text')}
               </Text>
             )}
-
             <Button
               fontSize="18px"
               display="block"
@@ -111,7 +114,6 @@ function StickyBottomCta({
             >
               {courseButtonText()}
             </Button>
-
             {includesFreeTier && (
               <Button
                 fontSize="18px"
@@ -128,14 +130,34 @@ function StickyBottomCta({
           </>
         )}
 
+        {event && !isAuthenticated && (
+          <>
+            <Heading size="sm" mt="10px" color="white">
+              {eventTitle || tWorkshops('form.title')}
+            </Heading>
+            <Text color="white" mb="16px">
+              {eventDescription || tWorkshops('form.description')}
+            </Text>
+            <Button
+              width="95%"
+              margin="10px auto"
+              background="white"
+              color="gray.700"
+              onClick={onClick}
+            >
+              {eventWording || tWorkshops('reserv-button-text')}
+            </Button>
+          </>
+        )}
       </Box>
     </Box>
   );
 }
 
-StickyBottomCta.propTypes = {
+FixedBottomCta.propTypes = {
   asset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   course: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  event: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   videoUrl: PropTypes.string,
   couponApplied: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   onClick: PropTypes.func.isRequired,
@@ -144,17 +166,24 @@ StickyBottomCta.propTypes = {
   isAuthenticated: PropTypes.bool,
   isFetching: PropTypes.bool,
   paymentOptions: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  eventWording: PropTypes.string,
+  eventTitle: PropTypes.string,
+  eventDescription: PropTypes.string,
 };
 
-StickyBottomCta.defaultProps = {
+FixedBottomCta.defaultProps = {
   asset: null,
   course: null,
+  event: null,
   videoUrl: undefined,
   couponApplied: undefined,
   financingAvailable: undefined,
   isAuthenticated: false,
   isFetching: false,
   paymentOptions: [],
+  eventWording: undefined,
+  eventTitle: undefined,
+  eventDescription: undefined,
 };
 
-export default StickyBottomCta;
+export default FixedBottomCta;
