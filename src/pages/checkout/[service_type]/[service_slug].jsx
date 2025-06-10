@@ -148,8 +148,6 @@ function ServiceSlug() {
     );
   }
 
-  console.log('service', service);
-
   return (
     <Box p={{ base: '0 0', md: '0' }} minHeight="auto">
       <Flex
