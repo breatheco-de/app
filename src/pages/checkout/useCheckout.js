@@ -181,7 +181,7 @@ const useCheckout = () => {
       })) || [];
 
       const defaultPlan = processedPlan?.plans?.find((item) => item?.plan_id === planId)
-      || processedPlan?.plans?.[0] || {};
+        || processedPlan?.plans?.[0] || {};
 
       const { data: suggestedPlanInfo } = await bc.payment({ original_plan: processedPlan?.slug }).planOffer();
 
@@ -298,9 +298,7 @@ const useCheckout = () => {
         const autoSelectedPlan = findAutoSelectedPlan(checking);
 
         setSelectedPlan(autoSelectedPlan);
-        if (stepIndex >= stepsEnum.PAYMENT) {
-          handleStep(stepsEnum.PAYMENT);
-        }
+        handleStep(stepsEnum.PAYMENT);
         setCheckInfoLoader(false);
       })
       .catch(() => {
