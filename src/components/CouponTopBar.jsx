@@ -14,7 +14,6 @@ function CouponTopBar({ ...rest }) {
   const { getPriceWithDiscount, state } = useSignup();
   const { selfAppliedCoupon } = state;
   const { enrollQuerys, router } = useBootcamp();
-  console.log('enrollQuerys', enrollQuerys);
 
   // Since we are not showing the price after discount, we can give the price as cero
   const { discount } = getPriceWithDiscount(0, selfAppliedCoupon);
