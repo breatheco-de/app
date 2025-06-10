@@ -1,11 +1,11 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, Button } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import Text from './Text';
 import Timer from './Timer';
 import useStyle from '../hooks/useStyle';
 import signupAction from '../store/actions/signupAction';
 import useSignup from '../hooks/useSignup';
-import NextChakraLink from './NextChakraLink';
+import { useBootcamp } from '../pages/bootcamp/useBootcamp';
 
 function CouponTopBar({ ...rest }) {
   const { t } = useTranslation('course');
@@ -13,6 +13,8 @@ function CouponTopBar({ ...rest }) {
   const { setSelfAppliedCoupon } = signupAction();
   const { getPriceWithDiscount, state } = useSignup();
   const { selfAppliedCoupon } = state;
+  const { enrollQuerys, router } = useBootcamp();
+  console.log('enrollQuerys', enrollQuerys);
 
   // Since we are not showing the price after discount, we can give the price as cero
   const { discount } = getPriceWithDiscount(0, selfAppliedCoupon);
@@ -74,21 +76,21 @@ function CouponTopBar({ ...rest }) {
             />
           </Flex>
         </Flex>
-        <NextChakraLink
-          href="#pricing"
+        <Button
           variant="default"
           background="white"
           padding="8px"
           color={hexColor.green}
           borderRadius="3px"
           fontWeight="bold"
+          onClick={() => router.push(`/checkout${enrollQuerys}`)}
         >
           <Text size="auto" style={{ textWrap: 'nowrap' }}>
             {t('coupon-bar.see-prices')}
             {' '}
             →
           </Text>
-        </NextChakraLink>
+        </Button>
       </Box>
     </Box>
   );

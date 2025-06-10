@@ -298,7 +298,9 @@ const useCheckout = () => {
         const autoSelectedPlan = findAutoSelectedPlan(checking);
 
         setSelectedPlan(autoSelectedPlan);
-        handleStep(stepsEnum.PAYMENT);
+        if (stepIndex >= stepsEnum.PAYMENT) {
+          handleStep(stepsEnum.PAYMENT);
+        }
         setCheckInfoLoader(false);
       })
       .catch(() => {
