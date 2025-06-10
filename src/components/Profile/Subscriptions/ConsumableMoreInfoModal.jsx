@@ -18,7 +18,6 @@ import { ProfilesSection } from '../../SupportSidebar/MentoringConsumables';
 import { defaultProfiles } from '../../../utils/variables';
 
 function UnitsDisplay({ item, hexColor }) {
-  console.log('item', item);
   const value = item?.unit ?? item?.how_many;
   if (value === -1 || item?.nonSaasAcademy) {
     return <Icon icon="infinite" color={hexColor.fontColor3} width="20px" height="20px" />;

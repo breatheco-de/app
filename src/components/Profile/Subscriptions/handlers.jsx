@@ -88,9 +88,10 @@ function profileHandlers() {
       const activeSinceText = (date) => t('subscription.active-since', { date });
       const totallyPaidText = (amount) => t('subscription.totally-paid', { amount, currencySymbol: subCurrency });
       const totalPaidText = (paidAmount, pendingAmount) => t('subscription.total-paid', { paidAmount, pendingAmount, currencySymbol: subCurrency });
-      const paymentInfoText = (amount, unit) => t('subscription.payment', { payment: `${subCurrency}${amount}/${t(`signup:payment_unit_short.${unit.toLowerCase()}`)}` });
+      const paymentInfoText = (amount, unit) => (amount ? t('subscription.payment', { payment: `${subCurrency}${amount}/${t(`signup:payment_unit_short.${unit.toLowerCase()}`)}` }) : false);
       const errorMessageText = (error) => t('subscription.error-message', { error: error || 'Something went wrong' });
       const noPaymentsLeft = () => t('subscription.no-payment-left');
+      console.log(invoiceAmount);
 
       // Use the functions in statusConfig
       const statusConfig = {
