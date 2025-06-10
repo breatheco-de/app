@@ -9,7 +9,6 @@ import {
   Box,
   Text,
   Image,
-  Button,
   ModalCloseButton,
 } from '@chakra-ui/react';
 import Icon from '../../Icon';
@@ -56,7 +55,6 @@ function ConsumableMoreInfoModal({ serviceModal, services, closeMentorshipsModal
     },
   };
 
-  // console.log(services[serviceModal]);
   return (
     <Modal isOpen={serviceModal !== null} onClose={closeMentorshipsModal} isCentered>
       <ModalOverlay />
@@ -105,19 +103,6 @@ function ConsumableMoreInfoModal({ serviceModal, services, closeMentorshipsModal
                   <Text color={hexColor.fontColor2} fontSize="16px" mb="16px" textAlign="center">
                     {t('subscription.no-consumables-available', { service: t(`consumable-services.${serviceModal}`).toLowerCase() })}
                   </Text>
-                  <Button
-                    backgroundColor="blue.default"
-                    color="white"
-                    onClick={closeMentorshipsModal}
-                    fontWeight="500"
-                    borderRadius="4px"
-                    height="32px"
-                    _hover="none"
-                    fontSize="14px"
-                    _active="none"
-                  >
-                    {t('subscription.add-consumables', { service: t(`consumable-services.${serviceModal}`).toLowerCase() })}
-                  </Button>
                 </Box>
               ) : (
                 <Box w="100%" px="8px">
