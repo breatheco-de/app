@@ -18,8 +18,9 @@ import { ProfilesSection } from '../../SupportSidebar/MentoringConsumables';
 import { defaultProfiles } from '../../../utils/variables';
 
 function UnitsDisplay({ item, hexColor }) {
+  console.log('item', item);
   const value = item?.unit ?? item?.how_many;
-  if (value === -1) {
+  if (value === -1 || item?.nonSaasAcademy) {
     return <Icon icon="infinite" color={hexColor.fontColor3} width="20px" height="20px" />;
   }
   if (typeof value === 'number' && value >= 0) {
@@ -32,6 +33,7 @@ UnitsDisplay.propTypes = {
   item: PropTypes.shape({
     unit: PropTypes.number,
     how_many: PropTypes.number,
+    nonSaasAcademy: PropTypes.bool,
   }).isRequired,
   hexColor: PropTypes.shape({
     fontColor3: PropTypes.string.isRequired,
@@ -95,11 +97,6 @@ function ConsumableMoreInfoModal({ serviceModal, services, closeMentorshipsModal
                   alignItems="center"
                   justifyContent="center"
                 >
-                  {existsNoAvailableAsSaas && (
-                    <Text color={hexColor.fontColor2} fontSize="18px" mb="16px" textAlign="center">
-                      {t('subscription.bootcamp-mentorships')}
-                    </Text>
-                  )}
                   <Text color={hexColor.fontColor2} fontSize="16px" mb="16px" textAlign="center">
                     {t('subscription.no-consumables-available', { service: t(`consumable-services.${serviceModal}`).toLowerCase() })}
                   </Text>
@@ -129,6 +126,11 @@ function ConsumableMoreInfoModal({ serviceModal, services, closeMentorshipsModal
                       </Box>
                     </Box>
                   ))}
+                  {existsNoAvailableAsSaas && (
+                    <Text color={hexColor.fontColor2} fontSize="12px" mb="16px" textAlign="center">
+                      {t('subscription.bootcamp-mentorships')}
+                    </Text>
+                  )}
                 </Box>
               )}
             </ModalBody>
