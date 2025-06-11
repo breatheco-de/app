@@ -76,27 +76,27 @@ function Checkout() {
   const { t } = useTranslation('signup');
   const router = useRouter();
   const {
-    couponError,
     setCouponError,
-    checkInfoLoader,
     getDiscountValue,
     renderPlanDetails,
     calculateTotalPrice,
     handleCoupon,
+    setDiscountCode,
     setUserSelectedPlan,
     saveCouponToBag,
+    setDiscountCoupon,
+    couponError,
+    checkInfoLoader,
     processedPrice,
     allCoupons,
     originalPlan,
     discountCode,
-    setDiscountCode,
     currencySymbol,
     couponValue,
     planFormated,
     planId,
     fixedCouponExist,
     discountCoupon,
-    setDiscountCoupon,
   } = useCheckout();
   const { query } = router;
   const [showPaymentDetails, setShowPaymentDetails] = useState(true);
@@ -421,10 +421,9 @@ function Checkout() {
                                           padding="10px"
                                           height="auto"
                                           onClick={() => {
-                                            console.log('checkingData', checkingData);
+                                            setDiscountCode('');
                                             saveCouponToBag([''], checkingData?.id);
                                             removeSessionStorageItem('coupon');
-                                            setDiscountCode('');
                                             setDiscountCoupon(null);
                                             setCouponError(false);
                                           }}
