@@ -98,7 +98,6 @@ const useCheckout = () => {
   };
 
   const handleCoupon = async (coup, actions) => {
-    console.log('discountCode', discountCode);
     const couponToApply = coup || discountCode;
 
     const isCouponAlreadyApplied = allCoupons.some((existingCoupon) => existingCoupon?.slug === couponToApply);
