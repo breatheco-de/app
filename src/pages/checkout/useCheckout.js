@@ -471,6 +471,7 @@ const useCheckout = () => {
     planId,
     discountCoupon,
     setDiscountCoupon,
+    handleCoupon,
   };
 };
 export default useCheckout;
