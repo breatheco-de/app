@@ -283,19 +283,8 @@ function CoursePage() {
                               {allDiscounts.length > 0 && '🔥'}
                               {featurePrice}
                             </Text>
-                            {!featuredPlanToEnroll?.isFreeTier && (
-                              <Flex alignItems="center" marginTop="5px" gap="5px" justifyContent="center">
-                                <Icon icon="shield" color="#ffffff" secondColor={courseColor || '#00b765'} width="23px" />
-                                <Text fontSize="13px" fontWeight="medium" paddingTop="2px">
-                                  {t('common:money-back-guarantee-no-link')}
-                                </Text>
-                              </Flex>
-                            )}
                           </Flex>
                         </Button>
-                        {!featuredPlanToEnroll?.isFreeTier && (
-                          <Text fontSize="11px" color="gray.500" textAlign="center" marginTop="6px" dangerouslySetInnerHTML={{ __html: t('common:money-back-guarantee-conditions-link') }} />
-                        )}
                         {isAuthenticated ? (
                           <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                             {t('signup:switch-user-connector', { name: user?.first_name })}
@@ -365,7 +354,7 @@ function CoursePage() {
               </Text>
             </OneColumnWithIcon>
           </Flex>
-          {courseContentList?.length > 0 && (
+          {courseContentList && courseContentList?.length > 0 && (
             <Flex flexDirection="column" gridColumn="2 / span 12">
               {/* CourseContent comopnent */}
               {cohortData?.cohortSyllabus?.syllabus && (
@@ -384,26 +373,26 @@ function CoursePage() {
               )}
             </Flex>
           )}
-          <Flex flexDirection="column" gridGap="16px">
-            <Heading size={{ base: '24px', md: '34px' }} lineHeight="normal" textAlign="center">
-              {getAlternativeTranslation('build-connector.what-you-will')}
-              {' '}
-              <Box as="span" color="blue.default">
-                {getAlternativeTranslation('build-connector.build')}
-              </Box>
-            </Heading>
-            <Text size="18px" textAlign="center">
-              {getAlternativeTranslation('build-connector.description')}
-            </Text>
-            {assignmentList?.length > 0 && (
+          {assignmentList?.length > 0 && (
+            <Flex flexDirection="column" gridGap="16px">
+              <Heading size={{ base: '24px', md: '34px' }} lineHeight="normal" textAlign="center">
+                {getAlternativeTranslation('build-connector.what-you-will')}
+                {' '}
+                <Box as="span" color="blue.default">
+                  {getAlternativeTranslation('build-connector.build')}
+                </Box>
+              </Heading>
+              <Text size="18px" textAlign="center">
+                {getAlternativeTranslation('build-connector.description')}
+              </Text>
               <CustomCarousel
                 items={assignmentList}
                 renderItem={(item, index) => (
                   <AssignmentSlide key={item?.id || `assignment-slide-${index}`} assignment={item} />
                 )}
               />
-            )}
-          </Flex>
+            </Flex>
+          )}
         </GridContainer>
         {/* Features section */}
         <Box background={hexColor.featuredColor2} mt="6.25rem">
@@ -418,7 +407,7 @@ function CoursePage() {
                   <Heading size={{ base: '24px', md: '34px' }} textAlign="center">
                     {getAlternativeTranslation('why-learn-4geeks-connector.why-learn-with')}
                     {' '}
-                    <Box as="span" color="blue.default">4Geeks</Box>
+                    <Box as="span" color="blue.default">{getAlternativeTranslation('why-learn-4geeks-connector.who')}</Box>
                     ?
                   </Heading>
                   <Text size="18px" margin={{ base: 'auto', md: '0 8vw' }} textAlign="center" style={{ textWrap: 'balance' }}>
@@ -492,7 +481,7 @@ function CoursePage() {
 
         <GridContainer padding="0 10px" maxWidth="1280px" width="100%" mt="6.25rem" withContainer childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} gridTemplateColumns="repeat(12, 1fr)" gridColumn="1 / 12 span">
           <MktTrustCards
-            title={getAlternativeTranslation('why-learn-with-4geeks.title')}
+            title={`${getAlternativeTranslation('why-learn-with-4geeks.title')} ${getAlternativeTranslation('why-learn-with-4geeks.who')}?`}
             description={getAlternativeTranslation('why-learn-with-4geeks.description')}
             cardStyles={{
               border: 'none',
@@ -529,7 +518,7 @@ function CoursePage() {
           }}
         />
         {/* Pricing */}
-        {data?.plan_slug && featuredPlanToEnroll?.type !== 'FREE' && (
+        {getAlternativeTranslation('show-pricing-section') === 'true' && data?.plan_slug && featuredPlanToEnroll?.type !== 'FREE' && (
           <MktShowPrices
             id="pricing"
             externalPlanProps={planData}
@@ -545,7 +534,7 @@ function CoursePage() {
           />
         )}
 
-        {featuredPlanToEnroll?.type !== 'FREE' && (
+        {getAlternativeTranslation('show-free-course') === 'true' && featuredPlanToEnroll?.type !== 'FREE' && (
           <MktTwoColumnSideImage
             mt="6.25rem"
             imageUrl={getAlternativeTranslation('havent-decided.image')}
