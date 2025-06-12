@@ -91,10 +91,25 @@ function profileHandlers() {
       const paymentInfoText = (amount, unit) => (amount ? t('subscription.payment', { payment: `${subCurrency}${amount}/${t(`signup:payment_unit_short.${unit.toLowerCase()}`)}` }) : false);
       const errorMessageText = (error) => t('subscription.error-message', { error: error || 'Something went wrong' });
       const noPaymentsLeft = () => t('subscription.no-payment-left');
-      console.log(invoiceAmount);
 
       // Use the functions in statusConfig
       const statusConfig = {
+        fully_paid: () => {
+          if (isPlanFinancing) {
+            return {
+              renewalDate: expirationDateText(expirationDate),
+              paymentInfo: isPlanFinancingFullyPaid
+                ? totallyPaidText(fullFilledInvoicesAmount * monthlyPrice)
+                : totalPaidText(fullFilledInvoicesAmount * monthlyPrice, totalPrice),
+              nextPayment: isPlanFinancingFullyPaid ? noPaymentsLeft() : paymentText(monthlyPrice, nextPaymentDate),
+            };
+          }
+          return {
+            renewalDate: renewalDateText(nextPaymentDate),
+            renewability: activeSince ? activeSinceText(activeSince) : false,
+            paymentInfo: invoiceAmount === 0 ? t('subscription.payment', { payment: t('common:free') }) : paymentInfoText(invoiceAmount, payEveryUnit),
+          };
+        },
         active: () => {
           if (isPlanFinancing) {
             return {

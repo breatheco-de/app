@@ -62,8 +62,7 @@ function ConsumableMoreInfoModal({ serviceModal, services, closeMentorshipsModal
       <ModalContent
         borderRadius="11px"
         overflow="hidden"
-        minH={services[serviceModal]?.length === 0 && '264px'}
-        maxH="264px"
+        height="264px"
       >
         <ModalCloseButton size="14px" _hover="none" _active="none" />
         {serviceModal && (
@@ -125,7 +124,7 @@ function ConsumableMoreInfoModal({ serviceModal, services, closeMentorshipsModal
                       </Box>
                     </Box>
                   ))}
-                  {existsNoAvailableAsSaas && (
+                  {existsNoAvailableAsSaas && serviceModal === 'mentorships' && (
                     <Text color={hexColor.fontColor2} fontSize="12px" mb="16px" textAlign="center">
                       {t('subscription.bootcamp-mentorships')}
                     </Text>
