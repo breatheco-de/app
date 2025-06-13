@@ -95,27 +95,19 @@ function chooseProgram() {
     return syllabus;
   }, [cohorts]);
 
-  const hasValidCohorts = useMemo(() => cohorts.some((cohort) => {
+  const hasValidCohorts = cohorts.some((cohort) => {
     const validEducationalStatus = ['ACTIVE', 'GRADUATED', 'POSTPONED', 'NOT_COMPLETING'].includes(cohort.cohort_user?.educational_status);
     const validFinancialStatus = cohort.cohort_user?.finantial_status !== 'LATE';
     return validEducationalStatus && validFinancialStatus;
-  }), [cohorts]);
+  });
 
-  const showMentorshipWidget = useMemo(() => {
-    const hasMentorshipConsumables = consumables.mentorship_service_sets?.some(
-      (set) => set.balance.unit > 0 || set.balance.unit === -1,
-    );
+  const showMentorshipWidget = consumables.mentorship_service_sets?.some(
+    (set) => set.balance.unit > 0 || set.balance.unit === -1,
+  ) || hasValidCohorts;
 
-    return hasValidCohorts || hasMentorshipConsumables;
-  }, [hasValidCohorts, consumables]);
-
-  const showEventWidget = useMemo(() => {
-    const hasEventConsumables = consumables.event_type_sets?.some(
-      (set) => set.balance.unit > 0 || set.balance.unit === -1,
-    );
-
-    return hasValidCohorts || hasEventConsumables;
-  }, [hasValidCohorts, consumables]);
+  const showEventWidget = consumables.event_type_sets?.some(
+    (set) => set.balance.unit > 0 || set.balance.unit === -1,
+  ) || hasValidCohorts;
 
   const getServices = async (userRoles) => {
     if (userRoles?.length > 0) {
