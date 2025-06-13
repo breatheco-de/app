@@ -105,10 +105,6 @@ function chooseProgram() {
     (set) => set.balance.unit > 0 || set.balance.unit === -1,
   ) || hasValidCohorts;
 
-  const showEventWidget = consumables.event_type_sets?.some(
-    (set) => set.balance.unit > 0 || set.balance.unit === -1,
-  ) || hasValidCohorts;
-
   const getServices = async (userRoles) => {
     if (userRoles?.length > 0) {
       delete axios.defaults.headers.common.Academy;
@@ -617,18 +613,16 @@ function chooseProgram() {
           )}
         </Box>
         <Flex flexDirection="column" gridGap="42px" flex={{ base: 1, md: 0.3 }}>
-          {showEventWidget && (
-            <Box zIndex={10}>
-              <LiveEvent
-                featureLabel={t('common:live-event.title')}
-                featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                mainClasses={liveClasses?.length > 0 ? liveClasses : []}
-                otherEvents={events}
-                margin="0 auto"
-                cohorts={cohorts}
-              />
-            </Box>
-          )}
+          <Box zIndex={10}>
+            <LiveEvent
+              featureLabel={t('common:live-event.title')}
+              featureReadMoreUrl={t('common:live-event.readMoreUrl')}
+              mainClasses={liveClasses?.length > 0 ? liveClasses : []}
+              otherEvents={events}
+              margin="0 auto"
+              cohorts={cohorts}
+            />
+          </Box>
           {showMentorshipWidget && !mentorshipServices.isLoading && mentorshipServices?.data?.length > 0 && (
             <Box zIndex={10}>
               <SupportSidebar
