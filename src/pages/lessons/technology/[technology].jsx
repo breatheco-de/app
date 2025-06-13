@@ -37,63 +37,80 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { technology } = params;
   const currentLang = locale === 'en' ? 'us' : 'es';
 
-  const responseTechs = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?slug=${technology}&limit=1000&academy=${WHITE_LABEL_ACADEMY}`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
-      Academy: 4,
-    },
-  });
-  const techs = await responseTechs.json(); // array of objects
-  const technologyData = techs.results.find((tech) => tech.slug === technology);
-
-  const qs = parseQuerys({
-    asset_type: 'LESSON,ARTICLE',
-    visibility: 'PUBLIC',
-    status: 'PUBLISHED',
-    exclude_category: 'how-to,como',
-    academy: WHITE_LABEL_ACADEMY,
-    limit: 1000,
-    technologies: technology,
-  });
-
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${qs}`);
-  const lessons = await response.json();
-
-  const dataFiltered = lessons?.results;
-
-  if (responseTechs.status >= 400 || response.status_code >= 400
-    || !technologyData || dataFiltered.length === 0) {
-    return {
-      notFound: true,
-    };
-  }
-
-  const ogUrl = {
-    en: `/lessons/technology/${technology}`,
-    us: `/lessons/technology/${technology}`,
-  };
-
-  return {
-    props: {
-      seo: {
-        title: technologyData?.title,
-        description: '',
-        image: technologyData?.icon_url || '',
-        pathConnector: `/lessons/technology/${technology}`,
-        url: ogUrl.en,
-        type: 'website',
-        card: 'default',
-        locales,
-        locale,
+  try {
+    const responseTechs = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?slug=${technology}&limit=1000&academy=${WHITE_LABEL_ACADEMY}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
+        Academy: 4,
       },
-      fallback: false,
-      technologyData,
-      lessons: dataFiltered.filter((project) => project.lang === currentLang).map(
-        (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
-      ),
-    },
-  };
+    });
+
+    if (!responseTechs.ok) {
+      console.error(`Error fetching technology data: ${responseTechs.status}`);
+      return { notFound: true };
+    }
+
+    const techs = await responseTechs.json();
+    const technologyData = techs.results?.find((tech) => tech.slug === technology);
+
+    if (!technologyData) {
+      return { notFound: true };
+    }
+
+    const qs = parseQuerys({
+      asset_type: 'LESSON,ARTICLE',
+      visibility: 'PUBLIC',
+      status: 'PUBLISHED',
+      exclude_category: 'how-to,como',
+      academy: WHITE_LABEL_ACADEMY,
+      limit: 1000,
+      technologies: technology,
+    });
+
+    const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${qs}`);
+
+    if (!response.ok) {
+      console.error(`Error fetching lessons: ${response.status}`);
+      return { notFound: true };
+    }
+
+    const lessons = await response.json();
+    const dataFiltered = lessons?.results || [];
+
+    if (dataFiltered.length === 0) {
+      return { notFound: true };
+    }
+
+    const ogUrl = {
+      en: `/lessons/technology/${technology}`,
+      us: `/lessons/technology/${technology}`,
+    };
+
+    return {
+      props: {
+        seo: {
+          title: technologyData?.title,
+          description: '',
+          image: technologyData?.icon_url || '',
+          pathConnector: `/lessons/technology/${technology}`,
+          url: ogUrl.en,
+          type: 'website',
+          card: 'default',
+          locales,
+          locale,
+        },
+        fallback: false,
+        technologyData,
+        lessons: dataFiltered.filter((project) => project.lang === currentLang).map(
+          (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
+        ),
+      },
+    };
+  } catch (error) {
+    console.error('Error in getStaticProps:', error);
+    return { notFound: true };
+  }
 };
 
 function LessonByTechnology({ lessons, technologyData }) {
