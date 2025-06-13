@@ -12,7 +12,7 @@ import {
   ModalBody,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import { useEffect, useState, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -23,9 +23,9 @@ import useStyle from '../../../hooks/useStyle';
 import useSubscriptions from '../../../hooks/useSubscriptions';
 import { location, slugToTitle, unSlugify } from '../../../utils';
 import { CardSkeleton, SimpleSkeleton } from '../../Skeleton';
-import bc from '../../../services/breathecode';
 import SubscriptionCard from './SubscriptionCard';
 import ConsumableCard from './ConsumableCard';
+import useConsumables from '../../../hooks/useConsumables';
 
 const ModalInfo = lazy(() => import('../../ModalInfo'));
 
@@ -35,85 +35,11 @@ function Subscriptions({ cohorts }) {
   const { hexColor, fontColor } = useStyle();
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
   const [servicesModal, setServicesModal] = useState(null);
-  const [consumables, setConsumables] = useState({
-    cohort_sets: [],
-    event_type_sets: [],
-    mentorship_service_sets: [],
-    service_sets: [],
-    voids: [],
-  });
-  const [services, setServices] = useState({
-    mentorships: [],
-    workshops: [],
-    voids: [],
-  });
-  const [loadingServices, setLoadingServices] = useState(true);
+  const { consumables, services, isLoading: loadingServices } = useConsumables(cohorts);
   const [subscriptionProps, setSubscriptionProps] = useState({});
   const memberships = state?.subscriptions;
 
   const onOpenCancelSubscription = () => setCancelModalIsOpen(true);
-
-  const getConsumables = async () => {
-    try {
-      const nonSaasCohorts = cohorts.filter(({ available_as_saas }) => !available_as_saas);
-      const academies = [...new Set(nonSaasCohorts.map(({ academy }) => academy.id))];
-
-      const allServices = {
-        mentorships: [],
-        workshops: [],
-      };
-
-      const cohortsServices = academies.map((academy) => bc.mentorship({ academy }, true).getService());
-      const responseServices = await Promise.all(cohortsServices);
-      const nonSaasServices = responseServices.flatMap(({ data }) => data).map((elem) => ({ ...elem, nonSaasAcademy: true }));
-
-      const res = await bc.payment().service().consumable();
-      if (res.status === 200) {
-        const { data } = res;
-        setConsumables(data);
-        const promiseMentorship = data.mentorship_service_sets.map(async (elem) => {
-          const mentRes = await bc.payment().getServiceSet(elem.id);
-
-          return mentRes.data.mentorship_services.map((service) => ({ ...service, unit: elem.balance.unit }));
-        });
-        const promiseEvents = data.event_type_sets.map(async (elem) => {
-          const evRes = await bc.payment().getEventTypeSet(elem.id);
-
-          return evRes.data.event_types;
-        });
-
-        const promiseVoids = data.voids.map(async (elem) => {
-          const voidRes = await bc.payment().getServiceInfo(elem.slug);
-          const serviceData = voidRes.data[0];
-
-          return {
-            ...serviceData,
-            name: serviceData.features[0]?.title || serviceData.service.title || '',
-            description: serviceData.features[0]?.description || '',
-            one_line_desc: serviceData.features[0]?.one_line_desc || '',
-          };
-        });
-
-        const resMentorships = await Promise.all(promiseMentorship);
-        const resWorkshops = await Promise.all(promiseEvents);
-        const resVoids = await Promise.all(promiseVoids);
-
-        allServices.mentorships = [...resMentorships.flat(), ...nonSaasServices];
-        allServices.workshops = resWorkshops.flat();
-        allServices.voids = resVoids.flat();
-      }
-
-      setServices(allServices);
-      setLoadingServices(false);
-    } catch (e) {
-      setLoadingServices(false);
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    getConsumables();
-  }, []);
 
   const membershipsArray = memberships?.subscriptions
     && memberships?.plan_financings
