@@ -105,7 +105,7 @@ function chooseProgram() {
     (set) => set.balance.unit > 0 || set.balance.unit === -1,
   ) || hasValidCohorts;
 
-  const showEventWidget = consumables.event_type_sets?.some(
+  const showEventWidget = true || consumables.event_type_sets?.some(
     (set) => set.balance.unit > 0 || set.balance.unit === -1,
   ) || hasValidCohorts;
 
