@@ -64,6 +64,17 @@ const useCheckout = () => {
       }).applyCoupon(bagId);
 
       const couponsList = resp?.data?.coupons;
+
+      if (coupons[0] === '') {
+        setDiscountCoupon(null);
+        setCheckingData({
+          ...checkingData,
+          coupons: [],
+        });
+        setCouponError(false);
+        return;
+      }
+
       if (couponsList?.length > 0) {
         const couponToFind = specificCoupon || discountCode;
         const couponData = couponsList.find(({ slug }) => slug === couponToFind);
@@ -473,6 +484,7 @@ const useCheckout = () => {
     planId,
     discountCoupon,
     setDiscountCoupon,
+    handleCoupon,
   };
 };
 export default useCheckout;
