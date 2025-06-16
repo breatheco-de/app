@@ -29,9 +29,9 @@ const useCustomToast = () => {
     actions = null,
     isClosable = true,
   }) => {
-    // Limitar a máximo 3 toasts activos
+    // Limit to 3 the number of active toast (to avoid overwellming the ui)
     if (activeToasts.size >= 3) {
-      // Cerrar el toast más antiguo
+      // Close oldest toast
       const oldestToast = Array.from(activeToasts)[0];
       closeToast(oldestToast);
     }
