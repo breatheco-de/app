@@ -10,7 +10,6 @@ import useTranslation from 'next-translate/useTranslation';
 import Heading from '../Heading';
 import useStyle from '../../hooks/useStyle';
 import ReactPlayerV2 from '../ReactPlayerV2';
-import CouponTopBar from '../CouponTopBar';
 
 function FixedBottomCta({
   asset,
@@ -93,9 +92,7 @@ function FixedBottomCta({
 
         {course && isFetching && <Skeleton height="150px" width="100%" padding="1px" />}
 
-        {course && !isFetching && couponApplied && <CouponTopBar />}
-
-        {course && !isFetching && !couponApplied && (
+        {course && !isFetching && (
           <>
             {!videoUrl && (
               <Text color="black" fontSize="18px" fontWeight={600}>

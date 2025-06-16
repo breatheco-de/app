@@ -385,7 +385,8 @@ export const useBootcamp = () => {
       if (showBottomCTA.current) {
         const { scrollY } = window;
         const top = getElementTopOffset(showBottomCTA.current);
-        setIsCtaVisible(top - scrollY > 700);
+        const isMobile = window.innerWidth <= 768;
+        setIsCtaVisible(isMobile || top - scrollY > 700);
       }
     };
 
@@ -396,8 +397,10 @@ export const useBootcamp = () => {
     };
 
     window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', checkCtaVisibility);
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', checkCtaVisibility);
     };
   }, []);
 

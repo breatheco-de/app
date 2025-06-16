@@ -51,6 +51,7 @@ function CouponTopBar({ ...rest }) {
     <Box
       background={hexColor.green}
       padding="8px 10px"
+      display={{ base: 'none', md: 'block' }}
       {...rest}
     >
       <Box maxWidth="1280px" margin="auto" display="flex" justifyContent="space-between" alignItems="center">

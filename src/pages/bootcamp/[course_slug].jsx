@@ -104,10 +104,9 @@ function CoursePage() {
         paymentOptions={planData?.paymentOptions}
         couponApplied={selfAppliedCoupon}
         width="calc(100vw - 15px)"
-        left="7.5px"
         zIndex={1100}
       />
-      <CouponTopBar display={{ base: 'none', md: 'block' }} />
+      <CouponTopBar />
       <Flex flexDirection="column" background={backgroundColor7}>
         <GridContainer maxWidth="1280px" gridTemplateColumns="repeat(12, 1fr)" gridGap="36px" padding="8px 10px 50px 10px" mt="17px">
           <Flex flexDirection="column" gridColumn="1 / span 8" gridGap="24px">
