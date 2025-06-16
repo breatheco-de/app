@@ -122,7 +122,6 @@ export const useBootcamp = () => {
 
     if (alreadyHaveThisCohort) {
       callback();
-      setIsFetching(false);
       if (withAlert) {
         createToast({
           position: 'top',
