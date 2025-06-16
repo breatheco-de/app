@@ -642,7 +642,7 @@ function Dashboard() {
                     </Flex>
                   ) : (
                     <Flex direction="column" gap="10px" mb="20px">
-                      <Box display="flex" wrap alignItems="center" gap="10px" justifyContent="space-between">
+                      <Flex direction={{ base: 'column', md: 'row' }} wrap alignItems={{ base: 'start', md: 'center' }} gap="10px" justifyContent="space-between">
                         <Flex gap="10px">
                           <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
                           <Heading as="h1" size="m">
@@ -674,7 +674,7 @@ function Dashboard() {
                             color="currentColor"
                           />
                         </Button>
-                      </Box>
+                      </Flex>
                       <Text fontSize="16px">
                         {t('micro-cohorts-description')}
                       </Text>
