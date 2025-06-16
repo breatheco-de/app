@@ -22,6 +22,7 @@ const useCheckout = () => {
   const {
     state, handleStep, setLoader,
     setSelectedPlan, setCheckingData, setPlanData,
+    restartSignup,
   } = signupAction();
   const {
     stepsEnum, getSelfAppliedCoupon,
@@ -299,7 +300,7 @@ const useCheckout = () => {
     if (!isAuthenticated && !accessToken) {
       setLoader('plan', false);
     }
-  }, [isAuthenticated, router.locale]);
+  }, [isAuthenticated, router.locale, planData]);
 
   useEffect(() => {
     if (!userSelectedPlan || !planData) return;
@@ -461,6 +462,8 @@ const useCheckout = () => {
 
     return null;
   };
+
+  useEffect(() => () => restartSignup(), []);
 
   return {
     couponError,
