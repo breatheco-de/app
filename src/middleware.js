@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import aliasRedirects from '../public/alias-redirects.json';
 import redirectsFromApi from '../public/redirects-from-api.json';
+import staticRedirects from '../public/redirects.json';
 import { log } from './utils/logging';
 
 export const config = {
@@ -28,9 +29,9 @@ async function middleware(req) {
     fullPath = fullPath.replace(`/${localePrefix}`, '');
   }
 
-  const aliasAndLessonRedirects = [...aliasRedirects, ...redirectsFromApi];
+  const allRedirects = [...staticRedirects, ...aliasRedirects, ...redirectsFromApi];
 
-  const currentProject = aliasAndLessonRedirects.find((item) => {
+  const currentProject = allRedirects.find((item) => {
     const normalizedSource = item.source.endsWith('/') ? item.source.slice(0, -1) : item.source;
     const normalizedPath = fullPath.endsWith('/') ? fullPath.slice(0, -1) : fullPath;
 
