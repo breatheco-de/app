@@ -215,7 +215,10 @@ export const useBootcamp = () => {
         });
 
         const filterAssets = (assets, isFeatured) => assets.filter((asset) => {
-          const assetSlug = asset?.translations?.[language]?.slug || asset?.slug;
+          const hasTranslation = asset?.translations && asset?.translations[language];
+          if (!hasTranslation) return false;
+
+          const assetSlug = asset?.translations[language]?.slug;
           return isFeatured ? featuredAssetSlugs.includes(assetSlug) : !featuredAssetSlugs.includes(assetSlug);
         });
 
@@ -235,7 +238,7 @@ export const useBootcamp = () => {
         }
 
         const assignmentsFetch = await Promise.all(
-          combinedFeaturedAssets.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[language]?.slug || item?.slug}`)
+          combinedFeaturedAssets.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[language]?.slug}`)
             .then((assignmentResp) => assignmentResp.json())
             .catch(() => [])),
         );
