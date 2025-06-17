@@ -272,6 +272,34 @@
           "review": "Contenido y estructura increíbles. ¡La herramienta de IA es maravillosa!"
         }
       ]
+    },
+    "change-your-career-in-15-days": {
+      "rating": 5,
+      "total_ratings": 178,
+      "reviews_numbers": 33,
+      "reviews": [
+        {
+          "name": "Jesús Barreto",
+          "avatar": "https://media.licdn.com/dms/image/v2/D4E03AQHZPOJT7LMCOw/profile-displayphoto-shrink_200_200/B4EZc8FJaYGcAc-/0/1749059672345?e=1755734400&v=beta&t=Kk4tnyruLaDAWgpyTOgbG7Qc4NfOx9cTGxr1iXMb7Rw",
+          "rating": 5,
+          "date": "hace 5 semanas",
+          "review": "La mejor profesional con la que he trabajado."
+        },
+        {
+          "name": "Alejandra Arraez",
+          "avatar": "https://media.licdn.com/dms/image/v2/C5603AQHrtJxllVsRYw/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1638885619249?e=1755734400&v=beta&t=-pzeL2QGhA7-e-bl9a0wAtoTQghBksWnhm51EKLApSs",
+          "rating": 5,
+          "date": "hace 2 semanas",
+          "review": "Me sentí muy cómoda con Valentiana, fue muy rápida en su atención y me encantó el resultado final de mi CV, la recomiendo"
+        },
+        {
+          "name": "Daniel Anderi",
+          "avatar": "https://media.licdn.com/dms/image/v2/C4E03AQEMqo1Mrq4SOw/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1604327222040?e=1755734400&v=beta&t=nDFf_ZysyTZgowUOgAY5QjEH-FNUbudFG8x0fbFokPQ",
+          "rating": 5,
+          "date": "hace 1 semana",
+          "review": "Valentina es muy profesional, empática y servicial. Realiza su trabajo con mucha pasión y ética. Es responsable y a la vez se desempeña con alto nivel de excelencia. Es de ese tipo de personas que deseas tener en tu equipo porque sabe hacer las cosas bien y porque tiene una excelente actitud. :-)"
+        }
+      ]
     }
   },
   "featured-bullets": [
