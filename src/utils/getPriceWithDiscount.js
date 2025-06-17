@@ -35,7 +35,7 @@ const getPlanPrice = (plan, planList, allDiscounts, t) => {
       });
     }
     if (plan.period === 'ONE_TIME') {
-      return `${t('common:info.enroll-for-connector')} ${handlePriceTextWithCoupon(plan.priceText, allDiscounts, plan)}, ${t('signup:info.one-time-payment')}`;
+      return `${t('common:enroll-for-connector')} ${handlePriceTextWithCoupon(plan.priceText, allDiscounts, plan)}, ${t('signup:info.one-time-payment')}`;
     }
     if (plan.period === 'FINANCING') {
       return `${handlePriceTextWithCoupon(plan.priceText, allDiscounts, plan)} ${t('signup:info.installments')}`;
