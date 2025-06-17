@@ -125,9 +125,35 @@ function SubsriptionButton({
         text: t('subscription.contact-support'),
         isComponent: true,
         component: (
-          <Button onClick={manageActionBasedOnLocation} marginTop="5px" textAlign="center" userSelect="none" justifyContent="center" fontSize="sm" fontWeight={700} color="blue.1000" width="100%" _hover="none" _active="none" background="auto" height="none">
-            {router.pathname === '/profile/[slug]' ? t('subscription.contact-support') : t('subscription.manage-subscription')}
-          </Button>
+          <>
+            <Button
+              onClick={() => {
+                setSubscriptionProps(subscription);
+                if (isCancelled) {
+                  handleReactivatePlan();
+                } else {
+                  onOpenCancelSubscription();
+                }
+              }}
+              marginTop="5px"
+              textAlign="center"
+              userSelect="none"
+              justifyContent="center"
+              fontSize="sm"
+              fontWeight={700}
+              color="blue.1000"
+              width="100%"
+              _hover="none"
+              _active="none"
+              background="auto"
+              height="none"
+            >
+              {isCancelled ? t('subscription.reactivate-subscription') : t('subscription.cancel')}
+            </Button>
+            <Button onClick={manageActionBasedOnLocation} marginTop="5px" textAlign="center" userSelect="none" justifyContent="center" fontSize="sm" fontWeight={700} color="blue.1000" width="100%" _hover="none" _active="none" background="auto" height="none">
+              {router.pathname === '/profile/[slug]' ? t('subscription.contact-support') : t('subscription.manage-subscription')}
+            </Button>
+          </>
         ),
       };
     }
@@ -153,11 +179,11 @@ function SubsriptionButton({
         <Button
           isLoading={isLoading}
           onClick={() => {
+            setSubscriptionProps(subscription);
             if (isPlanFinancingExpired) handlePlanOffer();
             if ((['FREE_TRIAL', 'PAYMENT_ISSUE'].includes(status)) || (['ACTIVE', 'FULLY_PAID'].includes(status) && subscription?.planOffer?.slug)) handlePlanOffer();
-            if (['ACTIVE', 'FULLY_PAID'].includes(status) && subscription?.type !== 'plan_financing' && !subscription?.planOffer?.slug) onOpenCancelSubscription();
+            if (['ACTIVE', 'FULLY_PAID', 'PAYMENT_ISSUE'].includes(status) && subscription?.type !== 'plan_financing' && !subscription?.planOffer?.slug) onOpenCancelSubscription();
             if (['CANCELLED'].includes(status)) handleReactivatePlan();
-            setSubscriptionProps(subscription);
           }}
           color="blue.default"
           margin="auto 0 0 0"
