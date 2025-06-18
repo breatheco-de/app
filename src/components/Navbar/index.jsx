@@ -97,18 +97,30 @@ function Navbar({ translations, pageProps }) {
         country_code: location?.countryShort,
       };
       const response = await bc.marketing(mktQueryString).courses();
-      const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null && item?.visibility !== 'UNLISTED');
+
+      const filterByTranslations = response?.data?.filter((item) => {
+        if (!item?.course_translation?.title) {
+          console.warn(`Course ${item?.slug} has no translation title`);
+          return false;
+        }
+        if (item?.visibility === 'UNLISTED') {
+          return false;
+        }
+        return true;
+      });
+
       const coursesStruct = filterByTranslations?.map((item) => ({
         ...item,
-        slug: item?.slug,
-        label: item?.course_translation?.title,
-        href: `/${locale}/bootcamp/${item?.slug}`,
-        icon: item?.icon_url,
+        slug: item?.slug || '',
+        label: item?.course_translation?.title || '',
+        href: `/${locale}/bootcamp/${item?.slug || ''}`,
+        icon: item?.icon_url || '',
       }));
 
       setMktCourses(coursesStruct || []);
     } catch (error) {
       console.error(`Error fetching mkt courses: ${error}`);
+      setMktCourses([]);
     }
   };
 
