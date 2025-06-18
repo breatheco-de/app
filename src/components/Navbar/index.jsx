@@ -111,10 +111,10 @@ function Navbar({ translations, pageProps }) {
 
       const coursesStruct = filterByTranslations?.map((item) => ({
         ...item,
-        slug: item?.slug || '',
-        label: item?.course_translation?.title || '',
-        href: `/${locale}/bootcamp/${item?.slug || ''}`,
-        icon: item?.icon_url || '',
+        slug: item?.slug,
+        label: item?.course_translation?.title,
+        href: `/${locale}/bootcamp/${item?.slug}`,
+        icon: item?.icon_url,
       }));
 
       setMktCourses(coursesStruct || []);
