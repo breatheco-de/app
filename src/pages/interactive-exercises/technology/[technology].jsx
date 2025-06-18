@@ -34,64 +34,81 @@ export const getStaticPaths = async ({ locales }) => {
 };
 
 export const getStaticProps = async ({ params, locale, locales }) => {
-  const { technology } = params;
-  const currentLang = locale === 'en' ? 'us' : 'es';
+  try {
+    const { technology } = params;
+    const currentLang = locale === 'en' ? 'us' : 'es';
 
-  const responseTechs = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?slug=${technology}&limit=1000&academy=${WHITE_LABEL_ACADEMY}`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
-      Academy: 4,
-    },
-  });
-  const techs = await responseTechs.json(); // array of objects
-  const technologyData = techs.results.find((tech) => tech.slug === technology);
+    // Fetch technology data
+    let techs;
+    try {
+      const responseTechs = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?slug=${technology}&limit=1000&academy=${WHITE_LABEL_ACADEMY}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
+          Academy: 4,
+        },
+      });
+      techs = await responseTechs.json();
+    } catch (error) {
+      console.error('Error fetching technology data:', error);
+      return { notFound: true };
+    }
 
-  const qs = parseQuerys({
-    asset_type: 'EXERCISE',
-    visibility: 'PUBLIC',
-    status: 'PUBLISHED',
-    academy: WHITE_LABEL_ACADEMY,
-    limit: 1000,
-    technologies: technology,
-  });
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${qs}`);
-  const exercises = await response.json();
+    const technologyData = techs.results?.find((tech) => tech.slug === technology);
 
-  const dataFiltered = exercises?.results;
+    // Fetch exercises data
+    let exercises;
+    try {
+      const qs = parseQuerys({
+        asset_type: 'EXERCISE',
+        visibility: 'PUBLIC',
+        status: 'PUBLISHED',
+        academy: WHITE_LABEL_ACADEMY,
+        limit: 1000,
+        technologies: technology,
+      });
+      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${qs}`);
+      exercises = await response.json();
+    } catch (error) {
+      console.error('Error fetching exercises data:', error);
+      return { notFound: true };
+    }
 
-  if (responseTechs.status >= 400 || response.status >= 400 || response.status_code >= 400
-    || !technologyData || dataFiltered.length === 0) {
-    return {
-      notFound: true,
+    const dataFiltered = exercises?.results || [];
+
+    if (!technologyData || dataFiltered.length === 0) {
+      return { notFound: true };
+    }
+
+    const ogUrl = {
+      en: `/interactive-exercises/technology/${technology}`,
+      us: `/interactive-exercises/technology/${technology}`,
     };
-  }
 
-  const ogUrl = {
-    en: `/interactive-exercises/technology/${technology}`,
-    us: `/interactive-exercises/technology/${technology}`,
-  };
-
-  return {
-    props: {
-      seo: {
-        title: technologyData?.title,
-        description: '',
-        image: technologyData?.icon_url || '',
-        pathConnector: `/interactive-exercises/technology/${technology}`,
-        url: ogUrl.en,
-        type: 'website',
-        card: 'default',
-        locales,
-        locale,
+    return {
+      props: {
+        seo: {
+          title: technologyData?.title,
+          description: '',
+          image: technologyData?.icon_url || '',
+          pathConnector: `/interactive-exercises/technology/${technology}`,
+          url: ogUrl.en,
+          type: 'website',
+          card: 'default',
+          locales,
+          locale,
+        },
+        fallback: false,
+        technologyData,
+        exercises: dataFiltered.filter((project) => project.lang === currentLang).map(
+          (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
+        ),
       },
-      fallback: false,
-      technologyData,
-      exercises: dataFiltered.filter((project) => project.lang === currentLang).map(
-        (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
-      ),
-    },
-  };
+    };
+  } catch (error) {
+    console.error('Error in getStaticProps:', error);
+    return { notFound: true };
+  }
 };
 
 function ExercisesByTechnology({ exercises, technologyData }) {
