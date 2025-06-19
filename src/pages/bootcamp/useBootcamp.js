@@ -29,6 +29,7 @@ export const useBootcamp = () => {
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);
   const [isCtaVisible, setIsCtaVisible] = useState(false);
+  const [showVideoInCta, setShowVideoInCta] = useState(true);
   const [allDiscounts, setAllDiscounts] = useState([]);
   const { isAuthenticated, user, logout, reSetUserAndCohorts } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor, backgroundColor7, backgroundColor8 } = useStyle();
@@ -383,9 +384,12 @@ export const useBootcamp = () => {
   useEffect(() => {
     const checkCtaVisibility = () => {
       if (showBottomCTA.current) {
-        const { scrollY } = window;
         const top = getElementTopOffset(showBottomCTA.current);
-        setIsCtaVisible(top - scrollY > 700);
+        setIsCtaVisible(top - window.scrollY > 700);
+        setShowVideoInCta(window.scrollY === 0);
+      } else {
+        setIsCtaVisible(true);
+        setShowVideoInCta(window.scrollY === 0);
       }
     };
 
@@ -492,6 +496,7 @@ export const useBootcamp = () => {
     cleanedStructuredData,
     showBottomCTA,
     studentsImages,
+    showVideoInCta,
 
     // Computed values
     isAuthenticated,
