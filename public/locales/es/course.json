@@ -279,18 +279,18 @@
       "reviews_numbers": 33,
       "reviews": [
         {
-          "name": "Jesús Barreto",
-          "avatar": "https://media.licdn.com/dms/image/v2/D4E03AQHZPOJT7LMCOw/profile-displayphoto-shrink_200_200/B4EZc8FJaYGcAc-/0/1749059672345?e=1755734400&v=beta&t=Kk4tnyruLaDAWgpyTOgbG7Qc4NfOx9cTGxr1iXMb7Rw",
-          "rating": 5,
-          "date": "hace 5 semanas",
-          "review": "La mejor profesional con la que he trabajado."
-        },
-        {
-          "name": "Alejandra Arraez",
-          "avatar": "https://media.licdn.com/dms/image/v2/C5603AQHrtJxllVsRYw/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1638885619249?e=1755734400&v=beta&t=-pzeL2QGhA7-e-bl9a0wAtoTQghBksWnhm51EKLApSs",
+          "name": "Amber Shaw",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/amber-shaw-jpeg",
           "rating": 5,
           "date": "hace 2 semanas",
-          "review": "Me sentí muy cómoda con Valentiana, fue muy rápida en su atención y me encantó el resultado final de mi CV, la recomiendo"
+          "review": "¡Trabajar con Valentina fue genial! Me ayudó a prepararme para una entrevista próxima con dos simulacros de entrevista y me dio retroalimentación útil después de cada uno. Los consejos que compartió me hicieron sentir más seguro y preparado. Agradezco mucho su apoyo y la recomendaría a cualquiera que necesite un empujón extra para estar listo para una entrevista."
+        },
+        {
+          "name": "Nicole Woods",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/nicole-woods-png",
+          "rating": 5,
+          "date": "hace 2 semanas",
+          "review": "Tuve una excelente experiencia trabajando con Valentina en mi currículum y CV. Desde el principio, destacó por su profesionalismo: su propuesta inicial dejaba claro que se había tomado el tiempo de revisar a fondo mi perfil de LinkedIn y entender realmente mi trayectoria. Fue increíblemente eficiente, con un tiempo de respuesta sorprendentemente rápido, y los resultados fueron excelentes."
         },
         {
           "name": "Daniel Anderi",
