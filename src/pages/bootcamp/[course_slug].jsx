@@ -23,6 +23,7 @@ import SimpleModal from '../../components/SimpleModal';
 import CustomCarousel from '../../components/CustomCarousel';
 import AssignmentSlide from '../../components/AssignmentSlide';
 import { useBootcamp } from './useBootcamp';
+import PageBubble from '../../components/PageBubble';
 
 const limitViewStudents = 3;
 
@@ -627,6 +628,11 @@ function CoursePage() {
           />
         </Box>
       </SimpleModal>
+      {data?.course_translation?.landing_variables.whatsapp_url && (
+        <PageBubble url={data.course_translation.landing_variables.whatsapp_url}>
+          <Icon icon="whatsapp" width="32px" height="32px" color="white" />
+        </PageBubble>
+      )}
     </>
   );
 }
