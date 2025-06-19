@@ -106,7 +106,7 @@ function CoursePage() {
         couponApplied={selfAppliedCoupon}
         width="calc(100vw - 15px)"
         left="7.5px"
-        zIndex={1100}
+        zIndex={3000}
       />
       <CouponTopBar display={{ base: 'none', md: 'block' }} />
       <Flex flexDirection="column" background={backgroundColor7}>
@@ -629,8 +629,22 @@ function CoursePage() {
         </Box>
       </SimpleModal>
       {data?.course_translation?.landing_variables.whatsapp_url && (
-        <PageBubble url={data.course_translation.landing_variables.whatsapp_url}>
-          <Icon icon="whatsapp" width="32px" height="32px" color="white" />
+        <PageBubble
+          url={data.course_translation.landing_variables.whatsapp_url}
+          background="green.400"
+          borderRadius="50%"
+          boxShadow="0 2px 8px rgba(0,0,0,0.10)"
+          p={1.5}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          width="52px"
+          height="52px"
+          bottom="10px"
+          right="12px"
+          zIndex={2000}
+        >
+          <Icon icon="whatsapp-border" color="#ffffff" width="35px" height="35px" />
         </PageBubble>
       )}
     </>
