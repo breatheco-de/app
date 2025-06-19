@@ -252,7 +252,7 @@ const breathecode = {
   },
 
   payment: (query = {}) => {
-    const url = `${host}/payments`;
+    const url = `${hostV2}/payments`;
     const qs = parseQuerys(query);
     return {
       checking: (data) => axios.put(`${url}/checking${qs}`, data),

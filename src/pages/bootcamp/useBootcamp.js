@@ -30,7 +30,7 @@ export const useBootcamp = () => {
   const showBottomCTA = useRef(null);
   const [isCtaVisible, setIsCtaVisible] = useState(false);
   const [allDiscounts, setAllDiscounts] = useState([]);
-  const { isAuthenticated, user, logout, cohorts } = useAuth();
+  const { isAuthenticated, user, logout, reSetUserAndCohorts } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor, backgroundColor7, backgroundColor8 } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
@@ -105,24 +105,23 @@ export const useBootcamp = () => {
     return 0;
   };
 
-  const redirectTocohort = () => {
+  const redirectTocohort = (userCohorts) => {
     const cohort = cohortData?.cohortSyllabus?.cohort;
     axiosInstance.defaults.headers.common.Academy = cohort.academy.id;
 
-    const joinedCohort = cohorts.find(({ slug }) => slug === cohort?.slug);
+    const joinedCohort = userCohorts.find(({ slug }) => slug === cohort?.slug);
     setCohortSession({
       ...joinedCohort,
     });
     router.push(joinedCohort.selectedProgramSlug);
   };
 
-  const redirectToCohortIfItsReady = ({ withAlert = true, callback = () => { } } = {}) => {
-    const alreadyHaveThisCohort = cohorts?.some((cohort) => cohort?.id === cohortId);
+  const redirectToCohortIfItsReady = async ({ withAlert = true, callback = () => {} } = {}) => {
+    const { cohorts: userCohorts } = await reSetUserAndCohorts();
+    const alreadyHaveThisCohort = userCohorts?.some((cohort) => cohort?.id === cohortId);
 
     if (alreadyHaveThisCohort) {
       callback();
-
-      setIsFetching(false);
       if (withAlert) {
         createToast({
           position: 'top',
@@ -131,7 +130,7 @@ export const useBootcamp = () => {
           duration: 5000,
         });
       }
-      redirectTocohort();
+      redirectTocohort(userCohorts);
     }
   };
 
@@ -417,7 +416,7 @@ export const useBootcamp = () => {
         setRelatedSubscription(subscriptionRelatedToThisCohort);
       });
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, cohortId]);
 
   useEffect(() => {
     if (isAuthenticated && cohortData?.cohortSyllabus?.cohort?.id) redirectToCohortIfItsReady();

@@ -1,7 +1,7 @@
 import {
   Box, Flex, IconButton, Avatar, Stack, Collapse, useColorModeValue,
   useDisclosure, useColorMode, Popover, PopoverTrigger,
-  PopoverContent, PopoverArrow, Button, Link, Divider,
+  PopoverContent, PopoverArrow, Button, Divider,
   useBreakpointValue,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
@@ -21,7 +21,6 @@ import MobileNav from './MobileNav';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useSession from '../../hooks/useSession';
 import Heading from '../Heading';
-import Text from '../Text';
 import useAuth from '../../hooks/useAuth';
 import LanguageSelector from '../LanguageSelector';
 import { setStorageItem } from '../../utils';
@@ -34,7 +33,6 @@ import useStyle from '../../hooks/useStyle';
 import useSubscriptions from '../../hooks/useSubscriptions';
 
 function Navbar({ translations, pageProps }) {
-  const [uniqueLanguages, setUniqueLanguages] = useState([]);
   const { location, isLoadingLocation } = useSession();
   const { isAuthenticated, isLoading, user, logout, cohorts } = useAuth();
   const [navbarItems, setNavbarItems] = useState([]);
@@ -50,23 +48,19 @@ function Navbar({ translations, pageProps }) {
   const { toggleColorMode } = useColorMode();
   const fontColor = useColorModeValue('black', 'gray.200');
   const isMobile = useBreakpointValue({ base: true, lg: false });
-  const { hexColor, colorMode, reverseColorMode, borderColor, lightColor, navbarBackground } = useStyle();
+  const { hexColor, colorMode, reverseColorMode, borderColor, navbarBackground } = useStyle();
 
   const existsCohortWithoutAvailableAsSaas = cohorts.some((c) => c?.available_as_saas === false);
   const existsPaidSubscription = allSubscriptions.some((sb) => sb?.invoices?.[0]?.amount > 0);
   const hasPaidSubscription = existsCohortWithoutAvailableAsSaas || existsPaidSubscription;
 
   const disableLangSwitcher = pageProps?.disableLangSwitcher || false;
-  const langs = ['en', 'es'];
   const { locale } = router;
 
   const imageFilter = useColorModeValue('none', 'brightness(0) invert(1)');
 
-  const translationsPropsExists = translations?.length > 0;
-
   const whiteLabelitems = t('white-label-version-items', {}, { returnObjects: true });
   const preDefinedItems = t('items', {}, { returnObjects: true });
-  const languages = t('languages', {}, { returnObjects: true });
 
   axios.defaults.headers.common['Accept-Language'] = locale;
 
@@ -94,12 +88,6 @@ function Navbar({ translations, pageProps }) {
       window.location.href = `/${locale}/pricing${parseQuerys({ internal_cta_placement: 'navbar-get-started' }, false)}`;
     }
   };
-
-  useEffect(() => {
-    const filteredLanguages = [...new Map(((translationsPropsExists && translations) || languages)
-      .map((lang) => [lang.value, lang])).values()];
-    setUniqueLanguages(filteredLanguages);
-  }, [router.asPath]);
 
   const fetchMktCourses = async () => {
     try {
@@ -373,143 +361,81 @@ function Navbar({ translations, pageProps }) {
                   minW={{ base: 'auto', md: 'md' }}
                 >
                   <PopoverArrow />
-                  <Box
-                    boxShadow="dark-lg"
-                    bg={navbarBackground}
-                    rounded="md"
-                    width={{ base: '100%', md: 'auto' }}
-                    minW={{ base: 'auto', md: 'md' }}
-                  >
 
-                    <Box
-                      width="100%"
-                      borderBottom={2}
+                  {/* Container Section */}
+                  <Box p="1rem 1.5rem 0 1.5rem">
+                    <Stack flexDirection="row" gridGap="10px" pb="15px">
+                      <Avatar
+                        width="62px"
+                        marginY="auto"
+                        height="62px"
+                        src={userImg}
+                      />
+                      <Flex flexDirection="column" alignItems="flex-start" gridGap="6px">
+                        <Heading as="p" size="20px" fontWeight="700">
+                          {getName() || ''}
+                        </Heading>
+                        {user?.date_joined && (
+                          <Heading as="p" size="16px" maxWidth="300px" textTransform="initial" fontWeight="400">
+                            {t('member-since', { date: formattedDateJoined })}
+                          </Heading>
+                        )}
+                      </Flex>
+                    </Stack>
+
+                    <Flex
+                      borderTop={2}
                       borderStyle="solid"
                       borderColor={borderColor}
-                      display="flex"
-                      justifyContent="space-between"
-                      padding="12px 1.5rem"
+                      alignItems="center"
+                      padding="1rem 0rem"
                     >
-                      <Text size="md" fontWeight="700">
-                        {t('language')}
-                      </Text>
-                      {disableLangSwitcher !== true && (
-                        <Box display="flex" flexDirection="row">
-                          {uniqueLanguages.map((l, i) => {
-                            const lang = languages.find((language) => language?.value === l?.lang);
-                            const value = translationsPropsExists ? lang?.value : l.value;
-                            const path = translationsPropsExists ? l?.link : router.asPath;
-
-                            const cleanedPath = (path === '/' && value !== 'en') ? '' : path;
-                            const localePrefix = `${value !== 'en' && !cleanedPath?.includes(`/${value}`) ? `/${value}` : ''}`;
-                            const link = `${localePrefix}${cleanedPath}`;
-
-                            const getIconFlags = value === 'en' ? 'usaFlag' : 'spainFlag';
-                            const getLangName = value === 'en' ? 'Eng' : 'Esp';
-
-                            return (
-                              <Box display="flex" flexDirection="row" key={value}>
-                                <Link
-                                  _hover={{
-                                    textDecoration: 'none',
-                                    color: 'blue.default',
-                                  }}
-                                  color={locale === lang ? 'blue.default' : lightColor}
-                                  fontWeight={locale === lang ? '700' : '400'}
-                                  href={link}
-                                  display="flex"
-                                  alignItems="center"
-                                  textTransform="uppercase"
-                                  gridGap="5px"
-                                  size="sm"
-                                >
-                                  <Icon icon={getIconFlags} width="16px" height="16px" />
-                                  {getLangName}
-                                </Link>
-                                {i < langs.length - 1 && (
-                                  <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
-                                )}
-                              </Box>
-                            );
-                          })}
-                        </Box>
-                      )}
-                    </Box>
-
-                    <Box p="1rem 1.5rem 0 1.5rem">
-                      <Stack flexDirection="row" gridGap="10px" pb="15px">
-                        <Avatar
-                          width="62px"
-                          marginY="auto"
-                          height="62px"
-                          src={userImg}
-                        />
-                        <Flex flexDirection="column" alignItems="flex-start" gridGap="6px">
-                          <Heading as="p" size="20px" fontWeight="700">
-                            {getName() || ''}
-                          </Heading>
-                          {user?.date_joined && (
-                            <Heading as="p" size="16px" maxWidth="300px" textTransform="initial" fontWeight="400">
-                              {t('member-since', { date: formattedDateJoined })}
-                            </Heading>
-                          )}
-                        </Flex>
-                      </Stack>
-
-                      <Flex
-                        borderTop={2}
-                        borderStyle="solid"
-                        borderColor={borderColor}
-                        alignItems="center"
-                        padding="1rem 0rem"
+                      <NextChakraLink
+                        href="/profile/info"
+                        fontWeight="400"
+                        color={fontColor}
+                        fontSize="14px"
+                        textDecoration="none"
+                        _hover={{
+                          textDecoration: 'none',
+                        }}
+                        letterSpacing="0.05em"
                       >
-                        <NextChakraLink
-                          href="/profile/info"
-                          fontWeight="400"
-                          color={fontColor}
-                          fontSize="14px"
-                          textDecoration="none"
-                          _hover={{
-                            textDecoration: 'none',
-                          }}
-                          letterSpacing="0.05em"
-                        >
-                          {t('my-profile')}
-                        </NextChakraLink>
-                      </Flex>
-                      <Flex
-                        borderTop={2}
-                        borderStyle="solid"
-                        borderColor={borderColor}
-                        alignItems="center"
-                        padding="1rem 0rem"
+                        {t('my-profile')}
+                      </NextChakraLink>
+                    </Flex>
+                    <Flex
+                      borderTop={2}
+                      borderStyle="solid"
+                      borderColor={borderColor}
+                      alignItems="center"
+                      padding="1rem 0rem"
+                    >
+                      <Box
+                        as="button"
+                        cursor="pointer"
+                        width="auto"
+                        display="flex"
+                        gridGap="10px"
+                        onClick={() => {
+                          setIsPopoverOpen(false);
+                          setTimeout(() => {
+                            logout();
+                          }, 150);
+                        }}
+                        title={t('logout')}
                       >
+                        <Icon icon="logout" width="20px" height="20px" />
                         <Box
-                          as="button"
-                          cursor="pointer"
-                          width="auto"
-                          display="flex"
-                          gridGap="10px"
-                          onClick={() => {
-                            setIsPopoverOpen(false);
-                            setTimeout(() => {
-                              logout();
-                            }, 150);
-                          }}
-                          title={t('logout')}
+                          fontWeight="700"
+                          color="blue.400"
+                          as="span"
+                          fontSize="14px"
                         >
-                          <Icon icon="logout" width="20px" height="20px" />
-                          <Box
-                            fontWeight="700"
-                            color="blue.400"
-                            as="span"
-                            fontSize="14px"
-                          >
-                            {t('logout')}
-                          </Box>
+                          {t('logout')}
                         </Box>
-                      </Flex>
-                    </Box>
+                      </Box>
+                    </Flex>
                   </Box>
                 </PopoverContent>
               </Popover>
