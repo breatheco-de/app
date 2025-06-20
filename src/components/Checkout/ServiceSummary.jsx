@@ -86,7 +86,7 @@ function ServiceSummary({ service }) {
         isClosable: true,
         duration: 6000,
       });
-      console.log("welelelelelelelel", data?.detail);
+      console.log('welelelelelelelel', data?.detail);
       setDeclinedModalProps({
         title: t('transaction-denied'),
         description: data?.detail || t('payment-not-processed'),
