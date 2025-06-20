@@ -255,7 +255,7 @@ const useCheckout = () => {
       setLoader('plan', true);
 
       const checking = await getChecking(planData);
-      
+
       // Check if getChecking returned an error response
       if (checking?.status >= 400) {
         setPaymentStatus('error');
