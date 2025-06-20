@@ -103,7 +103,7 @@
     ]
   },
   "coupon-bar": {
-    "headline": "¡¡Precios tan bajos como {{discount}} de descuento!!",
+    "headline": "¡Aprovecha el {{discount}} de descuento!",
     "ends-in": "Termina en {{time}}",
     "see-prices": "Ver precios"
   },
