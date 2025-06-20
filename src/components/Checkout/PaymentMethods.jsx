@@ -53,7 +53,7 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
 
     if (!silentCode) {
       setOpenDeclinedModal(true);
-      console.log("wulululuku", data?.detail);
+      console.log('wulululuku', data?.detail);
       setDeclinedModalProps({
         title: t('transaction-denied'),
         description: data?.detail || t('payment-not-processed'),
