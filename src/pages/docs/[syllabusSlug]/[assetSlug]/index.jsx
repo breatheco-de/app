@@ -90,7 +90,7 @@ export const getStaticProps = async ({ params, locale }) => {
 
   try {
     const result = await bc.admissions({ is_documentation: 'True', version: 1, academy: WHITE_LABEL_ACADEMY, slug: syllabusSlug }).getPublicSyllabusVersion();
-    const syllabus = result.data.find((syll) => syll.slug === syllabusSlug);
+    const syllabus = result?.data?.find((syll) => syll.slug === syllabusSlug);
     if (!syllabus) throw new Error('syllabus not found');
 
     const moduleData = formatSyllabus(syllabus);

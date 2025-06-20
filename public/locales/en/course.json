@@ -95,6 +95,11 @@
       "https://randomuser.me/api/portraits/men/1.jpg",
       "https://randomuser.me/api/portraits/men/34.jpg",
       "https://randomuser.me/api/portraits/women/25.jpg"
+    ],
+    "change-your-career-in-15-days": [
+      "https://randomuser.me/api/portraits/men/100.jpg",
+      "https://randomuser.me/api/portraits/men/14.jpg",
+      "https://randomuser.me/api/portraits/women/24.jpg"
     ]
   },
   "coupon-bar": {

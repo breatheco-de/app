@@ -48,6 +48,7 @@ function CoursePage() {
     reviewsForCurrentCourse,
     cleanedStructuredData,
     showBottomCTA,
+    showVideoInCta,
 
     // Computed values
     isAuthenticated,
@@ -106,6 +107,7 @@ function CoursePage() {
         width="calc(100vw - 15px)"
         left="7.5px"
         zIndex={1100}
+        showVideoInCta={showVideoInCta}
       />
       <CouponTopBar display={{ base: 'none', md: 'block' }} />
       <Flex flexDirection="column" background={backgroundColor7}>

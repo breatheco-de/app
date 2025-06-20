@@ -29,8 +29,9 @@ export const useBootcamp = () => {
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);
   const [isCtaVisible, setIsCtaVisible] = useState(false);
+  const [showVideoInCta, setShowVideoInCta] = useState(true);
   const [allDiscounts, setAllDiscounts] = useState([]);
-  const { isAuthenticated, user, logout, cohorts, reSetUserAndCohorts } = useAuth();
+  const { isAuthenticated, user, logout, reSetUserAndCohorts } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor, backgroundColor7, backgroundColor8 } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
@@ -105,11 +106,11 @@ export const useBootcamp = () => {
     return 0;
   };
 
-  const redirectTocohort = () => {
+  const redirectTocohort = (userCohorts) => {
     const cohort = cohortData?.cohortSyllabus?.cohort;
     axiosInstance.defaults.headers.common.Academy = cohort.academy.id;
 
-    const joinedCohort = cohorts.find(({ slug }) => slug === cohort?.slug);
+    const joinedCohort = userCohorts.find(({ slug }) => slug === cohort?.slug);
     setCohortSession({
       ...joinedCohort,
     });
@@ -117,12 +118,11 @@ export const useBootcamp = () => {
   };
 
   const redirectToCohortIfItsReady = async ({ withAlert = true, callback = () => {} } = {}) => {
-    await reSetUserAndCohorts();
-    const alreadyHaveThisCohort = cohorts?.some((cohort) => cohort?.id === cohortId);
+    const { cohorts: userCohorts } = await reSetUserAndCohorts();
+    const alreadyHaveThisCohort = userCohorts?.some((cohort) => cohort?.id === cohortId);
 
     if (alreadyHaveThisCohort) {
       callback();
-      setIsFetching(false);
       if (withAlert) {
         createToast({
           position: 'top',
@@ -131,7 +131,7 @@ export const useBootcamp = () => {
           duration: 5000,
         });
       }
-      redirectTocohort();
+      redirectTocohort(userCohorts);
     }
   };
 
@@ -216,7 +216,10 @@ export const useBootcamp = () => {
         });
 
         const filterAssets = (assets, isFeatured) => assets.filter((asset) => {
-          const assetSlug = asset?.translations?.[language]?.slug || asset?.slug;
+          const hasTranslation = asset?.translations && asset?.translations[language];
+          if (!hasTranslation) return false;
+
+          const assetSlug = asset?.translations[language]?.slug;
           return isFeatured ? featuredAssetSlugs.includes(assetSlug) : !featuredAssetSlugs.includes(assetSlug);
         });
 
@@ -236,7 +239,7 @@ export const useBootcamp = () => {
         }
 
         const assignmentsFetch = await Promise.all(
-          combinedFeaturedAssets.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[language]?.slug || item?.slug}`)
+          combinedFeaturedAssets.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[language]?.slug}`)
             .then((assignmentResp) => assignmentResp.json())
             .catch(() => [])),
         );
@@ -384,9 +387,12 @@ export const useBootcamp = () => {
   useEffect(() => {
     const checkCtaVisibility = () => {
       if (showBottomCTA.current) {
-        const { scrollY } = window;
         const top = getElementTopOffset(showBottomCTA.current);
-        setIsCtaVisible(top - scrollY > 700);
+        setIsCtaVisible(top - window.scrollY > 700);
+        setShowVideoInCta(window.scrollY === 0);
+      } else {
+        setIsCtaVisible(true);
+        setShowVideoInCta(window.scrollY === 0);
       }
     };
 
@@ -493,6 +499,7 @@ export const useBootcamp = () => {
     cleanedStructuredData,
     showBottomCTA,
     studentsImages,
+    showVideoInCta,
 
     // Computed values
     isAuthenticated,

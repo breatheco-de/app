@@ -9,12 +9,13 @@ const bgColors = {
   success: { background: '#e0ffe8', color: '#00a33d', borderColor: '#00bb2d' },
 };
 
-const useCustomToast = ({
-  toastId,
-}) => {
+const useCustomToast = () => {
   const toast = useToast();
-  const closeToast = () => {
-    toast.close(toastId);
+  const activeToasts = new Set();
+
+  const closeToast = (id) => {
+    toast.close(id);
+    activeToasts.delete(id);
   };
 
   const createToast = ({
@@ -23,14 +24,20 @@ const useCustomToast = ({
     position = 'top',
     maxWidth = '1200px',
     width = '90%',
-    duration = 5000,
+    duration = 4000,
     description,
     actions = null,
     isClosable = true,
   }) => {
-    const toastColors = bgColors[status];
+    // Limit to 3 the number of active toast (to avoid overwellming the ui)
+    if (activeToasts.size >= 3) {
+      // Close oldest toast
+      const oldestToast = Array.from(activeToasts)[0];
+      closeToast(oldestToast);
+    }
 
-    toastId = toast({
+    const toastColors = bgColors[status];
+    const id = toast({
       position,
       status,
       render: () => (
@@ -66,7 +73,7 @@ const useCustomToast = ({
                 height="24px"
                 fontSize="10px"
                 padding={2}
-                onClick={closeToast}
+                onClick={() => closeToast(id)}
                 top={2}
                 right={2}
               >
@@ -91,7 +98,7 @@ const useCustomToast = ({
                   fontSize="14px"
                   textDecoration="underline"
                   target="_blank"
-                  onClick={closeToast}
+                  onClick={() => closeToast(id)}
                 >
                   {action.label}
                 </Button>
@@ -101,7 +108,13 @@ const useCustomToast = ({
         </Box>
       ),
       duration,
+      onCloseComplete: () => {
+        activeToasts.delete(id);
+      },
     });
+
+    activeToasts.add(id);
+    return id;
   };
 
   return {
