@@ -330,10 +330,9 @@ function Checkout() {
                                           <Text fontSize="md" flex="1" color={option.plan_id === selectedPlan?.plan_id ? useColorModeValue('#25BF6C', 'green') : 'auto'}>
                                             {originalPlan.hasSubscriptionMethod
                                               ? (
-                                                `${handlePriceTextWithCoupon(option.priceText, allCoupons, originalPlan.plans)} / ${option.title}${
-                                                  option.pricePerMonthText
-                                                    ? `, (${handlePriceTextWithCoupon(option.pricePerMonthText, allCoupons, originalPlan.plans)}${t('signup:info.per-month')})`
-                                                    : ''
+                                                `${handlePriceTextWithCoupon(option.priceText, allCoupons, originalPlan.plans)} / ${option.title}${option.pricePerMonthText
+                                                  ? `, (${handlePriceTextWithCoupon(option.pricePerMonthText, allCoupons, originalPlan.plans)}${t('signup:info.per-month')})`
+                                                  : ''
                                                 }`
                                               )
                                               : `${handlePriceTextWithCoupon(option.priceText, allCoupons, originalPlan.plans)} / ${option.title}`}

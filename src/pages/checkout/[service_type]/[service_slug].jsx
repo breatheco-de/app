@@ -132,7 +132,6 @@ function ServiceSlug() {
     }
   }, [isAuthenticated, areSubscriptionsFetched, router.locale]);
 
-  // eslint-disable-next-line arrow-body-style
   useEffect(() => {
     if (!allowedServiceTypes.includes(service_type)) router.push('/404');
     return () => {
