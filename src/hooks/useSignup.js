@@ -850,9 +850,10 @@ const useSignup = () => {
 
       if (respPayment?.status_code >= 400) {
         setPaymentStatus('error');
+        console.log("wililililili", respPayment?.detail);
         setDeclinedPayment({
           title: t('transaction-denied'),
-          description: t('payment-not-processed'),
+          description: respPayment?.detail || t('payment-not-processed'),
         });
       }
 

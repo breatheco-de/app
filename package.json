@@ -17,7 +17,7 @@
     "node": "20.x"
   },
   "scripts": {
-    "dev": "bun verify:asset-file && bun make:iconDict && next dev -p 3000",
+    "dev": "bun verify:asset-file && bun make:iconDict && next dev -p 3002",
     "build": "bun make:assets && bun generate-files && next build",
     "start": "bun make:iconDict && next start -p 3080",
     "lint": "next lint",

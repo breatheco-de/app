@@ -86,6 +86,7 @@ function ServiceSummary({ service }) {
         isClosable: true,
         duration: 6000,
       });
+      console.log("welelelelelelelel", data?.detail);
       setDeclinedModalProps({
         title: t('transaction-denied'),
         description: data?.detail || t('payment-not-processed'),
@@ -141,6 +142,12 @@ function ServiceSummary({ service }) {
           } });
         setPaymentStatus('success');
         setConfirmationOpen(false);
+      } else if (res?.status === 400) {
+        setConfirmationOpen(false);
+        handlePaymentErrors(data, {
+          setSubmiting: setIsSubmittingPayment,
+          description: data?.detail || t('payment-not-processed'),
+        });
       } else {
         setConfirmationOpen(false);
         handlePaymentErrors(data, {
