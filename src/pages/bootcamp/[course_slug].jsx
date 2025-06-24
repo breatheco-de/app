@@ -630,7 +630,7 @@ function CoursePage() {
           />
         </Box>
       </SimpleModal>
-      {getAlternativeTranslation('whatsapp_url') && (
+      {getAlternativeTranslation('whatsapp_url') && getAlternativeTranslation('whatsapp_url') !== '' && (
         <PageBubble
           url={getAlternativeTranslation('whatsapp_url')}
           background="green.400"
