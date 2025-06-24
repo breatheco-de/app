@@ -24,8 +24,45 @@ import CustomCarousel from '../../components/CustomCarousel';
 import AssignmentSlide from '../../components/AssignmentSlide';
 import { useBootcamp } from './useBootcamp';
 import PageBubble from '../../components/PageBubble';
+import bc from '../../services/breathecode';
 
 const limitViewStudents = 3;
+
+export async function getStaticPaths({ locales }) {
+  const { data: courses } = await bc.marketing().courses();
+
+  const paths = courses?.length > 0
+    ? courses.flatMap((course) => locales.map((locale) => ({
+      params: { course_slug: course.slug },
+      locale,
+    })))
+    : [];
+
+  return {
+    fallback: 'blocking',
+    paths,
+  };
+}
+
+export async function getStaticProps({ params }) {
+  const { course_slug } = params;
+  let disableLangSwitcher = false;
+
+  try {
+    const { data: translations } = await bc.marketing.courseTranslations(course_slug);
+    if (Array.isArray(translations) && translations.length <= 1) {
+      disableLangSwitcher = true;
+    }
+  } catch (e) {
+    disableLangSwitcher = false;
+  }
+
+  return {
+    props: {
+      disableLangSwitcher,
+    },
+  };
+}
 
 function CoursePage() {
   const {
