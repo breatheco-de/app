@@ -36,6 +36,7 @@ import DynamicContentCard from '../../components/DynamicContentCard';
 import useAuth from '../../hooks/useAuth';
 import useSignup from '../../hooks/useSignup';
 import useCustomToast from '../../hooks/useCustomToast';
+import AddToCalendar from '../../components/addToCalendar';
 import FixedBottomCta from '../../components/Assets/FixedBottomCta';
 
 const arrayOfImages = [
@@ -278,6 +279,7 @@ function Workshop({ eventData, asset }) {
   const isAuth = isAuthenticated && user?.id;
   const recordingUrl = event?.recording_url;
   const alreadyApplied = users.some((l) => l?.attendee?.id === user?.id) || applied;
+  const eventNotStarted = event?.starting_at && new Date(event.starting_at) > new Date();
 
   const getWording = () => {
     if (!finishedEvent && (alreadyApplied || readyToJoinEvent)) {
@@ -1154,7 +1156,6 @@ function Workshop({ eventData, asset }) {
             </>
           )}
         </Box>
-
         <Box
           display="flex"
           gridColumn={{ base: '8 / span 4', lg: '10 / span 4' }}
@@ -1322,6 +1323,27 @@ function Workshop({ eventData, asset }) {
                 </ShowOnSignUp>
               </Box>
             </>
+          )}
+
+          {alreadyApplied && eventNotStarted && (
+            <Box my="10px">
+              <Text mb="16px" fontSize="14px" fontWeight={700}>{t('add-to-calendar-title')}</Text>
+              <AddToCalendar
+                event={{
+                  title: event?.title || '',
+                  description: event?.description || '',
+                  startTime: event?.starting_at || '',
+                  endTime: event?.ending_at || '',
+                  location: event?.online_event ? 'online' : '',
+                }}
+                buttonLabel={t('add-to-calendar')}
+                buttonProps={{
+                  variant: 'outline',
+                  borderColor: 'blue.default',
+                  color: 'blue.default',
+                }}
+              />
+            </Box>
           )}
 
           {users?.length > 0 && (
