@@ -630,9 +630,9 @@ function CoursePage() {
           />
         </Box>
       </SimpleModal>
-      {data?.course_translation?.landing_variables.whatsapp_url && (
+      {getAlternativeTranslation('whatsapp_url') && (
         <PageBubble
-          url={data.course_translation.landing_variables.whatsapp_url}
+          url={getAlternativeTranslation('whatsapp_url')}
           background="green.400"
           borderRadius="50%"
           boxShadow="0 2px 8px rgba(0,0,0,0.10)"
