@@ -1358,7 +1358,7 @@ function Workshop({ eventData, asset }) {
             </Box>
           )}
 
-          <Box my="10px">
+          <Box my="10px" background={featuredColor} padding="20px 25px" borderRadius="17px">
             <Text mb="16px" fontSize="14px" fontWeight={700}>{t('add-to-calendar-title')}</Text>
             <AddToCalendar
               event={{
@@ -1368,12 +1368,17 @@ function Workshop({ eventData, asset }) {
                 endTime: event?.ending_at || '',
                 location: event?.online_event ? 'online' : '',
               }}
-              buttonLabel={t('add-to-calendar')}
+              buttonLabel={(
+                <Box display="flex" alignItems="center" justifyContent="center" width="100%">
+                  <Icon icon="calendar" width="18px" height="18px" color="white" style={{ marginRight: 8 }} />
+                  <Text>{t('add-to-calendar')}</Text>
+                </Box>
+              )}
               buttonProps={{
                 variant: 'default',
                 background: 'blue.default',
                 color: 'white',
-                leftIcon: <Icon icon="calendar" width="15px" height="15px" color="currentColor" />,
+                width: '100%',
               }}
             />
           </Box>
