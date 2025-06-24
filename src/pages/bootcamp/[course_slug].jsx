@@ -642,7 +642,7 @@ function CoursePage() {
           justifyContent="center"
           width="52px"
           height="52px"
-          bottom="10px"
+          bottom={isCtaVisible ? "72px" : "10px"}
           right="12px"
           zIndex={2000}
         >
