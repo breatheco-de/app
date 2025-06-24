@@ -95,10 +95,15 @@
       "https://randomuser.me/api/portraits/men/1.jpg",
       "https://randomuser.me/api/portraits/men/34.jpg",
       "https://randomuser.me/api/portraits/women/25.jpg"
+    ],
+    "change-your-career-in-15-days": [
+      "https://randomuser.me/api/portraits/men/15.jpg",
+      "https://randomuser.me/api/portraits/men/3.jpg",
+      "https://randomuser.me/api/portraits/women/20.jpg"
     ]
   },
   "coupon-bar": {
-    "headline": "¡¡Precios tan bajos como {{discount}} de descuento!!",
+    "headline": "¡Aprovecha el {{discount}} de descuento!",
     "ends-in": "Termina en {{time}}",
     "see-prices": "Ver precios"
   },

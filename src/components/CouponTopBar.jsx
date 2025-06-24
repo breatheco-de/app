@@ -54,7 +54,7 @@ function CouponTopBar({ ...rest }) {
       {...rest}
     >
       <Box maxWidth="1280px" margin="auto" display="flex" justifyContent="space-between" alignItems="center">
-        <Flex alignItems="center" justifyContent="center" grow={1} gap="10px" flexDirection="row" flexWrap="wrap">
+        <Flex alignItems="center" justifyContent="center" gap="10px" flexDirection="row" flexWrap="wrap">
           <Text color="#FFF" fontSize={{ base: '12px', md: '18px' }} fontFamily="inter">
             {t('coupon-bar.headline', { discount })}
           </Text>
@@ -76,6 +76,7 @@ function CouponTopBar({ ...rest }) {
           </Flex>
         </Flex>
         <Button
+          minWidth="100px"
           variant="default"
           background="white"
           padding="8px"
@@ -85,9 +86,7 @@ function CouponTopBar({ ...rest }) {
           onClick={() => router.push(`/checkout${enrollQuerys}`)}
         >
           <Text size="auto" style={{ textWrap: 'nowrap' }}>
-            {t('coupon-bar.see-prices')}
-            {' '}
-            →
+            {`${t('coupon-bar.see-prices')} →`}
           </Text>
         </Button>
       </Box>
