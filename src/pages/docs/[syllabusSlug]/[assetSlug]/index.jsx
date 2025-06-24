@@ -95,7 +95,7 @@ export const getStaticProps = async ({ params, locale }) => {
 
     const moduleData = formatSyllabus(syllabus);
 
-    const asset = moduleData.flatMap((syllabusModule) => syllabusModule.assets.map((moduleAsset) => moduleAsset))
+    const asset = moduleData?.flatMap((syllabusModule) => syllabusModule.assets.map((moduleAsset) => moduleAsset))
       .find((moduleAsset) => moduleAsset.slug === assetSlug || moduleAsset.translations?.[locale]?.slug === assetSlug);
 
     const { translations } = asset;
