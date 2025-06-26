@@ -20,7 +20,8 @@ export const config = {
 async function middleware(req) {
   const url = req.nextUrl.clone();
   const { href, origin } = url;
-  let fullPath = href.replace(origin, '');
+  let fullPath = url.pathname;
+  log('DEBUG fullPath:', fullPath, 'search:', url.search);
 
   const localeMatch = fullPath.match(/^\/(es|en|us)(\/|$)/);
   const localePrefix = localeMatch ? localeMatch[1] : null;
@@ -42,7 +43,7 @@ async function middleware(req) {
 
   // Evitar redirecciones infinitas
   if (currentProject) {
-    const destinationUrl = `${origin}${currentProject.destination}`;
+    const destinationUrl = `${origin}${currentProject.destination}${url.search}`;
     if (destinationUrl === href) {
       log('Middleware: already on destination URL, skipping redirect.');
       return NextResponse.next();
