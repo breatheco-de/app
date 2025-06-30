@@ -78,7 +78,7 @@ export const useBootcamp = () => {
     coupon: getQueryString('coupon'),
   }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
 
-  const featurePrice = planPriceFormatter(featuredPlanToEnroll, planList, allDiscounts).toLocaleLowerCase();
+  const featurePrice = planPriceFormatter(featuredPlanToEnroll, planList, allDiscounts);
 
   const getAlternativeTranslation = (slug, params = {}, options = {}) => {
     const keys = slug.split('.');

@@ -14,6 +14,8 @@ import { slugify } from '../../../utils';
 import Text from '../../Text';
 import Image from '../../Image';
 import MermaidRenderer from '../MermaidRenderer';
+import useRigo from '../../../hooks/useRigo';
+import Icon from '../../Icon';
 
 export function generateId(children) {
   const text = children ? children
@@ -41,15 +43,44 @@ export function Wrapper({ children, ...rest }) {
     </Box>
   );
 }
+
+function RigoLink({ children, href }) {
+  const { rigo, isRigoInitialized } = useRigo();
+
+  const extractQueryFromUrlAndformatAsMessage = (url) => {
+    const urlObj = new URL(url);
+    const query = urlObj.searchParams.get('query');
+    const words = query?.split('-');
+
+    if (words && words.length > 0) {
+      words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1).toLowerCase();
+      return words?.join(' ');
+    }
+    return query;
+  };
+  function openRigo() {
+    if (isRigoInitialized) {
+      rigo.updateOptions(
+        { showBubble: true, collapsed: false, userMessage: { text: extractQueryFromUrlAndformatAsMessage(href), autoSend: true } },
+      );
+    }
+  }
+  return (
+    <button style={{ display: 'flex', alignItems: 'center', gap: '5px' }} type="button" onClick={openRigo}>
+      <Icon icon="rigobot-avatar-tiny" width="30px" height="30px" />
+      <span>{children}</span>
+    </button>
+  );
+}
+
 export function MDLink({ children, href }) {
+  const { isRigoInitialized } = useRigo();
   function isExternalUrl(url) {
     try {
       const baseUrl = process.env.DOMAIN_NAME || '';
       const base = new URL(baseUrl);
-
       // Handle relative URLs by using the base URL as a reference
       const fullUrl = url.startsWith('http') ? url : new URL(url, baseUrl).href;
-
       // Create a URL object based on the full URL
       const linkUrl = new URL(fullUrl, baseUrl);
 
@@ -68,8 +99,14 @@ export function MDLink({ children, href }) {
       return false; // If URL is invalid, handle as needed
     }
   }
+
+  function isRigoQuestion(url) {
+    return url.startsWith('https://4geeks.com/ask?query=');
+  }
+
   const external = isExternalUrl(href);
-  return (
+  const isRigLink = isRigoQuestion(href);
+  return isRigLink && isRigoInitialized ? <RigoLink href={href}>{children}</RigoLink> : (
     <Link
       as="a"
       href={href}
@@ -582,6 +619,10 @@ Code.defaultProps = {
   showInlineLineNumbers: true,
 };
 
+RigoLink.propTypes = {
+  children: PropTypes.node.isRequired,
+  href: PropTypes.string.isRequired,
+};
 MDLink.propTypes = {
   children: PropTypes.node.isRequired,
   href: PropTypes.string.isRequired,

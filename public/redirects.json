@@ -40,5 +40,11 @@
     "destination": "/es/interactive-coding-tutorial/random-card-es",
     "locale": false,
     "permanent": true
+  },
+  {
+    "source": "/bootcamp/change-your-career-in-15-days",
+    "destination": "/es/bootcamp/change-your-career-in-15-days",
+    "locale": false,
+    "permanent": true
   }
 ]

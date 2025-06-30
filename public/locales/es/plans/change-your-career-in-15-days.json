@@ -1,0 +1,143 @@
+{
+    "info": {
+        "type": "Cambia tu carrera",
+        "title": "Aprende a tu propio ritmo con retroalimentación y eventos en vivo",
+        "description": "Todo el contenido que necesitas para cambiar tu carrera en 15 días",
+        "button": {
+            "variant": "default",
+            "color": "#000000",
+            "background": "#fff",
+            "title": "Obtener Plan"
+        },
+        "service_items": {
+            "title": "Todo en Vuela Solo más...",
+            "items": [
+                {
+                    "label": "Talleres en vivo"
+                },
+                {
+                    "label": "Descuento en sesiones de mentoría individuales"
+                }
+            ]
+        },
+        "featured_info": [
+            {
+                "service": {
+                    "slug": "live-learning",
+                    "title": "Clases en vivo",
+                    "icon": "video"
+                },
+                "features": [
+                    {
+                        "description": "Aprende directamente de expertos todos los martes y jueves a través de Google Meet."
+                    }
+                ]
+            },
+            {
+                "service": {
+                    "slug": "interactive-platform",
+                    "title": "Plataforma con recursos prácticos",
+                    "icon": "message"
+                },
+                "features": [
+                    {
+                        "description": "Accede a lecturas, ejercicios y clases grabadas disponibles en todo momento."
+                    }
+                ]
+            },
+            {
+                "service": {
+                    "slug": "access-to-community",
+                    "title": "Comunidad exclusiva en WhatsApp",
+                    "icon": "community"
+                },
+                "features": [
+                    {
+                        "description": "Recibe asesoría, comparte avances y resuelve dudas en una comunidad activa y cercana."
+                    }
+                ]
+            },
+            {
+                "service": {
+                    "slug": "mentoring-session-discounts",
+                    "title": "Descuento en sesiones de coaching",
+                    "icon": "certificate"
+                },
+                "features": [
+                    {
+                        "description": "Obtén un 50% de descuento en sesiones personalizadas para llevar tu perfil al siguiente nivel."
+                    }
+                ]
+            },
+            {
+                "service": {
+                    "slug": "guides-and-templates",
+                    "title": "Guías y plantillas",
+                    "icon": "message"
+                },
+                "features": [
+                    {
+                        "description": "Descarga recursos clave para mejorar tu CV, negociar tu salario y hacer networking."
+                    }
+                ]
+            }
+        ],
+        "checkout_features": [
+            {
+                "features": [
+                    {
+                        "description": "Prueba nuestros modelos de IA entrenados internamente que pueden revisar tu código constantemente y darte retroalimentación, consejos mientras programas y más.",
+                        "title": "Clases en vivo"
+                    }
+                ],
+                "service": {
+                    "slug": "clases-en-vivo"
+                }
+            },
+            {
+                "features": [
+                    {
+                        "description": "Accede a lecturas, ejercicios y clases grabadas disponibles en todo momento.",
+                        "title": "Plataforma con recursos prácticos"
+                    }
+                ],
+                "service": {
+                    "slug": "plataforma-con-recursos-practicos"
+                }
+            },
+            {
+                "features": [
+                    {
+                        "description": "Recibe asesoría, comparte avances y resuelve dudas en una comunidad activa y cercana.",
+                        "title": "Comunidad exclusiva en WhatsApp"
+                    }
+                ],
+                "service": {
+                    "slug": "comunidad-exclusiva-en-whatsapp"
+                }
+            },
+            {
+                "features": [
+                    {
+                        "description": "Obtén un 50% de descuento en sesiones personalizadas para llevar tu perfil al siguiente nivel.",
+                        "title": "Descuento en sesiones de coaching"
+                    }
+                ],
+                "service": {
+                    "slug": "descuento-en-sesiones-de-coaching"
+                }
+            },
+            {
+                "features": [
+                    {
+                        "description": "Descarga recursos clave para mejorar tu CV, negociar tu salario y hacer networking.",
+                        "title": "Guías y plantillas"
+                    }
+                ],
+                "service": {
+                    "slug": "guias-y-plantillas"
+                }
+            }
+        ]
+    }
+}
