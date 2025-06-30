@@ -15,7 +15,7 @@
     },
     {
       "id": "bootcamps",
-      "label": "Aprender",
+      "label": "Fórmate para Tech",
       "bgColor": "#F3FAFE",
       "titleColor": "#0084FF",
       "description": "Cambia tu vida/carrera, entra al mundo tech y vive libre.",
@@ -71,7 +71,7 @@
     },
     {
       "id": "career-booster",
-      "label": "Career booster",
+      "label": "Más allá del CV",
       "bgColor": "#FFE7CC",
       "titleColor": "#FF8800",
       "private": false,
@@ -93,10 +93,10 @@
     },
     {
       "id": "read",
-      "label": "Talento y Formación",
+      "label": "Para Empresas",
       "bgColor": "#FFF4DC",
       "titleColor": "#FFB718",
-      "description": "Conecta personas y empresas a través de programas de aprendizaje, talento y capacitación adaptados a las necesidades del mercado. Ya sea que estés construyendo tu equipo o tu futuro, este es el lugar donde se encuentra la oportunidad.",
+      "description": "Programas de aprendizaje, captación de nuevo talento y/o capacitación adaptados a las necesidades del mercado. Ya sea que estés construyendo tu equipo o tu futuro, este es el lugar donde se encuentra la oportunidad.",
       "mainMenu": [
         {
           "label": "",
