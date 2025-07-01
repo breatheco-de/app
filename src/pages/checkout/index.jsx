@@ -28,7 +28,7 @@ import ContactInformation from '../../components/Checkout/ContactInformation';
 import Summary from '../../components/Checkout/Summary';
 import PaymentInfo from '../../components/Checkout/PaymentInfo';
 import Stepper from '../../components/Checkout/Stepper';
-import { removeSessionStorageItem } from '../../utils';
+import { getBrowserInfo, removeSessionStorageItem } from '../../utils';
 import signupAction from '../../store/actions/signupAction';
 import LoaderScreen from '../../components/LoaderScreen';
 import ModalInfo from '../../components/ModalInfo';
@@ -40,6 +40,8 @@ import Icon from '../../components/Icon';
 import AcordionList from '../../components/AcordionList';
 import useCustomToast from '../../hooks/useCustomToast';
 import { handlePriceTextWithCoupon } from '../../utils/getPriceWithDiscount';
+import useAuth from '../../hooks/useAuth';
+import { reportDatalayer } from '../../utils/requests';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -73,6 +75,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 };
 
 function Checkout() {
+  const { user } = useAuth();
   const { t } = useTranslation('signup');
   const router = useRouter();
   const {
@@ -131,6 +134,40 @@ function Checkout() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [isOpenned]);
+
+  useEffect(() => {
+    const handleExit = (eventOrUrl) => {
+      if (
+        (typeof eventOrUrl === 'string' && !eventOrUrl.startsWith('/checkout')) ||
+        typeof eventOrUrl === 'object'
+      ) {
+        reportDatalayer({
+          dataLayer: {
+            event: 'checkout_abandonment',
+            user: user?.email,
+            plan: selectedPlan?.title,
+            checkout_id: checkingData?.id,
+            checkout_status: paymentStatus,
+            checkout_date: new Date().toISOString(),
+            checkout_amount: selectedPlan?.price,
+            step: stepIndex,
+            agent: getBrowserInfo(),
+          },
+        });
+          
+      }
+    };
+  
+    if (!isPaymentSuccess) {
+      window.addEventListener('beforeunload', handleExit);
+      router.events.on('routeChangeStart', handleExit);
+  
+      return () => {
+        window.removeEventListener('beforeunload', handleExit);
+        router.events.off('routeChangeStart', handleExit);
+      };
+    }
+  }, [router, isPaymentSuccess]);
 
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
