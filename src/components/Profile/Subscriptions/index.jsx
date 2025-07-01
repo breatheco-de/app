@@ -3,36 +3,30 @@
 import {
   Box,
   Grid,
-  Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState, lazy, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
-import Image from 'next/image';
-import Icon from '../../Icon';
-import Heading from '../../Heading';
 import Text from '../../Text';
 import useStyle from '../../../hooks/useStyle';
 import useSubscriptions from '../../../hooks/useSubscriptions';
-import { location, slugToTitle, unSlugify } from '../../../utils';
+import { location, slugToTitle } from '../../../utils';
 import { CardSkeleton, SimpleSkeleton } from '../../Skeleton';
 import bc from '../../../services/breathecode';
 import SubscriptionCard from './SubscriptionCard';
 import ConsumableCard from './ConsumableCard';
+import ConsumableMoreInfoModal from './ConsumableMoreInfoModal';
+import Icon from '../../Icon';
+import { ProfilesSection } from '../../SupportSidebar/MentoringConsumables';
+import { defaultProfiles } from '../../../utils/variables';
 
 const ModalInfo = lazy(() => import('../../ModalInfo'));
 
 function Subscriptions({ cohorts }) {
   const { t } = useTranslation('profile');
   const { state, isLoading, cancelSubscription } = useSubscriptions();
-  const { hexColor, fontColor } = useStyle();
+  const { fontColor } = useStyle();
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
   const [servicesModal, setServicesModal] = useState(null);
   const [consumables, setConsumables] = useState({
@@ -147,21 +141,6 @@ function Subscriptions({ cohorts }) {
 
   const closeMentorshipsModal = () => setServicesModal(null);
 
-  const detailsConsumableData = {
-    mentorships: {
-      icon: 'teacher1',
-      title: t('subscription.your-mentoring-available'),
-    },
-    workshops: {
-      icon: 'community',
-      title: t('subscription.your-workshop-available'),
-    },
-    voids: {
-      icon: 'rigobot-avatar-tiny',
-      title: t('subscription.rigo-available'),
-    },
-  };
-
   const totalMentorshipsAvailable = consumables.mentorship_service_sets.some((service) => service.balance.unit === -1) ? -1 : consumables.mentorship_service_sets.reduce((acum, service) => acum + service.balance.unit, 0);
   const totalWorkshopsAvailable = consumables.event_type_sets.some((service) => service.balance.unit === -1) ? -1 : consumables.event_type_sets.reduce((acum, service) => acum + service.balance.unit, 0);
   const totalRigoConsumablesAvailable = consumables.voids.some((service) => service.balance.unit === -1) ? -1 : consumables.voids.reduce((acum, service) => acum + service.balance.unit, 0);
@@ -186,102 +165,32 @@ function Subscriptions({ cohorts }) {
           <>
             <ConsumableCard
               title={t('subscription.mentoring-available')}
-              icon="teacher1"
+              icon={<ProfilesSection profiles={defaultProfiles} size="34px" />}
               totalAvailable={totalMentorshipsAvailable}
               onClick={() => setServicesModal('mentorships')}
             />
             <ConsumableCard
               title={t('subscription.workshop-available')}
-              icon="community"
+              icon={<Icon icon="live-event-opaque" width="40px" height="40px" />}
               totalAvailable={totalWorkshopsAvailable}
               onClick={() => setServicesModal('workshops')}
             />
             <ConsumableCard
               title={t('subscription.rigo-available')}
-              icon="rigobot-avatar-tiny"
+              icon={<Icon icon="rigobot-avatar-tiny" width="34px" height="34px" />}
               totalAvailable={totalRigoConsumablesAvailable}
               onClick={() => setServicesModal('voids')}
             />
           </>
         )}
       </Box>
-      <Modal isOpen={servicesModal !== null} onClose={closeMentorshipsModal}>
-        <ModalOverlay />
-        <ModalContent>
-          {servicesModal && (
-            <>
-              <ModalHeader fontSize="26px" lineHeight="31px" display="flex" alignItems="center" gap="18px">
-                <Icon icon={detailsConsumableData[servicesModal].icon} color={hexColor.blueDefault} width="32px" height="32px" />
-                {detailsConsumableData[servicesModal].title}
-              </ModalHeader>
-              <ModalBody>
-                {services[servicesModal].map((service) => {
-                  const logo = service.logo_url || service.icon_url;
-                  return (
-                    <Box key={service.slug} mb="10px" background={hexColor.featuredColor} padding="10px" borderRadius="4px">
-                      <Box justifyContent="space-between" display="flex" gap="10px" alignItems="center" mb="5px" width="100%">
-                        <Box display="flex" gap="10px" alignItems="center">
-                          {logo && <Image src={logo} width={28} height={28} alt="Service logo" />}
-                          <Heading size="16px">
-                            {service.name || unSlugify(service.slug)}
-                          </Heading>
-                        </Box>
-                        {servicesModal === 'mentorships' && (
-                          <>
-                            {service.nonSaasAcademy ? (
-                              <Icon icon="infinite" color={hexColor.fontColor3} />
-                            ) : (
-                              <Box width="30px" height="30px" background={hexColor.featuredColor3} padding="5px" borderRadius="full">
-                                <Text textAlign="center" size="l" fontWeight="700">
-                                  {service.unit}
-                                </Text>
-                              </Box>
-                            )}
-                          </>
-                        )}
-                        {servicesModal === 'voids' && (
-                          <>
-                            <Box width="30px" height="30px" background={hexColor.featuredColor3} padding="5px" borderRadius="full">
-                              {service?.how_many >= 0 && service?.how_many < 100 ? (
-                                <Text textAlign="center" size="l" fontWeight="700">
-                                  {service?.how_many}
-                                </Text>
-                              ) : (
-                                <Icon icon="infinite" color={hexColor.fontColor3} />
-                              )}
-                            </Box>
-                          </>
-                        )}
-                      </Box>
-                      <Text size="md" color={hexColor.fontColor3}>
-                        {service?.description}
-                      </Text>
-                    </Box>
-                  );
-                })}
-                {servicesModal === 'mentorships' && existsNoAvailableAsSaas && (
-                  <Text>
-                    {t('subscription.bootcamp-mentorships')}
-                  </Text>
-                )}
-              </ModalBody>
-            </>
-          )}
-
-          <ModalFooter borderTop={`1px solid ${hexColor.borderColor}`}>
-            <Button
-              background={hexColor.blueDefault}
-              onClick={closeMentorshipsModal}
-              color="white"
-              _hover={{
-                background: hexColor.blueDefault,
-              }}
-            >
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <ConsumableMoreInfoModal
+        serviceModal={servicesModal}
+        services={services}
+        closeMentorshipsModal={closeMentorshipsModal}
+        existsNoAvailableAsSaas={existsNoAvailableAsSaas}
+        t={t}
+      />
       <Text fontSize="15px" fontWeight="700" pb="18px">
         {t('my-subscriptions')}
       </Text>
