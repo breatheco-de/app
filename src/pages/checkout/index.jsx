@@ -138,8 +138,8 @@ function Checkout() {
   useEffect(() => {
     const handleExit = (eventOrUrl) => {
       if (
-        (typeof eventOrUrl === 'string' && !eventOrUrl.startsWith('/checkout')) ||
-        typeof eventOrUrl === 'object'
+        (typeof eventOrUrl === 'string' && !eventOrUrl.startsWith('/checkout'))
+        || typeof eventOrUrl === 'object'
       ) {
         reportDatalayer({
           dataLayer: {
@@ -154,19 +154,19 @@ function Checkout() {
             agent: getBrowserInfo(),
           },
         });
-          
       }
     };
-  
+
     if (!isPaymentSuccess) {
       window.addEventListener('beforeunload', handleExit);
       router.events.on('routeChangeStart', handleExit);
-  
+
       return () => {
         window.removeEventListener('beforeunload', handleExit);
         router.events.off('routeChangeStart', handleExit);
       };
     }
+    return undefined;
   }, [router, isPaymentSuccess]);
 
   return (
