@@ -37,7 +37,7 @@ const useCheckout = () => {
   const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
   const currencySymbol = currenciesSymbols[originalPlan?.currency?.code] || '$';
 
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { userSession, location, isLoadingLocation } = useSession();
   const { createToast } = useCustomToast({ toastId: 'coupon-plan-email-detail' });
   const { coupon: couponQuery } = query;
@@ -345,6 +345,38 @@ const useCheckout = () => {
 
     setAllCoupons(coupons);
   }, [selfAppliedCoupon, discountCoupon]);
+
+  useEffect(() => {
+    const handleExit = (eventOrUrl) => {
+      if (
+        (typeof eventOrUrl === 'string' && !eventOrUrl.includes('/checkout'))
+        || typeof eventOrUrl === 'object'
+      ) {
+        reportDatalayer({
+          dataLayer: {
+            event: 'checkout_abandonment',
+            user: user?.email,
+            plan: selectedPlan?.title,
+            checkout_id: checkingData?.id,
+            checkout_status: paymentStatus,
+            checkout_date: new Date().toISOString(),
+            checkout_amount: selectedPlan?.price,
+            step: stepIndex,
+            agent: getBrowserInfo(),
+          },
+        });
+      }
+    };
+    if (!isPaymentSuccess) {
+      window.addEventListener('beforeunload', handleExit);
+      router.events.on('routeChangeStart', handleExit);
+      return () => {
+        window.removeEventListener('beforeunload', handleExit);
+        router.events.off('routeChangeStart', handleExit);
+      };
+    }
+    return undefined;
+  }, [router, isPaymentSuccess, stepIndex, selectedPlan]);
 
   const processedPrice = useMemo(() => {
     let pricingData = { ...selectedPlan };
