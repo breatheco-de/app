@@ -154,7 +154,20 @@
     "total-size": "Total size {{size}}",
     "invalid-url": "Invalid URL, expected link must contain: {{url}}",
     "url-is-required": "URL is required",
-    "no-delivery-needed": "To deliver this assignment you are not required to upload or specify anything, just click on the button below \"Deliver assignment\" and it will be considered done."
+    "no-delivery-needed": "To deliver this assignment you are not required to upload or specify anything, just click on the button below \"Deliver assignment\" and it will be considered done.",
+    "submit-flags-instruction": "You need to submit {{quantity}} flag(s) you captured while solving the project:",
+    "flag-placeholder": "FLAG{something}",
+    "flag-required": "Flag is required",
+    "invalid-flag": "Incorrect flag",
+    "duplicate-flag": "Duplicate flag detected",
+    "duplicate-flags-error": "Duplicate flags are not allowed",
+    "flags-submitted-successfully": "Flags submitted successfully",
+    "some-flags-invalid": "Some flags are invalid or missing",
+    "flag-validation-error": "Flag validation error occurred",
+    "invalid-flag-format": "Invalid flag format",
+    "no-permission-validate": "You don't have permission to validate flags",
+    "asset-not-found": "Asset not found for flag validation",
+    "flag-validation-failed": "Flag validation failed"
   },
   "mandatoryProjects": {
     "title": "Pending mandatory projects",

@@ -323,10 +323,10 @@ function SyllabusContent() {
     if (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
   }, [cohortSession, areSubscriptionsFetched]);
 
-  const sendProject = async ({ task, githubUrl, taskStatus }) => {
+  const sendProject = async ({ task, githubUrl, taskStatus, flags }) => {
     setShowModal(true);
     await updateAssignment({
-      task, githubUrl, taskStatus,
+      task, githubUrl, taskStatus, flags,
     });
   };
 

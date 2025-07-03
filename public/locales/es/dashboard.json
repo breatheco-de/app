@@ -155,7 +155,20 @@
     "total-size": "Tamaño total de {{size}}",
     "invalid-url": "URL no válida, el enlace esperado debe contener: {{url}}",
     "url-is-required": "La URL es obligatoria",
-    "no-delivery-needed": "Para entregar este proyecto no necesitas subir ningún archivo o especificar nada, simplemente puedes apretar el botón \"Entregar proyecto\" que se encuentra debajo y lo consideraremos como entregado."
+    "no-delivery-needed": "Para entregar este proyecto no necesitas subir ningún archivo o especificar nada, simplemente puedes apretar el botón \"Entregar proyecto\" que se encuentra debajo y lo consideraremos como entregado.",
+    "submit-flags-instruction": "Necesitas enviar {{quantity}} flag(s) que capturaste mientras resolvías el proyecto:",
+    "flag-placeholder": "FLAG{algo}",
+    "flag-required": "La flag es requerida",
+    "invalid-flag": "Flag incorrecta",
+    "duplicate-flag": "Flag duplicada detectada",
+    "duplicate-flags-error": "No se permiten flags duplicadas",
+    "flags-submitted-successfully": "Flags enviadas exitosamente",
+    "invalid-flag-format": "Formato de flag inválido",
+    "some-flags-invalid": "Algunas flags son inválidas o están faltando",
+    "flag-validation-error": "Ocurrió un error en la validación de la flag",
+    "no-permission-validate": "No tienes permisos para validar flags",
+    "asset-not-found": "Asset no encontrado para validación de flags",
+    "flag-validation-failed": "Falló la validación de la flag"
   },
   "mandatoryProjects": {
     "title": "Proyectos obligatorios pendientes",

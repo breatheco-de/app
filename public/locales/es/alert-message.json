@@ -64,6 +64,7 @@
   "google-maps-no-coincidences": "Google Maps: No se encontraron coincidencias para la dirección ingresada",
   "cohort-not-found": "No se encontró la cohorte especificada",
   "files-uploaded": "Archivos enviados con éxito",
+  "flags-validated-successfully": "¡Todas las flags validadas exitosamente! Proyecto entregado.",
   "current-task-no-files": "La tarea actual no tiene ningún archivo.",
   "error-fetching-activities": "Hubo un error al obtener las actividades",
   "error-updating-day-and-modules": "Hubo un error al actualizar el día y el módulo seleccionado",
