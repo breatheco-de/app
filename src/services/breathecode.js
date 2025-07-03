@@ -226,6 +226,7 @@ const breathecode = {
     return {
       lead: (data) => axios.post(`${url}/lead${qs}`, data),
       courses: () => axios.get(`${url}/course${qs}`),
+      courseTranslations: (courseSlug) => axios.get(`${url}/course/${courseSlug}/translations`),
       getCourse: (courseSlug) => axios.get(`${url}/course/${courseSlug}${qs}`),
     };
   },
