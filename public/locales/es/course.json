@@ -1,4 +1,6 @@
 {
+  "course-not-found": "Curso no encontrado",
+  "course-not-found-description": "El curso que estás buscando no existe. Por favor, intenta con un curso diferente.",
   "course-content-text": "Prepárate para obtener un trabajo con nuestro curriculum",
   "course-content-description": "Hemos ajustado nuestro contenido del curso con cientos de posiciones laborales para prepararte para una entrada exitosa en el mundo de la tecnología.",
   "students-enrolled-count": "+{{count}} estudiantes inscritos",
