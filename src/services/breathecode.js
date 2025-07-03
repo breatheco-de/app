@@ -201,6 +201,12 @@ const breathecode = {
         get: (id) => axios.get(`${url}/user/me/task/${id}/subtasks`),
         update: (id, args) => axios.put(`${url}/user/me/task/${id}/subtasks`, args),
       }),
+      validateFlag: (args) => axios.get(`${url}/academy/asset/flag${qs}`, {
+        headers: args.academyId && {
+          academy: args.academyId,
+        },
+      }),
+      generateFlag: () => axios.post(`${url}/academy/flag`),
     };
   },
   feedback: () => {
