@@ -37,7 +37,14 @@ const useCustomToast = () => {
     actions = null,
     isClosable = true,
   }) => {
-    const contentKey = `${title}-${description || ''}-${status}`;
+    const safeString = (value) => {
+      if (value === null || value === undefined) return '';
+      if (typeof value === 'string') return value;
+      if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+      return String(value);
+    };
+
+    const contentKey = `${safeString(title)}-${safeString(description)}-${safeString(status)}`;
     const now = Date.now();
 
     const existingToast = globalActiveToasts.get(contentKey);
