@@ -95,10 +95,15 @@
       "https://randomuser.me/api/portraits/men/1.jpg",
       "https://randomuser.me/api/portraits/men/34.jpg",
       "https://randomuser.me/api/portraits/women/25.jpg"
+    ],
+    "change-your-career-in-15-days": [
+      "https://randomuser.me/api/portraits/men/15.jpg",
+      "https://randomuser.me/api/portraits/men/3.jpg",
+      "https://randomuser.me/api/portraits/women/20.jpg"
     ]
   },
   "coupon-bar": {
-    "headline": "¡¡Precios tan bajos como {{discount}} de descuento!!",
+    "headline": "¡Aprovecha el {{discount}} de descuento!",
     "ends-in": "Termina en {{time}}",
     "see-prices": "Ver precios"
   },
@@ -272,6 +277,34 @@
           "review": "Contenido y estructura increíbles. ¡La herramienta de IA es maravillosa!"
         }
       ]
+    },
+    "change-your-career-in-15-days": {
+      "rating": 5,
+      "total_ratings": 178,
+      "reviews_numbers": 33,
+      "reviews": [
+        {
+          "name": "Amber Shaw",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/amber-shaw-jpeg",
+          "rating": 5,
+          "date": "hace 2 semanas",
+          "review": "¡Trabajar con Valentina fue genial! Me ayudó a prepararme para una entrevista próxima con dos simulacros de entrevista y me dio retroalimentación útil después de cada uno. Los consejos que compartió me hicieron sentir más seguro y preparado. Agradezco mucho su apoyo y la recomendaría a cualquiera que necesite un empujón extra para estar listo para una entrevista."
+        },
+        {
+          "name": "Nicole Woods",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/nicole-woods-png",
+          "rating": 5,
+          "date": "hace 2 semanas",
+          "review": "Tuve una excelente experiencia trabajando con Valentina en mi currículum y CV. Desde el principio, destacó por su profesionalismo: su propuesta inicial dejaba claro que se había tomado el tiempo de revisar a fondo mi perfil de LinkedIn y entender realmente mi trayectoria. Fue increíblemente eficiente, con un tiempo de respuesta sorprendentemente rápido, y los resultados fueron excelentes."
+        },
+        {
+          "name": "Daniel Anderi",
+          "avatar": "https://media.licdn.com/dms/image/v2/C4E03AQEMqo1Mrq4SOw/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1604327222040?e=1755734400&v=beta&t=nDFf_ZysyTZgowUOgAY5QjEH-FNUbudFG8x0fbFokPQ",
+          "rating": 5,
+          "date": "hace 1 semana",
+          "review": "Valentina es muy profesional, empática y servicial. Realiza su trabajo con mucha pasión y ética. Es responsable y a la vez se desempeña con alto nivel de excelencia. Es de ese tipo de personas que deseas tener en tu equipo porque sabe hacer las cosas bien y porque tiene una excelente actitud. :-)"
+        }
+      ]
     }
   },
   "featured-bullets": [
@@ -397,7 +430,7 @@
   },
   "job-section": {
     "image": "/static/images/happy-male-with-laptop.png",
-    "title": "Obtén un descuento exclusivo de 30% en Beyond the Resume",
+    "title": "Obtén un descuento exclusivo de 20% en Beyond the Resume",
     "subtitle": "Mejora tu CV, portafolio, perfil de GitHub, y el perfil de tus redes sociales.",
     "description": "Obtén un descuento exclusivo en Beyond the Resume al completar el curso, un programa diseñado para ayudarte con temas de carrera, desde optimizar tu perfil profesional hasta destacar en entrevistas.",
     "button": "Empieza ahora",

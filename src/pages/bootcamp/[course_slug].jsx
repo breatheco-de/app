@@ -23,6 +23,7 @@ import SimpleModal from '../../components/SimpleModal';
 import CustomCarousel from '../../components/CustomCarousel';
 import AssignmentSlide from '../../components/AssignmentSlide';
 import { useBootcamp } from './useBootcamp';
+import PageBubble from '../../components/PageBubble';
 
 const limitViewStudents = 3;
 
@@ -48,6 +49,7 @@ function CoursePage() {
     reviewsForCurrentCourse,
     cleanedStructuredData,
     showBottomCTA,
+    showVideoInCta,
 
     // Computed values
     isAuthenticated,
@@ -106,6 +108,7 @@ function CoursePage() {
         width="calc(100vw - 15px)"
         left="7.5px"
         zIndex={1100}
+        showVideoInCta={showVideoInCta}
       />
       <CouponTopBar display={{ base: 'none', md: 'block' }} />
       <Flex flexDirection="column" background={backgroundColor7}>
@@ -627,6 +630,25 @@ function CoursePage() {
           />
         </Box>
       </SimpleModal>
+      {getAlternativeTranslation('whatsapp_url') && getAlternativeTranslation('whatsapp_url') !== 'whatsapp_url' && (
+        <PageBubble
+          url={getAlternativeTranslation('whatsapp_url')}
+          background="green.400"
+          borderRadius="50%"
+          boxShadow="0 2px 8px rgba(0,0,0,0.10)"
+          p={1.5}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          width="52px"
+          height="52px"
+          bottom={isCtaVisible ? '72px' : '10px'}
+          right="12px"
+          zIndex={2000}
+        >
+          <Icon icon="whatsapp-border" color="#ffffff" width="35px" height="35px" />
+        </PageBubble>
+      )}
     </>
   );
 }

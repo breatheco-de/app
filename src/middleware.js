@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import aliasRedirects from '../public/alias-redirects.json';
 import redirectsFromApi from '../public/redirects-from-api.json';
+import staticRedirects from '../public/redirects.json';
 import { log } from './utils/logging';
 
 export const config = {
@@ -19,7 +20,8 @@ export const config = {
 async function middleware(req) {
   const url = req.nextUrl.clone();
   const { href, origin } = url;
-  let fullPath = href.replace(origin, '');
+  let fullPath = url.pathname;
+  log('DEBUG fullPath:', fullPath, 'search:', url.search);
 
   const localeMatch = fullPath.match(/^\/(es|en|us)(\/|$)/);
   const localePrefix = localeMatch ? localeMatch[1] : null;
@@ -28,9 +30,9 @@ async function middleware(req) {
     fullPath = fullPath.replace(`/${localePrefix}`, '');
   }
 
-  const aliasAndLessonRedirects = [...aliasRedirects, ...redirectsFromApi];
+  const allRedirects = [...staticRedirects, ...aliasRedirects, ...redirectsFromApi];
 
-  const currentProject = aliasAndLessonRedirects.find((item) => {
+  const currentProject = allRedirects.find((item) => {
     const normalizedSource = item.source.endsWith('/') ? item.source.slice(0, -1) : item.source;
     const normalizedPath = fullPath.endsWith('/') ? fullPath.slice(0, -1) : fullPath;
 
@@ -41,7 +43,7 @@ async function middleware(req) {
 
   // Evitar redirecciones infinitas
   if (currentProject) {
-    const destinationUrl = `${origin}${currentProject.destination}`;
+    const destinationUrl = `${origin}${currentProject.destination}${url.search}`;
     if (destinationUrl === href) {
       log('Middleware: already on destination URL, skipping redirect.');
       return NextResponse.next();

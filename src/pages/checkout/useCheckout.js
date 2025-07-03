@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import bc from '../../services/breathecode';
 import useAuth from '../../hooks/useAuth';
 import useSession from '../../hooks/useSession';
-import { isWindow, getQueryString, getStorageItem, removeStorageItem, slugToTitle, getBrowserInfo } from '../../utils';
+import { isWindow, getQueryString, getStorageItem, removeStorageItem, setStorageItem, slugToTitle, getBrowserInfo } from '../../utils';
 import signupAction from '../../store/actions/signupAction';
 import useSignup from '../../hooks/useSignup';
 import { BASE_PLAN, currenciesSymbols } from '../../utils/variables';
@@ -21,8 +21,7 @@ const useCheckout = () => {
   const [originalPlan, setOriginalPlan] = useState(null);
   const {
     state, handleStep, setLoader,
-    setSelectedPlan, setCheckingData, setPlanData,
-    restartSignup,
+    setSelectedPlan, setCheckingData, setPlanData, setPaymentStatus, setDeclinedPayment, restartSignup,
   } = signupAction();
   const {
     stepsEnum, getSelfAppliedCoupon,
@@ -38,12 +37,13 @@ const useCheckout = () => {
   const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
   const currencySymbol = currenciesSymbols[originalPlan?.currency?.code] || '$';
 
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { userSession, location, isLoadingLocation } = useSession();
   const { createToast } = useCustomToast({ toastId: 'coupon-plan-email-detail' });
   const { coupon: couponQuery } = query;
   const plan = getQueryString('plan');
   const planId = getQueryString('plan_id');
+  const callbackUrl = getQueryString('callback');
   const planFormated = plan || BASE_PLAN;
 
   const [coupon] = usePersistentBySession('coupon', '');
@@ -217,7 +217,12 @@ const useCheckout = () => {
   };
 
   useEffect(() => {
-    removeStorageItem('redirect');
+    // If callback URL is provided, set it as the redirect destination
+    if (callbackUrl) {
+      setStorageItem('redirect', callbackUrl);
+    } else {
+      removeStorageItem('redirect');
+    }
 
     if (!isLoadingLocation) {
       initializePlanData();
@@ -232,7 +237,7 @@ const useCheckout = () => {
         agent: getBrowserInfo(),
       },
     });
-  }, [router.locale, isLoadingLocation]);
+  }, [router.locale, isLoadingLocation, callbackUrl]);
 
   useEffect(() => {
     if (checkingData?.id && !checkingData?.isTrial) {
@@ -261,6 +266,19 @@ const useCheckout = () => {
       setLoader('plan', true);
 
       const checking = await getChecking(planData);
+
+      // Check if getChecking returned an error response
+      if (checking?.status >= 400) {
+        setPaymentStatus('error');
+        setDeclinedPayment({
+          title: t('transaction-denied'),
+          description: checking?.data?.detail || checking?.detail || t('payment-not-processed'),
+        });
+        handleStep(stepsEnum.SUMMARY);
+        setLoader('plan', false);
+        return;
+      }
+
       const plans = checking?.plans || [];
       const existsPayablePlan = plans.some((item) => item.price > 0);
       const autoSelectedPlan = findAutoSelectedPlan(checking);
@@ -327,6 +345,38 @@ const useCheckout = () => {
 
     setAllCoupons(coupons);
   }, [selfAppliedCoupon, discountCoupon]);
+
+  useEffect(() => {
+    const handleExit = (eventOrUrl) => {
+      if (
+        (typeof eventOrUrl === 'string' && !eventOrUrl.includes('/checkout'))
+        || typeof eventOrUrl === 'object'
+      ) {
+        reportDatalayer({
+          dataLayer: {
+            event: 'checkout_abandonment',
+            user: user?.email,
+            plan: selectedPlan?.title,
+            checkout_id: checkingData?.id,
+            checkout_status: paymentStatus,
+            checkout_date: new Date().toISOString(),
+            checkout_amount: selectedPlan?.price,
+            step: stepIndex,
+            agent: getBrowserInfo(),
+          },
+        });
+      }
+    };
+    if (!isPaymentSuccess) {
+      window.addEventListener('beforeunload', handleExit);
+      router.events.on('routeChangeStart', handleExit);
+      return () => {
+        window.removeEventListener('beforeunload', handleExit);
+        router.events.off('routeChangeStart', handleExit);
+      };
+    }
+    return undefined;
+  }, [router, isPaymentSuccess, stepIndex, selectedPlan]);
 
   const processedPrice = useMemo(() => {
     let pricingData = { ...selectedPlan };

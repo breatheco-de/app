@@ -27,6 +27,7 @@ function FixedBottomCta({
   eventWording,
   eventTitle,
   eventDescription,
+  showVideoInCta,
   ...rest
 }) {
   const { t } = useTranslation('exercises');
@@ -72,7 +73,7 @@ function FixedBottomCta({
       {...rest}
     >
       <Box paddingBottom={couponApplied || isFetching ? '0' : '5px'}>
-        {videoUrl && (
+        {videoUrl && (showVideoInCta === undefined || showVideoInCta) && (
           <ReactPlayerV2
             title={asset ? 'Video tutorial' : ''}
             withModal
@@ -91,7 +92,7 @@ function FixedBottomCta({
           </>
         )}
 
-        {course && isFetching && <Skeleton height="150px" width="100%" padding="1px" />}
+        {course && isFetching && <Skeleton height="50px" width="100%" padding="1px" />}
 
         {course && !isFetching && couponApplied && <CouponTopBar />}
 
@@ -169,6 +170,7 @@ FixedBottomCta.propTypes = {
   eventWording: PropTypes.string,
   eventTitle: PropTypes.string,
   eventDescription: PropTypes.string,
+  showVideoInCta: PropTypes.bool,
 };
 
 FixedBottomCta.defaultProps = {
@@ -184,6 +186,7 @@ FixedBottomCta.defaultProps = {
   eventWording: undefined,
   eventTitle: undefined,
   eventDescription: undefined,
+  showVideoInCta: undefined,
 };
 
 export default FixedBottomCta;
