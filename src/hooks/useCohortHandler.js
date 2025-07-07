@@ -346,7 +346,7 @@ function useCohortHandler() {
   };
 
   const updateAssignment = async ({
-    task, githubUrl, taskStatus,
+    task, githubUrl, taskStatus, flags,
   }) => {
     // Task case
     const { cohort, ...taskData } = task;
@@ -362,7 +362,7 @@ function useCohortHandler() {
 
       const toastMessage = () => {
         if (!isProject) return t('alert-message:assignment-updated');
-        return isDelivering ? t('alert-message:delivery-success') : t('alert-message:delivery-removed');
+        return isDelivering ? t('alert-message:delivery-success') : t('alert-message:assignment-updated');
       };
 
       if (isProject) {
@@ -370,6 +370,7 @@ function useCohortHandler() {
           ...taskData,
           task_status: taskStatus || toggleStatus,
           github_url: projectUrl,
+          flags,
           revision_status: 'PENDING',
           delivered_at: new Date().toISOString(),
         };

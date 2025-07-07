@@ -1,4 +1,6 @@
 {
+  "course-not-found": "Course not found",
+  "course-not-found-description": "The course you are looking for does not exist. Please try again with a different course.",
   "course-content-text": "Get Job-Ready with Our Syllabus!",
   "course-content-description": "We've fine-tuned our course content with hundreds of job positions to prepare you for a successful entry into tech.",
   "students-enrolled-count": "+{{count}} of students enrolled",
@@ -401,7 +403,7 @@
   },
   "job-section": {
     "image": "/static/images/happy-male-with-laptop.png",
-    "title": "Get an exclusive 30% discount on Beyond the Resume",
+    "title": "Get an exclusive 20% discount on Beyond the Resume",
     "subtitle": "Improve your CV, portfolio, GitHub profile, and social media profiles.",
     "description": "Earn an exclusive discount on Beyond the Resume after completing the course, a program designed to help you with career topics, from optimizing your professional profile to excelling in interviews.",
     "button": "Join now!",
