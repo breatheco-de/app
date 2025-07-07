@@ -49,7 +49,7 @@ export async function getStaticProps({ params }) {
   let disableLangSwitcher = false;
 
   try {
-    const { data: translations } = await bc.marketing.courseTranslations(course_slug);
+    const { data: translations } = await bc.marketing().courseTranslations(course_slug);
     if (Array.isArray(translations) && translations.length <= 1) {
       disableLangSwitcher = true;
     }
