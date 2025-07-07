@@ -30,6 +30,7 @@ import SupportSidebar from '../../components/SupportSidebar';
 import Feedback from '../../components/Feedback';
 import axios from '../../axios';
 import LanguageSelector from '../../components/LanguageSelector';
+import useConsumables from '../../hooks/useConsumables';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -78,6 +79,12 @@ function chooseProgram() {
   const isClosedLateModal = getStorageItem('isClosedLateModal');
   const TwelveHoursInMinutes = 720;
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
+  const { consumables } = useConsumables(cohorts);
+
+  const allSubscriptions = [
+    ...subscriptions?.subscriptions || [],
+    ...subscriptions?.plan_financings || [],
+  ];
 
   const allSyllabus = useMemo(() => {
     const syllabus = [];
@@ -87,6 +94,16 @@ function chooseProgram() {
     });
     return syllabus;
   }, [cohorts]);
+
+  const hasValidCohorts = cohorts.some((cohort) => {
+    const validEducationalStatus = ['ACTIVE', 'GRADUATED', 'POSTPONED', 'NOT_COMPLETING'].includes(cohort.cohort_user?.educational_status);
+    const validFinancialStatus = cohort.cohort_user?.finantial_status !== 'LATE';
+    return validEducationalStatus && validFinancialStatus;
+  });
+
+  const showMentorshipWidget = consumables.mentorship_service_sets?.some(
+    (set) => set.balance.unit > 0 || set.balance.unit === -1,
+  ) || hasValidCohorts;
 
   const getServices = async (userRoles) => {
     if (userRoles?.length > 0) {
@@ -123,8 +140,8 @@ function chooseProgram() {
       const cohortIsReady = cohorts?.length > 0 && cohorts?.some((cohort) => {
         const academy = cohort?.academy;
         if (cohort?.id === subscriptionProcess?.id
-        && cohort?.slug === subscriptionProcess?.slug
-        && academy?.id === subscriptionProcess?.academy_info?.id) return true;
+          && cohort?.slug === subscriptionProcess?.slug
+          && academy?.id === subscriptionProcess?.academy_info?.id) return true;
 
         return false;
       });
@@ -168,12 +185,6 @@ function chooseProgram() {
     return () => clearTimeout(revalidate);
   }, [user, cohorts]);
 
-  const allSubscriptions = [
-    ...subscriptions?.subscriptions || [],
-    ...subscriptions?.plan_financings || [],
-  ];
-  // .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
-
   useEffect(() => {
     if (subscriptionLoading === false && cohorts.length > 0 && Object.values(cohortMembers)?.length > 0) {
       const programList = cohorts?.reduce((acc, value) => {
@@ -186,7 +197,7 @@ function chooseProgram() {
           subscription: subscriptions?.subscriptions?.find(
             (sub) => sub?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === value.slug),
           ) || null,
-          all_subscriptions: allSubscriptions,
+          all_subscriptions: JSON.parse(JSON.stringify(allSubscriptions)),
           slug: value.slug,
         };
         return acc;
@@ -612,16 +623,16 @@ function chooseProgram() {
               cohorts={cohorts}
             />
           </Box>
-          <Box zIndex={10}>
-            {!mentorshipServices.isLoading && mentorshipServices?.data?.length > 0 && (
+          {showMentorshipWidget && !mentorshipServices.isLoading && mentorshipServices?.data?.length > 0 && (
+            <Box zIndex={10}>
               <SupportSidebar
                 allCohorts={cohorts}
                 allSyllabus={allSyllabus}
                 services={mentorshipServices.data}
                 subscriptions={allSubscriptions}
               />
-            )}
-          </Box>
+            </Box>
+          )}
           <Feedback />
 
           {cohorts.every((elem) => elem.available_as_saas) && (
