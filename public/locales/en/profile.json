@@ -58,6 +58,11 @@
     "title": "Upload your profile image",
     "submit-button": "Update profile picture"
   },
+  "consumable-services": {
+    "mentorships": "Mentoring",
+    "workshops": "Workshop",
+    "voids": "Rigobot"
+  },
   "subscription": {
     "totally-paid": "Total paid: You've paid the full amount of the plan of {{currencySymbol}}{{amount}}.",
     "error-message": "Error message: {{error}}",
@@ -68,8 +73,10 @@
     "what-you-will-get": "What you will get:",
     "bootcamp-mentorships": "You have unlimited access to those mentorship services with this icon ∞ because you belong to the bootcamp",
     "mentoring-available": "Mentoring sessions available",
+    "no-consumables-available": "You do not have {{service}} sessions available",
+    "add-consumables": "Add {{service}} sessions",
     "rigo-available": "Rigobot consumables",
-    "your-mentoring-available": "Your mentoring services available",
+    "your-mentoring-available": "Your mentoring services",
     "workshop-available": "Workshop sessions available",
     "your-workshop-available": "Your workshop sessions available",
     "see-details": "See details",

@@ -58,6 +58,11 @@
     "title": "Sube tu imagen de perfil",
     "submit-button": "Actualizar imagen de perfil"
   },
+  "consumable-services": {
+    "mentorships": "Mentoría",
+    "workshops": "Taller",
+    "voids": "Rigo AI"
+  },
   "subscription": {
     "totally-paid": "Total pagado: Has pagado el precio completo del plan de {{currencySymbol}}{{amount}}.",
     "error-message": "Mensaje de error: {{error}}",
@@ -68,8 +73,10 @@
     "what-you-will-get": "Lo que obtendrás:",
     "bootcamp-mentorships": "Tienes acceso ilimitado a los servicios de mentoría con este ícono ∞ porque perteneces al bootcamp",
     "mentoring-available": "Sesiones de mentorías disponibles",
+    "no-consumables-available": "No tienes sesiones de {{service}} disponibles",
+    "add-consumables": "Agregar sesiones de {{service}}",
     "rigo-available": "Consumibles de Rigobot",
-    "your-mentoring-available": "Tus servicios de mentorías disponibles",
+    "your-mentoring-available": "Tus servicios de mentorías",
     "workshop-available": "Sesiones de workshops disponibles",
     "your-workshop-available": "Tus sesiones de workshops disponibles",
     "see-details": "Ver detalles",
