@@ -526,8 +526,8 @@ function CoursePage() {
             id="pricing"
             externalPlanProps={planData}
             externalSelection={financeSelected}
-            title={getAlternativeTranslation('show-prices.title')}
-            description={getAlternativeTranslation('show-prices.description')}
+            title={getAlternativeTranslation('pricing-title')}
+            subtitle={getAlternativeTranslation('pricing-subtitle')}
             plan={data?.plan_slug}
             cohortId={cohortId}
             pricingMktInfo={benefitsBullets}

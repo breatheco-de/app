@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { Box, Flex, Container, Button, Img, Link, Image } from '@chakra-ui/react';
+import { Box, Flex, Container, Button, Img } from '@chakra-ui/react';
 import { useEffect, useState, useMemo } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useQuery } from '@tanstack/react-query';
@@ -10,8 +10,8 @@ import Faq from '../components/Faq';
 import PricingCard from '../components/PricingCard';
 import LoaderScreen from '../components/LoaderScreen';
 import MktTrustCards from '../components/PrismicComponents/MktTrustCards';
-import DraggableContainer from '../components/DraggableContainer';
-import Icon from '../components/Icon';
+import MktShowPrices from '../components/PrismicComponents/MktShowPrices';
+import CourseCard from '../components/CourseCard';
 import { getQueryString, isWindow, slugToTitle } from '../utils';
 import { WHITE_LABEL_ACADEMY } from '../utils/variables';
 import useStyle from '../hooks/useStyle';
@@ -40,30 +40,71 @@ const getYearlyPlans = (originalPlans, suggestedPlans, allFeaturedPlans) => {
 
 function PricingView() {
   const { t, lang } = useTranslation('pricing');
-  const { getSelfAppliedCoupon, handleSuggestedPlan } = useSignup();
+  const { getSelfAppliedCoupon, handleSuggestedPlan, generatePlan } = useSignup();
   const { getPlanFeatures } = usePlanMktInfo();
   const [activeType, setActiveType] = useState('monthly');
+  const [viewMode, setViewMode] = useState('immersive-bootcamps');
   const { isAuthenticated, cohorts } = useAuth();
   const { location } = useSession();
-  const { hexColor, modal } = useStyle();
+  const { hexColor } = useStyle();
   const [relatedSubscription, setRelatedSubscription] = useState({});
   const [selectedPlanData, setSelectedPlanData] = useState({});
   const [selectedCourseData, setSelectedCourseData] = useState({});
   const [allFeaturedPlansSelected, setAllFeaturedPlansSelected] = useState([]);
-  const [publicMktCourses, setPublicMktCourses] = useState([]);
   const [isFetching, setIsFetching] = useState({ courses: true, selectedPlan: true });
+  const [showBootcamps, setShowBootcamps] = useState(false);
+  const [previousViewMode, setPreviousViewMode] = useState('');
+  const [premiumPlan, setPremiumPlan] = useState(null);
+  const [premiumPlanCourses, setPremiumPlanCourses] = useState([]);
+  const [showPremiumPlan, setShowPremiumPlan] = useState(false);
   const [paymentTypePlans, setPaymentTypePlans] = useState({ hasSubscriptionMethod: false, monthly: [], yearly: [] });
   const router = useRouter();
   const queryCourse = getQueryString('course');
   const queryPlan = getQueryString('plan');
+  const queryView = getQueryString('view');
+  const premiumPlanSlug = process.env.PURCHASE_PLAN || '4geeks-plus-subscription';
   const defaultMonthlyPlans = t('signup:pricing.monthly-plans', {}, { returnObjects: true });
   const defaultYearlyPlans = t('signup:pricing.yearly-plans', {}, { returnObjects: true });
   const bootcampInfo = t('common:bootcamp', {}, { returnObjects: true });
+  const bootcampCourses = t('bootcamp-courses', {}, { returnObjects: true });
   const planFormated = useMemo(() => (queryPlan && encodeURIComponent(queryPlan)) || '', [queryPlan]);
   const allDefaultPlansList = useMemo(() => [...defaultMonthlyPlans || [], ...defaultYearlyPlans || []], [defaultMonthlyPlans, defaultYearlyPlans]);
   const courseFormated = useMemo(() => (queryCourse && encodeURIComponent(queryCourse)) || '', [queryCourse]);
   const selectedPlanListExists = selectedPlanData?.planList?.length > 0;
   const planSlug = selectedCourseData?.plan_slug || planFormated;
+
+  const handleViewModeChange = (mode) => {
+    setViewMode(mode);
+  };
+
+  useEffect(() => {
+    if (queryView === 'self-paced') {
+      setViewMode('self-paced');
+    } else {
+      setViewMode('immersive-bootcamps');
+    }
+  }, [queryView]);
+
+  useEffect(() => {
+    if (previousViewMode !== viewMode) {
+      setShowPremiumPlan(false);
+      setShowBootcamps(false);
+    }
+
+    if (viewMode === 'self-paced' && previousViewMode !== 'self-paced' && premiumPlan) {
+      setTimeout(() => {
+        setShowPremiumPlan(true);
+      }, 100);
+    }
+
+    if (viewMode === 'immersive-bootcamps' && previousViewMode !== 'immersive-bootcamps') {
+      setTimeout(() => {
+        setShowBootcamps(true);
+      }, 100);
+    }
+
+    setPreviousViewMode(viewMode);
+  }, [viewMode, previousViewMode, premiumPlan]);
 
   const formatPlans = (allPlansList, hideYearlyOption = false) => {
     const freeTierList = allPlansList?.filter((p) => p?.isFreeTier);
@@ -172,7 +213,8 @@ function PricingView() {
       const { data } = response;
 
       const publicCourses = data?.filter((course) => course?.visibility === 'PUBLIC' && course?.plan_slug !== 'basic' && course?.plan_slug !== 'free-trial-deep-dive-into-python');
-      setPublicMktCourses(publicCourses);
+      const coursesRelatedToPremium = publicCourses?.filter((course) => course?.plan_slug === premiumPlanSlug);
+      setPremiumPlanCourses(coursesRelatedToPremium);
 
       const selectedCourseByQueryString = publicCourses.find((course) => course?.slug === courseFormated);
 
@@ -191,9 +233,24 @@ function PricingView() {
     }
   };
 
+  const fetchPremiumPlanWithCoupons = async () => {
+    const premiumPlanData = await generatePlan(premiumPlanSlug);
+    await getSelfAppliedCoupon(premiumPlanData?.slug || premiumPlanSlug);
+    setPremiumPlan(premiumPlanData);
+  };
+
   useEffect(() => {
     fetchCourses();
+    fetchPremiumPlanWithCoupons();
   }, [lang]);
+
+  useEffect(() => {
+    if (premiumPlan && viewMode === 'self-paced' && !showPremiumPlan) {
+      setTimeout(() => {
+        setShowPremiumPlan(true);
+      }, 50);
+    }
+  }, [premiumPlan, viewMode, showPremiumPlan]);
 
   const verifyIfUserAlreadyHaveThisPlan = (userPlan, featuredPlans) => featuredPlans.some(
     (ftPlan) => userPlan?.plans[0]?.slug === ftPlan?.plan_slug,
@@ -262,131 +319,166 @@ function PricingView() {
         margin="0 auto"
         padding="0 10px"
       >
-        <Box marginBottom="20px">
+        {!isAbleToShowPrices && (
+          <>
+            <Box textAlign="center" marginBottom="40px">
+              <Text
+                size="48px"
+                fontWeight="400"
+                color="#25BF6C"
+                marginBottom="8px"
+                lineHeight="1.2"
+              >
+                {viewMode === 'immersive-bootcamps' ? t('change-your-life-with-bootcamp') : t('learn-at-your-own-pace')}
+              </Text>
+              <Text
+                size="18px"
+                margin="0 auto"
+                lineHeight="1.5"
+              >
+                {viewMode === 'immersive-bootcamps'
+                  ? t('immersive-bootcamp-description')
+                  : t('self-paced-description')}
+              </Text>
+            </Box>
 
-          {!isAbleToShowPrices && (
-            <Flex
-              direction={['column', 'column', 'row', 'row']}
-            >
-              <Box maxWidth="350px">
-                <Text size="xl" as="h2" textAlign="start" color={hexColor.blueDefault}>
-                  {t('heading')}
-                </Text>
-                <Text
-                  size="30px"
-                  flexShrink={[0, 0, 1, 1]}
-                  fontWeight="700"
-                  width={['100%', '100%', '100%', '100%']}
+            <Flex justifyContent="center" marginBottom="40px">
+              <Flex
+                border={`1px solid ${hexColor.darkBlueDefault}`}
+                borderRadius="5px"
+                overflow="hidden"
+                background={hexColor.background}
+              >
+                <Button
+                  variant="unstyled"
+                  padding="0 24px"
+                  fontWeight="600"
+                  fontSize={{ base: '13px', md: '14px' }}
+                  background={viewMode === 'self-paced' ? hexColor.darkBlueDefault : 'transparent'}
+                  color={viewMode === 'self-paced' ? 'white' : hexColor.darkBlueDefault}
+                  onClick={() => handleViewModeChange('self-paced')}
+                  borderRadius="0"
                 >
-                  {t('choose-your-career-path')}
-                </Text>
-                <Text marginBottom="26px" size="xl" as="h2" textAlign="start">
-                  {t('sub-heading')}
-                </Text>
-              </Box>
-              <DraggableContainer>
-                <Flex gridGap="24px">
-                  {publicMktCourses?.length > 0 && publicMktCourses.slice(0, 2).map((course) => (
-                    <Flex key={course.slug} borderRadius="8px" background={modal.background3} padding="24px 8px 8px" margin="43px 0 0 0" justifyContent="space-between" minHeight="200px" width={['23rem', '23rem', '27rem', '27rem']} minWidth={['23rem', '23rem', '27rem', '27rem']} flexDirection="column" gridGap="16px" position="relative">
-                      <Box position="absolute" borderRadius="full" top="-30px">
-                        <Img src={course.icon_url} width="44px" height="44px" />
-                      </Box>
-                      <Flex flexDirection="column" gridGap="8px">
-                        <Heading
-                          size="21px"
-                          as="h3"
-                          lineHeight="normal"
-                          fontWeight="700"
-                          color={course.color}
-                        >
-                          {course?.course_translation?.title}
-                        </Heading>
-                        <Text
-                          size="14px"
-                          fontWeight="500"
-                        >
-                          {course?.course_translation?.description}
-                        </Text>
-                      </Flex>
-                      <Link
-                        variant="buttonDefault"
-                        borderRadius="3px"
-                        href={`/${lang}/bootcamp/${course?.slug}`}
-                        textAlign="center"
-                        width="100%"
-                        opacity="0.9"
-                        _hover={{ opacity: 1 }}
-                        _active={{ opacity: 1 }}
-                        display="flex"
-                        justifyContent="center"
-                        alignItems="center"
-                        gap="10px"
-                      >
-                        <Text fontSize="auto">{t('see-plans-and-prices')}</Text>
-                        <Icon icon="longArrowRight" width="18px" height="18px" color="white" />
-                      </Link>
-                      {course?.course_translation?.landing_variables?.card?.length > 0 && (
-                        <Flex flexDirection="column" gridGap="10px" borderRadius="4px" padding="12px">
-                          {course?.course_translation?.landing_variables?.card?.map((content) => {
-                            const isUrlImage = content?.icon?.includes('http');
-                            return (
-                              <Flex key={content.title} gridGap="10px">
-                                {isUrlImage ? (
-                                  <Image src={course?.icon} width="18px" height="18px" borderRadius="8px" background={course?.color || 'green.400'} />
-                                ) : (
-                                  <Icon icon={content?.icon} width="18px" height="18px" color={hexColor.blueDefault} />
-                                )}
-                                <Text size="14px" fontWeight="500" letterSpacing="normal">
-                                  {content.title}
-                                  {' '}
-                                  <Text as="span" size="14px" fontWeight="700">
-                                    {content.value}
-                                  </Text>
-                                </Text>
-                              </Flex>
-                            );
-                          })}
-                        </Flex>
-                      )}
-                    </Flex>
-                  ))}
-                </Flex>
-              </DraggableContainer>
+                  {t('toggle-self-paced')}
+                </Button>
+                <Button
+                  variant="unstyled"
+                  padding="0 24px"
+                  fontWeight="600"
+                  fontSize={{ base: '13px', md: '14px' }}
+                  background={viewMode === 'immersive-bootcamps' ? hexColor.darkBlueDefault : 'transparent'}
+                  color={viewMode === 'immersive-bootcamps' ? 'white' : hexColor.darkBlueDefault}
+                  onClick={() => handleViewModeChange('immersive-bootcamps')}
+                  borderRadius="0"
+                >
+                  {t('toggle-immersive-bootcamp')}
+                </Button>
+              </Flex>
             </Flex>
-          )}
 
-          {isAbleToShowPrices && (
-            <Flex gridGap="1rem" flexDirection={{ base: 'column', md: 'row' }} justifyContent="space-between" margin="3.75rem 0 2.5rem 0">
-              {!planFormated && (
-                <Text size="30px" width="100%" alignItems="center" textAlign={!existsSubscriptionMehtod ? 'center' : 'start'} fontWeight={700}>
-                  {t('you-are-buying')}
-                  <Text as="span" size="30px" margin="0 0 0 8px" color="blue.default">
-                    {selectedCourseData?.course_translation?.title || slugToTitle(courseFormated) || slugToTitle(planFormated)}
-                  </Text>
-                </Text>
-              )}
+            {viewMode === 'self-paced' && (
+              <Flex
+                opacity={showPremiumPlan ? 1 : 0}
+                transform={showPremiumPlan ? 'translateY(0)' : 'translateY(20px)'}
+                transition="all 0.5s ease-in-out"
+                direction="column"
+              >
+                <MktShowPrices
+                  externalPlanProps={premiumPlan}
+                  plan={premiumPlanSlug}
+                  paymentSwitchPlacement="inner"
+                  title=""
+                  description=""
+                  padding="0"
+                />
 
-              {existsSubscriptionMehtod && existentOptions?.length > 0 && ((courseFormated || planFormated) && !isFetching.selectedPlan) && (
-                <Flex width="fit-content" margin={planFormated ? '0 0 0 auto' : '0 auto'} border={`1px solid ${hexColor.blueDefault}`} borderRadius="4px">
-                  {existentOptions.map((info) => (
-                    <Box
-                      key={info.type}
-                      padding="8px 16px"
-                      textTransform="uppercase"
-                      fontWeight={900}
-                      background={activeType === info.type ? 'blue.default' : ''}
-                      color={activeType === info.type ? 'white' : 'blue.default'}
-                      cursor={activeType === info.type ? 'default' : 'pointer'}
-                      onClick={() => setActiveType(info.type)}
+                {premiumPlanCourses?.length > 0 && (
+                  <Box marginTop="40px">
+                    <Heading
+                      size="24px"
+                      fontWeight="700"
+                      marginBottom="24px"
+                      textAlign="left"
                     >
-                      {info.name}
-                    </Box>
+                      This subscription includes:
+                    </Heading>
+
+                    <Flex gap="20px" flexWrap="wrap">
+                      {premiumPlanCourses.map((course) => (
+                        <CourseCard
+                          key={course.slug}
+                          course={course}
+                          width="300px"
+                          linkType="internal"
+                        />
+                      ))}
+                    </Flex>
+                  </Box>
+                )}
+              </Flex>
+            )}
+
+            {viewMode === 'immersive-bootcamps' && (
+              <Box
+                marginBottom="20px"
+                maxWidth="1280px"
+                margin="0 auto"
+                opacity={showBootcamps ? 1 : 0}
+                transform={showBootcamps ? 'translateY(0)' : 'translateY(20px)'}
+                transition="all 0.5s ease-in-out"
+              >
+                <Box
+                  display="grid"
+                  gridTemplateColumns="repeat(auto-fit, 320px)"
+                  gap="24px"
+                  justifyItems="start"
+                  justifyContent="center"
+                >
+                  {bootcampCourses?.map((course) => (
+                    <CourseCard
+                      key={course.slug}
+                      course={course}
+                      showDescription
+                      showIncludedBadge
+                      linkType="external"
+                    />
                   ))}
-                </Flex>
-              )}
-            </Flex>
-          )}
-        </Box>
+                </Box>
+              </Box>
+            )}
+          </>
+        )}
+        {isAbleToShowPrices && (
+          <Flex gridGap="1rem" flexDirection={{ base: 'column', md: 'row' }} justifyContent="space-between" margin="3.75rem 0 2.5rem 0">
+            {!planFormated && (
+              <Text size="30px" width="100%" alignItems="center" textAlign={!existsSubscriptionMehtod ? 'center' : 'start'} fontWeight={700}>
+                {t('you-are-buying')}
+                <Text as="span" size="30px" margin="0 0 0 8px" color="blue.default">
+                  {selectedCourseData?.course_translation?.title || slugToTitle(courseFormated) || slugToTitle(planFormated)}
+                </Text>
+              </Text>
+            )}
+
+            {existsSubscriptionMehtod && existentOptions?.length > 0 && ((courseFormated || planFormated) && !isFetching.selectedPlan) && (
+              <Flex width="fit-content" margin={planFormated ? '0 0 0 auto' : '0 auto'} border={`1px solid ${hexColor.blueDefault}`} borderRadius="4px">
+                {existentOptions.map((info) => (
+                  <Box
+                    key={info.type}
+                    padding="8px 16px"
+                    textTransform="uppercase"
+                    fontWeight={900}
+                    background={activeType === info.type ? 'blue.default' : ''}
+                    color={activeType === info.type ? 'white' : 'blue.default'}
+                    cursor={activeType === info.type ? 'default' : 'pointer'}
+                    onClick={() => setActiveType(info.type)}
+                  >
+                    {info.name}
+                  </Box>
+                ))}
+              </Flex>
+            )}
+          </Flex>
+        )}
         {isAbleToShowPrices && (
           <Flex flexWrap={{ base: 'wrap', lg: 'nowrap' }} justifyContent="center" gridGap="24px" margin="0 auto">
             {paymentOptions?.monthly?.length > 0 && paymentOptions.monthly.map((plan) => (
