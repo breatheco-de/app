@@ -142,8 +142,10 @@ function SyllabusContent() {
 
     const iframe = 'true';
     const token = getStorageItem('accessToken');
+    const cohortId = cohortSession?.id;
+    const academyId = cohortSession?.academy?.id;
 
-    return `${learnpackDeployUrl}#language=${language}&lang=${language}&theme=${colorMode}&iframe=${iframe}&token=${token}`;
+    return `${learnpackDeployUrl}#language=${language}&lang=${language}&theme=${colorMode}&iframe=${iframe}&token=${token}&cohort=${cohortId}&academy=${academyId}`;
   };
   const iframeURL = useMemo(() => buildLearnpackUrl(), [colorMode, currentAsset, lang]);
 
