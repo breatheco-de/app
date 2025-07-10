@@ -72,6 +72,15 @@ export const getStaticProps = async ({ locale, locales }) => {
   };
 };
 
+function getPlanPriceText(option, allCoupons, originalPlan, t) {
+  const priceText = handlePriceTextWithCoupon(option.priceText, allCoupons, originalPlan.plans);
+  if (option.pricePerMonthText) {
+    const perMonth = handlePriceTextWithCoupon(option.pricePerMonthText, allCoupons, originalPlan.plans);
+    return `${priceText} / ${option.title}, (${perMonth}${t('signup:info.per-month')})`;
+  }
+  return `${priceText} / ${option.title}`;
+}
+
 function Checkout() {
   const { t } = useTranslation('signup');
   const router = useRouter();
@@ -329,13 +338,7 @@ function Checkout() {
                                         <Flex justifyContent="space-between" alignItems="center" width="100%">
                                           <Text fontSize="md" flex="1" color={option.plan_id === selectedPlan?.plan_id ? useColorModeValue('#25BF6C', 'green') : 'auto'}>
                                             {originalPlan.hasSubscriptionMethod
-                                              ? (
-                                                `${handlePriceTextWithCoupon(option.priceText, allCoupons, originalPlan.plans)} / ${option.title}${
-                                                  option.pricePerMonthText
-                                                    ? `, (${handlePriceTextWithCoupon(option.pricePerMonthText, allCoupons, originalPlan.plans)}${t('signup:info.per-month')})`
-                                                    : ''
-                                                }`
-                                              )
+                                              ? getPlanPriceText(option, allCoupons, originalPlan, t)
                                               : `${handlePriceTextWithCoupon(option.priceText, allCoupons, originalPlan.plans)} / ${option.title}`}
                                           </Text>
                                           {option.plan_id === selectedPlan?.plan_id
