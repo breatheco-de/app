@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { Box, Flex, Container, Button, Img } from '@chakra-ui/react';
+import { Box, Flex, Container, Button } from '@chakra-ui/react';
 import { useEffect, useState, useMemo } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useQuery } from '@tanstack/react-query';
@@ -12,7 +12,7 @@ import LoaderScreen from '../components/LoaderScreen';
 import MktTrustCards from '../components/PrismicComponents/MktTrustCards';
 import MktShowPrices from '../components/PrismicComponents/MktShowPrices';
 import CourseCard from '../components/CourseCard';
-import { getQueryString, isWindow, slugToTitle } from '../utils';
+import { getQueryString, slugToTitle } from '../utils';
 import { WHITE_LABEL_ACADEMY } from '../utils/variables';
 import useStyle from '../hooks/useStyle';
 import useAuth from '../hooks/useAuth';
@@ -393,14 +393,14 @@ function PricingView() {
                 />
 
                 {premiumPlanCourses?.length > 0 && (
-                  <Box marginTop="40px">
+                  <Box marginTop="20px">
                     <Heading
                       size="24px"
-                      fontWeight="700"
-                      marginBottom="24px"
+                      fontWeight="400"
+                      marginBottom="40px"
                       textAlign="left"
                     >
-                      This subscription includes:
+                      {t('this-subscription-includes')}
                     </Heading>
 
                     <Flex gap="20px" flexWrap="wrap">
@@ -520,35 +520,24 @@ function PricingView() {
         <MktTrustCards
           title={t('why-trust-us.title')}
           description={t('why-trust-us.description')}
+          textStyles={{
+            fontWeight: '400',
+          }}
+          cardStyles={{
+            borderColor: 'transparent',
+          }}
           margin="60px 0 0 0"
         />
-        <Flex flexDirection={{ base: 'column', sm: 'row' }} marginTop="30px" gap="30px" justifyContent="space-between">
-          <Box color="white" width="100%" background="#00041A" padding="15px" borderRadius="10px">
-            <Heading margin="20px 0" size="sm">
-              {t('decided.heading')}
-            </Heading>
-            <Heading margin="20px 0" size="sm">
-              {t('decided.sub_heading')}
-            </Heading>
-            <Text fontWeight="400" size="md" marginBottom="20px">
-              {t('decided.description')}
-            </Text>
-            <Button
-              variant="default"
-              onClick={() => {
-                if (isWindow) {
-                  const langPath = lang === 'en' ? '' : `/${lang}`;
-                  window.location.href = `${langPath}/checkout?plan=4geeks-basic-subscription&plan_id=p-0-trial`;
-                }
-              }}
-              textTransform="uppercase"
-              fontSize="13px"
-              mt="1rem"
-            >
-              {t('decided.button')}
-            </Button>
-          </Box>
-          <Img margin="auto" width="235px" src="/static/images/women-laptop-people.png" />
+        <Flex flexDirection="column" gridGap="1rem">
+          <Heading size={{ base: '24px', md: '34px' }} textAlign="center">
+            {t('why-learn-4geeks-connector.why-learn-with')}
+            {' '}
+            <Box as="span" color="blue.default">{t('why-learn-4geeks-connector.who')}</Box>
+            ?
+          </Heading>
+          <Text size="18px" margin={{ base: 'auto', md: '0 8vw' }} textAlign="center" style={{ textWrap: 'balance' }}>
+            {t('why-learn-4geeks-connector.benefits-connector')}
+          </Text>
         </Flex>
         <Faq marginTop="40px" items={t('faq', {}, { returnObjects: true })} />
         <Box>
