@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useRef, useEffect } from 'react';
-import { Box, useColorModeValue } from '@chakra-ui/react';
+import {
+  Box, useColorModeValue, Flex, Tooltip,
+} from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import SubtasksPill from './SubtasksPill';
@@ -89,10 +91,38 @@ function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
   const { currentTask } = useModuleHandler();
   const headerRef = useRef(null);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
-  const { hexColor, backgroundColor, featuredLight } = useStyle();
+  const {
+    hexColor, backgroundColor, featuredLight,
+  } = useStyle();
 
-  // const isDelivered = false;
   const isDelivered = currentTask?.task_status === 'DONE' && currentAsset?.delivery_formats !== 'no_delivery';
+
+  const getTooltipInfo = (status) => {
+    switch (status) {
+      case 'APPROVED':
+        return {
+          label: t('approved-tooltip'),
+          color: hexColor.green,
+        };
+      case 'REJECTED':
+        return {
+          label: t('rejected-tooltip'),
+          color: hexColor.error,
+        };
+      case 'PENDING':
+        return {
+          label: t('pending-tooltip'),
+          color: hexColor.warning,
+        };
+      default:
+        return {
+          label: null,
+          color: hexColor.fontColor3,
+        };
+    }
+  };
+
+  const tooltipInfo = getTooltipInfo(currentTask?.revision_status);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -130,9 +160,30 @@ function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
           <ProjectHeading currentAsset={currentAsset} isDelivered={isDelivered} handleStartLearnpack={handleStartLearnpack} />
           {isDelivered && (
             <Box padding="16px" background={backgroundColor} borderRadius="16px" height="100%">
-              <Heading size="18px" mb="16px">
-                {t('teachers-feedback')}
-              </Heading>
+              <Flex justifyContent="space-between">
+                <Heading size="18px" mb="16px">
+                  {t('teachers-feedback')}
+                </Heading>
+                <Tooltip label={tooltipInfo.label} placement="top">
+                  <Flex alignItems="flex-start" gap="4px" mb="16px" cursor="pointer">
+                    <Text
+                      size="md"
+                      color={tooltipInfo.color}
+                    >
+                      {`${t('assignments:type.project')} ${t(`assignments:status.${currentTask?.revision_status?.toLowerCase()}`).toLowerCase()}`}
+                    </Text>
+                    <Icon
+                      alignSelf="center"
+                      pt="2px"
+                      icon="info"
+                      color={tooltipInfo.color}
+                      width="10px"
+                      height="10px"
+                      style={{ margin: '0px' }}
+                    />
+                  </Flex>
+                </Tooltip>
+              </Flex>
               {currentTask.description ? (
                 <Box height="calc(100% - 40px)" background={featuredLight} borderRadius="11px" padding="8px">
                   <Text size="md" color={hexColor.fontColor3}>

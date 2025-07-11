@@ -72,5 +72,8 @@
   "share-social-message": "Acabo de terminar de programar {{title}} en 4geeks.com",
   "approved": "Aprobado",
   "rejected": "Rechazado",
-  "pending": "Pendiente"
+  "pending": "Pendiente",
+  "approved-tooltip": "Este proyecto fue aprobado por el profesor",
+  "rejected-tooltip": "Este proyecto fue rechazado por el profesor, lee los comentarios a continuación",
+  "pending-tooltip": "Este proyecto está pendiente de revisión por parte de un profesor"
 }

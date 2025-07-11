@@ -80,6 +80,7 @@ const theme = extendTheme({
     red: {
       light: '#FFBEBE',
       light2: '#FFE7DC',
+      dark: '#CD0000',
     },
 
     gray: {

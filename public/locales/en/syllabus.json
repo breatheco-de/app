@@ -72,5 +72,8 @@
   "share-social-message": "I just finished coding {{title}} at 4geeks.com",
   "approved": "Approved",
   "rejected": "Rejected",
-  "pending": "Pending"
+  "pending": "Pending",
+  "approved-tooltip": "This project was approved by the teacher",
+  "rejected-tooltip": "This project was rejected by the teacher, read teachers feedback below",
+  "pending-tooltip": "This project is pending to be reviewed by a teacher"
 }
