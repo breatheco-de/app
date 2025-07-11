@@ -330,6 +330,7 @@ const useSignup = () => {
     try {
       const resp = await bc.payment({ country_code }).getPlan(planSlug);
       const data = await processPlans(resp?.data);
+      console.log(data);
       return data;
     } catch (error) {
       console.error('Error generating plan:', error);
@@ -928,6 +929,7 @@ const useSignup = () => {
     validatePlanExistence,
     subscribeFreePlan,
     reactivatePlan,
+    generatePlan,
   };
 };
 

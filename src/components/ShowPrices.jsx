@@ -21,6 +21,7 @@ function PlanButton({
   isLast,
   onClick,
   getPlanLabel,
+  ...rest
 }) {
   return (
     <Button
@@ -39,6 +40,7 @@ function PlanButton({
       _last={{ borderRightRadius: '4px' }}
       _hover="none"
       onClick={onClick}
+      {...rest}
     >
       {getPlanLabel(plan).full}
     </Button>
@@ -54,6 +56,7 @@ function ShowPrices({
   onSelect,
   handleUpgrade,
   bullets,
+  paymentSwitchPlacement,
 }) {
   const [selectedPlanId, setSelectedPlanId] = useState('');
   const { t } = useTranslation('signup');
@@ -149,43 +152,53 @@ function ShowPrices({
   }, []);
 
   return (
-    <Flex flexDirection="column" mx="auto">
-      <Box display="flex" flexDirection="column" mb={4}>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-          <Heading as="h2" size="24px" color="blue.default" flexGrow={1}>
-            {title || data?.pricing['choose-plan']}
-          </Heading>
-          <Box display={{ base: 'none', md: 'flex' }} alignItems="center" bg="transparent" border="none">
-            {availablePlans.length > 1 && availablePlans.map((plan, index) => (
-              <PlanButton
-                key={plan.plan_id}
-                plan={plan}
-                isSelected={selectedPlanId === plan.plan_id}
-                isFirst={index === 0}
-                isLast={index === availablePlans.length - 1}
-                onClick={() => handlePlanSelect(plan.plan_id)}
-                getPlanLabel={getPlanLabel}
-              />
-            ))}
+    <Flex flexDirection="column" mx="auto" padding="0">
+      {(title || subtitle || paymentSwitchPlacement === 'outer') && (
+        <Box display="flex" flexDirection="column" mb={4}>
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+            {title && (
+              <Heading as="h2" size="24px" color="blue.default" flexGrow={1}>
+                {title || data?.pricing['choose-plan']}
+              </Heading>
+            )}
+            {paymentSwitchPlacement === 'outer' && (
+              <Box display={{ base: 'none', md: 'flex' }} alignItems="center" bg="transparent" border="none">
+                {availablePlans.length > 1 && availablePlans.map((plan, index) => (
+                  <PlanButton
+                    key={plan.plan_id}
+                    plan={plan}
+                    isSelected={selectedPlanId === plan.plan_id}
+                    isFirst={index === 0}
+                    isLast={index === availablePlans.length - 1}
+                    onClick={() => handlePlanSelect(plan.plan_id)}
+                    getPlanLabel={getPlanLabel}
+                  />
+                ))}
+              </Box>
+            )}
           </Box>
+          {subtitle && (
+            <Text fontSize="18px" color={lightColor}>
+              {subtitle || data?.pricing?.subtitle}
+            </Text>
+          )}
+          {paymentSwitchPlacement === 'outer' && (
+            <Box display={{ base: 'flex', md: 'none' }} alignItems="center" bg="transparent" mt={4} justifyContent="center">
+              {availablePlans.length > 1 && availablePlans.map((plan, index) => (
+                <PlanButton
+                  key={plan.plan_id}
+                  plan={plan}
+                  isSelected={selectedPlanId === plan.plan_id}
+                  isFirst={index === 0}
+                  isLast={index === availablePlans.length - 1}
+                  onClick={() => handlePlanSelect(plan.plan_id)}
+                  getPlanLabel={getPlanLabel}
+                />
+              ))}
+            </Box>
+          )}
         </Box>
-        <Text fontSize="18px" color={lightColor}>
-          {subtitle || data?.pricing?.subtitle}
-        </Text>
-        <Box display={{ base: 'flex', md: 'none' }} alignItems="center" bg="transparent" mt={4} justifyContent="center">
-          {availablePlans.length > 1 && availablePlans.map((plan, index) => (
-            <PlanButton
-              key={plan.plan_id}
-              plan={plan}
-              isSelected={selectedPlanId === plan.plan_id}
-              isFirst={index === 0}
-              isLast={index === availablePlans.length - 1}
-              onClick={() => handlePlanSelect(plan.plan_id)}
-              getPlanLabel={getPlanLabel}
-            />
-          ))}
-        </Box>
-      </Box>
+      )}
 
       {hasValidPrice && (
         <Box position="relative" mt={6}>
@@ -295,7 +308,7 @@ function ShowPrices({
               </Flex>
               <Flex flexDirection="column" alignItems="center" mb={{ base: 4, md: 0 }}>
                 <Text
-                  fontSize={{ base: '4xl', md: selectedPlan.period !== 'FINANCING' ? '55px' : '40px' }}
+                  fontSize={{ base: '4xl', md: '40px' }}
                   fontWeight="bold"
                   fontFamily="Space Grotesk Variable"
                 >
@@ -312,11 +325,6 @@ function ShowPrices({
                   <Text as="span" fontSize="md" color="#01455E" textDecoration="line-through">
                     {selectedPlan.lastPrice}
                   </Text>
-                  {selfAppliedCoupon && (
-                    <Text as="span" fontSize="xs" color="#01455E">
-                      {t('discount-applied')}
-                    </Text>
-                  )}
                 </Flex>
                 {shouldShowSavingsPill && selfAppliedCoupon && (
                   <Box
@@ -366,11 +374,34 @@ function ShowPrices({
               borderBottomRightRadius="8px"
               borderTopRightRadius={{ base: '0', md: '8px' }}
             >
-              <Text fontSize="18px" mb={4}>
-                {selectedPlan?.description || data?.pricing?.description}
-              </Text>
+              <Flex
+                justifyContent="space-between"
+                alignItems="center"
+                mb={4}
+                flexDirection={{ base: 'column', md: 'row' }}
+                gap={4}
+              >
+                <Text fontSize="18px" flex={1}>
+                  {selectedPlan?.description || data?.pricing?.description}
+                </Text>
+                {paymentSwitchPlacement === 'inner' && (
+                  <Box display="flex" alignItems="center" bg="transparent" flexShrink={0} alignSelf="flex-start">
+                    {availablePlans.length > 1 && availablePlans.map((plan, index) => (
+                      <PlanButton
+                        key={plan.plan_id}
+                        plan={plan}
+                        isSelected={selectedPlanId === plan.plan_id}
+                        isFirst={index === 0}
+                        isLast={index === availablePlans.length - 1}
+                        onClick={() => handlePlanSelect(plan.plan_id)}
+                        getPlanLabel={getPlanLabel}
+                      />
+                    ))}
+                  </Box>
+                )}
+              </Flex>
 
-              <Box mb={6} mt={7}>
+              <Box mb={6} mt={7} height="20px">
                 <MktTechnologies
                   padding="0"
                   imageSize={{ base: '22px', md: '22px' }}
@@ -432,6 +463,7 @@ ShowPrices.propTypes = {
     color: PropTypes.string,
     text: PropTypes.string,
   })),
+  paymentSwitchPlacement: PropTypes.oneOf(['outer', 'inner']),
 };
 
 ShowPrices.defaultProps = {
@@ -443,6 +475,7 @@ ShowPrices.defaultProps = {
   onSelect: () => { },
   handleUpgrade: false,
   bullets: [],
+  paymentSwitchPlacement: 'outer',
 };
 
 PlanButton.propTypes = {

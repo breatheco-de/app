@@ -121,6 +121,7 @@ function MktTrustCards({
   slice,
   fontFamily,
   cardStyles,
+  textStyles,
   ...rest
 }) {
   const { lang } = useTranslation('common');
@@ -147,7 +148,7 @@ function MktTrustCards({
   return (
     <Box id={id} padding={{ base: '20px', md: '0' }} px={{ base: '10px', md: '2rem' }} width="100%" maxWidth="1280px" margin="0 auto" background={slice?.primary?.background} {...rest}>
       <Box paddingBottom="50px" textAlign="center" px={{ base: '10px', md: '128px' }} borderRadius="3px">
-        <Heading fontFamily={fontFamily} as="h2" fontSize="40px" color={slice?.primary?.font_color} marginBottom="21px">
+        <Heading fontFamily={fontFamily} as="h2" fontSize="40px" color={slice?.primary?.font_color} marginBottom="21px" {...textStyles}>
           {title}
         </Heading>
         {slice?.primary?.description ? (
