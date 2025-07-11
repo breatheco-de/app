@@ -11,6 +11,9 @@
   "filters": "Filters",
   "description": "Practice and develop your coding skills by building real live interactive autograded projects with solutions and video tutorials",
   "backToProjects": "Back to Projects",
+  "delivery": {
+    "share-via": "Your project '{{project}}' has been delivered and is now pending review. Congratulations on your progress! Share your progress and celebrate this achievement."
+  },
   "table": {
     "title": "Goal",
     "description": "4Geeks Coding Projects tutorials and exercises for people learning to code or improving their coding skills"
