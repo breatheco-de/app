@@ -376,7 +376,6 @@ function useCohortHandler() {
       }
 
       const response = await bc.assignments().updateTask(taskToUpdate);
-      console.log(response);
       if (response.status < 400) {
         updateTask(response.data, cohort);
         reportDatalayer({
