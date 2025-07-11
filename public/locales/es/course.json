@@ -166,6 +166,34 @@
         }
       ]
     },
+    "default": {
+      "rating": 4.5,
+      "total_ratings": 1621,
+      "reviews_numbers": 345,
+      "reviews": [
+        {
+          "name": "Felipe Cespedes",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/felipe-profile-picture-jpg",
+          "rating": 5,
+          "date": "hace 1 semana",
+          "review": "Este curso es muy flexible y me permitió aprender mientras hacía otras cosas en mi vida."
+        },
+        {
+          "name": "Rubi Rimache",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/ruby-profile-picture-jpg",
+          "rating": 5,
+          "date": "hace 2 semanas",
+          "review": "Me encanta el programa, es muy bueno y cómodo. Lo recomendaría por su comodidad y la claridad con la que se explican las cosas."
+        },
+        {
+          "name": "Brian Hernandes",
+          "avatar": "https://example.com/avatar3.jpg",
+          "rating": 4,
+          "date": "hace 1 semana",
+          "review": "Contenido y estructura increíbles. ¡La herramienta de IA es maravillosa!"
+        }
+      ]
+    },
     "deep-dive-into-python": {
       "rating": 4.5,
       "total_ratings": 1346,

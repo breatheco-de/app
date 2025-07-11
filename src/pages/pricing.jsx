@@ -11,6 +11,8 @@ import PricingCard from '../components/PricingCard';
 import LoaderScreen from '../components/LoaderScreen';
 import MktTrustCards from '../components/PrismicComponents/MktTrustCards';
 import MktShowPrices from '../components/PrismicComponents/MktShowPrices';
+import Icon from '../components/Icon';
+import Rating from '../components/Rating';
 import CourseCard from '../components/CourseCard';
 import { getQueryString, slugToTitle } from '../utils';
 import { WHITE_LABEL_ACADEMY } from '../utils/variables';
@@ -46,7 +48,7 @@ function PricingView() {
   const [viewMode, setViewMode] = useState('immersive-bootcamps');
   const { isAuthenticated, cohorts } = useAuth();
   const { location } = useSession();
-  const { hexColor } = useStyle();
+  const { hexColor, backgroundColor, fontColor } = useStyle();
   const [relatedSubscription, setRelatedSubscription] = useState({});
   const [selectedPlanData, setSelectedPlanData] = useState({});
   const [selectedCourseData, setSelectedCourseData] = useState({});
@@ -65,6 +67,9 @@ function PricingView() {
   const premiumPlanSlug = process.env.PURCHASE_PLAN || '4geeks-plus-subscription';
   const defaultMonthlyPlans = t('signup:pricing.monthly-plans', {}, { returnObjects: true });
   const defaultYearlyPlans = t('signup:pricing.yearly-plans', {}, { returnObjects: true });
+  const features = t('course:features', {}, { returnObjects: true }) || {};
+  const reviewsData = t('course:reviews', {}, { returnObjects: true });
+  const generalreviews = reviewsData?.default;
   const bootcampInfo = t('common:bootcamp', {}, { returnObjects: true });
   const bootcampCourses = t('bootcamp-courses', {}, { returnObjects: true });
   const planFormated = useMemo(() => (queryPlan && encodeURIComponent(queryPlan)) || '', [queryPlan]);
@@ -493,7 +498,6 @@ function PricingView() {
                 display={activeType === switchTypes.monthly ? 'flex' : 'none'}
               />
             ))}
-
             {paymentOptions?.yearly?.length > 0 && paymentOptions.yearly.map((plan) => (
               <PricingCard
                 key={plan?.plan_id}
@@ -516,7 +520,6 @@ function PricingView() {
             )}
           </Flex>
         )}
-
         <MktTrustCards
           title={t('why-trust-us.title')}
           description={t('why-trust-us.description')}
@@ -528,18 +531,48 @@ function PricingView() {
           }}
           margin="60px 0 0 0"
         />
-        <Flex flexDirection="column" gridGap="1rem">
-          <Heading size={{ base: '24px', md: '34px' }} textAlign="center">
-            {t('why-learn-4geeks-connector.why-learn-with')}
+        <Flex flexDirection="column" gridGap="1rem" mt="80px">
+          <Heading size={{ base: '24px', md: '34px' }} textAlign="center" fontWeight={400}>
+            {t('course:why-learn-4geeks-connector.why-learn-with')}
             {' '}
-            <Box as="span" color="blue.default">{t('why-learn-4geeks-connector.who')}</Box>
+            <Box as="span" color="blue.default">{t('course:why-learn-4geeks-connector.who')}</Box>
             ?
           </Heading>
-          <Text size="18px" margin={{ base: 'auto', md: '0 8vw' }} textAlign="center" style={{ textWrap: 'balance' }}>
-            {t('why-learn-4geeks-connector.benefits-connector')}
+          <Text size="18px" margin={{ base: 'auto', md: '0 8vw' }} textAlign="center" style={{ textWrap: 'balance' }} fontWeight={400}>
+            {t('course:why-learn-4geeks-connector.benefits-connector')}
           </Text>
         </Flex>
-        <Faq marginTop="40px" items={t('faq', {}, { returnObjects: true })} />
+        <Flex gridGap="2rem" flexDirection={{ base: 'column', md: 'row' }} margin="64px 0">
+          {features?.list?.length > 0 && features?.list?.map((item) => (
+            <Flex key={item.title} flex={{ base: 1, md: 0.33 }} flexDirection="column" gridGap="16px" padding="16px" borderRadius="8px" color={fontColor} background={backgroundColor}>
+              <Flex gridGap="8px" alignItems="center">
+                <Icon icon={item.icon} color={hexColor.blueDefault} />
+                <Heading size="16px" fontWeight={700} color="currentColor" lineHeight="normal">
+                  {item?.title}
+                </Heading>
+              </Flex>
+              <Text
+                size="14px"
+                lineHeight="normal"
+                dangerouslySetInnerHTML={{ __html: item.description }}
+              />
+            </Flex>
+          ))}
+        </Flex>
+        {generalreviews && (
+          <Rating
+            totalRatings={generalreviews.total_ratings}
+            totalReviews={generalreviews.reviews_numbers}
+            rating={generalreviews.rating}
+            id="rating-commnets"
+            marginTop="40px"
+            reviews={generalreviews.reviews}
+            cardStyles={{
+              border: 'none',
+            }}
+          />
+        )}
+        <Faq marginTop="80px" items={t('faq', {}, { returnObjects: true })} />
         <Box>
           <Text fontWeight="300" size="xs" marginTop="20px">
             {t('pricing-disclaimer.title')}
