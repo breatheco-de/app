@@ -356,14 +356,7 @@ function useCohortHandler() {
     try {
       const projectUrl = githubUrl || '';
 
-      const isDelivering = projectUrl !== '';
-
       let taskToUpdate;
-
-      const toastMessage = () => {
-        if (!isProject) return t('alert-message:assignment-updated');
-        return isDelivering ? t('alert-message:delivery-success') : t('alert-message:assignment-updated');
-      };
 
       if (isProject) {
         taskToUpdate = {
@@ -383,6 +376,7 @@ function useCohortHandler() {
       }
 
       const response = await bc.assignments().updateTask(taskToUpdate);
+      console.log(response);
       if (response.status < 400) {
         updateTask(response.data, cohort);
         reportDatalayer({
@@ -396,13 +390,6 @@ function useCohortHandler() {
             task_revision_status: task.revision_status,
             agent: getBrowserInfo(),
           },
-        });
-        createToast({
-          position: 'top',
-          title: toastMessage(),
-          status: 'success',
-          duration: 6000,
-          isClosable: true,
         });
       } else {
         createToast({

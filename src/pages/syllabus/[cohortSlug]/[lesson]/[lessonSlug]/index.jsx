@@ -1110,7 +1110,7 @@ function SyllabusContent() {
                                 <ShareButton
                                   variant="outline"
                                   title={t('projects:share-certificate.title')}
-                                  shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
+                                  shareText={t('projects:delivery.share-via', { project: currentTask?.title })}
                                   link={shareLink}
                                   socials={socials}
                                   currentTask={currentTask}
@@ -1269,7 +1269,7 @@ function SyllabusContent() {
                                 <ShareButton
                                   variant="outline"
                                   title={t('projects:share-certificate.title')}
-                                  shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
+                                  shareText={t('projects:delivery.share-via', { project: currentTask?.title })}
                                   link={shareLink}
                                   socials={socials}
                                   currentTask={currentTask}
