@@ -142,6 +142,8 @@
   },
   "deliverProject": {
     "title": "Deliver assignment",
+    "update-title": "Update assignment",
+    "resend-title": "Resend assignment",
     "how-to-deliver": "How to deliver projects",
     "how-to-deliver-text": "Please submit a Github URL that points to your project as a Github repository. <a class='link' target='blank' href='{{link}}'>How to deliver projects</a>",
     "handler-text": "Deliver assignment",

@@ -5,7 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import MarkDownParser from '../MarkDownParser';
 import useCustomToast from '../../hooks/useCustomToast';
 
-function FlagsDeliveryFormat({ currentAssetData, currentTask, sendProject, closePopover, onClickHandler }) {
+function FlagsDeliveryFormat({ currentAssetData, currentTask, sendProject, closePopover, onClickHandler, statusText }) {
   const { t } = useTranslation('dashboard');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [acceptTC, setAcceptTC] = useState(false);
@@ -190,7 +190,7 @@ function FlagsDeliveryFormat({ currentAssetData, currentTask, sendProject, close
         onClick={handleSubmit}
         isDisabled={!acceptTC || flags.every((flag) => !flag.trim())}
       >
-        {t('deliverProject.handler-text')}
+        {statusText || t('deliverProject.handler-text')}
       </Button>
     </Box>
   );
@@ -202,6 +202,7 @@ FlagsDeliveryFormat.propTypes = {
   sendProject: PropTypes.func,
   closePopover: PropTypes.func,
   onClickHandler: PropTypes.func,
+  statusText: PropTypes.string,
 };
 
 FlagsDeliveryFormat.defaultProps = {
@@ -210,6 +211,7 @@ FlagsDeliveryFormat.defaultProps = {
   sendProject: () => {},
   closePopover: () => {},
   onClickHandler: () => {},
+  statusText: '',
 };
 
 export default FlagsDeliveryFormat;
