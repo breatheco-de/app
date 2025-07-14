@@ -93,7 +93,7 @@ function SyllabusContent() {
   const {
     getCohortUserCapabilities, getCohortData, cohortSession, sortedAssignments, setCohortSession, taskTodo,
     updateAssignment, startDay, updateTask, reviewModalState, handleCloseReviewModal,
-    grantAccess, setGrantAccess, checkNavigationAvailability,
+    grantAccess, setGrantAccess, checkNavigationAvailability, checkRevisionStatus,
   } = useCohortHandler();
   const { areSubscriptionsFetched } = useSubscriptions();
   // const isAvailableAsSaas = false;
@@ -284,6 +284,9 @@ function SyllabusContent() {
   useEffect(() => {
     if (currentTask && !currentTask.opened_at) {
       updateOpenedAt();
+    }
+    if (currentTask) {
+      checkRevisionStatus(currentTask);
     }
   }, [currentTask]);
 

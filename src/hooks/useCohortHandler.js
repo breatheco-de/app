@@ -308,6 +308,21 @@ function useCohortHandler() {
     });
   };
 
+  const checkRevisionStatus = async (task) => {
+    if (!task || task.task_type !== 'PROJECT' || task.revision_status !== 'PENDING' || task.task_status !== 'DONE') {
+      return;
+    }
+
+    try {
+      const { data: updatedTask } = await bc.assignments().getTask(task.id);
+      if (updatedTask && updatedTask.revision_status !== task.revision_status) {
+        updateTask(updatedTask, task.cohort);
+      }
+    } catch (error) {
+      console.error('Error checking revision status on load:', error);
+    }
+  };
+
   const updateTaskReadAt = async (task) => {
     try {
       const response = await bc.assignments().updateTask({
@@ -816,6 +831,7 @@ function useCohortHandler() {
     userCapabilities,
     state,
     setCohortsAssingments,
+    checkRevisionStatus,
     serializeModulesMap,
     taskTodo,
     cohortProgram,
