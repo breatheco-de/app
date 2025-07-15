@@ -446,6 +446,7 @@ function useCohortHandler() {
           status: 'success',
           duration: 6000,
           isClosable: true,
+          silent: true,
         });
         if (updateContext) {
           addTasks(response.data, cohort);

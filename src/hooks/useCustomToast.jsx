@@ -36,7 +36,9 @@ const useCustomToast = () => {
     description,
     actions = null,
     isClosable = true,
+    silent = false,
   }) => {
+    if (silent) return null;
     const safeString = (value) => {
       if (value === null || value === undefined) return '';
       if (typeof value === 'string') return value;
