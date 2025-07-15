@@ -116,13 +116,12 @@ function FlagsDeliveryFormat({ currentAssetData, currentTask, sendProject, close
 
     // Send flags to backend - it will validate the actual flag values
     try {
+      if (onClickHandler) onClickHandler();
       await sendProject({
         task: currentTask,
         taskStatus: 'DONE',
         flags: flags.map((flag) => flag.trim()),
       });
-
-      if (onClickHandler) onClickHandler();
       closePopover();
     } catch (error) {
       createToast({
