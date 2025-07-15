@@ -172,15 +172,6 @@ function ReviewModal({
           code_revisions: codeRevisionsSortedByDate,
           my_revisions: data.filter((revision) => revision?.reviewer?.username === user?.email),
         }));
-      } else {
-        createToast({
-          title: t('alert-message:something-went-wrong'),
-          description: `Error: ${data?.Error}. ${data?.solution || ''}`,
-          status: 'error',
-          duration: 5000,
-          position: 'top',
-          isClosable: true,
-        });
       }
     } catch (errorMsg) {
       error('Error fetching code revisions:', errorMsg);
@@ -232,6 +223,7 @@ function ReviewModal({
       }));
     }
   }, [isOpen, externalData]);
+
   useEffect(() => {
     if (defaultStage) {
       setStage(defaultStage);
