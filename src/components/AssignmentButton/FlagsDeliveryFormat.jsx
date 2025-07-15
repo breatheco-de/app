@@ -121,6 +121,7 @@ function FlagsDeliveryFormat({ currentAssetData, currentTask, sendProject, close
         task: currentTask,
         taskStatus: 'DONE',
         flags: flags.map((flag) => flag.trim()),
+        showShareModal: !onClickHandler,
       });
       closePopover();
     } catch (error) {

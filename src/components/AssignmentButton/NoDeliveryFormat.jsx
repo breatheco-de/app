@@ -3,7 +3,7 @@ import { Box, Text, Button } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 
-function NoDeliveryFormat({ currentTask, sendProject, closePopover }) {
+function NoDeliveryFormat({ currentTask, sendProject, closePopover, onClickHandler }) {
   const { t } = useTranslation('dashboard');
   const [isSubmitting, setIsSubmitting] = useState(false);
   return (
@@ -13,7 +13,7 @@ function NoDeliveryFormat({ currentTask, sendProject, closePopover }) {
         width="fit-content"
         onClick={async () => {
           setIsSubmitting(true);
-          await sendProject({ task: currentTask, taskStatus: 'DONE' });
+          await sendProject({ task: currentTask, taskStatus: 'DONE', showShareModal: !onClickHandler });
           setIsSubmitting(false);
           closePopover();
         }}
@@ -31,12 +31,14 @@ NoDeliveryFormat.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.objectOf(PropTypes.any)),
   sendProject: PropTypes.func,
   closePopover: PropTypes.func,
+  onClickHandler: PropTypes.func,
 };
 
 NoDeliveryFormat.defaultProps = {
   currentTask: {},
   sendProject: () => {},
   closePopover: () => {},
+  onClickHandler: () => {},
 };
 
 export default NoDeliveryFormat;
