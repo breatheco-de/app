@@ -102,22 +102,22 @@ function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
       case 'APPROVED':
         return {
           label: t('approved-tooltip'),
-          color: hexColor.green,
+          bg: hexColor.green,
         };
       case 'REJECTED':
         return {
           label: t('rejected-tooltip'),
-          color: hexColor.error,
+          bg: hexColor.error,
         };
       case 'PENDING':
         return {
           label: t('pending-tooltip'),
-          color: hexColor.warning,
+          bg: hexColor.warning,
         };
       default:
         return {
           label: null,
-          color: hexColor.fontColor3,
+          bg: hexColor.fontColor3,
         };
     }
   };
@@ -165,10 +165,18 @@ function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
                   {t('teachers-feedback')}
                 </Heading>
                 <Tooltip label={tooltipInfo.label} placement="top">
-                  <Flex alignItems="flex-start" gap="4px" mb="16px" cursor="pointer">
+                  <Flex
+                    alignItems="flex-start"
+                    gap="4px"
+                    mb="16px"
+                    cursor="pointer"
+                    background={tooltipInfo.bg}
+                    padding="0 8px"
+                    borderRadius="full"
+                  >
                     <Text
                       size="md"
-                      color={tooltipInfo.color}
+                      color="white"
                     >
                       {`${t('assignments:type.project')} ${t(`assignments:status.${currentTask?.revision_status?.toLowerCase()}`).toLowerCase()}`}
                     </Text>
@@ -176,7 +184,7 @@ function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
                       alignSelf="center"
                       pt="2px"
                       icon="info"
-                      color={tooltipInfo.color}
+                      color="white"
                       width="10px"
                       height="10px"
                       style={{ margin: '0px' }}

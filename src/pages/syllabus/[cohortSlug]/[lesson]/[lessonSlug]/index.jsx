@@ -93,7 +93,7 @@ function SyllabusContent() {
   const {
     getCohortUserCapabilities, getCohortData, cohortSession, sortedAssignments, setCohortSession, taskTodo,
     updateAssignment, startDay, updateTask, reviewModalState, handleCloseReviewModal,
-    grantAccess, setGrantAccess, checkNavigationAvailability,
+    grantAccess, setGrantAccess, checkNavigationAvailability, checkRevisionStatus,
   } = useCohortHandler();
   const { areSubscriptionsFetched } = useSubscriptions();
   // const isAvailableAsSaas = false;
@@ -285,6 +285,9 @@ function SyllabusContent() {
     if (currentTask && !currentTask.opened_at) {
       updateOpenedAt();
     }
+    if (currentTask) {
+      checkRevisionStatus(currentTask);
+    }
   }, [currentTask]);
 
   // eslint-disable-next-line arrow-body-style
@@ -323,8 +326,9 @@ function SyllabusContent() {
     if (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
   }, [cohortSession, areSubscriptionsFetched]);
 
-  const sendProject = async ({ task, githubUrl, taskStatus, flags }) => {
-    setShowModal(true);
+  const sendProject = async ({ task, githubUrl, taskStatus, flags, showShareModal = true }) => {
+    console.log('showShareModal', showShareModal);
+    if (showShareModal) setShowModal(true);
     await updateAssignment({
       task, githubUrl, taskStatus, flags,
     });
@@ -1340,7 +1344,6 @@ function SyllabusContent() {
                 togglePendingSubtasks={handleNavigateToLastPendingSubtask}
                 currentAssetData={currentAsset}
                 onClickHandler={async () => {
-                  setShowModal(false);
                   const moduleToCheck = !nextAssignment && firstTask ? nextModule : sortedAssignments[currentModuleIndex];
                   await checkAndUpdateModule(moduleToCheck);
                   if (nextAssignment?.target === 'blank') {
