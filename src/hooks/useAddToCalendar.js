@@ -134,10 +134,18 @@ const CALENDAR_TYPES = [
 export default function useAddToCalendar(event) {
   return useMemo(() => {
     if (!event) return [];
+
+    const eventLanding = typeof window !== 'undefined' ? window.location.href : '';
+
+    const eventTemplate = {
+      ...event,
+      description: `${event.description || ''} \n\nLink: ${eventLanding}`,
+    };
+
     return CALENDAR_TYPES.map(({ key, label }) => ({
       key,
       label,
-      url: buildUrl(event, key),
+      url: buildUrl(eventTemplate, key),
     }));
   }, [event]);
 }
