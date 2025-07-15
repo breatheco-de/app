@@ -116,7 +116,7 @@ function FlagsDeliveryFormat({ currentAssetData, currentTask, sendProject, close
 
     // Send flags to backend - it will validate the actual flag values
     try {
-      if (onClickHandler) onClickHandler();
+      if (onClickHandler) await onClickHandler();
       await sendProject({
         task: currentTask,
         taskStatus: 'DONE',

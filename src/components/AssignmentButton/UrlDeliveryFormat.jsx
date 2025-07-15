@@ -33,7 +33,7 @@ function UrlDeliveryFormat({ currentAssetData, currentTask, sendProject, closePo
       onSubmit={async () => {
         setIsSubmitting(true);
         if (githubUrl !== '') {
-          if (onClickHandler) onClickHandler();
+          if (onClickHandler) await onClickHandler();
           await sendProject({ task: currentTask, githubUrl, taskStatus: 'DONE' });
           setIsSubmitting(false);
           closePopover();
