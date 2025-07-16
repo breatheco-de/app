@@ -174,6 +174,7 @@ const breathecode = {
       sendScreenshot: (args) => axios.post(`${url}/user/me/final_project/screenshot`, args),
       updateMeFinalProject: (args) => breathecode.put(`${url}/user/me/final_project`, args),
       getMeTasks: () => axios.get(`${url}/user/me/task${qs}`),
+      getTask: (taskId) => axios.get(`${url}/task/${taskId}`),
       updateTask: (args) => axios.put(`${url}/task/${args.id}`, args),
       addTasks: (args) => axios.post(`${url}/user/me/task`, args),
       getDeletionOrders: () => axios.get(`${url}/me/deletion_order${qs}`),

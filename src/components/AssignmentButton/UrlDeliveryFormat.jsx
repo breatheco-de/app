@@ -6,7 +6,7 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import MarkDownParser from '../MarkDownParser';
 
-function UrlDeliveryFormat({ currentAssetData, currentTask, sendProject, closePopover, onClickHandler }) {
+function UrlDeliveryFormat({ currentAssetData, currentTask, sendProject, closePopover, onClickHandler, statusText }) {
   const { t } = useTranslation('dashboard');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [acceptTC, setAcceptTC] = useState(false);
@@ -33,9 +33,14 @@ function UrlDeliveryFormat({ currentAssetData, currentTask, sendProject, closePo
       onSubmit={async () => {
         setIsSubmitting(true);
         if (githubUrl !== '') {
-          await sendProject({ task: currentTask, githubUrl, taskStatus: 'DONE' });
+          if (onClickHandler) await onClickHandler();
+          await sendProject({
+            task: currentTask,
+            githubUrl,
+            taskStatus: 'DONE',
+            showShareModal: !onClickHandler,
+          });
           setIsSubmitting(false);
-          if (onClickHandler) onClickHandler();
           closePopover();
         }
       }}
@@ -91,7 +96,7 @@ function UrlDeliveryFormat({ currentAssetData, currentTask, sendProject, closePo
             type="submit"
             isDisabled={!acceptTC}
           >
-            {t('deliverProject.handler-text')}
+            {statusText || t('deliverProject.handler-text')}
           </Button>
         </Form>
       )}
@@ -105,6 +110,7 @@ UrlDeliveryFormat.propTypes = {
   sendProject: PropTypes.func,
   closePopover: PropTypes.func,
   onClickHandler: PropTypes.func,
+  statusText: PropTypes.string,
 };
 
 UrlDeliveryFormat.defaultProps = {
@@ -113,6 +119,7 @@ UrlDeliveryFormat.defaultProps = {
   sendProject: () => {},
   closePopover: () => {},
   onClickHandler: () => {},
+  statusText: '',
 };
 
 export default UrlDeliveryFormat;

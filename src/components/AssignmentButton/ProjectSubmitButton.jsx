@@ -33,6 +33,18 @@ function ProjectSubmitButton({
     closePopover();
   };
 
+  const getProjectStatusText = (status) => {
+    switch (status) {
+      case 'PENDING':
+        return t('deliverProject.update-title');
+      case 'REJECTED':
+        return t('deliverProject.resend-title');
+      default:
+        return t('deliverProject.title');
+    }
+  };
+
+  const statusText = getProjectStatusText(currentTask?.revision_status);
   const deliveryFormatExists = typeof currentAssetData?.delivery_formats === 'string';
   const noDeliveryFormat = deliveryFormatExists && currentAssetData?.delivery_formats.includes('no_delivery');
 
@@ -60,7 +72,7 @@ function ProjectSubmitButton({
 
       <PopoverContent>
         <PopoverArrow />
-        <PopoverHeader>{t('deliverProject.title')}</PopoverHeader>
+        <PopoverHeader>{statusText}</PopoverHeader>
         <PopoverCloseButton />
         <PopoverBody>
           <DeliveryFormat
@@ -69,6 +81,7 @@ function ProjectSubmitButton({
             sendProject={sendProject}
             closePopover={closePopover}
             onClickHandler={onClickHandler}
+            statusText={statusText}
           />
         </PopoverBody>
       </PopoverContent>

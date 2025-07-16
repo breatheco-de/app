@@ -45,7 +45,7 @@ function OnlyFor({
   const { user, hasNonSaasCohort } = useAuth();
   const academyNumber = Math.floor(academy);
   const teachers = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
-  const commonUser = ['TEACHER', 'ASSISTANT', 'STUDENT', 'REVIEWER'];
+  const commonUser = ['TEACHER', 'ASSISTANT', 'STUDENT', 'REVIEWER', 'ADMIN'];
 
   const { state } = useCohortHandler();
   const { userCapabilities: cohortCapabilities, cohortSession } = state;

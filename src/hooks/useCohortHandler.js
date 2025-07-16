@@ -308,6 +308,20 @@ function useCohortHandler() {
     });
   };
 
+  const checkRevisionStatus = async (task) => {
+    if (!task || task.task_type !== 'PROJECT' || task.revision_status !== 'PENDING' || task.task_status !== 'DONE') {
+      return;
+    }
+    try {
+      const { data: updatedTask } = await bc.assignments().getTask(task.id);
+      if (updatedTask && updatedTask.revision_status !== task.revision_status) {
+        updateTask(updatedTask, task.cohort);
+      }
+    } catch (error) {
+      console.error('Error checking revision status on load:', error);
+    }
+  };
+
   const updateTaskReadAt = async (task) => {
     try {
       const response = await bc.assignments().updateTask({
@@ -356,14 +370,7 @@ function useCohortHandler() {
     try {
       const projectUrl = githubUrl || '';
 
-      const isDelivering = projectUrl !== '';
-
       let taskToUpdate;
-
-      const toastMessage = () => {
-        if (!isProject) return t('alert-message:assignment-updated');
-        return isDelivering ? t('alert-message:delivery-success') : t('alert-message:assignment-updated');
-      };
 
       if (isProject) {
         taskToUpdate = {
@@ -396,13 +403,6 @@ function useCohortHandler() {
             task_revision_status: task.revision_status,
             agent: getBrowserInfo(),
           },
-        });
-        createToast({
-          position: 'top',
-          title: toastMessage(),
-          status: 'success',
-          duration: 6000,
-          isClosable: true,
         });
       } else {
         createToast({
@@ -460,6 +460,7 @@ function useCohortHandler() {
           status: 'success',
           duration: 6000,
           isClosable: true,
+          silent: true,
         });
         if (updateContext) {
           addTasks(response.data, cohort);
@@ -830,6 +831,7 @@ function useCohortHandler() {
     userCapabilities,
     state,
     setCohortsAssingments,
+    checkRevisionStatus,
     serializeModulesMap,
     taskTodo,
     cohortProgram,

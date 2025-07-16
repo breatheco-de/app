@@ -10,7 +10,7 @@ import bc from '../../services/breathecode';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useCustomToast from '../../hooks/useCustomToast';
 
-function FileDeliveryFormat({ currentAssetData, currentTask, sendProject, closePopover }) {
+function FileDeliveryFormat({ currentAssetData, currentTask, sendProject, closePopover, onClickHandler }) {
   const { t } = useTranslation('dashboard');
   const [acceptTC, setAcceptTC] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -77,6 +77,7 @@ function FileDeliveryFormat({ currentAssetData, currentTask, sendProject, closeP
         task: currentTask,
         githubUrl: respData?.url,
         taskStatus: 'DONE',
+        showShareModal: !onClickHandler,
       });
       createToast({
         position: 'top',
@@ -219,6 +220,7 @@ FileDeliveryFormat.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.objectOf(PropTypes.any)),
   sendProject: PropTypes.func,
   closePopover: PropTypes.func,
+  onClickHandler: PropTypes.func,
 };
 
 FileDeliveryFormat.defaultProps = {
@@ -226,6 +228,7 @@ FileDeliveryFormat.defaultProps = {
   currentTask: {},
   sendProject: () => {},
   closePopover: () => {},
+  onClickHandler: () => {},
 };
 
 export default FileDeliveryFormat;
