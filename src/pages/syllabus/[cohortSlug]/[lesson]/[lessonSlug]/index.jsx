@@ -329,7 +329,6 @@ function SyllabusContent() {
   }, [cohortSession, areSubscriptionsFetched]);
 
   const sendProject = async ({ task, githubUrl, taskStatus, flags, showShareModal = true }) => {
-    console.log('showShareModal', showShareModal);
     if (showShareModal) setShowModal(true);
     await updateAssignment({
       task, githubUrl, taskStatus, flags,
@@ -344,6 +343,13 @@ function SyllabusContent() {
     setIpynbHtmlUrl(null);
     setCurrentBlankProps(null);
     setSubTasks([]);
+  };
+
+  const restoreCurrentState = () => {
+    setShowModal(false);
+    setOpenNextModuleModal(false);
+    setOpenNextPageModal(false);
+    setOpenTargetBlankModal(false);
   };
 
   const onClickAssignment = (e, item) => {
@@ -515,8 +521,10 @@ function SyllabusContent() {
     return null;
   })[currentModuleIndex];
 
-  const handleNextPage = () => {
-    cleanCurrentData();
+  const handleNextPage = (shouldCleanData = true) => {
+    if (shouldCleanData) {
+      cleanCurrentData();
+    }
     scrollMainContainerTop();
     if (nextAssignment !== null) {
       if (nextAssignment?.target === 'blank') {
@@ -662,7 +670,7 @@ function SyllabusContent() {
         });
       } else {
         setCurrentBlankProps(null);
-        handleNextPage();
+        handleNextPage(false);
       }
     } else {
       setOpenNextModuleModal(true);
@@ -698,7 +706,7 @@ function SyllabusContent() {
   const handleMarkLater = async () => {
     const moduleToCheck = !nextAssignment && firstTask ? nextModule : sortedAssignments[currentModuleIndex];
     await checkAndUpdateModule(moduleToCheck);
-    handleNextPage();
+    handleNextPage(false);
     setOpenNextPageModal(false);
   };
 
@@ -1355,7 +1363,7 @@ function SyllabusContent() {
                     }, 1200);
                   } else {
                     setTimeout(() => {
-                      handleNextPage();
+                      handleNextPage(false);
                     }, 1200);
                   }
                   setOpenNextPageModal(false);
@@ -1380,7 +1388,7 @@ function SyllabusContent() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  setOpenNextModuleModal(false);
+                  restoreCurrentState();
                 }}
                 textTransform="uppercase"
                 fontSize="13px"
@@ -1389,8 +1397,12 @@ function SyllabusContent() {
               </Button>
               <Button
                 variant="default"
-                onClick={() => {
-                  handleStartDay();
+                onClick={async () => {
+                  await handleStartDay(null, true);
+                  cleanCurrentData();
+                  if (cohortSlug && firstTask) {
+                    router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`);
+                  }
                   setOpenNextModuleModal(false);
                 }}
                 textTransform="uppercase"
