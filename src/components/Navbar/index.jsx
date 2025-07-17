@@ -367,7 +367,7 @@ function Navbar({ translations, pageProps }) {
 
                 <PopoverContent
                   border={0}
-                  style={{ boxShadow: 'var(--chakra-shadows-2xl) !important' }}
+                  boxShadow="2xl !important"
                   rounded="md"
                   width={{ base: '100%', md: 'auto' }}
                   minW={{ base: 'auto', md: 'md' }}
