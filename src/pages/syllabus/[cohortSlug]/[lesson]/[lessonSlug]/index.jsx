@@ -358,7 +358,7 @@ function SyllabusContent() {
   };
 
   const handleNotFound = (task) => {
-    if (task.target === 'blank' && task.task_type === 'LESSON') {
+    if (task?.target === 'blank' && task?.task_type === 'LESSON') {
       setReadme({
         content: t('external-read', { link: task.url }),
       });
