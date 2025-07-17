@@ -19,6 +19,7 @@ import useAuth from '../hooks/useAuth';
 import useSession from '../hooks/useSession';
 import useSignup from '../hooks/useSignup';
 import usePlanMktInfo from '../hooks/usePlanMktInfo';
+import useCustomToast from '../hooks/useCustomToast';
 import bc from '../services/breathecode';
 
 const switchTypes = {
@@ -42,6 +43,7 @@ function PricingView() {
   const { t, lang } = useTranslation('pricing');
   const { getSelfAppliedCoupon, handleSuggestedPlan } = useSignup();
   const { getPlanFeatures } = usePlanMktInfo();
+  const { createToast } = useCustomToast({ toastId: 'pricing-plan-error' });
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated, cohorts } = useAuth();
   const { location } = useSession();
@@ -88,6 +90,24 @@ function PricingView() {
 
   const handleFetchPlan = async () => {
     const data = await handleSuggestedPlan(planSlug);
+    console.log(data);
+
+    const firstPlan = data?.planList?.[0];
+    if (firstPlan?.featured_info?.status_code === 404 && firstPlan?.featured_info?.detail === 'Plan not found') {
+      createToast({
+        position: 'top',
+        title: t('plan-not-found', { planSlug }),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      router.push({
+        pathname: '/pricing',
+        query: {},
+      });
+      return null;
+    }
+
     const originalPlan = data?.plans?.original_plan || {};
     const suggestedPlan = data?.plans?.suggested_plan || {};
     const allPlanList = [...originalPlan?.plans || [], ...suggestedPlan?.plans || []];
@@ -129,9 +149,9 @@ function PricingView() {
   });
 
   useEffect(() => {
-    if (planSlug) {
+    if (planSlug && paymentTypePlans.monthly.length > 0) {
       setIsFetching((prev) => ({ ...prev, selectedPlan: true }));
-      setTimeout(async () => {
+      const updatePlans = async () => {
         const updatedMonthlyPlans = await getPlanFeatures(paymentTypePlans.monthly);
         const updatedYearlyPlans = await getPlanFeatures(paymentTypePlans.yearly);
         setPaymentTypePlans((prev) => ({
@@ -140,9 +160,10 @@ function PricingView() {
           yearly: updatedYearlyPlans,
         }));
         setIsFetching((prev) => ({ ...prev, selectedPlan: false }));
-      }, 500);
+      };
+      updatePlans();
     }
-  }, [lang]);
+  }, [lang, paymentTypePlans.monthly.length]);
 
   useEffect(() => {
     if (isLoading || isQueryFetching) {
@@ -253,7 +274,7 @@ function PricingView() {
 
   return (
     <Container maxWidth="100%" background={hexColor.featuredColor3} paddingY="4rem">
-      {isFetching.courses && (
+      {((isFetching.courses || isFetching.selectedPlan || isLoading || isQueryFetching) && planSlug) && (
         <LoaderScreen position="fixed" />
       )}
       <Container
