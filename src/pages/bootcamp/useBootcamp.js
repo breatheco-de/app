@@ -96,6 +96,7 @@ export const useBootcamp = () => {
   const countryCode = location?.countryShort;
 
   const studentsImages = t(`students-course-images.${data?.slug}`, {}, { returnObjects: true });
+  const supportProfileImages = t('support-profile-images', {}, { returnObjects: true });
 
   const getElementTopOffset = (elem) => {
     if (elem && isWindow) {
@@ -519,6 +520,7 @@ export const useBootcamp = () => {
     cleanedStructuredData,
     showBottomCTA,
     studentsImages,
+    supportProfileImages,
     showVideoInCta,
 
     // Computed values

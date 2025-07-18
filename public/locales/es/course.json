@@ -104,6 +104,11 @@
       "https://randomuser.me/api/portraits/women/20.jpg"
     ]
   },
+  "support-profile-images": [
+      "https://randomuser.me/api/portraits/women/20.jpg",
+      "https://randomuser.me/api/portraits/men/14.jpg",
+      "https://randomuser.me/api/portraits/women/24.jpg"
+  ],
   "coupon-bar": {
     "headline": "¡Aprovecha el {{discount}} de descuento!",
     "ends-in": "Termina en {{time}}",
