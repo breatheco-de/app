@@ -110,6 +110,7 @@ function SignupForm({
         conversion_info: userSession,
       });
       const { data } = resp;
+      console.log('data', data);
       if (data.silent_code === SILENT_CODE.USER_EXISTS) {
         setShowAlreadyMember(true);
       } else if (resp.status >= 400) {
@@ -131,6 +132,8 @@ function SignupForm({
             last_name: data.last_name,
             plan: planFormated,
             user_id: data.user,
+            course_slug: getQueryString('course_slug') || courseChoosed,
+            course_title: getQueryString('course_title') || data.course_translation?.title,
             course: allValues.course,
             country: allValues.country,
             city: data.city,
