@@ -582,11 +582,12 @@ export function MDCheckbox({
 }
 
 export function OnlyForBanner({
-  children, permission, include, exclude, saas, withbanner,
+  children, permission, include, exclude, saas, withbanner, onlyAnonymous,
 }) {
   const allCapabilities = permission.split(',').concat(include.split(',').concat(exclude.split(',')));
 
   const parsedWithBanner = ['true', 'True', '1'].includes(String(withbanner));
+  const parsedOnlyAnonymous = ['true', 'True', '1'].includes(String(onlyAnonymous));
 
   return (
     <OnlyFor
@@ -594,6 +595,7 @@ export function OnlyForBanner({
       withBanner={parsedWithBanner}
       capabilities={allCapabilities}
       saas={saas}
+      onlyAnonymous={parsedOnlyAnonymous}
     >
       {children}
     </OnlyFor>
@@ -680,6 +682,7 @@ OnlyForBanner.propTypes = {
   exclude: PropTypes.string,
   saas: PropTypes.string,
   withbanner: PropTypes.string,
+  onlyAnonymous: PropTypes.string,
 };
 OnlyForBanner.defaultProps = {
   permission: '',
@@ -687,6 +690,7 @@ OnlyForBanner.defaultProps = {
   exclude: '',
   saas: '',
   withbanner: true,
+  onlyAnonymous: false,
 };
 DOMComponent.propTypes = {
   children: PropTypes.node.isRequired,

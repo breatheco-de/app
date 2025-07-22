@@ -40,9 +40,9 @@ function Component({ withBanner, children }) {
 }
 
 function OnlyFor({
-  academy, capabilities, children, onlyMember, onlyTeachers, withBanner, cohort, saas,
+  academy, capabilities, children, onlyMember, onlyTeachers, withBanner, cohort, saas, onlyAnonymous,
 }) {
-  const { user, hasNonSaasCohort } = useAuth();
+  const { user, hasNonSaasCohort, isAuthenticated } = useAuth();
   const academyNumber = Math.floor(academy);
   const teachers = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const commonUser = ['TEACHER', 'ASSISTANT', 'STUDENT', 'REVIEWER', 'ADMIN'];
@@ -67,6 +67,20 @@ function OnlyFor({
 
   const isSaasAllowed = saas !== undefined;
   const isCohortSaas = currentCohort?.available_as_saas === true;
+
+  // If onlyAnonymous is true, hide content from authenticated users
+  if (onlyAnonymous && isAuthenticated) {
+    return (
+      <Component withBanner={withBanner}>
+        {children}
+      </Component>
+    );
+  }
+
+  // If onlyAnonymous is true and user is not authenticated, show content
+  if (onlyAnonymous && !isAuthenticated) {
+    return children;
+  }
 
   const haveRequiredCapabilities = () => {
     if (isSaasAllowed) {
@@ -122,6 +136,7 @@ OnlyFor.propTypes = {
   cohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   withBanner: PropTypes.bool,
   saas: PropTypes.string,
+  onlyAnonymous: PropTypes.bool,
 };
 
 OnlyFor.defaultProps = {
@@ -132,6 +147,7 @@ OnlyFor.defaultProps = {
   cohort: null,
   withBanner: false,
   saas: undefined,
+  onlyAnonymous: false,
 };
 
 Component.propTypes = {
