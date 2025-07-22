@@ -2,12 +2,22 @@ import { useMemo } from 'react';
 import { format, differenceInMinutes } from 'date-fns';
 
 function formatTime(date) {
+  if (!date) return '';
   const d = new Date(date);
+  if (Number.isNaN(d.getTime())) {
+    console.error('Invalid date:', date);
+    return '';
+  }
   return format(d, "yyyyMMdd'T'HHmmss");
 }
 
 function getTimezoneOffset(date) {
+  if (!date) return '';
   const d = new Date(date);
+  if (Number.isNaN(d.getTime())) {
+    console.error('Invalid date:', date);
+    return '';
+  }
   const offsetMinutes = d.getTimezoneOffset();
   const sign = offsetMinutes > 0 ? '-' : '+';
   const hours = Math.floor(Math.abs(offsetMinutes) / 60).toString().padStart(2, '0');
@@ -16,9 +26,10 @@ function getTimezoneOffset(date) {
 }
 
 function formatOutlookDate(date, offset) {
+  if (!date) return '';
   const d = new Date(date);
   if (Number.isNaN(d.getTime())) {
-    console.error('Fecha inválida:', date);
+    console.error('Invalid date:', date);
     return '';
   }
   const pad = (n) => n.toString().padStart(2, '0');
@@ -26,7 +37,14 @@ function formatOutlookDate(date, offset) {
 }
 
 function calculateDuration(startTime, endTime) {
-  const diff = differenceInMinutes(new Date(endTime), new Date(startTime));
+  if (!startTime || !endTime) return '0000';
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    console.error('Invalid dates:', { startTime, endTime });
+    return '0000';
+  }
+  const diff = differenceInMinutes(end, start);
   const hours = Math.floor(diff / 60).toString().padStart(2, '0');
   const minutes = (diff % 60).toString().padStart(2, '0');
   return `${hours}${minutes}`;
@@ -38,6 +56,7 @@ function getRandomKey() {
 }
 
 function isMobile() {
+  if (typeof window === 'undefined') return false;
   return window.matchMedia('(max-width: 768px)').matches;
 }
 
@@ -80,12 +99,12 @@ function buildUrl(event, type) {
     case 'outlook':
     case 'apple':
     default: {
-      const isCrappyIE = /MSIE 9|MSIE 10|MSIE 11/.test(navigator.userAgent);
+      const isCrappyIE = typeof window !== 'undefined' && /MSIE 9|MSIE 10|MSIE 11/.test(window.navigator?.userAgent);
       calendarUrl = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
         'BEGIN:VEVENT',
-        `URL:${document.URL}`,
+        `URL:${typeof window !== 'undefined' ? document.URL : ''}`,
         `DTSTART:${formatTime(event.startTime)}`,
         `DTEND:${formatTime(event.endTime)}`,
         `SUMMARY:${event.title}`,
@@ -110,16 +129,23 @@ const CALENDAR_TYPES = [
   { key: 'outlookcom', label: 'Outlook.com' },
   { key: 'yahoo', label: 'Yahoo' },
   { key: 'apple', label: 'Apple Calendar' },
-  { key: 'outlook', label: 'Outlook app' },
 ];
 
 export default function useAddToCalendar(event) {
   return useMemo(() => {
     if (!event) return [];
+
+    const eventLanding = typeof window !== 'undefined' ? window.location.href : '';
+
+    const eventTemplate = {
+      ...event,
+      description: `${event.description || ''} \n\nLink: ${eventLanding}`,
+    };
+
     return CALENDAR_TYPES.map(({ key, label }) => ({
       key,
       label,
-      url: buildUrl(event, key),
+      url: buildUrl(eventTemplate, key),
     }));
   }, [event]);
 }

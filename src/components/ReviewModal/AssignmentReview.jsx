@@ -344,6 +344,9 @@ function AssignmentReview({
                       isRemovingDelivery: true,
                     }));
                     changeStatusAssignment(currentTask, PENDING)
+                      .then(() => {
+                        onClose();
+                      })
                       .finally(() => {
                         setLoaders((prevState) => ({
                           ...prevState,
