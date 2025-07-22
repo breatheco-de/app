@@ -5,6 +5,7 @@ alwaysApply: true
 ---
 ##Components
 All of our components are in the folder @/src/components. The files and folders names must be created using PascalCase.
+All of our components use PropTypes from 'prop-types' and defaultProps;
 
 ###Icons
 We have an Icon component inside the components folder. The Icon has a set of icons inside that folder, which are svg components that can be customized with props (width, height, style, color, etc.).

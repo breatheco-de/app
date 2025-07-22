@@ -9,13 +9,21 @@ const bgColors = {
   success: { background: '#e0ffe8', color: '#00a33d', borderColor: '#00bb2d' },
 };
 
+const globalActiveToasts = new Map();
+
+const globalActiveToastIds = new Set();
+
 const useCustomToast = () => {
   const toast = useToast();
-  const activeToasts = new Set();
 
   const closeToast = (id) => {
     toast.close(id);
-    activeToasts.delete(id);
+    globalActiveToastIds.delete(id);
+    globalActiveToasts.forEach((value, key) => {
+      if (value.id === id) {
+        globalActiveToasts.delete(key);
+      }
+    });
   };
 
   const createToast = ({
@@ -28,11 +36,28 @@ const useCustomToast = () => {
     description,
     actions = null,
     isClosable = true,
+    silent = false,
   }) => {
+    if (silent) return null;
+    const safeString = (value) => {
+      if (value === null || value === undefined) return '';
+      if (typeof value === 'string') return value;
+      if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+      return String(value);
+    };
+
+    const contentKey = `${safeString(title)}-${safeString(description)}-${safeString(status)}`;
+    const now = Date.now();
+
+    const existingToast = globalActiveToasts.get(contentKey);
+    if (existingToast && (now - existingToast.timestamp) < 4000) {
+      return existingToast.id;
+    }
+
     // Limit to 3 the number of active toast (to avoid overwellming the ui)
-    if (activeToasts.size >= 3) {
+    if (globalActiveToastIds.size >= 3) {
       // Close oldest toast
-      const oldestToast = Array.from(activeToasts)[0];
+      const oldestToast = Array.from(globalActiveToastIds)[0];
       closeToast(oldestToast);
     }
 
@@ -109,11 +134,13 @@ const useCustomToast = () => {
       ),
       duration,
       onCloseComplete: () => {
-        activeToasts.delete(id);
+        globalActiveToastIds.delete(id);
+        globalActiveToasts.delete(contentKey);
       },
     });
 
-    activeToasts.add(id);
+    globalActiveToastIds.add(id);
+    globalActiveToasts.set(contentKey, { id, timestamp: now });
     return id;
   };
 

@@ -93,7 +93,7 @@ function SyllabusContent() {
   const {
     getCohortUserCapabilities, getCohortData, cohortSession, sortedAssignments, setCohortSession, taskTodo,
     updateAssignment, startDay, updateTask, reviewModalState, handleCloseReviewModal,
-    grantAccess, setGrantAccess, checkNavigationAvailability,
+    grantAccess, setGrantAccess, checkNavigationAvailability, checkRevisionStatus,
   } = useCohortHandler();
   const { areSubscriptionsFetched } = useSubscriptions();
   // const isAvailableAsSaas = false;
@@ -142,8 +142,10 @@ function SyllabusContent() {
 
     const iframe = 'true';
     const token = getStorageItem('accessToken');
+    const cohortId = cohortSession?.id;
+    const academyId = cohortSession?.academy?.id;
 
-    return `${learnpackDeployUrl}#language=${language}&lang=${language}&theme=${colorMode}&iframe=${iframe}&token=${token}`;
+    return `${learnpackDeployUrl}#language=${language}&lang=${language}&theme=${colorMode}&iframe=${iframe}&token=${token}&cohort=${cohortId}&academy=${academyId}`;
   };
   const iframeURL = useMemo(() => buildLearnpackUrl(), [colorMode, currentAsset, lang]);
 
@@ -285,6 +287,9 @@ function SyllabusContent() {
     if (currentTask && !currentTask.opened_at) {
       updateOpenedAt();
     }
+    if (currentTask) {
+      checkRevisionStatus(currentTask);
+    }
   }, [currentTask]);
 
   // eslint-disable-next-line arrow-body-style
@@ -323,10 +328,11 @@ function SyllabusContent() {
     if (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
   }, [cohortSession, areSubscriptionsFetched]);
 
-  const sendProject = async ({ task, githubUrl, taskStatus }) => {
-    setShowModal(true);
+  const sendProject = async ({ task, githubUrl, taskStatus, flags, showShareModal = true }) => {
+    console.log('showShareModal', showShareModal);
+    if (showShareModal) setShowModal(true);
     await updateAssignment({
-      task, githubUrl, taskStatus,
+      task, githubUrl, taskStatus, flags,
     });
   };
 
@@ -1110,7 +1116,7 @@ function SyllabusContent() {
                                 <ShareButton
                                   variant="outline"
                                   title={t('projects:share-certificate.title')}
-                                  shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
+                                  shareText={t('projects:delivery.share-via', { project: currentTask?.title })}
                                   link={shareLink}
                                   socials={socials}
                                   currentTask={currentTask}
@@ -1269,7 +1275,7 @@ function SyllabusContent() {
                                 <ShareButton
                                   variant="outline"
                                   title={t('projects:share-certificate.title')}
-                                  shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
+                                  shareText={t('projects:delivery.share-via', { project: currentTask?.title })}
                                   link={shareLink}
                                   socials={socials}
                                   currentTask={currentTask}
@@ -1340,7 +1346,6 @@ function SyllabusContent() {
                 togglePendingSubtasks={handleNavigateToLastPendingSubtask}
                 currentAssetData={currentAsset}
                 onClickHandler={async () => {
-                  setShowModal(false);
                   const moduleToCheck = !nextAssignment && firstTask ? nextModule : sortedAssignments[currentModuleIndex];
                   await checkAndUpdateModule(moduleToCheck);
                   if (nextAssignment?.target === 'blank') {

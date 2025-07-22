@@ -66,7 +66,7 @@ function OnlyForComponent({ ...props }) {
 
 function HowToStartComponent({ ...props }) {
   return (
-    <OnlyForComponent {...props} saas={false} withbanner={false}>
+    <OnlyForComponent {...props} saas={props.saas || false} withbanner={false}>
       {props.children}
     </OnlyForComponent>
   );

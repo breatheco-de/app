@@ -279,7 +279,6 @@ function Workshop({ eventData, asset }) {
   const isAuth = isAuthenticated && user?.id;
   const recordingUrl = event?.recording_url;
   const alreadyApplied = users.some((l) => l?.attendee?.id === user?.id) || applied;
-  const eventNotStarted = event?.starting_at && new Date(event.starting_at) > new Date();
 
   const getWording = () => {
     if (!finishedEvent && (alreadyApplied || readyToJoinEvent)) {
@@ -1325,27 +1324,6 @@ function Workshop({ eventData, asset }) {
             </>
           )}
 
-          {alreadyApplied && eventNotStarted && (
-            <Box my="10px">
-              <Text mb="16px" fontSize="14px" fontWeight={700}>{t('add-to-calendar-title')}</Text>
-              <AddToCalendar
-                event={{
-                  title: event?.title || '',
-                  description: event?.description || '',
-                  startTime: event?.starting_at || '',
-                  endTime: event?.ending_at || '',
-                  location: event?.online_event ? 'online' : '',
-                }}
-                buttonLabel={t('add-to-calendar')}
-                buttonProps={{
-                  variant: 'outline',
-                  borderColor: 'blue.default',
-                  color: 'blue.default',
-                }}
-              />
-            </Box>
-          )}
-
           {users?.length > 0 && (
             <Box maxHeight="294px" display="flex" flexDirection="column" gridGap="18px" background={featuredColor} padding="20px 25px" borderRadius="17px">
               <Text>
@@ -1379,6 +1357,31 @@ function Workshop({ eventData, asset }) {
               )}
             </Box>
           )}
+
+          <Box my="10px" background={featuredColor} padding="20px 25px" borderRadius="17px">
+            <Text mb="16px" fontSize="14px" fontWeight={700}>{t('add-to-calendar-title')}</Text>
+            <AddToCalendar
+              event={{
+                title: event?.title || '',
+                description: event?.description || '',
+                startTime: event?.starting_at || '',
+                endTime: event?.ending_at || '',
+                location: event?.online_event ? 'online' : '',
+              }}
+              buttonLabel={(
+                <Box display="flex" alignItems="center" justifyContent="center" width="100%">
+                  <Icon icon="calendar" width="18px" height="18px" color="white" style={{ marginRight: 8 }} />
+                  <Text>{t('add-to-calendar')}</Text>
+                </Box>
+              )}
+              buttonProps={{
+                variant: 'default',
+                background: 'blue.default',
+                color: 'white',
+                width: '100%',
+              }}
+            />
+          </Box>
         </Box>
       </GridContainer>
       {finishedEvent && (<MktEventCards gridTemplateColumns="2fr repeat(12, 1fr) 2fr" gridColumn="2 / span 12" margin="2rem auto 0 auto" maxWidth="1440px" padding="0 10px" />)}
