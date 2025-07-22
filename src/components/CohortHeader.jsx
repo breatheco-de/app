@@ -1,7 +1,20 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import {
-  Flex, Box, Container, Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverCloseButton, PopoverHeader, PopoverBody, PopoverFooter, Link, Button, useDisclosure,
+  Flex,
+  Box,
+  Container,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  Link,
+  Button,
+  useDisclosure,
+  Image,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -45,7 +58,7 @@ function CustomButton({ children, infoTooltip, ...props }) {
     >
       {infoTooltip && (
         <Popover
-          placement="top-start"
+          placement="bottom-start"
           trigger="hover"
         >
           <PopoverTrigger>
@@ -157,6 +170,7 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isRigobotModalOpen, onOpen: onRigobotModalOpen, onClose: onRigobotModalClose } = useDisclosure();
   const rigobotModalInfo = t('common:rigobot', {}, { returnObjects: true });
+  const shortcuts = Array.isArray(cohortSession?.shortcuts) ? cohortSession?.shortcuts : [];
 
   const fetchServices = async () => {
     try {
@@ -196,6 +210,20 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
       });
     }
     onRigobotModalClose();
+  };
+
+  const renderShortcutIcon = (shortcut, size = '42px') => {
+    if (shortcut.icon_url) {
+      return (
+        <Image
+          src={shortcut.icon_url}
+          alt={shortcut.icon_url_alternative_text}
+          width={size}
+          height={size}
+        />
+      );
+    }
+    return <Icon icon={shortcut.icon} width={size} height={size} />;
   };
 
   return (
@@ -277,7 +305,7 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
                   </CustomButton>
                 )}
 
-                {!hasGithub && (
+                {!hasGithub && shortcuts.length === 0 && (
                   <CustomButton onClick={onOpenGithubModal}>
                     <Icon icon="github" width="42px" height="42px" />
                     <Text textAlign="center" color={hexColor.blueDefault}>
@@ -309,6 +337,23 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
                 </CustomButton>
               </>
             )}
+            {shortcuts.map((shortcut) => (
+              <CustomButton
+                key={shortcut.label}
+                onClick={() => window.open(shortcut.url, '_blank')}
+                infoTooltip={{
+                  leftComponent: renderShortcutIcon(shortcut, '19px'),
+                  title: shortcut.label,
+                  description: shortcut.help_text,
+                  learnMoreLink: shortcut.help_text_link,
+                }}
+              >
+                {renderShortcutIcon(shortcut)}
+                <Text textAlign="center" color={hexColor.blueDefault}>
+                  {shortcut.label}
+                </Text>
+              </CustomButton>
+            ))}
           </Flex>
         </Flex>
       ) : (
