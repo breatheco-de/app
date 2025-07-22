@@ -305,7 +305,7 @@ function AuthProvider({ children, pageProps }) {
                 user_id: userData.id,
                 email: userData.email,
                 is_academy_legacy: [...new Set(userData.roles.map((role) => role.academy.id))].join(', '),
-                is_available_as_saas: !userData.roles.some((r) => r.academy.id !== 47),
+                is_available_as_saas: !userData.roles.some((r) => r.academy.available_as_saas !== true),
                 first_name: userData.first_name,
                 last_name: userData.last_name,
                 avatar_url: userData.profile?.avatar_url || userData.github?.avatar_url,

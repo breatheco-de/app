@@ -39,10 +39,10 @@ function SyllabusActivity({
   });
 
   const sendProject = async ({
-    task, githubUrl, taskStatus,
+    task, githubUrl, taskStatus, flags,
   }) => {
     await updateAssignment({
-      task, githubUrl, taskStatus,
+      task, githubUrl, taskStatus, flags,
     });
     setShowModal(true);
   };

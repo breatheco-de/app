@@ -83,6 +83,10 @@
           "description": "",
           "subMenu": [
             {
+              "href": "/bootcamp/change-your-career-in-15-days",
+              "label": "Change your career in 15 days"
+            },
+            {
               "href": "/beyond-the-resume",
               "label": "Beyond the resume"
             }
