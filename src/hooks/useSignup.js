@@ -557,12 +557,12 @@ const useSignup = () => {
           item_category: 'subscription',
           subscription_period: selectedPlan?.period_label || 'one-time',
         }));
-
+        console.log(transactionData, 'transactionData');
         reportDatalayer({
           dataLayer: {
             event: 'purchase',
             transaction_id: transactionData?.id,
-            value: selectedPlan?.price || 0,
+            value: transactionData?.amount || 0,
             currency,
             payment_type: 'Credit card',
             plan: selectedPlan?.plan_slug || transactionData?.plan?.slug || defaultPlan,
