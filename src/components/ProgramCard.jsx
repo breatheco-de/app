@@ -86,7 +86,11 @@ function ProgramCard({
   const statusActive = subscriptionStatus === 'ACTIVE' || subscriptionStatus === 'FULLY_PAID';
   const isError = subscriptionStatus === 'ERROR';
   const expiredStatus = subscriptionStatus === 'EXPIRED';
-  // const statusActive = subscriptionStatus === 'ACTIVE' || isFreeTrial || subscriptionStatus === 'FULLY_PAID';
+
+  const isCancelledButValid = isCancelled && subscription && (
+    (subscription.valid_until && new Date(subscription.valid_until) > now)
+    || (subscription.next_payment_at && new Date(subscription.next_payment_at) > now)
+  );
 
   const statusTimeString = (start) => {
     if (start < now) return 'started';
@@ -327,8 +331,7 @@ function ProgramCard({
                   {isFreeTrial && isExpired ? (
                     <SubsriptionButton
                       subscription={subscription}
-                      onOpenCancelSubscription={() => {}}
-                      // ------------------
+                      onOpenCancelSubscription={() => { }}
                       marginTop={!isCancelled && '20px'}
                       borderRadius="3px"
                       width="100%"
@@ -419,7 +422,7 @@ function ProgramCard({
                   >
                     {!isExpired && (
                       <>
-                        {(courseProgress > 0 && !isCancelled) ? (
+                        {(courseProgress > 0 && (statusActive || isCancelledButValid)) ? (
                           <Button
                             variant={isFinantialStatusLate ? 'danger' : 'link'}
                             onClick={handleChoose}
@@ -436,21 +439,21 @@ function ProgramCard({
 
                         ) : (
                           <>
-                            {(!isAvailableAsSaas || !isCancelled) && !isError && !expiredStatus && (
-                            <Button
-                              borderRadius="3px"
-                              width="100%"
-                              padding="0"
-                              whiteSpace="normal"
-                              variant={isFinantialStatusLate ? 'danger' : 'default'}
-                              mb={isAvailableAsSaas && !statusActive && '10px'}
-                              onClick={handleChoose}
-                              isLoading={isLoadingPageContent}
-                            >
-                              {isFinantialStatusLate
-                                ? t('action-required')
-                                : t('start-course')}
-                            </Button>
+                            {(!isAvailableAsSaas || !isCancelled || isCancelledButValid) && !isError && !expiredStatus && (
+                              <Button
+                                borderRadius="3px"
+                                width="100%"
+                                padding="0"
+                                whiteSpace="normal"
+                                variant={isFinantialStatusLate ? 'danger' : 'default'}
+                                mb={isAvailableAsSaas && !statusActive && '10px'}
+                                onClick={handleChoose}
+                                isLoading={isLoadingPageContent}
+                              >
+                                {isFinantialStatusLate
+                                  ? t('action-required')
+                                  : t('start-course')}
+                              </Button>
                             )}
                           </>
                         )}
@@ -461,8 +464,7 @@ function ProgramCard({
                   {((isAvailableAsSaas && isFreeTrial) || (isAvailableAsSaas && !statusActive)) && (
                     <SubsriptionButton
                       subscription={subscription}
-                      onOpenCancelSubscription={() => {}}
-                      // ------------------
+                      onOpenCancelSubscription={() => { }}
                       marginTop={!isCancelled && !isExpired && courseProgress > 0 && '5px'}
                       borderRadius="3px"
                       width="100%"
@@ -474,7 +476,7 @@ function ProgramCard({
                       color="white"
                     >
                       <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
-                      {t('upgrade')}
+                      {isCancelledButValid ? t('profile:subscription.reactivate-subscription') : t('upgrade')}
                     </SubsriptionButton>
                   )}
                 </Box>
@@ -596,7 +598,7 @@ ProgramCard.defaultProps = {
   assistants: [],
   teacher: null,
   iconBackground: '',
-  handleChoose: () => {},
+  handleChoose: () => { },
   isHiddenOnPrework: false,
   isMarketingCourse: false,
   iconLink: '',

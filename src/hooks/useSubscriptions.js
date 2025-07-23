@@ -1,12 +1,18 @@
+import { useRouter } from 'next/router';
+import signupAction from '../store/actions/signupAction';
 import subscriptionAction from '../store/actions/subscriptionAction';
 import bc from '../services/breathecode';
 import useCustomToast from './useCustomToast';
 import { toCapitalize, unSlugify } from '../utils';
 
 const useSubscriptions = () => {
-  const { state, setAreSubscriptionsFetched, setSubscriptionsLoading, setSubscriptions, setCancelSubscription } = subscriptionAction();
+  const { state, setAreSubscriptionsFetched, setSubscriptionsLoading, setSubscriptions, setCancelSubscription, setReactivateSubscription } = subscriptionAction();
   const { subscriptions } = state;
+  const {
+    setPaymentStatus,
+  } = signupAction();
   const { createToast } = useCustomToast({ toastId: 'canceling-subscription-error-action' });
+  const router = useRouter();
 
   const SUBS_STATUS = {
     ACTIVE: 'ACTIVE',
@@ -104,6 +110,34 @@ const useSubscriptions = () => {
     }
   };
 
+  const reactivateSubscription = async (subscription) => {
+    const planStatus = subscription?.status;
+    const planSlug = subscription?.plans[0]?.slug;
+    if (planStatus === 'CANCELLED') {
+      const now = new Date();
+      const isStillValid = subscription && (
+        (subscription.valid_until && new Date(subscription.valid_until) > now)
+        || (subscription.next_payment_at && new Date(subscription.next_payment_at) > now)
+      );
+
+      if (isStillValid) {
+        console.log('reactivating subscription', subscription);
+        try {
+          const { data } = await bc.payment({ }).reactivateMySubscription(subscription.id);
+          setReactivateSubscription(data);
+          return data;
+        } catch (error) {
+          console.error('Error reactivating subscription:', error);
+          throw error;
+        }
+      } else {
+        setPaymentStatus('idle');
+        router.push(`/checkout?plan=${planSlug}`);
+      }
+    }
+    throw new Error('Subscription is not cancelled');
+  };
+
   const allSubscriptions = (subscriptions?.subscriptions
     && subscriptions?.plan_financings
     && [...subscriptions.subscriptions, ...subscriptions.plan_financings]) || [];
@@ -116,6 +150,7 @@ const useSubscriptions = () => {
     getPlanOffer,
     initializeSubscriptionsData,
     cancelSubscription,
+    reactivateSubscription,
     getSubscriptions,
   };
 };

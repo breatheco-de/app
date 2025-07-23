@@ -129,7 +129,7 @@
     "duration-cancelled": "Duration: Cancelled",
     "cancel-modal": {
       "title": "Cancel subscription",
-      "description": "Are you sure you want to cancel your subscription to {{cohort}}",
+      "description": "Are you sure you want to cancel your subscription? This means <strong>your subscription will still be accessible until {{nextPaymentDate}}</strong>. until this date you will also be able to reactivate it.",
       "closeText": "No, go back",
       "handlerText": "Yes, confirm"
     }

@@ -85,7 +85,6 @@ function ModalInfo({
             {htmlDescription && (
               <Text
                 size="l"
-                fontWeight="400"
                 color={commonTextColor}
                 margin="10px 0 0 0"
                 dangerouslySetInnerHTML={{

@@ -67,6 +67,7 @@ function profileHandlers() {
   return {
     statusStyles,
     statusLabel,
+    formatDate,
     getSubscriptionDetails: (sub) => {
       const status = sub?.status?.toLowerCase();
       const isPlanFinancing = sub?.type === 'plan_financing';
