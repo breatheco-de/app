@@ -121,7 +121,6 @@ const useSubscriptions = () => {
       );
 
       if (isStillValid) {
-        console.log('reactivating subscription', subscription);
         try {
           const { data } = await bc.payment({ }).reactivateMySubscription(subscription.id);
           setReactivateSubscription(data);
