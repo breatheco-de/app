@@ -552,12 +552,11 @@ const useSignup = () => {
         const adaptedItems = simplePlans.map((planObj) => ({
           item_id: planObj.plan.slug,
           item_name: planObj.plan.slug,
-          price: selectedPlan?.price || 0,
+          price: transactionData?.amount || 0,
           quantity: 1,
           item_category: 'subscription',
           subscription_period: selectedPlan?.period_label || 'one-time',
         }));
-        console.log(transactionData, 'transactionData');
         reportDatalayer({
           dataLayer: {
             event: 'purchase',
