@@ -238,7 +238,7 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
               {t('read-to-start-learning')}
             </Heading>
           </Box>
-          <Flex gap="16px" flexDirection={{ base: 'column', sm: 'row' }} width={{ base: '100%', sm: 'auto' }}>
+          <Flex gap="16px" wrap="wrap" flexDirection={{ base: 'column', sm: 'row' }} width={{ base: '100%', sm: 'auto' }}>
             {cohortSession.cohort_user.role === 'STUDENT' ? (
               <>
                 <Popover placement="bottom-start" isOpen={isOpen} onClose={onClose}>
