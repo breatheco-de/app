@@ -10,7 +10,7 @@ import {
   Image,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import { formatDuration, intervalToDuration, subMinutes } from 'date-fns';
+import { formatDuration, intervalToDuration, subMinutes, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { memo, useState } from 'react';
 import CustomTheme from '../../styles/theme';
@@ -138,7 +138,9 @@ function ProgramCard({
     active: t('status.active'),
     fully_paid: t('status.fully_paid'),
     expired: t('status.expired'),
-    cancelled: t('status.cancelled'),
+    cancelled: isCancelledButValid
+      ? t('status.is_cancelled_but_valid', { date: format(new Date(subscription.next_payment_at), 'dd MMM yyyy') })
+      : t('status.cancelled'),
     payment_issue: t('status.payment_issue'),
     error: t('status.error'),
   };

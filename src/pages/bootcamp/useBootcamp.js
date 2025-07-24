@@ -66,6 +66,7 @@ export const useBootcamp = () => {
     || (relatedSubscription.next_payment_at && new Date(relatedSubscription.next_payment_at) > new Date())
   );
   const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE || cancelledButValid;
+
   const planList = planData?.planList || [];
   const payableList = planList.filter((plan) => plan?.type === 'PAYMENT');
   const freePlan = planList?.find((plan) => plan?.type === 'TRIAL' || plan?.type === 'FREE');

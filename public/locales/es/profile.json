@@ -104,7 +104,8 @@
       "expired": "Expirado",
       "cancelled": "Cancelado",
       "completed": "Completado",
-      "error": "Error"
+      "error": "Error",
+      "is_cancelled_but_valid": "Válido hasta {{date}}"
     },
     "cancel": "Cancelar suscripción",
     "upgrade": "Actualizar suscripción",

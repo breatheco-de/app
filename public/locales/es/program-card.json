@@ -26,7 +26,8 @@
     "expired": "Expirado",
     "cancelled": "Cancelado",
     "completed": "Completado",
-    "error": "Error"
+    "error": "Error",
+    "is_cancelled_but_valid": "Válido hasta {{date}}"
   },
   "prework-message": "¡Tendrá acceso a esta cohorte tan pronto como comience!",
   "learn-more": "Ver curso",
