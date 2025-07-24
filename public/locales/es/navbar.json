@@ -83,6 +83,10 @@
           "description": "",
           "subMenu": [
             {
+              "href": "/es/bootcamp/change-your-career-in-15-days",
+              "label": "Cambia Tu Carrera en 15 Días"
+            },
+            {
               "href": "/es/beyond-the-resume",
               "label": "Más allá del currículum"
             }

@@ -62,7 +62,7 @@ function FlagsDeliveryFormat({ currentAssetData, currentTask, sendProject, close
 
   const validateFlagFormat = (flag) => {
     const trimmed = flag.trim();
-    return trimmed.startsWith('FLAG{') && trimmed.endsWith('}') && trimmed.length > 6;
+    return (trimmed.startsWith('FLAG{') || trimmed.startsWith('4GEEKS{')) && trimmed.endsWith('}') && trimmed.length > 6;
   };
 
   const handleSubmit = async () => {

@@ -103,17 +103,7 @@ function ModalInfo({
                   size="l"
                   fontWeight="500"
                   color={commonTextColor}
-                  // padding="4px 0"
                   margin="0"
-                  // margin="10px 0 0 0"
-                  // opacity={0.8}
-                  // borderLeft={4}
-                  // borderStyle="solid"
-                  // borderColor={commonBorderColor}
-                  // _hover={{
-                  //   opacity: 1,
-                  //   transition: 'opacity 0.2s ease-in-out',
-                  // }}
                 >
                   {teacherFeedback}
                 </Text>
@@ -243,7 +233,6 @@ function ModalInfo({
                   isLoading={isSubmitting}
                   onClick={() => resubmitHandler()}
                   variant="default"
-                  // colorScheme="blue"
                   textTransform="uppercase"
                 >
                   {handlerText}
