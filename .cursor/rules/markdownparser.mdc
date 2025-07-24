@@ -1,0 +1,6 @@
+---
+globs: src\components\MarkDownParser\MDComponents\index.jsx
+alwaysApply: false
+---
+## MDComponent
+When editing any funciton related to MDComponent/index.jsx we should take into consideration that all the props passed to the markdownParser should be lowercase
