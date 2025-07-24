@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Box, Text, Button, Checkbox, Input, FormControl, FormErrorMessage, VStack } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import MarkDownParser from '../MarkDownParser';
 import useCustomToast from '../../hooks/useCustomToast';
 
 function FlagsDeliveryFormat({ currentAssetData, currentTask, sendProject, closePopover, onClickHandler, statusText }) {
@@ -137,25 +136,13 @@ function FlagsDeliveryFormat({ currentAssetData, currentTask, sendProject, close
     setIsSubmitting(false);
   };
 
+  console.log(currentAssetData);
+
   return (
     <Box>
-      {currentAssetData?.delivery_instructions?.length > 2 ? (
-        <Box
-          height="100%"
-          margin="0 rem auto 0 auto"
-          transition="background 0.2s ease-in-out"
-          borderRadius="3px"
-          maxWidth="1280px"
-          width={{ base: '100%', md: 'auto' }}
-          className="markdown-body"
-        >
-          <MarkDownParser content={currentAssetData?.delivery_instructions} />
-        </Box>
-      ) : (
-        <Text size="md" mb={4}>
-          {t('deliverProject.submit-flags-instruction', { quantity: flagQuantity })}
-        </Text>
-      )}
+      <Text size="md" mb={4}>
+        {t('deliverProject.submit-flags-instruction', { quantity: flagQuantity })}
+      </Text>
 
       <VStack spacing={3} align="stretch">
         {flagIndexes.map((index) => (
@@ -208,9 +195,9 @@ FlagsDeliveryFormat.propTypes = {
 FlagsDeliveryFormat.defaultProps = {
   currentAssetData: {},
   currentTask: {},
-  sendProject: () => {},
-  closePopover: () => {},
-  onClickHandler: () => {},
+  sendProject: () => { },
+  closePopover: () => { },
+  onClickHandler: () => { },
   statusText: '',
 };
 

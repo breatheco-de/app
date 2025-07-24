@@ -75,8 +75,8 @@ function AssignmentReview({
     reject: t('review-assignment.reject'),
   };
   const assignmentButtonText = {
-    resubmit: 'Resubmit Assignment',
-    remove: 'Remove delivery',
+    resubmit: t('code-review.resubmit-assignment'),
+    remove: t('dashboard:modalInfo.rejected.remove-delivery'),
   };
   const assignmentButtonColor = {
     resubmit: 'blue.default',
