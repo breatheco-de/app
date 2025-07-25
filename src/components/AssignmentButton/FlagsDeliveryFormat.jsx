@@ -136,8 +136,6 @@ function FlagsDeliveryFormat({ currentAssetData, currentTask, sendProject, close
     setIsSubmitting(false);
   };
 
-  console.log(currentAssetData);
-
   return (
     <Box>
       <Text size="md" mb={4}>
