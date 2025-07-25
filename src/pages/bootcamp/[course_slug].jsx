@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { Avatar, Box, Button, Flex, Image, SkeletonText, useColorModeValue } from '@chakra-ui/react';
+import { Avatar, Box, Button, Flex, Image, SkeletonText, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
 import Head from 'next/head';
 import Icon from '../../components/Icon';
 import Text from '../../components/Text';
@@ -133,6 +133,8 @@ function CoursePage() {
       ? [customContactImage, supportProfileImages[0], supportProfileImages[1]]
       : supportProfileImages;
   })();
+
+  const showFullBubble = useBreakpointValue({ base: false, md: true });
 
   return (
     <>
@@ -681,58 +683,58 @@ function CoursePage() {
           <PageBubble
             url={`https://wa.me/${getAlternativeTranslation('contact_methods.whatsapp.number')}`}
             isCtaVisible={isCtaVisible}
-            background={{ base: useColorModeValue('green.400', 'green.600'), md: useColorModeValue('white', 'gray.700') }}
-            borderRadius={{ base: '50%', md: '30px' }}
-            boxShadow={{ base: '0 2px 8px rgba(0,0,0,0.10)', md: useColorModeValue('lg', 'dark-lg') }}
-            p={{ base: 1.5, md: 3 }}
-            display={{ base: 'flex', md: 'flex' }}
-            alignItems={{ base: 'center', md: 'center' }}
-            justifyContent={{ base: 'center', md: 'space-between' }}
-            width={{ base: '52px', md: 'fit-content' }}
-            height={{ base: '52px', md: '60px' }}
-            content={{
-              base: <Icon icon="whatsapp-border" color="#ffffff" width="35px" height="35px" />,
-              md: (
-                <>
-                  <Flex alignItems="center">
-                    <Flex position="relative" left="-10px">
-                      {supportAvatars && supportAvatars.length > 0 && supportAvatars.map((avatarUrl, index) => (
-                        <Avatar
-                          key={avatarUrl}
-                          size="sm"
-                          src={avatarUrl}
-                          ml={index > 0 ? '-10px' : '10px'}
-                          zIndex={supportAvatars.length - index}
-                        />
-                      ))}
-                    </Flex>
-
-                    <Box>
-                      <Text fontWeight="bold" fontSize="xs" color={useColorModeValue('gray.800', 'whiteAlpha.900')}>
-                        {getAlternativeTranslation('contact_methods.whatsapp.title')}
-                      </Text>
-                      <Text fontSize="xs" color={useColorModeValue('gray.500', 'gray.400')}>
-                        {getAlternativeTranslation('contact_methods.whatsapp.subtitle')}
-                      </Text>
-                    </Box>
+            background={showFullBubble ? useColorModeValue('white', 'gray.700') : useColorModeValue('green.400', 'green.600')}
+            borderRadius={showFullBubble ? '30px' : '50%'}
+            boxShadow={showFullBubble ? useColorModeValue('lg', 'dark-lg') : '0 2px 8px rgba(0,0,0,0.10)'}
+            p={showFullBubble ? 3 : 1.5}
+            display="flex"
+            alignItems="center"
+            justifyContent={showFullBubble ? 'space-between' : 'center'}
+            width={showFullBubble ? 'fit-content' : '52px'}
+            height={showFullBubble ? '60px' : '52px'}
+          >
+            {showFullBubble ? (
+              <>
+                <Flex alignItems="center">
+                  <Flex position="relative" left="-10px">
+                    {supportAvatars?.length > 0 && supportAvatars.map((avatarUrl, index) => (
+                      <Avatar
+                        key={avatarUrl}
+                        size="sm"
+                        src={avatarUrl}
+                        ml={index > 0 ? '-10px' : '10px'}
+                        zIndex={supportAvatars.length - index}
+                      />
+                    ))}
                   </Flex>
-                  <Box
-                    bg={useColorModeValue('green.400', 'green.600')}
-                    borderRadius="50%"
-                    p={2}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    boxShadow={useColorModeValue('lg', 'dark-lg')}
-                    ml={3}
-                    mr={-2}
-                  >
-                    <Icon icon="whatsapp-border" color="#ffffff" width="35px" height="35px" />
+
+                  <Box>
+                    <Text fontWeight="bold" fontSize="xs" color={useColorModeValue('gray.800', 'whiteAlpha.900')}>
+                      {getAlternativeTranslation('contact_methods.whatsapp.title')}
+                    </Text>
+                    <Text fontSize="xs" color={useColorModeValue('gray.500', 'gray.400')}>
+                      {getAlternativeTranslation('contact_methods.whatsapp.subtitle')}
+                    </Text>
                   </Box>
-                </>
-              ),
-            }}
-          />
+                </Flex>
+                <Box
+                  bg={useColorModeValue('green.400', 'green.600')}
+                  borderRadius="50%"
+                  p={2}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  boxShadow={useColorModeValue('lg', 'dark-lg')}
+                  ml={3}
+                  mr={-2}
+                >
+                  <Icon icon="whatsapp-border" color="#ffffff" width="35px" height="35px" />
+                </Box>
+              </>
+            ) : (
+              <Icon icon="whatsapp-border" color="#ffffff" width="35px" height="35px" />
+            )}
+          </PageBubble>
         )}
     </>
   );

@@ -1,18 +1,16 @@
 import React from 'react';
-import { Box, useBreakpointValue } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
 function PageBubble({
   url,
   isCtaVisible,
-  content,
+  children,
   ...rest
 }) {
   if (!url) {
     return null;
   }
-
-  const showFullBubble = useBreakpointValue({ base: false, md: true });
 
   return (
     <Box
@@ -26,18 +24,15 @@ function PageBubble({
       zIndex={2000}
       {...rest}
     >
-      {!showFullBubble ? content.base : content.md}
+      {children}
     </Box>
   );
 }
 
 PageBubble.propTypes = {
   url: PropTypes.string.isRequired,
-  content: PropTypes.shape({
-    base: PropTypes.node,
-    md: PropTypes.node,
-  }).isRequired,
   isCtaVisible: PropTypes.bool.isRequired,
+  children: PropTypes.node.isRequired,
 };
 
 export default PageBubble;
