@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 
 function PageBubble({
   url,
-  isCtaVisible,
   children,
   ...rest
 }) {
@@ -19,7 +18,6 @@ function PageBubble({
       target="_blank"
       rel="noopener noreferrer"
       position="fixed"
-      bottom={isCtaVisible ? '72px' : '10px'}
       right="12px"
       zIndex={2000}
       {...rest}

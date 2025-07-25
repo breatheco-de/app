@@ -682,7 +682,7 @@ function CoursePage() {
         && (
           <PageBubble
             url={`https://wa.me/${getAlternativeTranslation('contact_methods.whatsapp.number')}`}
-            isCtaVisible={isCtaVisible}
+            bottom={isCtaVisible ? '72px' : '10px'}
             background={showFullBubble ? useColorModeValue('white', 'gray.700') : useColorModeValue('green.400', 'green.600')}
             borderRadius={showFullBubble ? '30px' : '50%'}
             boxShadow={showFullBubble ? useColorModeValue('lg', 'dark-lg') : '0 2px 8px rgba(0,0,0,0.10)'}
