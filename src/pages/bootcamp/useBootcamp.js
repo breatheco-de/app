@@ -340,11 +340,9 @@ export const useBootcamp = () => {
       return existsAvatar || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`;
     });
 
-  const randomMultiplier = Math.floor(Math.random() * 2) + 20;
-
   const assetCountByType = {
     lesson: assetCount?.lesson || 0,
-    exercise: assetCount?.exercise ? assetCount.exercise * randomMultiplier : 0,
+    exercise: assetCount?.exercise || 0,
     project: assetCount?.project || 0,
   };
 

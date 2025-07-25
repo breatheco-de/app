@@ -153,9 +153,9 @@ function AssignmentReview({
   const closePopover = () => {
     setIsPopoverOpen(false);
   };
-  const sendProject = async ({ task, githubUrl, taskStatus: newTaskStatus }) => {
+  const sendProject = async ({ task, githubUrl, taskStatus: newTaskStatus, flags }) => {
     await updateAssignment({
-      task, githubUrl, taskStatus: newTaskStatus,
+      task, githubUrl, taskStatus: newTaskStatus, flags,
     });
   };
 

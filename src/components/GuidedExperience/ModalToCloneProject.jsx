@@ -190,7 +190,7 @@ function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID,
                   {step.source && (
                     <>
                       {!isOnlyReadme ? (
-                        <NextChakraLink href={step.source} target="_blank" color={hexColor.blueDefault}>
+                        <NextChakraLink href={step.source} target="_blank" variant="link" color={hexColor.blue}>
                           {step['source-label'] || t('common:learn-more')}
                         </NextChakraLink>
                       ) : (
@@ -257,6 +257,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   //__first step to determine options and modal steps__
   const templateUrl = currentAsset?.template_url;
   const isInteractive = currentAsset?.interactive;
+  const isOvaTemplate = templateUrl && templateUrl.toLowerCase().endsWith('.ova');
 
   const isForOpenLocaly = isInteractive || templateUrl;
   const showProvisioningLinks = (provisioningVendors?.length > 0) && currentAsset?.gitpod;
@@ -280,7 +281,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   //__this is the video when selecting os open locally__
   const localIntro = t('common:learnpack.clone-modal.intro', {}, { returnObjects: true });
 
-  //__os availaable and steps lists of each os__
+  //__os available and steps lists of each os__
   const osList = t('common:learnpack.clone-modal.os-list', { repoUrl: getFinalUrl() }, { returnObjects: true });
   const agentVsCode = t('common:learnpack.clone-modal.agent-vs-code', {}, { returnObjects: true });
   const agentOS = t('common:learnpack.clone-modal.agent-os', { repoName }, { returnObjects: true });
@@ -313,6 +314,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
 
   //__based on selected option and data previously obtained, get the steps__
   const parseSteps = () => {
+    if (isOvaTemplate) return selectedOs?.ova_steps;
     if (showProvisioningLinks && selectedOption === 'provisioning_vendors' && !isInteractive) return openInLearnpackAction.steps;
     if (isInteractive) return selectedOs?.steps.concat([finalStep]);
     if (onlyReadme) return selectedOs?.readme_steps;

@@ -62,7 +62,7 @@ const assetTypeDict = {
 export const getStaticPaths = async ({ locales }) => {
   const { data } = await bc.events().allEvents();
 
-  const paths = data.filter((ev) => ev?.slug && ['ACTIVE', 'FINISHED'].includes(data.status))
+  const paths = data.filter((ev) => ev?.slug && ['ACTIVE', 'FINISHED'].includes(ev.status))
     .flatMap((res) => locales.map((locale) => ({
       params: {
         event_slug: res?.slug,
@@ -118,6 +118,8 @@ export const getStaticProps = async ({ params, locale }) => {
     asset = assetResp?.data;
   }
 
+  const isEventFinished = data?.status === 'FINISHED' || (data?.ending_at && new Date(data.ending_at) < new Date());
+
   return ({
     props: {
       seo: {
@@ -140,6 +142,7 @@ export const getStaticProps = async ({ params, locale }) => {
       eventData: data,
       asset,
     },
+    revalidate: isEventFinished ? false : 30,
   });
 };
 

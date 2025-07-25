@@ -177,6 +177,7 @@ function AssignmentButton({
       return (
         <ButtonVariants
           isLoading={loaders.isOpeningReviewModal}
+          allowText={allowText}
           onClick={togglePendingSubtasks}
           isDisabled={isButtonDisabled}
           currentTask={currentTask}
