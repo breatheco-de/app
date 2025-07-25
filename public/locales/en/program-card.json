@@ -26,7 +26,8 @@
     "expired": "Expired",
     "cancelled": "Cancelled",
     "completed": "Completed",
-    "error": "Error"
+    "error": "Error",
+    "is_cancelled_but_valid": "Valid until {{date}}"
   },
   "prework-message": "You will have access to this cohort as soon as it starts!",
   "learn-more": "Learn more",
