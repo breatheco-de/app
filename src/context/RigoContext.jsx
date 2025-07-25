@@ -46,7 +46,7 @@ function RigoProvider({ children }) {
       }}
     >
       <Script
-        src="https://unpkg.com/rigo-ai@0.1.9/dist/main.js"
+        src="https://unpkg.com/rigo-ai@0.1.10/dist/main.js"
         onLoad={() => {
           window.rigo.init(process.env.RIGOBOT_HASH, {
             context: '',
