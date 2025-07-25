@@ -3,8 +3,8 @@ description:
 globs: 
 alwaysApply: true
 ---
-##Breathecode
+## Breathecode
 The service breathecode is the api from where we will consume most of our data. Every time we want to communicate with breathecode, it must be done using the service declared in the [breathecode.js](mdc:src/services/breathecode.js) file in the services folder. Internally, the breathecode service is separated by modules, which corresponds to the modules of the api.
 
-##Rigobot
+## Rigobot
 Rigobot is another api from where we will consume some data ocasionally. This service is also structured by modules inside the file [rigobot.js](mdc:src/services/rigobot.js).
