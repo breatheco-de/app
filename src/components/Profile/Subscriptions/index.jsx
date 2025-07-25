@@ -11,7 +11,8 @@ import Head from 'next/head';
 import Text from '../../Text';
 import useStyle from '../../../hooks/useStyle';
 import useSubscriptions from '../../../hooks/useSubscriptions';
-import { location, slugToTitle } from '../../../utils';
+import profileHandlers from './handlers';
+import { location } from '../../../utils';
 import { CardSkeleton, SimpleSkeleton } from '../../Skeleton';
 import bc from '../../../services/breathecode';
 import SubscriptionCard from './SubscriptionCard';
@@ -44,6 +45,7 @@ function Subscriptions({ cohorts }) {
   const [loadingServices, setLoadingServices] = useState(true);
   const [subscriptionProps, setSubscriptionProps] = useState({});
   const memberships = state?.subscriptions;
+  const { formatDate } = profileHandlers();
 
   const onOpenCancelSubscription = () => setCancelModalIsOpen(true);
 
@@ -217,7 +219,9 @@ function Subscriptions({ cohorts }) {
             <ModalInfo
               isOpen={cancelModalIsOpen}
               title={t('subscription.cancel-modal.title')}
-              description={t('subscription.cancel-modal.description', { cohort: slugToTitle(subscriptionProps?.slug) })}
+              htmlDescription={t('subscription.cancel-modal.description', {
+                nextPaymentDate: formatDate(subscriptionProps?.next_payment_at),
+              })}
               closeText={t('subscription.cancel-modal.closeText')}
               handlerText={t('subscription.cancel-modal.handlerText')}
               headerStyles={{ textAlign: 'center' }}

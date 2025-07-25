@@ -104,7 +104,8 @@
       "expired": "Expirado",
       "cancelled": "Cancelado",
       "completed": "Completado",
-      "error": "Error"
+      "error": "Error",
+      "is_cancelled_but_valid": "Válido hasta {{date}}"
     },
     "cancel": "Cancelar suscripción",
     "upgrade": "Actualizar suscripción",
@@ -116,7 +117,7 @@
     "duration-cancelled": "Duración: Cancelada",
     "cancel-modal": {
       "title": "Cancelar suscripción",
-      "description": "¿Estás seguro de que desea cancelar su suscripción a {{cohort}}?",
+      "description": "¿Estás seguro de que desea cancelar su suscripción? Esto significa que <strong>tu suscripción seguirá siendo accesible hasta {{nextPaymentDate}}</strong>. hasta esta fecha también podrás reactivarla.",
       "closeText": "No, volver",
       "handlerText": "Si, confirmar"
     }

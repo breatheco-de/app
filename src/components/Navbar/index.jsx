@@ -48,7 +48,7 @@ function Navbar({ translations, pageProps }) {
   const { toggleColorMode } = useColorMode();
   const fontColor = useColorModeValue('black', 'gray.200');
   const isMobile = useBreakpointValue({ base: true, lg: false });
-  const { hexColor, colorMode, reverseColorMode, borderColor, navbarBackground } = useStyle();
+  const { hexColor, colorMode, reverseColorMode, borderColor, borderColor2, navbarBackground } = useStyle();
 
   const existsCohortWithoutAvailableAsSaas = cohorts.some((c) => c?.available_as_saas === false);
   const existsPaidSubscription = allSubscriptions.some((sb) => sb?.invoices?.[0]?.amount > 0);
@@ -367,7 +367,7 @@ function Navbar({ translations, pageProps }) {
 
                 <PopoverContent
                   border={0}
-                  boxShadow="2xl"
+                  boxShadow="2xl !important"
                   rounded="md"
                   width={{ base: '100%', md: 'auto' }}
                   minW={{ base: 'auto', md: 'md' }}
@@ -398,7 +398,7 @@ function Navbar({ translations, pageProps }) {
                     <Flex
                       borderTop={2}
                       borderStyle="solid"
-                      borderColor={borderColor}
+                      borderColor={borderColor2}
                       alignItems="center"
                       padding="1rem 0rem"
                     >
@@ -419,7 +419,7 @@ function Navbar({ translations, pageProps }) {
                     <Flex
                       borderTop={2}
                       borderStyle="solid"
-                      borderColor={borderColor}
+                      borderColor={borderColor2}
                       alignItems="center"
                       padding="1rem 0rem"
                     >

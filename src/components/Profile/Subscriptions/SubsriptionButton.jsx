@@ -5,7 +5,6 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useSubscriptions from '../../../hooks/useSubscriptions';
-import useSignup from '../../../hooks/useSignup';
 import useCustomToast from '../../../hooks/useCustomToast';
 import { reportDatalayer } from '../../../utils/requests';
 import { getBrowserInfo } from '../../../utils';
@@ -30,8 +29,7 @@ function SubsriptionButton({
   const isExpired = status === 'EXPIRED';
   const isPaymentIssue = status === 'PAYMENT_ISSUE';
 
-  const { getPlanOffer } = useSubscriptions();
-  const { reactivatePlan } = useSignup();
+  const { getPlanOffer, reactivateSubscription } = useSubscriptions();
   const handlePlanOffer = async () => {
     try {
       setIsLoading(true);
@@ -50,9 +48,15 @@ function SubsriptionButton({
     }
   };
 
-  const handleReactivatePlan = () => {
+  const handleReactivatePlan = async () => {
     setIsLoading(true);
-    reactivatePlan(planSlug, status);
+    try {
+      await reactivateSubscription(subscription);
+    } catch (error) {
+      console.error('Error reactivating subscription:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const manageActionBasedOnLocation = () => {

@@ -798,13 +798,25 @@ function useCohortHandler() {
 
       const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED' || sub.status === 'ERROR');
       const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
-      if (expiredCourse && !fullyPaidSub) {
+      const cancelledSub = cohortSubscriptions.find((sub) => sub.status === 'CANCELLED' || sub.status === 'PAYMENT_ISSUE');
+      const now = new Date();
+      const isCancelledButValid = cancelledSub && (
+        (cancelledSub.valid_until && new Date(cancelledSub.valid_until) > now)
+        || (cancelledSub.next_payment_at && new Date(cancelledSub.next_payment_at) > now)
+      );
+
+      if (fullyPaidSub) {
+        setGrantAccess(true);
+        return;
+      }
+
+      if (!isCancelledButValid) {
         showToastAndRedirect(currentCohortSlug);
         return;
       }
 
-      if (fullyPaidSub) {
-        setGrantAccess(true);
+      if (expiredCourse) {
+        showToastAndRedirect(currentCohortSlug);
         return;
       }
 
