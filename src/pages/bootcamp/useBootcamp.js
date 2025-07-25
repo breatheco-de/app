@@ -153,7 +153,7 @@ export const useBootcamp = () => {
       bc.admissions().joinCohort(cohortId)
         .then(async (resp) => {
           const dataRequested = await resp.data;
-          if (dataRequested?.status === 'ACTIVE') {
+          if (dataRequested?.status === 'ACTIVE' || cancelledButValid) {
             setReadyToRefetch(true);
           }
           if (dataRequested?.status_code === 400) {
