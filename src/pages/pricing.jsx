@@ -21,6 +21,7 @@ import useAuth from '../hooks/useAuth';
 import useSession from '../hooks/useSession';
 import useSignup from '../hooks/useSignup';
 import usePlanMktInfo from '../hooks/usePlanMktInfo';
+import useCustomToast from '../hooks/useCustomToast';
 import bc from '../services/breathecode';
 
 const switchTypes = {
@@ -41,14 +42,8 @@ const getYearlyPlans = (originalPlans, suggestedPlans, allFeaturedPlans) => {
 };
 
 function PricingView() {
-  const { t, lang } = useTranslation('pricing');
-  const { getSelfAppliedCoupon, handleSuggestedPlan, generatePlan } = useSignup();
-  const { getPlanFeatures } = usePlanMktInfo();
   const [activeType, setActiveType] = useState('monthly');
   const [viewMode, setViewMode] = useState('immersive-bootcamps');
-  const { isAuthenticated, cohorts } = useAuth();
-  const { location } = useSession();
-  const { hexColor, backgroundColor, fontColor } = useStyle();
   const [relatedSubscription, setRelatedSubscription] = useState({});
   const [selectedPlanData, setSelectedPlanData] = useState({});
   const [selectedCourseData, setSelectedCourseData] = useState({});
@@ -60,7 +55,17 @@ function PricingView() {
   const [premiumPlanCourses, setPremiumPlanCourses] = useState([]);
   const [showPremiumPlan, setShowPremiumPlan] = useState(false);
   const [paymentTypePlans, setPaymentTypePlans] = useState({ hasSubscriptionMethod: false, monthly: [], yearly: [] });
+  const [isInitialLoadComplete, setIsInitialLoadComplete] = useState(false);
+
+  const { t, lang } = useTranslation('pricing');
+  const { getSelfAppliedCoupon, handleSuggestedPlan, generatePlan } = useSignup();
+  const { getPlanFeatures } = usePlanMktInfo();
+  const { createToast } = useCustomToast({ toastId: 'pricing-plan-error' });
+  const { isAuthenticated, cohorts } = useAuth();
+  const { location } = useSession();
+  const { hexColor, backgroundColor, fontColor } = useStyle();
   const router = useRouter();
+
   const queryCourse = getQueryString('course');
   const queryPlan = getQueryString('plan');
   const queryView = getQueryString('view');
@@ -134,6 +139,24 @@ function PricingView() {
 
   const handleFetchPlan = async () => {
     const data = await handleSuggestedPlan(planSlug);
+    console.log(data);
+
+    const firstPlan = data?.planList?.[0];
+    if (firstPlan?.featured_info?.status_code === 404 && firstPlan?.featured_info?.detail === 'Plan not found') {
+      createToast({
+        position: 'top',
+        title: t('plan-not-found', { planSlug }),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      router.push({
+        pathname: '/pricing',
+        query: {},
+      });
+      return null;
+    }
+
     const originalPlan = data?.plans?.original_plan || {};
     const suggestedPlan = data?.plans?.suggested_plan || {};
     const allPlanList = [...originalPlan?.plans || [], ...suggestedPlan?.plans || []];
@@ -175,9 +198,9 @@ function PricingView() {
   });
 
   useEffect(() => {
-    if (planSlug) {
+    if (planSlug && paymentTypePlans.monthly.length > 0) {
       setIsFetching((prev) => ({ ...prev, selectedPlan: true }));
-      setTimeout(async () => {
+      const updatePlans = async () => {
         const updatedMonthlyPlans = await getPlanFeatures(paymentTypePlans.monthly);
         const updatedYearlyPlans = await getPlanFeatures(paymentTypePlans.yearly);
         setPaymentTypePlans((prev) => ({
@@ -186,9 +209,10 @@ function PricingView() {
           yearly: updatedYearlyPlans,
         }));
         setIsFetching((prev) => ({ ...prev, selectedPlan: false }));
-      }, 500);
+      };
+      updatePlans();
     }
-  }, [lang]);
+  }, [lang, paymentTypePlans.monthly.length]);
 
   useEffect(() => {
     if (isLoading || isQueryFetching) {
@@ -199,14 +223,6 @@ function PricingView() {
       setIsFetching((prev) => ({ ...prev, selectedPlan: false }));
     }
   }, [status, isLoading, isQueryFetching, planData?.title]);
-
-  useEffect(() => {
-    const hasActiveBootcamp = cohorts.some((cohort) => !cohort.available_as_saas
-      && cohort.ending_date && new Date(cohort.ending_date) > new Date()
-      && cohort.cohort_user.educational_status === 'ACTIVE');
-
-    if (hasActiveBootcamp) router.push('/choose-program');
-  }, [cohorts]);
 
   const fetchCourses = async () => {
     try {
@@ -235,6 +251,7 @@ function PricingView() {
       console.error('Error fetching marketing courses:', error);
     } finally {
       setIsFetching((prev) => ({ ...prev, courses: false }));
+      setIsInitialLoadComplete(true);
     }
   };
 
@@ -285,39 +302,71 @@ function PricingView() {
   };
 
   useEffect(() => {
+    const hasActiveBootcamp = cohorts.some((cohort) => !cohort.available_as_saas
+      && cohort.ending_date && new Date(cohort.ending_date) > new Date()
+      && cohort.cohort_user.educational_status === 'ACTIVE');
+
+    if (hasActiveBootcamp) router.push('/choose-program');
+  }, [cohorts, router]);
+
+  useEffect(() => {
     if (isAuthenticated) {
       fetchMySubscriptions();
     }
   }, [isAuthenticated, allFeaturedPlansSelected]);
+
+  useEffect(() => {
+    fetchCourses();
+  }, [lang]);
 
   const paymentOptions = useMemo(() => ({
     monthly: selectedPlanListExists ? paymentTypePlans.monthly : defaultMonthlyPlans,
     yearly: selectedPlanListExists ? paymentTypePlans.yearly : defaultYearlyPlans,
   }), [selectedPlanListExists, paymentTypePlans, defaultMonthlyPlans, defaultYearlyPlans]);
 
-  const isAbleToShowPrices = (paymentOptions?.monthly?.length > 0 || paymentOptions?.yearly?.length > 0) && (courseFormated || planFormated);
+  const isAbleToShowPrices = useMemo(() => {
+    if (planSlug && !isInitialLoadComplete) {
+      return false;
+    }
+    return (paymentOptions?.monthly?.length > 0 || paymentOptions?.yearly?.length > 0) && (courseFormated || planFormated);
+  }, [planSlug, isInitialLoadComplete, paymentOptions, courseFormated, planFormated]);
 
-  const switcherInfo = useMemo(() => [
-    {
-      type: 'monthly',
-      name: t('signup:info.monthly'),
-      exists: paymentOptions.monthly.length > 0,
-    },
-    {
-      type: 'yearly',
-      name: t('signup:info.yearly'),
-      exists: paymentOptions.yearly.length > 0,
-    },
-  ], [paymentOptions, t]);
+  const existentOptions = useMemo(() => {
+    const switcherInfo = [
+      {
+        type: 'monthly',
+        name: t('signup:info.monthly'),
+        exists: paymentOptions.monthly.length > 0,
+      },
+      {
+        type: 'yearly',
+        name: t('signup:info.yearly'),
+        exists: paymentOptions.yearly.length > 0,
+      },
+    ];
+    return switcherInfo.filter((l) => l.exists);
+  }, [paymentOptions, t]);
 
-  const existentOptions = switcherInfo.filter((l) => l.exists);
   const existsSubscriptionMehtod = paymentTypePlans.hasSubscriptionMethod;
+
+  const shouldShowLoader = useMemo(() => {
+    if (planSlug) {
+      return isFetching.courses || isFetching.selectedPlan || isLoading || isQueryFetching;
+    }
+    return isFetching.courses;
+  }, [planSlug, isFetching.courses, isFetching.selectedPlan, isLoading, isQueryFetching]);
+
+  // Early returns for loading states
+  if (shouldShowLoader) {
+    return (
+      <Container maxWidth="100%" background={hexColor.featuredColor3} paddingY="4rem">
+        <LoaderScreen position="fixed" />
+      </Container>
+    );
+  }
 
   return (
     <Container maxWidth="100%" background={hexColor.featuredColor3} paddingY="4rem">
-      {isFetching.courses && (
-        <LoaderScreen position="fixed" />
-      )}
       <Container
         maxWidth="1280px"
         position="relative"

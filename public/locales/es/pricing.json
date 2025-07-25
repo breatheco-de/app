@@ -4,6 +4,7 @@
   "sub-heading": "Comienza a aprender desde cero y prepárate para ingresar a la industria tecnológica!",
   "read-more" : "Conoce la ciencia detrás de 4Geeks.",
   "read-more-link": "https://4geeks.com/es/mastering-technical-knowledge",
+  "plan-not-found": "El plan \"{{planSlug}}\" no existe. Redirigiendo a la página de precios.",
   "choose-your-career-path": "Elige tu camino profesional",
   "learn-at-your-own-pace": "Aprende a tu propio ritmo",
   "selfpaced-included": "+ 6 meses de selfpaced incluido",

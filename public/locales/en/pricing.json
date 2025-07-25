@@ -4,6 +4,7 @@
   "sub-heading": "Start learning from scratch and get ready to enter the tech industry!",
   "read-more": "Learn the science behind 4Geeks.",
   "read-more-link": "https://4geeks.com/mastering-technical-knowledge",
+  "plan-not-found": "Plan \"{{planSlug}}\" does not exist. Redirecting to pricing page.",
   "choose-your-career-path": "Choose your career path",
   "learn-at-your-own-pace": "Learn at your own pace",
   "selfpaced-included": "+ 6 months of selfpaced included",
