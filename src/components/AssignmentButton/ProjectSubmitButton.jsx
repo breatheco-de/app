@@ -6,6 +6,7 @@ import {
   PopoverHeader,
   Popover,
   PopoverTrigger,
+  Portal,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -70,21 +71,23 @@ function ProjectSubmitButton({
         />
       </PopoverTrigger>
 
-      <PopoverContent>
-        <PopoverArrow />
-        <PopoverHeader>{statusText}</PopoverHeader>
-        <PopoverCloseButton />
-        <PopoverBody>
-          <DeliveryFormat
-            currentAssetData={currentAssetData}
-            currentTask={currentTask}
-            sendProject={sendProject}
-            closePopover={closePopover}
-            onClickHandler={onClickHandler}
-            statusText={statusText}
-          />
-        </PopoverBody>
-      </PopoverContent>
+      <Portal>
+        <PopoverContent>
+          <PopoverArrow />
+          <PopoverHeader>{statusText}</PopoverHeader>
+          <PopoverCloseButton />
+          <PopoverBody>
+            <DeliveryFormat
+              currentAssetData={currentAssetData}
+              currentTask={currentTask}
+              sendProject={sendProject}
+              closePopover={closePopover}
+              onClickHandler={onClickHandler}
+              statusText={statusText}
+            />
+          </PopoverBody>
+        </PopoverContent>
+      </Portal>
     </Popover>
   );
 }
