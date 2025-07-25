@@ -60,7 +60,7 @@ function ShowPrices({
 }) {
   const [selectedPlanId, setSelectedPlanId] = useState('');
   const { t } = useTranslation('signup');
-  const { backgroundColor, lightColor } = useStyle();
+  const { backgroundColor, lightColor, navbarBackground } = useStyle();
   const router = useRouter();
   const { applyDiscountCouponsToPlans, state } = useSignup();
   const { selfAppliedCoupon } = state;
@@ -369,7 +369,7 @@ function ShowPrices({
             <Box
               flex="1"
               p={{ base: 4, md: 6 }}
-              bg={backgroundColor}
+              bg={navbarBackground}
               borderBottomLeftRadius={{ base: '8px', md: '0' }}
               borderBottomRightRadius="8px"
               borderTopRightRadius={{ base: '0', md: '8px' }}
