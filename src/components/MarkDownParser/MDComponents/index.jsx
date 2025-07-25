@@ -66,7 +66,7 @@ function RigoLink({ children, href }) {
     }
   }
   return (
-    <button style={{ display: 'flex', alignItems: 'center', gap: '5px' }} type="button" onClick={openRigo}>
+    <button style={{ display: 'flex', alignItems: 'center', gap: '5px', border: '1px solid #109DD3', borderRadius: '13px', padding: '4px 17px' }} type="button" onClick={openRigo}>
       <Icon icon="rigobot-avatar-tiny" width="30px" height="30px" />
       <span>{children}</span>
     </button>
@@ -124,8 +124,6 @@ export function MDLink({ children, href }) {
 
 export function Code({ inline, showLineNumbers, showInlineLineNumbers, className, children }) {
   const match = /language-(\w+)/.exec(className || '');
-
-  console.log('LENGUAGE ', match);
 
   if (match && match.includes('mermaid')) {
     console.log(children, 'Children');

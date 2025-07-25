@@ -3,7 +3,7 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 import ProjectSubmitButton from './ProjectSubmitButton';
@@ -31,6 +31,12 @@ function AssignmentButton({
   const [currentAsset, setCurrentAsset] = useState(currentAssetData);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [fileData, setFileData] = useState(null);
+
+  useEffect(() => {
+    if (currentAssetData?.id !== currentAsset?.id) {
+      setCurrentAsset(currentAssetData);
+    }
+  }, [currentAssetData]);
 
   const [loaders, setLoaders] = useState({
     isFetchingCommitFiles: false,
@@ -171,6 +177,7 @@ function AssignmentButton({
       return (
         <ButtonVariants
           isLoading={loaders.isOpeningReviewModal}
+          allowText={allowText}
           onClick={togglePendingSubtasks}
           isDisabled={isButtonDisabled}
           currentTask={currentTask}

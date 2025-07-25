@@ -17,7 +17,7 @@ import Text from '../Text';
 import { AvatarSkeletonWrapped, CardSkeleton } from '../Skeleton';
 import { getStorageItem, getBrowserInfo } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
-import { BREATHECODE_HOST } from '../../utils/variables';
+import { BREATHECODE_HOST, defaultProfiles } from '../../utils/variables';
 import CanAccess from '../CanAccess';
 import useSignup from '../../hooks/useSignup';
 import useCanAccess from '../../hooks/useCanAccess';
@@ -64,66 +64,16 @@ function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mento
 }
 
 function ProfilesSection({
-  profiles, size,
+  profiles, size, ...rest
 }) {
   let displayProfiles = profiles || [];
 
   if (profiles?.length === 1) {
-    const placeholder1 = {
-      id: 'placeholder-1',
-      slug: 'placeholder-mentor-1',
-      status: 'ACTIVE',
-      booking_url: null,
-      created_at: '2024-05-23T21:07:42.286848Z',
-      email: null,
-      one_line_bio: null,
-      online_meeting_url: null,
-      price_per_hour: null,
-      rating: null,
-      services: [],
-      timezone: 'Africa/Abidjan',
-      updated_at: '2024-05-23T21:07:42.286848Z',
-      user: {
-        id: -1,
-        first_name: 'Luis',
-        last_name: 'Doe',
-        email: '',
-        profile: {
-          avatar_url: 'https://randomuser.me/api/portraits/men/1.jpg',
-          github_username: null,
-        },
-      },
-    };
-    const placeholder2 = {
-      id: 'placeholder-2',
-      slug: 'placeholder-mentor-2',
-      status: 'ACTIVE',
-      booking_url: null,
-      created_at: '2024-05-23T21:07:42.286848Z',
-      email: null,
-      one_line_bio: null,
-      online_meeting_url: null,
-      price_per_hour: null,
-      rating: null,
-      services: [],
-      timezone: 'Africa/Abidjan',
-      updated_at: '2024-05-23T21:07:42.286848Z',
-      user: {
-        id: -2,
-        first_name: 'Andrea',
-        last_name: 'Doe',
-        email: '',
-        profile: {
-          avatar_url: 'https://randomuser.me/api/portraits/women/2.jpg',
-          github_username: null,
-        },
-      },
-    };
-    displayProfiles = [profiles[0], placeholder1, placeholder2];
+    displayProfiles = [profiles[0], defaultProfiles[0], defaultProfiles[1]];
   }
 
   return (
-    <AvatarGroup max={4} justifyContent="center">
+    <AvatarGroup max={4} justifyContent="center" {...rest}>
       {displayProfiles?.map((c, i) => {
         if (!c || !c.user) return null;
         const fullName = c.user.first_name && c.user.last_name ? `${c.user.first_name} ${c.user.last_name}` : '';

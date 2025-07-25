@@ -377,6 +377,40 @@
               "source": "#markdown-body",
               "source-label": "¡Llevame al readme!"
             }
+          ],
+          "ova_steps": [
+            {
+              "slug": "download-virtualbox",
+              "label": "Descarga VirtualBox (o alternativa si es imposible)",
+              "description": "Recomendamos encarecidamente usar Virtual Box, un software gratuito que se puede descargar en el [sitio web oficial](https://www.virtualbox.org/). Si por alguna razón no puedes usar Virtual Box puedes usar otras herramientas alternativas como VMware, etc.",
+              "video": "",
+              "source": "https://www.virtualbox.org/",
+              "source-label": "Descargar VirtualBox"
+            },
+            {
+              "slug": "download-ova",
+              "label": "Descarga la máquina virtual desde este enlace:",
+              "description": "Haz clic en el [siguiente enlace y espera]({{repoUrl}}) a que aparezca el prompt de descarga, guarda el archivo `.ova` en un lugar donde lo recuerdes fácilmente.",
+              "video": "",
+              "source": "{{repoUrl}}",
+              "source-label": "Descargar archivo .ova"
+            },
+            {
+              "slug": "import-machine",
+              "label": "Importa la máquina en VirtualBox (o alternativas).",
+              "description": "Una vez que tengas VirtualBox instalado y el archivo .ova descargado, necesitas importar la máquina virtual en VirtualBox. Abre VirtualBox y usa la opción 'Importar Aplicación' para cargar el archivo .ova.",
+              "video": "",
+              "source": "",
+              "source-label": ""
+            },
+            {
+              "slug": "start-lab",
+              "label": "¡Una vez que la máquina esté funcionando, puedes comenzar el laboratorio!",
+              "description": "Después de importar la máquina virtual, iníciala desde VirtualBox. La máquina se iniciará y podrás acceder al entorno del laboratorio de ciberseguridad.",
+              "video": "",
+              "source": "",
+              "source-label": ""
+            }
           ]
         },
         {
@@ -454,6 +488,40 @@
               "video": "https://www.youtube.com/watch?v=xNPsmUOyres",
               "source": "#markdown-body",
               "source-label": "¡Llevame al readme!"
+            }
+          ],
+          "ova_steps": [
+            {
+              "slug": "download-virtualbox",
+              "label": "Descarga VirtualBox (o alternativa si es imposible)",
+              "description": "Recomendamos encarecidamente usar Virtual Box, un software gratuito que se puede descargar en el [sitio web oficial](https://www.virtualbox.org/). Si por alguna razón no puedes usar Virtual Box puedes usar otras herramientas alternativas como VMware, etc.",
+              "video": "",
+              "source": "https://www.virtualbox.org/",
+              "source-label": "Descargar VirtualBox"
+            },
+            {
+              "slug": "download-ova",
+              "label": "Descarga la máquina virtual desde este enlace:",
+              "description": "Haz clic en el [siguiente enlace y espera]({{repoUrl}}) a que aparezca el prompt de descarga, guarda el archivo `.ova` en un lugar donde lo recuerdes fácilmente.",
+              "video": "",
+              "source": "{{repoUrl}}",
+              "source-label": "Descargar archivo .ova"
+            },
+            {
+              "slug": "import-machine",
+              "label": "Importa la máquina en VirtualBox (o alternativas).",
+              "description": "Una vez que tengas VirtualBox instalado y el archivo .ova descargado, necesitas importar la máquina virtual en VirtualBox. Abre VirtualBox y usa la opción 'Importar Aplicación' para cargar el archivo .ova.",
+              "video": "",
+              "source": "",
+              "source-label": ""
+            },
+            {
+              "slug": "start-lab",
+              "label": "¡Una vez que la máquina esté funcionando, puedes comenzar el laboratorio!",
+              "description": "Después de importar la máquina virtual, iníciala desde VirtualBox. La máquina se iniciará y podrás acceder al entorno del laboratorio de ciberseguridad.",
+              "video": "",
+              "source": "",
+              "source-label": ""
             }
           ]
         },
@@ -538,6 +606,40 @@
               "video": "https://www.youtube.com/watch?v=xNPsmUOyres",
               "source": "#markdown-body",
               "source-label": "¡Llevame al readme!"
+            }
+          ],
+          "ova_steps": [
+            {
+              "slug": "download-virtualbox",
+              "label": "Descarga VirtualBox (o alternativa si es imposible)",
+              "description": "Recomendamos encarecidamente usar Virtual Box, un software gratuito que se puede descargar en el [sitio web oficial](https://www.virtualbox.org/). Si por alguna razón no puedes usar Virtual Box puedes usar otras herramientas alternativas como VMware, etc.",
+              "video": "",
+              "source": "https://www.virtualbox.org/",
+              "source-label": "Descargar VirtualBox"
+            },
+            {
+              "slug": "download-ova",
+              "label": "Descarga la máquina virtual desde este enlace:",
+              "description": "Haz clic en el [siguiente enlace y espera]({{repoUrl}}) a que aparezca el prompt de descarga, guarda el archivo `.ova` en un lugar donde lo recuerdes fácilmente.",
+              "video": "",
+              "source": "{{repoUrl}}",
+              "source-label": "Descargar archivo .ova"
+            },
+            {
+              "slug": "import-machine",
+              "label": "Importa la máquina en VirtualBox (o alternativas).",
+              "description": "Una vez que tengas VirtualBox instalado y el archivo .ova descargado, necesitas importar la máquina virtual en VirtualBox. Abre VirtualBox y usa la opción 'Importar Aplicación' para cargar el archivo .ova.",
+              "video": "",
+              "source": "",
+              "source-label": ""
+            },
+            {
+              "slug": "start-lab",
+              "label": "¡Una vez que la máquina esté funcionando, puedes comenzar el laboratorio!",
+              "description": "Después de importar la máquina virtual, iníciala desde VirtualBox. La máquina se iniciará y podrás acceder al entorno del laboratorio de ciberseguridad.",
+              "video": "",
+              "source": "",
+              "source-label": ""
             }
           ]
         }

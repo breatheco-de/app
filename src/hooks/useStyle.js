@@ -75,6 +75,8 @@ const useStyle = () => {
     greenLight4: '#F2FFF6',
     fontColor2: useColorModeValue('#3A3A3A', '#EBEBEB'),
     successLight: useColorModeValue('#e9ffef', '#A4FFBD'),
+    error: '#EB5757',
+    warning: '#FFB718',
     gray: {
       ...theme.colors.gray,
     },

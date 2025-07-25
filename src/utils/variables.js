@@ -28,3 +28,38 @@ export const SILENT_CODE = {
   LIST_PROCESSING_ERRORS: ['rate-limit-error', 'invalid-request', 'authentication-error', 'payment-service-are-down', 'stripe-error'],
   UNEXPECTED_EXCEPTION: 'unexpected-exception',
 };
+
+export const defaultProfiles = [{
+  user: {
+    id: -1,
+    first_name: 'Andrea',
+    last_name: 'Vega',
+    profile: {
+      avatar_url: 'https://randomuser.me/api/portraits/women/2.jpg',
+      github_username: null,
+    },
+  },
+},
+{
+  user: {
+    id: -2,
+    first_name: 'Luis',
+    last_name: 'Diaz',
+    profile: {
+      avatar_url: 'https://randomuser.me/api/portraits/men/1.jpg',
+      github_username: null,
+    },
+  },
+},
+{
+  user: {
+    id: -3,
+    first_name: 'Tomas',
+    last_name: 'Gonzalez',
+    profile: {
+      avatar_url: 'https://ca.slack-edge.com/T0BFXMWMV-U03T95TLQMC-b3d800f56e90-512',
+      github_username: null,
+    },
+  },
+},
+];

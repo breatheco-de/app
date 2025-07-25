@@ -174,6 +174,7 @@ const breathecode = {
       sendScreenshot: (args) => axios.post(`${url}/user/me/final_project/screenshot`, args),
       updateMeFinalProject: (args) => breathecode.put(`${url}/user/me/final_project`, args),
       getMeTasks: () => axios.get(`${url}/user/me/task${qs}`),
+      getTask: (taskId) => axios.get(`${url}/task/${taskId}`),
       updateTask: (args) => axios.put(`${url}/task/${args.id}`, args),
       addTasks: (args) => axios.post(`${url}/user/me/task`, args),
       getDeletionOrders: () => axios.get(`${url}/me/deletion_order${qs}`),
@@ -201,6 +202,12 @@ const breathecode = {
         get: (id) => axios.get(`${url}/user/me/task/${id}/subtasks`),
         update: (id, args) => axios.put(`${url}/user/me/task/${id}/subtasks`, args),
       }),
+      validateFlag: (args) => axios.get(`${url}/academy/asset/flag${qs}`, {
+        headers: args.academyId && {
+          academy: args.academyId,
+        },
+      }),
+      generateFlag: () => axios.post(`${url}/academy/flag`),
     };
   },
   feedback: () => {
@@ -226,6 +233,7 @@ const breathecode = {
     return {
       lead: (data) => axios.post(`${url}/lead${qs}`, data),
       courses: () => axios.get(`${url}/course${qs}`),
+      courseTranslations: (courseSlug) => axios.get(`${url}/course/${courseSlug}/translations`),
       getCourse: (courseSlug) => axios.get(`${url}/course/${courseSlug}${qs}`),
     };
   },

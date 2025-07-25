@@ -378,6 +378,40 @@
               "source": "#markdown-body",
               "source-label": "Take me to the readme!"
             }
+          ],
+          "ova_steps": [
+            {
+              "slug": "download-virtualbox",
+              "label": "Download VirtualBox (or alternative if impossible)",
+              "description": "We strongly recommend using Virtual Box, a free software that can be downloaded in the [official website](https://www.virtualbox.org/). If by any reason you cannot use Virtual Box you can use other alternative tools like VMware, etc.",
+              "video": "",
+              "source": "https://www.virtualbox.org/",
+              "source-label": "Download VirtualBox"
+            },
+            {
+              "slug": "download-ova",
+              "label": "Download the virtual machine from this link:",
+              "description": "Click on the [following link and wait]({{repoUrl}}) for the download prompt, save the `.ova` file in a place were you will easily remember.",
+              "video": "",
+              "source": "{{repoUrl}}",
+              "source-label": "Download .ova file"
+            },
+            {
+              "slug": "import-machine",
+              "label": "Import the machine into VirtualBox (or alternatives).",
+              "description": "Once you have VirtualBox installed and the .ova file downloaded, you need to import the virtual machine into VirtualBox. Open VirtualBox and use the 'Import Appliance' option to load the .ova file.",
+              "video": "",
+              "source": "",
+              "source-label": ""
+            },
+            {
+              "slug": "start-lab",
+              "label": "Once the machine is running, you can start the lab!",
+              "description": "After importing the virtual machine, start it from VirtualBox. The machine will boot up and you'll be able to access the cybersecurity lab environment.",
+              "video": "",
+              "source": "",
+              "source-label": ""
+            }
           ]
         },
         {
@@ -455,6 +489,40 @@
               "video": "",
               "source": "#markdown-body",
               "source-label": "Take me to the readme!"
+            }
+          ],
+          "ova_steps": [
+            {
+              "slug": "download-virtualbox",
+              "label": "Download VirtualBox (or alternative if impossible)",
+              "description": "We strongly recommend using Virtual Box, a free software that can be downloaded in the [official website](https://www.virtualbox.org/). If by any reason you cannot use Virtual Box you can use other alternative tools like VMware, etc.",
+              "video": "",
+              "source": "https://www.virtualbox.org/",
+              "source-label": "Download VirtualBox"
+            },
+            {
+              "slug": "download-ova",
+              "label": "Download the virtual machine from this link:",
+              "description": "Click on the [following link and wait]({{repoUrl}}) for the download prompt, save the `.ova` file in a place were you will easily remember.",
+              "video": "",
+              "source": "{{repoUrl}}",
+              "source-label": "Download .ova file"
+            },
+            {
+              "slug": "import-machine",
+              "label": "Import the machine into VirtualBox (or alternatives).",
+              "description": "Once you have VirtualBox installed and the .ova file downloaded, you need to import the virtual machine into VirtualBox. Open VirtualBox and use the 'Import Appliance' option to load the .ova file.",
+              "video": "",
+              "source": "",
+              "source-label": ""
+            },
+            {
+              "slug": "start-lab",
+              "label": "Once the machine is running, you can start the lab!",
+              "description": "After importing the virtual machine, start it from VirtualBox. The machine will boot up and you'll be able to access the cybersecurity lab environment.",
+              "video": "",
+              "source": "",
+              "source-label": ""
             }
           ]
         },
@@ -539,6 +607,40 @@
               "video": "https://www.youtube.com/watch?v=bphlMjXZpLg",
               "source": "#markdown-body",
               "source-label": "Take me to the readme!"
+            }
+          ],
+          "ova_steps": [
+            {
+              "slug": "download-virtualbox",
+              "label": "Download VirtualBox (or alternative if impossible)",
+              "description": "We strongly recommend using Virtual Box, a free software that can be downloaded in the [official website](https://www.virtualbox.org/). If by any reason you cannot use Virtual Box you can use other alternative tools like VMware, etc.",
+              "video": "",
+              "source": "https://www.virtualbox.org/",
+              "source-label": "Download VirtualBox"
+            },
+            {
+              "slug": "download-ova",
+              "label": "Download the virtual machine from this link:",
+              "description": "Click on the [following link and wait]({{repoUrl}}) for the download prompt, save the `.ova` file in a place were you will easily remember.",
+              "video": "",
+              "source": "{{repoUrl}}",
+              "source-label": "Download .ova file"
+            },
+            {
+              "slug": "import-machine",
+              "label": "Import the machine into VirtualBox (or alternatives).",
+              "description": "Once you have VirtualBox installed and the .ova file downloaded, you need to import the virtual machine into VirtualBox. Open VirtualBox and use the 'Import Appliance' option to load the .ova file.",
+              "video": "",
+              "source": "",
+              "source-label": ""
+            },
+            {
+              "slug": "start-lab",
+              "label": "Once the machine is running, you can start the lab!",
+              "description": "After importing the virtual machine, start it from VirtualBox. The machine will boot up and you'll be able to access the cybersecurity lab environment.",
+              "video": "",
+              "source": "",
+              "source-label": ""
             }
           ]
         }

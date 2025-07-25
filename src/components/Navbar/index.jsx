@@ -48,7 +48,7 @@ function Navbar({ translations, pageProps }) {
   const { toggleColorMode } = useColorMode();
   const fontColor = useColorModeValue('black', 'gray.200');
   const isMobile = useBreakpointValue({ base: true, lg: false });
-  const { hexColor, colorMode, reverseColorMode, borderColor, navbarBackground } = useStyle();
+  const { hexColor, colorMode, reverseColorMode, borderColor, borderColor2, navbarBackground } = useStyle();
 
   const existsCohortWithoutAvailableAsSaas = cohorts.some((c) => c?.available_as_saas === false);
   const existsPaidSubscription = allSubscriptions.some((sb) => sb?.invoices?.[0]?.amount > 0);
@@ -97,7 +97,18 @@ function Navbar({ translations, pageProps }) {
         country_code: location?.countryShort,
       };
       const response = await bc.marketing(mktQueryString).courses();
-      const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null && item?.visibility !== 'UNLISTED');
+
+      const filterByTranslations = response?.data?.filter((item) => {
+        if (!item?.course_translation?.title) {
+          console.warn(`Course ${item?.slug} has no translation title`);
+          return false;
+        }
+        if (item?.visibility === 'UNLISTED') {
+          return false;
+        }
+        return true;
+      });
+
       const coursesStruct = filterByTranslations?.map((item) => ({
         ...item,
         slug: item?.slug,
@@ -109,6 +120,7 @@ function Navbar({ translations, pageProps }) {
       setMktCourses(coursesStruct || []);
     } catch (error) {
       console.error(`Error fetching mkt courses: ${error}`);
+      setMktCourses([]);
     }
   };
 
@@ -355,7 +367,7 @@ function Navbar({ translations, pageProps }) {
 
                 <PopoverContent
                   border={0}
-                  boxShadow="2xl"
+                  boxShadow="2xl !important"
                   rounded="md"
                   width={{ base: '100%', md: 'auto' }}
                   minW={{ base: 'auto', md: 'md' }}
@@ -386,7 +398,7 @@ function Navbar({ translations, pageProps }) {
                     <Flex
                       borderTop={2}
                       borderStyle="solid"
-                      borderColor={borderColor}
+                      borderColor={borderColor2}
                       alignItems="center"
                       padding="1rem 0rem"
                     >
@@ -407,7 +419,7 @@ function Navbar({ translations, pageProps }) {
                     <Flex
                       borderTop={2}
                       borderStyle="solid"
-                      borderColor={borderColor}
+                      borderColor={borderColor2}
                       alignItems="center"
                       padding="1rem 0rem"
                     >

@@ -191,105 +191,125 @@ export const useBootcamp = () => {
 
   const getInitialData = async () => {
     setInitialDataIsFetching(true);
-    const { data: courseData } = await bc.marketing({ lang, countryCode }).getCourse(courseSlug);
-    setData(courseData);
 
-    const cohortSyllabus = await generateCohortSyllabusModules(courseData?.cohort?.id);
+    try {
+      const { data: courseData } = await bc.marketing({ lang, countryCode }).getCourse(courseSlug);
 
-    const getModulesInfo = async () => {
-      try {
-        const assetTypeCount = { lesson: 0, project: 0, quiz: 0, exercise: 0 };
-        const projects = [];
-        const exercises = [];
-        const featuredAssetSlugs = courseData?.course_translation?.featured_assets?.split(',') || [];
-        const language = lang === 'en' ? 'us' : lang;
-
-        cohortSyllabus?.syllabus?.modules?.forEach((module) => {
-          module?.content.forEach((task) => {
-            if (task?.task_type) {
-              const taskType = task.task_type.toLowerCase();
-              assetTypeCount[taskType] += 1;
-              if (taskType === 'project') projects.push(task);
-              if (taskType === 'exercise') exercises.push(task);
-            }
-          });
-        });
-
-        const filterAssets = (assets, isFeatured) => assets.filter((asset) => {
-          const hasTranslation = asset?.translations && asset?.translations[language];
-          if (!hasTranslation) return false;
-
-          const assetSlug = asset?.translations[language]?.slug;
-          return isFeatured ? featuredAssetSlugs.includes(assetSlug) : !featuredAssetSlugs.includes(assetSlug);
-        });
-
-        let combinedFeaturedAssets = [
-          ...filterAssets(exercises, true),
-          ...filterAssets(projects, true),
-        ];
-
-        if (combinedFeaturedAssets.length < 3) {
-          const remainingNeeded = 3 - combinedFeaturedAssets.length;
-          const additionalItems = [
-            ...filterAssets(exercises, false),
-            ...filterAssets(projects, false),
-          ].slice(-remainingNeeded);
-
-          combinedFeaturedAssets = [...combinedFeaturedAssets, ...additionalItems];
-        }
-
-        const assignmentsFetch = await Promise.all(
-          combinedFeaturedAssets.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[language]?.slug}`)
-            .then((assignmentResp) => assignmentResp.json())
-            .catch(() => [])),
-        );
-
-        return {
-          count: assetTypeCount,
-          assignmentList: assignmentsFetch.filter(Boolean),
-        };
-      } catch (errorMsg) {
-        error('Error fetching module info:', errorMsg);
-        return { count: {}, assignmentList: [] };
+      if (courseData?.status_code === 404) {
+        throw new Error('Course not found');
       }
-    };
 
-    const formatedPlanData = await fetchSuggestedPlan(courseData?.plan_slug, translationsObj, 'mkt_plans', countryCode).then((finalData) => finalData);
+      setData(courseData);
 
-    const modulesInfo = await getModulesInfo();
+      const cohortSyllabus = await generateCohortSyllabusModules(courseData?.cohort?.id);
 
-    const studentList = await bc.admissions({ roles: 'STUDENT' }).getPublicMembers()
-      .then((respMembers) => respMembers.data)
-      .catch((err) => {
-        error('Error fetching cohort users:', err);
-        return [];
+      const getModulesInfo = async () => {
+        try {
+          const assetTypeCount = { lesson: 0, project: 0, quiz: 0, exercise: 0 };
+          const projects = [];
+          const exercises = [];
+          const featuredAssetSlugs = courseData?.course_translation?.featured_assets?.split(',') || [];
+          const language = lang === 'en' ? 'us' : lang;
+
+          cohortSyllabus?.syllabus?.modules?.forEach((module) => {
+            module?.content.forEach((task) => {
+              if (task?.task_type) {
+                const taskType = task.task_type.toLowerCase();
+                assetTypeCount[taskType] += 1;
+                if (taskType === 'project') projects.push(task);
+                if (taskType === 'exercise') exercises.push(task);
+              }
+            });
+          });
+
+          const filterAssets = (assets, isFeatured) => assets.filter((asset) => {
+            const hasTranslation = asset?.translations && asset?.translations[language];
+            if (!hasTranslation) return false;
+
+            const assetSlug = asset?.translations[language]?.slug;
+            return isFeatured ? featuredAssetSlugs.includes(assetSlug) : !featuredAssetSlugs.includes(assetSlug);
+          });
+
+          let combinedFeaturedAssets = [
+            ...filterAssets(exercises, true),
+            ...filterAssets(projects, true),
+          ];
+
+          if (combinedFeaturedAssets.length < 3) {
+            const remainingNeeded = 3 - combinedFeaturedAssets.length;
+            const additionalItems = [
+              ...filterAssets(exercises, false),
+              ...filterAssets(projects, false),
+            ].slice(-remainingNeeded);
+
+            combinedFeaturedAssets = [...combinedFeaturedAssets, ...additionalItems];
+          }
+
+          const assignmentsFetch = await Promise.all(
+            combinedFeaturedAssets.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[language]?.slug}`)
+              .then((assignmentResp) => assignmentResp.json())
+              .catch(() => [])),
+          );
+
+          return {
+            count: assetTypeCount,
+            assignmentList: assignmentsFetch.filter(Boolean),
+          };
+        } catch (errorMsg) {
+          error('Error fetching module info:', errorMsg);
+          return { count: {}, assignmentList: [] };
+        }
+      };
+
+      const formatedPlanData = await fetchSuggestedPlan(courseData?.plan_slug, translationsObj, 'mkt_plans', countryCode).then((finalData) => finalData);
+
+      const modulesInfo = await getModulesInfo();
+
+      const studentList = await bc.admissions({ roles: 'STUDENT' }).getPublicMembers()
+        .then((respMembers) => respMembers.data)
+        .catch((err) => {
+          error('Error fetching cohort users:', err);
+          return [];
+        });
+      const uniqueStudents = studentList?.length > 0 ? studentList?.filter((student, index, self) => self.findIndex((l) => (
+        l.user.id === student.user.id
+      )) === index) : [];
+
+      const instructorsList = await bc.admissions({
+        roles: 'TEACHER,ASSISTANT',
+        cohort_id: courseData?.cohort?.id,
+      }).getPublicMembers()
+        .then((respMembers) => respMembers.data);
+      const uniqueInstructors = instructorsList?.length > 0 ? instructorsList?.filter((instructor, index, self) => self.findIndex((l) => (
+        l.user.id === instructor.user.id
+      )) === index) : [];
+
+      await getSelfAppliedCoupon(formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug);
+      const couponOnQuery = await getQueryString('coupon');
+      const { data: allCouponsApplied } = await bc.payment({ coupons: [couponOnQuery || coupon], plan: formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug, countryCode }).verifyCoupon();
+      setAllDiscounts(allCouponsApplied);
+
+      setCohortData({
+        cohortSyllabus,
+        students: uniqueStudents,
+        instructors: uniqueInstructors,
+        modulesInfo,
       });
-    const uniqueStudents = studentList?.length > 0 ? studentList?.filter((student, index, self) => self.findIndex((l) => (
-      l.user.id === student.user.id
-    )) === index) : [];
-
-    const instructorsList = await bc.admissions({
-      roles: 'TEACHER,ASSISTANT',
-      cohort_id: courseData?.cohort?.id,
-    }).getPublicMembers()
-      .then((respMembers) => respMembers.data);
-    const uniqueInstructors = instructorsList?.length > 0 ? instructorsList?.filter((instructor, index, self) => self.findIndex((l) => (
-      l.user.id === instructor.user.id
-    )) === index) : [];
-
-    await getSelfAppliedCoupon(formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug);
-    const couponOnQuery = await getQueryString('coupon');
-    const { data: allCouponsApplied } = await bc.payment({ coupons: [couponOnQuery || coupon], plan: formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug, countryCode }).verifyCoupon();
-    setAllDiscounts(allCouponsApplied);
-
-    setCohortData({
-      cohortSyllabus,
-      students: uniqueStudents,
-      instructors: uniqueInstructors,
-      modulesInfo,
-    });
-    setPlanData(formatedPlanData);
-    setInitialDataIsFetching(false);
+      setPlanData(formatedPlanData);
+      setInitialDataIsFetching(false);
+    } catch (errorMsg) {
+      error('Error fetching course data:', errorMsg);
+      setInitialDataIsFetching(false);
+      createToast({
+        position: 'top',
+        title: t('course-not-found'),
+        description: t('course-not-found-description'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      router.push('/');
+    }
   };
 
   const goToFinancingOptions = () => {
@@ -319,11 +339,9 @@ export const useBootcamp = () => {
       return existsAvatar || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`;
     });
 
-  const randomMultiplier = Math.floor(Math.random() * 2) + 20;
-
   const assetCountByType = {
     lesson: assetCount?.lesson || 0,
-    exercise: assetCount?.exercise ? assetCount.exercise * randomMultiplier : 0,
+    exercise: assetCount?.exercise || 0,
     project: assetCount?.project || 0,
   };
 

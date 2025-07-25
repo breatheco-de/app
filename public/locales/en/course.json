@@ -1,4 +1,6 @@
 {
+  "course-not-found": "Course not found",
+  "course-not-found-description": "The course you are looking for does not exist. Please try again with a different course.",
   "course-content-text": "Get Job-Ready with Our Syllabus!",
   "course-content-description": "We've fine-tuned our course content with hundreds of job positions to prepare you for a successful entry into tech.",
   "students-enrolled-count": "+{{count}} of students enrolled",
