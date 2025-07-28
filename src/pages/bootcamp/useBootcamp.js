@@ -61,7 +61,12 @@ export const useBootcamp = () => {
 
   const students = cohortData.students || [];
   const instructors = cohortData.instructors || [];
-  const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
+  const cancelledButValid = relatedSubscription?.status === 'CANCELLED' && relatedSubscription && (
+    (relatedSubscription.valid_until && new Date(relatedSubscription.valid_until) > new Date())
+    || (relatedSubscription.next_payment_at && new Date(relatedSubscription.next_payment_at) > new Date())
+  );
+  const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE || cancelledButValid;
+
   const planList = planData?.planList || [];
   const payableList = planList.filter((plan) => plan?.type === 'PAYMENT');
   const freePlan = planList?.find((plan) => plan?.type === 'TRIAL' || plan?.type === 'FREE');
@@ -122,7 +127,7 @@ export const useBootcamp = () => {
     const { cohorts: userCohorts } = await reSetUserAndCohorts();
     const alreadyHaveThisCohort = userCohorts?.some((cohort) => cohort?.id === cohortId);
 
-    if (alreadyHaveThisCohort) {
+    if (alreadyHaveThisCohort && existsRelatedSubscription) {
       callback();
       if (withAlert) {
         createToast({
@@ -149,7 +154,7 @@ export const useBootcamp = () => {
       bc.admissions().joinCohort(cohortId)
         .then(async (resp) => {
           const dataRequested = await resp.data;
-          if (dataRequested?.status === 'ACTIVE') {
+          if (dataRequested?.status === 'ACTIVE' || cancelledButValid) {
             setReadyToRefetch(true);
           }
           if (dataRequested?.status_code === 400) {

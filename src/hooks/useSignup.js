@@ -900,13 +900,6 @@ const useSignup = () => {
     }
   };
 
-  const reactivatePlan = (planSlug, planStatus) => {
-    if (planStatus === 'CANCELLED') {
-      setPaymentStatus('idle');
-      router.push(`/checkout?plan=${planSlug}`);
-    }
-  };
-
   return {
     state,
     stepsEnum,
@@ -927,7 +920,6 @@ const useSignup = () => {
     handleSuggestedPlan,
     validatePlanExistence,
     subscribeFreePlan,
-    reactivatePlan,
   };
 };
 

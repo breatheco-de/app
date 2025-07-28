@@ -1,5 +1,5 @@
 import {
-  SET_SUBSCRIPTIONS, CANCEL_SUBSCRIPTION, SET_SUBSCRIPTIONS_LOADING, SET_ARE_SUBSCRIPTIONS_FECHED,
+  SET_SUBSCRIPTIONS, CANCEL_SUBSCRIPTION, SET_SUBSCRIPTIONS_LOADING, SET_ARE_SUBSCRIPTIONS_FECHED, REACTIVATE_SUBSCRIPTION,
 } from '../types';
 
 const initialState = {
@@ -21,6 +21,22 @@ const subscriptionsReducer = (state = initialState, action) => {
         subscriptions: action.payload,
       };
     case CANCEL_SUBSCRIPTION: {
+      const updatedSubscription = action.payload;
+      const updatedSubscriptions = state?.subscriptions?.subscriptions?.map((subscription) => {
+        if (subscription.id === updatedSubscription.id) {
+          return updatedSubscription;
+        }
+        return subscription;
+      });
+      return {
+        ...state,
+        subscriptions: {
+          ...state.subscriptions,
+          subscriptions: updatedSubscriptions,
+        },
+      };
+    }
+    case REACTIVATE_SUBSCRIPTION: {
       const updatedSubscription = action.payload;
       const updatedSubscriptions = state?.subscriptions?.subscriptions?.map((subscription) => {
         if (subscription.id === updatedSubscription.id) {
