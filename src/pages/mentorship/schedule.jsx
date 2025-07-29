@@ -192,7 +192,7 @@ function MentorshipSchedule() {
                 mentorsFiltered,
                 allMentorsAvailable,
                 subscriptionData,
-                allSubscriptions: subscriptionData.subscriptions,
+                allSubscriptions: subscriptionData?.subscriptions || [],
                 queryService: service,
                 queryMentor: mentor,
                 withDescription: true,
