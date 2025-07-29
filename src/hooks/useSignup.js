@@ -583,6 +583,16 @@ const useSignup = () => {
         }
       }
 
+      const couponData = await bc.payment().getMyCoupon();
+      if (couponData?.data?.length > 0) {
+        reportDatalayer({
+          dataLayer: {
+            event: 'plan_coupon_create',
+            coupon_data: couponData?.data[0],
+          },
+        });
+      }
+
       return transactionData;
     } catch (error) {
       console.error('Error handling payment bc.payment().pay', error);
