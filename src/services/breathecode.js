@@ -304,6 +304,7 @@ const breathecode = {
       applyEvent: (eventId, payload) => axios.post(`${url}/me/event/${eventId}/checkin${qs}`, payload),
       getUsers: (eventId) => axios.get(`${url}/event/${eventId}/checkin${qs}`),
       getAllEventTypes: () => axios.get(`${url}/eventype${qs}`),
+      liveWorkshopStatus: () => axios.get(`${url}/live-workshop-status`),
     };
   },
   provisioning: (query = {}) => {

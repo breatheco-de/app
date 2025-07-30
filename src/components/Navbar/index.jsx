@@ -3,6 +3,8 @@ import {
   useDisclosure, useColorMode, Popover, PopoverTrigger,
   PopoverContent, PopoverArrow, Button, Divider,
   useBreakpointValue,
+  Badge,
+  Text,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import {
@@ -37,6 +39,7 @@ function Navbar({ translations, pageProps }) {
   const { isAuthenticated, isLoading, user, logout, cohorts } = useAuth();
   const [navbarItems, setNavbarItems] = useState([]);
   const [mktCourses, setMktCourses] = useState([]);
+  const [liveWorkshopData, setLiveWorkshopData] = useState(false);
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const { allSubscriptions } = useSubscriptions();
@@ -187,6 +190,18 @@ function Navbar({ translations, pageProps }) {
     .map((item) => prepareMenuData(item, mktCourses))
     .sort((a, b) => a.position - b.position);
 
+  useEffect(() => {
+    const checkLiveWorkshop = async () => {
+      try {
+        const res = await bc.events().liveWorkshopStatus();
+        setLiveWorkshopData(res.data.slug && res.data);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    checkLiveWorkshop();
+  }, []);
+
   return (
     <>
       {/* Overlay oscuro para mobile, siempre montado para permitir el fade */}
@@ -283,6 +298,25 @@ function Navbar({ translations, pageProps }) {
                 />
               ) : <Icon icon="4GeeksIcon" secondColor={hexColor.black} width="90px" height="35px" />}
             </NextLink>
+            {!liveWorkshopData && (
+              <Box
+                display="inline-flex"
+                alignItems="center"
+                bg="#EF4444"
+                color="white"
+                fontWeight="semibold"
+                fontSize="xs"
+                px={2}
+                py="2px"
+                my="auto"
+                ml={2}
+                borderRadius="full"
+                height="fit-content"
+              >
+                <Text lineHeight="1" mr="1">Live</Text>
+                <Box w="6px" h="6px" bg="whiteAlpha.800" borderRadius="full" />
+              </Box>
+            )}
 
             <Flex display="flex" ml={10}>
               <Stack className="hideOverflowX__" direction="row" width="auto" spacing={4} alignItems="center">
