@@ -78,7 +78,7 @@ function SubscriptionCard({ subscription, allSubscriptions, setSubscriptionProps
       </Box>
       <Box padding="0 0 14px 0" width="100%">
         <Text fontSize="12px" fontWeight="700" padding="4px 10px" borderRadius="18px" width="fit-content" margin="0 0 0 auto" {...statusStyles[status] || ''}>
-          {statusLabel[status] || 'unknown'}
+          {statusLabel(subscription) || 'unknown'}
         </Text>
       </Box>
       <Flex flexDirection="column" gridGap="8px" height="100%" width="100%">

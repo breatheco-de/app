@@ -193,7 +193,7 @@ function chooseProgram() {
       }, {});
       updateProgramList(programList);
     }
-  }, [cohorts, cohortMembers, subscriptionLoading]);
+  }, [cohorts, cohortMembers, subscriptionLoading, subscriptions]);
 
   const processCohort = async (cohort) => {
     if (cohort?.slug) {

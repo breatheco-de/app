@@ -730,6 +730,29 @@ function Workshop({ eventData, asset }) {
               </Text>
             </Button>
           </Link>
+          <Box margin="auto">
+            <AddToCalendar
+              event={{
+                title: event?.title || '',
+                description: event?.description || '',
+                startTime: event?.starting_at || '',
+                endTime: event?.ending_at || '',
+                location: event?.online_event ? 'online' : '',
+              }}
+              buttonLabel={(
+                <Box display="flex" alignItems="center" justifyContent="center" width="100%" padding="6.15px">
+                  <Icon icon="calendar" width="20px" height="14px" color="white" style={{ marginRight: 8 }} />
+                  <Text size="md" fontWeight="700">{t('add-to-calendar')}</Text>
+                </Box>
+              )}
+              buttonProps={{
+                variant: 'default',
+                background: 'blue.default',
+                color: 'white',
+                width: '100%',
+              }}
+            />
+          </Box>
         </Flex>
 
       </SimpleModal>
