@@ -3,8 +3,8 @@ import {
   useDisclosure, useColorMode, Popover, PopoverTrigger,
   PopoverContent, PopoverArrow, Button, Divider,
   useBreakpointValue,
-  Badge,
   Text,
+  Tooltip,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import {
@@ -298,23 +298,41 @@ function Navbar({ translations, pageProps }) {
                 />
               ) : <Icon icon="4GeeksIcon" secondColor={hexColor.black} width="90px" height="35px" />}
             </NextLink>
-            {!liveWorkshopData && (
-              <Box
-                display="inline-flex"
-                alignItems="center"
-                bg="#EF4444"
-                color="white"
-                fontWeight="semibold"
-                fontSize="xs"
-                px={2}
-                py="2px"
-                my="auto"
-                ml={2}
-                borderRadius="full"
-                height="fit-content"
-              >
-                <Text lineHeight="1" mr="1">Live</Text>
-                <Box w="6px" h="6px" bg="whiteAlpha.800" borderRadius="full" />
+            {liveWorkshopData && (
+              <Box display="flex" alignItems="center" ml={2}>
+                <Tooltip
+                  label={liveWorkshopData?.title}
+                  placement="bottom"
+                  hasArrow
+                  bg="gray.800"
+                  color="white"
+                  borderRadius="md"
+                  fontSize="sm"
+                >
+                  <NextLink href={`/workshops/${liveWorkshopData?.slug}`} passHref>
+                    <Box
+                      display="inline-flex"
+                      alignItems="center"
+                      bg="#EF4444"
+                      color="white"
+                      fontWeight="semibold"
+                      fontSize="xs"
+                      px={2}
+                      py="2px"
+                      borderRadius="full"
+                      height="fit-content"
+                      cursor="pointer"
+                      _hover={{
+                        bg: '#DC2626',
+                        transform: 'scale(1.05)',
+                        transition: 'all 0.2s ease-in-out',
+                      }}
+                    >
+                      <Text lineHeight="1" mr="1">{t('live-workshop-badge') || 'Live'}</Text>
+                      <Box w="6px" h="6px" bg="whiteAlpha.800" borderRadius="full" />
+                    </Box>
+                  </NextLink>
+                </Tooltip>
               </Box>
             )}
 
