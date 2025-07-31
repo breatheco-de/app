@@ -142,7 +142,7 @@ export const getStaticProps = async ({ params, locale }) => {
       eventData: data,
       asset,
     },
-    revalidate: isEventFinished ? false : 30,
+    revalidate: isEventFinished ? false : 5,
   });
 };
 
