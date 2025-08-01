@@ -42,9 +42,11 @@ function MentorshipSchedule() {
       const mentorshipResults = await Promise.all(mentorshipPromises);
       const recopilatedServices = mentorshipResults.flat();
 
+      const uniqueServices = recopilatedServices.filter((serviceItem, index, self) => index === self.findIndex((s) => s.slug === serviceItem.slug));
+
       setMentorshipServices({
         isLoading: false,
-        data: recopilatedServices,
+        data: uniqueServices,
       });
     }
   };
@@ -130,8 +132,11 @@ function MentorshipSchedule() {
 
     const allConsumables = await Promise.all(reqConsumables);
     const sortedConsumables = sortByConsumptionAvailability(allConsumables);
+
+    const uniqueMentors = mentors.filter((mentorItem, index, self) => index === self.findIndex((m) => m.id === mentorItem.id));
+
     setConsumables(sortedConsumables);
-    setAllMentorsAvailable(mentors);
+    setAllMentorsAvailable(uniqueMentors);
   };
 
   useEffect(() => {
@@ -139,6 +144,14 @@ function MentorshipSchedule() {
       getMentorsAndConsumables();
     }
   }, [mentorshipServices]);
+
+  useEffect(() => {
+    if (allMentorsAvailable.length === 0) {
+      setMentorsByService([]);
+      setMentoryProps({});
+      setSearchProps({ serviceSearch: '', mentorSearch: '' });
+    }
+  }, [allMentorsAvailable.length]);
 
   const mentorsFiltered = mentorsByService.filter(
     (ment) => {
@@ -192,7 +205,7 @@ function MentorshipSchedule() {
                 mentorsFiltered,
                 allMentorsAvailable,
                 subscriptionData,
-                allSubscriptions: subscriptionData.subscriptions,
+                allSubscriptions: subscriptionData?.subscriptions || [],
                 queryService: service,
                 queryMentor: mentor,
                 withDescription: true,

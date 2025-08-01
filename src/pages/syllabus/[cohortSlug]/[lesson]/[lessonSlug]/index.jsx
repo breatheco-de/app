@@ -52,7 +52,7 @@ function SyllabusContent() {
   const { createToast } = useCustomToast({ toastId: 'ai-chat-access-error' });
 
   const { isOpen, onToggle } = useDisclosure({ defaultIsOpen: true });
-  const { user, isLoading, isAuthenticatedWithRigobot } = useAuth();
+  const { user, isLoading, isAuthenticatedWithRigobot, isAuthenticated } = useAuth();
   const { rigo, isRigoInitialized } = useRigo();
   const {
     setCurrentTask,
@@ -320,13 +320,13 @@ function SyllabusContent() {
   }, [currentAsset, isRigoInitialized]);
 
   useEffect(() => {
-    if (areSubscriptionsFetched && cohortSession && cohortSession.available_as_saas === true && cohortSession.cohort_user.role === 'STUDENT') {
+    if (isAuthenticated && areSubscriptionsFetched && cohortSession && cohortSession.available_as_saas === true && cohortSession.cohort_user.role === 'STUDENT') {
       checkNavigationAvailability();
 
       setGrantAccess(true);
     }
-    if (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
-  }, [cohortSession, areSubscriptionsFetched]);
+    if (isAuthenticated && (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false)) setGrantAccess(true);
+  }, [cohortSession, areSubscriptionsFetched, isAuthenticated]);
 
   const sendProject = async ({ task, githubUrl, taskStatus, flags, showShareModal = true }) => {
     if (showShareModal) setShowModal(true);

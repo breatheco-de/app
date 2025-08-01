@@ -31,7 +31,7 @@ import Icon from './Icon';
 import StudentsModal from './StudentsModal';
 import { ProfilesSection } from './SupportSidebar/MentoringConsumables';
 import { BREATHECODE_HOST } from '../utils/variables';
-import { getStorageItem } from '../utils';
+import { getStorageItem, languageFix } from '../utils';
 import LiveEventWidgetV2 from './LiveEvent/LiveEventWidgetV2';
 import StepsModal from './StepsModal';
 
@@ -159,7 +159,7 @@ CustomButton.defaultProps = {
 };
 
 function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
-  const { t } = useTranslation('choose-program');
+  const { t, lang } = useTranslation('choose-program');
   const router = useRouter();
   const { user, isAuthenticatedWithRigobot, conntectToRigobot, cohorts } = useAuth();
   const { rigo, isRigoInitialized } = useRigo();
@@ -339,18 +339,18 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
             )}
             {shortcuts.map((shortcut) => (
               <CustomButton
-                key={shortcut.label}
-                onClick={() => window.open(shortcut.url, '_blank')}
+                key={languageFix(shortcut.label, lang)}
+                onClick={() => window.open(languageFix(shortcut.url, lang), '_blank')}
                 infoTooltip={{
                   leftComponent: renderShortcutIcon(shortcut, '19px'),
-                  title: shortcut.label,
-                  description: shortcut.help_text,
-                  learnMoreLink: shortcut.help_text_link,
+                  title: languageFix(shortcut.label, lang),
+                  description: languageFix(shortcut.help_text, lang),
+                  learnMoreLink: languageFix(shortcut.help_text_link, lang),
                 }}
               >
                 {renderShortcutIcon(shortcut)}
                 <Text textAlign="center" color={hexColor.blueDefault}>
-                  {shortcut.label}
+                  {languageFix(shortcut.label, lang)}
                 </Text>
               </CustomButton>
             ))}

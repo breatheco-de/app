@@ -357,7 +357,7 @@
               "label": "Instala LearnPack en tu computadora",
               "description": "Debes instalar LearnPack para poder correr estos ejercicios de forma interactiva en tu computadora. Para esto debes correr este comando: `npm install @learnpack/learnpack -g`. Abre el siguiente link si quieres leer más sobre LearnPack.",
               "video": "https://www.youtube.com/watch?v=noKAD-d_z3c",
-              "source": "https://4geeks.com/es/docs/learnpack/what-is-learnpack-es"
+              "source": "https://4geeks.com/es/docs/learnpack/que-es-learnpack"
             },
             {
               "slug": "clone",
@@ -469,7 +469,7 @@
               "label": "Instala LearnPack en tu computadora",
               "description": "Debes instalar LearnPack para poder correr estos ejercicios de forma interactiva en tu computadora. Para esto debes correr este comando: `npm install @learnpack/learnpack -g`. Abre el siguiente link si quieres leer más sobre LearnPack.",
               "video": "https://www.youtube.com/watch?v=noKAD-d_z3c",
-              "source": "https://4geeks.com/es/docs/learnpack/what-is-learnpack-es"
+              "source": "https://4geeks.com/es/docs/learnpack/que-es-learnpack"
             },
             {
               "slug": "clone",
@@ -581,7 +581,7 @@
               "label": "Instala LearnPack en tu computadora",
               "description": "Debes instalar LearnPack para poder correr estos ejercicios de forma interactiva en tu computadora. Para esto debes correr este comando: `npm install @learnpack/learnpack -g`. Abre el siguiente link si quieres leer más sobre LearnPack.",
               "video": "https://www.youtube.com/watch?v=noKAD-d_z3c",
-              "source": "https://4geeks.com/es/docs/learnpack/what-is-learnpack-es"
+              "source": "https://4geeks.com/es/docs/learnpack/que-es-learnpack"
             },
             {
               "label": "Instala GIT en tu computadora",
