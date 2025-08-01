@@ -789,7 +789,7 @@ function useCohortHandler() {
 
     if (allSubscriptions) {
       const cohortSubscriptions = allSubscriptions?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
-      const currentCohortSlug = cohortSubscriptions[0]?.selected_cohort_set?.slug;
+      const currentCohortSlug = cohortSubscriptions[0]?.plans[0]?.slug;
 
       if (cohortSubscriptions.length === 0) {
         showToastAndRedirect(currentCohortSlug);
