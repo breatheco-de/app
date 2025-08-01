@@ -3,6 +3,8 @@ import {
   useDisclosure, useColorMode, Popover, PopoverTrigger,
   PopoverContent, PopoverArrow, Button, Divider,
   useBreakpointValue,
+  Text,
+  Tooltip,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import {
@@ -37,6 +39,7 @@ function Navbar({ translations, pageProps }) {
   const { isAuthenticated, isLoading, user, logout, cohorts } = useAuth();
   const [navbarItems, setNavbarItems] = useState([]);
   const [mktCourses, setMktCourses] = useState([]);
+  const [liveWorkshopData, setLiveWorkshopData] = useState(false);
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const { allSubscriptions } = useSubscriptions();
@@ -187,6 +190,18 @@ function Navbar({ translations, pageProps }) {
     .map((item) => prepareMenuData(item, mktCourses))
     .sort((a, b) => a.position - b.position);
 
+  useEffect(() => {
+    const checkLiveWorkshop = async () => {
+      try {
+        const res = await bc.events().liveWorkshopStatus();
+        setLiveWorkshopData(res.data.slug && res.data);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    checkLiveWorkshop();
+  }, []);
+
   return (
     <>
       {/* Overlay oscuro para mobile, siempre montado para permitir el fade */}
@@ -283,6 +298,43 @@ function Navbar({ translations, pageProps }) {
                 />
               ) : <Icon icon="4GeeksIcon" secondColor={hexColor.black} width="90px" height="35px" />}
             </NextLink>
+            {liveWorkshopData && (
+              <Box display="flex" alignItems="center" ml={2}>
+                <Tooltip
+                  label={liveWorkshopData?.title}
+                  placement="bottom"
+                  hasArrow
+                  bg="gray.800"
+                  color="white"
+                  borderRadius="md"
+                  fontSize="sm"
+                >
+                  <NextLink href={`/workshops/${liveWorkshopData?.slug}`} passHref>
+                    <Box
+                      display="inline-flex"
+                      alignItems="center"
+                      bg="#EF4444"
+                      color="white"
+                      fontWeight="semibold"
+                      fontSize="xs"
+                      px={2}
+                      py="2px"
+                      borderRadius="full"
+                      height="fit-content"
+                      cursor="pointer"
+                      _hover={{
+                        bg: '#DC2626',
+                        transform: 'scale(1.05)',
+                        transition: 'all 0.2s ease-in-out',
+                      }}
+                    >
+                      <Text lineHeight="1" mr="1">{t('live-workshop-badge') || 'Live'}</Text>
+                      <Box w="6px" h="6px" bg="whiteAlpha.800" borderRadius="full" />
+                    </Box>
+                  </NextLink>
+                </Tooltip>
+              </Box>
+            )}
 
             <Flex display="flex" ml={10}>
               <Stack className="hideOverflowX__" direction="row" width="auto" spacing={4} alignItems="center">
