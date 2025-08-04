@@ -21,7 +21,7 @@
   "progressText": "progress in the program",
   "member-since": "{{role}} in this cohort since {{date}}",
   "share-message": "I just finished coding {{title}} at 4geeks",
-  "micro-cohorts-description": "Welcome! This course is divided into several certificates that you will earn as you progress. To get started, expand the first box just below this text and click "Start this course." A list of modules and activities will be displayed. We wish you great success!",
+  "micro-cohorts-description": "Welcome! This course is divided into several certificates that you will earn as you progress. To get started, expand the first box just below this text and click \"Start this course.\" A list of modules and activities will be displayed. We wish you great success!",
   "students-modal": {
     "students-course": "Students in this course",
     "select-student": "Select a student to see their full report",
