@@ -79,6 +79,7 @@ const useStyle = () => {
     gray: {
       ...theme.colors.gray,
     },
+    highlightDark: useColorModeValue('#0A3A50', '#EBEBEB'),
   };
   const input = {
     borderColor: useColorModeValue('gray.default', '#CACACA'),

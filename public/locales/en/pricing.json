@@ -45,5 +45,10 @@
   }, {
     "label": "Are the courses self-paced or instructor-led?",
     "answer": "Our Basic and With Feedback Plans empower learners to engage with courses at their preferred pace, providing a self-paced learning experience with support from experts or AI when needed. However, if you opt for our bootcamp, the learning sessions are instructor-led."
-  }]
+  }],
+  "see-plan-details": "See plan details",
+  "self-paced-courses": "Self-paced courses",
+  "self-paced-description": "Build real tech skills at your own pace with 4Geeks: get personalized exercises, 1:1 mentorship, 24/7 feedback from our AI mentor, and full platform support to guide your journey.",
+  "immersive-bootcamp": "Immersive bootcamp",
+  "immersive-bootcamp-description": "Everything from the Self-paced experience, plus a total transformation: live classes, human mentorship, structured guidance, and hands-on support to help you break into tech and get hired."
 }

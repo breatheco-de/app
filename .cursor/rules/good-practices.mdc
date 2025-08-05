@@ -9,3 +9,20 @@ When using promises we wont use the chaining event syntax, we will use async/awa
 ## Linting
 
 We are using ESLint to improve the higene of our code. Make sure to follow its recommendations and fix linting errors if they arise.
+
+## Internationalization (i18n)
+
+All text content in the application must be internationalized using the i18n system. Follow these guidelines:
+
+1. **Translation Files**: All translations are located in `/app/public/locales/` directory
+2. **Translation Hook**: Use `useTranslation` from 'next-translate/useTranslation' to access translations
+3. **Translation Keys**: Always check if a translation key already exists before adding new ones
+4. **File Structure**: Translations are organized by language (en, es) and feature (pricing, common, etc.)
+5. **Usage Pattern**: 
+   ```javascript
+   const { t } = useTranslation('feature-name');
+   const translatedText = t('translation-key');
+   ```
+6. **Adding New Translations**: When adding new text, first search existing translation files for similar keys, then add to both English and Spanish files
+7. **Fallback**: Always provide fallback text in case translation is missing
+8. **Dynamic Content**: Use interpolation for dynamic content: `t('welcome', { name: userName })`
