@@ -1,10 +1,18 @@
 {
   "heading": "Boost your career gaining technical skills",
+  "this-subscription-includes": "This subscription includes:",
   "sub-heading": "Start learning from scratch and get ready to enter the tech industry!",
   "read-more": "Learn the science behind 4Geeks.",
   "read-more-link": "https://4geeks.com/mastering-technical-knowledge",
   "plan-not-found": "Plan \"{{planSlug}}\" does not exist. Redirecting to pricing page.",
   "choose-your-career-path": "Choose your career path",
+  "learn-at-your-own-pace": "Learn at your own pace",
+  "selfpaced-included": "+ 6 months of selfpaced included",
+  "change-your-life-with-bootcamp": "Change your life with a Bootcamp",
+  "self-paced-description": "Your future in tech starts here—learn programming and AI with total flexibility and one simple subscription. Get access to all of our learning database, courses, and services.",
+  "immersive-bootcamp-description": "Ready to fast-track your future? Master coding, AI, and job skills with an immersive 18-week bootcamp includes full Self-paced access for 6 months.",
+  "toggle-self-paced": "Self-paced courses",
+  "toggle-immersive-bootcamp": "Immersive Bootcamp",
   "pricing-disclaimer": {
     "title": "Pricing and plan disclaimer",
     "description": "Please note that all prices and plans listed on this page are subject to change at any time without prior notice. This flexibility allows us to continually adapt to market conditions, cost variations, and other relevant factors, ensuring that our offerings remain competitive and aligned with our business strategy. We encourage our customers to review this page regularly for any updates. Your continued use of our products or services following any pricing changes constitutes your acceptance of such changes."
@@ -48,7 +56,98 @@
   }],
   "see-plan-details": "See plan details",
   "self-paced-courses": "Self-paced courses",
-  "self-paced-description": "Build real tech skills at your own pace with 4Geeks: get personalized exercises, 1:1 mentorship, 24/7 feedback from our AI mentor, and full platform support to guide your journey.",
   "immersive-bootcamp": "Immersive bootcamp",
-  "immersive-bootcamp-description": "Everything from the Self-paced experience, plus a total transformation: live classes, human mentorship, structured guidance, and hands-on support to help you break into tech and get hired."
+  "bootcamp-courses": [{
+    "slug": "part-time-full-stack-developer",
+    "icon": "laptop-code",
+    "color": "#0084FF",
+    "course_translation": {
+      "title": "Full Stack Development",
+      "description": "Become a Full Stack Developer with our self-paced bootcamp! Start learning from scratch and get ready to enter the tech industry!",
+      "landing_variables": {
+        "card": [{
+          "icon": "book",
+          "title": "Average Salary per year:",
+          "value": "$55K"
+        }, {
+          "icon": "strength",
+          "title": "Job Positions:",
+          "value": "+350.000"
+        }, {
+          "icon": "key",
+          "title": "Career Growth:",
+          "value": "45% in the last year"
+        }]
+      }
+    }
+  }, {
+    "slug": "datascience-machine-learning",
+    "icon": "laptop-code",
+    "color": "#FFB718",
+    "course_translation": {
+      "title": "Data Science & ML",
+      "description": "Go by yourself through a structured syllabus, and get instant help from expert mentors and AI when needed! Start learning from scratch and get prepared for your first job as a Data Scientist!",
+      "landing_variables": {
+        "card": [{
+          "icon": "book",
+          "title": "Average Salary per year:",
+          "value": "$55K"
+        }, {
+          "icon": "strength",
+          "title": "Job Positions:",
+          "value": "+350.000"
+        }, {
+          "icon": "key",
+          "title": "Career Growth:",
+          "value": "45% in the last year"
+        }]
+      }
+    }
+  }, {
+    "slug": "cybersecurity",
+    "icon": "data-science",
+    "color": "#25BF6C",
+    "course_translation": {
+      "title": "Cyber security specialist",
+      "description": "Go by yourself through a structured syllabus, and get instant help from expert mentors and AI when needed! Start learning from scratch and get prepared for your first job as a Data Scientist!",
+      "landing_variables": {
+        "card": [{
+          "icon": "book",
+          "title": "Average Salary per year:",
+          "value": "$55K"
+        }, {
+          "icon": "strength",
+          "title": "Job Positions:",
+          "value": "+350.000"
+        }, {
+          "icon": "key",
+          "title": "Career Growth:",
+          "value": "45% in the last year"
+        }]
+      }
+    }
+  }, {
+    "slug": "applied-ai-course",
+    "icon": "data-science",
+    "color": "#8B5CF6",
+    "course_translation": {
+      "title": "Artificial intelligence",
+      "description": "Become a Full Stack Developer with our self-paced bootcamp! Start learning from scratch and get ready to enter the tech industry!",
+      "landing_variables": {
+        "card": [{
+          "icon": "book",
+          "title": "Average Salary per year:",
+          "value": "$55K"
+        }, {
+          "icon": "strength",
+          "title": "Job Positions:",
+          "value": "+350.000"
+        }, {
+          "icon": "key",
+          "title": "Career Growth:",
+          "value": "45% in the last year"
+        }]
+      }
+    }
+  }]
 }

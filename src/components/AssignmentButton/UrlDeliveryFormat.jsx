@@ -86,7 +86,7 @@ function UrlDeliveryFormat({ currentAssetData, currentTask, sendProject, closePo
               <Box dangerouslySetInnerHTML={{ __html: t('deliverProject.how-to-deliver-text', { link: howToSendProjectUrl }) }} />
             )}
           </Box>
-          <Checkbox size="md" isChecked={acceptTC} onChange={() => setAcceptTC((prev) => !prev)}>
+          <Checkbox my="20px" size="md" isChecked={acceptTC} onChange={() => setAcceptTC((prev) => !prev)}>
             <Text fontSize="sm">{t('deliverProject.deliver-confirm')}</Text>
           </Checkbox>
           <Button

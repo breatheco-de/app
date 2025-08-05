@@ -1,10 +1,18 @@
 {
   "heading": "Impulsa tu carrera adquiriendo habilidades técnicas",
+  "this-subscription-includes": "Esta suscripción incluye:",
   "sub-heading": "Comienza a aprender desde cero y prepárate para ingresar a la industria tecnológica!",
   "read-more" : "Conoce la ciencia detrás de 4Geeks.",
   "read-more-link": "https://4geeks.com/es/mastering-technical-knowledge",
   "plan-not-found": "El plan \"{{planSlug}}\" no existe. Redirigiendo a la página de precios.",
   "choose-your-career-path": "Elige tu camino profesional",
+  "learn-at-your-own-pace": "Aprende a tu propio ritmo",
+  "selfpaced-included": "+ 6 meses de selfpaced incluido",
+  "change-your-life-with-bootcamp": "Cambia tu vida con un Bootcamp",
+  "self-paced-description": "Tu futuro en tecnología comienza aquí—aprende programación e IA con total flexibilidad y una suscripción simple. Obtén acceso a toda nuestra base de datos de aprendizaje, cursos y servicios.",
+  "immersive-bootcamp-description": "¿Listo para acelerar tu futuro? Domina programación, IA y habilidades laborales con un bootcamp inmersivo de 18 semanas que incluye acceso completo a Self-paced por 6 meses.",
+  "toggle-self-paced": "Cursos a tu ritmo",
+  "toggle-immersive-bootcamp": "Bootcamp Inmersivo",
   "pricing-disclaimer": {
     "title": "Información de los precios y planes",
     "description": "Ten en cuenta que todos los precios y planes listados en esta página están sujetos a cambios en cualquier momento sin previo aviso. Esta flexibilidad nos permite adaptarnos continuamente a las condiciones del mercado, variaciones de costos y otros factores relevantes, asegurando que nuestras ofertas sigan siendo competitivas y estén alineadas con nuestra estrategia comercial. Animamos a nuestros clientes a revisar esta página regularmente para cualquier actualización. El uso continuo de nuestros productos o servicios después de cualquier cambio en los precios constituye tu aceptación de dichos cambios."
@@ -48,7 +56,98 @@
   }],
   "see-plan-details": "Ver detalles del plan",
   "self-paced-courses": "Cursos auto-gestionados",
-  "self-paced-description": "Desarrolla habilidades técnicas reales a tu propio ritmo con 4Geeks: obtén ejercicios personalizados, mentoría 1:1, retroalimentación 24/7 de nuestro mentor de IA, y soporte completo de la plataforma para guiar tu viaje.",
   "immersive-bootcamp": "Bootcamp inmersivo",
-  "immersive-bootcamp-description": "Todo lo del plan Auto-gestionado, más una transformación total: clases en vivo, mentoría humana, orientación estructurada y soporte práctico para ayudarte a entrar en la tecnología y conseguir trabajo."
+  "bootcamp-courses": [{
+    "slug": "desarrollador-full-stack",
+    "icon": "laptop-code",
+    "color": "#0084FF",
+    "course_translation": {
+      "title": "Desarrollo Full Stack",
+      "description": "¡Conviértete en un desarrollador Full Stack con nuestro bootcamp a tu propio ritmo! ¡Comienza a aprender desde cero y prepárate para ingresar a la industria tecnológica!",
+      "landing_variables": {
+        "card": [{
+          "icon": "book",
+          "title": "Salario promedio por año:",
+          "value": "$55K"
+        }, {
+          "icon": "strength",
+          "title": "Posiciones laborales:",
+          "value": "+350.000"
+        }, {
+          "icon": "key",
+          "title": "Crecimiento profesional:",
+          "value": "45% en el último año"
+        }]
+      }
+    }
+  }, {
+    "slug": "curso-datascience-machine-learning",
+    "icon": "laptop-code",
+    "color": "#FFB718",
+    "course_translation": {
+      "title": "Ciencia de Datos & ML",
+      "description": "¡Avanza por ti mismo a través de un plan de estudios estructurado y obtén ayuda instantánea de mentores expertos e IA cuando lo necesites! ¡Comienza a aprender desde cero y prepárate para tu primer trabajo como científico de datos!",
+      "landing_variables": {
+        "card": [{
+          "icon": "book",
+          "title": "Salario promedio por año:",
+          "value": "$55K"
+        }, {
+          "icon": "strength",
+          "title": "Posiciones laborales:",
+          "value": "+350.000"
+        }, {
+          "icon": "key",
+          "title": "Crecimiento profesional:",
+          "value": "45% en el último año"
+        }]
+      }
+    }
+  }, {
+    "slug": "curso-ciberseguridad",
+    "icon": "data-science",
+    "color": "#25BF6C",
+    "course_translation": {
+      "title": "Especialista en Ciberseguridad",
+      "description": "¡Avanza por ti mismo a través de un plan de estudios estructurado y obtén ayuda instantánea de mentores expertos e IA cuando lo necesites! ¡Comienza a aprender desde cero y prepárate para tu primer trabajo como especialista en ciberseguridad!",
+      "landing_variables": {
+        "card": [{
+          "icon": "book",
+          "title": "Salario promedio por año:",
+          "value": "$55K"
+        }, {
+          "icon": "strength",
+          "title": "Posiciones laborales:",
+          "value": "+350.000"
+        }, {
+          "icon": "key",
+          "title": "Crecimiento profesional:",
+          "value": "45% en el último año"
+        }]
+      }
+    }
+  }, {
+    "slug": "curso-inteligencia-artificial",
+    "icon": "data-science",
+    "color": "#8B5CF6",
+    "course_translation": {
+      "title": "Inteligencia Artificial",
+      "description": "¡Conviértete en un desarrollador Full Stack con nuestro bootcamp a tu propio ritmo! ¡Comienza a aprender desde cero y prepárate para ingresar a la industria tecnológica!",
+      "landing_variables": {
+        "card": [{
+          "icon": "book",
+          "title": "Salario promedio por año:",
+          "value": "$55K"
+        }, {
+          "icon": "strength",
+          "title": "Posiciones laborales:",
+          "value": "+350.000"
+        }, {
+          "icon": "key",
+          "title": "Crecimiento profesional:",
+          "value": "45% en el último año"
+        }]
+      }
+    }
+  }]
 }

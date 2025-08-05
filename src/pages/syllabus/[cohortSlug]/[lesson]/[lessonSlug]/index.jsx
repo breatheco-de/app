@@ -1277,6 +1277,7 @@ function SyllabusContent() {
                                   currentTask={currentTask}
                                   sendProject={sendProject}
                                   currentAssetData={currentAsset}
+                                  portalled
                                 />
                               )}
                               {currentTask?.task_status === 'DONE' && showModal && (
