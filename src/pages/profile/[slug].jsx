@@ -15,6 +15,7 @@ import GridContainer from '../../components/GridContainer';
 import Subscriptions from '../../components/Profile/Subscriptions';
 import Certificates from '../../components/Profile/Certificates';
 import Information from '../../components/Profile/Information';
+import ReferralProgram from '../../components/Profile/ReferralProgram';
 import useCustomToast from '../../hooks/useCustomToast';
 
 function Profile() {
@@ -115,6 +116,9 @@ function Profile() {
             </TabPanel>
             <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
               <Subscriptions cohorts={cohorts} />
+            </TabPanel>
+            <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
+              <ReferralProgram />
             </TabPanel>
           </TabPanels>
         </Tabs>
