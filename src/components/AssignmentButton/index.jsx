@@ -22,6 +22,7 @@ function AssignmentButton({
   hasPendingSubtasks,
   togglePendingSubtasks,
   setStage,
+  portalled,
 }) {
   const { t, lang } = useTranslation('dashboard');
   const { hexColor } = useStyle();
@@ -198,6 +199,7 @@ function AssignmentButton({
         isPopoverOpen={isPopoverOpen}
         closePopover={closePopover}
         togglePopover={togglePopover}
+        portalled={portalled}
       />
     );
   }
@@ -227,6 +229,7 @@ AssignmentButton.propTypes = {
   isGuidedExperience: PropTypes.bool,
   hasPendingSubtasks: PropTypes.bool,
   setStage: PropTypes.func,
+  portalled: PropTypes.bool,
 };
 
 AssignmentButton.defaultProps = {
@@ -238,4 +241,5 @@ AssignmentButton.defaultProps = {
   isGuidedExperience: false,
   hasPendingSubtasks: undefined,
   setStage: null,
+  portalled: false,
 };
