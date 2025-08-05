@@ -13,7 +13,6 @@ import {
   Image,
   VStack,
   HStack,
-  Icon,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import useStyle from '../hooks/useStyle';
@@ -100,26 +99,18 @@ function PricingModal({
                     }}
                   >
                     <HStack spacing="16px" mb="12px">
-                      {cta.icon && (
-                        <Box
-                          p="8px"
-                          borderRadius="8px"
-                          bg={cta.iconBgColor || 'green.100'}
-                          color={cta.iconColor || 'green.600'}
-                        >
-                          <Icon as={cta.icon} boxSize="20px" />
-                        </Box>
-                      )}
+                      {cta.titleLeftComponent && cta.titleLeftComponent}
                       <Text
-                        fontSize="18px"
+                        fontSize={{ base: '16px', md: '18px' }}
                         fontWeight="600"
                         color="gray.800"
+                        {...cta.titleStyles}
                       >
                         {cta.title}
                       </Text>
                     </HStack>
                     <Text
-                      fontSize="14px"
+                      fontSize={{ base: '12px', md: '14px' }}
                       color="gray.600"
                       lineHeight="1.5"
                       mb="16px"
@@ -159,10 +150,9 @@ PricingModal.propTypes = {
       title: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
       buttonText: PropTypes.string,
-      icon: PropTypes.elementType,
-      iconBgColor: PropTypes.string,
-      iconColor: PropTypes.string,
+      titleLeftComponent: PropTypes.node,
       action: PropTypes.func,
+      titleStyles: PropTypes.objectOf(PropTypes.string),
     }),
   ).isRequired,
 };

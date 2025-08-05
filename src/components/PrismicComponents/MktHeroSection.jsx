@@ -10,6 +10,7 @@ import Button from '../Button';
 import PrismicTextComponent from '../PrismicTextComponent';
 import Rating from '../Rating';
 import PricingModal from '../PricingModal';
+import Icon from '../Icon';
 
 function MktHeroSection({
   slice, fontFamily, buttonHandler, imagesArray,
@@ -203,15 +204,23 @@ function MktHeroSection({
         callToActions={[
           {
             title: 'Self-paced courses',
+            titleStyles: {
+              color: 'green.500',
+            },
             description: 'Build real tech skills at your own pace with 4Geeks: get personalized exercises, 1:1 mentorship, 24/7 feedback from our AI mentor, and full platform support to guide your journey.',
             buttonText: 'See plan details',
-            action: () => router.push('/pricing?view=self-paced'),
+            titleLeftComponent: <Box p="8px" borderRadius="8px" bg="green.100"><Icon icon="pathToStar" color="#06AB52" /></Box>,
+            action: () => router.push({ pathname: '/pricing', query: { view: 'self-paced' } }),
           },
           {
             title: 'Immersive bootcamp',
+            titleStyles: {
+              color: 'blue.default',
+            },
             description: 'Everything from the Self-paced experience, plus a total transformation: live classes, human mentorship, structured guidance, and hands-on support to help you break into tech and get hired.',
             buttonText: 'See plan details',
-            action: () => router.push('/pricing?view=immersive-bootcamps'),
+            titleLeftComponent: <Box p="8px" borderRadius="8px" bg="blue.50"><Icon icon="rocketDiagonal" color="#0084FF" /></Box>,
+            action: () => router.push({ pathname: '/pricing', query: { view: 'immersive-bootcamps' } }),
           },
         ]}
       />
