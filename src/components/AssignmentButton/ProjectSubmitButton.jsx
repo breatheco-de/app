@@ -6,6 +6,7 @@ import {
   PopoverHeader,
   Popover,
   PopoverTrigger,
+  Portal,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -24,6 +25,7 @@ function ProjectSubmitButton({
   closePopover,
   togglePopover,
   buttonChildren,
+  portalled,
 }) {
   const { t } = useTranslation('dashboard');
   const taskIsApproved = allowText && currentTask?.revision_status === 'APPROVED';
@@ -70,21 +72,41 @@ function ProjectSubmitButton({
         />
       </PopoverTrigger>
 
-      <PopoverContent>
-        <PopoverArrow />
-        <PopoverHeader>{statusText}</PopoverHeader>
-        <PopoverCloseButton />
-        <PopoverBody>
-          <DeliveryFormat
-            currentAssetData={currentAssetData}
-            currentTask={currentTask}
-            sendProject={sendProject}
-            closePopover={closePopover}
-            onClickHandler={onClickHandler}
-            statusText={statusText}
-          />
-        </PopoverBody>
-      </PopoverContent>
+      {portalled ? (
+        <Portal>
+          <PopoverContent>
+            <PopoverArrow />
+            <PopoverHeader>{statusText}</PopoverHeader>
+            <PopoverCloseButton />
+            <PopoverBody>
+              <DeliveryFormat
+                currentAssetData={currentAssetData}
+                currentTask={currentTask}
+                sendProject={sendProject}
+                closePopover={closePopover}
+                onClickHandler={onClickHandler}
+                statusText={statusText}
+              />
+            </PopoverBody>
+          </PopoverContent>
+        </Portal>
+      ) : (
+        <PopoverContent>
+          <PopoverArrow />
+          <PopoverHeader>{statusText}</PopoverHeader>
+          <PopoverCloseButton />
+          <PopoverBody>
+            <DeliveryFormat
+              currentAssetData={currentAssetData}
+              currentTask={currentTask}
+              sendProject={sendProject}
+              closePopover={closePopover}
+              onClickHandler={onClickHandler}
+              statusText={statusText}
+            />
+          </PopoverBody>
+        </PopoverContent>
+      )}
     </Popover>
   );
 }
@@ -101,6 +123,7 @@ ProjectSubmitButton.propTypes = {
   togglePopover: PropTypes.func,
   buttonChildren: PropTypes.node,
   isGuidedExperience: PropTypes.bool,
+  portalled: PropTypes.bool,
 };
 
 ProjectSubmitButton.defaultProps = {
@@ -115,6 +138,7 @@ ProjectSubmitButton.defaultProps = {
   togglePopover: () => { },
   buttonChildren: null,
   isGuidedExperience: false,
+  portalled: false,
 };
 
 export default ProjectSubmitButton;

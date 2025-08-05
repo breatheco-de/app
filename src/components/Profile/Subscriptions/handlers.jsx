@@ -15,15 +15,28 @@ function profileHandlers() {
     return format(parsedDate, 'dd MMM yy', { locale: lang === 'en' || lang === 'us' ? enUS : es });
   };
 
-  const statusLabel = {
-    free_trial: t('subscription.status.free_trial'),
-    fully_paid: t('subscription.status.fully_paid'),
-    active: t('subscription.status.active'),
-    expired: t('subscription.status.expired'),
-    payment_issue: t('subscription.status.payment_issue'),
-    cancelled: t('subscription.status.cancelled'),
-    completed: t('subscription.status.completed'),
-    error: t('subscription.status.error'),
+  const statusLabel = (subscription) => {
+    const status = subscription?.status?.toLowerCase();
+    const now = new Date();
+    const isCancelledButValid = status === 'cancelled' && subscription && (
+      (subscription.valid_until && new Date(subscription.valid_until) > now)
+      || (subscription.next_payment_at && new Date(subscription.next_payment_at) > now)
+    );
+
+    const labels = {
+      free_trial: t('subscription.status.free_trial'),
+      fully_paid: t('subscription.status.fully_paid'),
+      active: t('subscription.status.active'),
+      expired: t('subscription.status.expired'),
+      payment_issue: t('subscription.status.payment_issue'),
+      cancelled: isCancelledButValid
+        ? t('subscription.status.is_cancelled_but_valid', { date: format(new Date(subscription.valid_until || subscription.next_payment_at), 'dd MMM yyyy', { locale: lang === 'es' ? es : enUS }) })
+        : t('subscription.status.cancelled'),
+      completed: t('subscription.status.completed'),
+      error: t('subscription.status.error'),
+    };
+
+    return labels[status] || 'unknown';
   };
   const statusStyles = {
     free_trial: {
@@ -67,6 +80,7 @@ function profileHandlers() {
   return {
     statusStyles,
     statusLabel,
+    formatDate,
     getSubscriptionDetails: (sub) => {
       const status = sub?.status?.toLowerCase();
       const isPlanFinancing = sub?.type === 'plan_financing';

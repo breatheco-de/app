@@ -269,6 +269,7 @@ const breathecode = {
       addCard: (data) => axios.post(`${url}/card${qs}`, data),
       cancelSubscription: (id) => axios.put(`${url}/subscription/${id}/cancel${qs}`),
       cancelMySubscription: (id) => axios.put(`${url}/me/subscription/${id}/cancel${qs}`),
+      reactivateMySubscription: (id) => axios.put(`${url}/me/subscription/${id}/reactivate${qs}`),
       getPlan: (slug) => axios.get(`${url}/plan/${slug}${qs}`),
       getpaymentMethods: () => axios.get(`${url}/methods${qs}`),
       planOffer: () => axios.get(`${url}/planoffer${qs}`),
@@ -304,6 +305,7 @@ const breathecode = {
       applyEvent: (eventId, payload) => axios.post(`${url}/me/event/${eventId}/checkin${qs}`, payload),
       getUsers: (eventId) => axios.get(`${url}/event/${eventId}/checkin${qs}`),
       getAllEventTypes: () => axios.get(`${url}/eventype${qs}`),
+      liveWorkshopStatus: () => axios.get(`${url}/live-workshop-status`),
     };
   },
   provisioning: (query = {}) => {

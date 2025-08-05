@@ -96,7 +96,7 @@ function SyllabusContent() {
     grantAccess, setGrantAccess, checkNavigationAvailability, checkRevisionStatus,
   } = useCohortHandler();
   const { areSubscriptionsFetched } = useSubscriptions();
-  // const isAvailableAsSaas = false;
+  const allowContributions = currentAsset?.allow_contributions;
   const isAvailableAsSaas = cohortSession?.available_as_saas;
 
   const introButtonRef = useRef(null);
@@ -1203,7 +1203,7 @@ function SyllabusContent() {
                                   </Button>
                                 </Tooltip>
                               )}
-                              {repoUrl && (isLesson || isProject) && (
+                              {repoUrl && (isLesson || isProject) && allowContributions && (
                                 <Tooltip label={t('contribute')} placement="top">
                                   <Link
                                     display="flex"
@@ -1277,6 +1277,7 @@ function SyllabusContent() {
                                   currentTask={currentTask}
                                   sendProject={sendProject}
                                   currentAssetData={currentAsset}
+                                  portalled
                                 />
                               )}
                               {currentTask?.task_status === 'DONE' && showModal && (
