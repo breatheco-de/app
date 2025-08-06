@@ -210,7 +210,7 @@ function MktHeroSection({
             description: 'Build real tech skills at your own pace with 4Geeks: get personalized exercises, 1:1 mentorship, 24/7 feedback from our AI mentor, and full platform support to guide your journey.',
             buttonText: 'See plan details',
             titleLeftComponent: <Box p="8px" borderRadius="8px" bg="green.100"><Icon icon="pathToStar" color="#06AB52" /></Box>,
-            action: () => router.push({ pathname: '/pricing', query: { view: 'self-paced' } }),
+            action: () => router.replace({ pathname: '/pricing', query: { view: 'self-paced' } }),
           },
           {
             title: 'Immersive bootcamp',
@@ -220,7 +220,7 @@ function MktHeroSection({
             description: 'Everything from the Self-paced experience, plus a total transformation: live classes, human mentorship, structured guidance, and hands-on support to help you break into tech and get hired.',
             buttonText: 'See plan details',
             titleLeftComponent: <Box p="8px" borderRadius="8px" bg="blue.50"><Icon icon="rocketDiagonal" color="#0084FF" /></Box>,
-            action: () => router.push({ pathname: '/pricing', query: { view: 'immersive-bootcamps' } }),
+            action: () => router.replace({ pathname: '/pricing', query: { view: 'immersive-bootcamps' } }),
           },
         ]}
       />
