@@ -576,6 +576,7 @@ function CoursePage() {
             title={getAlternativeTranslation('show-prices.title')}
             description={getAlternativeTranslation('show-prices.description')}
             plan={data?.plan_slug}
+            course={data?.slug}
             cohortId={cohortId}
             pricingMktInfo={benefitsBullets}
             padding={{ base: '10px', md: '0px' }}

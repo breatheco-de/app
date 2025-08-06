@@ -81,7 +81,8 @@ export const useBootcamp = () => {
     has_available_cohorts: planData?.has_available_cohorts,
     cohort: cohortId,
     coupon: getQueryString('coupon'),
-  }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
+    course: data?.slug,
+  }) : `?plan=${data?.plan_slug}&cohort=${cohortId}&course=${data?.slug}`;
 
   const featurePrice = planPriceFormatter(featuredPlanToEnroll, planList, allDiscounts);
 

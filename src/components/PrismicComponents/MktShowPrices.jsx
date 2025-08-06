@@ -8,7 +8,7 @@ import { usePersistentBySession } from '../../hooks/usePersistent';
 import useSignup from '../../hooks/useSignup';
 import { getQueryString } from '../../utils';
 
-function MktShowPrices({ id, externalPlanProps, cohortId, title, description, pricingMktInfo, plan, ...rest }) {
+function MktShowPrices({ id, externalPlanProps, cohortId, title, description, pricingMktInfo, plan, course, ...rest }) {
   const { t } = useTranslation('course');
   const { generatePlan } = useSignup();
   const router = useRouter();
@@ -38,6 +38,7 @@ function MktShowPrices({ id, externalPlanProps, cohortId, title, description, pr
             plan_id: item?.plan_id,
             cohort: cohortId,
             coupon: queryCoupon || coupon,
+            course,
           }).toString();
           router.push(`/checkout?${querys}`);
         }}
@@ -60,6 +61,7 @@ MktShowPrices.propTypes = {
   cohortId: PropTypes.number,
   pricingMktInfo: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
   externalPlanProps: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
+  course: PropTypes.string,
 };
 
 MktShowPrices.defaultProps = {
@@ -69,6 +71,7 @@ MktShowPrices.defaultProps = {
   cohortId: null,
   externalPlanProps: {},
   pricingMktInfo: [],
+  course: '',
 };
 
 export default MktShowPrices;
