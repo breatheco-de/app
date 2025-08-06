@@ -309,7 +309,7 @@ function Navbar({ translations, pageProps }) {
                   borderRadius="md"
                   fontSize="sm"
                 >
-                  <NextLink href={`/workshops/${liveWorkshopData?.slug}`} passHref>
+                  <NextLink href={`/${liveWorkshopData?.language}/workshops/${liveWorkshopData?.slug}`} passHref>
                     <Box
                       display="inline-flex"
                       alignItems="center"
