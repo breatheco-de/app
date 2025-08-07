@@ -148,6 +148,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
       'images.prismic.io',
       'images.unsplash.com',
       'refreshmiami.com',
+      'techhubsouthflorida.org',
     ],
     // formats: ['image/avif', 'image/webp'],
   },
