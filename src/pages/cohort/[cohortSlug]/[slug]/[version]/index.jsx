@@ -176,11 +176,11 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    if (areSubscriptionsFetched && cohortSession?.available_as_saas === true && cohortSession.cohort_user.role === 'STUDENT') {
+    if (isAuthenticated && areSubscriptionsFetched && cohortSession?.available_as_saas === true && cohortSession.cohort_user.role === 'STUDENT') {
       checkNavigationAvailability();
     }
-    if (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
-  }, [cohortSession, areSubscriptionsFetched]);
+    if (isAuthenticated && (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false)) setGrantAccess(true);
+  }, [cohortSession, areSubscriptionsFetched, isAuthenticated]);
 
   useEffect(() => {
     if (cohortSession?.cohort_user) {

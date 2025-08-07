@@ -16,7 +16,7 @@ import useSubscriptions from './useSubscriptions';
 function useCohortHandler() {
   const router = useRouter();
   const [grantAccess, setGrantAccess] = useState(false);
-  const { user, cohorts: myCohorts, fetchUserAndCohorts, setCohorts } = useAuth();
+  const { user, isAuthenticated, cohorts: myCohorts, fetchUserAndCohorts, setCohorts } = useAuth();
   const { t, lang } = useTranslation('dashboard');
   const {
     setCohortSession,
@@ -789,10 +789,34 @@ function useCohortHandler() {
 
     if (allSubscriptions) {
       const cohortSubscriptions = allSubscriptions?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
-      const currentCohortSlug = cohortSubscriptions[0]?.selected_cohort_set?.slug;
+      const currentCohortSlug = cohortSubscriptions[0]?.plans[0]?.slug;
 
       if (cohortSubscriptions.length === 0) {
-        showToastAndRedirect(currentCohortSlug);
+        if (isAuthenticated) {
+          createToast({
+            position: 'top',
+            title: t('alert-message:access-denied'),
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+          router.push({
+            pathname: '/choose-program',
+            locale: lang,
+          });
+        } else {
+          createToast({
+            position: 'top',
+            title: t('alert-message:login-required'),
+            status: 'warning',
+            duration: 5000,
+            isClosable: true,
+          });
+          router.push({
+            pathname: '/login',
+            locale: lang,
+          });
+        }
         return;
       }
 

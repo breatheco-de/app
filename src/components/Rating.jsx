@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Flex, Text, Box, Avatar, SimpleGrid, Button, useBreakpointValue } from '@chakra-ui/react';
+import { Flex, Text, Box, Avatar, SimpleGrid, Button, useBreakpointValue, AvatarGroup } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useStyle from '../hooks/useStyle';
@@ -43,10 +43,11 @@ function CommentCard({ review, ...rest }) {
   );
 }
 
-function Rating({ variant, totalRatings, totalReviews, rating, reviews, link, cardStyles, ...rest }) {
+function Rating({ variant, totalRatings, totalReviews, rating, reviews, link, cardStyles, trustText, ratingUsers, ...rest }) {
   const { t } = useTranslation('common');
   const router = useRouter();
   const roundedRating = Math.round(parseFloat(rating)) || 0;
+  const { navbarBackground, fontColor } = useStyle();
 
   const initialVisibleCount = useBreakpointValue({ base: 3, md: 6 });
   const [visibleReviewCount, setVisibleReviewCount] = useState(initialVisibleCount);
@@ -61,34 +62,58 @@ function Rating({ variant, totalRatings, totalReviews, rating, reviews, link, ca
 
   if (variant === 'inline') {
     return (
-      <Flex alignItems="center" gap="8px" {...rest}>
-        {(parseFloat(rating) > 0 && roundedRating > 0) && (
-          <>
-            <Text fontSize="14px">{rating}</Text>
-            <Flex gap="4px">
-              {Array.from({ length: 5 }).map((_, index) => {
-                const isFullStar = index + 1 <= Math.floor(parseFloat(rating));
-                const isHalfStar = index === Math.floor(parseFloat(rating)) && parseFloat(rating) % 1 >= 0.5;
-
-                return (
-                  <Icon
-                    icon="star"
-                    color={isFullStar ? '#FFB718' : '#ffffff'}
-                    secondColor="#FFB718"
-                    width="18px"
-                    fill={isHalfStar ? 'half' : undefined}
-                  />
-                );
-              })}
-            </Flex>
-          </>
+      <Flex gap="8px" alignItems="center">
+        {ratingUsers && ratingUsers.length > 0 && (
+          <AvatarGroup size="sm" max={5} spacing="-8px">
+            {ratingUsers.slice(0, 4).map((userImage, index) => (
+              <Avatar
+                src={userImage}
+                alt={`User ${index + 1}`}
+                name={`User ${index + 1}`}
+                border="1px solid"
+                borderColor={navbarBackground}
+                boxShadow="0 2px 4px rgba(0, 0, 0, 0.1)"
+              />
+            ))}
+          </AvatarGroup>
         )}
 
-        {totalRatings > 0 && (
-          <Text onClick={() => router.push(link)} color="blue.default" textDecor="underline" fontWeight="bold" fontSize="14px" cursor="pointer">
-            {`(${totalRatings} ${t('reviews')})`}
-          </Text>
-        )}
+        <Flex direction="column" gap="8px">
+          <Flex alignItems="center" gap="8px" {...rest}>
+            {(parseFloat(rating) > 0 && roundedRating > 0) && (
+              <>
+                <Text fontSize="14px" color={fontColor}>{rating}</Text>
+                <Flex gap="4px">
+                  {Array.from({ length: 5 }).map((_, index) => {
+                    const isFullStar = index + 1 <= Math.floor(parseFloat(rating));
+                    const isHalfStar = index === Math.floor(parseFloat(rating)) && parseFloat(rating) % 1 >= 0.5;
+
+                    return (
+                      <Icon
+                        icon="star"
+                        color={isFullStar ? '#FFB718' : '#ffffff'}
+                        secondColor="#FFB718"
+                        width="18px"
+                        fill={isHalfStar ? 'half' : undefined}
+                      />
+                    );
+                  })}
+                </Flex>
+              </>
+            )}
+
+            {totalRatings > 0 && (
+              <Text onClick={() => router.push(link)} color="blue.default" textDecor="underline" fontWeight="bold" fontSize="14px" cursor="pointer">
+                {`(${totalRatings} ${t('reviews')})`}
+              </Text>
+            )}
+          </Flex>
+          {trustText && (
+            <Text fontSize="14px" color={fontColor}>
+              {trustText}
+            </Text>
+          )}
+        </Flex>
       </Flex>
     );
   }
@@ -102,7 +127,7 @@ function Rating({ variant, totalRatings, totalReviews, rating, reviews, link, ca
         <Flex direction="column" {...rest}>
           <Flex alignItems="center" gap="14px" mb={4}>
             <Icon icon="star" color="#FFB718" width="18px" />
-            <Text fontSize="24px">
+            <Text fontSize="24px" color={fontColor}>
               {`${parseFloat(rating) > 0 ? rating : ''} ${t('course-rating')} ${totalReviews > 0 ? `- ${totalReviews} ${t('comments')}` : ''}`}
             </Text>
           </Flex>
@@ -142,6 +167,8 @@ Rating.propTypes = {
   })),
   link: PropTypes.string,
   cardStyles: PropTypes.objectOf(PropTypes.string),
+  trustText: PropTypes.string,
+  ratingUsers: PropTypes.arrayOf(PropTypes.string),
 };
 
 CommentCard.propTypes = {
@@ -162,6 +189,8 @@ Rating.defaultProps = {
   rating: 0,
   reviews: [],
   cardStyles: {},
+  trustText: null,
+  ratingUsers: [],
 };
 
 export default Rating;

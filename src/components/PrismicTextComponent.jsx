@@ -104,11 +104,13 @@ function Preformatted({ children, ...rest }) {
 }
 
 function LabelRenderer({ node, children, grayTextColor }) {
+  const { hexColor } = useStyle();
+
   if (node.data.label === 'highlight-blue') {
     return <span style={{ color: '#A5D9F8' }}>{children}</span>;
   }
   if (node.data.label === 'highlight-dark') {
-    return <span style={{ color: '#0A3A50', fontWeight: 'bold' }}>{children}</span>;
+    return <span style={{ color: hexColor.highlightDark, fontWeight: 'bold' }}>{children}</span>;
   }
   if (node.data.label === 'highlight-blue-default') {
     return <span style={{ color: '#0084FF' }}>{children}</span>;

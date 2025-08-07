@@ -241,7 +241,9 @@ function PricingView() {
 
       if (selectedCourseByQueryString || planFormated) {
         setSelectedCourseData((prev) => ({ ...prev, ...selectedCourseByQueryString }));
-      } else {
+      }
+
+      if (planFormated && !selectedCourseByQueryString) {
         router.push({
           pathname: '/pricing',
           query: {},
@@ -364,6 +366,8 @@ function PricingView() {
       </Container>
     );
   }
+
+  console.log('hola');
 
   return (
     <Container maxWidth="100%" background={hexColor.featuredColor3} paddingY="4rem">

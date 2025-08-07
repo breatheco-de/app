@@ -6,6 +6,7 @@ import type * as prismicClient from "@prismicio/client";
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
 type PageDocumentDataSlicesSlice =
+  | HeroSectionSlice
   | LearningPlatformSectionSlice
   | RatingsSlice
   | AwardSectionSlice
@@ -658,6 +659,132 @@ type FaqsSliceVariation = FaqsSliceDefault;
  * - **Documentation**: https://prismic.io/docs/slice
  */
 export type FaqsSlice = prismic.SharedSlice<"faqs", FaqsSliceVariation>;
+
+/**
+ * Primary content in *HeroSection → Default → Primary*
+ */
+export interface HeroSectionSliceDefaultPrimary {
+  /**
+   * Title field in *HeroSection → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero_section.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  title: prismic.RichTextField;
+
+  /**
+   * Description field in *HeroSection → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero_section.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  description: prismic.RichTextField;
+
+  /**
+   * Button Text field in *HeroSection → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero_section.default.primary.button_text
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  button_text: prismic.RichTextField;
+
+  /**
+   * Button Link field in *HeroSection → Default → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero_section.default.primary.button_link
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  button_link: prismic.LinkField<
+    string,
+    string,
+    unknown,
+    prismic.FieldState,
+    never
+  >;
+
+  /**
+   * Rating field in *HeroSection → Default → Primary*
+   *
+   * - **Field Type**: Number
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero_section.default.primary.rating
+   * - **Documentation**: https://prismic.io/docs/field#number
+   */
+  rating: prismic.NumberField;
+
+  /**
+   * Trust Text field in *HeroSection → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero_section.default.primary.trust_text
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  trust_text: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *HeroSection → Items*
+ */
+export interface HeroSectionSliceDefaultItem {
+  /**
+   * User Image field in *HeroSection → Items*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero_section.items[].user_image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  user_image: prismic.ImageField<never>;
+
+  /**
+   * Learner Image field in *HeroSection → Items*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero_section.items[].learner_image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  learner_image: prismic.ImageField<never>;
+}
+
+/**
+ * Default variation for HeroSection Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type HeroSectionSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<HeroSectionSliceDefaultPrimary>,
+  Simplify<HeroSectionSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *HeroSection*
+ */
+type HeroSectionSliceVariation = HeroSectionSliceDefault;
+
+/**
+ * HeroSection Shared Slice
+ *
+ * - **API ID**: `hero_section`
+ * - **Description**: HeroSection
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type HeroSectionSlice = prismic.SharedSlice<
+  "hero_section",
+  HeroSectionSliceVariation
+>;
 
 /**
  * Primary content in *InfoCards → Default → Primary*
@@ -4457,6 +4584,11 @@ declare module "@prismicio/client" {
       FaqsSliceDefaultItem,
       FaqsSliceVariation,
       FaqsSliceDefault,
+      HeroSectionSlice,
+      HeroSectionSliceDefaultPrimary,
+      HeroSectionSliceDefaultItem,
+      HeroSectionSliceVariation,
+      HeroSectionSliceDefault,
       InfoCardsSlice,
       InfoCardsSliceDefaultPrimary,
       InfoCardsSliceVariation,
