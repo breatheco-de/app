@@ -5,6 +5,7 @@ import {
 } from '@chakra-ui/react';
 import { PrismicRichText } from '@prismicio/react';
 import { useRouter } from 'next/router';
+import useTranslation from 'next-translate/useTranslation';
 import Heading from '../Heading';
 import Button from '../Button';
 import PrismicTextComponent from '../PrismicTextComponent';
@@ -18,6 +19,7 @@ function MktHeroSection({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const router = useRouter();
+  const { t } = useTranslation('pricing');
 
   const userImages = slice?.items?.slice(0, 4) || imagesArray || [];
   const ratingUserImages = slice?.items?.map((item) => item.learner_image?.url).filter(Boolean) || [];
@@ -203,22 +205,22 @@ function MktHeroSection({
         mainImage="/static/images/women-laptop-bubbles.png"
         callToActions={[
           {
-            title: 'Self-paced courses',
+            title: t('self-paced-courses'),
             titleStyles: {
               color: 'green.500',
             },
-            description: 'Build real tech skills at your own pace with 4Geeks: get personalized exercises, 1:1 mentorship, 24/7 feedback from our AI mentor, and full platform support to guide your journey.',
-            buttonText: 'See plan details',
+            description: t('self-paced-description'),
+            buttonText: t('see-plan-details'),
             titleLeftComponent: <Box p="8px" borderRadius="8px" bg="green.100"><Icon icon="pathToStar" color="#06AB52" /></Box>,
             action: () => router.replace({ pathname: '/pricing', query: { view: 'self-paced' } }),
           },
           {
-            title: 'Immersive bootcamp',
+            title: t('immersive-bootcamp'),
             titleStyles: {
               color: 'blue.default',
             },
-            description: 'Everything from the Self-paced experience, plus a total transformation: live classes, human mentorship, structured guidance, and hands-on support to help you break into tech and get hired.',
-            buttonText: 'See plan details',
+            description: t('immersive-bootcamp-description'),
+            buttonText: t('see-plan-details'),
             titleLeftComponent: <Box p="8px" borderRadius="8px" bg="blue.50"><Icon icon="rocketDiagonal" color="#0084FF" /></Box>,
             action: () => router.replace({ pathname: '/pricing', query: { view: 'immersive-bootcamps' } }),
           },
