@@ -65,7 +65,7 @@ function Rating({ variant, totalRatings, totalReviews, rating, reviews, link, ca
       <Flex gap="8px" alignItems="center">
         {ratingUsers && ratingUsers.length > 0 && (
           <AvatarGroup size="sm" max={5} spacing="-8px">
-            {ratingUsers.map((userImage, index) => (
+            {ratingUsers.slice(0, 4).map((userImage, index) => (
               <Avatar
                 src={userImage}
                 alt={`User ${index + 1}`}

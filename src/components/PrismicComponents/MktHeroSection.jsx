@@ -20,7 +20,7 @@ function MktHeroSection({
   const router = useRouter();
 
   const userImages = slice?.items?.slice(0, 4) || imagesArray || [];
-  const ratingUserImages = userImages.map((item) => item.user_image?.url).filter(Boolean);
+  const ratingUserImages = slice?.items?.map((item) => item.learner_image?.url).filter(Boolean) || [];
   const ratingSlice = {
     variation: 'inline',
     primary: {
@@ -112,7 +112,7 @@ function MktHeroSection({
             <Box
               position="absolute"
               top={{ sm: '5px', md: '-15px', lg: '-15px', xl: '-50px' }}
-              right={{ sm: '-30px', md: '-20px', lg: '-10px', xl: '30px' }}
+              right={{ sm: '-28px', md: '-20px', lg: '-10px', xl: '30px' }}
               zIndex="1"
               transform="rotate(10deg)"
               display={{ base: 'none', sm: 'block', xl: 'block' }}
@@ -245,6 +245,10 @@ MktHeroSection.propTypes = {
     items: PropTypes.arrayOf(
       PropTypes.shape({
         user_image: PropTypes.shape({
+          url: PropTypes.string,
+          alt: PropTypes.string,
+        }),
+        learner_image: PropTypes.shape({
           url: PropTypes.string,
           alt: PropTypes.string,
         }),

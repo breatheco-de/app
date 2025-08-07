@@ -66,6 +66,14 @@
             "constraint": {},
             "thumbnails": []
           }
+        },
+        "learner_image": {
+          "type": "Image",
+          "config": {
+            "label": "Learner Image",
+            "constraint": {},
+            "thumbnails": []
+          }
         }
       }
     }

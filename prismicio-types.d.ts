@@ -744,6 +744,16 @@ export interface HeroSectionSliceDefaultItem {
    * - **Documentation**: https://prismic.io/docs/field#image
    */
   user_image: prismic.ImageField<never>;
+
+  /**
+   * Learner Image field in *HeroSection → Items*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: hero_section.items[].learner_image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  learner_image: prismic.ImageField<never>;
 }
 
 /**
