@@ -65,7 +65,7 @@ export const useBootcamp = () => {
     (relatedSubscription.valid_until && new Date(relatedSubscription.valid_until) > new Date())
     || (relatedSubscription.next_payment_at && new Date(relatedSubscription.next_payment_at) > new Date())
   );
-  const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE || cancelledButValid;
+  const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE || relatedSubscription?.status === SUBS_STATUS.FULLY_PAID || cancelledButValid;
 
   const planList = planData?.planList || [];
   const payableList = planList.filter((plan) => plan?.type === 'PAYMENT');
@@ -81,7 +81,8 @@ export const useBootcamp = () => {
     has_available_cohorts: planData?.has_available_cohorts,
     cohort: cohortId,
     coupon: getQueryString('coupon'),
-  }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
+    course: data?.slug,
+  }) : `?plan=${data?.plan_slug}&cohort=${cohortId}&course=${data?.slug}`;
 
   const featurePrice = planPriceFormatter(featuredPlanToEnroll, planList, allDiscounts);
 
