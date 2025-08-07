@@ -6,6 +6,7 @@ export const components = {
   award_section: dynamic(() => import("./AwardSection")),
   event_cards: dynamic(() => import("./EventCards")),
   faqs: dynamic(() => import("./Faqs")),
+  hero_section: dynamic(() => import("./HeroSection")),
   info_cards: dynamic(() => import("./InfoCards")),
   learning_platform_section: dynamic(() => import("./LearningPlatformSection")),
   markdown: dynamic(() => import("./Markdown")),

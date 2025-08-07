@@ -45,6 +45,7 @@ function SignupForm({
   const { emailValidation, thriggerValidation } = useEmailValidation();
   const { hexColor, featuredColor } = useStyle();
   const plan = getQueryString('plan') || planSlug;
+  const cohort = getQueryString('cohort') || '';
   const planFormated = plan ? encodeURIComponent(plan) : BASE_PLAN;
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [formProps, setFormProps] = useState({
@@ -107,6 +108,8 @@ function SignupForm({
       const resp = await bc.auth().subscribe({
         ...allValues,
         ...subscribeValues,
+        cohort: typeof cohort === 'string' ? parseInt(cohort, 10) : cohort,
+        course: courseChoosed,
         conversion_info: userSession,
       });
       const { data } = resp;

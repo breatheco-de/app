@@ -1,0 +1,81 @@
+{
+  "id": "hero_section",
+  "type": "SharedSlice",
+  "name": "HeroSection",
+  "description": "HeroSection",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Title",
+            "labels": ["highlight-blue-default", "highlight-dark"],
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "description": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Description",
+            "labels": ["highlight-blue-default", "highlight-dark"],
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "button_text": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Button Text",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "button_link": {
+          "type": "Link",
+          "config": {
+            "label": "Button Link",
+            "placeholder": "",
+            "select": null
+          }
+        },
+        "rating": {
+          "type": "Number",
+          "config": { "label": "Rating", "placeholder": "" }
+        },
+        "trust_text": {
+          "type": "Text",
+          "config": { "label": "Trust Text", "placeholder": "" }
+        }
+      },
+      "items": {
+        "user_image": {
+          "type": "Image",
+          "config": {
+            "label": "User Image",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "learner_image": {
+          "type": "Image",
+          "config": {
+            "label": "Learner Image",
+            "constraint": {},
+            "thumbnails": []
+          }
+        }
+      }
+    }
+  ]
+}

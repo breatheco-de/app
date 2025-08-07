@@ -11,6 +11,7 @@ import CustomCarousel from '../CustomCarousel';
 import PrismicTextComponent from '../PrismicTextComponent';
 import Link from '../NextChakraLink';
 import { parseProp } from '../../utils';
+import useStyle from '../../hooks/useStyle';
 
 function RichTextHeading2({ children }) {
   return (
@@ -81,7 +82,7 @@ function MktAwardsSection({ slice }) {
   const awardBgColor = useColorModeValue('transparent', 'gray.700');
   const carouselVariant = slice?.primary?.mobile_carousel_variant || 'default';
   const sectionVariant = slice?.variation || 'default';
-
+  const { fontColor3 } = useStyle();
   if (!items || items.length === 0) {
     return null;
   }
@@ -149,7 +150,7 @@ function MktAwardsSection({ slice }) {
                 <>
                   {item.text && (
                     <Box
-                      color="#000"
+                      color={fontColor3}
                       textAlign="center"
                       fontFeatureSettings="liga off"
                       fontFamily="Lato"
