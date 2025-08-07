@@ -2,6 +2,7 @@
   "change-language": "Change language",
   "see-more": "See more",
   "reviews": "Ratings",
+  "comments": "Comments",
   "course-rating": "Course rating",
   "connect-with-github": "Connect with Github",
   "connect-with-rigobot": "Connect with Rigobot",
@@ -20,6 +21,8 @@
   "mentorship-description": "Schedule a face to face mentorship session with an industry expert. Mentorships are the most efficient way to learn.",
   "schedule-mentoring": "Schedule a mentoring session",
   "default-share-message": "Look what I've learned at 4Geeks!",
+  "start-your-tech-career": "Start your tech career, Your way",
+  "go-all-in-or-learn-flexibly": "Go all-in with our Bootcamp or learn flexibly with Self-paced",
   "rigobot-bubble": {
     "greeting": "Hi!"
   },

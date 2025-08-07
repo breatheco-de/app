@@ -54,6 +54,9 @@
     "label": "¿Los cursos son a tu propio ritmo o dirigidos por un instructor?",
     "answer": "Nuestros Planes Básico y con Feedback permiten a los estudiantes participar en los cursos a su propio ritmo, brindando una experiencia de aprendizaje a su propio ritmo con el respaldo de expertos o inteligencia artificial cuando lo necesite. Por otro lado, si optas por nuestro bootcamp, las sesiones de aprendizaje son dirigidas por un instructor."
   }],
+  "see-plan-details": "Ver detalles del plan",
+  "self-paced-courses": "Cursos auto-gestionados",
+  "immersive-bootcamp": "Bootcamp inmersivo",
   "bootcamp-courses": [{
     "slug": "desarrollador-full-stack",
     "icon": "laptop-code",

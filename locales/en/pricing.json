@@ -54,6 +54,9 @@
     "label": "Are the courses self-paced or instructor-led?",
     "answer": "Our Basic and With Feedback Plans empower learners to engage with courses at their preferred pace, providing a self-paced learning experience with support from experts or AI when needed. However, if you opt for our bootcamp, the learning sessions are instructor-led."
   }],
+  "see-plan-details": "See plan details",
+  "self-paced-courses": "Self-paced courses",
+  "immersive-bootcamp": "Immersive bootcamp",
   "bootcamp-courses": [{
     "slug": "part-time-full-stack-developer",
     "icon": "laptop-code",
