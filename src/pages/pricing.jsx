@@ -417,7 +417,7 @@ function PricingView() {
                   onClick={() => handleViewModeChange('self-paced')}
                   borderRadius="0"
                 >
-                  {t('toggle-self-paced')}
+                  {t('self-paced-courses')}
                 </Button>
                 <Button
                   variant="unstyled"
@@ -429,7 +429,7 @@ function PricingView() {
                   onClick={() => handleViewModeChange('immersive-bootcamps')}
                   borderRadius="0"
                 >
-                  {t('toggle-immersive-bootcamp')}
+                  {t('immersive-bootcamp')}
                 </Button>
               </Flex>
             </Flex>
