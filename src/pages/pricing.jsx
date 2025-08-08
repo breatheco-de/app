@@ -367,8 +367,6 @@ function PricingView() {
     );
   }
 
-  console.log('hola');
-
   return (
     <Container maxWidth="100%" background={hexColor.featuredColor3} paddingY="4rem">
       <Container
