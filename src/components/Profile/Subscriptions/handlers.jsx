@@ -12,7 +12,7 @@ function profileHandlers() {
   const formatDate = (date) => {
     if (!date) return 'N/A';
     const parsedDate = new Date(date);
-    return format(parsedDate, 'dd MMM yy', { locale: lang === 'en' || lang === 'us' ? enUS : es });
+    return format(parsedDate, 'dd MMM, yyyy', { locale: lang === 'en' || lang === 'us' ? enUS : es });
   };
 
   const statusLabel = (subscription) => {
@@ -100,7 +100,7 @@ function profileHandlers() {
       const expirationDateText = (date) => t('subscription.expiration-date', { date });
       const expiredOnText = (date) => t('subscription.expired-on', { date });
       const activeSinceText = (date) => t('subscription.active-since', { date });
-      const totallyPaidText = (amount) => t('subscription.totally-paid', { amount, currencySymbol: subCurrency });
+      const totallyPaidText = (amount) => t('subscription.totally-paid', { amount: amount.toFixed(2), currencySymbol: subCurrency });
       const totalPaidText = (paidAmount, pendingAmount) => t('subscription.total-paid', { paidAmount, pendingAmount, currencySymbol: subCurrency });
       const paymentInfoText = (amount, unit) => (amount ? t('subscription.payment', { payment: `${subCurrency}${amount}/${t(`signup:payment_unit_short.${unit.toLowerCase()}`)}` }) : false);
       const errorMessageText = (error) => t('subscription.error-message', { error: error || 'Something went wrong' });
