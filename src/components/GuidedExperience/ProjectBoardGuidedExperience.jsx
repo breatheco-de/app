@@ -177,6 +177,7 @@ function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
                     <Text
                       size="md"
                       color="white"
+                      textAlign="center"
                     >
                       {`${t('assignments:type.project')} ${t(`assignments:status.${currentTask?.revision_status?.toLowerCase()}`).toLowerCase()}`}
                     </Text>
