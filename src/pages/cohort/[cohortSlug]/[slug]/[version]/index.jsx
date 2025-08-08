@@ -300,7 +300,6 @@ function Dashboard() {
       }
       if (certificates.length === 0) {
         const { data } = await bc.certificate().get();
-        console.log(data);
         if (Array.isArray(data) && data.length > 0) {
           setCertificates(data);
         }
