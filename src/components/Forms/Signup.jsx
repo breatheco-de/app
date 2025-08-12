@@ -113,7 +113,7 @@ function SignupForm({
         conversion_info: userSession,
       });
       const { data } = resp;
-      console.log('data', data);
+
       if (data.silent_code === SILENT_CODE.USER_EXISTS) {
         setShowAlreadyMember(true);
       } else if (resp.status >= 400) {
