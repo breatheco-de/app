@@ -45,7 +45,7 @@ const useCheckout = () => {
   const callbackUrl = getQueryString('callback');
   const planFormated = plan || BASE_PLAN;
 
-  const coupon = userSession?.coupon || '';
+  const coupon = userSession?.coupon || userSession?.ref || '';
 
   const couponValue = useMemo(() => {
     const formatedCouponQuery = couponQuery && couponQuery.replace(/[^a-zA-Z0-9-\s]/g, '');
