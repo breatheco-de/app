@@ -142,18 +142,9 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
         }}
         onSubmit={(values, actions) => {
           login(values, disableRedirect)
-            .then((data) => {
+            .then(() => {
               actions.setSubmitting(false);
               callBack();
-              if (data.status === 200) {
-                createToast({
-                  position: 'top',
-                  title: t('alert-message:welcome'),
-                  status: 'success',
-                  duration: 9000,
-                  isClosable: true,
-                });
-              }
             })
             .catch(() => {
               actions.setSubmitting(false);
