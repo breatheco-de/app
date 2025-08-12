@@ -80,6 +80,8 @@ export const useBootcamp = () => {
     plan: featuredPlanToEnroll?.plan_slug,
     has_available_cohorts: planData?.has_available_cohorts,
     cohort: cohortId,
+    course_slug: data?.slug,
+    course_title: data?.course_translation?.title,
     coupon: getQueryString('coupon'),
     course: data?.slug,
   }) : `?plan=${data?.plan_slug}&cohort=${cohortId}&course=${data?.slug}`;
