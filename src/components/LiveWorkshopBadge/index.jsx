@@ -35,7 +35,7 @@ function LiveWorkshopBadge() {
         borderRadius="md"
         fontSize="sm"
       >
-        <NextLink href={`/${liveWorkshopData?.language}/workshops/${liveWorkshopData?.slug}`} passHref>
+        <NextLink href={`/${liveWorkshopData?.lang || liveWorkshopData?.language}/workshops/${liveWorkshopData?.slug}`} passHref>
           <Box
             display="inline-flex"
             alignItems="center"
