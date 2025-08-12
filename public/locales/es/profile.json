@@ -38,6 +38,11 @@
       "title": "Suscripciones",
       "value": "subscriptions",
       "disabled": false
+    },
+    {
+      "title": "Programa de referidos",
+      "value": "referral",
+      "disabled": false
     }
   ],
   "remove-github-modal": {
