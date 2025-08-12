@@ -69,7 +69,7 @@
     "total-paid": "Total paid to the date: {{currencySymbol}}{{paidAmount}}/{{currencySymbol}}{{pendingAmount}}",
     "expiration-date": "Expiration date: {{date}}",
     "expired-on": "Your plan expired on: {{date}}",
-    "active-since": "Active subscription since: {{date}}",
+    "active-since": "Active since: {{date}}",
     "what-you-will-get": "What you will get:",
     "bootcamp-mentorships": "You have unlimited access to those mentorship services with this icon ∞ because you belong to the bootcamp",
     "mentoring-available": "Mentoring sessions available",
