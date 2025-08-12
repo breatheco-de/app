@@ -423,6 +423,7 @@ function Navbar({ translations, pageProps }) {
                   rounded="md"
                   width={{ base: '100%', md: 'auto' }}
                   minW={{ base: 'auto', md: 'md' }}
+                  maxW={{ base: '340px', sm: 'auto' }}
                 >
                   <PopoverArrow />
 
