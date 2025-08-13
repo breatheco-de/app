@@ -206,6 +206,10 @@
   "upgrade-a-plan": "Mejora un plan",
   "compilation-bundle-title": "Paquete de acceso a compilaciones",
   "take-me-there": "Comprar plan",
+  "prereq-modal": {
+    "continue-registration": "Continuar con el registro",
+    "go-to-page": "Página {{page}}"
+  },
   "consumables": {
     "already-have-it": "Ya lo tienes",
     "consumable-event-not-available": "Este evento no está disponible para tu suscripción",
