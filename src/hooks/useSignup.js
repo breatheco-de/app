@@ -550,15 +550,24 @@ const useSignup = () => {
           simplePlans = [{ plan: restOfPlan }];
         }
 
+        const adaptedItems = simplePlans.map((planObj) => ({
+          item_id: planObj.plan.slug,
+          item_name: planObj.plan.slug,
+          price: transactionData?.amount || 0,
+          quantity: 1,
+          item_category: 'subscription',
+          subscription_period: selectedPlan?.period_label || 'one-time',
+        }));
         reportDatalayer({
           dataLayer: {
             event: 'purchase',
-            value: selectedPlan?.price || 0,
+            transaction_id: transactionData?.id,
+            value: transactionData?.amount || 0,
             currency,
             payment_type: 'Credit card',
             plan: selectedPlan?.plan_slug || transactionData?.plan?.slug || defaultPlan,
             period_label: selectedPlan?.period_label || 'one-time',
-            items: simplePlans,
+            items: adaptedItems,
             agent: getBrowserInfo(),
           },
         });
