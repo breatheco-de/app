@@ -18,7 +18,6 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalCloseButton,
   ModalBody,
   ModalFooter,
 } from '@chakra-ui/react';
@@ -221,15 +220,9 @@ function Checkout() {
 
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
-      <Modal isOpen={prereqModalOpen} onClose={handleClosePrereq} isCentered size="xl">
+      <Modal isOpen={prereqModalOpen} onClose={handleClosePrereq} isCentered size="xl" closeOnOverlayClick={false}>
         <ModalOverlay />
         <ModalContent marginX="10px">
-          <ModalCloseButton
-            zIndex={2}
-            bg={useColorModeValue('white', 'gray.700')}
-            _hover={{ bg: useColorModeValue('white', 'gray.700') }}
-            borderRadius="full"
-          />
           <ModalBody pt={2}>
             <Box maxH={{ base: '60vh', md: '70vh' }} overflowY="auto" pr={2}>
               {prerequisites.length > 0 && (
@@ -242,16 +235,34 @@ function Checkout() {
           <ModalFooter>
             <Flex width="100%" justifyContent="space-between" alignItems="center">
               <Flex alignItems="center" gap={3}>
-                <Button onClick={() => setCurrentPrereqIndex((idx) => (idx > 0 ? idx - 1 : 0))} isDisabled={currentPrereqIndex === 0}>
-                  <Icon icon="arrowLeft3" width="10px" height="10px" />
-                </Button>
+                {currentPrereqIndex > 0 && (
+                  <Button
+                    onClick={() => setCurrentPrereqIndex((idx) => (idx > 0 ? idx - 1 : 0))}
+                    variant="default"
+                  >
+                    {t('signup:prereq-modal.go-to-page', { page: currentPrereqIndex })}
+                  </Button>
+                )}
                 <Text fontSize="sm" color="gray.500">
                   {`${currentPrereqIndex + 1} / ${prerequisites.length}`}
                 </Text>
-                <Button onClick={() => setCurrentPrereqIndex((idx) => (idx < prerequisites.length - 1 ? idx + 1 : idx))} isDisabled={currentPrereqIndex >= prerequisites.length - 1}>
-                  <Icon icon="arrowRight" width="10px" height="10px" />
-                </Button>
               </Flex>
+              <Button
+                onClick={() => {
+                  const hasSecond = prerequisites.length > 1;
+                  const onFirst = currentPrereqIndex === 0;
+                  if (hasSecond && onFirst) {
+                    setCurrentPrereqIndex(1);
+                  } else {
+                    handleClosePrereq();
+                  }
+                }}
+                variant="default"
+              >
+                {currentPrereqIndex === 0 && prerequisites.length > 1
+                  ? t('signup:prereq-modal.go-to-page', { page: 2 })
+                  : t('signup:prereq-modal.continue-registration')}
+              </Button>
             </Flex>
           </ModalFooter>
         </ModalContent>
