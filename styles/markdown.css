@@ -556,3 +556,7 @@ blockquote > :last-child {
   /* padding-bottom: 15px; */
   flex-direction: column;
 }
+
+.mermaid > svg{
+  margin: auto !important; 
+}

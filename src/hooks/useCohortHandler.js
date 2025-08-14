@@ -577,7 +577,7 @@ function useCohortHandler() {
     let absoluteLatestDate = 0;
     let absoluteLatestCohortSlug = null;
 
-    mainCohort.micro_cohorts.forEach((microCohort) => {
+    mainCohort?.micro_cohorts?.forEach((microCohort) => {
       const microCohortSlug = microCohort.slug;
       const cohortTasks = cohortsAssignments[microCohortSlug]?.tasks || [];
       const completedTasks = cohortTasks.filter((task) => task.task_status === 'DONE');
@@ -626,7 +626,7 @@ function useCohortHandler() {
     }
 
     if (!determinedByCompletion) {
-      const foundMicroCohortData = mainCohort.micro_cohorts.find((microCohort) => {
+      const foundMicroCohortData = mainCohort?.micro_cohorts?.find((microCohort) => {
         const microCohortSlug = microCohort.slug;
         return cohortsAssignments[microCohortSlug]?.modules?.some(
           (module) => module.content && module.content.length > 0,

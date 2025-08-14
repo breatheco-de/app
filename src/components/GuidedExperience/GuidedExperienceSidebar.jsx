@@ -74,9 +74,9 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
   const getCohortDashboardUrl = () => {
     if (!mainCohortSlug) return cohortSession.selectedProgramSlug;
 
-    const mainCohort = cohorts.find(({ slug }) => slug === mainCohortSlug);
+    const mainCohort = cohorts?.find(({ slug }) => slug === mainCohortSlug);
 
-    return mainCohort.selectedProgramSlug;
+    return mainCohort?.selectedProgramSlug;
   };
 
   return (
