@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { isWindow } from '../utils';
+import { IP_API_KEY } from '../utils/variables';
 
 const useIPGeolocation = () => {
   const [status, setStatus] = useState({
@@ -9,7 +10,6 @@ const useIPGeolocation = () => {
   });
 
   const IP_API_URL = 'https://pro.ip-api.com/json';
-  const API_KEY = process.env.NEXT_PUBLIC_IP_API_KEY;
 
   useEffect(() => {
     if (isWindow) {
@@ -23,7 +23,7 @@ const useIPGeolocation = () => {
   const reverseGeocode = async (coordinates) => {
     if (isWindow && status.loaded) {
       try {
-        const response = await axios.get(`${IP_API_URL}?lat=${coordinates.lat}&lon=${coordinates.lng}&key=${API_KEY}`);
+        const response = await axios.get(`${IP_API_URL}?lat=${coordinates.lat}&lon=${coordinates.lng}&key=${IP_API_KEY}`);
         return response.data;
       } catch (error) {
         console.error('Reverse geocoding error:', error);
@@ -36,7 +36,7 @@ const useIPGeolocation = () => {
   const getCurrentLocation = async () => {
     if (status.loaded) {
       try {
-        const response = await axios.get(`${IP_API_URL}?key=${API_KEY}`);
+        const response = await axios.get(`${IP_API_URL}?key=${IP_API_KEY}`);
         return response.data;
       } catch (error) {
         console.error('Geolocation error:', error);
@@ -80,9 +80,16 @@ const useIPGeolocation = () => {
       } catch (error) {
         console.error('Error getting user location:', error);
         setStatus((prev) => ({ ...prev, error: true }));
+        return null;
       }
     } else if (userLocation) {
-      return JSON.parse(userLocation);
+      try {
+        return JSON.parse(userLocation);
+      } catch (error) {
+        console.error('Error parsing stored location:', error);
+        localStorage.removeItem('user-location');
+        return null;
+      }
     }
 
     return null;
@@ -91,7 +98,7 @@ const useIPGeolocation = () => {
   const getLocationByIP = async (ip) => {
     if (status.loaded && ip) {
       try {
-        const response = await axios.get(`${IP_API_URL}/${ip}?key=${API_KEY}`);
+        const response = await axios.get(`${IP_API_URL}/${ip}?key=${IP_API_KEY}`);
         return response.data;
       } catch (error) {
         console.error('Error getting location by IP:', error);
@@ -104,7 +111,7 @@ const useIPGeolocation = () => {
   const getUserIP = async () => {
     if (status.loaded) {
       try {
-        const response = await axios.get(`${IP_API_URL}?key=${API_KEY}`);
+        const response = await axios.get(`${IP_API_URL}?key=${IP_API_KEY}`);
         return response.data.query;
       } catch (error) {
         console.error('Error getting user IP:', error);

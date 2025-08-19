@@ -41,14 +41,17 @@ function SessionProvider({ children }) {
       setLocation(loc);
     } catch (e) {
       error('function getUserLocation()', e);
+      setLocation(null);
     } finally {
       setIsLoadingLocation(false);
     }
   };
 
   useEffect(() => {
-    initLocation();
-  }, [status]);
+    if (status.loaded) {
+      initLocation();
+    }
+  }, [status.loaded]);
 
   const setConversionUrl = () => {
     if (isWindow) {
