@@ -154,6 +154,19 @@ function SyllabusContent() {
     onToggle();
   };
 
+  const handleCloseExercise = async () => {
+    if (currentTask?.id) {
+      try {
+        const { data: updatedTask } = await bc.assignments().getTask(currentTask.id);
+        if (updatedTask) {
+          updateTask(updatedTask, cohortSession);
+        }
+      } catch (error) {
+        console.error('Error updating task telemetry:', error);
+      }
+    }
+  };
+
   useEffect(() => {
     setLearnpackStart(false);
     if (currentAsset?.superseded_by?.slug) {
@@ -960,6 +973,7 @@ function SyllabusContent() {
                 setLearnpackStart={setLearnpackStart}
                 iframeURL={iframeURL}
                 learnpackStart={learnpackStart}
+                onCloseExercise={handleCloseExercise}
               />
             ) : (
               <Box
