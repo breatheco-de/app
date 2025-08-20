@@ -205,6 +205,7 @@
   "upgrade-a-plan": "Mejora un plan",
   "compilation-bundle-title": "Paquete de acceso a compilaciones",
   "take-me-there": "Comprar plan",
+  "coupon-not-valid": "El cupón {{name}} no es válido",
   "consumables": {
     "already-have-it": "Ya lo tienes",
     "consumable-event-not-available": "Este evento no está disponible para tu suscripción",

@@ -205,6 +205,7 @@
   "compilation-bundle-title": "Compilation bundle",
   "upgrade-a-plan": "Upgrade a plan",
   "take-me-there": "Take me there",
+  "coupon-not-valid": "Coupon {{name}} is not valid",
   "consumables": {
     "already-have-it": "Already have it",
     "consumable-event-not-available": "This event is not available for your subscription",

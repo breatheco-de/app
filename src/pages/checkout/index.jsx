@@ -453,6 +453,11 @@ function Checkout() {
                             )}
                           </Formik>
                         )}
+                        {couponError && (
+                          <Text paddingStart="3px" size="sm" color="red">
+                            {t('coupon-not-valid', { name: discountCode })}
+                          </Text>
+                        )}
 
                         {allCoupons?.length > 0
                           && allCoupons.map((coup) => (
