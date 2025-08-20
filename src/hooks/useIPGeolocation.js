@@ -48,7 +48,6 @@ const useIPGeolocation = () => {
 
   const getUserLocation = async (setCoords = () => {}) => {
     const userLocation = localStorage.getItem('user-location');
-    localStorage.clear();
 
     if (status.loaded && !userLocation) {
       try {

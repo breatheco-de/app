@@ -49,7 +49,6 @@ function SessionProvider({ children }) {
 
   useEffect(() => {
     if (status.loaded) {
-      console.log('status.loaded', status.loaded);
       initLocation();
     }
   }, [status.loaded]);
