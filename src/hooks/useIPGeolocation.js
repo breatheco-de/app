@@ -48,10 +48,12 @@ const useIPGeolocation = () => {
 
   const getUserLocation = async (setCoords = () => {}) => {
     const userLocation = localStorage.getItem('user-location');
+    localStorage.clear();
 
     if (status.loaded && !userLocation) {
       try {
         const data = await getCurrentLocation();
+        console.log('data', data);
         const loc = {};
 
         if (data && data.status === 'success') {

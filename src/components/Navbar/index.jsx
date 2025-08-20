@@ -99,6 +99,7 @@ function Navbar({ translations, pageProps }) {
         academy: WHITE_LABEL_ACADEMY,
         country_code: location?.countryShort,
       };
+      console.log('mktQueryString', mktQueryString);
       const response = await bc.marketing(mktQueryString).courses();
 
       const filterByTranslations = response?.data?.filter((item) => {
