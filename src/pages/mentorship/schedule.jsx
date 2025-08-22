@@ -130,6 +130,8 @@ function MentorshipSchedule() {
           ...mentorshipServiceSet,
         }))));
 
+    console.log('reqConsumables', reqConsumables);
+
     const allConsumables = await Promise.all(reqConsumables);
     const sortedConsumables = sortByConsumptionAvailability(allConsumables);
 
