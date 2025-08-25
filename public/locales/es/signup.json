@@ -206,6 +206,7 @@
   "upgrade-a-plan": "Mejora un plan",
   "compilation-bundle-title": "Paquete de acceso a compilaciones",
   "take-me-there": "Comprar plan",
+  "coupon-not-valid": "El cupón {{name}} no es válido",
   "prereq-modal": {
     "continue-registration": "Continuar con el registro",
     "go-to-page": "Página {{page}}"
