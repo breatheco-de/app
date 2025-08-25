@@ -3,7 +3,7 @@ import React, { createContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { isWindow, getQueryString } from '../utils';
-import useGoogleMaps from '../hooks/useGoogleMaps';
+import useIPGeolocation from '../hooks/useIPGeolocation';
 import { error } from '../utils/logging';
 
 const initialUserSession = {
@@ -35,11 +35,7 @@ function SessionProvider({ children }) {
   const router = useRouter();
   const [location, setLocation] = useState(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(true);
-  const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
-  const { gmapStatus, getUserLocation } = useGoogleMaps(
-    GOOGLE_KEY,
-    'places',
-  );
+  const { status, getUserLocation } = useIPGeolocation();
 
   const initLocation = async () => {
     try {
@@ -47,14 +43,17 @@ function SessionProvider({ children }) {
       setLocation(loc);
     } catch (e) {
       error('function getUserLocation()', e);
+      setLocation(null);
     } finally {
       setIsLoadingLocation(false);
     }
   };
 
   useEffect(() => {
-    initLocation();
-  }, [gmapStatus]);
+    if (status.loaded) {
+      initLocation();
+    }
+  }, [status.loaded]);
 
   const setConversionUrl = () => {
     if (isWindow) {
