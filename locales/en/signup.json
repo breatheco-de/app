@@ -206,6 +206,7 @@
   "compilation-bundle-title": "Compilation bundle",
   "upgrade-a-plan": "Upgrade a plan",
   "take-me-there": "Take me there",
+  "coupon-not-valid": "Coupon {{name}} is not valid",
   "prereq-modal": {
     "continue-registration": "Continue with registration",
     "go-to-page": "Page {{page}}"
