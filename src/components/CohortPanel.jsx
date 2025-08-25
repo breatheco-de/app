@@ -93,6 +93,8 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
     modules.forEach((module) => {
       const assignmentsCount = module.content.reduce((acc, curr) => {
         const isApproved = isTaskApproved(curr);
+        const isRejected = curr.revision_status === 'REJECTED';
+        const isPendingProject = curr.task_type === 'PROJECT' && curr.revision_status === 'PENDING' && curr.task_status === 'DONE';
         if (!(curr.task_type in acc)) {
           // Check if any assignment in the module has a pending revision
           const pendingRevisionsCount = module.content.filter((assignment) => pendingRevisions.some((task) => task.associated_slug === assignment.slug && task.task_type === curr.task_type)).length;
@@ -103,11 +105,15 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
             done: curr.task_status === 'DONE' ? 1 : 0,
             pendingRevision: pendingRevisionsCount,
             approved: isApproved ? 1 : 0,
+            rejected: isRejected ? 1 : 0,
+            pending: isPendingProject ? 1 : 0,
           };
         } else {
           acc[curr.task_type].total += 1;
           if (curr.task_status === 'DONE') acc[curr.task_type].done += 1;
           if (isApproved) acc[curr.task_type].approved += 1;
+          if (isRejected) acc[curr.task_type].rejected += 1;
+          if (isPendingProject) acc[curr.task_type].pending += 1;
         }
         return acc;
       }, {});
@@ -115,12 +121,16 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
       const typesPerModule = Object.keys(assignmentsCount);
       const moduleTotalAssignments = typesPerModule.reduce((acc, curr) => assignmentsCount[curr].total + acc, 0);
       const moduleDoneAssignments = typesPerModule.reduce((acc, curr) => assignmentsCount[curr].done + acc, 0);
+      const moduleApprovedAssignments = typesPerModule.reduce((acc, curr) => assignmentsCount[curr].approved + acc, 0);
+      const moduleRejectedAssignments = typesPerModule.reduce((acc, curr) => assignmentsCount[curr].rejected + acc, 0);
       const hasPendingRevisions = typesPerModule.some((taskType) => assignmentsCount[taskType].pendingRevision > 0);
       const isStarted = module.filteredContent.length > 0;
 
       modulesDict[module.id] = {
         moduleTotalAssignments,
         moduleDoneAssignments,
+        moduleApprovedAssignments,
+        moduleRejectedAssignments,
         assignmentsCount,
         hasPendingRevisions,
         isStarted,
@@ -135,16 +145,18 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
 
     const allModules = Object.values(modulesProgress);
     const totalAssignments = allModules.reduce((acc, curr) => curr.moduleTotalAssignments + acc, 0);
-    const doneAssignments = allModules.reduce((acc, curr) => curr.moduleDoneAssignments + acc, 0);
+    const approvedAssignments = allModules.reduce((acc, curr) => curr.moduleApprovedAssignments + acc, 0);
+    const rejectedAssignments = allModules.reduce((acc, curr) => curr.moduleRejectedAssignments + acc, 0);
     const hasPendingRevisions = allModules.some((module) => module.hasPendingRevisions);
 
-    const percentage = cohort.cohort_user.educational_status === 'GRADUATED' ? 100 : Math.floor((doneAssignments * 100) / (totalAssignments || 1));
+    const percentage = cohort.cohort_user.educational_status === 'GRADUATED' ? 100 : Math.ceil((approvedAssignments * 100) / (totalAssignments || 1));
 
     const isCohortStarted = allModules.some((module) => module.isStarted);
 
     return {
       totalAssignments,
-      doneAssignments,
+      approvedAssignments,
+      rejectedAssignments,
       percentage,
       isCohortStarted,
       hasPendingRevisions,
@@ -292,6 +304,8 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
     borderRadius: '8px',
     padding: '16px',
   } : {};
+
+  console.log(modulesProgress);
 
   return (
     <>
@@ -462,7 +476,7 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
                   {modules?.map((module) => {
                     const assignmentsCount = modulesProgress?.[module.id]?.assignmentsCount;
                     const moduleTotalAssignments = modulesProgress?.[module.id]?.moduleTotalAssignments;
-                    const moduleDoneAssignments = modulesProgress?.[module.id]?.moduleDoneAssignments;
+                    const moduleApprovedAssignments = modulesProgress?.[module.id]?.moduleApprovedAssignments;
 
                     const typesPerModule = assignmentsCount ? Object.keys(assignmentsCount) : [];
                     const moduleLabel = getModuleLabel(module);
@@ -492,13 +506,13 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
                                       <Icon icon="play" width="12px" height="12px" color="white" />
                                     </Box>
                                   );
-                                } if (moduleTotalAssignments === moduleDoneAssignments) { // Case 2: Started and Complete
+                                } if (moduleTotalAssignments === moduleApprovedAssignments) { // Case 2: Started and Complete
                                   return (
                                     <Icon icon="verified" width="26px" height="26px" color={hexColor.green} />
                                   );
                                 } // else: Case 3: Started but In Progress (including 0 done)
                                 return (
-                                  <CircularProgress color={hexColor.green} size="26px" value={(moduleDoneAssignments * 100) / (moduleTotalAssignments || 1)} />
+                                  <CircularProgress color={hexColor.green} size="26px" value={(moduleApprovedAssignments * 100) / (moduleTotalAssignments || 1)} />
                                 );
                               })()}
                             </>
@@ -509,7 +523,7 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
                         </Box>
                         <Box display={{ base: 'none', sm: 'flex' }} alignItems="center" gap="16px">
                           {typesPerModule.map((taskType) => {
-                            const { icon, total, done, pendingRevision, approved } = assignmentsCount[taskType];
+                            const { icon, total, done, pendingRevision, approved, rejected, pending } = assignmentsCount[taskType];
                             return (
                               <Box
                                 key={`${moduleLabel}-${taskType}`}
@@ -532,7 +546,33 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
                                   {total}
                                 </Text>
                                 {approved === total && <Icon icon="checked2" color={hexColor.green} />}
-                                {pendingRevision > 0 && (
+                                {rejected > 0 && (
+                                  <Box border="5px solid" borderColor="danger" borderRadius="100%" color="danger" position="relative">
+                                    <Box
+                                      position="absolute"
+                                      top="50%"
+                                      left="50%"
+                                      transform="translate(-50%, -50%)"
+                                      borderRadius="full"
+                                      border="2px solid"
+                                      borderColor={hexColor.white2}
+                                    />
+                                  </Box>
+                                )}
+                                {pending > 0 && (
+                                  <Box border="5px solid" borderColor="yellow.default" borderRadius="100%" position="relative">
+                                    <Box
+                                      position="absolute"
+                                      top="50%"
+                                      left="50%"
+                                      transform="translate(-50%, -50%)"
+                                      borderRadius="full"
+                                      border="2px solid"
+                                      borderColor={hexColor.white2}
+                                    />
+                                  </Box>
+                                )}
+                                {pendingRevision > 0 && rejected > 0 && (
                                   <Box
                                     position="absolute"
                                     top="18px"

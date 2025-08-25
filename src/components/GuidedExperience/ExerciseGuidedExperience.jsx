@@ -12,7 +12,7 @@ import Heading from '../Heading';
 import Text from '../Text';
 import { reportDatalayer } from '../../utils/requests';
 
-function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnpack, iframeURL, learnpackStart, setLearnpackStart }) {
+function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnpack, iframeURL, learnpackStart, setLearnpackStart, onCloseExercise }) {
   const { t } = useTranslation('syllabus');
   const { colorMode } = useStyle();
   const [telemetryReport, setTelemetryReport] = useState([]);
@@ -121,7 +121,21 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
       {learnpackStart
         ? (
           <>
-            <Button color="white" alignSelf="end" _hover="none" _active="none" background="none" onClick={() => setLearnpackStart(false)}>{t('close-exercise')}</Button>
+            <Button
+              color="white"
+              alignSelf="end"
+              _hover="none"
+              _active="none"
+              background="none"
+              onClick={() => {
+                setLearnpackStart(false);
+                if (onCloseExercise) {
+                  onCloseExercise();
+                }
+              }}
+            >
+              {t('close-exercise')}
+            </Button>
             <Box flexGrow={100}>
               <iframe
                 title="exercise-frame"
@@ -243,6 +257,7 @@ ExerciseGuidedExperience.propTypes = {
   handleStartLearnpack: PropTypes.func,
   setLearnpackStart: PropTypes.func,
   learnpackStart: PropTypes.bool,
+  onCloseExercise: PropTypes.func,
 };
 
 ExerciseGuidedExperience.defaultProps = {
@@ -252,6 +267,7 @@ ExerciseGuidedExperience.defaultProps = {
   handleStartLearnpack: null,
   setLearnpackStart: null,
   learnpackStart: false,
+  onCloseExercise: null,
 };
 
 export default ExerciseGuidedExperience;
