@@ -300,7 +300,9 @@ function Dashboard() {
       }
       if (certificates.length === 0) {
         const { data } = await bc.certificate().get();
-        setCertificates(data);
+        if (Array.isArray(data) && data.length > 0) {
+          setCertificates(data);
+        }
       }
 
       await getCohortUserCapabilities({
@@ -698,11 +700,11 @@ function Dashboard() {
                               tasks={cohortsAssignments[microCohort.slug]?.tasks}
                               mainCohort={cohortSession}
                               onOpenReviewModal={handleOpenReviewModal}
-                              certificate={certificates.find((cert) => cert.cohort.id === microCohort.id)}
+                              certificate={certificates?.find((cert) => cert.cohort.id === microCohort.id)}
                             />
                           ))
                         : (
-                          <CohortPanel openByDefault cohort={cohortSession} modules={sortedAssignments} certificate={certificates.find((cert) => cert.cohort.id === cohortSession.id)} />
+                          <CohortPanel openByDefault cohort={cohortSession} modules={sortedAssignments} certificate={certificates?.find((cert) => cert.cohort.id === cohortSession.id)} />
                         )}
                     </Box>
                   ) : (

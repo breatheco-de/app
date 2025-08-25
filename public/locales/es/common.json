@@ -5,6 +5,7 @@
   "comments": "Comentarios",
   "course-rating": "Calificación del curso",
   "connect-with-github": "Conéctate con Github",
+  "github-short": "Github",
   "connect-with-rigobot": "Conéctate con Rigobot",
   "get-help-rigobot": "Pide ayuda a Rigobot",
   "see-financing-options": "Ver opciones de pago",
@@ -14,10 +15,13 @@
   "hide": "Ocultar",
   "rigo": "Rigo",
   "see-workshops": "Ver todos los workshops",
+  "see-workshops-short": "En vivo",
   "see-all-events": "Ver todos los eventos",
   "mentorships": "Mentorías",
   "mentorship-description": "Programa una sesión de mentoría presencial con un experto en la industria. Las mentorías son la forma más eficiente de aprender.",
   "schedule-mentoring": "Agenda una sesión de mentoria",
+  "mentors-short": "Mentores",
+  "rigo-ai-short": "Rigo IA",
   "default-share-message": "¡Mira lo que he aprendido en 4Geeks!",
   "rigobot-bubble": {
     "greeting": "Hola!"

@@ -11,8 +11,6 @@
   "change-your-life-with-bootcamp": "Cambia tu vida con un Bootcamp",
   "self-paced-description": "Tu futuro en tecnología comienza aquí—aprende programación e IA con total flexibilidad y una suscripción simple. Obtén acceso a toda nuestra base de datos de aprendizaje, cursos y servicios.",
   "immersive-bootcamp-description": "¿Listo para acelerar tu futuro? Domina programación, IA y habilidades laborales con un bootcamp inmersivo de 18 semanas que incluye acceso completo a Self-paced por 6 meses.",
-  "toggle-self-paced": "Cursos a tu ritmo",
-  "toggle-immersive-bootcamp": "Bootcamp Inmersivo",
   "pricing-disclaimer": {
     "title": "Información de los precios y planes",
     "description": "Ten en cuenta que todos los precios y planes listados en esta página están sujetos a cambios en cualquier momento sin previo aviso. Esta flexibilidad nos permite adaptarnos continuamente a las condiciones del mercado, variaciones de costos y otros factores relevantes, asegurando que nuestras ofertas sigan siendo competitivas y estén alineadas con nuestra estrategia comercial. Animamos a nuestros clientes a revisar esta página regularmente para cualquier actualización. El uso continuo de nuestros productos o servicios después de cualquier cambio en los precios constituye tu aceptación de dichos cambios."
@@ -55,7 +53,7 @@
     "answer": "Nuestros Planes Básico y con Feedback permiten a los estudiantes participar en los cursos a su propio ritmo, brindando una experiencia de aprendizaje a su propio ritmo con el respaldo de expertos o inteligencia artificial cuando lo necesite. Por otro lado, si optas por nuestro bootcamp, las sesiones de aprendizaje son dirigidas por un instructor."
   }],
   "see-plan-details": "Ver detalles del plan",
-  "self-paced-courses": "Cursos auto-gestionados",
+  "self-paced-courses": "Cursos a tu ritmo",
   "immersive-bootcamp": "Bootcamp inmersivo",
   "bootcamp-courses": [{
     "slug": "desarrollador-full-stack",

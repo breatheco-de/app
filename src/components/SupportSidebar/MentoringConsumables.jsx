@@ -64,7 +64,7 @@ function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mento
 }
 
 function ProfilesSection({
-  profiles, size, ...rest
+  profiles, size, max, ...rest
 }) {
   let displayProfiles = profiles || [];
 
@@ -73,7 +73,7 @@ function ProfilesSection({
   }
 
   return (
-    <AvatarGroup max={4} justifyContent="center" {...rest}>
+    <AvatarGroup max={max || 4} justifyContent="center" size={{ base: 'sm', md: 'md' }} {...rest}>
       {displayProfiles?.map((c, i) => {
         if (!c || !c.user) return null;
         const fullName = c.user.first_name && c.user.last_name ? `${c.user.first_name} ${c.user.last_name}` : '';

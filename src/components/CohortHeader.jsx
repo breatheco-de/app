@@ -15,6 +15,7 @@ import {
   Button,
   useDisclosure,
   Image,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -36,14 +37,15 @@ import LiveEventWidgetV2 from './LiveEvent/LiveEventWidgetV2';
 import StepsModal from './StepsModal';
 
 // eslint-disable-next-line react/prop-types
-function CustomButton({ children, infoTooltip, ...props }) {
+function CustomButton({ children, infoTooltip, ...rest }) {
   const { t } = useTranslation('');
   const { backgroundColor, backgroundColor4, hexColor } = useStyle();
 
   return (
     <Box
       position="relative"
-      width={{ base: '100%', sm: '145px' }}
+      minWidth="100px"
+      width={{ base: 'auto', sm: '145px' }}
       height="102px"
       borderRadius="8px"
       padding="8px"
@@ -53,8 +55,9 @@ function CustomButton({ children, infoTooltip, ...props }) {
       justifyContent="space-evenly"
       alignItems="center"
       cursor="pointer"
+      userSelect="none"
       _hover={{ background: backgroundColor4, transition: 'background 0.3s' }}
-      {...props}
+      {...rest}
     >
       {infoTooltip && (
         <Popover
@@ -198,6 +201,11 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
     return t('common:get-help-rigobot');
   };
 
+  const labelLive = useBreakpointValue({ base: t('common:see-workshops-short'), sm: t('common:see-workshops') });
+  const labelMentors = useBreakpointValue({ base: t('common:mentors-short'), sm: t('common:schedule-mentoring') });
+  const labelRigo = useBreakpointValue({ base: t('common:rigo-ai-short'), sm: getRigobotButtonText() });
+  const labelGithub = useBreakpointValue({ base: t('common:github-short'), sm: t('common:connect-with-github') });
+
   const rigobotMessage = () => {
     if (!isAuthenticatedWithRigobot) {
       conntectToRigobot();
@@ -238,7 +246,7 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
               {t('read-to-start-learning')}
             </Heading>
           </Box>
-          <Flex gap="16px" wrap="wrap" flexDirection={{ base: 'column', sm: 'row' }} width={{ base: '100%', sm: 'auto' }}>
+          <Flex gap="16px" wrap="wrap" flexDirection="row" width={{ base: '100%', sm: 'auto' }}>
             {cohortSession.cohort_user.role === 'STUDENT' ? (
               <>
                 <Popover placement="bottom-start" isOpen={isOpen} onClose={onClose}>
@@ -254,7 +262,7 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
                       >
                         <Icon icon="live-event-opaque" width="42px" height="42px" />
                         <Text textAlign="center" color={hexColor.blueDefault}>
-                          {t('common:see-workshops')}
+                          {labelLive}
                         </Text>
                       </CustomButton>
                     </Box>
@@ -284,15 +292,15 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
                 <CustomButton
                   onClick={() => router.push('/mentorship/schedule')}
                   infoTooltip={{
-                    leftComponent: <Box><ProfilesSection size="19px" profiles={mentors} /></Box>,
+                    leftComponent: <Box><ProfilesSection size="19px" max={2} profiles={mentors} /></Box>,
                     title: t('common:mentorships'),
                     description: t('common:mentorship-description'),
                     learnMoreLink: '/docs/knowledge-base-4geeks/mentoring-sessions',
                   }}
                 >
-                  <ProfilesSection size="40px" profiles={mentors} />
+                  <ProfilesSection size={{ base: '30px', sm: '40px' }} max={2} profiles={mentors} />
                   <Text textAlign="center" color={hexColor.blueDefault}>
-                    {t('common:schedule-mentoring')}
+                    {labelMentors}
                   </Text>
                 </CustomButton>
 
@@ -300,7 +308,7 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
                   <CustomButton onClick={onRigobotModalOpen}>
                     <Icon icon="rigobot-avatar-tiny" width="42px" height="42px" />
                     <Text textAlign="center" color={hexColor.blueDefault}>
-                      {getRigobotButtonText()}
+                      {labelRigo}
                     </Text>
                   </CustomButton>
                 )}
@@ -309,7 +317,7 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
                   <CustomButton onClick={onOpenGithubModal}>
                     <Icon icon="github" width="42px" height="42px" />
                     <Text textAlign="center" color={hexColor.blueDefault}>
-                      {t('common:connect-with-github')}
+                      {labelGithub}
                     </Text>
                   </CustomButton>
                 )}

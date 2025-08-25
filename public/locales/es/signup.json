@@ -15,6 +15,7 @@
     "read-more": "Lee la ciencia detrás de esto.",
     "read-more-link": "https://4geeks.com/es/mastering-technical-knowledge"
   },
+  "view-course-warning": "Ver prerrequisitos del curso {{courseName}}",
   "free_trial_one_payment": "{{description}} y luego {{currency}}{{price}} único pago",
   "free_trial_multiple_payments": "{{description}} y luego {{numPayments}} pagos de {{currency}}{{firstPrice}} o un único pago de {{currency}}{{oneTimePrice}}",
   "free_trial_monthly_payment": "{{description}} y luego {{currency}}{{monthlyPrice}}/mes",
@@ -206,6 +207,10 @@
   "compilation-bundle-title": "Paquete de acceso a compilaciones",
   "take-me-there": "Comprar plan",
   "coupon-not-valid": "El cupón {{name}} no es válido",
+  "prereq-modal": {
+    "continue-registration": "Continuar con el registro",
+    "go-to-page": "Página {{page}}"
+  },
   "consumables": {
     "already-have-it": "Ya lo tienes",
     "consumable-event-not-available": "Este evento no está disponible para tu suscripción",

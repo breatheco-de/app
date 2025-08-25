@@ -15,6 +15,7 @@
     "read-more": "Read the science behind it.",
     "read-more-link": "https://4geeks.com/mastering-technical-knowledge"
   },
+  "view-course-warning": "View course prerequisites for {{courseName}}",
   "free_trial_one_payment": "{{description}} and then {{currency}}{{price}} one time",
   "free_trial_multiple_payments": "{{description}} and then {{numPayments}} payments of {{currency}}{{firstPrice}} or {{currency}}{{oneTimePrice}} one time",
   "free_trial_monthly_payment": "{{description}} and then {{currency}}{{monthlyPrice}}/mo",
@@ -206,6 +207,10 @@
   "upgrade-a-plan": "Upgrade a plan",
   "take-me-there": "Take me there",
   "coupon-not-valid": "Coupon {{name}} is not valid",
+  "prereq-modal": {
+    "continue-registration": "Continue with registration",
+    "go-to-page": "Page {{page}}"
+  },
   "consumables": {
     "already-have-it": "Already have it",
     "consumable-event-not-available": "This event is not available for your subscription",

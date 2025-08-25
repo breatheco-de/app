@@ -15,6 +15,11 @@ import {
   MenuList,
   MenuItem,
   useColorModeValue,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalBody,
+  ModalFooter,
 } from '@chakra-ui/react';
 import { useState, useEffect, useRef } from 'react';
 import getT from 'next-translate/getT';
@@ -40,6 +45,7 @@ import Icon from '../../components/Icon';
 import AcordionList from '../../components/AcordionList';
 import useCustomToast from '../../hooks/useCustomToast';
 import { handlePriceTextWithCoupon } from '../../utils/getPriceWithDiscount';
+import MarkdownParser from '../../components/MarkDownParser';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -82,7 +88,7 @@ function getPlanPriceText(option, allCoupons, originalPlan, t) {
 }
 
 function Checkout() {
-  const { t } = useTranslation('signup');
+  const { t, lang } = useTranslation('signup');
   const router = useRouter();
   const {
     setCouponError,
@@ -124,8 +130,79 @@ function Checkout() {
 
   const { createToast } = useCustomToast({ toastId: 'coupon-plan-email-detail' });
   const { course } = query;
+  const [prereqModalOpen, setPrereqModalOpen] = useState(false);
+  const [currentPrereqIndex, setCurrentPrereqIndex] = useState(0);
+  const [prerequisites, setPrerequisites] = useState([]);
+  const [courseTitle, setCourseTitle] = useState('');
 
   const isPaymentSuccess = paymentStatus === 'success';
+
+  useEffect(() => {
+    const shouldShowPrereq = () => {
+      if (!course) return false;
+      if (typeof window === 'undefined') return false;
+      return sessionStorage.getItem(`prereq_seen_${course}_${lang}`) !== 'true';
+    };
+
+    const fetchPrerequisites = async () => {
+      try {
+        if (!course) return;
+        const cacheKey = `prereq_cache_${course}_${lang}`;
+        const now = Date.now();
+        const ttlMs = 60 * 60 * 1000;
+        try {
+          const cachedRaw = typeof window !== 'undefined' ? sessionStorage.getItem(cacheKey) : null;
+          if (cachedRaw) {
+            const cached = JSON.parse(cachedRaw);
+            if (cached && Array.isArray(cached.mdList) && (now - (cached.ts || 0) < ttlMs)) {
+              setPrerequisites(cached.mdList);
+              if (cached.title) setCourseTitle(cached.title);
+              setCurrentPrereqIndex(0);
+              if (shouldShowPrereq() && cached.mdList.length > 0) setPrereqModalOpen(true);
+              return;
+            }
+          }
+        } catch (err) {
+          console.log(err);
+        }
+
+        const { data: courseData } = await bc.marketing({ lang }).getCourse(course);
+        const raw = Array.isArray(courseData?.course_translation?.prerequisite)
+          ? courseData.course_translation.prerequisite
+          : [];
+        const mdList = raw
+          .map((item) => {
+            if (typeof item === 'string') return item;
+            if (item && typeof item === 'object') return item.content || item.description || item.md || '';
+            return '';
+          })
+          .filter((md) => typeof md === 'string' && md.trim().length > 0);
+
+        setPrerequisites(mdList);
+        setCourseTitle(courseData?.course_translation?.title || '');
+        setCurrentPrereqIndex(0);
+
+        try {
+          if (typeof window !== 'undefined') sessionStorage.setItem(cacheKey, JSON.stringify({ mdList, ts: now, title: courseData?.course_translation?.title || '' }));
+        } catch (e) {
+          console.log(e);
+        }
+
+        if (shouldShowPrereq() && mdList.length > 0) {
+          setPrereqModalOpen(true);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchPrerequisites();
+  }, [course, lang]);
+
+  const handleClosePrereq = () => {
+    if (course && typeof window !== 'undefined') sessionStorage.setItem(`prereq_seen_${course}_${lang}`, 'true');
+    setPrereqModalOpen(false);
+  };
 
   useEffect(() => {
     const updateWidth = () => {
@@ -143,6 +220,53 @@ function Checkout() {
 
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
+      <Modal isOpen={prereqModalOpen} onClose={handleClosePrereq} isCentered size="xl" closeOnOverlayClick={false}>
+        <ModalOverlay />
+        <ModalContent marginX="10px">
+          <ModalBody pt={2}>
+            <Box maxH={{ base: '60vh', md: '70vh' }} overflowY="auto" pr={2}>
+              {prerequisites.length > 0 && (
+                <MarkdownParser
+                  content={prerequisites[currentPrereqIndex]}
+                />
+              )}
+            </Box>
+          </ModalBody>
+          <ModalFooter>
+            <Flex width="100%" justifyContent="space-between" alignItems="center">
+              <Flex alignItems="center" gap={3}>
+                {currentPrereqIndex > 0 && (
+                  <Button
+                    onClick={() => setCurrentPrereqIndex((idx) => (idx > 0 ? idx - 1 : 0))}
+                    variant="default"
+                  >
+                    {t('signup:prereq-modal.go-to-page', { page: currentPrereqIndex })}
+                  </Button>
+                )}
+                <Text fontSize="sm" color="gray.500">
+                  {`${currentPrereqIndex + 1} / ${prerequisites.length}`}
+                </Text>
+              </Flex>
+              <Button
+                onClick={() => {
+                  const hasSecond = prerequisites.length > 1;
+                  const onFirst = currentPrereqIndex === 0;
+                  if (hasSecond && onFirst) {
+                    setCurrentPrereqIndex(1);
+                  } else {
+                    handleClosePrereq();
+                  }
+                }}
+                variant="default"
+              >
+                {currentPrereqIndex === 0 && prerequisites.length > 1
+                  ? t('signup:prereq-modal.go-to-page', { page: 2 })
+                  : t('signup:prereq-modal.continue-registration')}
+              </Button>
+            </Flex>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       {loader.plan && (
         <LoaderScreen />
       )}
@@ -358,8 +482,23 @@ function Checkout() {
                       </Flex>
                     </Flex>
                     <Divider borderBottomWidth="2px" />
-                    {originalPlan?.accordionList?.length > 0 && (
-                      <Flex flexDirection="column" gridGap="4px" width="100%" mt="1rem">
+                    <Flex flexDirection="column" gridGap="4px" width="100%" mt={!prerequisites.length > 0 && '1rem'}>
+                      {prerequisites.length > 0 && (
+                        <Button
+                          size="xs"
+                          variant="inline"
+                          onClick={() => { setCurrentPrereqIndex(0); setPrereqModalOpen(true); }}
+                          leftIcon={<Icon icon="warning" width="13px" height="13px" marginBottom="2px" />}
+                          alignSelf="flex-start"
+                          fontSize="13px"
+                          fontWeight="400"
+                          padding="0"
+                          color="yellow.500"
+                        >
+                          {t('signup:view-course-warning', { courseName: courseTitle || '' })}
+                        </Button>
+                      )}
+                      {originalPlan?.accordionList?.length > 0 && (
                         <AcordionList
                           list={originalPlan?.accordionList}
                           leftIcon="checked2"
@@ -367,8 +506,8 @@ function Checkout() {
                           border="none"
                           containerStyles={{ _hover: 'none' }}
                         />
-                      </Flex>
-                    )}
+                      )}
+                    </Flex>
                     {isSecondStep && (
                       <>
                         <Flex justifyContent="space-between" width="100%" padding="3rem 0px 0">
