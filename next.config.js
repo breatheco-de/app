@@ -168,5 +168,6 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     DOMAIN_NAME: process.env.DOMAIN_NAME,
     BASE_PLAN: process.env.BASE_PLAN,
     RIGOBOT_HOST: process.env.RIGOBOT_HOST,
+    NEXT_PUBLIC_IP_API_KEY: process.env.NEXT_PUBLIC_IP_API_KEY,
   },
 })));

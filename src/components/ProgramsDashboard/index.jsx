@@ -33,7 +33,7 @@ function ProgramsDashboard({ cohorts, setLateModalProps }) {
   const marketingCourses = marketingCursesList?.filter(
     (item) => !activeCohorts.some(
       (cohort) => cohort.slug === item?.cohort?.slug,
-    ) && item?.course_translation?.title,
+    ) && item?.course_translation?.title && item?.visibility === 'PUBLIC',
   );
 
   useEffect(() => {

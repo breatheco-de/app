@@ -77,6 +77,34 @@ function Timeline({
       : (item?.translations?.[lang]?.title || item?.title);
   };
 
+  const getAssignmentStatusIndicator = (item) => {
+    const isProjectPending = item.task_status === 'DONE' && item.revision_status === 'PENDING' && item.task_type === 'PROJECT';
+    const isProjectRejected = item.task_status === 'DONE' && item.revision_status === 'REJECTED' && item.task_type === 'PROJECT';
+
+    if (isProjectPending || isProjectRejected) {
+      return (
+        <Box border="9px solid" borderColor={isProjectPending ? 'yellow.default' : 'danger'} borderRadius="100%" position="relative">
+          <Box
+            position="absolute"
+            top="50%"
+            left="50%"
+            transform="translate(-50%, -50%)"
+            borderRadius="full"
+            border="4px solid"
+            borderColor={hexColor.white2}
+          />
+        </Box>
+      );
+    }
+    if (item.task_status === 'DONE' && item.task_type !== 'PROJECT') {
+      return <Icon icon="checked2" color={hexColor.green} />;
+    }
+    if (item.task_status === 'DONE' && item.revision_status === 'APPROVED' && item.task_type === 'PROJECT') {
+      return <Icon icon="checked2" color={hexColor.green} />;
+    }
+    return null;
+  };
+
   if (variant === 'guided-experience') {
     return (
       <Box display="flex" flexDirection="column" gap="5px" flex="1">
@@ -110,9 +138,7 @@ function Timeline({
                 </Flex>
                 <Text size="sm" fontWeight="400" marginY={0} color={muted ? '#6883B4' : fontColor}>{assignmentTitle}</Text>
               </Box>
-              {item.task_status === 'DONE' && (
-                <Icon icon="checked2" color={hexColor.green} />
-              )}
+              {getAssignmentStatusIndicator(item)}
             </Box>
           );
         }) : (
@@ -216,7 +242,7 @@ Timeline.defaultProps = {
   assignments: [],
   technologies: [],
   width: '100%',
-  onClickAssignment: () => {},
+  onClickAssignment: () => { },
   showPendingTasks: false,
   variant: '',
 };
