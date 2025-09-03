@@ -297,17 +297,17 @@ function Navbar({ translations, pageProps }) {
             </Flex>
           </Flex>
 
-          <Stack justify="flex-end" alignItems="center" direction="row" gridGap={hasPaidSubscription ? '16px' : '20px'}>
-            <Flex display={{ base: 'none', md: 'flex' }} gridGap="18px">
+          <Stack justify="flex-end" alignItems="center" direction="row" gridGap="14px">
+            <Flex display="flex" gridGap={{ base: '10px', md: '18px' }}>
               {disableLangSwitcher !== true && (
-                <LanguageSelector display={{ base: 'none ', lg: 'block' }} translations={translations} minWidth="unset" />
+                <LanguageSelector display="block" translations={translations} minWidth="unset" />
               )}
               <IconButton
                 style={{
                   margin: 0,
                   minWidth: 'unset',
                 }}
-                display={{ base: 'none', lg: 'flex' }}
+                display="flex"
                 height="auto"
                 _hover={{
                   background: navbarBackground,
@@ -333,7 +333,7 @@ function Navbar({ translations, pageProps }) {
               <Divider orientation="vertical" borderColor={hexColor.fontColor3} opacity={0.5} />
             </Box>
             {hasPaidSubscription && (
-              <Box display="flex" alignItems="center" height="100%" zIndex={10}>
+              <Box display={{ base: 'none', md: 'flex' }} alignItems="center" height="100%" zIndex={10}>
                 <Icon icon="crown" width="20px" height="26px" color="" />
               </Box>
             )}
