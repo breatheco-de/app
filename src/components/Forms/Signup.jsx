@@ -137,6 +137,7 @@ function SignupForm({
             language: lang,
             has_marketing_consent: marketingConsent,
             user_id: data.user,
+            event_slug: subscribeValues?.event_slug || null,
             course_slug: getQueryString('course_slug') || courseChoosed,
             course_title: getQueryString('course_title') || data.course_translation?.title,
             course: allValues.course,
