@@ -59,6 +59,8 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "event_toast": { "type": "SharedSlice" },
+            "page_bubble": { "type": "SharedSlice" },
             "hero_section": { "type": "SharedSlice" },
             "learning_platform_section": { "type": "SharedSlice" },
             "ratings": { "type": "SharedSlice" },

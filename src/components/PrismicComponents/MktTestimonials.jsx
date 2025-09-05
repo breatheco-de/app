@@ -156,7 +156,7 @@ function MktTestimonials({
   version,
   ...rest
 }) {
-  const [testimonialsData, setTestimonialsData] = useState();
+  const [testimonialsData, setTestimonialsData] = useState([]);
   const router = useRouter();
   const defaultEndpoint = `${BREATHECODE_HOST}/v1/feedback/review?lang=${router?.locale}`;
 
@@ -179,7 +179,24 @@ function MktTestimonials({
   useEffect(() => {
     getTestimonials();
   }, []);
-  const testimonialsArray = (testimonialsData?.length > 0 && testimonialsData) || (testimonials?.length > 0 && testimonials);
+
+  const mapPrismicItemToTestimonial = (item) => ({
+    author: {
+      first_name: item?.author_first_name || '',
+      last_name: item?.author_last_name || '',
+      profile: { avatar_url: item?.avatar_url?.url || '' },
+    },
+    total_rating: item.total_rating || undefined,
+    comments: item.comments,
+  });
+
+  const getTestimonialsArray = () => {
+    if (testimonials.length > 0) return testimonials.map(mapPrismicItemToTestimonial);
+    if (testimonialsData.length > 0) return testimonialsData;
+    return [];
+  };
+
+  const testimonialsArray = getTestimonialsArray();
 
   const stylesBox = {
     v2: {

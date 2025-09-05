@@ -45,6 +45,8 @@ const useSignup = () => {
   const redirect = getStorageItem('redirect');
   const redirectedFrom = getStorageItem('redirected-from');
   const couponsQuery = getQueryString('coupons');
+  const addOnsSimple = getQueryString('add_ons');
+
   const defaultPlan = process.env.BASE_PLAN || 'basic';
   const country_code = location?.countryShort;
 
@@ -301,9 +303,59 @@ const useSignup = () => {
         });
       });
 
-      const planList = [trialPlan, onePaymentFinancing[0], yearPlan, halfPlan, quarterPlan, monthPlan, ...financingOption].filter((plan) => plan && Object.keys(plan).length > 0 && plan.show);
-      const paymentList = [onePaymentFinancing[0], yearPlan, monthPlan, trialPlan].filter((plan) => plan && Object.keys(plan).length > 0);
-      const financingList = financingOption?.filter((plan) => plan && Object.keys(plan).length > 0);
+      const parseAddOnsQuery = (queryValue) => {
+        if (!queryValue || typeof queryValue !== 'string') return [];
+        return queryValue.split(',').map((token) => token.trim()).filter((token) => token.length > 0)
+          .map((token) => {
+            const [idStr] = token.split(':');
+            const serviceId = Number(idStr);
+            const qty = 1;
+            return { serviceId, qty };
+          })
+          .filter((it) => Number.isFinite(it.serviceId) && it.serviceId > 0 && Number.isFinite(it.qty) && it.qty > 0);
+      };
+
+      const computeMonthlyAddOnSum = (planObj, selections) => {
+        const list = Array.isArray(planObj?.add_ons) ? planObj.add_ons : [];
+        if (!list.length || !selections.length) return 0;
+        return selections.reduce((acc, sel) => {
+          const match = list.find((ao) => ao?.service?.id === sel.serviceId);
+          if (!match) return acc;
+          const unit = Number(match?.price_per_unit) || 0;
+          return acc + (unit * sel.qty);
+        }, 0);
+      };
+
+      const selections = parseAddOnsQuery(addOnsSimple);
+      const extraMonthly = computeMonthlyAddOnSum(data, selections);
+
+      const applyAddOnsToPlan = (planItem) => {
+        if (!planItem || Object.keys(planItem).length === 0) return planItem;
+        const symbol = currenciesSymbols[planItem?.currency?.code || data?.currency?.code] || '$';
+        const months = Number(planItem?.how_many_months) || 1;
+        const added = extraMonthly;
+        if (!added) return planItem;
+
+        const newPrice = Number(planItem?.price || 0) + added;
+        const updated = {
+          ...planItem,
+          price: newPrice,
+        };
+
+        if (planItem?.period === 'FINANCING') updated.priceText = `${symbol}${newPrice} x ${months}`;
+        else updated.priceText = `${symbol}${newPrice}`;
+        return updated;
+      };
+
+      const planListBase = [trialPlan, onePaymentFinancing[0], yearPlan, halfPlan, quarterPlan, monthPlan, ...financingOption]
+        .filter((plan) => plan && Object.keys(plan).length > 0 && plan.show);
+      const paymentListBase = [onePaymentFinancing[0], yearPlan, monthPlan, trialPlan]
+        .filter((plan) => plan && Object.keys(plan).length > 0);
+      const financingListBase = financingOption?.filter((plan) => plan && Object.keys(plan).length > 0);
+
+      const planList = extraMonthly > 0 ? planListBase.map(applyAddOnsToPlan) : planListBase;
+      const paymentList = extraMonthly > 0 ? paymentListBase.map(applyAddOnsToPlan) : paymentListBase;
+      const financingList = extraMonthly > 0 ? financingListBase.map(applyAddOnsToPlan) : financingListBase;
 
       return {
         ...data,
@@ -330,7 +382,6 @@ const useSignup = () => {
     try {
       const resp = await bc.payment({ country_code }).getPlan(planSlug);
       const data = await processPlans(resp?.data);
-      console.log(data);
       return data;
     } catch (error) {
       console.error('Error generating plan:', error);
@@ -611,11 +662,24 @@ const useSignup = () => {
   };
 
   const getChecking = async (plansData) => {
+    const src = (addOnsSimple || '').trim();
+    let addOnsArray = [];
+    if (src) {
+      const ids = src.split(',')
+        .map((tok) => tok.trim())
+        .filter((tok) => tok.length > 0)
+        .map((tok) => tok.split(':')[0]);
+      addOnsArray = ids
+        .map((id) => ({ service: Number(id), how_many: 1 }))
+        .filter((it) => Number.isFinite(it.service) && it.service > 0);
+    }
+
     const checkingBody = {
       type: 'PREVIEW',
       plans: [plansData?.slug],
       coupons: couponsQuery ? [couponsQuery] : undefined,
       country_code,
+      service_items: addOnsArray,
     };
 
     try {
@@ -831,7 +895,7 @@ const useSignup = () => {
     });
   };
 
-  const handleSubscribeToPlan = async ({ slug, onSubscribedToPlan = () => {}, disableRedirects = false }) => {
+  const handleSubscribeToPlan = async ({ slug, onSubscribedToPlan = () => { }, disableRedirects = false }) => {
     try {
       const data = await generatePlan(slug);
 

@@ -224,6 +224,11 @@
 			"image_first_on_mobile": {
 				"__TYPE__": "BooleanContent",
 				"value": false
+			},
+			"video_url": {
+				"__TYPE__": "FieldContent",
+				"value": "stone",
+				"type": "Text"
 			}
 		},
 		"items": [
