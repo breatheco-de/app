@@ -229,6 +229,10 @@
             "placeholder_true": "true",
             "placeholder_false": "false"
           }
+        },
+        "video_url": {
+          "type": "Text",
+          "config": { "label": "Video url", "placeholder": "" }
         }
       },
       "items": {

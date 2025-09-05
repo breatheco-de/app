@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 export const components = {
   award_section: dynamic(() => import("./AwardSection")),
   event_cards: dynamic(() => import("./EventCards")),
+  event_toast: dynamic(() => import("./EventToast")),
   faqs: dynamic(() => import("./Faqs")),
   hero_section: dynamic(() => import("./HeroSection")),
   info_cards: dynamic(() => import("./InfoCards")),
@@ -12,6 +13,7 @@ export const components = {
   markdown: dynamic(() => import("./Markdown")),
   multiple_column_card: dynamic(() => import("./MultipleColumnCard")),
   one_column: dynamic(() => import("./OneColumn")),
+  page_bubble: dynamic(() => import("./PageBubble")),
   partners: dynamic(() => import("./Partners")),
   pricing_cards: dynamic(() => import("./PricingCards")),
   ratings: dynamic(() => import("./Ratings")),

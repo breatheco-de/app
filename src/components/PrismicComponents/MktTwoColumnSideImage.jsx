@@ -317,11 +317,11 @@ function MktTwoColumnSideImage({
               muted
               volume={0}
               width="100%"
-              height="auto"
               pictureInPicture={false}
               autoPlay
               iframeStyle={{
                 background: 'transparent',
+                borderRadius: '13px',
               }}
             />
           ) : (
