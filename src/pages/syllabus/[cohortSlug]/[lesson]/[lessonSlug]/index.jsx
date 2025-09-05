@@ -434,7 +434,8 @@ function SyllabusContent() {
               const markdownData = respMarkdown.data;
 
               if (lesson === 'answer') {
-                setQuizSlug(currentTranslationSlug);
+                const slug = currData.assessment?.slug || currentTranslationSlug;
+                setQuizSlug(slug);
               } else {
                 setQuizSlug(null);
               }
