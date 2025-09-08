@@ -857,6 +857,57 @@ function useCohortHandler() {
     }
   };
 
+  const handleShortcutApiCall = async (shortcut) => {
+    if (!shortcut?.api_url || !shortcut?.method) return;
+    const api_url = `${BREATHECODE_HOST}/${shortcut.api_url}`;
+    const requestConfig = {
+      url: api_url,
+      headers: { Authorization: `Token ${accessToken}` },
+    };
+
+    try {
+      if (shortcut.label === 'Discord') {
+        const profile = await bc.admissions().me();
+
+        if (!profile.data.discord) {
+          requestConfig.url += `?cohort_slug=${cohortSession.slug}&url=${encodeURIComponent(window.location.href)}`;
+          const apiResponse = await axios.get(requestConfig);
+          const auth_url = apiResponse.data?.authorization_url;
+          if (auth_url) {
+            window.location.href = auth_url;
+          }
+        }
+        const matchingServer = profile.data.discord.joined_servers.find((server) => server === shortcut.server_id);
+        if (matchingServer) {
+          const response = await bc.auth().checkDiscordServer(shortcut.server_id);
+          const serverUrl = response.data?.server_url;
+          if (serverUrl) {
+            window.location.href = serverUrl;
+          }
+          if (response.data === 404) {
+            requestConfig.url += `?cohort_slug=${cohortSession.slug}&url=${encodeURIComponent(window.location.href)}`;
+            const apiResponse = await axios.get(requestConfig);
+            const auth_url = apiResponse.data?.authorization_url;
+            if (auth_url) {
+              window.location.href = auth_url;
+            }
+            return;
+          }
+        }
+      }
+      await axios.get(requestConfig);
+    } catch (e) {
+      console.log(e);
+      createToast({
+        position: 'top',
+        title: t('alert-message:module-start-error'),
+        status: 'error',
+        duration: 6000,
+        isClosable: true,
+      });
+    }
+  };
+
   return {
     setCohortSession,
     getCohortUserCapabilities,
@@ -886,6 +937,7 @@ function useCohortHandler() {
     grantAccess,
     setGrantAccess,
     checkNavigationAvailability,
+    handleShortcutApiCall,
     ...state,
   };
 }
