@@ -91,7 +91,7 @@ function MktHeroSection({
             <Box
               position="absolute"
               top={{ sm: '0px', md: '-15px', lg: '-10px', xl: '-50px' }}
-              left={{ sm: '-30px', md: '-20px', lg: '0px', xl: '36px' }}
+              left={{ sm: '-30px', md: '-20px', lg: '-20px', xl: '36px' }}
               zIndex="0"
               transform="rotate(13deg)"
               display={{ base: 'none', sm: 'block', xl: 'block' }}
@@ -114,7 +114,7 @@ function MktHeroSection({
             <Box
               position="absolute"
               top={{ sm: '5px', md: '-15px', lg: '-15px', xl: '-50px' }}
-              right={{ sm: '-28px', md: '-20px', lg: '-10px', xl: '30px' }}
+              right={{ sm: '-28px', md: '-20px', lg: '-30px', xl: '30px' }}
               zIndex="1"
               transform="rotate(10deg)"
               display={{ base: 'none', sm: 'block', xl: 'block' }}
@@ -141,7 +141,7 @@ function MktHeroSection({
               <Box
                 position="absolute"
                 bottom={{ sm: '-20px', md: '-100px', lg: '-100px', xl: '-110px' }}
-                left={{ sm: '10px', md: '40px', lg: '130px', xl: '220px' }}
+                left={{ sm: '10px', md: '40px', lg: '110px', xl: '220px' }}
                 zIndex="0"
                 transform="rotate(-6deg)"
                 display={{ base: 'none', sm: 'block', xl: 'block' }}
@@ -164,7 +164,7 @@ function MktHeroSection({
               <Box
                 position="absolute"
                 bottom={{ sm: '-20px', md: '-100px', lg: '-100px', xl: '-110px' }}
-                right={{ sm: '15px', md: '40px', lg: '130px', xl: '220px' }}
+                right={{ sm: '15px', md: '40px', lg: '110px', xl: '220px' }}
                 zIndex="0"
                 transform="rotate(13deg)"
                 display={{ base: 'none', sm: 'block', xl: 'block' }}
@@ -182,18 +182,31 @@ function MktHeroSection({
                 />
               </Box>
             )}
-            <Button
-              variant="default"
-              width="fit-content"
-              textAlign="center"
-              onClick={handleButtonClick}
-              fontSize="17px"
-              letterSpacing="0.05em"
-              isLoading={isButtonLoading}
-              loadingText="Loading..."
-            >
-              <PrismicRichText field={slice?.primary?.button_text} />
-            </Button>
+            <Box display="flex" justifyContent="center" position="relative" mx="10">
+              <Image
+                src="/static/images/curved-arrow-with-loop.png"
+                position="absolute"
+                top="-20px"
+                height={{ base: '65px', sm: '65px', md: '120px', lg: '120px', xl: '120px' }}
+              />
+
+              <Button
+                variant="default"
+                width="fit-content"
+                textAlign="center"
+                onClick={handleButtonClick}
+                fontSize="17px"
+                letterSpacing="0.05em"
+                isLoading={isButtonLoading}
+                loadingText="Loading..."
+                position="relative"
+                top={{ base: '50px', sm: '50px', md: '105px', lg: '105px', xl: '105px' }}
+                transform={{ md: 'scale(1.1)', lg: 'scale(1.3)', xl: 'scale(1.3)' }}
+                px={{ base: '13px', sm: '13px', md: '6px', lg: '6px', xl: '13px' }}
+              >
+                <PrismicRichText field={slice?.primary?.button_text} />
+              </Button>
+            </Box>
           </Box>
         )}
       </Box>
