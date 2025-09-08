@@ -309,7 +309,6 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
     padding: '16px',
   } : {};
 
-  console.log('asdasdasdasd', cohortProgress);
   return (
     <>
       <Accordion index={isExpanded ? 0 : -1} onChange={(index) => setIsExpanded(index === 0)} allowToggle>
