@@ -65,6 +65,14 @@
           "type": "Text",
           "config": { "label": "Title", "placeholder": "" }
         },
+        "title_side_image": {
+          "type": "Image",
+          "config": {
+            "label": "Title side image",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
         "custom_title_size": {
           "type": "Text",
           "config": { "label": "Custom Title Size", "placeholder": "" }

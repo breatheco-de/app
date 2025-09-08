@@ -12,7 +12,7 @@ function MktEventToast({ academy, status, type, text, colorLight, colorDark, hos
   const { t } = useTranslation('workshops');
   const { locale } = useRouter();
   const [event, setEvent] = useState(null);
-  const { backgroundColor } = useStyle();
+  const { backgroundColor, fontColor } = useStyle();
   const isMobile = useBreakpointValue({ base: true, md: false });
   const background = colorLight && colorDark ? useColorModeValue(colorLight, colorDark) : backgroundColor;
   const query = useMemo(() => {
@@ -83,7 +83,7 @@ function MktEventToast({ academy, status, type, text, colorLight, colorDark, hos
             <Avatar name="host" src={hostImage?.url || hostImage} />
           )}
           <Box display="flex" flexDirection="column" flex={1} minWidth={0}>
-            <Text size="sm" color="black" noOfLines={2}>
+            <Text size="sm" color={fontColor} noOfLines={2}>
               {text || dynamicText || t('toast-default')}
             </Text>
           </Box>

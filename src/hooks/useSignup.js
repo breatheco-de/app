@@ -14,6 +14,7 @@ import {
   getBrowserInfo,
   slugToTitle,
   unSlugifyCapitalize,
+  parseAddOnIdsFromQuery,
 } from '../utils';
 import { currenciesSymbols, BASE_PLAN, SILENT_CODE } from '../utils/variables';
 import { reportDatalayer } from '../utils/requests';
@@ -46,6 +47,8 @@ const useSignup = () => {
   const redirectedFrom = getStorageItem('redirected-from');
   const couponsQuery = getQueryString('coupons');
   const addOnsSimple = getQueryString('add_ons');
+
+  const addOnsIds = parseAddOnIdsFromQuery(addOnsSimple);
 
   const defaultPlan = process.env.BASE_PLAN || 'basic';
   const country_code = location?.countryShort;
@@ -305,21 +308,25 @@ const useSignup = () => {
 
       const parseAddOnsQuery = (queryValue) => {
         if (!queryValue || typeof queryValue !== 'string') return [];
-        return queryValue.split(',').map((token) => token.trim()).filter((token) => token.length > 0)
+        return queryValue
+          .split(',')
+          .map((token) => token.trim())
+          .filter((token) => token.length > 0)
           .map((token) => {
-            const [idStr] = token.split(':');
-            const serviceId = Number(idStr);
-            const qty = 1;
-            return { serviceId, qty };
+            const [idStr, qtyStr] = token.split(':');
+            const addOnId = Number(idStr);
+            const qtyParsed = Number(qtyStr);
+            const qty = Number.isFinite(qtyParsed) && qtyParsed > 0 ? qtyParsed : 1;
+            return { addOnId, qty };
           })
-          .filter((it) => Number.isFinite(it.serviceId) && it.serviceId > 0 && Number.isFinite(it.qty) && it.qty > 0);
+          .filter((it) => Number.isFinite(it.addOnId) && it.addOnId > 0 && Number.isFinite(it.qty) && it.qty > 0);
       };
 
       const computeMonthlyAddOnSum = (planObj, selections) => {
         const list = Array.isArray(planObj?.add_ons) ? planObj.add_ons : [];
         if (!list.length || !selections.length) return 0;
         return selections.reduce((acc, sel) => {
-          const match = list.find((ao) => ao?.service?.id === sel.serviceId);
+          const match = list.find((ao) => ao?.id === sel.addOnId);
           if (!match) return acc;
           const unit = Number(match?.price_per_unit) || 0;
           return acc + (unit * sel.qty);
@@ -568,6 +575,7 @@ const useSignup = () => {
           how_many_installments: data?.installments || selectedPlan?.how_many_months || undefined,
           chosen_period: manyInstallmentsExists ? undefined : (selectedPlan?.period || 'HALF'),
           coupons: checkingData?.coupons,
+          add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
         };
       }
       return {
@@ -665,13 +673,26 @@ const useSignup = () => {
     const src = (addOnsSimple || '').trim();
     let addOnsArray = [];
     if (src) {
-      const ids = src.split(',')
+      // Parse add_on ids and optional quantities from QS: "add_ons=40,41:2"
+      const tokens = src.split(',')
         .map((tok) => tok.trim())
-        .filter((tok) => tok.length > 0)
-        .map((tok) => tok.split(':')[0]);
-      addOnsArray = ids
-        .map((id) => ({ service: Number(id), how_many: 1 }))
-        .filter((it) => Number.isFinite(it.service) && it.service > 0);
+        .filter((tok) => tok.length > 0);
+
+      const addOnSelections = tokens.map((tok) => {
+        const [idStr, qtyStr] = tok.split(':');
+        const addOnId = Number(idStr);
+        const qtyParsed = Number(qtyStr);
+        const how_many = Number.isFinite(qtyParsed) && qtyParsed > 0 ? qtyParsed : 1;
+        return { addOnId, how_many };
+      }).filter((sel) => Number.isFinite(sel.addOnId) && sel.addOnId > 0 && Number.isFinite(sel.how_many) && sel.how_many > 0);
+
+      // Map add_on.id -> service.id to comply with backend contract for service_items
+      const list = Array.isArray(plansData?.add_ons) ? plansData.add_ons : [];
+      addOnsArray = addOnSelections.map((sel) => {
+        const match = list.find((ao) => ao?.id === sel.addOnId);
+        const serviceId = match?.service?.id;
+        return { service: Number(serviceId), how_many: sel.how_many };
+      }).filter((it) => Number.isFinite(it.service) && it.service > 0 && Number.isFinite(it.how_many) && it.how_many > 0);
     }
 
     const checkingBody = {

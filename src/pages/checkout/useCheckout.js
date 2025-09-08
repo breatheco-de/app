@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import bc from '../../services/breathecode';
 import useAuth from '../../hooks/useAuth';
 import useSession from '../../hooks/useSession';
-import { isWindow, getQueryString, getStorageItem, removeStorageItem, setStorageItem, slugToTitle, getBrowserInfo } from '../../utils';
+import { isWindow, getQueryString, getStorageItem, removeStorageItem, setStorageItem, slugToTitle, getBrowserInfo, parseAddOnIdsFromQuery } from '../../utils';
 import signupAction from '../../store/actions/signupAction';
 import useSignup from '../../hooks/useSignup';
 import { BASE_PLAN, currenciesSymbols } from '../../utils/variables';
@@ -201,8 +201,8 @@ const useCheckout = () => {
 
       let accordionListWithAddOns = accordionList;
       if (addOnsQS) {
-        const addOnIds = addOnsQS.split(',').map((id) => Number(id.trim()));
-        const selectedAddOns = (data?.add_ons || []).filter((ao) => addOnIds.includes(ao?.service?.id));
+        const addOnIds = parseAddOnIdsFromQuery(addOnsQS);
+        const selectedAddOns = (data?.add_ons || []).filter((ao) => addOnIds.includes(ao?.id));
         const addOnsAccordion = selectedAddOns.map((ao) => ({
           title: ao?.service?.title || slugToTitle(ao?.service?.slug),
           description: '',

@@ -1,0 +1,84 @@
+{
+  "id": "outcomes",
+  "type": "SharedSlice",
+  "name": "Outcomes",
+  "description": "Outcomes",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "center_logo": {
+          "type": "Image",
+          "config": {
+            "label": "Center logo",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "center_color": {
+          "type": "Color",
+          "config": { "label": "Center color", "placeholder": "" }
+        },
+        "avatar_top": {
+          "type": "Image",
+          "config": {
+            "label": "Avatar Top",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "avatar_bottom_left": {
+          "type": "Image",
+          "config": {
+            "label": "Avatar Bottom Left",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "avatar_bottom_right": {
+          "type": "Image",
+          "config": {
+            "label": "Avatar Bottom Right",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "avatar_top_label": {
+          "type": "Text",
+          "config": { "label": "Avatar top label", "placeholder": "" }
+        },
+        "avatar_bottom_left_label": {
+          "type": "Text",
+          "config": { "label": "Avatar bottom left label", "placeholder": "" }
+        },
+        "avatar_bottom_right_label": {
+          "type": "Text",
+          "config": { "label": "Avatar Bottom Right Label", "placeholder": "" }
+        }
+      },
+      "items": {
+        "side": {
+          "type": "Select",
+          "config": {
+            "label": "Side",
+            "placeholder": "",
+            "options": ["left", "right"]
+          }
+        },
+        "value": {
+          "type": "Text",
+          "config": { "label": "Value", "placeholder": "" }
+        },
+        "description": {
+          "type": "Text",
+          "config": { "label": "Description", "placeholder": "" }
+        }
+      }
+    }
+  ]
+}

@@ -6,6 +6,8 @@ import type * as prismicClient from "@prismicio/client";
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
 type PageDocumentDataSlicesSlice =
+  | OutcomesSlice
+  | ProductPricingSlice
   | EventToastSlice
   | PageBubbleSlice
   | HeroSectionSlice
@@ -2932,6 +2934,156 @@ export type OneColumnSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *Outcomes → Default → Primary*
+ */
+export interface OutcomesSliceDefaultPrimary {
+  /**
+   * Center logo field in *Outcomes → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.default.primary.center_logo
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  center_logo: prismic.ImageField<never>;
+
+  /**
+   * Center color field in *Outcomes → Default → Primary*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.default.primary.center_color
+   * - **Documentation**: https://prismic.io/docs/field#color
+   */
+  center_color: prismic.ColorField;
+
+  /**
+   * Avatar Top field in *Outcomes → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.default.primary.avatar_top
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  avatar_top: prismic.ImageField<never>;
+
+  /**
+   * Avatar Bottom Left field in *Outcomes → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.default.primary.avatar_bottom_left
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  avatar_bottom_left: prismic.ImageField<never>;
+
+  /**
+   * Avatar Bottom Right field in *Outcomes → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.default.primary.avatar_bottom_right
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  avatar_bottom_right: prismic.ImageField<never>;
+
+  /**
+   * Avatar top label field in *Outcomes → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.default.primary.avatar_top_label
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  avatar_top_label: prismic.KeyTextField;
+
+  /**
+   * Avatar bottom left label field in *Outcomes → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.default.primary.avatar_bottom_left_label
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  avatar_bottom_left_label: prismic.KeyTextField;
+
+  /**
+   * Avatar Bottom Right Label field in *Outcomes → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.default.primary.avatar_bottom_right_label
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  avatar_bottom_right_label: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *Outcomes → Items*
+ */
+export interface OutcomesSliceDefaultItem {
+  /**
+   * Side field in *Outcomes → Items*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.items[].side
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  side: prismic.SelectField<"left" | "right">;
+
+  /**
+   * Value field in *Outcomes → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.items[].value
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  value: prismic.KeyTextField;
+
+  /**
+   * Description field in *Outcomes → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.items[].description
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  description: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for Outcomes Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type OutcomesSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<OutcomesSliceDefaultPrimary>,
+  Simplify<OutcomesSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *Outcomes*
+ */
+type OutcomesSliceVariation = OutcomesSliceDefault;
+
+/**
+ * Outcomes Shared Slice
+ *
+ * - **API ID**: `outcomes`
+ * - **Description**: Outcomes
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type OutcomesSlice = prismic.SharedSlice<
+  "outcomes",
+  OutcomesSliceVariation
+>;
+
+/**
  * Primary content in *PageBubble → Default → Primary*
  */
 export interface PageBubbleSliceDefaultPrimary {
@@ -3209,6 +3361,61 @@ type PricingCardsSliceVariation = PricingCardsSliceDefault;
 export type PricingCardsSlice = prismic.SharedSlice<
   "pricing_cards",
   PricingCardsSliceVariation
+>;
+
+/**
+ * Primary content in *ProductPricing → Default → Primary*
+ */
+export interface ProductPricingSliceDefaultPrimary {
+  /**
+   * Plan slug field in *ProductPricing → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: product_pricing.default.primary.plan_slug
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  plan_slug: prismic.KeyTextField;
+
+  /**
+   * Image field in *ProductPricing → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: product_pricing.default.primary.image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  image: prismic.ImageField<never>;
+}
+
+/**
+ * Default variation for ProductPricing Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type ProductPricingSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<ProductPricingSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *ProductPricing*
+ */
+type ProductPricingSliceVariation = ProductPricingSliceDefault;
+
+/**
+ * ProductPricing Shared Slice
+ *
+ * - **API ID**: `product_pricing`
+ * - **Description**: ProductPricing
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type ProductPricingSlice = prismic.SharedSlice<
+  "product_pricing",
+  ProductPricingSliceVariation
 >;
 
 /**
@@ -4369,6 +4576,16 @@ export interface TwoColumnSliceDefaultPrimary {
   title: prismic.KeyTextField;
 
   /**
+   * Title side image field in *TwoColumn → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.default.primary.title_side_image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  title_side_image: prismic.ImageField<never>;
+
+  /**
    * Custom Title Size field in *TwoColumn → Default → Primary*
    *
    * - **Field Type**: Text
@@ -4917,6 +5134,11 @@ declare module "@prismicio/client" {
       OneColumnSliceDefault,
       OneColumnSliceOneColumnWithKpIs,
       OneColumnSliceImageOnTop,
+      OutcomesSlice,
+      OutcomesSliceDefaultPrimary,
+      OutcomesSliceDefaultItem,
+      OutcomesSliceVariation,
+      OutcomesSliceDefault,
       PageBubbleSlice,
       PageBubbleSliceDefaultPrimary,
       PageBubbleSliceDefaultItem,
@@ -4930,6 +5152,10 @@ declare module "@prismicio/client" {
       PricingCardsSliceDefaultPrimary,
       PricingCardsSliceVariation,
       PricingCardsSliceDefault,
+      ProductPricingSlice,
+      ProductPricingSliceDefaultPrimary,
+      ProductPricingSliceVariation,
+      ProductPricingSliceDefault,
       RatingsSlice,
       RatingsSliceDefaultPrimary,
       RatingsSliceDefaultItem,

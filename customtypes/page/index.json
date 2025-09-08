@@ -59,6 +59,8 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "outcomes": { "type": "SharedSlice" },
+            "product_pricing": { "type": "SharedSlice" },
             "event_toast": { "type": "SharedSlice" },
             "page_bubble": { "type": "SharedSlice" },
             "hero_section": { "type": "SharedSlice" },
