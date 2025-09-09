@@ -18,6 +18,7 @@ function useCohortHandler() {
   const [grantAccess, setGrantAccess] = useState(false);
   const { user, isAuthenticated, cohorts: myCohorts, fetchUserAndCohorts, setCohorts } = useAuth();
   const { t, lang } = useTranslation('dashboard');
+  const { t: tSignup } = useTranslation('signup');
   const {
     setCohortSession,
     setTaskCohortNull,
@@ -861,6 +862,7 @@ function useCohortHandler() {
     if (!shortcut?.api_url || !shortcut?.method) return;
     const api_url = `${BREATHECODE_HOST}/${shortcut.api_url}`;
     const requestConfig = {
+      httpMethod: 'GET',
       url: api_url,
       headers: { Authorization: `Token ${accessToken}` },
     };
@@ -868,39 +870,69 @@ function useCohortHandler() {
     try {
       if (shortcut.label === 'Discord') {
         const profile = await bc.admissions().me();
-
-        if (!profile.data.discord) {
-          requestConfig.url += `?cohort_slug=${cohortSession.slug}&url=${encodeURIComponent(window.location.href)}`;
-          const apiResponse = await axios.get(requestConfig);
-          const auth_url = apiResponse.data?.authorization_url;
-          if (auth_url) {
-            window.location.href = auth_url;
-          }
-        }
         const matchingServer = profile.data.discord.joined_servers.find((server) => server === shortcut.server_id);
         if (matchingServer) {
-          const response = await bc.auth().checkDiscordServer(shortcut.server_id);
-          const serverUrl = response.data?.server_url;
+          const serverResponse = await bc.auth().checkDiscordServer(shortcut.server_id);
+          const serverUrl = serverResponse.data?.server_url;
           if (serverUrl) {
             window.location.href = serverUrl;
           }
-          if (response.data === 404) {
+          if (serverResponse.data === 403) {
+            createToast({
+              position: 'top',
+              title: tSignup('select-service-of-plan.subscription-not-found'),
+              status: 'error',
+              duration: 6000,
+              isClosable: true,
+            });
+            return;
+          }
+          if (serverResponse.data === 404) {
             requestConfig.url += `?cohort_slug=${cohortSession.slug}&url=${encodeURIComponent(window.location.href)}`;
-            const apiResponse = await axios.get(requestConfig);
-            const auth_url = apiResponse.data?.authorization_url;
+            const response = await axios(requestConfig);
+            const auth_url = response.data?.authorization_url;
+
             if (auth_url) {
               window.location.href = auth_url;
             }
+            if (response.data === 403) {
+              createToast({
+                position: 'top',
+                title: tSignup('select-service-of-plan.subscription-not-found'),
+                status: 'error',
+                duration: 6000,
+                isClosable: true,
+              });
+              return;
+            }
             return;
           }
+        } else {
+          requestConfig.url += `?cohort_slug=${cohortSession.slug}&url=${encodeURIComponent(window.location.href)}`;
+          const response = await axios(requestConfig);
+          const auth_url = response.data?.authorization_url;
+          if (auth_url) {
+            window.location.href = auth_url;
+          }
+          if (response.data === 403) {
+            createToast({
+              position: 'top',
+              title: tSignup('select-service-of-plan.subscription-not-found'),
+              status: 'error',
+              duration: 6000,
+              isClosable: true,
+            });
+            return;
+          }
+          return;
         }
       }
-      await axios.get(requestConfig);
+      await axios(requestConfig);
     } catch (e) {
       console.log(e);
       createToast({
         position: 'top',
-        title: t('alert-message:module-start-error'),
+        title: tSignup('alert-message:module-start-error'),
         status: 'error',
         duration: 6000,
         isClosable: true,
