@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box, Text, Image,
-} from '@chakra-ui/react';
+  useColorModeValue } from '@chakra-ui/react';
 import { PrismicRichText } from '@prismicio/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -30,6 +30,7 @@ function MktHeroSection({
       trust_text: slice?.primary?.trust_text || '2.5K',
     },
   };
+  const arrowColor = useColorModeValue('black', 'white');
 
   const handleButtonClick = () => {
     setIsButtonLoading(true);
@@ -188,6 +189,9 @@ function MktHeroSection({
                 position="absolute"
                 top="-20px"
                 height={{ base: '0', sm: '0', md: '120px', lg: '120px', xl: '120px' }}
+                sx={{
+                  filter: arrowColor === 'white' ? 'invert(1)' : 'none',
+                }}
               />
 
               <Button
