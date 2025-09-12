@@ -276,6 +276,7 @@ function SignupForm({
                     placeholder={t('common:phone')}
                     formData={formProps}
                     required
+                    sessionContextLocation={location}
                     {...field}
                   />
                 </Box>
