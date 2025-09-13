@@ -59,6 +59,11 @@
     "slug": "part-time-full-stack-developer",
     "icon": "laptop-code",
     "color": "#0084FF",
+    "utm": {
+      "source": "4geeks.com",
+      "medium": "dropdown",
+      "campaign": "full-stack"
+    },
     "course_translation": {
       "title": "Full Stack Development",
       "description": "Become a Full Stack Developer with our self-paced bootcamp! Start learning from scratch and get ready to enter the tech industry!",
@@ -82,6 +87,11 @@
     "slug": "datascience-machine-learning",
     "icon": "laptop-code",
     "color": "#FFB718",
+    "utm": {
+      "source": "4geeks.com",
+      "medium": "dropdown",
+      "campaign": "datascience-ml"
+    },
     "course_translation": {
       "title": "Data Science & ML",
       "description": "Go by yourself through a structured syllabus, and get instant help from expert mentors and AI when needed! Start learning from scratch and get prepared for your first job as a Data Scientist!",
@@ -105,6 +115,11 @@
     "slug": "cybersecurity",
     "icon": "data-science",
     "color": "#25BF6C",
+    "utm": {
+      "source": "4geeks.com",
+      "medium": "dropdown",
+      "campaign": "cybersecurity"
+    },
     "course_translation": {
       "title": "Cyber security specialist",
       "description": "Go by yourself through a structured syllabus, and get instant help from expert mentors and AI when needed! Start learning from scratch and get prepared for your first job as a Data Scientist!",
@@ -128,6 +143,11 @@
     "slug": "applied-ai-course",
     "icon": "data-science",
     "color": "#8B5CF6",
+    "utm": {
+      "source": "4geeks.com",
+      "medium": "dropdown",
+      "campaign": "ai"
+    },
     "course_translation": {
       "title": "Artificial intelligence",
       "description": "Become a Full Stack Developer with our self-paced bootcamp! Start learning from scratch and get ready to enter the tech industry!",
