@@ -59,6 +59,11 @@
     "slug": "desarrollador-full-stack",
     "icon": "laptop-code",
     "color": "#0084FF",
+    "utm": {
+      "source": "4geeks.com",
+      "medium": "dropdown",
+      "campaign": "full-stack"
+    },
     "course_translation": {
       "title": "Desarrollo Full Stack",
       "description": "¡Conviértete en un desarrollador Full Stack con nuestro bootcamp a tu propio ritmo! ¡Comienza a aprender desde cero y prepárate para ingresar a la industria tecnológica!",
@@ -82,6 +87,11 @@
     "slug": "curso-datascience-machine-learning",
     "icon": "laptop-code",
     "color": "#FFB718",
+    "utm": {
+      "source": "4geeks.com",
+      "medium": "dropdown",
+      "campaign": "datascience-ml"
+    },
     "course_translation": {
       "title": "Ciencia de Datos & ML",
       "description": "¡Avanza por ti mismo a través de un plan de estudios estructurado y obtén ayuda instantánea de mentores expertos e IA cuando lo necesites! ¡Comienza a aprender desde cero y prepárate para tu primer trabajo como científico de datos!",
@@ -105,6 +115,11 @@
     "slug": "curso-ciberseguridad",
     "icon": "data-science",
     "color": "#25BF6C",
+    "utm": {
+      "source": "4geeks.com",
+      "medium": "dropdown",
+      "campaign": "cybersecurity"
+    },
     "course_translation": {
       "title": "Especialista en Ciberseguridad",
       "description": "¡Avanza por ti mismo a través de un plan de estudios estructurado y obtén ayuda instantánea de mentores expertos e IA cuando lo necesites! ¡Comienza a aprender desde cero y prepárate para tu primer trabajo como especialista en ciberseguridad!",
@@ -128,6 +143,11 @@
     "slug": "curso-inteligencia-artificial",
     "icon": "data-science",
     "color": "#8B5CF6",
+    "utm": {
+      "source": "4geeks.com",
+      "medium": "dropdown",
+      "campaign": "ai"
+    },
     "course_translation": {
       "title": "Inteligencia Artificial",
       "description": "¡Conviértete en un desarrollador Full Stack con nuestro bootcamp a tu propio ritmo! ¡Comienza a aprender desde cero y prepárate para ingresar a la industria tecnológica!",
