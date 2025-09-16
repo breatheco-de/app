@@ -216,20 +216,24 @@ function ReactPlayerV2({
 }) {
   const isVideoFromDrive = useMemo(() => url && url.includes('drive.google.com'), [url]);
   const isLoomVideo = useMemo(() => url && url.includes('loom.com'), [url]);
+  const isVideoAsk = useMemo(() => url && url.includes('videoask.com'), [url]);
   const [showVideo, setShowVideo] = useState(false);
   const [videoThumbnail, setVideoThumbnail] = useState('');
   const [isPreviewReady, setIsPreviewReady] = useState(false);
   const [showInlineVideoFull, setShowInlineVideoFull] = useState(autoPlay && !preview && !isPlayDisabled);
   const { backgroundColor, hexColor, featuredColor } = useStyle();
-  const isExternalVideoProvider = useMemo(() => isVideoFromDrive || isLoomVideo, [isVideoFromDrive, isLoomVideo]);
+  const isExternalVideoProvider = useMemo(() => isVideoFromDrive || isLoomVideo || isVideoAsk, [isVideoFromDrive, isLoomVideo, isVideoAsk]);
   const previewPlayerRef = useRef(null);
 
   const getVideo = useCallback(() => {
     if (isLoomVideo) {
       return url.replace('/share/', '/embed/');
     }
+    if (isVideoAsk) {
+      return url;
+    }
     return url;
-  }, [url, isLoomVideo]);
+  }, [url, isLoomVideo, isVideoAsk]);
 
   const videoUrl = useMemo(() => getVideo(), [getVideo]);
 
@@ -456,23 +460,50 @@ function ReactPlayerV2({
             </Box>
           )}
           {url && isExternalVideoProvider && (
-            <div
-              className={`lo-emb-vid ${className}`}
-              style={{
-                position: 'relative', paddingBottom: '75%', height: 0, borderRadius: '3px',
-              }}
-            >
-              <iframe
-                title="Loom video"
-                src={videoUrl}
-                style={{
-                  position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', ...iframeStyle,
-                }}
-                webkitallowfullscreen
-                mozallowfullscreen
-                allowFullScreen
-              />
-            </div>
+            <>
+              {isVideoAsk ? (
+                <Box
+                  className={`videoask-player ${className}`}
+                  position="relative"
+                  width="100%"
+                  height="600px"
+                  minHeight="500px"
+                  borderRadius="3px"
+                  overflow="hidden"
+                >
+                  <iframe
+                    title="VideoAsk video"
+                    src={videoUrl}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      border: 'none',
+                      ...iframeStyle,
+                    }}
+                    allow="camera *; microphone *; autoplay *; encrypted-media *; fullscreen *; display-capture *;"
+                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"
+                  />
+                </Box>
+              ) : (
+                <div
+                  className={`lo-emb-vid ${className}`}
+                  style={{
+                    position: 'relative', paddingBottom: '75%', height: 0, borderRadius: '3px',
+                  }}
+                >
+                  <iframe
+                    title="Loom video"
+                    src={videoUrl}
+                    style={{
+                      position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', ...iframeStyle,
+                    }}
+                    webkitallowfullscreen
+                    mozallowfullscreen
+                    allowFullScreen
+                  />
+                </div>
+              )}
+            </>
           )}
         </>
       )}

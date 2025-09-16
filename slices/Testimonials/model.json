@@ -44,7 +44,32 @@
           }
         }
       },
-      "items": {},
+      "items": {
+        "author_first_name": {
+          "type": "Text",
+          "config": { "label": "Author First Name", "placeholder": "" }
+        },
+        "author_last_name": {
+          "type": "Text",
+          "config": { "label": "Author Last Name", "placeholder": "" }
+        },
+        "avatar_url": {
+          "type": "Image",
+          "config": {
+            "label": "Avatar url",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "total_rating": {
+          "type": "Number",
+          "config": { "label": "Total rating", "placeholder": "" }
+        },
+        "comments": {
+          "type": "Text",
+          "config": { "label": "comments", "placeholder": "" }
+        }
+      },
       "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
     }
   ]

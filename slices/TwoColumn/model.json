@@ -65,6 +65,14 @@
           "type": "Text",
           "config": { "label": "Title", "placeholder": "" }
         },
+        "title_side_image": {
+          "type": "Image",
+          "config": {
+            "label": "Title side image",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
         "custom_title_size": {
           "type": "Text",
           "config": { "label": "Custom Title Size", "placeholder": "" }
@@ -229,6 +237,10 @@
             "placeholder_true": "true",
             "placeholder_false": "false"
           }
+        },
+        "video_url": {
+          "type": "Text",
+          "config": { "label": "Video url", "placeholder": "" }
         }
       },
       "items": {

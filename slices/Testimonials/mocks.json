@@ -37,7 +37,66 @@
 		"items": [
 			{
 				"__TYPE__": "GroupItemContent",
-				"value": []
+				"value": [
+					[
+						"author_first_name",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "save",
+							"type": "Text"
+						}
+					],
+					[
+						"author_last_name",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "compare",
+							"type": "Text"
+						}
+					],
+					[
+						"avatar_url",
+						{
+							"origin": {
+								"id": "main",
+								"url": "https://images.unsplash.com/photo-1544731612-de7f96afe55f",
+								"width": 6000,
+								"height": 4000
+							},
+							"url": "https://images.unsplash.com/photo-1544731612-de7f96afe55f",
+							"width": 6000,
+							"height": 4000,
+							"edit": {
+								"zoom": 1,
+								"crop": {
+									"x": 0,
+									"y": 0
+								},
+								"background": "transparent"
+							},
+							"credits": null,
+							"alt": null,
+							"__TYPE__": "ImageContent",
+							"thumbnails": {}
+						}
+					],
+					[
+						"total_rating",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "62",
+							"type": "Number"
+						}
+					],
+					[
+						"comments",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "helpful",
+							"type": "Text"
+						}
+					]
+				]
 			}
 		]
 	}

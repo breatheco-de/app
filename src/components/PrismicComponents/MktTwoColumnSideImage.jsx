@@ -152,6 +152,8 @@ function MktTwoColumnSideImage({
   const finalDescriptionSize = parseProp(descriptionFontSize, prismicStyles.descriptionSize);
   const finalButtonLabelSize = parseProp(buttonLabelSize, null);
   const finalMargin = parseProp(margin, '0 auto');
+  const titleSideImageUrl = slice?.primary?.title_side_image?.url;
+  const titleSideImageAlt = slice?.primary?.title_side_image?.alt || 'title side image';
 
   return (
     <Box
@@ -201,17 +203,28 @@ function MktTwoColumnSideImage({
                 {miniTitle}
               </Heading>
             )}
-            <Heading
-              fontFamily={fontFamily}
-              fontSize={finalTitleSize}
-              fontWeight={customTitleWeight}
-              as="h2"
-              lineHeight={prismicStyles.titleLineHeight}
-              color={titleColor || 'currentColor'}
-              style={{ textWrap: 'balance' }}
-            >
-              {title}
-            </Heading>
+            <Flex alignItems="center" gridGap="15px">
+              <Heading
+                fontFamily={fontFamily}
+                fontSize={finalTitleSize}
+                fontWeight={customTitleWeight}
+                as="h2"
+                lineHeight={prismicStyles.titleLineHeight}
+                color={titleColor || 'currentColor'}
+                style={{ textWrap: 'balance' }}
+              >
+                {title}
+              </Heading>
+              {titleSideImageUrl && (
+                <Image
+                  src={titleSideImageUrl}
+                  alt={titleSideImageAlt}
+                  height={{ base: '24px', md: '28px' }}
+                  width="auto"
+                  objectFit="contain"
+                />
+              )}
+            </Flex>
             {subTitle && (
               <Heading fontFamily={fontFamilySubtitle} as="h4" fontSize={finalSubTitleSize} color={subtitleColor || 'currentColor'}>
                 {subTitle}
@@ -317,11 +330,11 @@ function MktTwoColumnSideImage({
               muted
               volume={0}
               width="100%"
-              height="auto"
               pictureInPicture={false}
               autoPlay
               iframeStyle={{
                 background: 'transparent',
+                borderRadius: '13px',
               }}
             />
           ) : (

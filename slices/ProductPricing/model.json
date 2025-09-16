@@ -1,0 +1,27 @@
+{
+  "id": "product_pricing",
+  "type": "SharedSlice",
+  "name": "ProductPricing",
+  "description": "ProductPricing",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "plan_slug": {
+          "type": "Text",
+          "config": { "label": "Plan slug", "placeholder": "" }
+        },
+        "image": {
+          "type": "Image",
+          "config": { "label": "Image", "constraint": {}, "thumbnails": [] }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

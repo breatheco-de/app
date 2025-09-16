@@ -519,6 +519,18 @@ const parseProp = (propString, defaultValue) => {
 
 const isValidEmail = (email) => emailRegex.test(email);
 
+// Parse add_ons QS: supports formats like "40,41:2"
+// Returns an array of numeric add_on ids [40, 41]
+const parseAddOnIdsFromQuery = (queryValue) => {
+  if (!queryValue || typeof queryValue !== 'string') return [];
+  return queryValue
+    .split(',')
+    .map((token) => token.trim())
+    .filter((token) => token.length > 0)
+    .map((token) => Number(token.split(':')[0]))
+    .filter((id) => Number.isFinite(id) && id > 0);
+};
+
 export {
   isWindow, assetTypeValues, slugify, unSlugify, unSlugifyCapitalize, location,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
@@ -529,5 +541,5 @@ export {
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, intervalToHours, capitalizeFirstLetter,
   adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle, decodeBase64,
-  removeSessionStorageItem, languageFix, getBrowserInfo, isValidEmail, addQueryToURL, getColorVariations, parseProp,
+  removeSessionStorageItem, languageFix, getBrowserInfo, isValidEmail, addQueryToURL, getColorVariations, parseProp, parseAddOnIdsFromQuery,
 };
