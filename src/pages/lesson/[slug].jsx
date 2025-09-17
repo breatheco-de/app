@@ -25,8 +25,9 @@ import AssetsBreadcrumbs from '../../components/AssetsBreadcrumbs';
 import { getMarkdownFromCache } from '../../utils/requests';
 
 export const getStaticPaths = async () => {
-  const assetList = await import('../../../public/asset-list.json');
-  const data = assetList.lessons;
+  const assetListModule = await import('../../../public/asset-list.json');
+  const assetList = assetListModule?.default || {};
+  const data = Array.isArray(assetList?.lessons) ? assetList.lessons : [];
 
   const paths = data.flatMap((res) => {
     const lang = res?.lang === 'us' ? 'en' : res?.lang;
@@ -51,15 +52,19 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
     const assetList = await import('../../../public/asset-list.json')
       .then((res) => res.default)
-      .catch(() => []);
+      .catch(() => ({ lessons: [] }));
 
-    const lesson = assetList.lessons.find((l) => l?.slug === slug);
+    const lessons = Array.isArray(assetList?.lessons) ? assetList.lessons : [];
+    const lesson = lessons.find((l) => l?.slug === slug);
     const engPrefix = {
       us: 'en',
       en: 'en',
     };
-
-    const markdown = await getMarkdownFromCache(slug, lesson);
+    if (!lesson) {
+      return {
+        notFound: true,
+      };
+    }
 
     const isCurrenLang = locale === engPrefix[lesson?.lang] || locale === lesson?.lang;
     if (!['ARTICLE', 'LESSON'].includes(lesson?.asset_type) || !isCurrenLang) {
@@ -68,7 +73,9 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       };
     }
 
-    if (!lesson || !markdown) {
+    const markdown = await getMarkdownFromCache(slug, lesson);
+
+    if (!markdown) {
       return {
         notFound: true,
       };
