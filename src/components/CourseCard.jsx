@@ -14,7 +14,13 @@ function CourseCard({
 }) {
   const { t, lang } = useTranslation('pricing');
   const { hexColor, modal, backgroundColor4 } = useStyle();
-
+  const buildUtmString = (utm) => {
+    const params = Object.entries(utm)
+      .filter(([, value]) => value)
+      .map(([key, value]) => `utm_${key}=${encodeURIComponent(value)}`)
+      .join('&');
+    return params ? `?${params}` : '';
+  };
   return (
     <Flex
       key={course.slug}
@@ -105,7 +111,7 @@ function CourseCard({
         variant="buttonDefault"
         borderRadius="3px"
         href={linkType === 'external'
-          ? `https://4geeksacademy.com/${lang === 'en' ? 'us' : lang}/coding-bootcamps/${course?.slug}`
+          ? `https://4geeksacademy.com/${lang === 'en' ? 'us' : lang}/coding-bootcamps/${course?.slug}${course?.utm ? buildUtmString(course?.utm) : ''}`
           : `/${lang}/bootcamp/${course?.slug}`}
         target={linkType === 'external' ? '_blank' : '_self'}
         textAlign="center"
@@ -131,6 +137,11 @@ CourseCard.propTypes = {
     color: PropTypes.string,
     icon: PropTypes.string,
     icon_url: PropTypes.string,
+    utm: PropTypes.shape({
+      source: PropTypes.string,
+      medium: PropTypes.string,
+      campaign: PropTypes.string,
+    }),
     course_translation: PropTypes.shape({
       title: PropTypes.string,
       description: PropTypes.string,
