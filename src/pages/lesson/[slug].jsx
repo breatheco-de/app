@@ -29,15 +29,16 @@ export const getStaticPaths = async () => {
   const assetList = assetListModule?.default || {};
   const data = Array.isArray(assetList?.lessons) ? assetList.lessons : [];
 
-  const paths = data.flatMap((res) => {
-    const lang = res?.lang === 'us' ? 'en' : res?.lang;
-    return ({
-      params: {
-        slug: res.slug,
-      },
-      locale: lang,
+  const ALLOWED_TYPES = new Set(['ARTICLE', 'LESSON']);
+  const paths = data
+    .filter((res) => res?.slug && ALLOWED_TYPES.has(res?.asset_type))
+    .map((res) => {
+      const lang = res?.lang === 'us' ? 'en' : res?.lang;
+      return ({
+        params: { slug: res.slug },
+        locale: lang,
+      });
     });
-  });
 
   return {
     fallback: false,
@@ -73,13 +74,10 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       };
     }
 
-    const markdown = await getMarkdownFromCache(slug, lesson);
+    const markdown = await getMarkdownFromCache(slug, lesson).catch(() => null);
 
-    if (!markdown) {
-      return {
-        notFound: true,
-      };
-    }
+    // If markdown is unavailable, render page without content instead of failing export
+    // Still provide SEO and structure; the component shows skeleton if !markdown
 
     const urlPathname = lesson?.readme_url ? lesson?.readme_url.split('https://github.com')[1] : null;
     const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
