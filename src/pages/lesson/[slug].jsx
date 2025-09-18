@@ -74,7 +74,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       };
     }
 
-    const markdown = await getMarkdownFromCache(slug, lesson).catch(() => null);
+    const markdownRaw = await getMarkdownFromCache(slug, lesson).catch(() => null);
+    const markdown = typeof markdownRaw === 'string' ? markdownRaw : null;
 
     // If markdown is unavailable, render page without content instead of failing export
     // Still provide SEO and structure; the component shows skeleton if !markdown
@@ -163,12 +164,12 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
 function LessonSlug({ lesson, markdown }) {
   const { t } = useTranslation('lesson');
-  const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const { fontColor, borderColor, featuredLight } = useStyle();
   const { isAuthenticated } = useAuth();
 
   const exensionName = getExtensionName(lesson.readme_url);
   const isIpynb = exensionName === 'ipynb';
+  const markdownData = (!isIpynb && typeof markdown === 'string') ? getMarkDownContent(markdown) : null;
 
   return (
     <>
@@ -245,7 +246,7 @@ function LessonSlug({ lesson, markdown }) {
             </Heading>
           )}
 
-          {markdown && !isIpynb ? (
+          {markdownData && !isIpynb ? (
             <Box
               gridColumn="2 / span 12"
               margin="0 rem auto 0 auto"
@@ -300,7 +301,7 @@ function LessonSlug({ lesson, markdown }) {
             >
               <Box width="100%" height="100%">
                 <IpynbHtmlParser
-                  html={markdown}
+                  html={typeof markdown === 'string' ? markdown : ''}
                 />
                 {lesson?.slug && (
                   <RelatedContent
