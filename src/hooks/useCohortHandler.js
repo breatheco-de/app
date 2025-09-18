@@ -872,12 +872,12 @@ function useCohortHandler() {
         const profile = await bc.admissions().me();
         const matchingServer = profile.data.discord.joined_servers.find((server) => server === shortcut.server_id);
         if (matchingServer) {
-          const serverResponse = await bc.auth().checkDiscordServer(shortcut.server_id);
+          const serverResponse = await bc.auth().checkDiscordServer(shortcut.server_id, cohortSession.slug);
           const serverUrl = serverResponse.data?.server_url;
           if (serverUrl) {
             window.location.href = serverUrl;
           }
-          if (serverResponse.data === 403) {
+          if (serverResponse.status === 403) {
             createToast({
               position: 'top',
               title: tSignup('select-service-of-plan.subscription-not-found'),
