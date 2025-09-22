@@ -870,8 +870,7 @@ function useCohortHandler() {
     try {
       if (shortcut.label === 'Discord') {
         const profile = await bc.admissions().me();
-        const matchingServer = profile.data.discord.joined_servers.find((server) => server === shortcut.server_id);
-        if (matchingServer) {
+        if (profile.data.discord?.joined_servers && profile.data.discord?.joined_servers.find((server) => server === shortcut.server_id)) {
           const serverResponse = await bc.auth().checkDiscordServer(shortcut.server_id, cohortSession.slug);
           const serverUrl = serverResponse.data?.server_url;
           if (serverUrl) {
@@ -887,7 +886,7 @@ function useCohortHandler() {
             });
             return;
           }
-          if (serverResponse.data === 404) {
+          if (serverResponse.status === 404) {
             requestConfig.url += `?cohort_slug=${cohortSession.slug}&url=${encodeURIComponent(window.location.href)}`;
             const response = await axios(requestConfig);
             const auth_url = response.data?.authorization_url;
@@ -895,7 +894,7 @@ function useCohortHandler() {
             if (auth_url) {
               window.location.href = auth_url;
             }
-            if (response.data === 403) {
+            if (response.status === 403) {
               createToast({
                 position: 'top',
                 title: tSignup('select-service-of-plan.subscription-not-found'),
@@ -914,7 +913,7 @@ function useCohortHandler() {
           if (auth_url) {
             window.location.href = auth_url;
           }
-          if (response.data === 403) {
+          if (response.status === 403) {
             createToast({
               position: 'top',
               title: tSignup('select-service-of-plan.subscription-not-found'),
