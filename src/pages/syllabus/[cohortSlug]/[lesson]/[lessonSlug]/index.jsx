@@ -434,7 +434,8 @@ function SyllabusContent() {
               const markdownData = respMarkdown.data;
 
               if (lesson === 'answer') {
-                setQuizSlug(currentTranslationSlug);
+                const slug = currData.assessment?.slug || currentTranslationSlug;
+                setQuizSlug(slug);
               } else {
                 setQuizSlug(null);
               }
@@ -1089,7 +1090,7 @@ function SyllabusContent() {
                           <Box background={featuredColor} width="100%" height={isAvailableAsSaas ? '100%' : '100vh'} borderRadius="14px">
                             <iframe
                               id="iframe"
-                              src={`https://assessment.4geeks.com/asset/${quizSlug}?isAnon=true&token=${accessToken}&academy=${cohortSession?.academy?.id}`}
+                              src={`https://assessment.4geeks.com/quiz/${quizSlug}?isAnon=true&token=${accessToken}&academy=${cohortSession?.academy?.id}`}
                               style={{
                                 width: '100%',
                                 height: '100%',
