@@ -79,5 +79,9 @@
     "link": "",
     "get-more-workshops": "Get more workshops"
   },
-  "back-to-workshops": "Go back"
+  "back-to-workshops": "Go back",
+  "toast-default": "Don't miss the next workshop. Save your spot!",
+  "toast-dynamic": "The event {{title}} starts on {{date}}. Don't miss it!",
+  "toast-dynamic-short": "The event {{title}} starts soon. Don't miss it!",
+  "toast-host-fallback": "our team"
 }
