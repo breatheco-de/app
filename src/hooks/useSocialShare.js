@@ -18,6 +18,9 @@ const useSocialShare = ({ info, type = 'task', shareMessage }) => {
     if (creationType === 'certificate') {
       return `https://certificate.4geeks.com/${info}`;
     }
+    if (creationType === 'referral') {
+      return info;
+    }
     return '';
   };
 

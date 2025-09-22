@@ -38,6 +38,11 @@
       "title": "Subscriptions",
       "value": "subscriptions",
       "disabled": false
+    },
+    {
+      "title": "Referral Program",
+      "value": "referral-program",
+      "disabled": false
     }
   ],
   "remove-github-modal": {
@@ -155,5 +160,23 @@
   "referral-step-1": "1. Share your coupon code with friends and family",
   "referral-step-2": "2. When someone uses your coupon and makes a payment for self-paced programs on 4Geeks.com, you'll get a 10% discount on your next payment",
   "referral-step-3": "3. The more people use your coupon, the more discounts you'll receive!",
-  "referral-step-4": "4. This referral program only applies to self-paced programs at 4Geeks.com"
+  "referral-step-4": "4. This referral program only applies to self-paced programs at 4Geeks.com",
+  "discount-type-fixed-amount": "Fixed Amount",
+  "discount-type-percentage": "Percentage",
+  "coupon-auto-apply-next-renewal": "Auto-apply on the next renewal",
+  "coupon-click-to-auto-apply": "Click to auto-apply",
+  "coupon-already-used": "This coupon was already used",
+  "coupon-loading": "Loading...",
+  "coupon-percent-of-payment": "% of any payment",
+  "coupon-of-any-payment": "of any payment",
+  "referral-money-earned": "Money Earned",
+  "referral-refer-friend-button": "Refer a friend and make money",
+  "referral-share-description": "Share your coupon code with friends and family and make money while you learn",
+  "referral-rewards-activity": "Rewards and coupon activity",
+  "referral-modal-title": "SHARE AND MAKE MONEY",
+  "referral-share-coupon-text": "Share this coupon with your friends:",
+  "referral-share-link-text": "Or share this signup link:",
+  "referral-share-message": "Check out this amazing learning opportunity with my referral code! Join me at 4Geeks Academy and start your coding journey. Use this discount code: {{coupon}}",
+  "no-referral-coupon": "Couldn´t obtain your referral coupon",
+  "no-reward-coupons": "You don't have reward coupons, refer your code to a friend and get discounts on your next payments"
 }

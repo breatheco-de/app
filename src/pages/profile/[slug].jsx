@@ -15,6 +15,7 @@ import GridContainer from '../../components/GridContainer';
 import Subscriptions from '../../components/Profile/Subscriptions';
 import Certificates from '../../components/Profile/Certificates';
 import Information from '../../components/Profile/Information';
+import ReferralProgram from '../../components/Profile/ReferralProgram';
 import useCustomToast from '../../hooks/useCustomToast';
 
 function Profile() {
@@ -34,6 +35,8 @@ function Profile() {
     '/profile/certificates#': 1,
     '/profile/subscriptions': 2,
     '/profile/subscriptions#': 2,
+    '/profile/referral-program': 3,
+    '/profile/referral-program#': 3,
   };
   const currentPathCleaned = cleanQueryStrings(asPath);
 
@@ -115,6 +118,9 @@ function Profile() {
             </TabPanel>
             <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
               <Subscriptions cohorts={cohorts} />
+            </TabPanel>
+            <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
+              <ReferralProgram />
             </TabPanel>
           </TabPanels>
         </Tabs>
