@@ -167,7 +167,7 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
   const { user, isAuthenticatedWithRigobot, conntectToRigobot, cohorts } = useAuth();
   const { rigo, isRigoInitialized } = useRigo();
   const { featuredLight, hexColor } = useStyle();
-  const { cohortSession, handleShortcutApiCall } = useCohortHandler();
+  const { cohortSession, handleShortcutClick } = useCohortHandler();
   const [mentors, setMentors] = useState([]);
   const [showStudentsModal, setShowStudentsModal] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -346,39 +346,21 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
               </>
             )}
             {shortcuts.map((shortcut) => (
-              shortcut.api_url ? (
-                <CustomButton
-                  key={languageFix(shortcut.label, lang)}
-                  onClick={() => handleShortcutApiCall(shortcut)}
-                  infoTooltip={{
-                    leftComponent: renderShortcutIcon(shortcut, '19px'),
-                    title: languageFix(shortcut.label, lang),
-                    description: languageFix(shortcut.help_text, lang),
-                    learnMoreLink: languageFix(shortcut.help_text_link, lang),
-                  }}
-                >
-                  {renderShortcutIcon(shortcut)}
-                  <Text textAlign="center" color={hexColor.blueDefault}>
-                    {languageFix(shortcut.label, lang)}
-                  </Text>
-                </CustomButton>
-              ) : (
-                <CustomButton
-                  key={languageFix(shortcut.label, lang)}
-                  onClick={() => window.open(languageFix(shortcut.url, lang), '_blank')}
-                  infoTooltip={{
-                    leftComponent: renderShortcutIcon(shortcut, '19px'),
-                    title: languageFix(shortcut.label, lang),
-                    description: languageFix(shortcut.help_text, lang),
-                    learnMoreLink: languageFix(shortcut.help_text_link, lang),
-                  }}
-                >
-                  {renderShortcutIcon(shortcut)}
-                  <Text textAlign="center" color={hexColor.blueDefault}>
-                    {languageFix(shortcut.label, lang)}
-                  </Text>
-                </CustomButton>
-              )
+              <CustomButton
+                key={languageFix(shortcut.label, lang)}
+                onClick={() => handleShortcutClick(shortcut)}
+                infoTooltip={{
+                  leftComponent: renderShortcutIcon(shortcut, '19px'),
+                  title: languageFix(shortcut.label, lang),
+                  description: languageFix(shortcut.help_text, lang),
+                  learnMoreLink: languageFix(shortcut.help_text_link, lang),
+                }}
+              >
+                {renderShortcutIcon(shortcut)}
+                <Text textAlign="center" color={hexColor.blueDefault}>
+                  {languageFix(shortcut.label, lang)}
+                </Text>
+              </CustomButton>
             ))}
           </Flex>
         </Flex>
