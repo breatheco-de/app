@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box, Text, Image,
-} from '@chakra-ui/react';
+  useColorModeValue } from '@chakra-ui/react';
 import { PrismicRichText } from '@prismicio/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -30,6 +30,7 @@ function MktHeroSection({
       trust_text: slice?.primary?.trust_text || '2.5K',
     },
   };
+  const arrowColor = useColorModeValue('black', 'white');
 
   const handleButtonClick = () => {
     setIsButtonLoading(true);
@@ -91,7 +92,7 @@ function MktHeroSection({
             <Box
               position="absolute"
               top={{ sm: '0px', md: '-15px', lg: '-10px', xl: '-50px' }}
-              left={{ sm: '-30px', md: '-20px', lg: '0px', xl: '36px' }}
+              left={{ sm: '-30px', md: '-30px', lg: '-20px', xl: '36px' }}
               zIndex="0"
               transform="rotate(13deg)"
               display={{ base: 'none', sm: 'block', xl: 'block' }}
@@ -114,7 +115,7 @@ function MktHeroSection({
             <Box
               position="absolute"
               top={{ sm: '5px', md: '-15px', lg: '-15px', xl: '-50px' }}
-              right={{ sm: '-28px', md: '-20px', lg: '-10px', xl: '30px' }}
+              right={{ sm: '-28px', md: '-30px', lg: '-30px', xl: '30px' }}
               zIndex="1"
               transform="rotate(10deg)"
               display={{ base: 'none', sm: 'block', xl: 'block' }}
@@ -141,7 +142,7 @@ function MktHeroSection({
               <Box
                 position="absolute"
                 bottom={{ sm: '-20px', md: '-100px', lg: '-100px', xl: '-110px' }}
-                left={{ sm: '10px', md: '40px', lg: '130px', xl: '220px' }}
+                left={{ sm: '10px', md: '30px', lg: '110px', xl: '220px' }}
                 zIndex="0"
                 transform="rotate(-6deg)"
                 display={{ base: 'none', sm: 'block', xl: 'block' }}
@@ -164,7 +165,7 @@ function MktHeroSection({
               <Box
                 position="absolute"
                 bottom={{ sm: '-20px', md: '-100px', lg: '-100px', xl: '-110px' }}
-                right={{ sm: '15px', md: '40px', lg: '130px', xl: '220px' }}
+                right={{ sm: '15px', md: '30px', lg: '110px', xl: '220px' }}
                 zIndex="0"
                 transform="rotate(13deg)"
                 display={{ base: 'none', sm: 'block', xl: 'block' }}
@@ -182,18 +183,34 @@ function MktHeroSection({
                 />
               </Box>
             )}
-            <Button
-              variant="default"
-              width="fit-content"
-              textAlign="center"
-              onClick={handleButtonClick}
-              fontSize="17px"
-              letterSpacing="0.05em"
-              isLoading={isButtonLoading}
-              loadingText="Loading..."
-            >
-              <PrismicRichText field={slice?.primary?.button_text} />
-            </Button>
+            <Box display="flex" justifyContent="center" alignItems="center" position="relative" mx="10">
+              <Image
+                src="/static/images/curved-arrow-with-loop.png"
+                position="absolute"
+                top="-20px"
+                height={{ base: '0', sm: '0', md: '120px', lg: '120px', xl: '120px' }}
+                sx={{
+                  filter: arrowColor === 'white' ? 'invert(1)' : 'none',
+                }}
+              />
+
+              <Button
+                variant="default"
+                width="fit-content"
+                textAlign="center"
+                onClick={handleButtonClick}
+                fontSize="17px"
+                letterSpacing="0.05em"
+                isLoading={isButtonLoading}
+                loadingText="Loading..."
+                position="relative"
+                top={{ base: '0', sm: '0', md: '105px', lg: '105px', xl: '105px' }}
+                transform={{ base: 'scale(1.3)', sm: 'scale(1.1)', md: 'scale(1.1)', lg: 'scale(1.3)', xl: 'scale(1.3)' }}
+                px={{ base: '13px', sm: '11px', md: '13px', lg: '6px', xl: '13px' }}
+              >
+                <PrismicRichText field={slice?.primary?.button_text} />
+              </Button>
+            </Box>
           </Box>
         )}
       </Box>

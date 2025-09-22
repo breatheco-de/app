@@ -25,18 +25,20 @@ import AssetsBreadcrumbs from '../../components/AssetsBreadcrumbs';
 import { getMarkdownFromCache } from '../../utils/requests';
 
 export const getStaticPaths = async () => {
-  const assetList = await import('../../../public/asset-list.json');
-  const data = assetList.lessons;
+  const assetListModule = await import('../../../public/asset-list.json');
+  const assetList = assetListModule?.default || {};
+  const data = Array.isArray(assetList?.lessons) ? assetList.lessons : [];
 
-  const paths = data.flatMap((res) => {
-    const lang = res?.lang === 'us' ? 'en' : res?.lang;
-    return ({
-      params: {
-        slug: res.slug,
-      },
-      locale: lang,
+  const ALLOWED_TYPES = new Set(['ARTICLE', 'LESSON']);
+  const paths = data
+    .filter((res) => res?.slug && ALLOWED_TYPES.has(res?.asset_type))
+    .map((res) => {
+      const lang = res?.lang === 'us' ? 'en' : res?.lang;
+      return ({
+        params: { slug: res.slug },
+        locale: lang,
+      });
     });
-  });
 
   return {
     fallback: false,
@@ -51,15 +53,19 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
     const assetList = await import('../../../public/asset-list.json')
       .then((res) => res.default)
-      .catch(() => []);
+      .catch(() => ({ lessons: [] }));
 
-    const lesson = assetList.lessons.find((l) => l?.slug === slug);
+    const lessons = Array.isArray(assetList?.lessons) ? assetList.lessons : [];
+    const lesson = lessons.find((l) => l?.slug === slug);
     const engPrefix = {
       us: 'en',
       en: 'en',
     };
-
-    const markdown = await getMarkdownFromCache(slug, lesson);
+    if (!lesson) {
+      return {
+        notFound: true,
+      };
+    }
 
     const isCurrenLang = locale === engPrefix[lesson?.lang] || locale === lesson?.lang;
     if (!['ARTICLE', 'LESSON'].includes(lesson?.asset_type) || !isCurrenLang) {
@@ -68,11 +74,11 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       };
     }
 
-    if (!lesson || !markdown) {
-      return {
-        notFound: true,
-      };
-    }
+    const markdownRaw = await getMarkdownFromCache(slug, lesson).catch(() => null);
+    const markdown = typeof markdownRaw === 'string' ? markdownRaw : null;
+
+    // If markdown is unavailable, render page without content instead of failing export
+    // Still provide SEO and structure; the component shows skeleton if !markdown
 
     const urlPathname = lesson?.readme_url ? lesson?.readme_url.split('https://github.com')[1] : null;
     const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
@@ -158,12 +164,12 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
 function LessonSlug({ lesson, markdown }) {
   const { t } = useTranslation('lesson');
-  const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const { fontColor, borderColor, featuredLight } = useStyle();
   const { isAuthenticated } = useAuth();
 
   const exensionName = getExtensionName(lesson.readme_url);
   const isIpynb = exensionName === 'ipynb';
+  const markdownData = (!isIpynb && typeof markdown === 'string') ? getMarkDownContent(markdown) : null;
 
   return (
     <>
@@ -240,7 +246,7 @@ function LessonSlug({ lesson, markdown }) {
             </Heading>
           )}
 
-          {markdown && !isIpynb ? (
+          {markdownData && !isIpynb ? (
             <Box
               gridColumn="2 / span 12"
               margin="0 rem auto 0 auto"
@@ -295,7 +301,7 @@ function LessonSlug({ lesson, markdown }) {
             >
               <Box width="100%" height="100%">
                 <IpynbHtmlParser
-                  html={markdown}
+                  html={typeof markdown === 'string' ? markdown : ''}
                 />
                 {lesson?.slug && (
                   <RelatedContent
