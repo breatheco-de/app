@@ -18,8 +18,9 @@ import { BREATHECODE_HOST } from '../../utils/variables';
 function TestimonialBox({ picture, name, rating, description, version }) {
   const { fontColor2, backgroundColor, backgroundColor2, backgroundColor5, hexColor } = useStyle();
   const limit = 160;
-  const descriptionLength = lengthOfString(description);
-  const truncatedDescription = descriptionLength > limit ? `${description?.substring(0, limit)}...` : description;
+  const descriptionText = description || '';
+  const descriptionLength = lengthOfString(descriptionText);
+  const truncatedDescription = descriptionLength > limit ? `${descriptionText.substring(0, limit)}...` : descriptionText;
 
   const styles = {
     v1: {
@@ -108,11 +109,11 @@ function TestimonialBox({ picture, name, rating, description, version }) {
       flexShrink="0"
       {...styles[version]?.box}
     >
-      <Image name={name} alt={`${name} picture`} src={picture} width={65} height={65} style={styles[version]?.imageStyles} />
+      <Image name={name || 'testimonial'} alt={`${name || 'User'} picture`} src={picture} width={65} height={65} style={styles[version]?.imageStyles} />
       {version === 'v2' ? (
         <Image
-          name={`${name}-2`}
-          alt={`${name} picture 2`}
+          name={`${name || 'testimonial'}-2`}
+          alt={`${name || 'User'} picture 2`}
           src="https://cdn.worldvectorlogo.com/logos/globant-1.svg"
           width={65}
           height={65}
@@ -124,7 +125,7 @@ function TestimonialBox({ picture, name, rating, description, version }) {
         size="md"
         {...styles[version]?.textName}
       >
-        {name}
+        {name || 'Anonymous User'}
       </Text>
       {version === 'v1' ? (
         <StarRating
@@ -156,7 +157,7 @@ function MktTestimonials({
   version,
   ...rest
 }) {
-  const [testimonialsData, setTestimonialsData] = useState();
+  const [testimonialsData, setTestimonialsData] = useState([]);
   const router = useRouter();
   const defaultEndpoint = `${BREATHECODE_HOST}/v1/feedback/review?lang=${router?.locale}`;
 
@@ -169,17 +170,19 @@ function MktTestimonials({
       if (typeof data === 'string') {
         setTestimonialsData([]);
       } else {
-        setTestimonialsData(data);
+        setTestimonialsData(data || []);
       }
     } catch (e) {
       console.log(e);
+      setTestimonialsData([]);
     }
   };
 
   useEffect(() => {
     getTestimonials();
   }, []);
-  const testimonialsArray = (testimonialsData?.length > 0 && testimonialsData) || (testimonials?.length > 0 && testimonials);
+
+  const testimonialsArray = (testimonialsData?.length > 0 && testimonialsData) || (testimonials?.length > 0 && testimonials) || [];
 
   const stylesBox = {
     v2: {
@@ -214,11 +217,11 @@ function MktTestimonials({
           justifyContent={{ base: 'inherit', md: 'space-between' }}
           px={{ base: '10px', md: '2rem' }}
         >
-          {testimonialsArray && testimonialsArray.map((testimonial) => (
+          {testimonialsArray && testimonialsArray.map((testimonial, index) => (
             <TestimonialBox
-              key={`${testimonial?.author?.first_name}-${testimonial?.author?.last_name}`}
+              key={`${testimonial?.author?.first_name || 'user'}-${testimonial?.author?.last_name || index}`}
               picture={testimonial?.author?.profile?.avatar_url}
-              name={`${testimonial?.author?.first_name} ${testimonial?.author?.last_name}`}
+              name={`${testimonial?.author?.first_name || ''} ${testimonial?.author?.last_name || ''}`.trim()}
               rating={testimonial?.total_rating}
               description={testimonial?.comments}
               version={version}

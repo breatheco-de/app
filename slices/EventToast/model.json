@@ -1,0 +1,64 @@
+{
+  "id": "event_toast",
+  "type": "SharedSlice",
+  "name": "EventToast",
+  "description": "EventToast",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "toast_text": {
+          "type": "Text",
+          "config": { "label": "Toast Text", "placeholder": "" }
+        },
+        "toast_color_light_mode": {
+          "type": "Color",
+          "config": { "label": "Toast Color Light Mode", "placeholder": "" }
+        },
+        "toast_color_dark_mode": {
+          "type": "Color",
+          "config": { "label": "Toast Color Dark Mode", "placeholder": "" }
+        },
+        "academy": {
+          "type": "Text",
+          "config": { "label": "Academy", "placeholder": "" }
+        },
+        "type": {
+          "type": "Text",
+          "config": { "label": "Type", "placeholder": "" }
+        },
+        "status": {
+          "type": "Text",
+          "config": { "label": "Status", "placeholder": "" }
+        },
+        "max_width": {
+          "type": "Text",
+          "config": { "label": "Max Width", "placeholder": "" }
+        },
+        "host_image": {
+          "type": "Image",
+          "config": {
+            "label": "Host Image",
+            "constraint": {},
+            "thumbnails": []
+          }
+        }
+      },
+      "items": {
+        "host_group_image": {
+          "type": "Image",
+          "config": {
+            "label": "Host Group Image",
+            "constraint": {},
+            "thumbnails": []
+          }
+        }
+      }
+    }
+  ]
+}
