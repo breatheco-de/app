@@ -88,7 +88,11 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
 
     const modulesDict = {};
 
-    const pendingRevisions = cohortsAssignments[cohort.slug].tasks.filter((task) => task.reviewed_at !== null && (task.reviewed_at > task.read_at || task.read_at === null));
+    const pendingRevisions = cohortsAssignments[cohort.slug].tasks.filter((task) => {
+      if (task.task_type !== 'PROJECT') return false;
+      const unreadRejection = task.revision_status === 'REJECTED' && task.reviewed_at !== null;
+      return unreadRejection;
+    });
 
     modules.forEach((module) => {
       const assignmentsCount = module.content.reduce((acc, curr) => {
@@ -304,8 +308,6 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
     borderRadius: '8px',
     padding: '16px',
   } : {};
-
-  console.log(modulesProgress);
 
   return (
     <>

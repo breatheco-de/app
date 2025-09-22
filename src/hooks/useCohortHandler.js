@@ -821,10 +821,12 @@ function useCohortHandler() {
         return;
       }
 
+      const now = new Date();
       const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED' || sub.status === 'ERROR');
       const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
       const cancelledSub = cohortSubscriptions.find((sub) => sub.status === 'CANCELLED' || sub.status === 'PAYMENT_ISSUE');
-      const now = new Date();
+      const freeTrialSub = cohortSubscriptions.find((sub) => sub.status === 'FREE_TRIAL');
+      const freeTrialExpDate = new Date(freeTrialSub?.valid_until);
       const isCancelledButValid = cancelledSub && (
         (cancelledSub.valid_until && new Date(cancelledSub.valid_until) > now)
         || (cancelledSub.next_payment_at && new Date(cancelledSub.next_payment_at) > now)
@@ -835,7 +837,7 @@ function useCohortHandler() {
         return;
       }
 
-      if (!isCancelledButValid) {
+      if (!freeTrialSub && !isCancelledButValid) {
         showToastAndRedirect(currentCohortSlug);
         return;
       }
@@ -845,11 +847,7 @@ function useCohortHandler() {
         return;
       }
 
-      const freeTrialSub = cohortSubscriptions.find((sub) => sub.status === 'FREE_TRIAL');
-      const freeTrialExpDate = new Date(freeTrialSub?.valid_until);
-      const todayDate = new Date();
-
-      if (todayDate > freeTrialExpDate) {
+      if (now > freeTrialExpDate) {
         showToastAndRedirect(currentCohortSlug);
         return;
       }

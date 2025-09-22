@@ -84,12 +84,10 @@ export const getStaticProps = async ({ params, locale }) => {
   const data = resp?.data;
 
   if (resp.statusText === 'not-found' || !data?.slug || !['ACTIVE', 'FINISHED'].includes(data.status)) {
-    return ({
-      props: {
-        translations: [],
-        disableLangSwitcher: true,
-      },
-    });
+    return {
+      notFound: true,
+      revalidate: 60,
+    };
   }
   const lang = (data?.lang === 'us' || data?.lang === null) ? 'en' : data?.lang;
 

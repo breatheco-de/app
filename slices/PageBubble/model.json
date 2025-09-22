@@ -1,0 +1,44 @@
+{
+  "id": "page_bubble",
+  "type": "SharedSlice",
+  "name": "PageBubble",
+  "description": "PageBubble",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "url": {
+          "type": "Text",
+          "config": { "label": "Url", "placeholder": "" }
+        },
+        "top_text": {
+          "type": "Text",
+          "config": { "label": "Top text", "placeholder": "" }
+        },
+        "bottom_text": {
+          "type": "Text",
+          "config": { "label": "Botton Text", "placeholder": "" }
+        },
+        "icon_string": {
+          "type": "Text",
+          "config": { "label": "Icon string", "placeholder": "" }
+        }
+      },
+      "items": {
+        "support_avatar": {
+          "type": "Image",
+          "config": {
+            "label": "Support avatar",
+            "constraint": {},
+            "thumbnails": []
+          }
+        }
+      }
+    }
+  ]
+}
