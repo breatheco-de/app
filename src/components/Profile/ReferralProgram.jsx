@@ -1,4 +1,4 @@
-import { Box, Button, Input, InputGroup, InputRightElement, Heading, Switch, Flex, Grid, Stack, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Heading, Switch, Flex, useDisclosure } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
@@ -7,62 +7,8 @@ import useStyle from '../../hooks/useStyle';
 import bc from '../../services/breathecode';
 import Icon from '../Icon';
 import useCustomToast from '../../hooks/useCustomToast';
-import { parseQuerys } from '../../utils/url';
-import SimpleModal from '../SimpleModal';
-import useSocialShare from '../../hooks/useSocialShare';
-
-function CouponInput({ coupon, width }) {
-  const { createToast } = useCustomToast({ toastId: 'referral-coupon' });
-  const { t } = useTranslation('profile');
-  const { lightColor } = useStyle();
-  const copyToClipboard = async (couponSlug) => {
-    try {
-      await navigator.clipboard.writeText(couponSlug);
-      createToast({
-        position: 'top',
-        title: t('coupon-copied'),
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (error) {
-      console.error('Failed to copy coupon:', error);
-    }
-  };
-  return (
-    <InputGroup size="md" width={width} display="flex" justifyContent="space-between">
-      <Input
-        value={coupon}
-        isReadOnly
-        color={lightColor}
-        borderColor="blue.default"
-        borderRadius="3px"
-        height="50px"
-        cursor="pointer"
-        textOverflow="ellipsis"
-        overflow="hidden"
-        whiteSpace="nowrap"
-        marginRight="20px"
-        onClick={() => copyToClipboard(coupon)}
-      />
-      <InputRightElement width="50px" height="50px" display="flex" alignItems="center" justifyContent="center" borderRightRadius="3px" backgroundColor="blue.default">
-        <Button
-          size="sm"
-          variant="solid"
-          background="blue.default"
-          color="gray.800"
-          onClick={() => copyToClipboard(coupon)}
-          minWidth="auto"
-          padding="6px"
-          height="32px"
-          _hover={{ color: 'none' }}
-        >
-          <Icon icon="copy" size="25px" />
-        </Button>
-      </InputRightElement>
-    </InputGroup>
-  );
-}
+import ShareReferralModal from '../ShareReferralModal';
+import CouponInput from '../ReferralCouponInput';
 
 function Coupon({ coupon, getDiscountText, handleAutoToggle }) {
   const { borderColor2, hexColor } = useStyle();
@@ -196,12 +142,11 @@ Coupon.defaultProps = {
 
 function ReferralProgram() {
   const { t } = useTranslation('profile');
-  const { hexColor, borderColor2, lightColor, modal } = useStyle();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { hexColor, borderColor2 } = useStyle();
   const [couponData, setCouponData] = useState(null);
-  const [userCouponData, setUserCouponData] = useState(null);
+  const [userCouponsData, setUserCouponsData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [checkoutLink, setCheckoutLink] = useState('null');
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const createToast = useCustomToast();
 
   useEffect(() => {
@@ -211,17 +156,14 @@ function ReferralProgram() {
           bc.payment().getMyCoupon(),
           bc.payment().getMyUserCoupons(),
         ]);
+        const couponInfo = couponResponse?.data?.[0];
+        const userCouponInfo = userCouponResponse.data;
         if (couponResponse?.data?.length > 0) {
-          const couponInfo = couponResponse.data[0];
           setCouponData(couponInfo);
         }
         if (userCouponResponse?.data?.length > 0) {
-          const userCouponInfo = userCouponResponse.data;
-          setUserCouponData(userCouponInfo);
+          setUserCouponsData(userCouponInfo);
         }
-        const baseUrl = process.env.DOMAIN_NAME || '';
-        const queryParams = parseQuerys({ plan: couponData?.plans[0]?.slug || '4geeks-plus-subscription', coupon: couponData?.slug });
-        setCheckoutLink(`${baseUrl}/checkout${queryParams}`);
       } catch (error) {
         console.error('Error fetching referral coupon:', error);
       } finally {
@@ -247,12 +189,6 @@ function ReferralProgram() {
     }
   };
 
-  // Hook para compartir en redes sociales
-  const { socials } = useSocialShare({
-    type: 'referral',
-    shareMessage: t('referral-share-message', { coupon: couponData?.slug }),
-  });
-
   if (isLoading) {
     return (
       <Box width="100%" height="auto" borderRadius="17px" border="1px solid" borderColor={borderColor2} p="30px">
@@ -263,12 +199,6 @@ function ReferralProgram() {
           {t('coupon-loading')}
         </Text>
       </Box>
-    );
-  }
-
-  if (!couponData) {
-    return (
-      <Text fontSize="15px" fontWeight="700" pb="18px">{t('no-referral-coupon')}</Text>
     );
   }
 
@@ -287,11 +217,10 @@ function ReferralProgram() {
   };
 
   const calculateMoneyEarned = () => {
-    if (!userCouponData || userCouponData.length === 0) return 0;
-
+    if (!userCouponsData || userCouponsData.length === 0) return 0;
     let totalEarned = 0;
 
-    userCouponData.forEach((userCoupon) => {
+    userCouponsData.forEach((userCoupon) => {
       const wasUsed = userCoupon.is_valid === false;
       if (wasUsed) {
         if (userCoupon.discount_type === 'FIXED_PRICE') {
@@ -327,6 +256,12 @@ function ReferralProgram() {
               paddingY="24px"
               aria-label="Referir a un amigo y ganar dinero"
               onClick={onOpen}
+              _active={{
+                backgroundColor: 'blue.default',
+              }}
+              _hover={{
+                backgroundColor: 'blue.default',
+              }}
             >
               <Icon icon="share" size="32px" me="8px" />
               {t('referral-refer-friend-button')}
@@ -342,8 +277,8 @@ function ReferralProgram() {
       </Heading>
       <Box display="flex" flexDirection="column" gridGap="20px">
         {
-          userCouponData?.length > 0 ? (
-            userCouponData?.map((rewardCoupon) => (
+          userCouponsData?.length > 0 ? (
+            userCouponsData?.map((rewardCoupon) => (
               <Coupon
                 key={rewardCoupon.id}
                 coupon={rewardCoupon}
@@ -358,97 +293,12 @@ function ReferralProgram() {
           )
         }
       </Box>
-      <SimpleModal
+      <ShareReferralModal
+        couponData={couponData}
         isOpen={isOpen}
         onClose={onClose}
-        size={{ sm: 'xl', md: '3xl' }}
-        isCentered
-        title={t('referral-modal-title')}
-        backgroundColor={modal.background}
-        headerStyles={{
-          fontSize: '15px',
-          color: lightColor,
-          textAlign: 'center',
-          letterSpacing: '0.05em',
-          fontWeight: '900',
-          textTransform: 'uppercase',
-        }}
-        bodyStyles={{ pb: 6 }}
-      >
-        <Grid templateColumns={{ base: '1fr', md: '57% 43%' }} gridGap="13px" mt="20px">
-          <Box display="flex" flexDirection="column" gridGap="20px">
-            <Text fontSize="16px">
-              {t('referral-share-coupon-text')}
-            </Text>
-            <CouponInput coupon={couponData?.slug} />
-            <Text fontSize="16px">
-              {t('referral-share-link-text')}
-            </Text>
-            <CouponInput coupon={checkoutLink} />
-            <Stack
-              display={socials.length <= 2 ? 'flex' : 'grid'}
-              gridTemplateColumns={`repeat(${socials.length}, minmax(min(5rem, 100%), 1fr))`}
-              justifyItems="center"
-              justifyContent={socials.length <= 2 && 'center'}
-              flexDirection={socials.length <= 2 && 'row'}
-              gridGap={socials.length <= 2 && '3rem'}
-              width="100%"
-            >
-              {socials.map((social) => (
-                <Box key={social.name} style={{ margin: '0px' }} textAlign="center" display="flex" flexDirection="column" gridGap="6px">
-                  <Button
-                    onClick={() => {
-                      if (social.target === 'popup') {
-                        window.open(social.href, 'popup', 'width=600,height=600,scrollbars=no,resizable=no');
-                      } else {
-                        window.open(social.href, '_blank');
-                      }
-                    }}
-                    minWidth={{ base: '60px', md: '68px' }}
-                    minHeight={{ base: '60px', md: '68px' }}
-                    alignItems="center"
-                    justifyContent="center"
-                    borderRadius="35px"
-                    backgroundColor={modal.featuredBackground}
-                    _hover={{
-                      backgroundColor: 'gray.100',
-                    }}
-                    _active={{
-                      backgroundColor: 'gray.100',
-                    }}
-                    style={{ margin: '0px' }}
-                    padding="0"
-                  >
-                    <Icon icon={social.name} color={social.color} width="36px" height="36px" />
-                  </Button>
-                  <Text fontSize="12px" marginBottom="5px">
-                    {social.label}
-                  </Text>
-                </Box>
-              ))}
-            </Stack>
-          </Box>
-          <Box backgroundColor={modal.featuredBackground} borderRadius="17px" padding="16px">
-            <Text fontSize="15px" fontWeight="700" pb="12px">
-              {t('how-it-works')}
-            </Text>
-            <Box display="flex" flexDirection="column" gridGap="12px">
-              <Text fontSize="13px" lineHeight="1.5">
-                {t('referral-step-1')}
-              </Text>
-              <Text fontSize="13px" lineHeight="1.5">
-                {t('referral-step-2')}
-              </Text>
-              <Text fontSize="13px" lineHeight="1.5">
-                {t('referral-step-3')}
-              </Text>
-              <Text fontSize="13px" lineHeight="1.5">
-                {t('referral-step-4')}
-              </Text>
-            </Box>
-          </Box>
-        </Grid>
-      </SimpleModal>
+        onOpen={onOpen}
+      />
     </>
   );
 }

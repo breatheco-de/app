@@ -163,7 +163,7 @@
   "referral-modal-title": "COMPARTE Y GANA DINERO",
   "referral-share-coupon-text": "Comparte este cupón con tus amigos:",
   "referral-share-link-text": "O comparte este enlace de registro:",
-  "referral-share-message": "¡Mira esta increíble oportunidad de aprendizaje con mi código de referido! Únete a mí en 4Geeks Academy y comienza tu viaje en programación. Usa mi código de descuento: {{coupon}}",
+  "referral-share-message": "¡Mira esta oportunidad de aprendizaje con mi código de referido! Únete a 4Geeks Academy y comienza tu viaje en programación utilizando mi código de descuento, disponible aquí:",
   "no-referral-coupon": "No se pudo obtener tu cupón de referido",
   "no-reward-coupons": "No tienes cupones de recompensa, refiere tu código a un amigo y obtén descuentos en tus próximos pagos"
 }

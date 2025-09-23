@@ -176,7 +176,7 @@
   "referral-modal-title": "SHARE AND MAKE MONEY",
   "referral-share-coupon-text": "Share this coupon with your friends:",
   "referral-share-link-text": "Or share this signup link:",
-  "referral-share-message": "Check out this amazing learning opportunity with my referral code! Join me at 4Geeks Academy and start your coding journey. Use this discount code: {{coupon}}",
-  "no-referral-coupon": "Couldn´t obtain your referral coupon",
+  "referral-share-message": "Check out this learning opportunity with my referral code! Join 4Geeks Academy and start your coding journey using my discount code, available here:",
+  "no-referral-coupon": "Couldn't obtain your referral coupon",
   "no-reward-coupons": "You don't have reward coupons, refer your code to a friend and get discounts on your next payments"
 }
