@@ -44,7 +44,6 @@ function ServiceSlug() {
 
   const isPaymentSuccess = paymentStatus === 'success';
 
-  const voidServices = ['ai-compilation'];
   const allowedServiceTypes = ['compilation', 'mentorship', 'event'];
 
   useEffect(() => {
@@ -64,7 +63,6 @@ function ServiceSlug() {
   }, [isPaymentSuccess]);
 
   const getServiceData = async () => {
-    // Prepare service data to get consumables
     try {
       setLoader('plan', true);
       setServiceError(null);
@@ -83,7 +81,7 @@ function ServiceSlug() {
 
       const serviceData = currentSubscription?.[serviceTypesFields[service_type]];
 
-      if (serviceData || (voidServices.includes(service_slug) && allSubscriptions.length > 0)) {
+      if (serviceData || allSubscriptions.length > 0) {
         let data;
         let resp;
 
