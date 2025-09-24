@@ -38,6 +38,11 @@
       "title": "Subscriptions",
       "value": "subscriptions",
       "disabled": false
+    },
+    {
+      "title": "Referral Program",
+      "value": "referral",
+      "disabled": false
     }
   ],
   "remove-github-modal": {
