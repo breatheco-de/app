@@ -60,6 +60,7 @@ function chooseProgram() {
   const [events, setEvents] = useState(null);
   const [liveClasses, setLiveClasses] = useState([]);
   const [loadingInvite, setLoadingInvite] = useState(null);
+  const [loadingReferral, setLoadingReferral] = useState(false);
   const { updateProgramList } = useProgramList();
   const { state: subscriptionsState } = useSubscriptions();
   const { isLoading: subscriptionLoading, subscriptions } = subscriptionsState;
@@ -284,10 +285,12 @@ function chooseProgram() {
   }, [user]);
 
   const getReferralCoupon = async () => {
+    setLoadingReferral(true);
     const response = await bc.payment().getMyCoupon();
     if (response?.data?.length > 0) {
       setReferralCoupon(response?.data?.[0]);
     }
+    setLoadingReferral(false);
   };
 
   useEffect(() => {
@@ -616,7 +619,7 @@ function chooseProgram() {
         </Box>
         <Flex flexDirection="column" gridGap="42px" flex={{ base: 1, md: 0.3 }}>
           <Box zIndex={10}>
-            <ReferralFeatured couponData={referralCoupon} />
+            <ReferralFeatured couponData={referralCoupon} isLoading={loadingReferral} />
           </Box>
           <Box zIndex={10}>
             <LiveEvent

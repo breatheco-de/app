@@ -1,11 +1,11 @@
-import { Box, Text, Button, useDisclosure, Flex } from '@chakra-ui/react';
+import { Box, Text, Button, useDisclosure, Flex, Spinner } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 import ShareReferralModal from './ShareReferralModal';
 
-function ReferralFeatured({ couponData }) {
+function ReferralFeatured({ couponData, isLoading }) {
   const { textColor } = useStyle();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { t } = useTranslation('choose-program');
@@ -45,6 +45,9 @@ function ReferralFeatured({ couponData }) {
             gap="10px"
             aria-label={t('sidebar.referral-featured-button')}
             onClick={onOpen}
+            isLoading={isLoading}
+            loadingText={t('sidebar.referral-featured-button')}
+            spinner={<Spinner size="sm" color="white" />}
             _hover={{
               backgroundColor: 'blue.default',
             }}
@@ -52,7 +55,7 @@ function ReferralFeatured({ couponData }) {
               backgroundColor: 'blue.default',
             }}
           >
-            <Icon icon="share" size="27px" />
+            <Icon icon="share" size="23px" />
             {t('sidebar.referral-featured-button')}
           </Button>
         </Flex>
@@ -69,10 +72,12 @@ ReferralFeatured.propTypes = {
       slug: PropTypes.string,
     })),
   }),
+  isLoading: PropTypes.bool,
 };
 
 ReferralFeatured.defaultProps = {
   couponData: null,
+  isLoading: false,
 };
 
 export default ReferralFeatured;

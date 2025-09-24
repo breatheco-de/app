@@ -152,7 +152,7 @@
   "discount-type-percentage": "Porcentaje",
   "coupon-auto-apply-next-renewal": "Aplicar automáticamente en la próxima renovación",
   "coupon-click-to-auto-apply": "Haz clic para aplicar automáticamente",
-  "coupon-already-used": "Este cupón ya fue usado",
+  "coupon-already-used": "Este cupón ya fue usado o no es válido",
   "coupon-loading": "Cargando...",
   "coupon-percent-of-payment": "% de cualquier pago",
   "coupon-of-any-payment": "de cualquier pago",
