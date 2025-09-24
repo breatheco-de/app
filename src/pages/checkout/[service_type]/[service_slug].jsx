@@ -29,7 +29,7 @@ function ServiceSlug() {
   const router = useRouter();
   const { t } = useTranslation('signup');
   const { query } = router;
-  const { service_type, service_slug } = query;
+  const { service_type, service_slug, academy } = query;
   const { isAuthenticated, isLoading } = useAuth();
   const { areSubscriptionsFetched, allSubscriptions, isLoading: isSubscriptionsLoading } = useSubscriptions();
   const {
@@ -85,9 +85,11 @@ function ServiceSlug() {
         let data;
         let resp;
 
+        const academyId = academy || allSubscriptions[0]?.academy?.id;
+
         if (serviceData) {
           resp = await bc.payment({
-            academy: Number(serviceData?.academy?.id),
+            academy: Number(academyId),
             event_type_set: service_type === 'event' ? service_slug : undefined,
             mentorship_service_set: service_type === 'mentorship' ? service_slug : undefined,
             country_code: location?.countryShort,
@@ -96,7 +98,7 @@ function ServiceSlug() {
           [data] = resp.data;
         } else {
           resp = await bc.payment({
-            academy: allSubscriptions[0].academy.id,
+            academy: Number(academyId),
             country_code: location?.countryShort,
           }).service().getAcademyServiceBySlug(service_slug);
           data = resp.data;
