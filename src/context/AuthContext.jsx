@@ -309,7 +309,7 @@ function AuthProvider({ children, pageProps }) {
                 first_name: userData.first_name,
                 last_name: userData.last_name,
                 avatar_url: userData.profile?.avatar_url || userData.github?.avatar_url,
-                language: userData.profile?.settings?.lang === 'us' ? 'en' : userData.profile?.settings?.lang,
+                language: settingsLang,
                 agent: getBrowserInfo(),
               },
             });
