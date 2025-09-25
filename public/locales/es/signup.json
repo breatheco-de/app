@@ -206,7 +206,7 @@
   "upgrade-a-plan": "Mejora un plan",
   "compilation-bundle-title": "Paquete de acceso a compilaciones",
   "take-me-there": "Comprar plan",
-  "coupon-not-valid": "El cupón {{name}} no es válido",
+  "coupon-not-valid": "Este cupón no es válido o no funciona para el plan {{plan}}. Si crees que esto es un error, contacta a <strong>support@4geeks.com<strong>.",
   "prereq-modal": {
     "continue-registration": "Continuar con el registro",
     "go-to-page": "Página {{page}}"

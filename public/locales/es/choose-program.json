@@ -41,7 +41,10 @@
   "description": "Estos son los programas en los que estás participando actualmente, selecciona el curso en el que quieras entrar:",
   "sidebar": {
     "live-events-title": "Aprende en vivo",
-    "join-our-community": "Únete a nuestra comunidad"
+    "join-our-community": "Únete a nuestra comunidad",
+    "referral-featured-title": "Gana dinero referiendo a un amigo",
+    "referral-featured-label": "Ahora puedes referir a amigos y ganar dinero mientras aprendes",
+    "referral-featured-button": "Referir a un amigo"
   },
   "feedback": {
     "title": "Feedback",

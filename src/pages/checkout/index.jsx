@@ -198,7 +198,6 @@ function Checkout() {
 
     fetchPrerequisites();
   }, [course, lang]);
-
   const handleClosePrereq = () => {
     if (course && typeof window !== 'undefined') sessionStorage.setItem(`prereq_seen_${course}_${lang}`, 'true');
     setPrereqModalOpen(false);
@@ -593,9 +592,21 @@ function Checkout() {
                           </Formik>
                         )}
                         {couponError && (
-                          <Text paddingStart="3px" size="sm" color="red">
-                            {t('coupon-not-valid', { name: discountCode })}
-                          </Text>
+                          <Text
+                            paddingStart="3px"
+                            size="sm"
+                            color="red"
+                            dangerouslySetInnerHTML={{
+                              __html: t('coupon-not-valid', {
+                                plan: originalPlan?.title.split(' ').map((word) => {
+                                  const firstLetter = word.match(/[a-zA-Z]/);
+                                  if (!firstLetter) return word;
+                                  const { index } = firstLetter;
+                                  return word.slice(0, index) + word.charAt(index).toUpperCase() + word.slice(index + 1);
+                                }).join(' '),
+                              }),
+                            }}
+                          />
                         )}
 
                         {allCoupons?.length > 0

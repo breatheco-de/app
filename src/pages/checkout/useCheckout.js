@@ -10,6 +10,7 @@ import signupAction from '../../store/actions/signupAction';
 import useSignup from '../../hooks/useSignup';
 import { BASE_PLAN, currenciesSymbols } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
+import { usePersistentBySession } from '../../hooks/usePersistent';
 import useCustomToast from '../../hooks/useCustomToast';
 
 const useCheckout = () => {
@@ -46,7 +47,8 @@ const useCheckout = () => {
   const addOnsQS = getQueryString('add_ons');
   const planFormated = plan || BASE_PLAN;
 
-  const coupon = userSession?.coupon || userSession?.ref || '';
+  const [couponFromSession] = usePersistentBySession('coupon', '');
+  const coupon = couponFromSession || userSession?.ref || '';
 
   const couponValue = useMemo(() => {
     const formatedCouponQuery = couponQuery && couponQuery.replace(/[^a-zA-Z0-9-\s]/g, '');

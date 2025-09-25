@@ -27,6 +27,7 @@ import useProgramList from '../../store/actions/programListAction';
 import SimpleModal from '../../components/SimpleModal';
 import ReactPlayerV2 from '../../components/ReactPlayerV2';
 import SupportSidebar from '../../components/SupportSidebar';
+import ReferralFeatured from '../../components/ReferralFeatured';
 import Feedback from '../../components/Feedback';
 import axios from '../../axios';
 import LanguageSelector from '../../components/LanguageSelector';
@@ -59,6 +60,7 @@ function chooseProgram() {
   const [events, setEvents] = useState(null);
   const [liveClasses, setLiveClasses] = useState([]);
   const [loadingInvite, setLoadingInvite] = useState(null);
+  const [loadingReferral, setLoadingReferral] = useState(false);
   const { updateProgramList } = useProgramList();
   const { state: subscriptionsState } = useSubscriptions();
   const { isLoading: subscriptionLoading, subscriptions } = subscriptionsState;
@@ -73,6 +75,7 @@ function chooseProgram() {
     isLoading: true,
     data: [],
   });
+  const [referralCoupon, setReferralCoupon] = useState(null);
   const { createToast } = useCustomToast({ toastId: 'invitation-error-accepted' });
   const { hexColor } = useStyle();
   const isClosedLateModal = getStorageItem('isClosedLateModal');
@@ -280,6 +283,19 @@ function chooseProgram() {
       setCohortSession(null);
     }
   }, [user]);
+
+  const getReferralCoupon = async () => {
+    setLoadingReferral(true);
+    const response = await bc.payment().getMyCoupon();
+    if (response?.data?.length > 0) {
+      setReferralCoupon(response?.data?.[0]);
+    }
+    setLoadingReferral(false);
+  };
+
+  useEffect(() => {
+    getReferralCoupon();
+  }, []);
 
   const getPendingInvites = async () => {
     try {
@@ -602,6 +618,9 @@ function chooseProgram() {
           )}
         </Box>
         <Flex flexDirection="column" gridGap="42px" flex={{ base: 1, md: 0.3 }}>
+          <Box zIndex={10}>
+            <ReferralFeatured couponData={referralCoupon} isLoading={loadingReferral} />
+          </Box>
           <Box zIndex={10}>
             <LiveEvent
               featureLabel={t('common:live-event.title')}
