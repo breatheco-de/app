@@ -157,12 +157,12 @@ function ReferralProgram() {
           bc.payment().getMyUserCoupons(),
         ]);
         const couponInfo = couponResponse?.data?.[0];
-        const userCouponInfo = userCouponResponse.data;
+        const userCouponsInfo = userCouponResponse.data;
         if (couponResponse?.data?.length > 0) {
           setCouponData(couponInfo);
         }
         if (userCouponResponse?.data?.length > 0) {
-          setUserCouponsData(userCouponInfo);
+          setUserCouponsData(userCouponsInfo);
         }
       } catch (error) {
         console.error('Error fetching referral coupon:', error);
@@ -210,7 +210,8 @@ function ReferralProgram() {
     }
 
     if (userCoupon.discount_type === 'FIXED_PRICE') {
-      return `US$${userCoupon.discount_value} ${t('coupon-of-any-payment')}`;
+      const fixedPrice = Math.round(userCoupon.discount_value);
+      return `US$${fixedPrice} ${t('coupon-of-any-payment')}`;
     }
 
     return '';

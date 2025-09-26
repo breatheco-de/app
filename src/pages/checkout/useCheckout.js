@@ -364,7 +364,7 @@ const useCheckout = () => {
       return t('discount-value-off', { value: `${coup.discount_value * 100}%` });
     }
     if (coup.discount_type === 'FIXED_PRICE') {
-      return t('discount-value-off', { value: `$${coup.discount_value}` });
+      return t('discount-value-off', { value: `$${Math.round(coup.discount_value)}` });
     }
     return '';
   };
