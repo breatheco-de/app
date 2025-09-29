@@ -85,6 +85,14 @@ function PricingView() {
 
   const handleViewModeChange = (mode) => {
     setViewMode(mode);
+    // Update URL with view mode
+    router.push({
+      pathname: router.pathname,
+      query: {
+        ...router.query,
+        view: mode,
+      },
+    }, undefined, { shallow: true });
   };
 
   useEffect(() => {
@@ -92,8 +100,17 @@ function PricingView() {
       setViewMode('self-paced');
     } else {
       setViewMode('immersive-bootcamps');
+      if (!queryView) {
+        router.replace({
+          pathname: router.pathname,
+          query: {
+            ...router.query,
+            view: 'immersive-bootcamps',
+          },
+        }, undefined, { shallow: true });
+      }
     }
-  }, [queryView]);
+  }, [queryView, router]);
 
   useEffect(() => {
     if (previousViewMode !== viewMode) {
