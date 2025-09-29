@@ -208,7 +208,7 @@ function MktHeroSection({
                 position="relative"
                 top={{ base: '50%', sm: '0', md: '105px', lg: '105px', xl: '105px' }}
                 transform={{ base: 'scale(1.3)', sm: 'scale(1.1)', md: 'scale(1.1)', lg: 'scale(1.3)', xl: 'scale(1.3)' }}
-                px={{ base: '40px', sm: '11px', md: '13px', lg: '6px', xl: '13px' }}
+                px={{ base: '30px', sm: '11px', md: '13px', lg: '6px', xl: '13px' }}
               >
                 <PrismicRichText field={slice?.primary?.button_text} />
               </Button>
