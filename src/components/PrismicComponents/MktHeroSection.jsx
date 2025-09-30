@@ -65,7 +65,7 @@ function MktHeroSection({
             <PrismicTextComponent
               field={slice?.primary?.title}
               fontWeight="400"
-              fontSize={{ base: '28px', md: '38px', lg: '45px' }}
+              fontSize={{ base: '27px', md: '38px', lg: '45px' }}
               display="initial"
               lineHeight="inherit"
               fontFamily={fontFamily}
