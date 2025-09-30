@@ -137,10 +137,8 @@ function PricingView() {
     }
     return allPlansList;
   };
-
   const handleFetchPlan = async () => {
     const data = await handleSuggestedPlan(planSlug);
-    console.log(data);
 
     const firstPlan = data?.planList?.[0];
     if (firstPlan?.featured_info?.status_code === 404 && firstPlan?.featured_info?.detail === 'Plan not found') {
@@ -224,7 +222,6 @@ function PricingView() {
       setIsFetching((prev) => ({ ...prev, selectedPlan: false }));
     }
   }, [status, isLoading, isQueryFetching, planData?.title]);
-
   const fetchCourses = async () => {
     try {
       const response = await bc.marketing({
@@ -462,26 +459,28 @@ function PricingView() {
 
                     <Box
                       display="grid"
-                      gridTemplateColumns="repeat(auto-fit, 320px)"
+                      gridTemplateColumns="repeat(auto-fit, 280px)"
                       gap="24px"
                       justifyItems="start"
-                      justifyContent="center"
                     >
-                      {premiumPlanCourses.map((course) => (
-                        <ProgramCard
-                          isMarketingCourse
-                          icon="coding"
-                          iconLink={course?.icon_url}
-                          iconBackground="blue.default"
-                          handleChoose={() => router.push(course?.course_translation?.landing_url)}
-                          programName={course?.course_translation.title}
-                          programDescription={course?.course_translation?.description}
-                          bullets={course?.course_translation?.course_modules}
-                          width="100%"
-                          background={backgroundColor}
-                          bulletsBackground={featuredColor}
-                        />
-                      ))}
+                      {premiumPlanCourses.map((course) => {
+                        if (!course?.course_translation || !course?.course_translation?.landing_url) return null;
+                        return (
+                          <ProgramCard
+                            isMarketingCourse
+                            icon="coding"
+                            iconLink={course?.icon_url}
+                            iconBackground="blue.default"
+                            handleChoose={() => router.push(course?.course_translation?.landing_url)}
+                            programName={course?.course_translation?.title}
+                            programDescription={course?.course_translation?.description}
+                            bullets={course?.course_translation?.course_modules}
+                            width="100%"
+                            background={backgroundColor}
+                            bulletsBackground={featuredColor}
+                          />
+                        );
+                      })}
                     </Box>
                   </Box>
                 )}
