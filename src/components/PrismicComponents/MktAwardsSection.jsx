@@ -48,7 +48,7 @@ function RenderAwardSlide({ item, backgroundColor, variant }) {
         borderRadius="10px"
         padding="10px"
         alt={item.image.alt || 'Award Image'}
-        maxH={parseProp(item.image_max_height, '150px')}
+        maxH={parseProp(item.image_max_height, '105px')}
         maxW={parseProp(item.image_max_width, '100%')}
         objectFit="contain"
       />

@@ -65,6 +65,7 @@ function MktHeroSection({
             <PrismicTextComponent
               field={slice?.primary?.title}
               fontWeight="400"
+              fontSize={{ base: '27px', md: '38px', lg: '45px' }}
               display="initial"
               lineHeight="inherit"
               fontFamily={fontFamily}
@@ -77,6 +78,7 @@ function MktHeroSection({
             <PrismicTextComponent
               field={slice?.primary?.description}
               lineHeight="inherit"
+              fontSize={{ base: '15px', lg: '18px' }}
             />
           </Text>
         )}
@@ -204,9 +206,9 @@ function MktHeroSection({
                 isLoading={isButtonLoading}
                 loadingText="Loading..."
                 position="relative"
-                top={{ base: '0', sm: '0', md: '105px', lg: '105px', xl: '105px' }}
+                top={{ base: '50%', sm: '0', md: '105px', lg: '105px', xl: '105px' }}
                 transform={{ base: 'scale(1.3)', sm: 'scale(1.1)', md: 'scale(1.1)', lg: 'scale(1.3)', xl: 'scale(1.3)' }}
-                px={{ base: '13px', sm: '11px', md: '13px', lg: '6px', xl: '13px' }}
+                px={{ base: '30px', sm: '11px', md: '13px', lg: '6px', xl: '13px' }}
               >
                 <PrismicRichText field={slice?.primary?.button_text} />
               </Button>

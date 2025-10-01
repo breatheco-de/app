@@ -70,7 +70,7 @@ function ProgramCard({
   programName, programDescription, haveFreeTrial, startsIn, endsAt, signInDate, icon, iconBackground,
   syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
   width, assistants, teacher, handleChoose, isHiddenOnPrework, isAvailableAsSaas,
-  subscriptionStatus, subscription, isMarketingCourse, iconLink, bullets, background, isFinantialStatusLate, isLoadingPageContent,
+  subscriptionStatus, subscription, isMarketingCourse, iconLink, bullets, background, bulletsBackground, isFinantialStatusLate, isLoadingPageContent,
 }) {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
@@ -78,7 +78,7 @@ function ProgramCard({
 
   const freeTrialExpireDateValue = isValidDate(freeTrialExpireDate) ? new Date(freeTrialExpireDate) : new Date(subMinutes(new Date(), 1));
   const now = new Date();
-  const { backgroundColor, lightColor, hexColor } = useStyle();
+  const { lightColor, hexColor } = useStyle();
   const isFreeTrial = isAvailableAsSaas && subscriptionStatus === 'FREE_TRIAL';
   const isCancelled = isAvailableAsSaas && (subscriptionStatus === 'CANCELLED' || subscriptionStatus === 'PAYMENT_ISSUE');
   const isExpired = isFreeTrial && freeTrialExpireDateValue < now;
@@ -500,7 +500,7 @@ function ProgramCard({
                 </Text>
               </Box>
               {bullets?.length > 0 && (
-                <Flex flexDirection="column" gridGap="8px" background={backgroundColor} padding="10px 12px" borderRadius="4px">
+                <Flex flexDirection="column" gridGap="8px" background={bulletsBackground} padding="10px 12px" borderRadius="4px">
                   {bullets.slice(0, showAllBullets ? bullets.length : 4).map((l) => (
                     <Box key={l.name} display="flex" fontWeight={700} fontSize="14px" gridGap="10px" alignItems="center">
                       <Icon icon="checked2" color={hexColor.green} width="14px" height="14px" />
@@ -581,6 +581,7 @@ ProgramCard.propTypes = {
   subscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   bullets: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   background: PropTypes.string,
+  bulletsBackground: PropTypes.string,
   isLoadingPageContent: PropTypes.bool,
   isFinantialStatusLate: PropTypes.bool,
 };
@@ -609,6 +610,7 @@ ProgramCard.defaultProps = {
   subscription: {},
   bullets: [],
   background: '',
+  bulletsBackground: '',
   isLoadingPageContent: false,
   isFinantialStatusLate: false,
 };

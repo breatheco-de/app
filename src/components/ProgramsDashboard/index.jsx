@@ -21,7 +21,7 @@ function ProgramsDashboard({ cohorts, setLateModalProps }) {
   const [marketingCursesList, setMarketingCursesList] = useState([]);
   const [showFinished, setShowFinished] = useState(false);
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
-  const { featuredColor } = useStyle();
+  const { featuredColor, backgroundColor } = useStyle();
   const router = useRouter();
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
 
@@ -170,6 +170,7 @@ function ProgramsDashboard({ cohorts, setLateModalProps }) {
                 bullets={item?.course_translation?.course_modules}
                 width="100%"
                 background={featuredColor}
+                bulletsBackground={backgroundColor}
               />
             ))}
           </Box>

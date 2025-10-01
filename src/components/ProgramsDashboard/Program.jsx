@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { subMinutes } from 'date-fns';
 import { memo, useState } from 'react';
 import { getAssignmentsCount } from '../../utils/cohorts';
+import useStyle from '../../hooks/useStyle';
 import ProgramCard from '../ProgramCard';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useSubscriptions from '../../hooks/useSubscriptions';
@@ -12,6 +13,7 @@ import useProgramList from '../../store/actions/programListAction';
 function Program({ cohort, onOpenModal, setLateModalProps }) {
   const { setCohortSession, cohortsAssignments } = useCohortHandler();
   const { state } = useSubscriptions();
+  const { featuredColor, backgroundColor } = useStyle();
   const { isLoading } = state;
   const [isLoadingPageContent, setIsLoadingPageContent] = useState(false);
   const { state: programsList } = useProgramList();
@@ -105,6 +107,8 @@ function Program({ cohort, onOpenModal, setLateModalProps }) {
       handleChoose={onClickHandler}
       isHiddenOnPrework={isHiddenOnPrework && cohort.stage.includes('PREWORK')}
       onOpenModal={onOpenModal}
+      background={featuredColor}
+      bulletsBackground={backgroundColor}
     />
   );
 }
