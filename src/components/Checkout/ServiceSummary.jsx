@@ -21,9 +21,10 @@ import useSignup from '../../hooks/useSignup';
 import CardForm from './CardForm';
 import { reportDatalayer } from '../../utils/requests';
 import { BREATHECODE_HOST, SILENT_CODE } from '../../utils/variables';
-import { formatPrice, getStorageItem, getBrowserInfo } from '../../utils';
+import { formatPrice, getStorageItem, getBrowserInfo, unSlugifyCapitalize } from '../../utils';
 
 function ServiceSummary({ service }) {
+  const serviceTitle = service?.service?.title || unSlugifyCapitalize(service?.service?.slug);
   const { createToast } = useCustomToast({ toastId: 'service-summary' });
   const { isAuthenticated } = useAuth();
   const { location } = useSession();
@@ -46,22 +47,16 @@ function ServiceSummary({ service }) {
   const redirectedFrom = getStorageItem('redirected-from');
   const isPaymentSuccess = paymentStatus === 'success';
 
+  const getServiceDisplayInfo = () => ({
+    name: serviceTitle,
+    quantityOfConsumables: (item) => `${item.qty} ${serviceTitle}`,
+    pricePerUnit: (item) => `${formatPrice(item.pricePerUnit, true)} per ${serviceTitle.toLowerCase()}`,
+  });
+
   const serviceTypes = {
-    mentorship: {
-      name: t('consumables.sessions'),
-      quantityOfConsumables: (item) => t('consumables.qty-mentorship-to-consume', { qty: item.qty }),
-      pricePerUnit: (item) => t('consumables.price-mentorship-per-qty', { price: formatPrice(item.pricePerUnit, true) }),
-    },
-    event: {
-      name: t('consumables.events'),
-      quantityOfConsumables: (item) => t('consumables.qty-events-to-consume', { qty: item.qty }),
-      pricePerUnit: (item) => t('consumables.price-event-per-qty', { price: formatPrice(item.pricePerUnit, true) }),
-    },
-    compilation: {
-      name: t('consumables.compilations'),
-      quantityOfConsumables: (item) => t('consumables.qty-compilations-to-consume', { qty: item.qty }),
-      pricePerUnit: (item) => t('consumables.price-compilation-per-qty', { price: formatPrice(item.pricePerUnit, true) }),
-    },
+    mentorship: getServiceDisplayInfo(),
+    event: getServiceDisplayInfo(),
+    compilation: getServiceDisplayInfo(),
   };
 
   const dataToAssign = {
@@ -86,7 +81,6 @@ function ServiceSummary({ service }) {
         isClosable: true,
         duration: 6000,
       });
-      console.log('welelelelelelelel', data?.detail);
       setDeclinedModalProps({
         title: t('transaction-denied'),
         description: data?.detail || t('payment-not-processed'),
@@ -304,38 +298,6 @@ function ServiceSummary({ service }) {
         </Box>
       ) : (
         <>
-          <Box display="flex" flexDirection="column" gridGap="3rem" background={backgroundColor} p={{ base: '20px 22px', md: '14px 23px' }} borderRadius="15px">
-            <Box
-              display="flex"
-              flexDirection="column"
-              w="100%"
-              height="fit-content"
-              p="11px 14px"
-              gridGap="8px"
-              borderRadius="14px"
-            >
-              <Heading size="16px" fontWeight={900} color="yellow.default" textTransform="uppercase">
-                {t('getting-for')}
-              </Heading>
-              <Box display="flex" gridGap="12px" alignItems="center">
-                <Box display="flex" flexDirection="column">
-                  <Box
-                    background="yellow.default"
-                    borderRadius="50px"
-                    width="fit-content"
-                    padding="10px"
-                  >
-                    <Icon icon="idea" width="40px" height="40px" color="#fff" />
-                  </Box>
-                </Box>
-                <Box display="flex" width="100%" flexDirection="column" gridGap="7px">
-                  <Heading size="21px" width="70%">
-                    {t(`${service.serviceInfo.type}-bundle-title`)}
-                  </Heading>
-                </Box>
-              </Box>
-            </Box>
-          </Box>
           <Box
             display="flex"
             flexDirection={{ base: 'column', md: 'row' }}
@@ -485,13 +447,14 @@ function ServiceSummary({ service }) {
               {loader.paymentMethods ? (
                 <LoaderScreen />
               ) : (
-                <Box background={backgroundColor} p={{ base: '22px', md: '14px 23px' }} borderRadius="15px">
+                <Box background={backgroundColor} mt="10px" p={{ base: '22px', md: '14px 23px' }} borderRadius="15px">
                   <Heading size="xsm">
                     {t('payment-methods')}
                   </Heading>
                   <Flex flexDirection="column" gridGap="4px" width="100%" mt="1rem">
                     <AcordionList
                       width="100%"
+                      defaultIndex={0}
                       list={paymentMethods.map((method) => {
                         if (!method.is_credit_card) {
                           return {

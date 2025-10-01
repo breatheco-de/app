@@ -29,7 +29,7 @@ function ServiceSlug() {
   const router = useRouter();
   const { t } = useTranslation('signup');
   const { query } = router;
-  const { service_type, service_slug } = query;
+  const { service_type, service_slug, academy } = query;
   const { isAuthenticated, isLoading } = useAuth();
   const { areSubscriptionsFetched, allSubscriptions, isLoading: isSubscriptionsLoading } = useSubscriptions();
   const {
@@ -44,7 +44,6 @@ function ServiceSlug() {
 
   const isPaymentSuccess = paymentStatus === 'success';
 
-  const voidServices = ['ai-compilation'];
   const allowedServiceTypes = ['compilation', 'mentorship', 'event'];
 
   useEffect(() => {
@@ -64,7 +63,6 @@ function ServiceSlug() {
   }, [isPaymentSuccess]);
 
   const getServiceData = async () => {
-    // Prepare service data to get consumables
     try {
       setLoader('plan', true);
       setServiceError(null);
@@ -83,13 +81,15 @@ function ServiceSlug() {
 
       const serviceData = currentSubscription?.[serviceTypesFields[service_type]];
 
-      if (serviceData || (voidServices.includes(service_slug) && allSubscriptions.length > 0)) {
+      if (serviceData || allSubscriptions.length > 0) {
         let data;
         let resp;
 
+        const academyId = academy || allSubscriptions[0]?.academy?.id;
+
         if (serviceData) {
           resp = await bc.payment({
-            academy: Number(serviceData?.academy?.id),
+            academy: Number(academyId),
             event_type_set: service_type === 'event' ? service_slug : undefined,
             mentorship_service_set: service_type === 'mentorship' ? service_slug : undefined,
             country_code: location?.countryShort,
@@ -98,7 +98,7 @@ function ServiceSlug() {
           [data] = resp.data;
         } else {
           resp = await bc.payment({
-            academy: allSubscriptions[0].academy.id,
+            academy: Number(academyId),
             country_code: location?.countryShort,
           }).service().getAcademyServiceBySlug(service_slug);
           data = resp.data;
