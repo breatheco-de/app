@@ -13,7 +13,22 @@ import CouponInput from '../ReferralCouponInput';
 function Coupon({ coupon, getDiscountText, handleAutoToggle }) {
   const { borderColor2, hexColor } = useStyle();
   const [checked, setChecked] = useState(coupon?.auto || false);
+  const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation('profile');
+
+  const handleSwitchChange = async () => {
+    setIsLoading(true);
+    const previousValue = checked;
+    try {
+      const newAutoValue = await handleAutoToggle();
+      setChecked(newAutoValue);
+    } catch (error) {
+      console.error('Error updating coupon auto setting:', error);
+      setChecked(previousValue);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Box width="100%" height="auto" borderRadius="17px" border="1px solid" borderColor={borderColor2} p="20px">
@@ -44,11 +59,9 @@ function Coupon({ coupon, getDiscountText, handleAutoToggle }) {
                   <Box position="relative" display="flex" alignItems="center" width="fit-content">
                     <Switch
                       padding="1px"
-                      defaultChecked={checked}
-                      onChange={() => {
-                        setChecked(!checked);
-                        handleAutoToggle();
-                      }}
+                      isChecked={checked}
+                      isDisabled={isLoading}
+                      onChange={handleSwitchChange}
                       sx={{
                         '.chakra-switch__thumb': {
                           width: '14px',
@@ -114,16 +127,6 @@ function Coupon({ coupon, getDiscountText, handleAutoToggle }) {
     </Box>
   );
 }
-
-CouponInput.propTypes = {
-  coupon: PropTypes.string.isRequired,
-  width: PropTypes.string,
-};
-
-CouponInput.defaultProps = {
-  width: '100%',
-};
-
 Coupon.propTypes = {
   coupon: PropTypes.shape({
     slug: PropTypes.string,
@@ -147,7 +150,7 @@ function ReferralProgram() {
   const [userCouponsData, setUserCouponsData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const createToast = useCustomToast();
+  const { createToast } = useCustomToast();
 
   useEffect(() => {
     const fetchCoupon = async () => {
@@ -176,7 +179,12 @@ function ReferralProgram() {
 
   const handleAutoToggle = async (couponSlug) => {
     try {
-      await bc.payment().updateCoupon(couponSlug);
+      const response = await bc.payment().updateCoupon(couponSlug);
+      if (response.status < 400) {
+        const data = await response.data;
+        return data.auto;
+      }
+      throw new Error('Error updating coupon');
     } catch (error) {
       console.error('Error updating coupon:', error);
       createToast({
@@ -186,6 +194,7 @@ function ReferralProgram() {
         duration: 3000,
         isClosable: true,
       });
+      throw error;
     }
   };
 

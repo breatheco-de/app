@@ -6,7 +6,7 @@ import useStyle from '../hooks/useStyle';
 
 import Icon from './Icon';
 
-function CouponInput({ coupon, width }) {
+function CouponInput({ coupon, ...rest }) {
   const { createToast } = useCustomToast({ toastId: 'referral-coupon' });
   const { t } = useTranslation('profile');
   const { lightColor } = useStyle();
@@ -25,7 +25,7 @@ function CouponInput({ coupon, width }) {
     }
   };
   return (
-    <InputGroup size="md" width={width} display="flex" justifyContent="space-between">
+    <InputGroup size="md" display="flex" justifyContent="space-between" {...rest}>
       <Input
         value={coupon}
         isReadOnly
@@ -61,11 +61,6 @@ function CouponInput({ coupon, width }) {
 
 CouponInput.propTypes = {
   coupon: PropTypes.string.isRequired,
-  width: PropTypes.string,
-};
-
-CouponInput.defaultProps = {
-  width: '100%',
 };
 
 export default CouponInput;
