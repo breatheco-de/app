@@ -321,17 +321,6 @@ const useCheckout = () => {
     setAllCoupons(coupons);
   }, [selfAppliedCoupon, discountCoupon]);
 
-  const processedPrice = useMemo(() => {
-    let pricingData = { ...selectedPlan };
-    const discounts = [];
-
-    allCoupons.forEach((c) => {
-      pricingData = getPriceWithDiscount(pricingData.price, c);
-      discounts.push(pricingData);
-    });
-    return pricingData;
-  }, [allCoupons, selectedPlan]);
-
   const getDiscountValue = (coup) => {
     if (!coup?.discount_value || !coup?.discount_type) return '';
     if (coup.discount_type === 'PERCENT_OFF') {
@@ -454,29 +443,6 @@ const useCheckout = () => {
     }
 
     return null;
-  };
-
-  const calculateTotalPrice = () => {
-    const months = selectedPlan.how_many_months || 1;
-
-    if (processedPrice.discountType === 'FIXED_PRICE') {
-      const firstMonthPrice = processedPrice.price;
-      const remainingMonthsPrice = processedPrice.originalPrice * (months - 1);
-      return (firstMonthPrice + remainingMonthsPrice).toFixed(2);
-    }
-
-    return (processedPrice.price * (selectedPlan.how_many_months ? selectedPlan.how_many_months : 1)).toFixed(2);
-  };
-
-  const getDiscountValue = (coup) => {
-    if (!coup?.discount_value || !coup?.discount_type) return '';
-    if (coup.discount_type === 'PERCENT_OFF') {
-      return t('discount-value-off', { value: `${coup.discount_value * 100}%` });
-    }
-    if (coup.discount_type === 'FIXED_PRICE') {
-      return t('discount-value-off', { value: `$${coup.discount_value}` });
-    }
-    return '';
   };
 
   // STEP 1: GET THE PLAN DATA (first request the user perceives)
