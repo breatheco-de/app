@@ -6,6 +6,10 @@ import type * as prismicClient from "@prismicio/client";
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
 type PageDocumentDataSlicesSlice =
+  | OutcomesSlice
+  | ProductPricingSlice
+  | EventToastSlice
+  | PageBubbleSlice
   | HeroSectionSlice
   | LearningPlatformSectionSlice
   | RatingsSlice
@@ -431,6 +435,136 @@ type EventCardsSliceVariation = EventCardsSliceDefault;
 export type EventCardsSlice = prismic.SharedSlice<
   "event_cards",
   EventCardsSliceVariation
+>;
+
+/**
+ * Primary content in *EventToast → Default → Primary*
+ */
+export interface EventToastSliceDefaultPrimary {
+  /**
+   * Toast Text field in *EventToast → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_toast.default.primary.toast_text
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  toast_text: prismic.KeyTextField;
+
+  /**
+   * Toast Color Light Mode field in *EventToast → Default → Primary*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_toast.default.primary.toast_color_light_mode
+   * - **Documentation**: https://prismic.io/docs/field#color
+   */
+  toast_color_light_mode: prismic.ColorField;
+
+  /**
+   * Toast Color Dark Mode field in *EventToast → Default → Primary*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_toast.default.primary.toast_color_dark_mode
+   * - **Documentation**: https://prismic.io/docs/field#color
+   */
+  toast_color_dark_mode: prismic.ColorField;
+
+  /**
+   * Academy field in *EventToast → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_toast.default.primary.academy
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  academy: prismic.KeyTextField;
+
+  /**
+   * Type field in *EventToast → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_toast.default.primary.type
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  type: prismic.KeyTextField;
+
+  /**
+   * Status field in *EventToast → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_toast.default.primary.status
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  status: prismic.KeyTextField;
+
+  /**
+   * Max Width field in *EventToast → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_toast.default.primary.max_width
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  max_width: prismic.KeyTextField;
+
+  /**
+   * Host Image field in *EventToast → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_toast.default.primary.host_image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  host_image: prismic.ImageField<never>;
+}
+
+/**
+ * Primary content in *EventToast → Items*
+ */
+export interface EventToastSliceDefaultItem {
+  /**
+   * Host Group Image field in *EventToast → Items*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: event_toast.items[].host_group_image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  host_group_image: prismic.ImageField<never>;
+}
+
+/**
+ * Default variation for EventToast Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type EventToastSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<EventToastSliceDefaultPrimary>,
+  Simplify<EventToastSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *EventToast*
+ */
+type EventToastSliceVariation = EventToastSliceDefault;
+
+/**
+ * EventToast Shared Slice
+ *
+ * - **API ID**: `event_toast`
+ * - **Description**: EventToast
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type EventToastSlice = prismic.SharedSlice<
+  "event_toast",
+  EventToastSliceVariation
 >;
 
 /**
@@ -2800,6 +2934,246 @@ export type OneColumnSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *Outcomes → Default → Primary*
+ */
+export interface OutcomesSliceDefaultPrimary {
+  /**
+   * Center logo field in *Outcomes → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.default.primary.center_logo
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  center_logo: prismic.ImageField<never>;
+
+  /**
+   * Center color field in *Outcomes → Default → Primary*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.default.primary.center_color
+   * - **Documentation**: https://prismic.io/docs/field#color
+   */
+  center_color: prismic.ColorField;
+
+  /**
+   * Avatar Top field in *Outcomes → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.default.primary.avatar_top
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  avatar_top: prismic.ImageField<never>;
+
+  /**
+   * Avatar Bottom Left field in *Outcomes → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.default.primary.avatar_bottom_left
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  avatar_bottom_left: prismic.ImageField<never>;
+
+  /**
+   * Avatar Bottom Right field in *Outcomes → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.default.primary.avatar_bottom_right
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  avatar_bottom_right: prismic.ImageField<never>;
+
+  /**
+   * Avatar top label field in *Outcomes → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.default.primary.avatar_top_label
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  avatar_top_label: prismic.KeyTextField;
+
+  /**
+   * Avatar bottom left label field in *Outcomes → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.default.primary.avatar_bottom_left_label
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  avatar_bottom_left_label: prismic.KeyTextField;
+
+  /**
+   * Avatar Bottom Right Label field in *Outcomes → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.default.primary.avatar_bottom_right_label
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  avatar_bottom_right_label: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *Outcomes → Items*
+ */
+export interface OutcomesSliceDefaultItem {
+  /**
+   * Side field in *Outcomes → Items*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.items[].side
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  side: prismic.SelectField<"left" | "right">;
+
+  /**
+   * Value field in *Outcomes → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.items[].value
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  value: prismic.KeyTextField;
+
+  /**
+   * Description field in *Outcomes → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: outcomes.items[].description
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  description: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for Outcomes Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type OutcomesSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<OutcomesSliceDefaultPrimary>,
+  Simplify<OutcomesSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *Outcomes*
+ */
+type OutcomesSliceVariation = OutcomesSliceDefault;
+
+/**
+ * Outcomes Shared Slice
+ *
+ * - **API ID**: `outcomes`
+ * - **Description**: Outcomes
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type OutcomesSlice = prismic.SharedSlice<
+  "outcomes",
+  OutcomesSliceVariation
+>;
+
+/**
+ * Primary content in *PageBubble → Default → Primary*
+ */
+export interface PageBubbleSliceDefaultPrimary {
+  /**
+   * Url field in *PageBubble → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: page_bubble.default.primary.url
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  url: prismic.KeyTextField;
+
+  /**
+   * Top text field in *PageBubble → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: page_bubble.default.primary.top_text
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  top_text: prismic.KeyTextField;
+
+  /**
+   * Botton Text field in *PageBubble → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: page_bubble.default.primary.bottom_text
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  bottom_text: prismic.KeyTextField;
+
+  /**
+   * Icon string field in *PageBubble → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: page_bubble.default.primary.icon_string
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  icon_string: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *PageBubble → Items*
+ */
+export interface PageBubbleSliceDefaultItem {
+  /**
+   * Support avatar field in *PageBubble → Items*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: page_bubble.items[].support_avatar
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  support_avatar: prismic.ImageField<never>;
+}
+
+/**
+ * Default variation for PageBubble Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type PageBubbleSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<PageBubbleSliceDefaultPrimary>,
+  Simplify<PageBubbleSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *PageBubble*
+ */
+type PageBubbleSliceVariation = PageBubbleSliceDefault;
+
+/**
+ * PageBubble Shared Slice
+ *
+ * - **API ID**: `page_bubble`
+ * - **Description**: PageBubble
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type PageBubbleSlice = prismic.SharedSlice<
+  "page_bubble",
+  PageBubbleSliceVariation
+>;
+
+/**
  * Primary content in *Partners → Default → Primary*
  */
 export interface PartnersSliceDefaultPrimary {
@@ -2987,6 +3361,61 @@ type PricingCardsSliceVariation = PricingCardsSliceDefault;
 export type PricingCardsSlice = prismic.SharedSlice<
   "pricing_cards",
   PricingCardsSliceVariation
+>;
+
+/**
+ * Primary content in *ProductPricing → Default → Primary*
+ */
+export interface ProductPricingSliceDefaultPrimary {
+  /**
+   * Plan slug field in *ProductPricing → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: product_pricing.default.primary.plan_slug
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  plan_slug: prismic.KeyTextField;
+
+  /**
+   * Image field in *ProductPricing → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: product_pricing.default.primary.image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  image: prismic.ImageField<never>;
+}
+
+/**
+ * Default variation for ProductPricing Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type ProductPricingSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<ProductPricingSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *ProductPricing*
+ */
+type ProductPricingSliceVariation = ProductPricingSliceDefault;
+
+/**
+ * ProductPricing Shared Slice
+ *
+ * - **API ID**: `product_pricing`
+ * - **Description**: ProductPricing
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type ProductPricingSlice = prismic.SharedSlice<
+  "product_pricing",
+  ProductPricingSliceVariation
 >;
 
 /**
@@ -3651,6 +4080,61 @@ export interface TestimonialsSliceDefaultPrimary {
 }
 
 /**
+ * Primary content in *Testimonials → Items*
+ */
+export interface TestimonialsSliceDefaultItem {
+  /**
+   * Author First Name field in *Testimonials → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: testimonials.items[].author_first_name
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  author_first_name: prismic.KeyTextField;
+
+  /**
+   * Author Last Name field in *Testimonials → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: testimonials.items[].author_last_name
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  author_last_name: prismic.KeyTextField;
+
+  /**
+   * Avatar url field in *Testimonials → Items*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: testimonials.items[].avatar_url
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  avatar_url: prismic.ImageField<never>;
+
+  /**
+   * Total rating field in *Testimonials → Items*
+   *
+   * - **Field Type**: Number
+   * - **Placeholder**: *None*
+   * - **API ID Path**: testimonials.items[].total_rating
+   * - **Documentation**: https://prismic.io/docs/field#number
+   */
+  total_rating: prismic.NumberField;
+
+  /**
+   * comments field in *Testimonials → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: testimonials.items[].comments
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  comments: prismic.KeyTextField;
+}
+
+/**
  * Default variation for Testimonials Slice
  *
  * - **API ID**: `default`
@@ -3660,7 +4144,7 @@ export interface TestimonialsSliceDefaultPrimary {
 export type TestimonialsSliceDefault = prismic.SharedSliceVariation<
   "default",
   Simplify<TestimonialsSliceDefaultPrimary>,
-  never
+  Simplify<TestimonialsSliceDefaultItem>
 >;
 
 /**
@@ -4092,6 +4576,16 @@ export interface TwoColumnSliceDefaultPrimary {
   title: prismic.KeyTextField;
 
   /**
+   * Title side image field in *TwoColumn → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.default.primary.title_side_image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  title_side_image: prismic.ImageField<never>;
+
+  /**
    * Custom Title Size field in *TwoColumn → Default → Primary*
    *
    * - **Field Type**: Text
@@ -4375,6 +4869,16 @@ export interface TwoColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#boolean
    */
   transparent: prismic.BooleanField;
+
+  /**
+   * Video url field in *TwoColumn → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.default.primary.video_url
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  video_url: prismic.KeyTextField;
 }
 
 /**
@@ -4579,6 +5083,11 @@ declare module "@prismicio/client" {
       EventCardsSliceDefaultPrimary,
       EventCardsSliceVariation,
       EventCardsSliceDefault,
+      EventToastSlice,
+      EventToastSliceDefaultPrimary,
+      EventToastSliceDefaultItem,
+      EventToastSliceVariation,
+      EventToastSliceDefault,
       FaqsSlice,
       FaqsSliceDefaultPrimary,
       FaqsSliceDefaultItem,
@@ -4625,6 +5134,16 @@ declare module "@prismicio/client" {
       OneColumnSliceDefault,
       OneColumnSliceOneColumnWithKpIs,
       OneColumnSliceImageOnTop,
+      OutcomesSlice,
+      OutcomesSliceDefaultPrimary,
+      OutcomesSliceDefaultItem,
+      OutcomesSliceVariation,
+      OutcomesSliceDefault,
+      PageBubbleSlice,
+      PageBubbleSliceDefaultPrimary,
+      PageBubbleSliceDefaultItem,
+      PageBubbleSliceVariation,
+      PageBubbleSliceDefault,
       PartnersSlice,
       PartnersSliceDefaultPrimary,
       PartnersSliceVariation,
@@ -4633,6 +5152,10 @@ declare module "@prismicio/client" {
       PricingCardsSliceDefaultPrimary,
       PricingCardsSliceVariation,
       PricingCardsSliceDefault,
+      ProductPricingSlice,
+      ProductPricingSliceDefaultPrimary,
+      ProductPricingSliceVariation,
+      ProductPricingSliceDefault,
       RatingsSlice,
       RatingsSliceDefaultPrimary,
       RatingsSliceDefaultItem,
@@ -4665,6 +5188,7 @@ declare module "@prismicio/client" {
       TechnologiesPillsSliceDefault,
       TestimonialsSlice,
       TestimonialsSliceDefaultPrimary,
+      TestimonialsSliceDefaultItem,
       TestimonialsSliceVariation,
       TestimonialsSliceDefault,
       TitleIntroductionSlice,

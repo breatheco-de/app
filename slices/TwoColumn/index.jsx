@@ -24,6 +24,7 @@ function TwoColumn({ slice }) {
       imageUrl={slice?.primary?.image?.url}
       imageAlt={slice?.primary?.image?.alt}
       imagePosition={slice?.primary?.image_position}
+      videoUrl={slice?.primary?.video_url}
       margin={slice?.primary?.margin || ''}
       maxwidth={slice?.primary?.max_width}
       gridGap={slice?.primary?.grid_gap || '24px'}

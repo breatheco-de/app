@@ -29,8 +29,12 @@ function PageBubble({
 
 PageBubble.propTypes = {
   url: PropTypes.string.isRequired,
-  isCtaVisible: PropTypes.bool.isRequired,
+  isCtaVisible: PropTypes.bool,
   children: PropTypes.node.isRequired,
+};
+
+PageBubble.defaultProps = {
+  isCtaVisible: false,
 };
 
 export default PageBubble;

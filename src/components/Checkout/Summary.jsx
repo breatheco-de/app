@@ -173,7 +173,7 @@ function Summary() {
           const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
             (subscription) => checkingData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
           );
-          const cohortsForSubscription = currentSubscription?.selected_cohort_set.cohorts;
+          const cohortsForSubscription = currentSubscription?.selected_cohort_set?.cohorts;
           const foundCohort = cohortsForSubscription?.find(
             (cohort) => cohort?.id === cohortId,
           );

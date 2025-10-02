@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import bc from '../../services/breathecode';
 import useAuth from '../../hooks/useAuth';
 import useSession from '../../hooks/useSession';
-import { isWindow, getQueryString, getStorageItem, removeStorageItem, setStorageItem, slugToTitle, getBrowserInfo } from '../../utils';
+import { isWindow, getQueryString, getStorageItem, removeStorageItem, setStorageItem, slugToTitle, getBrowserInfo, parseAddOnIdsFromQuery } from '../../utils';
 import signupAction from '../../store/actions/signupAction';
 import useSignup from '../../hooks/useSignup';
 import { BASE_PLAN, currenciesSymbols } from '../../utils/variables';
@@ -44,6 +44,7 @@ const useCheckout = () => {
   const plan = getQueryString('plan');
   const planId = getQueryString('plan_id');
   const callbackUrl = getQueryString('callback');
+  const addOnsQS = getQueryString('add_ons');
   const planFormated = plan || BASE_PLAN;
 
   const [couponFromSession] = usePersistentBySession('coupon', '');
@@ -57,6 +58,17 @@ const useCheckout = () => {
 
   const isPaymentSuccess = paymentStatus === 'success';
   const fixedCouponExist = allCoupons.some((coup) => coup.discount_type === 'FIXED_PRICE');
+
+  const processedPrice = useMemo(() => {
+    let pricingData = { ...selectedPlan };
+    const discounts = [];
+
+    allCoupons.forEach((c) => {
+      pricingData = getPriceWithDiscount(pricingData.price, c);
+      discounts.push(pricingData);
+    });
+    return pricingData;
+  }, [allCoupons, selectedPlan]);
 
   const saveCouponToBag = async (coupons, bagId = '', specificCoupon = '') => {
     try {
@@ -173,10 +185,6 @@ const useCheckout = () => {
     return autoSelectedPlanByQueryString || defaultAutoSelectedPlan;
   };
 
-  useEffect(() => {
-    getSelfAppliedCoupon(planFormated);
-  }, []);
-
   const initializePlanData = async () => {
     try {
       const resp = await bc.payment({ country_code: location?.countryShort }).getPlan(planFormated);
@@ -193,8 +201,19 @@ const useCheckout = () => {
         description: info.features[0]?.description,
       })) || [];
 
+      let accordionListWithAddOns = accordionList;
+      if (addOnsQS) {
+        const addOnIds = parseAddOnIdsFromQuery(addOnsQS);
+        const selectedAddOns = (data?.add_ons || []).filter((ao) => addOnIds.includes(ao?.id));
+        const addOnsAccordion = selectedAddOns.map((ao) => ({
+          title: ao?.service?.title || slugToTitle(ao?.service?.slug),
+          description: '',
+        }));
+        accordionListWithAddOns = [...accordionList, ...addOnsAccordion];
+      }
+
       const defaultPlan = processedPlan?.plans?.find((item) => item?.plan_id === planId)
-      || processedPlan?.plans?.[0] || {};
+        || processedPlan?.plans?.[0] || {};
 
       const { data: suggestedPlanInfo } = await bc.payment({ original_plan: processedPlan?.slug }).planOffer();
 
@@ -204,7 +223,7 @@ const useCheckout = () => {
       setSuggestedPlans(suggestedPlanInfo[0]?.suggested_plan);
 
       setSelectedPlan(defaultPlan);
-      setOriginalPlan({ ...processedPlan, accordionList });
+      setOriginalPlan({ ...processedPlan, accordionList: accordionListWithAddOns });
     } catch (err) {
       createToast({
         position: 'top',
@@ -216,51 +235,6 @@ const useCheckout = () => {
       router.push('/pricing');
     }
   };
-
-  useEffect(() => {
-    // If callback URL is provided, set it as the redirect destination
-    if (callbackUrl) {
-      setStorageItem('redirect', callbackUrl);
-    } else {
-      removeStorageItem('redirect');
-    }
-
-    if (!isLoadingLocation) {
-      initializePlanData();
-    }
-
-    reportDatalayer({
-      dataLayer: {
-        event: 'begin_checkout',
-        plan: planFormated,
-        path: '/checkout',
-        conversion_info: userSession,
-        agent: getBrowserInfo(),
-      },
-    });
-  }, [router.locale, isLoadingLocation, callbackUrl]);
-
-  useEffect(() => {
-    if (checkingData?.id && !checkingData?.isTrial) {
-      if (couponValue) setDiscountCode(couponValue);
-      handleCoupon(couponValue);
-    }
-  }, [couponValue, checkingData?.id]);
-
-  useEffect(() => {
-    if (isWindow && stepIndex >= stepsEnum.SUMMARY && isAuthenticated && !isPaymentSuccess) {
-      const handleBeforeUnload = (e) => {
-        e.preventDefault();
-      };
-
-      window.addEventListener('beforeunload', handleBeforeUnload);
-
-      return () => {
-        window.removeEventListener('beforeunload', handleBeforeUnload);
-      };
-    }
-    return () => { };
-  }, [stepIndex, isAuthenticated]);
 
   const getCheckingData = async () => {
     try {
@@ -482,6 +456,130 @@ const useCheckout = () => {
     return null;
   };
 
+  const calculateTotalPrice = () => {
+    const months = selectedPlan.how_many_months || 1;
+
+    if (processedPrice.discountType === 'FIXED_PRICE') {
+      const firstMonthPrice = processedPrice.price;
+      const remainingMonthsPrice = processedPrice.originalPrice * (months - 1);
+      return (firstMonthPrice + remainingMonthsPrice).toFixed(2);
+    }
+
+    return (processedPrice.price * (selectedPlan.how_many_months ? selectedPlan.how_many_months : 1)).toFixed(2);
+  };
+
+  const getDiscountValue = (coup) => {
+    if (!coup?.discount_value || !coup?.discount_type) return '';
+    if (coup.discount_type === 'PERCENT_OFF') {
+      return t('discount-value-off', { value: `${coup.discount_value * 100}%` });
+    }
+    if (coup.discount_type === 'FIXED_PRICE') {
+      return t('discount-value-off', { value: `$${coup.discount_value}` });
+    }
+    return '';
+  };
+
+  // STEP 1: GET THE PLAN DATA (first request the user perceives)
+  // Renders: plan title, options list (monthly/annual/financing), and benefits accordion.
+  useEffect(() => {
+    // If callback URL is provided, set it as the redirect destination
+    if (callbackUrl) {
+      setStorageItem('redirect', callbackUrl);
+    } else {
+      removeStorageItem('redirect');
+    }
+
+    if (!isLoadingLocation) {
+      initializePlanData();
+    }
+
+    reportDatalayer({
+      dataLayer: {
+        event: 'begin_checkout',
+        plan: planFormated,
+        path: '/checkout',
+        conversion_info: userSession,
+        agent: getBrowserInfo(),
+      },
+    });
+  }, [router.locale, isLoadingLocation, callbackUrl]);
+
+  // STEP 1.1: Auto-coupon for plan if available
+  // Ensures the discount is applied from the start.
+  useEffect(() => {
+    getSelfAppliedCoupon(planFormated);
+  }, []);
+
+  // STEP 2: PREVIEW (checking) of the current plan
+  // Renders Subtotal/Total (now/later) including add‑ons and currency.
+  useEffect(() => {
+    const accessToken = getStorageItem('accessToken');
+    if (!planFormated && isAuthenticated) {
+      router.push('/pricing');
+    }
+
+    if (planFormated && isAuthenticated && planData) {
+      getCheckingData();
+    }
+    if (!isAuthenticated && !accessToken) {
+      setLoader('plan', false);
+    }
+  }, [isAuthenticated, router.locale, planData]);
+
+  // STEP 2b: user changes option (monthly/annual/financing)
+  // Re-run preview and refresh the right-hand summary.
+  useEffect(() => {
+    if (!userSelectedPlan || !planData) return;
+    setCheckInfoLoader(true);
+    getChecking(planData)
+      .then((checking) => {
+        const autoSelectedPlan = findAutoSelectedPlan(checking);
+
+        setSelectedPlan(autoSelectedPlan);
+        if (stepIndex >= stepsEnum.PAYMENT) {
+          handleStep(stepsEnum.PAYMENT);
+        }
+        setCheckInfoLoader(false);
+      })
+      .catch(() => {
+        setCheckInfoLoader(false);
+      });
+  }, [userSelectedPlan]);
+
+  // STEP 3: Apply coupon once checking/bag exists
+  // Updates Subtotal/Total in the right-hand summary.
+  useEffect(() => {
+    if (checkingData?.id && !checkingData?.isTrial) {
+      if (couponValue) setDiscountCode(couponValue);
+      handleCoupon(couponValue);
+    }
+  }, [couponValue, checkingData?.id]);
+
+  // Protection: prevent reload/close while payment is in progress
+  useEffect(() => {
+    if (isWindow && stepIndex >= stepsEnum.SUMMARY && isAuthenticated && !isPaymentSuccess) {
+      const handleBeforeUnload = (e) => {
+        e.preventDefault();
+      };
+
+      window.addEventListener('beforeunload', handleBeforeUnload);
+
+      return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      };
+    }
+    return () => { };
+  }, [stepIndex, isAuthenticated]);
+
+  useEffect(() => {
+    const coupons = [];
+    if (selfAppliedCoupon) coupons.push(selfAppliedCoupon);
+    if (discountCoupon) coupons.push(discountCoupon);
+
+    setAllCoupons(coupons);
+  }, [selfAppliedCoupon, discountCoupon]);
+
+  // STEP 4: clean up state on unmount
   useEffect(() => () => restartSignup(), []);
 
   return {
