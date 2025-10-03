@@ -65,21 +65,21 @@
       "campaign": "full-stack"
     },
     "course_translation": {
-      "title": "Full Stack Development",
-      "description": "Become a Full Stack Developer with our self-paced bootcamp! Start learning from scratch and get ready to enter the tech industry!",
+      "title": "Full Stack Development with AI",
+      "description": "Become an AI-fluent Full Stack Developer in just 20 weeks. Fast-track your progress with hands-on experience, a cutting-edge AI-integrated curriculum, unlimited personalized mentorship, and the option of a job guarantee.",
       "landing_variables": {
         "card": [{
           "icon": "book",
           "title": "Average Salary per year:",
-          "value": "$55K"
+          "value": "$117K"
         }, {
           "icon": "strength",
-          "title": "Job Positions:",
-          "value": "+350.000"
+          "title": "Open Positions:",
+          "value": "+100.000"
         }, {
           "icon": "key",
-          "title": "Career Growth:",
-          "value": "45% in the last year"
+          "title": "Projected growth:",
+          "value": "20 %  over the next decade"
         }]
       }
     }
@@ -94,20 +94,20 @@
     },
     "course_translation": {
       "title": "Data Science & ML",
-      "description": "Go by yourself through a structured syllabus, and get instant help from expert mentors and AI when needed! Start learning from scratch and get prepared for your first job as a Data Scientist!",
+      "description": "Launch a career in one of tech’s fastest-growing, highest-paying fields. Learn to analyze data, build predictive models, and use AI tools to solve real-world problems, backed by expert mentorship, hands-on learning, and the option of a job guarantee.",
       "landing_variables": {
         "card": [{
           "icon": "book",
           "title": "Average Salary per year:",
-          "value": "$55K"
+          "value": "$130K"
         }, {
           "icon": "strength",
-          "title": "Job Positions:",
-          "value": "+350.000"
+          "title": "Open Positions:",
+          "value": "+130.000"
         }, {
           "icon": "key",
-          "title": "Career Growth:",
-          "value": "45% in the last year"
+          "title": "Projected growth:",
+          "value": "35%  over the next decade"
         }]
       }
     }
@@ -121,49 +121,21 @@
       "campaign": "cybersecurity"
     },
     "course_translation": {
-      "title": "Cyber security specialist",
-      "description": "Go by yourself through a structured syllabus, and get instant help from expert mentors and AI when needed! Start learning from scratch and get prepared for your first job as a Data Scientist!",
+      "title": "Cybersecurity specialist",
+      "description": "Kickstart a high-paying career in one of tech’s most in-demand fields. Learn to defend systems and respond to real-world cyber threats with a hands-on, AI-integrated curriculum, designed by leading cybersecurity experts and backed by the option of a job guarantee.",
       "landing_variables": {
         "card": [{
           "icon": "book",
           "title": "Average Salary per year:",
-          "value": "$55K"
+          "value": "$130K"
         }, {
           "icon": "strength",
-          "title": "Job Positions:",
-          "value": "+350.000"
+          "title": "Open Positions:",
+          "value": "+450.000"
         }, {
           "icon": "key",
-          "title": "Career Growth:",
-          "value": "45% in the last year"
-        }]
-      }
-    }
-  }, {
-    "slug": "applied-ai-course",
-    "icon": "data-science",
-    "color": "#8B5CF6",
-    "utm": {
-      "source": "4geeks.com",
-      "medium": "dropdown",
-      "campaign": "ai"
-    },
-    "course_translation": {
-      "title": "Artificial intelligence",
-      "description": "Become a Full Stack Developer with our self-paced bootcamp! Start learning from scratch and get ready to enter the tech industry!",
-      "landing_variables": {
-        "card": [{
-          "icon": "book",
-          "title": "Average Salary per year:",
-          "value": "$55K"
-        }, {
-          "icon": "strength",
-          "title": "Job Positions:",
-          "value": "+350.000"
-        }, {
-          "icon": "key",
-          "title": "Career Growth:",
-          "value": "45% in the last year"
+          "title": "Projected growth:",
+          "value": "33% over the next decade"
         }]
       }
     }
