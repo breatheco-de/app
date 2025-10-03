@@ -10,6 +10,7 @@ import signupAction from '../../store/actions/signupAction';
 import useSignup from '../../hooks/useSignup';
 import { BASE_PLAN, currenciesSymbols } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
+import { usePersistentBySession } from '../../hooks/usePersistent';
 import useCustomToast from '../../hooks/useCustomToast';
 
 const useCheckout = () => {
@@ -46,7 +47,8 @@ const useCheckout = () => {
   const addOnsQS = getQueryString('add_ons');
   const planFormated = plan || BASE_PLAN;
 
-  const coupon = userSession?.coupon || userSession?.ref || '';
+  const [couponFromSession] = usePersistentBySession('coupon', '');
+  const coupon = couponFromSession || userSession?.ref || '';
 
   const couponValue = useMemo(() => {
     const formatedCouponQuery = couponQuery && couponQuery.replace(/[^a-zA-Z0-9-\s]/g, '');
@@ -279,6 +281,69 @@ const useCheckout = () => {
     }
   };
 
+  useEffect(() => {
+    const accessToken = getStorageItem('accessToken');
+    if (!planFormated && isAuthenticated) {
+      router.push('/pricing');
+    }
+
+    if (planFormated && isAuthenticated && planData) {
+      getCheckingData();
+    }
+    if (!isAuthenticated && !accessToken) {
+      setLoader('plan', false);
+    }
+  }, [isAuthenticated, router.locale, planData]);
+
+  useEffect(() => {
+    if (!userSelectedPlan || !planData) return;
+    setCheckInfoLoader(true);
+    getChecking(planData)
+      .then((checking) => {
+        const autoSelectedPlan = findAutoSelectedPlan(checking);
+
+        setSelectedPlan(autoSelectedPlan);
+        if (stepIndex >= stepsEnum.PAYMENT) {
+          handleStep(stepsEnum.PAYMENT);
+        }
+        setCheckInfoLoader(false);
+      })
+      .catch(() => {
+        setCheckInfoLoader(false);
+      });
+  }, [userSelectedPlan]);
+
+  useEffect(() => {
+    const coupons = [];
+    if (selfAppliedCoupon) coupons.push(selfAppliedCoupon);
+    if (discountCoupon) coupons.push(discountCoupon);
+
+    setAllCoupons(coupons);
+  }, [selfAppliedCoupon, discountCoupon]);
+
+  const getDiscountValue = (coup) => {
+    if (!coup?.discount_value || !coup?.discount_type) return '';
+    if (coup.discount_type === 'PERCENT_OFF') {
+      return t('discount-value-off', { value: `${coup.discount_value * 100}%` });
+    }
+    if (coup.discount_type === 'FIXED_PRICE') {
+      return t('discount-value-off', { value: `$${Math.round(coup.discount_value)}` });
+    }
+    return '';
+  };
+
+  const calculateTotalPrice = () => {
+    const months = selectedPlan.how_many_months || 1;
+
+    if (processedPrice.discountType === 'FIXED_PRICE') {
+      const firstMonthPrice = processedPrice.price;
+      const remainingMonthsPrice = processedPrice.originalPrice * (months - 1);
+      return (firstMonthPrice + remainingMonthsPrice).toFixed(2);
+    }
+
+    return (processedPrice.price * (selectedPlan.how_many_months ? selectedPlan.how_many_months : 1)).toFixed(2);
+  };
+
   const renderPlanDetails = () => {
     const applyDiscounts = (price, discountList) => {
       let finalPrice = price;
@@ -378,29 +443,6 @@ const useCheckout = () => {
     }
 
     return null;
-  };
-
-  const calculateTotalPrice = () => {
-    const months = selectedPlan.how_many_months || 1;
-
-    if (processedPrice.discountType === 'FIXED_PRICE') {
-      const firstMonthPrice = processedPrice.price;
-      const remainingMonthsPrice = processedPrice.originalPrice * (months - 1);
-      return (firstMonthPrice + remainingMonthsPrice).toFixed(2);
-    }
-
-    return (processedPrice.price * (selectedPlan.how_many_months ? selectedPlan.how_many_months : 1)).toFixed(2);
-  };
-
-  const getDiscountValue = (coup) => {
-    if (!coup?.discount_value || !coup?.discount_type) return '';
-    if (coup.discount_type === 'PERCENT_OFF') {
-      return t('discount-value-off', { value: `${coup.discount_value * 100}%` });
-    }
-    if (coup.discount_type === 'FIXED_PRICE') {
-      return t('discount-value-off', { value: `$${coup.discount_value}` });
-    }
-    return '';
   };
 
   // STEP 1: GET THE PLAN DATA (first request the user perceives)

@@ -38,6 +38,11 @@
       "title": "Suscripciones",
       "value": "subscriptions",
       "disabled": false
+    },
+    {
+      "title": "Programa de Referidos",
+      "value": "referral-program",
+      "disabled": false
     }
   ],
   "remove-github-modal": {
@@ -140,7 +145,25 @@
   "coupon-copied": "¡Cupón copiado al portapapeles!",
   "how-it-works": "Cómo funciona:",
   "referral-step-1": "1. Comparte tu código de cupón con amigos y familiares",
-  "referral-step-2": "2. Cuando alguien use tu cupón y haga un pago por programas autodidactas en 4Geeks.com, obtendrás un 10% de descuento en tu próximo pago",
+  "referral-step-2": "2. Cuando alguien use tu cupón y haga un pago por programas autodidactas, obtendrás un 10% de descuento en tu próximo pago",
   "referral-step-3": "3. ¡Mientras más personas usen tu cupón, más descuentos recibirás!",
-  "referral-step-4": "4. Este programa de referidos solo aplica para programas a tu propio ritmo en 4Geeks.com"
+  "referral-step-4": "4. Este programa de referidos solo aplica para programas a tu propio ritmo",
+  "discount-type-fixed-amount": "Cantidad Fija",
+  "discount-type-percentage": "Porcentaje",
+  "coupon-auto-apply-next-renewal": "Aplicar automáticamente en la próxima renovación",
+  "coupon-click-to-auto-apply": "Haz clic para aplicar automáticamente",
+  "coupon-already-used": "Este cupón ya fue usado o no es válido",
+  "coupon-loading": "Cargando...",
+  "coupon-percent-of-payment": "% en cualquier pago",
+  "coupon-of-any-payment": "en cualquier pago",
+  "referral-money-earned": "Dinero Ganado",
+  "referral-refer-friend-button": "Refiere a un amigo y gana dinero",
+  "referral-share-description": "Comparte tu código de cupón con amigos y familiares y gana dinero mientras aprendes",
+  "referral-rewards-activity": "Recompensas y actividad de cupones",
+  "referral-modal-title": "COMPARTE Y GANA DINERO",
+  "referral-share-coupon-text": "Comparte este cupón con tus amigos:",
+  "referral-share-link-text": "O comparte este enlace de registro:",
+  "referral-share-message": "¡Mira esta oportunidad de aprendizaje con mi código de referido! Únete a 4Geeks Academy y comienza tu viaje en programación utilizando mi código de descuento, disponible aquí:",
+  "no-referral-coupon": "No se pudo obtener tu cupón de referido",
+  "no-reward-coupons": "No tienes cupones de recompensa, refiere tu código a un amigo y obtén descuentos en tus próximos pagos"
 }

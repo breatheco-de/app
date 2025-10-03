@@ -206,7 +206,7 @@
   "compilation-bundle-title": "Compilation bundle",
   "upgrade-a-plan": "Upgrade a plan",
   "take-me-there": "Take me there",
-  "coupon-not-valid": "Coupon {{name}} is not valid",
+  "coupon-not-valid": "This coupon is invalid or doesn't work for the {{plan}} plan. If you think this is an error, contact <strong>support@4geeks.com</strong>.",
   "prereq-modal": {
     "continue-registration": "Continue with registration",
     "go-to-page": "Page {{page}}"

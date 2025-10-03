@@ -21,7 +21,6 @@ const initialUserSession = {
   internal_cta_content: '',
   internal_cta_campaign: '',
   ref: '',
-  coupon: '',
 };
 
 export const SessionContext = createContext({
@@ -89,7 +88,6 @@ function SessionProvider({ children }) {
       const internal_cta_content = getQueryString('internal_cta_content') || storedSession?.internal_cta_content;
       const internal_cta_campaign = getQueryString('internal_cta_campaign') || storedSession?.internal_cta_campaign;
       const ref = getQueryString('ref') || storedSession?.ref;
-      const coupon = getQueryString('coupon') || storedSession?.coupon;
 
       // remove translations for the endpoint
       const cleanedStore = {
@@ -113,7 +111,6 @@ function SessionProvider({ children }) {
         internal_cta_content,
         internal_cta_campaign,
         ref,
-        coupon,
       };
       setUserSession(session);
       localStorage.setItem('userSession', JSON.stringify(session));

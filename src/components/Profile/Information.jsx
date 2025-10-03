@@ -13,7 +13,6 @@ import getCroppedImg from '../../utils/cropImage';
 import Icon from '../Icon';
 import useUploadFileInChunks from '../../hooks/useUploadFileInChunks';
 import useCustomToast from '../../hooks/useCustomToast';
-import ReferralProgram from './ReferralProgram';
 
 function Information() {
   const { t } = useTranslation('profile');
@@ -241,9 +240,6 @@ function Information() {
           </Modal>
         </Avatar>
         <ProfileForm />
-      </Box>
-      <Box mt="38px">
-        <ReferralProgram />
       </Box>
     </>
   );
