@@ -98,7 +98,6 @@ function Checkout() {
     handleCoupon,
     setDiscountCode,
     setUserSelectedPlan,
-    saveCouponToBag,
     setDiscountCoupon,
     couponError,
     checkInfoLoader,
@@ -112,6 +111,7 @@ function Checkout() {
     planId,
     fixedCouponExist,
     discountCoupon,
+    removeManualCoupons,
   } = useCheckout();
   const { query } = router;
   const [showPaymentDetails, setShowPaymentDetails] = useState(true);
@@ -563,10 +563,9 @@ function Checkout() {
                                           height="auto"
                                           onClick={() => {
                                             setDiscountCode('');
-                                            saveCouponToBag([''], checkingData?.id);
                                             removeSessionStorageItem('coupon');
                                             setDiscountCoupon(null);
-                                            setCouponError(false);
+                                            removeManualCoupons(); // Función específica para eliminar
                                           }}
                                         >
                                           <Icon icon="close" color="currentColor" width="10px" height="10px" />
