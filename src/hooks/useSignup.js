@@ -873,7 +873,7 @@ const useSignup = () => {
         return {
           originalPrice: price,
           price: price - discount,
-          discount: `$${discount}`,
+          discount: `$${Math.round(discount)}`,
           discountType,
         };
       }
@@ -889,11 +889,22 @@ const useSignup = () => {
       if (plan) {
         const { data } = await bc.payment({ plan, country_code }).verifyCoupon();
         const coupon = data[0];
-        if (coupon) {
+        if (data.length > 0) {
           setSelfAppliedCoupon({
             ...coupon,
             plan,
           });
+        } else {
+          const userCoupons = await bc.payment({ plan }).getMyUserCoupons();
+          const firstAuto = userCoupons.data
+            .filter((c) => c.auto === true && c.is_valid === true)
+            .sort((a, b) => new Date(a.offered_at) - new Date(b.offered_at))[0];
+          if (firstAuto) {
+            setSelfAppliedCoupon({
+              ...firstAuto,
+              plan,
+            });
+          }
         }
       }
     } catch (e) {
