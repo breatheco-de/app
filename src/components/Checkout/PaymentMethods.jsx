@@ -221,7 +221,7 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
             allowToggle: true,
           }}
           descriptionStyle={{ padding: '10px 0 0 0' }}
-          defaultIndex={paymentMethods?.findIndex((method) => method.is_credit_card)}
+          defaultIndex={paymentMethods.length === 1 && paymentMethods?.findIndex((method) => method.is_credit_card)}
         />
       </Flex>
     </>
