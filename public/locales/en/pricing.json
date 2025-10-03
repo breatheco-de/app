@@ -71,15 +71,15 @@
         "card": [{
           "icon": "book",
           "title": "Average Salary per year:",
-          "value": "$65K"
+          "value": "$117K"
         }, {
           "icon": "strength",
-          "title": "Job Positions:",
-          "value": "+350.000"
+          "title": "Open Positions:",
+          "value": "+100.000"
         }, {
           "icon": "key",
-          "title": "Career Growth:",
-          "value": "0 %  over the next decade"
+          "title": "Projected growth:",
+          "value": "20 %  over the next decade"
         }]
       }
     }
@@ -99,15 +99,15 @@
         "card": [{
           "icon": "book",
           "title": "Average Salary per year:",
-          "value": "$120K"
+          "value": "$130K"
         }, {
           "icon": "strength",
-          "title": "Job Positions:",
-          "value": "+350.000"
+          "title": "Open Positions:",
+          "value": "+130.000"
         }, {
           "icon": "key",
-          "title": "Career Growth:",
-          "value": "30 %  over the next decade"
+          "title": "Projected growth:",
+          "value": "35%  over the next decade"
         }]
       }
     }
@@ -127,15 +127,15 @@
         "card": [{
           "icon": "book",
           "title": "Average Salary per year:",
-          "value": "$55K"
+          "value": "$130K"
         }, {
           "icon": "strength",
-          "title": "Job Positions:",
-          "value": "+350.000"
+          "title": "Open Positions:",
+          "value": "+450.000"
         }, {
           "icon": "key",
-          "title": "Career Growth:",
-          "value": "30 % over the next decade"
+          "title": "Projected growth:",
+          "value": "33% over the next decade"
         }]
       }
     }
