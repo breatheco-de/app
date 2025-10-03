@@ -21,7 +21,7 @@ function ShareReferralModal({ isOpen, onClose, couponData }) {
   useEffect(() => {
     if (couponData?.plans) {
       const has4GeeksPlusPlan = couponData?.plans.filter((plan) => plan.slug === '4geeks-plus-subscription') || [];
-      const baseUrl = process.env.DOMAIN_NAME || '';
+      const baseUrl = window.location.origin || '4geeks.com';
       const queryParams = parseQuerys({
         plan: has4GeeksPlusPlan.length > 0 || couponData.plans.length === 0 ? '4geeks-plus-subscription' : couponData?.plans[0]?.slug,
         coupon: couponData?.slug,
