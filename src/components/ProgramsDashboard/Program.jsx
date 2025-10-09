@@ -13,7 +13,7 @@ import useProgramList from '../../store/actions/programListAction';
 function Program({ cohort, onOpenModal, setLateModalProps }) {
   const { setCohortSession, cohortsAssignments } = useCohortHandler();
   const { state } = useSubscriptions();
-  const { featuredColor, backgroundColor } = useStyle();
+  const { backgroundColor } = useStyle();
   const { isLoading } = state;
   const [isLoadingPageContent, setIsLoadingPageContent] = useState(false);
   const { state: programsList } = useProgramList();
@@ -107,7 +107,6 @@ function Program({ cohort, onOpenModal, setLateModalProps }) {
       handleChoose={onClickHandler}
       isHiddenOnPrework={isHiddenOnPrework && cohort.stage.includes('PREWORK')}
       onOpenModal={onOpenModal}
-      background={featuredColor}
       bulletsBackground={backgroundColor}
     />
   );
