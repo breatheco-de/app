@@ -204,7 +204,6 @@ function AuthProvider({ children, pageProps }) {
   const fetchUserAndCohorts = async () => {
     try {
       const { data } = await bc.admissions().me();
-      console.log(data);
       const { cohorts: cohortUsers, ...userData } = data;
       const cohorts = cohortUsers.map((elem) => {
         const { cohort, ...cohort_user } = elem;
