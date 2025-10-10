@@ -82,6 +82,7 @@ const breathecode = {
     const qs = parseQuerys(query, isQueryConnector);
     return {
       me: () => axios.get(`${url}/user/me`),
+      syncMyMicroCohorts: (macroCohortSlug) => axios.post(`${url}/me/micro-cohorts/sync/${macroCohortSlug}`),
       cohort: (id, academy) => axios.get(`${url}/academy/cohort/${id}${qs}`, {
         headers: academy && {
           academy,
