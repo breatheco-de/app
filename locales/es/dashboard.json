@@ -255,4 +255,10 @@
     "days-left": "{{days}} días restantes",
     "deletion-imminent": "Eliminación inminente"
   }
+  ,
+  "microcohorts-sync": {
+    "title": "Se detectaron cambios en la malla educativa",
+    "description": "Hemos encontrado cambios en el diseño de la malla educativa de este curso y necesitas aceptarlos para continuar.",
+    "sync": "Sincronizar ahora"
+  }
 }
