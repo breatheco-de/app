@@ -65,6 +65,8 @@ function Dashboard() {
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [showSyncMicroModal, setShowSyncMicroModal] = useState(false);
+  const [isSyncingMicro, setIsSyncingMicro] = useState(false);
 
   const [searchValue, setSearchValue] = useState(router.query.search || '');
   const [showPendingTasks, setShowPendingTasks] = useState(false);
@@ -73,6 +75,7 @@ function Dashboard() {
   const [certificates, setCertificates] = useState([]);
   const [isLoadingAssigments, setIsLoadingAssigments] = useState(true);
   const { isAuthenticated, cohorts } = useAuth();
+  const { reSetUserAndCohorts } = useAuth();
   const { rigo, isRigoInitialized } = useRigo();
 
   const isBelowTablet = getBrowserSize()?.width < 768;
@@ -181,6 +184,30 @@ function Dashboard() {
     }
     if (isAuthenticated && (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false)) setGrantAccess(true);
   }, [cohortSession, areSubscriptionsFetched, isAuthenticated]);
+
+  useEffect(() => {
+    if (!cohortSession || !Array.isArray(cohortSession?.micro_cohorts) || cohortSession.micro_cohorts.length === 0) return;
+    const ownsMacro = cohorts?.some((c) => c?.slug === cohortSession?.slug);
+    if (!ownsMacro) return;
+    const missingAnyMicro = cohortSession.micro_cohorts.some((mc) => !cohorts?.some((uc) => uc.slug === mc.slug));
+    if (missingAnyMicro) setShowSyncMicroModal(true);
+  }, [cohortSession?.slug, cohorts?.length]);
+
+  const handleSyncMicroCohorts = async () => {
+    if (!cohortSession?.slug) return;
+    try {
+      setIsSyncingMicro(true);
+      const resp = await bc.admissions().syncMyMicroCohorts(cohortSession.slug);
+      if (resp?.status < 400) {
+        await reSetUserAndCohorts();
+        setShowSyncMicroModal(false);
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsSyncingMicro(false);
+    }
+  };
 
   useEffect(() => {
     if (cohortSession?.cohort_user) {
@@ -498,6 +525,25 @@ function Dashboard() {
 
   return (
     <Container minHeight="93vh" display="flex" flexDirection="column" maxW="none" padding="0">
+      <Modal
+        isOpen={showSyncMicroModal}
+        isCentered
+        onClose={() => {}}
+        closeOnOverlayClick={false}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{t('dashboard:microcohorts-sync.title')}</ModalHeader>
+          <ModalBody>
+            <Text>{t('dashboard:microcohorts-sync.description')}</Text>
+          </ModalBody>
+          <Flex justifyContent="flex-start" gap="10px" p="16px">
+            <Button isLoading={isSyncingMicro} onClick={handleSyncMicroCohorts} variant="default">
+              {t('dashboard:microcohorts-sync.sync')}
+            </Button>
+          </Flex>
+        </ModalContent>
+      </Modal>
       {isAvailableAsSaas && (
         <CohortHeader
           onOpenGithubModal={openGithubModalHandler}

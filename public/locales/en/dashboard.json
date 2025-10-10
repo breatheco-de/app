@@ -254,4 +254,10 @@
     "days-left": "{{days}} days left",
     "deletion-imminent": "Deletion imminent"
   }
+  ,
+  "microcohorts-sync": {
+    "title": "Curriculum changes detected",
+    "description": "We found changes in the curriculum design of this course and you need to accept them to continue.",
+    "sync": "Sync now"
+  }
 }
