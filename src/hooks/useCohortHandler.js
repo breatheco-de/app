@@ -130,7 +130,7 @@ function useCohortHandler() {
         ...tasksPromises,
       ]);
 
-      preFechedCohorts.forEach(({ slug }) => {
+      preFechedCohorts?.forEach(({ slug }) => {
         assignmentsMap[slug] = { ...cohortsAssignments[slug] };
       });
 
