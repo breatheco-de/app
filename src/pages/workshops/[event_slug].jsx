@@ -567,6 +567,18 @@ function Workshop({ eventData, asset }) {
     try {
       const resp = await bc.events().applyEvent(eventId, utms);
       if (resp && resp.status === 200) {
+        if (event?.live_stream_url && /livekit/i.test(event.live_stream_url)) {
+          try {
+            const tokenRes = await bc.events().getLivekitToken(eventId);
+            const params = tokenRes?.data || {};
+            const qs = new URLSearchParams(Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== ''));
+            const connector = event.live_stream_url.includes('?') ? '&' : '?';
+            window.location.href = `${event.live_stream_url}${connector}${qs.toString()}`;
+            return;
+          } catch (e) {
+            // fallback to default join
+          }
+        }
         const token = signupData?.access_token ? signupData.access_token : getStorageItem('accessToken');
         router.push(`${BREATHECODE_HOST}/v1/events/me/event/${eventId}/join?token=${token}`);
       }
@@ -592,7 +604,19 @@ function Workshop({ eventData, asset }) {
             agent: getBrowserInfo(),
           },
         });
-        router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
+        if (event?.live_stream_url && /livekit/i.test(event.live_stream_url)) {
+          try {
+            const tokenRes = await bc.events().getLivekitToken(event?.id);
+            const params = tokenRes?.data || {};
+            const qs = new URLSearchParams(Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== ''));
+            const connector = event.live_stream_url.includes('?') ? '&' : '?';
+            window.location.href = `${event.live_stream_url}${connector}${qs.toString()}`;
+          } catch (e) {
+            // fallback to default join
+          }
+        } else {
+          router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
+        }
       }
       if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
         setIsJoiningEvent(true);
