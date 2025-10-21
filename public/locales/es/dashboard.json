@@ -217,6 +217,7 @@
   },
   "attendance-modal": {
     "start-today-class": "Empezar la clase de hoy",
+    "greeting": "Hola {{name}}, Hoy es {{today}} y la cohorte comenzó a tomar clases el {{kickoffDate}}. Por favor, selecciona el módulo de hoy.",
     "select-students": "Selecciona los alumnos presentes en la clase",
     "showing-students-with-active-educational-status": "Solo se muestran alumnos con estatus educativo activo",
     "apply-changes": "Aplicar cambios",

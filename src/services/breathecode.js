@@ -305,7 +305,12 @@ const breathecode = {
       meCheckin: () => axios.get(`${url}/me/event/checkin${qs}`),
       liveClass: () => axios.get(`${url}/me/event/liveclass${qs}`),
       joinLiveClass: (liveClassHash) => axios.get(`${url}/me/event/liveclass/join/${liveClassHash}${qs}`),
-      applyEvent: (eventId, payload) => axios.post(`${url}/me/event/${eventId}/checkin${qs}`, payload),
+      applyEvent: (eventId, payload, token) => axios.post(`${url}/me/event/${eventId}/checkin${qs}`, payload, {
+        headers: token && {
+          Authorization: `Token ${token}`,
+        },
+      }),
+      getLivekitToken: (eventId) => axios.get(`${url}/event/${eventId}/livekit/token`),
       getUsers: (eventId) => axios.get(`${url}/event/${eventId}/checkin${qs}`),
       getAllEventTypes: () => axios.get(`${url}/eventype${qs}`),
       liveWorkshopStatus: () => axios.get(`${url}/live-workshop-status`),

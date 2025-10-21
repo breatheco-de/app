@@ -182,6 +182,7 @@ function Workshop({ eventData, asset }) {
   const { isAuthenticated, user, cohorts } = useAuth();
   const { featuredColor, hexColor } = useStyle();
   const endDate = event?.ended_at || event?.ending_at;
+
   const eventRecap = event?.recap;
 
   const getDefaultData = async () => {
@@ -565,8 +566,9 @@ function Workshop({ eventData, asset }) {
 
   const applyAndRedirectToEvent = async ({ eventId, signupData }) => {
     try {
-      const resp = await bc.events().applyEvent(eventId, utms);
-      if (resp && resp.status === 200) {
+      const tokenForHeader = signupData?.access_token || getStorageItem('accessToken');
+      const resp = await bc.events().applyEvent(eventId, utms, tokenForHeader);
+      if (resp && resp.status < 300) {
         const token = signupData?.access_token ? signupData.access_token : getStorageItem('accessToken');
         router.push(`${BREATHECODE_HOST}/v1/events/me/event/${eventId}/join?token=${token}`);
       }

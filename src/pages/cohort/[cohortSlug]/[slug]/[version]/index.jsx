@@ -247,6 +247,8 @@ function Dashboard() {
       });
   }, []);
 
+  console.log(liveClasses);
+
   const countDoneAssignments = (total, assignment) => {
     if (assignment.task_status === 'DONE') return total + 1;
     return total;
@@ -547,7 +549,7 @@ function Dashboard() {
       {isAvailableAsSaas && (
         <CohortHeader
           onOpenGithubModal={openGithubModalHandler}
-          mainClasses={liveClasses}
+          liveClasses={liveClasses}
           upcomingEvents={events}
           isLoadingEvents={isLoadingAssigments}
         />
