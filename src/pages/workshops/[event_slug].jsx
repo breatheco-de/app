@@ -567,7 +567,7 @@ function Workshop({ eventData, asset }) {
     try {
       const resp = await bc.events().applyEvent(eventId, utms);
       if (resp && resp.status === 200) {
-        if (event?.live_stream_url && /livekit/i.test(event.live_stream_url)) {
+        if (event?.live_stream_url && /live[-_]?kit/i.test(event.live_stream_url)) {
           try {
             const tokenRes = await bc.events().getLivekitToken(eventId);
             const params = tokenRes?.data || {};
@@ -604,7 +604,7 @@ function Workshop({ eventData, asset }) {
             agent: getBrowserInfo(),
           },
         });
-        if (event?.live_stream_url && /livekit/i.test(event.live_stream_url)) {
+        if (event?.live_stream_url && /live[-_]?kit/i.test(event.live_stream_url)) {
           try {
             const tokenRes = await bc.events().getLivekitToken(event?.id);
             const params = tokenRes?.data || {};
