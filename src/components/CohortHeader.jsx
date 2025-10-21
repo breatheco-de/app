@@ -386,12 +386,6 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
                     {t('dashboard:teacher-sidebar.assignments')}
                   </Text>
                 </CustomButton>
-                <CustomButton onClick={() => window.open('https://www.notion.so/4geeksacademy/Mentor-training-433451eb9dac4dc680b7c5dae1796519', '_blank')}>
-                  <Icon icon="courses" width="42px" height="42px" />
-                  <Text textAlign="center" color={hexColor.blueDefault}>
-                    {t('dashboard:teacher-sidebar.teacher-tutorial')}
-                  </Text>
-                </CustomButton>
               </>
             )}
             {shortcuts.map((shortcut) => (
