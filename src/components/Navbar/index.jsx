@@ -31,6 +31,7 @@ import logoData from '../../../public/logo.json';
 import { parseQuerys } from '../../utils/url';
 import useStyle from '../../hooks/useStyle';
 import useSubscriptions from '../../hooks/useSubscriptions';
+import useWhiteLabel from '../../hooks/useWhiteLabel';
 import LiveWorkshopBadge from '../LiveWorkshopBadge';
 
 function Navbar({ translations, pageProps }) {
@@ -41,6 +42,7 @@ function Navbar({ translations, pageProps }) {
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const { allSubscriptions } = useSubscriptions();
+  const { showMarketingNavigation } = useWhiteLabel();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const { t } = useTranslation('navbar');
@@ -133,13 +135,19 @@ function Navbar({ translations, pageProps }) {
 
   useEffect(() => {
     if (pageProps?.existsWhiteLabel) {
-      setNavbarItems(whiteLabelitems);
+      const filteredItems = whiteLabelitems.filter((item) => {
+        if (item.type === 'marketing') {
+          return showMarketingNavigation;
+        }
+        return true;
+      });
+      setNavbarItems(filteredItems);
     } else if (!isLoading && user?.id) {
       setNavbarItems(preDefinedItems.filter((item) => (item.disabled !== true && item.hide_on_auth !== true)));
     } else {
       setNavbarItems(preDefinedItems.filter((item) => item.disabled !== true));
     }
-  }, [user, cohorts, isLoading, cohortSession, mktCourses, router.locale, location]);
+  }, [user, cohorts, isLoading, cohortSession, mktCourses, router.locale, location, showMarketingNavigation]);
 
   const closeSettings = () => {
     setIsPopoverOpen(false);

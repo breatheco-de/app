@@ -8,6 +8,7 @@ import {
 import { useRouter } from 'next/router';
 import Heading from '../../components/Heading';
 import useAuth from '../../hooks/useAuth';
+import useWhiteLabel from '../../hooks/useWhiteLabel';
 import asPrivate from '../../context/PrivateRouteWrapper';
 import bc from '../../services/breathecode';
 import { cleanQueryStrings } from '../../utils';
@@ -21,12 +22,20 @@ import useCustomToast from '../../hooks/useCustomToast';
 function Profile() {
   const { t } = useTranslation('profile');
   const { user, cohorts } = useAuth();
+  const { isWhiteLabelFeatureEnabled } = useWhiteLabel();
   const router = useRouter();
   const { asPath } = router;
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [certificates, setCertificates] = useState([]);
   const tabListMenu = t('tabList', {}, { returnObjects: true });
   const { createToast, closeToast } = useCustomToast({ toastId: 'user-available-github' });
+
+  const canShowReferralProgram = isWhiteLabelFeatureEnabled('allow_referral_program');
+
+  const tabListFiltered = tabListMenu.filter((tab) => {
+    if (tab.value === 'referral-program' && !canShowReferralProgram) return false;
+    return tab.disabled !== true;
+  });
 
   const tabPosition = {
     '/profile/info': 0,
@@ -35,8 +44,8 @@ function Profile() {
     '/profile/certificates#': 1,
     '/profile/subscriptions': 2,
     '/profile/subscriptions#': 2,
-    '/profile/referral-program': 3,
-    '/profile/referral-program#': 3,
+    '/profile/referral-program': canShowReferralProgram ? 3 : -1,
+    '/profile/referral-program#': canShowReferralProgram ? 3 : -1,
   };
   const currentPathCleaned = cleanQueryStrings(asPath);
 
@@ -78,7 +87,7 @@ function Profile() {
         <Heading as="h1" size="m" margin="45px 0">{t('navbar:my-profile')}</Heading>
         <Tabs index={currentTabIndex} display="flex" flexDirection={{ base: 'column', md: 'row' }} variant="unstyled" gridGap="40px">
           <TabList display="flex" flexDirection="column" width={{ base: '100%', md: '300px' }}>
-            {tabListMenu.filter((l) => l.disabled !== true).map((tab) => (
+            {tabListFiltered.map((tab) => (
               <Tab
                 key={tab.title}
                 p="14px"
@@ -119,9 +128,11 @@ function Profile() {
             <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
               <Subscriptions cohorts={cohorts} />
             </TabPanel>
-            <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
-              <ReferralProgram />
-            </TabPanel>
+            {canShowReferralProgram && (
+              <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
+                <ReferralProgram />
+              </TabPanel>
+            )}
           </TabPanels>
         </Tabs>
       </GridContainer>

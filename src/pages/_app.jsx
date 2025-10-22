@@ -18,6 +18,7 @@ import Navbar from '../components/Navbar';
 import RigoProvider from '../context/RigoContext';
 import AuthProvider from '../context/AuthContext';
 import SessionProvider from '../context/SessionContext';
+import { WhiteLabelProvider } from '../context/WhiteLabelContext';
 import Footer from '../components/Footer';
 import Helmet from '../components/Helmet';
 import InterceptionLoader from '../components/InterceptionLoader';
@@ -89,20 +90,22 @@ function App({ Component, pageProps }) {
           theme={theme}
           colorModeManager={customColorModeManager}
         >
-          <AuthProvider pageProps={pageProps}>
-            <SessionProvider>
-              <Navbar pageProps={pagePropsData} translations={pageProps?.translations} />
-              <InterceptionLoader />
+          <WhiteLabelProvider>
+            <AuthProvider pageProps={pageProps}>
+              <SessionProvider>
+                <Navbar pageProps={pagePropsData} translations={pageProps?.translations} />
+                <InterceptionLoader />
 
-              <PrismicProvider internalLinkComponent={InternalLinkComponent}>
-                <PrismicPreview repositoryName={repositoryName}>
-                  <Component {...pagePropsData} />
-                </PrismicPreview>
-              </PrismicProvider>
+                <PrismicProvider internalLinkComponent={InternalLinkComponent}>
+                  <PrismicPreview repositoryName={repositoryName}>
+                    <Component {...pagePropsData} />
+                  </PrismicPreview>
+                </PrismicProvider>
 
-              <Footer pageProps={pagePropsData} />
-            </SessionProvider>
-          </AuthProvider>
+                <Footer pageProps={pagePropsData} />
+              </SessionProvider>
+            </AuthProvider>
+          </WhiteLabelProvider>
         </ChakraProvider>
       </RigoProvider>
       {/* <ReactQueryDevtools initialIsOpen={false} position="bottom" /> */}
