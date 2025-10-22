@@ -1,7 +1,6 @@
 import React, { createContext, useReducer, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import bc from '../services/breathecode';
-import { getStorageItem, setStorageItem } from '../utils';
 import { WHITE_LABEL_ACADEMY, isWhiteLabelAcademy } from '../utils/variables';
 
 const initialState = {
@@ -49,9 +48,12 @@ function WhiteLabelProvider({ children }) {
 
   const getCachedFeatures = () => {
     try {
-      const cached = getStorageItem(CACHE_KEY);
-      if (cached && cached.version === CACHE_VERSION && cached.academy === WHITE_LABEL_ACADEMY) {
-        return cached.data;
+      const cached = sessionStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed.version === CACHE_VERSION && parsed.academy === WHITE_LABEL_ACADEMY) {
+          return parsed.data;
+        }
       }
       return null;
     } catch (error) {
@@ -61,12 +63,12 @@ function WhiteLabelProvider({ children }) {
 
   const setCachedFeatures = (features) => {
     try {
-      setStorageItem(CACHE_KEY, {
+      sessionStorage.setItem(CACHE_KEY, JSON.stringify({
         version: CACHE_VERSION,
         academy: WHITE_LABEL_ACADEMY,
         data: features,
         timestamp: new Date().toISOString(),
-      });
+      }));
     } catch (error) {
       console.error('Failed to cache white label features:', error);
     }
