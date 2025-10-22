@@ -83,10 +83,27 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
   return (
     <>
       {startWithLearnpack ? (
-        <Button cursor="pointer" as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
-          {isStarted ? t('common:learnpack.continue-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })
-            : t('common:learnpack.start-interactive-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
-        </Button>
+        <Box display="flex" gap="10px" flexDirection={{ base: 'column', md: 'row' }}>
+          <Button cursor="pointer" as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
+            {isStarted ? t('common:learnpack.continue-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })
+              : t('common:learnpack.start-interactive-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+          </Button>
+          <Button
+            cursor="pointer"
+            size="sm"
+            padding="4px 8px"
+            fontSize="14px"
+            fontWeight="500"
+            background="gray.200"
+            color="blue.default"
+            onClick={() => {
+              setShowCloneModal(true);
+            }}
+            {...rest}
+          >
+            {t('common:learnpack.open-locally', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+          </Button>
+        </Box>
       ) : (
         <Button
           cursor="pointer"
