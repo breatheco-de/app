@@ -74,8 +74,7 @@ function Dashboard() {
   const [liveClasses, setLiveClasses] = useState([]);
   const [certificates, setCertificates] = useState([]);
   const [isLoadingAssigments, setIsLoadingAssigments] = useState(true);
-  const { isAuthenticated, cohorts } = useAuth();
-  const { reSetUserAndCohorts } = useAuth();
+  const { isAuthenticated, cohorts, reSetUserAndCohorts } = useAuth();
   const { rigo, isRigoInitialized } = useRigo();
 
   const isBelowTablet = getBrowserSize()?.width < 768;
@@ -86,7 +85,7 @@ function Dashboard() {
     state, getCohortUserCapabilities, getCohortData, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, setCohortSession,
     cohortProgram, taskTodo, addTasks, sortedAssignments, handleOpenReviewModal, handleCloseReviewModal,
-    continueWhereYouLeft, checkNavigationAvailability, grantAccess, setGrantAccess,
+    continueWhereYouLeft, checkNavigationAvailability, grantAccess, setGrantAccess, getCohortsModules,
   } = useCohortHandler();
   const { allSubscriptions, areSubscriptionsFetched } = useSubscriptions();
 
@@ -199,7 +198,11 @@ function Dashboard() {
       setIsSyncingMicro(true);
       const resp = await bc.admissions().syncMyMicroCohorts(cohortSession.slug);
       if (resp?.status < 400) {
-        await reSetUserAndCohorts();
+        const { cohorts: updatedCohorts } = await reSetUserAndCohorts();
+
+        const microCohorts = updatedCohorts.filter((c) => cohortSession.micro_cohorts.some((mc) => mc.slug === c.slug));
+        await getCohortsModules(microCohorts);
+
         setShowSyncMicroModal(false);
       }
     } catch (e) {
