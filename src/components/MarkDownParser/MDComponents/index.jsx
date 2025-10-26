@@ -58,11 +58,28 @@ function RigoLink({ children, href }) {
     }
     return query;
   };
+
+  const extractPurposeFromUrl = (url) => {
+    try {
+      const urlObj = new URL(url);
+      const purpose = urlObj.searchParams.get('purpose');
+      return purpose || 'ideal-4geeks-mentor';
+    } catch (error) {
+      return 'ideal-4geeks-mentor';
+    }
+  };
+
   function openRigo() {
     if (isRigoInitialized) {
-      rigo.updateOptions(
-        { showBubble: true, collapsed: false, userMessage: { text: extractQueryFromUrlAndformatAsMessage(href), autoSend: true } },
-      );
+      const purposeSlug = extractPurposeFromUrl(href);
+      const message = extractQueryFromUrlAndformatAsMessage(href);
+
+      rigo.updateOptions({
+        showBubble: true,
+        collapsed: false,
+        purposeSlug,
+        userMessage: { text: message, autoSend: true },
+      });
     }
   }
   return (
