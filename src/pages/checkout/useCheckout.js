@@ -70,7 +70,7 @@ const useCheckout = () => {
     return pricingData;
   }, [allCoupons, selectedPlan]);
 
-  const saveCouponToBag = async (coupons, bagId = '', specificCoupon = '') => {
+  const saveCouponToBag = async (coupons, bagId = '', specificCoupon = '', manualCoupon = false) => {
     try {
       const resp = await bc.payment({
         coupons,
@@ -85,7 +85,7 @@ const useCheckout = () => {
           ...checkingData,
           coupons: [],
         });
-        setCouponError(false);
+        if (manualCoupon) setCouponError(false);
         return;
       }
 
@@ -102,8 +102,8 @@ const useCheckout = () => {
             coupons,
           });
         }
-        setCouponError(false);
-      } else {
+        if (manualCoupon) setCouponError(false);
+      } else if (manualCoupon) {
         setCouponError(true);
       }
     } catch (e) {
@@ -116,9 +116,8 @@ const useCheckout = () => {
       const filtered = prev.filter((c) => c?.source !== 'manual');
       return filtered;
     });
-
     if (checkingData?.id) {
-      saveCouponToBag([''], checkingData.id);
+      saveCouponToBag([''], checkingData.id, '', true);
     }
   };
 
@@ -337,12 +336,13 @@ const useCheckout = () => {
 
   // useEffect for selfAppliedCoupons
   useEffect(() => {
+    console.log('selfAppliedCoupon', selfAppliedCoupon);
     const coupons = [];
 
     if (selfAppliedCoupon) {
       coupons.push(selfAppliedCoupon);
     }
-
+    console.log('selfAppliedCoupon', selfAppliedCoupon);
     const planToUse = selfAppliedCoupon?.plan || planFormated;
 
     if (planToUse) {
@@ -377,10 +377,12 @@ const useCheckout = () => {
         return [...coupons, ...manualCoupons];
       });
     }
-  }, [selfAppliedCoupon, planFormated]);
+  }, [selfAppliedCoupon, planFormated, checkingData?.id]);
 
+  // useEffect for syncing coupons with bag
   useEffect(() => {
     if (!checkingData?.id) return;
+
     const allCouponSlugs = allCoupons
       .map((c) => c?.slug)
       .filter((s) => typeof s === 'string' && s.length > 0);
