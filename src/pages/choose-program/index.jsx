@@ -4,6 +4,7 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
+import { useRouter } from 'next/router';
 import ProgramsDashboard from '../../components/ProgramsDashboard';
 import Text from '../../components/Text';
 import asPrivate from '../../context/PrivateRouteWrapper';
@@ -51,6 +52,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
 function chooseProgram() {
   const { t } = useTranslation('choose-program');
+  const router = useRouter();
   const { setCohortSession, getCohortsModules, cohortsAssignments } = useCohortHandler();
   const { subscriptionStatusDictionary } = useSignup();
   const { user, cohorts, isLoading, reSetUserAndCohorts, fetchUserAndCohorts, setCohorts } = useAuth();
@@ -90,6 +92,31 @@ function chooseProgram() {
     });
     return syllabus;
   }, [cohorts]);
+
+  useEffect(() => {
+    const coinbasePending = router.query.coinbase_pending;
+    const coinbaseIsRenewal = router.query.coinbase_is_renewal;
+
+    if (!coinbasePending) return;
+    if (coinbaseIsRenewal === 'true') {
+      createToast({
+        status: 'info',
+        title: t('renewing-subscription', { ns: 'common' }),
+        description: t('renewal-verification-in-progress', { ns: 'common' }),
+        duration: 5000,
+      });
+      return;
+    }
+    createToast({
+      position: 'top',
+      status: 'info',
+      title: t('common:verifying-payment'),
+      description: t('common:payment-verification-in-progress'),
+      duration: 10000,
+      isClosable: true,
+    });
+    router.replace('/choose-program', undefined, { shallow: true });
+  }, [router.query.coinbase_pending]);
 
   const getServices = async (userRoles) => {
     if (userRoles?.length > 0) {

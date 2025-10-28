@@ -34,7 +34,7 @@ const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
   );
 });
 
-function CardForm({ onSubmit, modalCardErrorProps, buttonText }) {
+function CardForm({ onSubmit, modalCardErrorProps, buttonText, customButtons }) {
   const { t } = useTranslation('signup');
 
   const {
@@ -183,33 +183,37 @@ function CardForm({ onSubmit, modalCardErrorProps, buttonText }) {
                   />
                 </Box>
               </Box>
-              {(isNotTrial || !priceIsNotNumber) ? (
-                <Button
-                  type="submit"
-                  width="100%"
-                  variant="default"
-                  isLoading={isSubmittingPayment}
-                  height="40px"
-                  mt="0"
-                >
-                  {buttonText || t('common:proceed-to-payment')}
-                </Button>
-              ) : (
-                <Button
-                  type="submit"
-                  width="100%"
-                  variant="outline"
-                  borderColor="blue.200"
-                  isLoading={isSubmittingPayment}
-                  background={featuredBackground}
-                  _hover={{ background: featuredBackground, opacity: 0.8 }}
-                  _active={{ background: featuredBackground, opacity: 1 }}
-                  color="blue.default"
-                  height="40px"
-                  mt="0"
-                >
-                  {t('common:start-free-trial')}
-                </Button>
+              {customButtons || (
+                <>
+                  {(isNotTrial || !priceIsNotNumber) ? (
+                    <Button
+                      type="submit"
+                      width="100%"
+                      variant="default"
+                      isLoading={isSubmittingPayment}
+                      height="40px"
+                      mt="0"
+                    >
+                      {buttonText || t('common:proceed-to-payment')}
+                    </Button>
+                  ) : (
+                    <Button
+                      type="submit"
+                      width="100%"
+                      variant="outline"
+                      borderColor="blue.200"
+                      isLoading={isSubmittingPayment}
+                      background={featuredBackground}
+                      _hover={{ background: featuredBackground, opacity: 0.8 }}
+                      _active={{ background: featuredBackground, opacity: 1 }}
+                      color="blue.default"
+                      height="40px"
+                      mt="0"
+                    >
+                      {t('common:start-free-trial')}
+                    </Button>
+                  )}
+                </>
               )}
             </Form>
           )}
@@ -247,11 +251,13 @@ CardForm.propTypes = {
   onSubmit: PropTypes.func,
   modalCardErrorProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   buttonText: PropTypes.string,
+  customButtons: PropTypes.bool,
 };
 CardForm.defaultProps = {
   onSubmit: () => { },
   buttonText: '',
   modalCardErrorProps: {},
+  customButtons: false,
 };
 
 export default CardForm;

@@ -47,6 +47,7 @@ const useSignup = () => {
   const redirectedFrom = getStorageItem('redirected-from');
   const couponsQuery = getQueryString('coupons');
   const addOnsSimple = getQueryString('add_ons');
+  const courseSlug = getQueryString('course_slug');
 
   const addOnsIds = parseAddOnIdsFromQuery(addOnsSimple);
 
@@ -669,6 +670,67 @@ const useSignup = () => {
     }
   };
 
+  const handleCoinbasePayment = async () => {
+    const manyInstallmentsExists = selectedPlan?.how_many_months > 0 || selectedPlan?.period === 'FINANCING';
+    const isTtrial = ['FREE', 'TRIAL'].includes(selectedPlan?.type);
+    if (isTtrial) {
+      createToast({
+        position: 'top',
+        title: t('common:error'),
+        description: t('signup:free-trial-no-crypto'),
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+      setIsSubmittingPayment(false);
+      return null;
+    }
+    const getRequests = () => {
+      if (!isTtrial) {
+        const redirectUrl = courseSlug
+          ? `${window.location.origin}/bootcamp/${courseSlug}?coinbase_pending=true`
+          : `${window.location.origin}/choose-program?coinbase_pending=true`;
+        console.log('selectedPlan de coinbase', selectedPlan?.how_many_months);
+        return {
+          type: checkingData?.type,
+          token: checkingData?.token,
+          how_many_installments: selectedPlan?.how_many_months || undefined,
+          chosen_period: manyInstallmentsExists ? undefined : (selectedPlan?.period || 'HALF'),
+          coupons: checkingData?.coupons,
+          add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
+          payment_method: 'coinbase',
+          return_url: redirectUrl,
+          cancel_url: window.location.href,
+        };
+      }
+      return null;
+    };
+    try {
+      const requestBody = getRequests();
+      const response = await bc.payment().pay({
+        country_code,
+        ...requestBody,
+        conversion_info: {
+          ...userSession,
+        },
+      });
+      const invoiceId = response?.data?.invoice_id || null;
+      console.log('Coinbase charge created:', {
+        p: response?.data?.hosted_url,
+        invoiceId,
+        plan: selectedPlan?.plan_slug,
+        period: selectedPlan?.period,
+        installments: selectedPlan?.how_many_months,
+      });
+
+      return response;
+    } catch (error) {
+      console.error('Error creating Coinbase charge:', error);
+      setIsSubmittingPayment(false);
+      return error;
+    }
+  };
+
   const getChecking = async (plansData) => {
     const src = (addOnsSimple || '').trim();
     let addOnsArray = [];
@@ -715,9 +777,13 @@ const useSignup = () => {
       delete finalData.id;
 
       if (response.status < 400) {
+        // Deep copy plans array to avoid Redux mutation errors
+        const plansCopy = finalData?.plans ? finalData.plans.map((plan) => ({ ...plan })) : [];
+
         const result = {
           ...data,
           ...finalData,
+          plans: plansCopy.length > 0 ? plansCopy : data?.plans?.map((plan) => ({ ...plan })) || [],
         };
         setCheckingData(result);
         return result;
@@ -777,7 +843,6 @@ const useSignup = () => {
   const getPaymentMethods = async (ownerId) => {
     try {
       if (isAuthenticated) {
-        setLoader('paymentMethods', false);
         // const ownerId = selectedPlan.owner.id;
         setLoader('paymentMethods', true);
         const resp = await bc.payment({
@@ -793,6 +858,29 @@ const useSignup = () => {
     } catch (e) {
       console.log(e);
       setLoader('paymentMethods', false);
+    }
+  };
+
+  const getSavedCard = async (ownerId) => {
+    try {
+      if (isAuthenticated && ownerId) {
+        const resp = await bc.payment({ academy: ownerId }).getSavedCard();
+        const { data } = resp;
+        console.log('🔍 Card:', data);
+        return data;
+      }
+      return null;
+    } catch (e) {
+      console.log('Error getting saved card:', e);
+      createToast({
+        position: 'top',
+        title: t('error'),
+        description: t('error-loading-saved-card'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return null;
     }
   };
 
@@ -1030,10 +1118,12 @@ const useSignup = () => {
     isSecondStep,
     isThirdStep,
     handlePayment,
+    handleCoinbasePayment,
     getChecking,
     getPaymentText,
     handleServiceToConsume,
     getPaymentMethods,
+    getSavedCard,
     getPriceWithDiscount,
     getSelfAppliedCoupon,
     applyDiscountCouponsToPlans,

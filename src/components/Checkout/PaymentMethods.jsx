@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, Flex,
+  Box, Flex, Button, RadioGroup, Stack, Radio, Image,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Heading from '../Heading';
@@ -13,12 +13,15 @@ import useAuth from '../../hooks/useAuth';
 import { reportDatalayer } from '../../utils/requests';
 import { getBrowserInfo } from '../../utils';
 import useSignup from '../../hooks/useSignup';
+import useRenewal from '../../pages/renew/useRenewal';
 import { SILENT_CODE } from '../../utils/variables';
+import useCustomToast from '../../hooks/useCustomToast';
 import CardForm from './CardForm';
 import Text from '../Text';
 import AcordionList from '../AcordionList';
 import LoaderScreen from '../LoaderScreen';
 import NextChakraLink from '../NextChakraLink';
+import Icon from '../Icon';
 
 function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
   const { t } = useTranslation('signup');
@@ -27,7 +30,13 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
   const {
     state, setIsSubmittingCard, setIsSubmittingPayment, setPaymentStatus, setPaymentInfo,
   } = signupAction();
-  const { handlePayment, getPaymentMethods } = useSignup();
+  const { isSubmittingPayment, paymentInfo } = state;
+
+  const isRenewalContext = window.location.pathname.includes('/renew');
+  const { handlePayment, handleCoinbasePayment, getPaymentMethods, getSavedCard } = useSignup();
+  const { handleRenewalPayment, handleCoinbaseRenewalPayment } = useRenewal();
+  const paymentHandler = isRenewalContext ? handleRenewalPayment : handlePayment;
+  const coinbaseHandler = isRenewalContext ? handleCoinbaseRenewalPayment : handleCoinbasePayment;
   const {
     selectedPlan,
     paymentMethods,
@@ -40,10 +49,48 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
     description: '',
   });
   const { fontColor, hexColor } = useStyle();
+  const { createToast } = useCustomToast({ toastId: 'payment-methods' });
+
+  const [selectedCard, setSelectedCard] = useState('newCard');
+  const [savedCard, setSavedCard] = useState(null);
+
+  const CARD_ICONS = {
+    visa: 'https://js.stripe.com/v3/fingerprinted/img/visa-729c05c240c4bdb47b03ac81d9945bfe.svg',
+    mastercard: 'https://js.stripe.com/v3/fingerprinted/img/mastercard-4d8844094130711885b5e41b28c9848f.svg',
+    amex: 'https://js.stripe.com/v3/fingerprinted/img/amex-a49b82f46c5cd6a96a6e418a6ca1717c.svg',
+    discover: 'https://js.stripe.com/v3/fingerprinted/img/discover-ac52cd46f89fa40a29a0bfb954e33173.svg',
+    diners: 'https://js.stripe.com/v3/fingerprinted/img/diners-fbcbd3360f8e3f629cdaa80e93abdb8b.svg',
+    jcb: 'https://js.stripe.com/v3/fingerprinted/img/jcb-271fd06e6e7a2c52692ffa91a95fb64f.svg',
+    unionpay: 'https://js.stripe.com/v3/fingerprinted/img/unionpay-8a10aefc7295216c338ba4e1224627a1.svg',
+  };
+
+  const processedErrorRef = useRef(false);
 
   useEffect(() => {
-    if (selectedPlan?.owner?.id) getPaymentMethods(selectedPlan.owner.id);
-  }, [isAuthenticated]);
+    if (selectedPlan?.owner?.id && isAuthenticated) {
+      getPaymentMethods(selectedPlan.owner.id);
+    }
+  }, [selectedPlan?.owner?.id, isAuthenticated]);
+
+  useEffect(() => {
+    const fetchSavedCard = async () => {
+      if (selectedPlan?.owner?.id && isAuthenticated) {
+        try {
+          const fetchedCard = await getSavedCard(selectedPlan.owner.id);
+          setSavedCard(fetchedCard);
+        } catch (error) {
+          console.error('Error fetching saved card:', error);
+        }
+      }
+    };
+    fetchSavedCard();
+  }, [selectedPlan?.owner?.id, isAuthenticated]);
+
+  useEffect(() => {
+    if (!openDeclinedModal) {
+      processedErrorRef.current = false;
+    }
+  }, [openDeclinedModal]);
 
   const handlePaymentErrors = (data, actions = {}, callback = () => { }) => {
     const silentCode = data?.silent_code;
@@ -90,12 +137,12 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
 
     if (data.status === 'ok') {
       try {
-        const respPayment = await handlePayment({}, true);
+        const respPayment = await paymentHandler({}, true);
         if (respPayment.status === 'FULFILLED') {
           setPaymentStatus('success');
           setIsSubmittingPayment(false);
-          onPaymentSuccess();
           setShowPaymentDetails(false);
+          onPaymentSuccess();
         } else {
           setPaymentStatus('error');
           handlePaymentErrors(respPayment, actions);
@@ -107,7 +154,7 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
       reportDatalayer({
         dataLayer: {
           event: 'add_payment_info',
-          path: '/checkout',
+          path: isRenewalContext ? '/renew' : '/checkout',
           value: selectedPlan?.price,
           currency,
           payment_type: 'Credit card',
@@ -142,6 +189,92 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
 
   const handleTryAgain = () => {
     setOpenDeclinedModal(false);
+  };
+
+  const handleSaveCardForLater = async () => {
+    if (!paymentInfo.card_number || !paymentInfo.exp || !paymentInfo.cvc) {
+      createToast({
+        position: 'top',
+        title: t('error'),
+        description: t('please-fill-all-fields'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setIsSubmittingCard(true);
+
+    try {
+      const monthAndYear = paymentInfo.exp.split('/');
+      const expMonth = monthAndYear[0];
+      const expYear = monthAndYear[1];
+
+      const cardData = {
+        card_number: paymentInfo.card_number,
+        exp_month: expMonth,
+        exp_year: expYear,
+        cvc: paymentInfo.cvc,
+      };
+
+      const resp = await bc.payment().addCard({ ...cardData, academy: selectedPlan.owner.id });
+
+      if (resp.data.status === 'ok') {
+        const currency = selectedPlan?.currency?.code;
+        reportDatalayer({
+          dataLayer: {
+            event: 'add_payment_info',
+            path: isRenewalContext ? '/renew' : '/checkout',
+            value: selectedPlan?.price,
+            currency,
+            payment_type: 'Credit card',
+            plan: selectedPlan?.plan_slug,
+            period_label: selectedPlan?.period_label,
+            agent: getBrowserInfo(),
+          },
+        });
+        createToast({
+          position: 'top',
+          title: t('success'),
+          description: t('card-saved-successfully'),
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+        setIsSubmittingCard(false);
+
+        getPaymentMethods(selectedPlan.owner.id);
+        const updatedCard = await getSavedCard(selectedPlan.owner.id);
+        setSavedCard(updatedCard);
+
+        setShowPaymentDetails(false);
+      } else {
+        setPaymentStatus('error');
+        handlePaymentErrors(resp.data, { setSubmitting: () => setIsSubmittingCard(false) });
+      }
+    } catch (error) {
+      console.error('Error saving card:', error);
+      setIsSubmittingCard(false);
+      setPaymentStatus('error');
+      handlePaymentErrors(error.response?.data || { detail: t('error-saving-card') }, { setSubmitting: () => setIsSubmittingCard(false) });
+    }
+  };
+
+  const handleCoinbaseCharge = async () => {
+    setIsSubmittingPayment(true);
+
+    const result = await coinbaseHandler();
+    const { data } = result;
+    if (result?.status < 400) {
+      if (data?.hosted_url) {
+        window.location.href = data.hosted_url;
+      }
+    } else {
+      setPaymentStatus('error');
+      setIsSubmittingPayment(false);
+      handlePaymentErrors(data || { detail: t('error-coinbase-payment') }, { setSubmitting: () => {} });
+    }
   };
 
   return (
@@ -196,20 +329,157 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
                 ),
               };
             }
+            if (method.is_coinbase) {
+              return {
+                ...method,
+                description: (
+                  <Box padding="0 17px">
+                    <Text size="md" mb="1rem">
+                      {method.description}
+                    </Text>
+                    <Button
+                      onClick={handleCoinbaseCharge}
+                      width="100%"
+                      variant="default"
+                      height="40px"
+                      mt="0"
+                      isLoading={isSubmittingPayment}
+                    >
+                      {t('pay-with-coinbase')}
+                    </Button>
+                  </Box>
+                ),
+              };
+            }
             return {
               ...method,
               description: (
-                <CardForm
-                  modalCardErrorProps={{
-                    declinedModalProps,
-                    openDeclinedModal,
-                    setOpenDeclinedModal,
-                    handleTryAgain,
-                    disableClose: true,
-                    isSubmitting: isSubmittingCard,
-                  }}
-                  onSubmit={onSubmitCard}
-                />
+                <>
+                  <RadioGroup onChange={setSelectedCard} value={selectedCard} marginBottom="10px">
+                    <Stack>
+                      {savedCard && (
+                        <Box
+                          border="1px solid"
+                          borderColor={selectedCard === 'userCard' ? hexColor.blueDefault : hexColor.borderColor}
+                          backgroundColor={selectedCard === 'userCard' ? hexColor.blueLight : 'transparent'}
+                          padding="10px"
+                          borderRadius="5px"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="space-between"
+                        >
+                          <Radio value="userCard">
+                            <Box display="flex">
+                              <Image src={CARD_ICONS[savedCard.brand]} alt={savedCard.brand} width="24px" height="18px" marginRight="8px" />
+                              <Text>
+                                ••••
+                                {' '}
+                                {savedCard.last4}
+                              </Text>
+                            </Box>
+                            <Text marginTop="4px" color="gray.500">
+                              Expires
+                              {' '}
+                              {savedCard.exp_month}
+                              /
+                              {savedCard.exp_year}
+                            </Text>
+                          </Radio>
+                        </Box>
+                      )}
+                      <Box
+                        border="1px solid"
+                        borderColor={selectedCard === 'newCard' ? hexColor.blueDefault : hexColor.borderColor}
+                        backgroundColor={selectedCard === 'newCard' ? hexColor.blueLight : 'transparent'}
+                        padding="10px"
+                        borderRadius="5px"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="space-between"
+                      >
+                        <Radio value="newCard">
+                          <Flex>
+                            <Icon icon="card" width="24px" height="18px" color={fontColor} />
+                            <Text marginLeft="8px">New card</Text>
+                          </Flex>
+                        </Radio>
+                      </Box>
+                    </Stack>
+                  </RadioGroup>
+                  {
+                    selectedCard === 'userCard' ? (
+                      <Button
+                        width="100%"
+                        variant="default"
+                        height="40px"
+                        mt="0"
+                        isLoading={isSubmittingPayment}
+                        onClick={async () => {
+                          setIsSubmittingPayment(true);
+                          try {
+                            const respPayment = await paymentHandler({}, true);
+                            if (respPayment?.status === 'FULFILLED') {
+                              setPaymentStatus('success');
+                              setIsSubmittingPayment(false);
+                              onPaymentSuccess();
+                              setShowPaymentDetails(false);
+                            } else {
+                              setPaymentStatus('error');
+                              handlePaymentErrors(respPayment, { setSubmitting: () => setIsSubmittingPayment(false) });
+                            }
+                          } catch (error) {
+                            console.error('Error processing payment with saved card:', error);
+                            setIsSubmittingPayment(false);
+                            setPaymentStatus('error');
+                            handlePaymentErrors(error.response?.data || { detail: t('error-processing-payment') }, { setSubmitting: () => setIsSubmittingPayment(false) });
+                          }
+                        }}
+                      >
+                        Proceed to payment
+                      </Button>
+                    ) : (
+                      <>
+                        <CardForm
+                          modalCardErrorProps={{
+                            declinedModalProps,
+                            openDeclinedModal,
+                            setOpenDeclinedModal,
+                            handleTryAgain,
+                            disableClose: true,
+                            isSubmitting: isSubmittingCard,
+                          }}
+                          onSubmit={onSubmitCard}
+                          customButtons={(
+                            <Flex justifyContent="space-between" mt="10px" gap="10px">
+                              <Button
+                                type="submit"
+                                variant="default"
+                                width="100%"
+                                height="40px"
+                                mt="0"
+                                isLoading={isSubmittingPayment}
+                              >
+                                Pay now
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="default"
+                                width="100%"
+                                height="40px"
+                                mt="0"
+                                onClick={handleSaveCardForLater}
+                                isLoading={isSubmittingCard && !isSubmittingPayment}
+                                disabled={isSubmittingPayment}
+                              >
+                                Save my credit card for later
+                              </Button>
+                            </Flex>
+                          )}
+                        />
+                      </>
+                    )
+                  }
+                </>
               ),
             };
           })}

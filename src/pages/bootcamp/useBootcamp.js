@@ -58,6 +58,8 @@ export const useBootcamp = () => {
   const isVisibilityPublic = data.visibility === 'PUBLIC';
   const courseColor = data?.color;
   const { course_slug: courseSlug } = router.query;
+  const coinbasePending = router.query.coinbase_pending === 'true';
+  const coinbaseIsRenewal = router.query.coinbase_is_renewal;
 
   const students = cohortData.students || [];
   const instructors = cohortData.instructors || [];
@@ -451,6 +453,36 @@ export const useBootcamp = () => {
       });
     }
   }, [isAuthenticated, cohortId]);
+
+  useEffect(() => {
+    if (!coinbasePending) return;
+    if (coinbaseIsRenewal) {
+      createToast({
+        status: 'info',
+        title: t('renewing-subscription', { ns: 'common' }),
+        description: t('renewal-verification-in-progress', { ns: 'common' }),
+        duration: 5000,
+      });
+      return;
+    }
+    if (!relatedSubscription) {
+      createToast({
+        status: 'info',
+        title: t('verifying-payment', { ns: 'common' }),
+        description: t('payment-verification-in-progress', { ns: 'common' }),
+        duration: 5000,
+      });
+    }
+    if (relatedSubscription && existsRelatedSubscription) {
+      createToast({
+        status: 'success',
+        title: t('payment-successful', { ns: 'common' }),
+        description: t('subscription-activated', { ns: 'common' }),
+        duration: 7000,
+      });
+      router.replace(`/bootcamp/${courseSlug}`, undefined, { shallow: true });
+    }
+  }, [coinbasePending, coinbaseIsRenewal, relatedSubscription, existsRelatedSubscription]);
 
   useEffect(() => {
     if (isAuthenticated && cohortData?.cohortSyllabus?.cohort?.id) redirectToCohortIfItsReady();

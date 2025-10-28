@@ -176,13 +176,17 @@ const useCheckout = () => {
 
   const findAutoSelectedPlan = (checking) => {
     const plans = checking?.plans || [];
-    const sortedPlans = plans.sort((a, b) => (a.how_many_months || 0) - (b.how_many_months || 0));
+    // Crear una copia del array ANTES de ordenar para no mutar el original
+    const sortedPlans = [...plans].sort((a, b) => (a.how_many_months || 0) - (b.how_many_months || 0));
     const defaultAutoSelectedPlan = sortedPlans[0];
     const autoSelectedPlanByQueryString = checking?.plans?.find(
       (item) => item?.plan_id === (planId || userSelectedPlan?.plan_id),
     );
 
-    return autoSelectedPlanByQueryString || defaultAutoSelectedPlan;
+    const foundPlan = autoSelectedPlanByQueryString || defaultAutoSelectedPlan;
+
+    // Retornar una copia profunda para evitar mutaciones de Redux
+    return foundPlan ? { ...foundPlan } : foundPlan;
   };
 
   const initializePlanData = async () => {

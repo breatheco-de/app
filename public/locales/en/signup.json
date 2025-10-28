@@ -35,6 +35,9 @@
   "plan-is-ready": "You're almost ready! To finish, press the blue button below that says 'Start Learning'.",
   "payment-success": "Payment successful",
   "payment-failed": "Payment failed",
+  "verifying-payment": "Verifying your payment",
+  "checking-coinbase-payment-confirmation": "We're checking the confirmation of your cryptocurrency payment with Coinbase",
+  "this-may-take-few-seconds": "This may take a few seconds...",
   "discount-applied": "Discount applied",
   "see-financing-opt": "See financing options",
   "course-details": "Plan details",
@@ -193,7 +196,20 @@
     "validate-email-description": "We sent a confirmation email to: <strong>{{email}}</strong>, please check your email and click on the confirmation link.",
     "email-sent-to": "We sent you a confirmation email to {{email}}!",
     "email-already-sent": "You have a pending invitation sent less than 1 day ago, check your email",
-    "coupon-already-applied": "Coupon already applied"
+    "coupon-already-applied": "Coupon already applied",
+    "already-renewed": "Subscription Already Renewed",
+    "already-renewed-description": "This subscription cycle was already paid on {{paidDate}}. Your next payment is due on {{nextDate}}.",
+    "error-loading-payment-methods": "Error loading payment methods",
+    "missing-subscription-id": "Missing Subscription ID",
+    "missing-subscription-id-description": "Please provide either subscription_id or plan_financing_id in the URL",
+    "multiple-subscription-ids": "Multiple Subscription IDs",
+    "multiple-subscription-ids-description": "Please provide only one ID: either subscription_id or plan_financing_id, not both",
+    "missing-renewal-window": "Missing Renewal Window",
+    "missing-renewal-window-description": "Please provide early_renewal_window_days parameter in the URL",
+    "too-early-to-renew": "Too Early to Renew",
+    "too-early-to-renew-description": "You can renew starting from {{startDate}}. Your next payment is due on {{nextDate}}.",
+    "payment-overdue": "Payment Overdue",
+    "payment-overdue-description": "Your payment is overdue. Please contact support."
   },
   "alert-message-validate-email": {
     "title": "Verify email",
@@ -254,6 +270,13 @@
     "select-text": "Select experience",
     "cohort-connector": "Cohort: {{name}}",
     "subscription-not-found": "Subscription not found",
+    "subscription-not-found-description": "The subscription you're trying to renew was not found. Please check the link and try again.",
+    "subscription-not-yours": "Access denied",
+    "subscription-not-yours-description": "This subscription doesn't belong to you. You can only renew your own subscriptions.",
+    "subscription-invalid-status": "Invalid subscription status",
+    "subscription-invalid-status-description": "This subscription cannot be renewed because it's not active. Please contact support if you believe this is an error.",
+    "subscription-expired": "Subscription expired",
+    "subscription-expired-description": "This subscription has expired and cannot be renewed. Please contact support for assistance.",
     "no-plan-found-for-service": "You don't have any subscription related to the following services:"
   },
   "get-premium": "Get Premium",
@@ -467,5 +490,16 @@
         }
       ]
     }
+  },
+  "renewal": {
+    "payment-success": "Payment Successful",
+    "subscription-renewed": "Your subscription has been renewed successfully",
+    "card-saved": "Card Saved",
+    "card-saved-successfully": "Your card has been saved for future payments",
+    "payment-confirmed": "Payment Confirmed",
+    "subscription-processing-message": "Your subscription is being processed. You will receive a confirmation email shortly.",
+    "redirecting-to-dashboard": "Redirecting to dashboard...",
+    "cryptocurrency-payment-success": "Cryptocurrency Payment Successful!",
+    "subscription-active-message": "Your subscription is now active. Welcome aboard!"
   }
 }
