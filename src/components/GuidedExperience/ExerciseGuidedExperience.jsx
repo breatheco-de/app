@@ -18,6 +18,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
   const [telemetryReport, setTelemetryReport] = useState([]);
 
   const isExerciseStarted = !!currentTask?.assignment_telemetry;
+  console.log(currentTask);
 
   useEffect(() => {
     if (isExerciseStarted) {
@@ -164,7 +165,15 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                 height="100%"
                 gap={!isExerciseStarted && '10px'}
               >
-                <Flex flexDirection="column" overflowY="hidden" maxWidth={{ base: 'none', md: !isExerciseStarted && '50%' }}>
+                <Flex
+                  flexDirection="column"
+                  overflowY="hidden"
+                  maxWidth={{
+                    base: 'none',
+                    md: !isExerciseStarted && currentAsset?.intro_video_url ? '50%' : '100%',
+                  }}
+                  flexGrow={1}
+                >
                   <Heading color="white" mb="16px" size="l" fontWeight="400">
                     {currentAsset?.title}
                   </Heading>
@@ -180,35 +189,36 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                     </Text>
                   </Box>
                 </Flex>
-                <Flex justifyContent="center" flexGrow={1}>
-                  <Box
-                    flexGrow={isExerciseStarted && 1}
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    width="100%"
-                    height={isExerciseStarted && '100%'}
-                    overflow="hidden"
-                    borderRadius="10px"
-                  >
+                {currentAsset?.intro_video_url && (
+                  <Flex justifyContent="center" alignItems="start" flexGrow={0} flexBasis="50%">
                     <Box
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
+                      width="100%"
+                      maxWidth="500px"
+                      overflow="hidden"
                       borderRadius="10px"
-                      width={{ base: '100%', md: 'auto' }}
-                      maxWidth="100%"
-                      aspectRatio="16 / 9"
-                      height="100%"
                     >
-                      <ReactPlayerV2
-                        withThumbnail
-                        controls={false}
+                      <Box
+                        borderRadius="10px"
                         width="100%"
-                        height="100%"
-                        style={{ objectFit: 'contain' }}
-                        url={currentAsset?.intro_video_url}
-                      />
+                        maxWidth="500px"
+                        aspectRatio="16 / 9"
+                        maxHeight="400px"
+                      >
+                        <ReactPlayerV2
+                          withThumbnail
+                          controls={false}
+                          width="100%"
+                          height="100%"
+                          style={{ objectFit: 'contain' }}
+                          url={currentAsset?.intro_video_url}
+                        />
+                      </Box>
                     </Box>
-                  </Box>
-                </Flex>
+                  </Flex>
+                )}
               </Box>
 
               {isExerciseStarted && (
