@@ -894,17 +894,6 @@ const useSignup = () => {
             ...coupon,
             plan,
           });
-        } else {
-          const userCoupons = await bc.payment({ plan }).getMyUserCoupons();
-          const firstAuto = userCoupons?.data
-            .filter((c) => c.auto === true && c.is_valid === true)
-            .sort((a, b) => new Date(a.offered_at) - new Date(b.offered_at))[0];
-          if (firstAuto) {
-            setSelfAppliedCoupon({
-              ...firstAuto,
-              plan,
-            });
-          }
         }
       }
     } catch (e) {
@@ -966,7 +955,6 @@ const useSignup = () => {
 
       if (respPayment?.status_code >= 400) {
         setPaymentStatus('error');
-        console.log('wililililili', respPayment?.detail);
         setDeclinedPayment({
           title: t('transaction-denied'),
           description: respPayment?.detail || t('payment-not-processed'),
