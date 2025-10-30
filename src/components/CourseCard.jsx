@@ -4,6 +4,8 @@ import {
   Box, Flex, Link, Image, Img,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
+import { usePersistentBySession } from '../hooks/usePersistent';
+import { parseQuerys } from '../utils/url';
 import Heading from './Heading';
 import Text from './Text';
 import Icon from './Icon';
@@ -14,12 +16,20 @@ function CourseCard({
 }) {
   const { t, lang } = useTranslation('pricing');
   const { hexColor, modal, backgroundColor4 } = useStyle();
-  const buildUtmString = (utm) => {
-    const params = Object.entries(utm)
-      .filter(([, value]) => value)
-      .map(([key, value]) => `utm_${key}=${encodeURIComponent(value)}`)
-      .join('&');
-    return params ? `?${params}` : '';
+  const [couponFromSession] = usePersistentBySession('coupon', '');
+
+  const buildQueryParams = (utm = {}) => {
+    const params = {};
+    if (utm) {
+      Object.entries(utm).forEach(([key, value]) => {
+        if (value) params[`utm_${key}`] = value;
+      });
+    }
+    if (couponFromSession) {
+      params.ref = couponFromSession;
+    }
+
+    return parseQuerys(params);
   };
   return (
     <Flex
@@ -111,8 +121,8 @@ function CourseCard({
         variant="buttonDefault"
         borderRadius="3px"
         href={linkType === 'external'
-          ? `https://4geeksacademy.com/${lang === 'en' ? 'us' : lang}/coding-bootcamps/${course?.slug}${course?.utm ? buildUtmString(course?.utm) : ''}`
-          : `/${lang}/bootcamp/${course?.slug}`}
+          ? `https://4geeksacademy.com/${lang === 'en' ? 'us' : lang}/coding-bootcamps/${course?.slug}${buildQueryParams(course?.utm)}`
+          : `/${lang}/bootcamp/${course?.slug}${buildQueryParams()}`}
         target={linkType === 'external' ? '_blank' : '_self'}
         textAlign="center"
         width="100%"

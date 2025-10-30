@@ -1,6 +1,7 @@
-import { Box, Text, Button, useDisclosure, Flex, Spinner } from '@chakra-ui/react';
+import { Box, Text, Button, useDisclosure, Flex, Spinner, useColorModeValue } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import Link from './NextChakraLink';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 import ShareReferralModal from './ShareReferralModal';
@@ -8,7 +9,7 @@ import ShareReferralModal from './ShareReferralModal';
 function ReferralFeatured({ couponData, isLoading }) {
   const { textColor } = useStyle();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { t } = useTranslation('choose-program');
+  const { t, lang } = useTranslation('choose-program');
   return (
     <>
       <Box
@@ -29,10 +30,32 @@ function ReferralFeatured({ couponData, isLoading }) {
           fontWeight="700"
           color={textColor}
           textAlign="center"
-          marginBottom="15px"
+          marginBottom="0"
           marginTop="0"
         >
           {t('sidebar.referral-featured-label')}
+        </Text>
+        <Text
+          fontSize="sm"
+          lineHeight="19px"
+          fontWeight="700"
+          color={textColor}
+          textAlign="center"
+          marginBottom="15px"
+          marginTop="0"
+        >
+          <Link
+            target="_blank"
+            href={`${window.location.origin}${lang === 'en' ? '' : `/${lang}`}/profile/referral-program`}
+            color={useColorModeValue('blue.default', 'blue.300')}
+            display="inline-block"
+            className="link"
+            letterSpacing="0.05em"
+            locale="en"
+            fontFamily="Lato, Sans-serif"
+          >
+            {t('sidebar.referral-featured-learn-more')}
+          </Link>
         </Text>
         <Flex justify="center">
           <Button

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Grid, Box, Text, Button, Stack } from '@chakra-ui/react';
+import { Grid, Box, Text, Button, Stack, Link } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import useStyle from '../hooks/useStyle';
@@ -20,13 +20,11 @@ function ShareReferralModal({ isOpen, onClose, couponData }) {
   });
   useEffect(() => {
     if (couponData?.plans) {
-      const has4GeeksPlusPlan = couponData?.plans.filter((plan) => plan.slug === '4geeks-plus-subscription') || [];
       const baseUrl = window.location.origin || '4geeks.com';
       const queryParams = parseQuerys({
-        plan: has4GeeksPlusPlan.length > 0 || couponData.plans.length === 0 ? '4geeks-plus-subscription' : couponData?.plans[0]?.slug,
         coupon: couponData?.slug,
       });
-      setCheckoutLink(`${baseUrl}/checkout${queryParams}`);
+      setCheckoutLink(`${baseUrl}${queryParams}`);
     }
   }, [couponData]);
   return (
@@ -135,6 +133,15 @@ function ShareReferralModal({ isOpen, onClose, couponData }) {
               </Text>
               <Text fontSize="13px" lineHeight="1.5">
                 {t('referral-step-2')}
+                <Link
+                  href={`${window.location.origin || '4geeks.com'}/referral-program`}
+                  color="blue.default"
+                  _hover={{ textDecoration: 'underline' }}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t('referral-read-terms')}
+                </Link>
               </Text>
               <Text fontSize="13px" lineHeight="1.5">
                 {t('referral-step-3')}

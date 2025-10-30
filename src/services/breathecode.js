@@ -55,6 +55,7 @@ const breathecode = {
       register: (payload) => axios.post(`${url}/user/register`, payload),
       subscribe: (payload) => axios.post(`${url}/subscribe/`, { ...payload }),
       removeGithub: () => axios.delete(`${url}/github/me`),
+      checkDiscordServer: (serverId, cohortSlug) => axios.get(`${url}/discord/server/${serverId}/${cohortSlug}`),
     };
   },
 
@@ -82,6 +83,7 @@ const breathecode = {
     const qs = parseQuerys(query, isQueryConnector);
     return {
       me: () => axios.get(`${url}/user/me`),
+      syncMyMicroCohorts: (macroCohortSlug) => axios.post(`${url}/me/micro-cohorts/sync/${macroCohortSlug}`),
       cohort: (id, academy) => axios.get(`${url}/academy/cohort/${id}${qs}`, {
         headers: academy && {
           academy,
@@ -305,6 +307,7 @@ const breathecode = {
       liveClass: () => axios.get(`${url}/me/event/liveclass${qs}`),
       joinLiveClass: (liveClassHash) => axios.get(`${url}/me/event/liveclass/join/${liveClassHash}${qs}`),
       applyEvent: (eventId, payload) => axios.post(`${url}/me/event/${eventId}/checkin${qs}`, payload),
+      getLivekitToken: (eventId) => axios.get(`${url}/event/${eventId}/livekit/token`),
       getUsers: (eventId) => axios.get(`${url}/event/${eventId}/checkin${qs}`),
       getAllEventTypes: () => axios.get(`${url}/eventype${qs}`),
       liveWorkshopStatus: () => axios.get(`${url}/live-workshop-status`),

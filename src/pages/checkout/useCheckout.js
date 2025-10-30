@@ -336,45 +336,43 @@ const useCheckout = () => {
 
   // useEffect for selfAppliedCoupons
   useEffect(() => {
-    const coupons = [];
+    const updateAllCoupons = (coupons) => {
+      setAllCoupons((prev) => {
+        const manualCoupons = prev.filter((c) => c?.source === 'manual');
+        const existingSlugs = new Set(coupons.map((c) => c?.slug));
+        const uniqueManualCoupons = manualCoupons.filter((c) => !existingSlugs.has(c?.slug));
+        return [...coupons, ...uniqueManualCoupons];
+      });
+    };
 
-    if (selfAppliedCoupon) {
-      coupons.push(selfAppliedCoupon);
-    }
-    const planToUse = selfAppliedCoupon?.plan || planFormated;
+    const loadAutoAppliedCoupons = async () => {
+      const coupons = [];
 
-    if (planToUse) {
-      bc.payment({ plan: planToUse }).getMyUserCoupons()
-        .then(({ data: userCouponsData }) => {
-          const autoReferralCoupons = (userCouponsData || [])
+      if (selfAppliedCoupon) {
+        coupons.push(selfAppliedCoupon);
+      }
+
+      const planToUse = selfAppliedCoupon?.plan || planFormated;
+
+      if (planToUse) {
+        try {
+          const { data: userCouponsData } = await bc.payment({ plan: planToUse }).getMyUserCoupons();
+          const autoRewardCoupons = (userCouponsData || [])
             .filter((c) => c?.auto === true && c?.is_valid === true)
             .sort((a, b) => new Date(a.offered_at) - new Date(b.offered_at));
 
-          autoReferralCoupons.forEach((ref) => {
-            coupons.push({ ...ref, plan: planToUse, source: 'referral' });
+          autoRewardCoupons.forEach((ref) => {
+            coupons.push({ ...ref, plan: planToUse, source: 'reward' });
           });
+        } catch (error) {
+          console.error('Error fetching user coupons:', error);
+        }
+      }
 
-          setAllCoupons((prev) => {
-            const manualCoupons = prev.filter((c) => c?.source === 'manual');
-            const existingSlugs = new Set(coupons.map((c) => c?.slug));
-            const uniqueManualCoupons = manualCoupons.filter((c) => !existingSlugs.has(c?.slug));
-            return [...coupons, ...uniqueManualCoupons];
-          });
-        })
-        .catch(() => {
-          setAllCoupons((prev) => {
-            const manualCoupons = prev.filter((c) => c?.source === 'manual');
-            const existingSlugs = new Set(coupons.map((c) => c?.slug));
-            const uniqueManualCoupons = manualCoupons.filter((c) => !existingSlugs.has(c?.slug));
-            return [...coupons, ...uniqueManualCoupons];
-          });
-        });
-    } else {
-      setAllCoupons((prev) => {
-        const manualCoupons = prev.filter((c) => c?.source === 'manual');
-        return [...coupons, ...manualCoupons];
-      });
-    }
+      updateAllCoupons(coupons);
+    };
+
+    loadAutoAppliedCoupons();
   }, [selfAppliedCoupon, planFormated, checkingData?.id]);
 
   // useEffect for syncing coupons with bag

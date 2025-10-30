@@ -4,7 +4,7 @@ import axios from 'axios';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useAuth from './useAuth';
-import { getStorageItem, getBrowserInfo } from '../utils';
+import { getStorageItem, getBrowserInfo, languageFix } from '../utils';
 import useCohortAction from '../store/actions/cohortAction';
 import { processRelatedAssignments } from '../utils/cohorts';
 import { reportDatalayer } from '../utils/requests';
@@ -18,6 +18,7 @@ function useCohortHandler() {
   const [grantAccess, setGrantAccess] = useState(false);
   const { user, isAuthenticated, cohorts: myCohorts, fetchUserAndCohorts, setCohorts } = useAuth();
   const { t, lang } = useTranslation('dashboard');
+  const { t: tSignup } = useTranslation('signup');
   const {
     setCohortSession,
     setTaskCohortNull,
@@ -770,7 +771,8 @@ function useCohortHandler() {
   };
 
   const checkNavigationAvailability = () => {
-    const showToastAndRedirect = (programSlug) => {
+    const showToastAndRedirect = (programSlug, reason) => {
+      console.log(`❌ ACCESS DENIED: ${reason} - Redirecting to checkout for plan: ${programSlug}`);
       router.push({
         pathname: '/checkout',
         locale: lang,
@@ -788,11 +790,15 @@ function useCohortHandler() {
     };
 
     if (allSubscriptions) {
+      console.log('🔍 All subscriptions:', allSubscriptions);
+      console.log('🎯 Looking for cohort ID:', cohortSession.id);
       const cohortSubscriptions = allSubscriptions?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
+      console.log('📋 Filtered cohort subscriptions:', cohortSubscriptions);
       const currentCohortSlug = cohortSubscriptions[0]?.plans[0]?.slug;
 
       if (cohortSubscriptions.length === 0) {
         if (isAuthenticated) {
+          console.log('❌ ACCESS DENIED: No subscriptions for this cohort - User authenticated but no subscription');
           createToast({
             position: 'top',
             title: t('alert-message:access-denied'),
@@ -805,6 +811,7 @@ function useCohortHandler() {
             locale: lang,
           });
         } else {
+          console.log('❌ ACCESS DENIED: User not authenticated - Redirecting to login');
           createToast({
             position: 'top',
             title: t('alert-message:login-required'),
@@ -832,26 +839,112 @@ function useCohortHandler() {
       );
 
       if (fullyPaidSub) {
+        console.log('✅ ACCESS GRANTED: User has fully paid subscription');
         setGrantAccess(true);
         return;
       }
 
       if (!freeTrialSub && !isCancelledButValid) {
-        showToastAndRedirect(currentCohortSlug);
+        console.log('❌ ACCESS DENIED: No valid subscription (no free trial or cancelled but valid)');
+        showToastAndRedirect(currentCohortSlug, 'NO_VALID_SUBSCRIPTION');
         return;
       }
 
       if (expiredCourse) {
-        showToastAndRedirect(currentCohortSlug);
+        console.log(`❌ ACCESS DENIED: Course expired or error - Status: ${expiredCourse.status}`);
+        showToastAndRedirect(currentCohortSlug, 'EXPIRED_COURSE');
         return;
       }
 
       if (now > freeTrialExpDate) {
-        showToastAndRedirect(currentCohortSlug);
+        const daysPast = Math.floor((now - freeTrialExpDate) / (1000 * 60 * 60 * 24));
+        console.log(`❌ ACCESS DENIED: Free trial expired ${daysPast} days ago`);
+        showToastAndRedirect(currentCohortSlug, 'TRIAL_EXPIRED');
         return;
       }
 
+      console.log('✅ ACCESS GRANTED: User has valid access (trial or cancelled but valid)');
       setGrantAccess(true);
+    } else {
+      console.log('❌ ACCESS DENIED: No subscription data available');
+    }
+  };
+
+  const handleShortcutClick = async (shortcut) => {
+    const initDiscordOAuth = async (requestConfig) => {
+      const requestConfigData = requestConfig;
+      requestConfigData.url += `?cohort_slug=${cohortSession.slug}&url=${encodeURIComponent(window.location.href)}`;
+      const response = await axios(requestConfigData);
+      const auth_url = response.data?.authorization_url;
+
+      if (auth_url) {
+        window.location.href = auth_url;
+      }
+      if (response.status === 403) {
+        createToast({
+          position: 'top',
+          title: tSignup('select-service-of-plan.subscription-not-found'),
+          status: 'error',
+          duration: 6000,
+          isClosable: true,
+        });
+      }
+    };
+
+    try {
+      if (shortcut?.api_url) {
+        const api_url = `${BREATHECODE_HOST}/${shortcut.api_url}`;
+        const requestConfig = {
+          httpMethod: 'GET',
+          url: api_url,
+          headers: { Authorization: `Token ${accessToken}` },
+        };
+
+        if (shortcut.label === 'Discord') {
+          const joinedServers = user?.discord?.joined_servers;
+          const isJoined = joinedServers?.find((server) => server === shortcut.server_id);
+          if (joinedServers && isJoined) {
+            const serverResponse = await bc.auth().checkDiscordServer(shortcut.server_id, cohortSession.slug);
+            const serverUrl = serverResponse.data?.server_url;
+            if (serverUrl) {
+              window.location.href = serverUrl;
+            }
+            if (serverResponse.status === 403) {
+              createToast({
+                position: 'top',
+                title: tSignup('select-service-of-plan.subscription-not-found'),
+                status: 'error',
+                duration: 6000,
+                isClosable: true,
+              });
+              return;
+            }
+            if (serverResponse.status === 404) {
+              initDiscordOAuth(requestConfig);
+              return;
+            }
+          } else {
+            initDiscordOAuth(requestConfig);
+            return;
+          }
+        }
+
+        await axios(requestConfig);
+        return;
+      }
+
+      if (shortcut?.url) {
+        window.open(languageFix(shortcut.url, lang), '_blank');
+      }
+    } catch (e) {
+      console.log(e);
+      createToast({
+        position: 'top',
+        title: tSignup('alert-message:module-start-error'),
+        status: 'error',
+        duration: 6000,
+        isClosable: true,
+      });
     }
   };
 
@@ -884,6 +977,7 @@ function useCohortHandler() {
     grantAccess,
     setGrantAccess,
     checkNavigationAvailability,
+    handleShortcutClick,
     ...state,
   };
 }

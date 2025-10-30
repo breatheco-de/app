@@ -332,33 +332,224 @@
     "who": "4Geeks",
     "description": "Join a proven leader in tech education: Over 9 years of recognized excellence, 4000+ successful graduates, 84% job placement rate!"
   },
-  "faq": [
-    {
-      "id": 1,
-      "title": "Will I be learning on my own?",
-      "description": "No, the solo BootCamp is designed to learn at your own pace and time, but we have a lot of live features at different schedules that are optional for you, and you can join whenever you want. We have many live workshops about the technologies you are learning, happening almost every day of the week. You can schedule private mentoring sessions with an expert that will help you exactly with the problems you have or concepts you don't understand, and the best part is that you choose the time and day!"
-    },
-    {
-      "id": 2,
-      "title": "How do I schedule a mentoring session?",
-      "description": "To schedule a mentoring session, you must go to the dashboard, choose the mentoring service you need on the mentorships box, choose the mentor you like the most, then select the day and time, and you are ready! You can read more about the mentoring sessions <a href='https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions' target='_blank'>here</a>."
-    },
-    {
-      "id": 3,
-      "title": "What are one-on-one mentoring sessions?",
-      "description": "One-on-one mentoring sessions are 45-minute meetings between you and an expert mentor, where you can ask all the questions related to problems you have on your code, or concepts you don't understand, about almost any technology, and at the day and time that best fits you."
-    },
-    {
-      "id": 4,
-      "title": "What other kind of support do I get when learning?",
-      "description": "You'll have access to one-on-one mentoring sessions conducted by experts in the field. Additionally, our platform offers AI feedback on projects you submit, assistance with exercises, and answers to any questions you might have during your learning journey. This combination of personalized mentoring and AI-driven support ensures that you receive guidance and help whenever needed, enhancing your overall learning experience. Plus, you'll have access to our slack community where we have a channel specialized for coding-related help, with fast response rates!"
-    },
-    {
-      "id": 5,
-      "title": "Do I need prior knowledge?",
-      "description": "No, our bootcamps are designed to teach you how to use all the tools first, and then we start with the basics of each technology before getting into advanced content."
-    }
-  ],
+  "course-faqs": {
+    "data-science-and-machine-learning-selfpaced": [
+      {
+        "id": 1,
+        "title": "Will I be learning on my own?",
+        "description": "You’ll learn at your own pace within the Data Science & Machine Learning (Self-Paced) track, but you won’t be alone. Join optional live workshops (Python, Pandas, SQL, scikit-learn, model evaluation), book 1:1 mentorships for debugging notebooks or clarifying ML concepts, and get instant AI feedback (Rigobot) on your data pipelines and models."
+      },
+      {
+        "id": 2,
+        "title": "How do I schedule a mentoring session?",
+        "description": "From your dashboard, choose Mentorships → pick a mentor with DS/ML expertise → select the time. Use sessions for topics like feature engineering, cross-validation, hyperparameter tuning, or deploying models. More details <a href='https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions' target='_blank'>here</a>."
+      },
+      {
+        "id": 3,
+        "title": "What are one-on-one mentoring sessions?",
+        "description": "One-on-one mentoring sessions are 45-minute meetings between you and an expert mentor, where you can ask all the questions related to problems you have on your code, or concepts you don't understand, about almost any technology, and at the day and time that best fits you."
+      },
+      {
+        "id": 4,
+        "title": "What other kind of support do I get when learning?",
+        "description": "Rigobot, (your AI Tutor)[https://4geeksacademy.com/us/ai-powered-learning/rigobot-ai-coding-mentor], reviews your notebooks, tests your ML pipelines, and suggests fixes. You also get exercise assistance, peer support in Slack, and live workshops on topics like SQL joins, pipeline design, and model deployment."
+      },
+      {
+        "id": 5,
+        "title": "Do I need prior knowledge?",
+        "description": "No prior DS/ML required. We start with Python fundamentals and basic statistics, then move into Pandas, SQL, and scikit-learn before advanced topics like model tuning and deployment."
+      }
+    ],
+    "back-end-development-with-python": [
+      {
+        "id": 1,
+        "title": "Will I be learning on my own?",
+        "description": "It’s self-paced, but not solo. In Back-End Development with Python you can jump into optional live workshops (APIs, FastAPI/Flask, databases), get 1:1 mentoring for debugging endpoints, and AI feedback on routes, schemas, and tests."
+      },
+      {
+        "id": 2,
+        "title": "How do I schedule a mentoring session?",
+        "description": "Go to the dashboard → Mentorships → pick a back-end mentor → choose the time. Perfect for help with REST design, auth (JWT), Docker, or database modeling. Learn more <a href='https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions' target='_blank'>here</a>."
+      },
+      {
+        "id": 3,
+        "title": "What are one-on-one mentoring sessions?",
+        "description": "One-on-one mentoring sessions are 45-minute meetings between you and an expert mentor, where you can ask all the questions related to problems you have on your code, or concepts you don't understand, about almost any technology, and at the day and time that best fits you."
+      },
+      {
+        "id": 4,
+        "title": "What other kind of support do I get when learning?",
+        "description": "Rigobot, (your AI Tutor)[https://4geeksacademy.com/us/ai-powered-learning/rigobot-ai-coding-mentor], analyzes your Python code, runs tests on endpoints, and flags anti-patterns. You’ll also have exercises, project checklists, Slack channels for quick help, and weekly live API/code reviews."
+      },
+      {
+        "id": 5,
+        "title": "Do I need prior knowledge?",
+        "description": "No prior back-end experience required. We start from Python basics and gradually add HTTP, CRUD, auth, SQL/NoSQL, and deployment workflows."
+      }
+    ],
+    "fullstack-development-self-paced": [
+      {
+        "id": 1,
+        "title": "Will I be learning on my own?",
+        "description": "You set the pace in Full-Stack Development (Self-Paced), but you’ll have optional live workshops for HTML/CSS, JavaScript, React, Node.js, and databases. Book 1:1 mentorships anytime and get instant AI feedback on frontend and backend code."
+      },
+      {
+        "id": 2,
+        "title": "How do I schedule a mentoring session?",
+        "description": "From your dashboard choose Mentorships → select a full-stack mentor → pick a time. Use sessions for React state, API integration, component design, or Node/Express routes. Details <a href='https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions' target='_blank'>here</a>."
+      },
+      {
+        "id": 3,
+        "title": "What are one-on-one mentoring sessions?",
+        "description": "45 minutes with an expert reviewing your UI, API, database, or deployment. Share your repo, get code reviews, performance tips, and a roadmap for your next milestone."
+      },
+      {
+        "id": 4,
+        "title": "What other kind of support do I get when learning?",
+        "description": "Rigobot, (your AI Tutor)[https://4geeksacademy.com/us/ai-powered-learning/rigobot-ai-coding-mentor], reads your components and endpoints, runs tests, and suggests fixes. You’ll have exercises, real projects, Slack help channels, and weekly live code-alongs to keep you moving."
+      },
+      {
+        "id": 5,
+        "title": "Do I need prior knowledge?",
+        "description": "No. We begin with fundamentals (web, Git, HTML/CSS, JS) and scale up to React, APIs, databases, and deployment."
+      }
+    ],
+    "applied-ai": [
+      {
+        "id": 1,
+        "title": "Will I be learning on my own?",
+        "description": "Applied AI is self-paced with support. Join optional live sessions (LLMs, prompt engineering, RAG, vector databases), schedule 1:1 mentorships for model integration, and get AI feedback on your prompts and pipelines."
+      },
+      {
+        "id": 2,
+        "title": "How do I schedule a mentoring session?",
+        "description": "Dashboard → Mentorships → pick an AI mentor → choose a time. Ideal for prompt strategy, retrieval design, evaluation frameworks, or API integration. More info <a href='https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions' target='_blank'>here</a>."
+      },
+      {
+        "id": 3,
+        "title": "What are one-on-one mentoring sessions?",
+        "description": "One-on-one mentoring sessions are 45-minute meetings between you and an expert mentor, where you can ask all the questions related to problems you have on your code, or concepts you don't understand, about almost any technology, and at the day and time that best fits you."
+      },
+      {
+        "id": 4,
+        "title": "What other kind of support do I get when learning?",
+        "description": "Rigobot, (your AI Tutor)[https://4geeksacademy.com/us/ai-powered-learning/rigobot-ai-coding-mentor], critiques prompts, tests your chains, and flags context/format issues. You’ll also get exercises, project templates, Slack support, and weekly live demos on real-world AI use cases."
+      },
+      {
+        "id": 5,
+        "title": "Do I need prior knowledge?",
+        "description": "No strict prerequisites. Basic Python/JS helps, but the course introduces LLM concepts, APIs, embeddings, and evaluation from scratch."
+      }
+    ],
+    "hack-30-machines-in-30-days": [
+      {
+        "id": 1,
+        "title": "Will I be learning on my own?",
+        "description": "It’s self-paced with constant support. In Hack 30 Machines in 30 Days you can join optional live labs, book 1:1 mentorships for walkthroughs and methodology, and get AI hints on enumeration and exploitation steps—always in safe, legal lab environments."
+      },
+      {
+        "id": 2,
+        "title": "How do I schedule a mentoring session?",
+        "description": "Dashboard → Mentorships → choose a cybersecurity mentor → select time. Great for planning attack paths, tool usage (nmap, gobuster, Burp), or post-exploitation. Read more <a href='https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions' target='_blank'>here</a>."
+      },
+      {
+        "id": 3,
+        "title": "What are one-on-one mentoring sessions?",
+        "description": "One-on-one mentoring sessions are 45-minute meetings between you and an expert mentor, where you can ask all the questions related to problems you have on your code, or concepts you don't understand, about almost any technology, and at the day and time that best fits you."
+      },
+      {
+        "id": 4,
+        "title": "What other kind of support do I get when learning?",
+        "description": "Rigobot, (your AI Tutor)[https://4geeksacademy.com/us/ai-powered-learning/rigobot-ai-coding-mentor], suggests next steps, common misconfig checks, and report structure. You’ll use Slack for quick help and attend weekly live debriefs on selected machines. All practice is in controlled labs—no real-world targets."
+      },
+      {
+        "id": 5,
+        "title": "Do I need prior knowledge?",
+        "description": "Basic Linux/CLI comfort helps, but we start with fundamentals: networking, enumeration, web vulns (OWASP), and safe tooling. Ethics and legality are reinforced throughout."
+      }
+    ],
+    "vibe-coding-with-ai": [
+      {
+        "id": 1,
+        "title": "Will I be learning on my own?",
+        "description": "Yes—at your own rhythm, with support. In Vibe Coding with AI you get optional live creative sessions, 1:1 mentorships for project ideas, and AI feedback on your code, prompts, and experiments."
+      },
+      {
+        "id": 2,
+        "title": "How do I schedule a mentoring session?",
+        "description": "Use the dashboard → Mentorships → pick a mentor → choose time. Perfect for brainstorming, prototyping with AI, or unblocking a fun weekend build. Details <a href='https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions' target='_blank'>here</a>."
+      },
+      {
+        "id": 3,
+        "title": "What are one-on-one mentoring sessions?",
+        "description": "One-on-one mentoring sessions are 45-minute meetings between you and an expert mentor, where you can ask all the questions related to problems you have on your code, or concepts you don't understand, about almost any technology, and at the day and time that best fits you."
+      },
+      {
+        "id": 4,
+        "title": "What other kind of support do I get when learning?",
+        "description": "Rigobot, (your AI Tutor)[https://4geeksacademy.com/us/ai-powered-learning/rigobot-ai-coding-mentor], reviews code and prompts, suggests small wins, and helps you iterate quickly. Plus Slack channels, weekly showcases, and templates to remix."
+      },
+      {
+        "id": 5,
+        "title": "Do I need prior knowledge?",
+        "description": "No. We start with beginner-friendly exercises and layer on coding + AI techniques as you go."
+      }
+    ],
+    "deep-dive-into-python": [
+      {
+        "id": 1,
+        "title": "Will I be learning on my own?",
+        "description": "Deep Dive into Python is self-paced with strong support. Join optional live workshops (OOP, typing, async, packaging), book 1:1 mentorships for code reviews, and get AI feedback on style, complexity, and tests."
+      },
+      {
+        "id": 2,
+        "title": "How do I schedule a mentoring session?",
+        "description": "Dashboard → Mentorships → pick a Python mentor → select time. Great for refactoring, performance, concurrency (asyncio), and packaging/publishing. More info <a href='https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions' target='_blank'>here</a>."
+      },
+      {
+        "id": 3,
+        "title": "What are one-on-one mentoring sessions?",
+        "description": "45 minutes of deep code review: idiomatic Python, testing (pytest), type hints, design patterns, and architecture tips. Bring your repo and questions."
+      },
+      {
+        "id": 4,
+        "title": "What other kind of support do I get when learning?",
+        "description": "Rigobot, (your AI Tutor)[https://4geeksacademy.com/us/ai-powered-learning/rigobot-ai-coding-mentor], runs tests, flags smells, and suggests idiomatic fixes. You’ll also have advanced exercises, Slack help, and weekly live code-alongs."
+      },
+      {
+        "id": 5,
+        "title": "Do I need prior knowledge?",
+        "description": "No! (even though some Python basics are helpful) we quickly revisit fundamentals, then go deep into advanced language features and best practices."
+      }
+    ],
+    "change-your-career-in-15-days-self-paced": [
+      {
+        "id": 1,
+        "title": "Will I be learning on my own?",
+        "description": "Yes, but with guidance. In Change Your Career in 15 Days (Self-Paced) you’ll follow a focused roadmap with optional live check-ins, 1:1 mentorships for rapid feedback, and AI support to keep momentum high."
+      },
+      {
+        "id": 2,
+        "title": "How do I schedule a mentoring session?",
+        "description": "Open the dashboard → Mentorships → select a mentor → choose the time. Use sessions to validate your plan, polish your first portfolio piece, and prepare for mock interviews. Details <a href='https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions' target='_blank'>here</a>."
+      },
+      {
+        "id": 3,
+        "title": "What are one-on-one mentoring sessions?",
+        "description": "45 minutes focused on outcomes: goal setting, learning strategy, portfolio scope, and interview practice. Mentors help you prioritize and ship quickly."
+      },
+      {
+        "id": 4,
+        "title": "What other kind of support do I get when learning?",
+        "description": "Rigobot, (your AI Tutor)[https://4geeksacademy.com/us/ai-powered-learning/rigobot-ai-coding-mentor], gives instant feedback on tasks, projects, and written reflections. You’ll also get Slack accountability, short daily challenges, and optional live sprint reviews."
+      },
+      {
+        "id": 5,
+        "title": "Do I need prior knowledge?",
+        "description": "No. This sprint is beginner-friendly and designed to build foundations fast while producing a tangible project and a clear next-steps plan."
+      }
+    ]
+  },
   "features": {
     "what-is-learnpack": {
       "title": "Maximize Your Learning Potential with LearnPack!",
