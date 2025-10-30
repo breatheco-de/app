@@ -39,6 +39,14 @@
   "checking-coinbase-payment-confirmation": "We're checking the confirmation of your cryptocurrency payment with Coinbase",
   "this-may-take-few-seconds": "This may take a few seconds...",
   "discount-applied": "Discount applied",
+  "pay-with-coinbase": "Pay with Coinbase",
+  "please-fill-all-fields": "Please fill all fields",
+  "error-coinbase-payment": "There was an error with Coinbase payment",
+  "error-processing-payment": "Error processing payment",
+  "expires": "Expires",
+  "new-card": "New card",
+  "pay-now": "Pay now",
+  "save-card-for-later": "Save my credit card for later",
   "see-financing-opt": "See financing options",
   "course-details": "Plan details",
   "one_payment_description": "Access hundreds of exercises, projects tutorials to develop and courses in the most wanted technologies",
@@ -209,7 +217,14 @@
     "too-early-to-renew": "Too Early to Renew",
     "too-early-to-renew-description": "You can renew starting from {{startDate}}. Your next payment is due on {{nextDate}}.",
     "payment-overdue": "Payment Overdue",
-    "payment-overdue-description": "Your payment is overdue. Please contact support."
+    "payment-overdue-description": "Your payment is overdue.",
+    "subscription-deprecated-status": "Subscription is deprecated",
+    "subscription-deprecated-status-description": "This subscription cannot be renewed.",
+    "subscription-cancelled-status": "Subscription is cancelled",
+    "subscription-cancelled-status-description": "This subscription cannot be renewed because it's cancelled.",
+    "subscription-expired-status": "Subscription status is expired",
+    "subscription-expired-status-description": "This subscription is expired; please contact support.",
+    "error-loading-subscription": "Error loading subscription"
   },
   "alert-message-validate-email": {
     "title": "Verify email",
@@ -490,16 +505,5 @@
         }
       ]
     }
-  },
-  "renewal": {
-    "payment-success": "Payment Successful",
-    "subscription-renewed": "Your subscription has been renewed successfully",
-    "card-saved": "Card Saved",
-    "card-saved-successfully": "Your card has been saved for future payments",
-    "payment-confirmed": "Payment Confirmed",
-    "subscription-processing-message": "Your subscription is being processed. You will receive a confirmation email shortly.",
-    "redirecting-to-dashboard": "Redirecting to dashboard...",
-    "cryptocurrency-payment-success": "Cryptocurrency Payment Successful!",
-    "subscription-active-message": "Your subscription is now active. Welcome aboard!"
   }
 }

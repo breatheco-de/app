@@ -5,6 +5,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Heading from '../Heading';
+import ModalCardError from './ModalCardError';
 import bc from '../../services/breathecode';
 import signupAction from '../../store/actions/signupAction';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -13,7 +14,6 @@ import useAuth from '../../hooks/useAuth';
 import { reportDatalayer } from '../../utils/requests';
 import { getBrowserInfo } from '../../utils';
 import useSignup from '../../hooks/useSignup';
-import useRenewal from '../../pages/renew/useRenewal';
 import { SILENT_CODE } from '../../utils/variables';
 import useCustomToast from '../../hooks/useCustomToast';
 import CardForm from './CardForm';
@@ -23,20 +23,27 @@ import LoaderScreen from '../LoaderScreen';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
 
-function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
+function PaymentMethods({
+  setShowPaymentDetails,
+  onPaymentSuccess,
+  handleRenewalPayment,
+  handleCoinbaseRenewalPayment,
+}) {
   const { t } = useTranslation('signup');
   const { isAuthenticated } = useAuth();
 
   const {
-    state, setIsSubmittingCard, setIsSubmittingPayment, setPaymentStatus, setPaymentInfo,
+    state, setIsSubmittingCard, setIsSubmittingPayment, setPaymentStatus, setPaymentInfo, setLoader,
   } = signupAction();
   const { isSubmittingPayment, paymentInfo } = state;
 
-  const isRenewalContext = window.location.pathname.includes('/renew');
   const { handlePayment, handleCoinbasePayment, getPaymentMethods, getSavedCard } = useSignup();
-  const { handleRenewalPayment, handleCoinbaseRenewalPayment } = useRenewal();
-  const paymentHandler = isRenewalContext ? handleRenewalPayment : handlePayment;
-  const coinbaseHandler = isRenewalContext ? handleCoinbaseRenewalPayment : handleCoinbasePayment;
+
+  const isRenewalContext = typeof window !== 'undefined' && window.location.pathname.includes('/renew');
+
+  // Use renewal handlers if provided (from props), otherwise use regular signup handlers
+  const paymentHandler = handleRenewalPayment || handlePayment;
+  const coinbaseHandler = handleCoinbaseRenewalPayment || handleCoinbasePayment;
   const {
     selectedPlan,
     paymentMethods,
@@ -74,13 +81,18 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
 
   useEffect(() => {
     const fetchSavedCard = async () => {
-      if (selectedPlan?.owner?.id && isAuthenticated) {
-        try {
-          const fetchedCard = await getSavedCard(selectedPlan.owner.id);
-          setSavedCard(fetchedCard);
-        } catch (error) {
-          console.error('Error fetching saved card:', error);
-        }
+      if (!selectedPlan?.owner?.id || !isAuthenticated) {
+        setLoader('savedCard', false);
+        return;
+      }
+      setLoader('savedCard', true);
+      try {
+        const fetchedCard = await getSavedCard(selectedPlan.owner.id);
+        setSavedCard(fetchedCard);
+      } catch (error) {
+        console.error('Error fetching saved card:', error);
+      } finally {
+        setLoader('savedCard', false);
       }
     };
     fetchSavedCard();
@@ -273,7 +285,7 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
     } else {
       setPaymentStatus('error');
       setIsSubmittingPayment(false);
-      handlePaymentErrors(data || { detail: t('error-coinbase-payment') }, { setSubmitting: () => {} });
+      handlePaymentErrors(data, { setSubmitting: () => {} });
     }
   };
 
@@ -288,14 +300,14 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
         h="1px"
         background={fontColor}
       />
-      {loader.paymentMethods && (
+      {(loader.paymentMethods || loader.savedCard) && (
         <LoaderScreen />
       )}
       <Flex flexDirection="column" gridGap="4px" width="100%" mt="1rem">
         <AcordionList
           width="100%"
           list={paymentMethods.map((method) => {
-            if (!method.is_credit_card) {
+            if (!method.is_credit_card && !method.is_coinbase) {
               return {
                 ...method,
                 onClick: (e) => {
@@ -368,7 +380,8 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
                           alignItems="center"
                           justifyContent="space-between"
                         >
-                          <Radio value="userCard">
+                          {savedCard && (
+                          <Radio value="userCard" width="100%">
                             <Box display="flex">
                               <Image src={CARD_ICONS[savedCard.brand]} alt={savedCard.brand} width="24px" height="18px" marginRight="8px" />
                               <Text>
@@ -378,13 +391,14 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
                               </Text>
                             </Box>
                             <Text marginTop="4px" color="gray.500">
-                              Expires
+                              {t('expires')}
                               {' '}
                               {savedCard.exp_month}
                               /
                               {savedCard.exp_year}
                             </Text>
                           </Radio>
+                          )}
                         </Box>
                       )}
                       <Box
@@ -397,10 +411,10 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
                         alignItems="center"
                         justifyContent="space-between"
                       >
-                        <Radio value="newCard">
+                        <Radio value="newCard" width="100%">
                           <Flex>
                             <Icon icon="card" width="24px" height="18px" color={fontColor} />
-                            <Text marginLeft="8px">New card</Text>
+                            <Text marginLeft="8px">{t('new-card')}</Text>
                           </Flex>
                         </Radio>
                       </Box>
@@ -408,35 +422,45 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
                   </RadioGroup>
                   {
                     selectedCard === 'userCard' ? (
-                      <Button
-                        width="100%"
-                        variant="default"
-                        height="40px"
-                        mt="0"
-                        isLoading={isSubmittingPayment}
-                        onClick={async () => {
-                          setIsSubmittingPayment(true);
-                          try {
-                            const respPayment = await paymentHandler({}, true);
-                            if (respPayment?.status === 'FULFILLED') {
-                              setPaymentStatus('success');
+                      <>
+                        <ModalCardError
+                          isSubmitting={isSubmittingCard}
+                          declinedModalProps={declinedModalProps}
+                          openDeclinedModal={openDeclinedModal}
+                          setOpenDeclinedModal={setOpenDeclinedModal}
+                          handleTryAgain={handleTryAgain}
+                          disableClose
+                        />
+                        <Button
+                          width="100%"
+                          variant="default"
+                          height="40px"
+                          mt="0"
+                          isLoading={isSubmittingPayment}
+                          onClick={async () => {
+                            setIsSubmittingPayment(true);
+                            try {
+                              const respPayment = await paymentHandler({}, true);
+                              if (respPayment?.status === 'FULFILLED') {
+                                setPaymentStatus('success');
+                                setIsSubmittingPayment(false);
+                                onPaymentSuccess();
+                                setShowPaymentDetails(false);
+                              } else {
+                                setPaymentStatus('error');
+                                handlePaymentErrors(respPayment, { setSubmitting: () => setIsSubmittingPayment(false) });
+                              }
+                            } catch (error) {
+                              console.error('Error processing payment with saved card:', error);
                               setIsSubmittingPayment(false);
-                              onPaymentSuccess();
-                              setShowPaymentDetails(false);
-                            } else {
                               setPaymentStatus('error');
-                              handlePaymentErrors(respPayment, { setSubmitting: () => setIsSubmittingPayment(false) });
+                              handlePaymentErrors(error.response?.data, { setSubmitting: () => setIsSubmittingPayment(false) });
                             }
-                          } catch (error) {
-                            console.error('Error processing payment with saved card:', error);
-                            setIsSubmittingPayment(false);
-                            setPaymentStatus('error');
-                            handlePaymentErrors(error.response?.data || { detail: t('error-processing-payment') }, { setSubmitting: () => setIsSubmittingPayment(false) });
-                          }
-                        }}
-                      >
-                        Proceed to payment
-                      </Button>
+                          }}
+                        >
+                          {t('common:proceed-to-payment')}
+                        </Button>
+                      </>
                     ) : (
                       <>
                         <CardForm
@@ -459,7 +483,7 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
                                 mt="0"
                                 isLoading={isSubmittingPayment}
                               >
-                                Pay now
+                                {t('pay-now')}
                               </Button>
                               <Button
                                 type="button"
@@ -471,7 +495,7 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
                                 isLoading={isSubmittingCard && !isSubmittingPayment}
                                 disabled={isSubmittingPayment}
                               >
-                                Save my credit card for later
+                                {t('save-card-for-later')}
                               </Button>
                             </Flex>
                           )}
@@ -501,11 +525,15 @@ function PaymentMethods({ setShowPaymentDetails, onPaymentSuccess }) {
 PaymentMethods.propTypes = {
   setShowPaymentDetails: PropTypes.func,
   onPaymentSuccess: PropTypes.func,
+  handleRenewalPayment: PropTypes.func,
+  handleCoinbaseRenewalPayment: PropTypes.func,
 };
 
 PaymentMethods.defaultProps = {
   setShowPaymentDetails: () => { },
   onPaymentSuccess: () => { },
+  handleRenewalPayment: null,
+  handleCoinbaseRenewalPayment: null,
 };
 
 export default PaymentMethods;

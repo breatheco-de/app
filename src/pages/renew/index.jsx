@@ -55,6 +55,8 @@ function Renew() {
 
   const {
     isLoadingSubscription,
+    handleRenewalPayment,
+    handleCoinbaseRenewalPayment,
   } = useRenewal();
 
   if (isLoadingSubscription) {
@@ -129,6 +131,8 @@ function Renew() {
                 entityId={entityId}
                 setShowPaymentDetails={setShowPaymentDetails}
                 onPaymentSuccess={onPaymentSuccess}
+                handleRenewalPayment={handleRenewalPayment}
+                handleCoinbaseRenewalPayment={handleCoinbaseRenewalPayment}
               />
             </Box>
           </Box>

@@ -39,6 +39,14 @@
   "checking-coinbase-payment-confirmation": "Estamos verificando la confirmación de tu pago con criptomonedas en Coinbase",
   "this-may-take-few-seconds": "Esto puede tomar unos segundos...",
   "discount-applied": "Descuento aplicado",
+  "pay-with-coinbase": "Pagar con Coinbase",
+  "please-fill-all-fields": "Por favor completa todos los campos",
+  "error-coinbase-payment": "Hubo un error con el pago de Coinbase",
+  "error-processing-payment": "Error procesando el pago",
+  "expires": "Expira",
+  "new-card": "Nueva tarjeta",
+  "pay-now": "Pagar ahora",
+  "save-card-for-later": "Guardar mi tarjeta para más tarde",
   "course-details": "Detalles del plan",
   "see-financing-opt": "Opciones de financiamiento",
   "one_payment_description": "Acceso a cientos de ejercicios, proyectos tutoriales para desarrollar y cursos en las tecnologías más buscadas",
@@ -209,7 +217,14 @@
     "too-early-to-renew": "Muy Temprano para Renovar",
     "too-early-to-renew-description": "Puedes renovar a partir del {{startDate}}. Tu próximo pago vence el {{nextDate}}.",
     "payment-overdue": "Pago Vencido",
-    "payment-overdue-description": "Tu pago está vencido. Por favor contacta soporte."
+    "payment-overdue-description": "Tu pago está vencido. Por favor contacta soporte.",
+    "subscription-deprecated-status": "La suscripción está deprecada",
+    "subscription-deprecated-status-description": "Esta suscripción no puede renovarse.",
+    "subscription-cancelled-status": "La suscripción está cancelada",
+    "subscription-cancelled-status-description": "Esta suscripción no puede renovarse porque está cancelada.",
+    "subscription-expired-status": "La suscripción está expirada",
+    "subscription-expired-status-description": "Esta suscripción está expirada; por favor contacta soporte.",
+    "error-loading-subscription": "Error cargando la suscripción"
   },
   "alert-message-validate-email": {
     "title": "Verificar correo electrónico",
@@ -488,16 +503,5 @@
         }
       ]
     }
-  },
-  "renewal": {
-    "payment-success": "Pago Exitoso",
-    "subscription-renewed": "Tu suscripción ha sido renovada exitosamente",
-    "card-saved": "Tarjeta Guardada",
-    "card-saved-successfully": "Tu tarjeta ha sido guardada para futuros pagos",
-    "payment-confirmed": "Pago Confirmado",
-    "subscription-processing-message": "Tu suscripción está siendo procesada. Recibirás un email de confirmación en breve.",
-    "redirecting-to-dashboard": "Redirigiendo al panel...",
-    "cryptocurrency-payment-success": "¡Pago con Criptomoneda Exitoso!",
-    "subscription-active-message": "Tu suscripción está activa. ¡Bienvenido!"
   }
 }

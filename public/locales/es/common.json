@@ -861,4 +861,11 @@
   },
   "hrs-average": "{{number}}hrs promedio",
   "service-blocked": "Fuiste bloqueado de acceder a este servicio. Envía un correo a support@4geeks.com o habla con tu profesor para obtener acceso."
+,
+  "renewing-subscription": "Renovando suscripción",
+  "renewal-verification-in-progress": "Estamos procesando tu renovación",
+  "verifying-payment": "Verificando pago",
+  "payment-verification-in-progress": "Estás obteniendo tu suscripción.",
+  "payment-successful": "Pago exitoso",
+  "subscription-activated": "Suscripción activada"
 }

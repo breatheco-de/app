@@ -75,7 +75,11 @@ const useRenewal = () => {
 
       try {
         setIsLoadingSubscription(true);
-        const queryParams = subscriptionId ? { subscription: id } : { plan_financing: id };
+        const queryParams = {
+          subscription: subscriptionId ? id : undefined,
+          plan_financing: planFinancingId ? id : undefined,
+          status: 'ACTIVE,CANCELLED,PAYMENT_ISSUE,DEPRECATED,EXPIRED',
+        };
 
         const response = await bc.payment(queryParams).subscriptions();
 
@@ -286,11 +290,9 @@ const useRenewal = () => {
       matchingPlan = originalPlan.plans.find((plan) => plan.period === 'MONTH')
         || originalPlan.plans.find((plan) => plan.period === 'YEAR')
         || originalPlan.plans[0];
-      console.log('🔍 Using fallback plan:', matchingPlan);
     }
 
     if (matchingPlan) {
-      console.log('🔍 Setting selected plan:', matchingPlan);
       setSelectedPlan(matchingPlan);
     }
   }, [existingSubscription, originalPlan]);
@@ -355,8 +357,6 @@ const useRenewal = () => {
     } else {
       throw new Error('No subscription_id or plan_financing_id provided');
     }
-
-    console.log('[Coinbase Renewal] Response:', resp);
     return resp;
   };
 

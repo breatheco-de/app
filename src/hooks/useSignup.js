@@ -690,7 +690,6 @@ const useSignup = () => {
         const redirectUrl = courseSlug
           ? `${window.location.origin}/bootcamp/${courseSlug}?coinbase_pending=true`
           : `${window.location.origin}/choose-program?coinbase_pending=true`;
-        console.log('selectedPlan de coinbase', selectedPlan?.how_many_months);
         return {
           type: checkingData?.type,
           token: checkingData?.token,
@@ -714,15 +713,6 @@ const useSignup = () => {
           ...userSession,
         },
       });
-      const invoiceId = response?.data?.invoice_id || null;
-      console.log('Coinbase charge created:', {
-        p: response?.data?.hosted_url,
-        invoiceId,
-        plan: selectedPlan?.plan_slug,
-        period: selectedPlan?.period,
-        installments: selectedPlan?.how_many_months,
-      });
-
       return response;
     } catch (error) {
       console.error('Error creating Coinbase charge:', error);
@@ -865,9 +855,10 @@ const useSignup = () => {
     try {
       if (isAuthenticated && ownerId) {
         const resp = await bc.payment({ academy: ownerId }).getSavedCard();
-        const { data } = resp;
-        console.log('🔍 Card:', data);
-        return data;
+        if (resp.status < 400) {
+          const { data } = resp;
+          return data;
+        }
       }
       return null;
     } catch (e) {
@@ -1054,7 +1045,6 @@ const useSignup = () => {
 
       if (respPayment?.status_code >= 400) {
         setPaymentStatus('error');
-        console.log('wililililili', respPayment?.detail);
         setDeclinedPayment({
           title: t('transaction-denied'),
           description: respPayment?.detail || t('payment-not-processed'),
