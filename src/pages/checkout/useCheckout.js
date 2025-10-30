@@ -336,13 +336,11 @@ const useCheckout = () => {
 
   // useEffect for selfAppliedCoupons
   useEffect(() => {
-    console.log('selfAppliedCoupon', selfAppliedCoupon);
     const coupons = [];
 
     if (selfAppliedCoupon) {
       coupons.push(selfAppliedCoupon);
     }
-    console.log('selfAppliedCoupon', selfAppliedCoupon);
     const planToUse = selfAppliedCoupon?.plan || planFormated;
 
     if (planToUse) {
