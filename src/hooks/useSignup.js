@@ -973,17 +973,6 @@ const useSignup = () => {
             ...coupon,
             plan,
           });
-        } else {
-          const userCoupons = await bc.payment({ plan }).getMyUserCoupons();
-          const firstAuto = userCoupons.data
-            .filter((c) => c.auto === true && c.is_valid === true)
-            .sort((a, b) => new Date(a.offered_at) - new Date(b.offered_at))[0];
-          if (firstAuto) {
-            setSelfAppliedCoupon({
-              ...firstAuto,
-              plan,
-            });
-          }
         }
       }
     } catch (e) {
