@@ -767,13 +767,9 @@ const useSignup = () => {
       delete finalData.id;
 
       if (response.status < 400) {
-        // Deep copy plans array to avoid Redux mutation errors
-        const plansCopy = finalData?.plans ? finalData.plans.map((plan) => ({ ...plan })) : [];
-
         const result = {
           ...data,
           ...finalData,
-          plans: plansCopy.length > 0 ? plansCopy : data?.plans?.map((plan) => ({ ...plan })) || [],
         };
         setCheckingData(result);
         return result;

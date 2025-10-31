@@ -26,6 +26,8 @@ const useRenewal = () => {
 
   const [existingSubscription, setExistingSubscription] = useState(null);
   const [isLoadingSubscription, setIsLoadingSubscription] = useState(true);
+  const [initialPlanFinancingPrice, setInitialPlanFinancingPrice] = useState(null);
+  const [planFinancingOption, setPlanFinancingOption] = useState(null);
 
   useEffect(() => {
     const fetchExistingSubscription = async () => {
@@ -77,7 +79,7 @@ const useRenewal = () => {
         setIsLoadingSubscription(true);
         const queryParams = {
           subscription: subscriptionId ? id : undefined,
-          plan_financing: planFinancingId ? id : undefined,
+          'plan-financing': planFinancingId ? id : undefined,
           status: 'ACTIVE,CANCELLED,PAYMENT_ISSUE,DEPRECATED,EXPIRED',
         };
 
@@ -274,8 +276,10 @@ const useRenewal = () => {
 
   useEffect(() => {
     if (!existingSubscription || !originalPlan?.plans) return;
+    console.log('existingSubscription', existingSubscription);
+    const firstInvoice = existingSubscription.invoices?.[0];
 
-    const payEvery = existingSubscription.pay_every;
+    const payEvery = existingSubscription.pay_every || existingSubscription.how_many_installments;
     const payEveryUnit = existingSubscription.pay_every_unit;
 
     let matchingPlan;
@@ -284,6 +288,28 @@ const useRenewal = () => {
       matchingPlan = originalPlan.plans.find((plan) => plan.period === 'MONTH');
     } else if (payEvery === 1 && payEveryUnit === 'YEAR') {
       matchingPlan = originalPlan.plans.find((plan) => plan.period === 'YEAR');
+    } else {
+      matchingPlan = originalPlan.plans.find((plan) => plan.how_many_months === payEvery);
+
+      // Derive the display price per installment from the first invoice amount, but exclude reward coupons
+      let amount = Number(firstInvoice?.amount) || 0;
+      const coupons = Array.isArray(firstInvoice?.bag?.coupons) ? firstInvoice.bag.coupons : [];
+      const rewardCoupons = coupons.filter((coup) => (
+        coup && coup.referral_type === 'NO_REFERRAL' && coup.allowed_user
+      ));
+
+      rewardCoupons.forEach((coup) => {
+        const v = Number(coup?.discount_value) || 0;
+        if (coup?.discount_type === 'PERCENT_OFF') {
+          const factor = 1 - v;
+          if (factor > 0) amount /= factor;
+        } else if (coup?.discount_type === 'FIXED_PRICE') {
+          amount += v;
+        }
+      });
+
+      setInitialPlanFinancingPrice(amount);
+      setPlanFinancingOption(existingSubscription.how_many_installments);
     }
 
     if (!matchingPlan) {
@@ -360,10 +386,17 @@ const useRenewal = () => {
     return resp;
   };
 
+  const calculateTotalPlanFinancingPrice = () => {
+    if (!initialPlanFinancingPrice) return '';
+    return initialPlanFinancingPrice * planFinancingOption;
+  };
+
   return {
     isLoadingSubscription,
     handleRenewalPayment,
     handleCoinbaseRenewalPayment,
+    initialPlanFinancingPrice,
+    calculateTotalPlanFinancingPrice,
   };
 };
 

@@ -4,6 +4,7 @@ import {
   Flex,
   Skeleton,
   Divider,
+  Button,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -22,7 +23,7 @@ import asPrivate from '../../context/PrivateRouteWrapper';
 function Renew() {
   const { t } = useTranslation('signup');
   const router = useRouter();
-  const { entity_id: entityId } = router.query;
+  const { subscription_id: subscriptionId, plan_financing_id: planFinancingId } = router.query;
   const { backgroundColor, hexColor, backgroundColor3 } = useStyle();
   const { state } = signupAction();
   const { selectedPlan } = state;
@@ -57,6 +58,8 @@ function Renew() {
     isLoadingSubscription,
     handleRenewalPayment,
     handleCoinbaseRenewalPayment,
+    initialPlanFinancingPrice,
+    calculateTotalPlanFinancingPrice,
   } = useRenewal();
 
   if (isLoadingSubscription) {
@@ -128,7 +131,6 @@ function Renew() {
           <Box display="flex" height="100%" flexDirection="column" margin={{ base: '0 1rem', lg: '0 auto' }} gridGap="30px" position="relative">
             <Box display="flex" width={{ base: 'auto', lg: '490px' }} height="auto" flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={backgroundColor} p={{ base: '20px 0', md: '30px 0' }} borderRadius="15px">
               <PaymentMethods
-                entityId={entityId}
                 setShowPaymentDetails={setShowPaymentDetails}
                 onPaymentSuccess={onPaymentSuccess}
                 handleRenewalPayment={handleRenewalPayment}
@@ -219,21 +221,38 @@ function Renew() {
                         <Text size="18px" color="currentColor" lineHeight="normal">
                           {selectedPlan?.price <= 0
                             ? selectedPlan?.priceText
-                            : `${currencySymbol}${selectedPlan?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
+                            : `${currencySymbol}${planFinancingId ? initialPlanFinancingPrice : selectedPlan?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
                         </Text>
                       </Flex>
-
-                      <Divider margin="6px 0" />
-                      {allCoupons?.length > 0 && allCoupons.map((coup) => (
-                        <Flex key={coup.slug} direction="row" justifyContent="space-between" w="100%" marginTop="10px">
-                          <Text size="lg">{coup?.slug}</Text>
-                          <Box borderRadius="4px" padding="5px" background={getDiscountValue(coup) ? hexColor.greenLight2 : ''}>
-                            <Text color={hexColor.green} fontWeight="700">
-                              {getDiscountValue(coup)}
-                            </Text>
-                          </Box>
-                        </Flex>
-                      ))}
+                      {subscriptionId && !planFinancingId && (
+                        <>
+                          <Divider margin="6px 0" />
+                          <Flex justifyContent="center" width="100%">
+                            <Button
+                              width="auto"
+                              as="a"
+                              href="/profile/referral-program"
+                              _hover={{
+                                backgroundColor: hexColor.lightColor,
+                              }}
+                              variant="outline"
+                              fontSize="17px"
+                            >
+                              Add my reward coupons
+                            </Button>
+                          </Flex>
+                          {allCoupons?.length > 0 && allCoupons.map((coup) => (
+                            <Flex key={coup.slug} direction="row" justifyContent="space-between" w="100%" marginTop="10px">
+                              <Text size="lg">{coup?.slug}</Text>
+                              <Box borderRadius="4px" padding="5px" background={getDiscountValue(coup) ? hexColor.greenLight2 : ''}>
+                                <Text color={hexColor.green} fontWeight="700">
+                                  {getDiscountValue(coup)}
+                                </Text>
+                              </Box>
+                            </Flex>
+                          ))}
+                        </>
+                      )}
 
                       <Divider margin="6px 0" />
 
@@ -242,7 +261,7 @@ function Renew() {
                           {selectedPlan?.period !== 'ONE_TIME' ? t('total-now') : t('total')}
                         </Text>
                         <Flex gridGap="1rem">
-                          {allCoupons?.length > 0 && (
+                          {allCoupons?.length > 0 && !planFinancingId && (
                             <Text size="18px" color="currentColor" textDecoration="line-through" opacity="0.5" lineHeight="normal">
                               {`${currencySymbol}${selectedPlan?.price?.toFixed(2)}`}
                             </Text>
@@ -250,7 +269,7 @@ function Renew() {
                           <Text size="18px" color="currentColor" lineHeight="normal">
                             {selectedPlan?.price <= 0
                               ? selectedPlan?.priceText
-                              : `${currencySymbol}${processedPrice?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
+                              : `${currencySymbol}${planFinancingId ? initialPlanFinancingPrice : processedPrice?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
                           </Text>
                         </Flex>
                       </Flex>
@@ -262,7 +281,7 @@ function Renew() {
                           <Text size="18px" color="currentColor" lineHeight="normal">
                             {selectedPlan.price <= 0
                               ? selectedPlan.priceText
-                              : `${currencySymbol}${calculateTotalPrice()} ${selectedPlan.currency?.code}`}
+                              : `${currencySymbol}${planFinancingId ? calculateTotalPlanFinancingPrice() : calculateTotalPrice()} ${selectedPlan.currency?.code}`}
                           </Text>
                         </Flex>
                       )}
