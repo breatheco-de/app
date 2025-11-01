@@ -16,7 +16,7 @@ import useCustomToast from '../../hooks/useCustomToast';
 const useCheckout = () => {
   const { t } = useTranslation('signup');
   const router = useRouter();
-  const { query } = router;
+  const { query, pathname } = router;
   const [allCoupons, setAllCoupons] = useState([]);
   const [originalPlan, setOriginalPlan] = useState(null);
   const {
@@ -242,8 +242,9 @@ const useCheckout = () => {
       setDiscountValues(allCouponsApplied);
 
       setSuggestedPlans(suggestedPlanInfo[0]?.suggested_plan);
-
-      setSelectedPlan(defaultPlan);
+      if (pathname !== '/renew') {
+        setSelectedPlan(defaultPlan);
+      }
       setOriginalPlan({ ...processedPlan, accordionList: accordionListWithAddOns });
     } catch (err) {
       createToast({
@@ -308,7 +309,7 @@ const useCheckout = () => {
       router.push('/pricing');
     }
 
-    if (planFormated && isAuthenticated && planData) {
+    if (planFormated && isAuthenticated && planData && pathname !== '/renew') {
       getCheckingData();
     }
     if (!isAuthenticated && !accessToken) {
@@ -543,7 +544,7 @@ const useCheckout = () => {
         agent: getBrowserInfo(),
       },
     });
-  }, [router.locale, isLoadingLocation, callbackUrl]);
+  }, [router.locale, isLoadingLocation, callbackUrl, pathname]);
 
   // STEP 1.1: Auto-coupon for plan if available
   // Ensures the discount is applied from the start.
@@ -554,6 +555,8 @@ const useCheckout = () => {
   // STEP 2: PREVIEW (checking) of the current plan
   // Renders Subtotal/Total (now/later) including add‑ons and currency.
   useEffect(() => {
+    if (pathname === '/renew') return;
+
     const accessToken = getStorageItem('accessToken');
     if (!planFormated && isAuthenticated) {
       router.push('/pricing');
@@ -565,11 +568,13 @@ const useCheckout = () => {
     if (!isAuthenticated && !accessToken) {
       setLoader('plan', false);
     }
-  }, [isAuthenticated, router.locale, planData]);
+  }, [isAuthenticated, router.locale, planData, pathname]);
 
   // STEP 2b: user changes option (monthly/annual/financing)
   // Re-run preview and refresh the right-hand summary.
   useEffect(() => {
+    if (pathname === '/renew') return;
+
     if (!userSelectedPlan || !planData) return;
     setCheckInfoLoader(true);
     getChecking(planData)
@@ -585,7 +590,7 @@ const useCheckout = () => {
       .catch(() => {
         setCheckInfoLoader(false);
       });
-  }, [userSelectedPlan]);
+  }, [userSelectedPlan, pathname]);
 
   // STEP 3: Apply coupon once checking/bag exists
   // Updates Subtotal/Total in the right-hand summary.

@@ -25,9 +25,9 @@ function Renew() {
   const router = useRouter();
   const { subscription_id: subscriptionId, plan_financing_id: planFinancingId } = router.query;
   const { backgroundColor, hexColor, backgroundColor3 } = useStyle();
+  const { createToast } = useCustomToast({ toastId: 'renewal' });
   const { state } = signupAction();
   const { selectedPlan } = state;
-  const { createToast } = useCustomToast({ toastId: 'renewal' });
 
   const [, setShowPaymentDetails] = useState(false);
 

@@ -60,6 +60,7 @@ function PaymentMethods({
 
   const [selectedCard, setSelectedCard] = useState('newCard');
   const [savedCard, setSavedCard] = useState(null);
+  const [isCoinbaseLoading, setIsCoinbaseLoading] = useState(false);
 
   const CARD_ICONS = {
     visa: 'https://js.stripe.com/v3/fingerprinted/img/visa-729c05c240c4bdb47b03ac81d9945bfe.svg',
@@ -274,7 +275,7 @@ function PaymentMethods({
   };
 
   const handleCoinbaseCharge = async () => {
-    setIsSubmittingPayment(true);
+    setIsCoinbaseLoading(true);
 
     const result = await coinbaseHandler();
     const { data } = result;
@@ -284,7 +285,7 @@ function PaymentMethods({
       }
     } else {
       setPaymentStatus('error');
-      setIsSubmittingPayment(false);
+      setIsCoinbaseLoading(false);
       handlePaymentErrors(data, { setSubmitting: () => {} });
     }
   };
@@ -355,7 +356,7 @@ function PaymentMethods({
                       variant="default"
                       height="40px"
                       mt="0"
-                      isLoading={isSubmittingPayment}
+                      isLoading={isCoinbaseLoading}
                     >
                       {t('pay-with-coinbase')}
                     </Button>
