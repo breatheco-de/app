@@ -124,8 +124,8 @@ function ShowOnSignUp({
                 label: '',
                 error: t('validators.invalid-phone'),
               }]}
-              onHandleSubmit={() => {
-                onSubmit();
+              onHandleSubmit={(signupResult) => {
+                onSubmit(signupResult);
                 handleSubscribeToPlan({ slug: defaultPlan, disableRedirects: true })
                   .then((respData) => {
                     if (respData.status === 'FULFILLED') {

@@ -19,6 +19,8 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import { format as formatDate } from 'date-fns';
+import { es } from 'date-fns/locale';
 import PropTypes from 'prop-types';
 import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
@@ -35,6 +37,7 @@ import { BREATHECODE_HOST } from '../utils/variables';
 import { getStorageItem, languageFix } from '../utils';
 import LiveEventWidgetV2 from './LiveEvent/LiveEventWidgetV2';
 import StepsModal from './StepsModal';
+import AttendanceModal from './AttendanceModal';
 
 // eslint-disable-next-line react/prop-types
 function CustomButton({ children, infoTooltip, ...rest }) {
@@ -170,6 +173,8 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
   const { cohortSession, handleShortcutClick } = useCohortHandler();
   const [mentors, setMentors] = useState([]);
   const [showStudentsModal, setShowStudentsModal] = useState(false);
+  const [openAttendance, setOpenAttendance] = useState(false);
+  const [students, setStudents] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isRigobotModalOpen, onOpen: onRigobotModalOpen, onClose: onRigobotModalClose } = useDisclosure();
   const rigobotModalInfo = t('common:rigobot', {}, { returnObjects: true });
@@ -187,9 +192,23 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
     }
   };
 
+  const fetchStudents = async () => {
+    try {
+      if (!cohortSession?.slug) return;
+      const { data } = await bc.admissions({ limit: 20 }).getStudents(cohortSession.slug, cohortSession?.academy?.id);
+      const { results } = data || {};
+      setStudents(Array.isArray(results) ? results : []);
+    } catch (e) {
+      // no-op
+    }
+  };
+
   useEffect(() => {
     if (cohortSession && cohortSession.cohort_user.role === 'STUDENT') {
       fetchServices();
+    }
+    if (cohortSession && cohortSession.cohort_user.role !== 'STUDENT') {
+      fetchStudents();
     }
   }, [cohortSession]);
 
@@ -205,6 +224,24 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
   const labelMentors = useBreakpointValue({ base: t('common:mentors-short'), sm: t('common:schedule-mentoring') });
   const labelRigo = useBreakpointValue({ base: t('common:rigo-ai-short'), sm: getRigobotButtonText() });
   const labelGithub = useBreakpointValue({ base: t('common:github-short'), sm: t('common:connect-with-github') });
+
+  const currentYear = new Date().getFullYear();
+  const kickoffYear = cohortSession?.kickoff_date ? new Date(cohortSession.kickoff_date).getFullYear() : null;
+  const showYear = kickoffYear && kickoffYear !== currentYear;
+  const todayIs = {
+    en: formatDate(new Date(), "'Today is' do 'of' MMMM"),
+    es: formatDate(new Date(), "'Hoy es' dd 'de' MMMM", { locale: es }),
+  };
+  const formatKickoffDate = cohortSession?.kickoff_date ? new Date(cohortSession.kickoff_date) : new Date();
+  const kickoffDate = {
+    en: formatDate(formatKickoffDate, showYear ? 'eeee MMMM Mo yyyy' : 'eeee MMMM Mo'),
+    es: formatDate(formatKickoffDate, showYear ? "eeee dd 'de' MMMM yyyy" : "eeee dd 'de' MMMM", { locale: es }),
+  };
+  const greetingMessage = t('dashboard:attendance-modal.greeting', {
+    name: user?.first_name,
+    today: todayIs[router.locale],
+    kickoffDate: kickoffDate[router.locale],
+  });
 
   const rigobotMessage = () => {
     if (!isAuthenticatedWithRigobot) {
@@ -331,16 +368,22 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
                     {t('dashboard:teacher-sidebar.student-progress')}
                   </Text>
                 </CustomButton>
+                <CustomButton onClick={() => setOpenAttendance(true)}>
+                  <Icon icon="calendar" color={hexColor.blueDefault} width="42px" height="42px" />
+                  <Text textAlign="center" color={hexColor.blueDefault}>
+                    {t('dashboard:teacher-sidebar.take-attendancy')}
+                  </Text>
+                </CustomButton>
+                <CustomButton onClick={() => window.open('https://www.notion.so/4geeksacademy/Mentor-training-433451eb9dac4dc680b7c5dae1796519', '_blank')}>
+                  <Icon icon="courses" color={hexColor.blueDefault} width="42px" height="42px" />
+                  <Text textAlign="center" color={hexColor.blueDefault}>
+                    {t('dashboard:teacher-sidebar.teacher-tutorial')}
+                  </Text>
+                </CustomButton>
                 <CustomButton onClick={() => window.open(`/cohort/${cohortSession?.slug}/assignments?academy=${cohortSession?.academy?.id}`, '_blank')}>
                   <Icon icon="list" width="42px" height="42px" />
                   <Text textAlign="center" color={hexColor.blueDefault}>
                     {t('dashboard:teacher-sidebar.assignments')}
-                  </Text>
-                </CustomButton>
-                <CustomButton onClick={() => window.open('https://www.notion.so/4geeksacademy/Mentor-training-433451eb9dac4dc680b7c5dae1796519', '_blank')}>
-                  <Icon icon="courses" width="42px" height="42px" />
-                  <Text textAlign="center" color={hexColor.blueDefault}>
-                    {t('dashboard:teacher-sidebar.teacher-tutorial')}
                   </Text>
                 </CustomButton>
               </>
@@ -374,7 +417,16 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
         />
       )}
       {cohortSession && cohortSession.cohort_user.role !== 'STUDENT' && (
-        <StudentsModal isOpen={showStudentsModal} onClose={() => setShowStudentsModal(false)} />
+        <StudentsModal isOpen={showStudentsModal} onClose={() => setShowStudentsModal(false)} students={students} />
+      )}
+      {cohortSession && cohortSession.cohort_user.role !== 'STUDENT' && openAttendance && (
+        <AttendanceModal
+          isOpen={openAttendance}
+          onClose={() => setOpenAttendance(false)}
+          title={t('dashboard:attendance-modal.start-today-class')}
+          message={greetingMessage}
+          students={(students || []).filter((x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE' && x.finantial_status !== 'LATE')}
+        />
       )}
       <StepsModal
         isOpen={isRigobotModalOpen}
