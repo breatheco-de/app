@@ -866,6 +866,17 @@ function SyllabusContent() {
             onToggle={onToggle}
             handleStartDay={handleStartDay}
             grantSyllabusAccess={grantAccess}
+            isStudent={!professionalRoles.includes(cohortSession?.cohort_user?.role)}
+            teacherInstructions={{
+              existContentToShow: extendedInstructions !== null,
+              actionHandler: () => {
+                setExtendedIsEnabled(!extendedIsEnabled);
+                if (extendedIsEnabled === false) {
+                  scrollTop();
+                }
+              },
+              actionState: extendedIsEnabled,
+            }}
           />
         ) : (
           <TimelineSidebar
