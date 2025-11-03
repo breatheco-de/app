@@ -187,6 +187,7 @@ function Summary() {
               clearInterval(interval);
               setReadyToRefetch(false);
             } else {
+              await initializeSubscriptionsData();
               clearInterval(interval);
               if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
                 router.push(redirect || redirectedFrom);

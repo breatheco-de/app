@@ -131,7 +131,7 @@ function useCohortHandler() {
         ...tasksPromises,
       ]);
 
-      preFechedCohorts.forEach(({ slug }) => {
+      preFechedCohorts?.forEach(({ slug }) => {
         assignmentsMap[slug] = { ...cohortsAssignments[slug] };
       });
 
@@ -771,8 +771,7 @@ function useCohortHandler() {
   };
 
   const checkNavigationAvailability = () => {
-    const showToastAndRedirect = (programSlug, reason) => {
-      console.log(`❌ ACCESS DENIED: ${reason} - Redirecting to checkout for plan: ${programSlug}`);
+    const showToastAndRedirect = (programSlug) => {
       router.push({
         pathname: '/checkout',
         locale: lang,
@@ -790,15 +789,11 @@ function useCohortHandler() {
     };
 
     if (allSubscriptions) {
-      console.log('🔍 All subscriptions:', allSubscriptions);
-      console.log('🎯 Looking for cohort ID:', cohortSession.id);
       const cohortSubscriptions = allSubscriptions?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
-      console.log('📋 Filtered cohort subscriptions:', cohortSubscriptions);
       const currentCohortSlug = cohortSubscriptions[0]?.plans[0]?.slug;
 
       if (cohortSubscriptions.length === 0) {
         if (isAuthenticated) {
-          console.log('❌ ACCESS DENIED: No subscriptions for this cohort - User authenticated but no subscription');
           createToast({
             position: 'top',
             title: t('alert-message:access-denied'),
@@ -811,7 +806,6 @@ function useCohortHandler() {
             locale: lang,
           });
         } else {
-          console.log('❌ ACCESS DENIED: User not authenticated - Redirecting to login');
           createToast({
             position: 'top',
             title: t('alert-message:login-required'),
@@ -839,34 +833,26 @@ function useCohortHandler() {
       );
 
       if (fullyPaidSub) {
-        console.log('✅ ACCESS GRANTED: User has fully paid subscription');
         setGrantAccess(true);
         return;
       }
 
       if (!freeTrialSub && !isCancelledButValid) {
-        console.log('❌ ACCESS DENIED: No valid subscription (no free trial or cancelled but valid)');
-        showToastAndRedirect(currentCohortSlug, 'NO_VALID_SUBSCRIPTION');
+        showToastAndRedirect(currentCohortSlug);
         return;
       }
 
       if (expiredCourse) {
-        console.log(`❌ ACCESS DENIED: Course expired or error - Status: ${expiredCourse.status}`);
-        showToastAndRedirect(currentCohortSlug, 'EXPIRED_COURSE');
+        showToastAndRedirect(currentCohortSlug);
         return;
       }
 
       if (now > freeTrialExpDate) {
-        const daysPast = Math.floor((now - freeTrialExpDate) / (1000 * 60 * 60 * 24));
-        console.log(`❌ ACCESS DENIED: Free trial expired ${daysPast} days ago`);
-        showToastAndRedirect(currentCohortSlug, 'TRIAL_EXPIRED');
+        showToastAndRedirect(currentCohortSlug);
         return;
       }
 
-      console.log('✅ ACCESS GRANTED: User has valid access (trial or cancelled but valid)');
       setGrantAccess(true);
-    } else {
-      console.log('❌ ACCESS DENIED: No subscription data available');
     }
   };
 

@@ -91,7 +91,7 @@ function App({ Component, pageProps }) {
         >
           <AuthProvider pageProps={pageProps}>
             <SessionProvider>
-              <Navbar pageProps={pageProps} translations={pageProps?.translations} />
+              <Navbar pageProps={pagePropsData} translations={pageProps?.translations} />
               <InterceptionLoader />
 
               <PrismicProvider internalLinkComponent={InternalLinkComponent}>

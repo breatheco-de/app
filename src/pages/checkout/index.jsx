@@ -565,7 +565,7 @@ function Checkout() {
                                             setDiscountCode('');
                                             removeSessionStorageItem('coupon');
                                             setDiscountCoupon(null);
-                                            removeManualCoupons(); // Función específica para eliminar
+                                            removeManualCoupons();
                                           }}
                                         >
                                           <Icon icon="close" color="currentColor" width="10px" height="10px" />

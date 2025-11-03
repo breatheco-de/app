@@ -308,6 +308,7 @@ function AttendanceModal({
                         icon={checkbox.isChecked ? 'checked' : 'unverified'}
                         width="15px"
                         height="15px"
+                        color={checkbox.isChecked ? 'blue.default' : undefined}
                         style={{ marginTop: 'auto', marginBottom: 'auto' }}
                       />
                     </Flex>
