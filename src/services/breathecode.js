@@ -55,6 +55,7 @@ const breathecode = {
       register: (payload) => axios.post(`${url}/user/register`, payload),
       subscribe: (payload) => axios.post(`${url}/subscribe/`, { ...payload }),
       removeGithub: () => axios.delete(`${url}/github/me`),
+      checkDiscordServer: (serverId, cohortSlug) => axios.get(`${url}/discord/server/${serverId}/${cohortSlug}`),
     };
   },
 
