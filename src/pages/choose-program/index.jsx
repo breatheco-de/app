@@ -101,8 +101,8 @@ function chooseProgram() {
     if (coinbaseIsRenewal === 'true') {
       createToast({
         status: 'info',
-        title: t('renewing-subscription', { ns: 'common' }),
-        description: t('renewal-verification-in-progress', { ns: 'common' }),
+        title: t('common:renewing-subscription'),
+        description: t('common:renewal-verification-in-progress'),
         duration: 5000,
       });
       return;

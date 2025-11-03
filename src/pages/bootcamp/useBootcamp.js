@@ -459,8 +459,8 @@ export const useBootcamp = () => {
     if (coinbaseIsRenewal) {
       createToast({
         status: 'info',
-        title: t('renewing-subscription', { ns: 'common' }),
-        description: t('renewal-verification-in-progress', { ns: 'common' }),
+        title: t('common:renewing-subscription'),
+        description: t('common:renewal-verification-in-progress'),
         duration: 5000,
       });
       return;
@@ -468,16 +468,16 @@ export const useBootcamp = () => {
     if (!relatedSubscription) {
       createToast({
         status: 'info',
-        title: t('verifying-payment', { ns: 'common' }),
-        description: t('payment-verification-in-progress', { ns: 'common' }),
+        title: t('common:verifying-payment'),
+        description: t('common:payment-verification-in-progress'),
         duration: 5000,
       });
     }
     if (relatedSubscription && existsRelatedSubscription) {
       createToast({
         status: 'success',
-        title: t('payment-successful', { ns: 'common' }),
-        description: t('subscription-activated', { ns: 'common' }),
+        title: t('common:payment-successful'),
+        description: t('common:subscription-activated'),
         duration: 7000,
       });
       router.replace(`/bootcamp/${courseSlug}`, undefined, { shallow: true });
