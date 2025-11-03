@@ -216,6 +216,7 @@
   },
   "attendance-modal": {
     "start-today-class": "Start today's class",
+    "greeting": "Hello {{name}}, Today is {{today}} and the cohort started taking classes on {{kickoffDate}}. Please, select today's module.",
     "select-students": "Select the students in the class",
     "showing-students-with-active-educational-status": "Only showing students with active educational status",
     "apply-changes": "Apply changes",
