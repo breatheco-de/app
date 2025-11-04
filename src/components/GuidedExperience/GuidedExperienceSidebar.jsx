@@ -21,15 +21,16 @@ import useCohortHandler from '../../hooks/useCohortHandler';
 import useStyle from '../../hooks/useStyle';
 import useAuth from '../../hooks/useAuth';
 
-function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentModuleIndex, handleStartDay, grantSyllabusAccess }) {
+function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentModuleIndex, handleStartDay, grantSyllabusAccess, isStudent, teacherInstructions }) {
   const router = useRouter();
   const { cohorts } = useAuth();
   const { mainCohortSlug } = router.query;
   const { t, lang } = useTranslation('syllabus');
   const [moduleLoading, setModuleLoading] = useState(false);
   const { cohortSession, sortedAssignments } = useCohortHandler();
-  const { hexColor, colorMode, backgroundColor, backgroundColor4, fontColor2 } = useStyle();
+  const { hexColor, colorMode, backgroundColor, backgroundColor4, fontColor2, fontColor3, featuredCard } = useStyle();
   const background = useColorModeValue('#E4E8EE', '#283340');
+  const { existContentToShow = false } = teacherInstructions;
 
   const { display, zIndex, ...slideStyles } = getSlideProps(isOpen);
 
@@ -111,6 +112,40 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
             </Box>
           )}
 
+          {!isStudent && (
+            <Box paddingX="16px" paddingTop="8px">
+              {existContentToShow ? (
+                <Button
+                  onClick={() => {
+                    teacherInstructions.actionHandler();
+                  }}
+                  height="auto"
+                  width="100%"
+                  variant="unstyled"
+                  background={featuredCard.yellow.featured}
+                  padding="6px 8px"
+                  gap="6px"
+                  borderRadius="6px"
+                  display="flex"
+                  alignItems="center"
+                  aria-label="Open Teacher Instructions"
+                >
+                  <Box background="yellow.default" padding="6px" borderRadius="full">
+                    <Icon icon="teacher" color="white" width="16px" height="16px" />
+                  </Box>
+                  <Text size="13px" fontWeight="600" color={fontColor3}>
+                    {t('teacherSidebar.open-instructions')}
+                  </Text>
+                </Button>
+              ) : (
+                <Box padding="10px" background="yellow.light" borderRadius="4px">
+                  <Text size="13px" fontWeight="600">
+                    {t('teacherSidebar.no-teacher-instructions-found')}
+                  </Text>
+                </Box>
+              )}
+            </Box>
+          )}
           <Button
             size="sm"
             aria-label={t(isOpen ? 'hide-menu' : 'show-menu')}
@@ -232,12 +267,16 @@ GuidedExperienceSidebar.propTypes = {
   currentModuleIndex: PropTypes.number,
   handleStartDay: PropTypes.func.isRequired,
   grantSyllabusAccess: PropTypes.bool.isRequired,
+  isStudent: PropTypes.bool,
+  teacherInstructions: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 GuidedExperienceSidebar.defaultProps = {
   onClickAssignment: () => { },
   isOpen: false,
   onToggle: () => { },
   currentModuleIndex: null,
+  isStudent: true,
+  teacherInstructions: {},
 };
 
 export default GuidedExperienceSidebar;

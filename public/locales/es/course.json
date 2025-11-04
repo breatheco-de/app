@@ -129,7 +129,7 @@
   "why-learn-4geeks-connector": {
     "why-learn-with": "¿Por qué aprender con",
     "who": "4Geeks",
-    "benefits-connector": "Aprender a tu propio ritmo puede ser desafiante, pero hemos desarrollado las herramientas para mantenerte motivado, evitar que te quedes atascado en problemas y acelerar tu proceso de aprendizaje."
+    "benefits-connector": "Aprender de forma intensiva puede ser desafiante, pero hemos desarrollado las herramientas para mantenerte motivado, evitar que te quedes atascado en problemas y acelerar tu proceso de aprendizaje."
   },
   "show-prices": {
     "title": "¡Aprender a programar a tu propio ritmo es posible sin una gran inversión!",
@@ -432,13 +432,13 @@
         "id": 1,
         "icon": "rigobot-avatar",
         "title": "Aprende con IA",
-        "description": "Nuestro inteligencia artificial revisa tu código para brindarte retroalimentación instantánea, te ayuda con los ejercicios ¡y mucho más!"
+        "description": "Nuestra inteligencia artificial revisa tu código para brindarte retroalimentación instantánea, te ayuda con los ejercicios ¡y mucho más!"
       },
       {
         "id": 2,
         "icon": "talking",
         "title": "Mentorías uno a uno",
-        "description": "Accede a un paquete de sesiones mensuales de mentoría con nuestros expertos y añade sesiones adicionales según sea necesario."
+        "description": "Accede a un paquete de sesiones mensuales de mentorías con nuestros expertos y añade sesiones adicionales según sea necesario."
       },
       {
         "id": 3,

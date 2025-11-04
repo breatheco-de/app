@@ -205,7 +205,11 @@ function AuthProvider({ children, pageProps }) {
     try {
       const { data } = await bc.admissions().me();
       const { cohorts: cohortUsers, ...userData } = data;
-      const cohorts = cohortUsers.map((elem) => {
+      const validCohortUsers = Array.isArray(cohortUsers)
+        ? cohortUsers.filter(({ cohort }) => cohort?.syllabus_version?.slug && cohort?.syllabus_version?.version)
+        : [];
+
+      const cohorts = validCohortUsers.map((elem) => {
         const { cohort, ...cohort_user } = elem;
         const { syllabus_version } = cohort;
         return {

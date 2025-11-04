@@ -127,7 +127,7 @@ function Dashboard() {
 
   const accessToken = getStorageItem('accessToken');
   const showGithubWarning = getStorageItem('showGithubWarning');
-  const TwelveHours = 720;
+  const TwentyFourHours = 720;
 
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const cohortUserDaysCalculated = calculateDifferenceDays(cohortSession?.cohort_user?.created_at);
@@ -241,11 +241,13 @@ function Dashboard() {
         const validatedEventList = res?.data?.length > 0
           ? res?.data?.filter((l) => isValidDate(l?.starting_at) && isValidDate(l?.ending_at))
           : [];
-        const sortDateToLiveClass = sortToNearestTodayDate(validatedEventList, TwelveHours);
+        const sortDateToLiveClass = sortToNearestTodayDate(validatedEventList, TwentyFourHours);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         setLiveClasses(existentLiveClasses);
       });
   }, []);
+
+  console.log(liveClasses);
 
   const countDoneAssignments = (total, assignment) => {
     if (assignment.task_status === 'DONE') return total + 1;
@@ -547,7 +549,7 @@ function Dashboard() {
       {isAvailableAsSaas && (
         <CohortHeader
           onOpenGithubModal={openGithubModalHandler}
-          mainClasses={liveClasses}
+          liveClasses={liveClasses}
           upcomingEvents={events}
           isLoadingEvents={isLoadingAssigments}
         />

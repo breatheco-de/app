@@ -79,14 +79,14 @@ function chooseProgram() {
   const { createToast } = useCustomToast({ toastId: 'invitation-error-accepted' });
   const { hexColor } = useStyle();
   const isClosedLateModal = getStorageItem('isClosedLateModal');
-  const TwelveHoursInMinutes = 720;
+  const TwentyFourHoursInMinutes = 720;
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
 
   const allSyllabus = useMemo(() => {
     const syllabus = [];
 
-    cohorts.forEach(({ syllabus_version: syllabusVersion }) => {
-      if (!syllabus.includes(syllabusVersion.slug)) syllabus.push(syllabusVersion.slug);
+    cohorts?.forEach(({ syllabus_version: syllabusVersion }) => {
+      if (!syllabus.includes(syllabusVersion?.slug)) syllabus.push(syllabusVersion?.slug);
     });
     return syllabus;
   }, [cohorts]);
@@ -251,7 +251,7 @@ function chooseProgram() {
         const validatedEventList = res?.data?.length > 0
           ? res?.data?.filter((l) => isValidDate(l?.starting_at) && isValidDate(l?.ending_at))
           : [];
-        const sortDateToLiveClass = sortToNearestTodayDate(validatedEventList, TwelveHoursInMinutes);
+        const sortDateToLiveClass = sortToNearestTodayDate(validatedEventList, TwentyFourHoursInMinutes);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         setLiveClasses(existentLiveClasses);
       });
@@ -260,7 +260,7 @@ function chooseProgram() {
         const validatedEventList = prev?.length > 0
           ? prev?.filter((l) => isValidDate(l?.starting_at) && isValidDate(l?.ending_at))
           : [];
-        const sortDateToLiveClass = sortToNearestTodayDate(validatedEventList, TwelveHoursInMinutes);
+        const sortDateToLiveClass = sortToNearestTodayDate(validatedEventList, TwentyFourHoursInMinutes);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         return existentLiveClasses;
       });

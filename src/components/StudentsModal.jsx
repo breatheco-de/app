@@ -12,12 +12,12 @@ import useStyle from '../hooks/useStyle';
 import useCohortHandler from '../hooks/useCohortHandler';
 
 function StudentsModal({
-  isOpen, onClose,
+  isOpen, onClose, students: studentsProp,
 }) {
   const { t } = useTranslation('dashboard');
   const { state } = useCohortHandler();
   const { cohortSession } = state;
-  const [students, setStudents] = useState([]);
+  const [students, setStudents] = useState(Array.isArray(studentsProp) ? studentsProp : []);
   const [studentsCount, setStudentsCount] = useState(0);
   const [filterStudent, setFilterStudent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -41,7 +41,7 @@ function StudentsModal({
   };
 
   useEffect(() => {
-    if (cohortSession?.cohort_user?.role !== 'STUDENT' && students.length === 0) loadStudents();
+    if (cohortSession?.cohort_user?.role !== 'STUDENT' && students.length === 0 && (!studentsProp || studentsProp.length === 0)) loadStudents();
   }, [cohortSession]);
 
   const handleFilterChange = (e) => {
@@ -50,8 +50,10 @@ function StudentsModal({
 
   useEffect(() => {
     let timeoutId;
-    if (!filterStudent) loadStudents(0, false);
-    else timeoutId = setTimeout(() => loadStudents(0, false, filterStudent), 1000);
+    if (!studentsProp || studentsProp.length === 0) {
+      if (!filterStudent) loadStudents(0, false);
+      else timeoutId = setTimeout(() => loadStudents(0, false, filterStudent), 1000);
+    }
     return () => clearTimeout(timeoutId);
   }, [filterStudent]);
 
@@ -144,10 +146,12 @@ function StudentsModal({
 StudentsModal.propTypes = {
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
+  students: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 StudentsModal.defaultProps = {
   isOpen: true,
   onClose: () => { },
+  students: [],
 };
 
 export default StudentsModal;
