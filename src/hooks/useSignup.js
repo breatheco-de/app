@@ -687,7 +687,6 @@ const useSignup = () => {
     }
     const getRequests = () => {
       if (!isTtrial) {
-        const redirectUrl = `${window.location.origin}/choose-program`;
         return {
           type: checkingData?.type,
           token: checkingData?.token,
@@ -696,8 +695,7 @@ const useSignup = () => {
           coupons: checkingData?.coupons,
           add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
           payment_method: 'coinbase',
-          return_url: redirectUrl,
-          cancel_url: window.location.href,
+          return_url: `${window.location.origin}/crypto-payment-success`,
         };
       }
       return null;

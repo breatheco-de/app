@@ -276,7 +276,6 @@ const useRenewal = () => {
 
   useEffect(() => {
     if (!existingSubscription || !originalPlan?.plans) return;
-    console.log('existingSubscription', existingSubscription);
     const firstInvoice = existingSubscription.invoices?.[0];
 
     const payEvery = existingSubscription.pay_every || existingSubscription.how_many_installments;
@@ -370,15 +369,13 @@ const useRenewal = () => {
       resp = await bc.payment().renewSubscription({
         subscription: subscriptionId,
         payment_method: 'coinbase',
-        return_url: `${window.location.origin}/choose-program?coinbase_pending=true&coinbase_is_renewal=true`,
-        cancel_url: window.location.href,
+        return_url: `${window.location.origin}/crypto-payment-success`,
       });
     } else if (planFinancingId) {
       resp = await bc.payment().renewPlanFinancing({
         planfinancing: planFinancingId,
         payment_method: 'coinbase',
-        return_url: `${window.location.origin}/choose-program?coinbase_pending=true&coinbase_is_renewal=true`,
-        cancel_url: window.location.href,
+        return_url: `${window.location.origin}/crypto-payment-success`,
       });
     } else {
       throw new Error('No subscription_id or plan_financing_id provided');

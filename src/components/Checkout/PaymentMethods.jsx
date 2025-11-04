@@ -348,7 +348,7 @@ function PaymentMethods({
 
           const startedAt = Date.now();
           const TIMEOUT_MS = 10 * 60 * 1000;
-          const TICK_MS = 30000;
+          const TICK_MS = 5000;
 
           coinbasePollRef.current = setInterval(async () => {
             const timeoutReached = Date.now() - startedAt > TIMEOUT_MS;
