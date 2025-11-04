@@ -251,13 +251,13 @@ CardForm.propTypes = {
   onSubmit: PropTypes.func,
   modalCardErrorProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   buttonText: PropTypes.string,
-  customButtons: PropTypes.bool,
+  customButtons: PropTypes.node,
 };
 CardForm.defaultProps = {
   onSubmit: () => { },
   buttonText: '',
   modalCardErrorProps: {},
-  customButtons: false,
+  customButtons: null,
 };
 
 export default CardForm;

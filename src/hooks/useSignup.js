@@ -47,7 +47,6 @@ const useSignup = () => {
   const redirectedFrom = getStorageItem('redirected-from');
   const couponsQuery = getQueryString('coupons');
   const addOnsSimple = getQueryString('add_ons');
-  const courseSlug = getQueryString('course_slug');
 
   const addOnsIds = parseAddOnIdsFromQuery(addOnsSimple);
 
@@ -577,6 +576,7 @@ const useSignup = () => {
           chosen_period: manyInstallmentsExists ? undefined : (selectedPlan?.period || 'HALF'),
           coupons: checkingData?.coupons,
           add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
+          payment_method: 'stripe',
         };
       }
       return {
@@ -687,9 +687,7 @@ const useSignup = () => {
     }
     const getRequests = () => {
       if (!isTtrial) {
-        const redirectUrl = courseSlug
-          ? `${window.location.origin}/bootcamp/${courseSlug}?coinbase_pending=true`
-          : `${window.location.origin}/choose-program?coinbase_pending=true`;
+        const redirectUrl = `${window.location.origin}/choose-program`;
         return {
           type: checkingData?.type,
           token: checkingData?.token,
