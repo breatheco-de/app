@@ -861,11 +861,5 @@
     ]
   },
   "hrs-average": "{{number}}hrs average",
-  "service-blocked": "You were blocked from accessing this service. Send an email to support@4geeks.com or talk to your teacher to get access.",
-  "renewing-subscription": "Renewing subscription",
-  "renewal-verification-in-progress": "Your subscription is being renewd",
-  "verifying-payment": "Verifying payment",
-  "payment-verification-in-progress": "You are obtaining your subscription. If you don't see your subscription activated in a few minutes, please contact support.",
-  "payment-successful": "Payment successful",
-  "subscription-activated": "Subscription activated"
+  "service-blocked": "You were blocked from accessing this service. Send an email to support@4geeks.com or talk to your teacher to get access."
 }
