@@ -85,8 +85,8 @@ function chooseProgram() {
   const allSyllabus = useMemo(() => {
     const syllabus = [];
 
-    cohorts.forEach(({ syllabus_version: syllabusVersion }) => {
-      if (!syllabus.includes(syllabusVersion.slug)) syllabus.push(syllabusVersion.slug);
+    cohorts?.forEach(({ syllabus_version: syllabusVersion }) => {
+      if (!syllabus.includes(syllabusVersion?.slug)) syllabus.push(syllabusVersion?.slug);
     });
     return syllabus;
   }, [cohorts]);

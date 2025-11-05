@@ -51,8 +51,8 @@ function Navbar({ translations, pageProps }) {
   const isMobile = useBreakpointValue({ base: true, lg: false });
   const { hexColor, colorMode, reverseColorMode, borderColor, borderColor2, navbarBackground } = useStyle();
 
-  const existsCohortWithoutAvailableAsSaas = cohorts.some((c) => c?.available_as_saas === false);
-  const existsPaidSubscription = allSubscriptions.some((sb) => sb?.invoices?.[0]?.amount > 0);
+  const existsCohortWithoutAvailableAsSaas = cohorts?.some((c) => c?.available_as_saas === false);
+  const existsPaidSubscription = allSubscriptions?.some((sb) => sb?.invoices?.[0]?.amount > 0);
   const hasPaidSubscription = existsCohortWithoutAvailableAsSaas || existsPaidSubscription;
 
   const disableLangSwitcher = pageProps?.disableLangSwitcher || false;
