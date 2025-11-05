@@ -247,8 +247,6 @@ function Dashboard() {
       });
   }, []);
 
-  console.log(liveClasses);
-
   const countDoneAssignments = (total, assignment) => {
     if (assignment.task_status === 'DONE') return total + 1;
     return total;

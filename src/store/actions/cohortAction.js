@@ -3,6 +3,7 @@ import {
   SET_COHORT_SESSION,
   SET_TASK_COHORT_NULL,
   SET_USER_CAPABILITIES,
+  SET_CAPABILITIES_CACHE,
   SET_COHORTS_ASSIGNMENTS,
   SET_REVIEW_MODAL_STATE,
 } from '../types';
@@ -38,6 +39,16 @@ const useCohortAction = () => {
     });
   };
 
+  const setCapabilitiesCache = (academyId, capabilities) => {
+    dispatch({
+      type: SET_CAPABILITIES_CACHE,
+      payload: {
+        academyId,
+        capabilities,
+      },
+    });
+  };
+
   const setCohortsAssingments = (paylaod) => {
     dispatch({
       type: SET_COHORTS_ASSIGNMENTS,
@@ -61,6 +72,7 @@ const useCohortAction = () => {
     setCohortSession,
     setTaskCohortNull,
     setUserCapabilities,
+    setCapabilitiesCache,
     setCohortsAssingments,
     setReviewModalState,
   };
