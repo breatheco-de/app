@@ -22,7 +22,7 @@ const useRenewal = () => {
   } = signupAction();
   const { selectedPlan } = state;
 
-  const { originalPlan } = useCheckout();
+  const { originalPlan, currencySymbol } = useCheckout();
 
   const [existingSubscription, setExistingSubscription] = useState(null);
   const [isLoadingSubscription, setIsLoadingSubscription] = useState(true);
@@ -312,6 +312,30 @@ const useRenewal = () => {
     if (!initialPlanFinancingPrice) return '';
     return initialPlanFinancingPrice * planFinancingOption;
   };
+  const getRemainingInstallments = () => {
+    if (!existingSubscription || !existingSubscription.how_many_installments) {
+      return null;
+    }
+
+    const totalInstallments = existingSubscription.how_many_installments;
+    const fulfilledInvoices = existingSubscription.invoices?.filter(
+      (invoice) => invoice.status === 'FULFILLED' && invoice.bag?.was_delivered === true,
+    ) || [];
+
+    const paidInstallments = fulfilledInvoices.length;
+    return totalInstallments - paidInstallments;
+  };
+  const renderPlanFinancingDetails = () => {
+    if (selectedPlan?.price > 0) {
+      const remaining = getRemainingInstallments();
+
+      return (
+        `${currencySymbol}${initialPlanFinancingPrice?.toFixed(2)} / ${remaining}`
+      );
+    }
+
+    return null;
+  };
 
   return {
     isLoadingSubscription,
@@ -319,6 +343,7 @@ const useRenewal = () => {
     handleCoinbaseRenewalPayment,
     initialPlanFinancingPrice,
     calculateTotalPlanFinancingPrice,
+    renderPlanFinancingDetails,
   };
 };
 

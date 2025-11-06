@@ -60,6 +60,7 @@ function Renew() {
     handleCoinbaseRenewalPayment,
     initialPlanFinancingPrice,
     calculateTotalPlanFinancingPrice,
+    renderPlanFinancingDetails,
   } = useRenewal();
 
   if (isLoadingSubscription) {
@@ -191,7 +192,7 @@ function Renew() {
                     <Flex justifyContent="space-between" width="full" alignItems="center">
                       {renderPlanDetails() && (
                         <Text size="16px" color="green.400">
-                          {renderPlanDetails()}
+                          {subscriptionId ? renderPlanDetails() : `${renderPlanFinancingDetails()} ${t('payments-remaining')}`}
                         </Text>
                       )}
                     </Flex>

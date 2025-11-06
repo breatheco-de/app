@@ -44,6 +44,7 @@
   "please-fill-all-fields": "Por favor completa todos los campos",
   "coinbase-status-error": "Hubo un problema al confirmar tu pago con Coinbase. Espera unos segundos y contacta al soporte si no recibes tu suscripción.",
   "timeout-reached": "Tiempo de espera para pago con Coinbase alcanzado. Por favor intenta de nuevo.",
+  "payments-remaining": "pagos restantes",
   "expires": "Expira",
   "new-card": "Nueva tarjeta",
   "pay-now": "Pagar ahora",
