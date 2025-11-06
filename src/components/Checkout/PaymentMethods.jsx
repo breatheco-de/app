@@ -588,7 +588,7 @@ function PaymentMethods({
                           }}
                           onSubmit={onSubmitCard}
                           customButtons={(
-                            <Flex justifyContent="space-between" mt="10px" gap="10px">
+                            <Flex justifyContent="space-between" flexDirection={{ base: 'column', md: 'row' }} mt="10px" gap="10px">
                               <Button
                                 type="submit"
                                 variant="default"
