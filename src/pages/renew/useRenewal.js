@@ -14,7 +14,7 @@ const useRenewal = () => {
   const { createToast } = useCustomToast();
   const router = useRouter();
   const { user } = useAuth();
-  const { subscription_id: subscriptionId, plan_financing_id: planFinancingId } = router.query;
+  const { subscription_id: subscriptionId, plan_financing_id: planFinancingId, plan } = router.query;
 
   const {
     state,
@@ -28,6 +28,21 @@ const useRenewal = () => {
   const [isLoadingSubscription, setIsLoadingSubscription] = useState(true);
   const [initialPlanFinancingPrice, setInitialPlanFinancingPrice] = useState(null);
   const [planFinancingOption, setPlanFinancingOption] = useState(null);
+
+  useEffect(() => {
+    if (!plan) {
+      createToast({
+        position: 'top',
+        title: t('signup:alert-message.missing-plan-slug'),
+        description: t('signup:alert-message.missing-plan-slug-description'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+      router.push('/');
+      setIsLoadingSubscription(false);
+    }
+  }, [plan]);
 
   useEffect(() => {
     const fetchExistingSubscription = async () => {
@@ -67,6 +82,7 @@ const useRenewal = () => {
           subscription: subscriptionId ? id : undefined,
           'plan-financing': planFinancingId ? id : undefined,
           status: 'ACTIVE,CANCELLED,PAYMENT_ISSUE,DEPRECATED,EXPIRED',
+          plan,
         };
 
         const response = await bc.payment(queryParams).subscriptions();
@@ -209,11 +225,11 @@ const useRenewal = () => {
     let matchingPlan;
 
     if (payEvery === 1 && payEveryUnit === 'MONTH') {
-      matchingPlan = originalPlan.plans.find((plan) => plan.period === 'MONTH');
+      matchingPlan = originalPlan.plans.find((p) => p.period === 'MONTH');
     } else if (payEvery === 1 && payEveryUnit === 'YEAR') {
-      matchingPlan = originalPlan.plans.find((plan) => plan.period === 'YEAR');
+      matchingPlan = originalPlan.plans.find((p) => p.period === 'YEAR');
     } else {
-      matchingPlan = originalPlan.plans.find((plan) => plan.how_many_months === payEvery);
+      matchingPlan = originalPlan.plans.find((p) => p.how_many_months === payEvery);
 
       // Derive the display price per installment from the first invoice amount, but exclude reward coupons
       let amount = Number(firstInvoice?.amount) || 0;
@@ -237,8 +253,8 @@ const useRenewal = () => {
     }
 
     if (!matchingPlan) {
-      matchingPlan = originalPlan.plans.find((plan) => plan.period === 'MONTH')
-        || originalPlan.plans.find((plan) => plan.period === 'YEAR')
+      matchingPlan = originalPlan.plans.find((p) => p.period === 'MONTH')
+        || originalPlan.plans.find((p) => p.period === 'YEAR')
         || originalPlan.plans[0];
     }
 
