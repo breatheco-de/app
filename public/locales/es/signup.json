@@ -212,6 +212,8 @@
     "error-loading-payment-methods": "Error cargando métodos de pago",
     "missing-subscription-id": "ID de Suscripción no encontrada",
     "missing-subscription-id-description": "Por favor proporciona subscription_id o plan_financing_id en la URL",
+    "missing-plan-slug": "Plan no encontrado",
+    "missing-plan-slug-description": "Por favor proporciona un plan en la URL",
     "multiple-subscription-ids": "Múltiples IDs de Suscripción",
     "multiple-subscription-ids-description": "Por favor proporciona solo un ID: subscription_id o plan_financing_id, no ambos",
     "payment-overdue": "Pago Vencido",
