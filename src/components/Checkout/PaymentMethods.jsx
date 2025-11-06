@@ -368,12 +368,17 @@ function PaymentMethods({
                 onPaymentSuccess();
                 setShowPaymentDetails(false);
                 setIsCoinbaseLoading(false);
-              } else if (timeoutReached || (popupClosed && !inSuccessView)) {
+              } else if (popupClosed && !inSuccessView) {
+                if (popup && !popupClosed) popup.close();
+                clearInterval(coinbasePollRef.current);
+                coinbasePollRef.current = null;
+                setIsCoinbaseLoading(false);
+              } else if (timeoutReached) {
                 if (popup && !popupClosed) popup.close();
                 clearInterval(coinbasePollRef.current);
                 coinbasePollRef.current = null;
                 setPaymentStatus('error');
-                handlePaymentErrors({ detail: 'coinbase-payment-not-completed' }, { setSubmitting: () => {} });
+                handlePaymentErrors({ detail: 'signup:timeout-reached' }, { setSubmitting: () => {} });
                 setIsCoinbaseLoading(false);
               }
             } catch (e) {
@@ -383,7 +388,7 @@ function PaymentMethods({
                 clearInterval(coinbasePollRef.current);
                 coinbasePollRef.current = null;
                 setPaymentStatus('error');
-                handlePaymentErrors(e?.response?.data || { detail: 'coinbase-status-error' }, { setSubmitting: () => {} });
+                handlePaymentErrors(e?.response?.data || { detail: 'signup:coinbase-status-error' }, { setSubmitting: () => {} });
                 setIsCoinbaseLoading(false);
               }
             }

@@ -14,7 +14,7 @@ const useRenewal = () => {
   const { createToast } = useCustomToast();
   const router = useRouter();
   const { user } = useAuth();
-  const { subscription_id: subscriptionId, plan_financing_id: planFinancingId, early_renewal_window_days: earlyRenewalWindowDays } = router.query;
+  const { subscription_id: subscriptionId, plan_financing_id: planFinancingId } = router.query;
 
   const {
     state,
@@ -34,8 +34,8 @@ const useRenewal = () => {
       if (!subscriptionId && !planFinancingId) {
         createToast({
           position: 'top',
-          title: t('alert-message:missing-subscription-id'),
-          description: t('alert-message:missing-subscription-id-description'),
+          title: t('signup:alert-message.missing-subscription-id'),
+          description: t('signup:alert-message.missing-subscription-id-description'),
           status: 'error',
           duration: 7000,
           isClosable: true,
@@ -48,22 +48,8 @@ const useRenewal = () => {
       if (subscriptionId && planFinancingId) {
         createToast({
           position: 'top',
-          title: t('alert-message:multiple-subscription-ids'),
-          description: t('alert-message:multiple-subscription-ids-description'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-        router.push('/');
-        setIsLoadingSubscription(false);
-        return;
-      }
-
-      if (!earlyRenewalWindowDays) {
-        createToast({
-          position: 'top',
-          title: t('alert-message:missing-renewal-window'),
-          description: t('alert-message:missing-renewal-window-description'),
+          title: t('signup:alert-message.multiple-subscription-ids'),
+          description: t('signup:alert-message.multiple-subscription-ids-description'),
           status: 'error',
           duration: 7000,
           isClosable: true,
@@ -93,8 +79,8 @@ const useRenewal = () => {
           if (currentUser && subscriptionUserId && currentUser !== subscriptionUserId) {
             createToast({
               position: 'top',
-              title: t('alert-message.subscription-not-yours'),
-              description: t('alert-message.subscription-not-yours-description'),
+              title: t('signup:alert-message.subscription-not-yours'),
+              description: t('signup:alert-message.subscription-not-yours-description'),
               status: 'error',
               duration: 7000,
               isClosable: true,
@@ -105,8 +91,8 @@ const useRenewal = () => {
           if (subscription.status === 'DEPRECATED') {
             createToast({
               position: 'top',
-              title: t('alert-message.subscription-deprecated-status'),
-              description: t('alert-message.subscription-deprecated-status-description'),
+              title: t('signup:alert-message.subscription-deprecated-status'),
+              description: t('signup:alert-message.subscription-deprecated-status-description'),
               status: 'error',
               duration: 7000,
               isClosable: true,
@@ -117,8 +103,8 @@ const useRenewal = () => {
           if (subscription.status === 'CANCELLED') {
             createToast({
               position: 'top',
-              title: t('alert-message.subscription-cancelled-status'),
-              description: t('alert-message.subscription-cancelled-status-description'),
+              title: t('signup:alert-message.subscription-cancelled-status'),
+              description: t('signup:alert-message.subscription-cancelled-status-description'),
               status: 'error',
               duration: 7000,
               isClosable: true,
@@ -129,8 +115,8 @@ const useRenewal = () => {
           if (subscription.status === 'EXPIRED') {
             createToast({
               position: 'top',
-              title: t('alert-message.subscription-expired-status'),
-              description: t('alert-message.subscription-expired-status-description'),
+              title: t('signup:alert-message.subscription-expired-status'),
+              description: t('signup:alert-message.subscription-expired-status-description'),
               status: 'error',
               duration: 7000,
               isClosable: true,
@@ -142,8 +128,8 @@ const useRenewal = () => {
           if (!validStatuses.includes(subscription.status)) {
             createToast({
               position: 'top',
-              title: t('alert-message.subscription-invalid-status'),
-              description: t('alert-message.subscription-invalid-status-description'),
+              title: t('signup:alert-message.subscription-invalid-status'),
+              description: t('signup:alert-message.subscription-invalid-status-description'),
               status: 'error',
               duration: 7000,
               isClosable: true,
@@ -155,8 +141,8 @@ const useRenewal = () => {
           if (subscription.valid_until && new Date(subscription.valid_until) < new Date()) {
             createToast({
               position: 'top',
-              title: t('alert-message.subscription-expired'),
-              description: t('alert-message.subscription-expired-description'),
+              title: t('signup:alert-message.subscription-expired-status'),
+              description: t('signup:alert-message.subscription-expired-status-description'),
               status: 'error',
               duration: 7000,
               isClosable: true,
@@ -170,73 +156,12 @@ const useRenewal = () => {
           if (subscription.next_payment_at) {
             const nextPayment = new Date(subscription.next_payment_at);
             const now = new Date();
-            const windowDays = Number(earlyRenewalWindowDays);
 
-            const renewalWindowStart = new Date(nextPayment);
-            renewalWindowStart.setDate(renewalWindowStart.getDate() - windowDays);
-            if (earlyRenewalWindowDays) {
-              if (now < renewalWindowStart) {
-                createToast({
-                  position: 'top',
-                  title: t('alert-message.too-early-to-renew'),
-                  description: t('alert-message.too-early-to-renew-description', {
-                    startDate: renewalWindowStart.toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    }),
-                    nextDate: nextPayment.toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    }),
-                  }),
-                  status: 'error',
-                  duration: 7000,
-                  isClosable: true,
-                });
-                router.push('/profile/subscriptions');
-                return;
-              }
-
-              if (now > nextPayment && subscription.status !== 'PAYMENT_ISSUE') {
-                createToast({
-                  position: 'top',
-                  title: t('alert-message.payment-overdue'),
-                  description: t('alert-message.payment-overdue-description'),
-                  status: 'error',
-                  duration: 7000,
-                  isClosable: true,
-                });
-                router.push('/profile/subscriptions');
-                return;
-              }
-            }
-
-            const renewalWindowEnd = subscription.status === 'PAYMENT_ISSUE' ? now : nextPayment;
-            const recentPayment = subscription.invoices
-              ?.filter((invoice) => invoice.status === 'FULFILLED'
-                && new Date(invoice.paid_at) >= renewalWindowStart
-                && new Date(invoice.paid_at) <= renewalWindowEnd)
-              ?.sort((a, b) => new Date(b.paid_at) - new Date(a.paid_at))[0];
-
-            if (recentPayment) {
-              const paidAtDate = new Date(recentPayment.paid_at);
+            if (now > nextPayment && subscription.status !== 'PAYMENT_ISSUE') {
               createToast({
                 position: 'top',
-                title: t('alert-message.already-renewed'),
-                description: t('signup:alert-message.already-renewed-description', {
-                  paidDate: paidAtDate.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  }),
-                  nextDate: nextPayment.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  }),
-                }),
+                title: t('signup:alert-message.payment-overdue'),
+                description: t('signup:alert-message.payment-overdue-description'),
                 status: 'error',
                 duration: 7000,
                 isClosable: true,
@@ -248,8 +173,8 @@ const useRenewal = () => {
         } else {
           createToast({
             position: 'top',
-            title: t('alert-message.subscription-not-found'),
-            description: t('alert-message.subscription-not-found-description'),
+            title: t('signup:alert-message.subscription-not-found'),
+            description: t('signup:alert-message.subscription-not-found-description'),
             status: 'error',
             duration: 7000,
             isClosable: true,
@@ -257,10 +182,10 @@ const useRenewal = () => {
           router.push('/');
         }
       } catch (error) {
-        console.error('Error fetching subscription:', error);
+        console.error('Error fetching subscripti  on:', error);
         createToast({
           position: 'top',
-          title: t('alert-message.error-loading-subscription'),
+          title: t('signup:alert-message.error-loading-subscription'),
           description: error?.response?.data?.detail || error.message,
           status: 'error',
           duration: 7000,
@@ -272,7 +197,7 @@ const useRenewal = () => {
     };
 
     fetchExistingSubscription();
-  }, [subscriptionId, planFinancingId, earlyRenewalWindowDays]);
+  }, [subscriptionId, planFinancingId]);
 
   useEffect(() => {
     if (!existingSubscription || !originalPlan?.plans) return;
