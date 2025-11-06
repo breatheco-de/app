@@ -610,7 +610,7 @@ function Checkout() {
 
                         {allCoupons?.length > 0
                           && allCoupons.map((coup) => (
-                            <Flex direction="row" justifyContent="space-between" w="100%" marginTop="10px">
+                            <Flex key={coup?.slug} direction="row" justifyContent="space-between" w="100%" marginTop="10px">
                               <Text size="lg">{coup?.slug}</Text>
                               <Box borderRadius="4px" padding="5px" background={getDiscountValue(coup) ? hexColor.greenLight2 : ''}>
                                 <Text color={hexColor.green} fontWeight="700">
