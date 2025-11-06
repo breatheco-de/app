@@ -157,11 +157,9 @@ function chooseProgram() {
           if (!cohortIsReady) {
             const { cohorts: myCohorts } = await fetchUserAndCohorts();
             setCohorts(myCohorts);
-            console.log('revalidated on:', new Date().toLocaleString());
             setIsRevalidating(false);
           } else {
             setIsRevalidating(false);
-            console.log('Start learning!');
             removeStorageItem('subscription-process');
           }
         }
