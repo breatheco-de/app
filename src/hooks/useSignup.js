@@ -847,7 +847,7 @@ const useSignup = () => {
     try {
       if (isAuthenticated && ownerId) {
         const resp = await bc.payment({ academy: ownerId }).getSavedCard();
-        if (resp.status < 400) {
+        if (resp.status < 400 && resp.data?.has_payment_method) {
           const { data } = resp;
           return data;
         }
