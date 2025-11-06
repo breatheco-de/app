@@ -424,7 +424,7 @@ function PaymentMethods({
         <AcordionList
           width="100%"
           list={paymentMethods.map((method) => {
-            if (!method.is_credit_card && !method.is_coinbase) {
+            if (!method.is_credit_card && !method.is_crypto) {
               return {
                 ...method,
                 onClick: (e) => {
@@ -458,7 +458,7 @@ function PaymentMethods({
                 ),
               };
             }
-            if (method.is_coinbase) {
+            if (method.is_crypto) {
               return {
                 ...method,
                 description: (
