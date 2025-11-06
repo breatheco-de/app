@@ -499,19 +499,19 @@ function PaymentMethods({
                         >
                           <Radio value="userCard" width="100%" padding="10px">
                             <Box display="flex">
-                              <Image src={CARD_ICONS[savedCard.card_brand.toLowerCase()]} alt={savedCard.card_brand} width="24px" height="18px" marginRight="8px" />
+                              <Image src={CARD_ICONS[savedCard.card_brand?.toLowerCase()]} alt={savedCard.card_brand} width="24px" height="18px" marginRight="8px" />
                               <Text>
                                 ••••
                                 {' '}
-                                {savedCard.card_last4}
+                                {savedCard?.card_last4}
                               </Text>
                             </Box>
                             <Text marginTop="4px" color="gray.500">
                               {t('expires')}
                               {' '}
-                              {savedCard.card_exp_month}
+                              {savedCard?.card_exp_month}
                               /
-                              {savedCard.card_exp_year}
+                              {savedCard?.card_exp_year}
                             </Text>
                           </Radio>
                         </Box>
