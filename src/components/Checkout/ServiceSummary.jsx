@@ -153,7 +153,7 @@ function ServiceSummary({ service }) {
     }
   };
 
-  const handleSubmit = async (_, values) => {
+  const handleSubmit = async (_, token) => {
     if (selectedService?.id) {
       reportDatalayer({
         dataLayer: {
@@ -174,7 +174,7 @@ function ServiceSummary({ service }) {
         },
       });
     }
-    const resp = await bc.payment().addCard({ ...values, academy: service.academy.id });
+    const resp = await bc.payment().addCard({ token: token?.id, academy: service.academy.id });
     const { data } = resp;
     setIsSubmittingCard(false);
     if (data.status === 'ok') {
@@ -238,20 +238,10 @@ function ServiceSummary({ service }) {
     }
   }, [service]);
 
-  const onSubmitCard = (values, actions, stateCard) => {
+  const onSubmitCard = (token, actions) => {
     setIsSubmittingPayment(true);
     setIsSubmittingCard(true);
-    const monthAndYear = values.exp?.split('/');
-    const expMonth = monthAndYear[0];
-    const expYear = monthAndYear[1];
-
-    const allValues = {
-      card_number: stateCard.card_number,
-      exp_month: expMonth,
-      exp_year: expYear,
-      cvc: values.cvc,
-    };
-    handleSubmit(actions, allValues);
+    handleSubmit(actions, token);
   };
 
   return (
@@ -456,7 +446,7 @@ function ServiceSummary({ service }) {
                       width="100%"
                       defaultIndex={0}
                       list={paymentMethods.map((method) => {
-                        if (!method.is_credit_card) {
+                        if (!method.is_credit_card && !method.is_crypto) {
                           return {
                             ...method,
                             onClick: (e) => {
@@ -490,10 +480,12 @@ function ServiceSummary({ service }) {
                             ),
                           };
                         }
+                        if (method.is_crypto) return (<Box />);
                         return {
                           ...method,
                           description: (
                             <CardForm
+                              academyId={service?.academy?.id}
                               modalCardErrorProps={{
                                 disableTryAgain: true,
                                 openDeclinedModal,

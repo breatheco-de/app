@@ -270,6 +270,7 @@ const breathecode = {
       pay: (data) => axios.post(`${url}/pay${qs}`, data),
       addCard: (data) => axios.post(`${url}/card${qs}`, data),
       getSavedCard: () => axios.get(`${url}/card${qs}`),
+      getStripePublishableKey: () => axios.get(`${url}/academy/publishable-key${qs}`),
       renew: (data) => axios.post(`${url}/renew${qs}`, data),
       renewSubscription: (data) => axios.post(`${url}/renew/subscription${qs}`, data),
       renewPlanFinancing: (data) => axios.post(`${url}/renew/planfinancing${qs}`, data),

@@ -15,13 +15,13 @@ import { reportDatalayer } from '../../utils/requests';
 import { getBrowserInfo } from '../../utils';
 import useSignup from '../../hooks/useSignup';
 import { SILENT_CODE } from '../../utils/variables';
-import useCustomToast from '../../hooks/useCustomToast';
 import CardForm from './CardForm';
 import Text from '../Text';
 import AcordionList from '../AcordionList';
 import LoaderScreen from '../LoaderScreen';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function PaymentMethods({
   setShowPaymentDetails,
@@ -35,7 +35,7 @@ function PaymentMethods({
   const {
     state, setIsSubmittingCard, setIsSubmittingPayment, setPaymentStatus, setPaymentInfo, setLoader,
   } = signupAction();
-  const { isSubmittingPayment, paymentInfo } = state;
+  const { isSubmittingPayment } = state;
 
   const { handlePayment, handleCoinbasePayment, getPaymentMethods, getSavedCard } = useSignup();
 
@@ -69,7 +69,7 @@ function PaymentMethods({
   const CARD_ICONS = {
     visa: 'https://js.stripe.com/v3/fingerprinted/img/visa-729c05c240c4bdb47b03ac81d9945bfe.svg',
     mastercard: 'https://js.stripe.com/v3/fingerprinted/img/mastercard-4d8844094130711885b5e41b28c9848f.svg',
-    amex: 'https://js.stripe.com/v3/fingerprinted/img/amex-a49b82f46c5cd6a96a6e418a6ca1717c.svg',
+    'american express': 'https://js.stripe.com/v3/fingerprinted/img/amex-a49b82f46c5cd6a96a6e418a6ca1717c.svg',
     discover: 'https://js.stripe.com/v3/fingerprinted/img/discover-ac52cd46f89fa40a29a0bfb954e33173.svg',
     diners: 'https://js.stripe.com/v3/fingerprinted/img/diners-fbcbd3360f8e3f629cdaa80e93abdb8b.svg',
     jcb: 'https://js.stripe.com/v3/fingerprinted/img/jcb-271fd06e6e7a2c52692ffa91a95fb64f.svg',
@@ -166,8 +166,11 @@ function PaymentMethods({
     }
   };
 
-  const handleSubmit = async (actions, values) => {
-    const resp = await bc.payment().addCard({ ...values, academy: selectedPlan.owner.id });
+  const handleSubmit = async (actions, token) => {
+    const resp = await bc.payment().addCard({
+      token: token.id,
+      academy: selectedPlan.owner.id,
+    });
     const { data } = resp;
     setIsSubmittingCard(false);
 
@@ -185,6 +188,9 @@ function PaymentMethods({
         }
       } finally {
         actions.setSubmitting(false);
+        getPaymentMethods(selectedPlan.owner.id);
+        const updatedCard = await getSavedCard(selectedPlan.owner.id);
+        setSavedCard(updatedCard);
       }
       const currency = selectedPlan?.currency?.code;
       reportDatalayer({
@@ -206,55 +212,24 @@ function PaymentMethods({
     }
   };
 
-  const onSubmitCard = (values, actions, stateCard) => {
+  const onSubmitCard = async (token, actions) => {
     setIsSubmittingPayment(true);
     setIsSubmittingCard(true);
-    const monthAndYear = values.exp?.split('/');
-    const expMonth = monthAndYear[0];
-    const expYear = monthAndYear[1];
-
-    const allValues = {
-      card_number: stateCard.card_number,
-      exp_month: expMonth,
-      exp_year: expYear,
-      cvc: values.cvc,
-    };
-
-    handleSubmit(actions, allValues);
+    await handleSubmit(actions, token);
   };
 
   const handleTryAgain = () => {
     setOpenDeclinedModal(false);
   };
 
-  const handleSaveCardForLater = async () => {
-    if (!paymentInfo.card_number || !paymentInfo.exp || !paymentInfo.cvc) {
-      createToast({
-        position: 'top',
-        title: t('error'),
-        description: t('please-fill-all-fields'),
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-      return;
-    }
-
+  const handleSaveCardForLater = async (token) => {
     setIsSubmittingCard(true);
 
     try {
-      const monthAndYear = paymentInfo.exp.split('/');
-      const expMonth = monthAndYear[0];
-      const expYear = monthAndYear[1];
-
-      const cardData = {
-        card_number: paymentInfo.card_number,
-        exp_month: expMonth,
-        exp_year: expYear,
-        cvc: paymentInfo.cvc,
-      };
-
-      const resp = await bc.payment().addCard({ ...cardData, academy: selectedPlan.owner.id });
+      const resp = await bc.payment().addCard({
+        token: token.id,
+        academy: selectedPlan.owner.id,
+      });
 
       if (resp.data.status === 'ok') {
         const currency = selectedPlan?.currency?.code;
@@ -293,7 +268,7 @@ function PaymentMethods({
       console.error('Error saving card:', error);
       setIsSubmittingCard(false);
       setPaymentStatus('error');
-      handlePaymentErrors(error.response?.data || { detail: t('error-saving-card') }, { setSubmitting: () => setIsSubmittingCard(false) });
+      handlePaymentErrors(error.response?.data || { detail: t('card-error') }, { setSubmitting: () => setIsSubmittingCard(false) });
     }
   };
 
@@ -360,7 +335,6 @@ function PaymentMethods({
               const status = chargeData?.payments?.[0]?.status;
 
               if (status === 'pending') {
-                console.log('ubicacion despues del pending', popup.location.href);
                 if (popup && !popupClosed) popup.close();
                 clearInterval(coinbasePollRef.current);
                 coinbasePollRef.current = null;
@@ -576,45 +550,20 @@ function PaymentMethods({
                         </Button>
                       </>
                     ) : (
-                      <>
-                        <CardForm
-                          modalCardErrorProps={{
-                            declinedModalProps,
-                            openDeclinedModal,
-                            setOpenDeclinedModal,
-                            handleTryAgain,
-                            disableClose: true,
-                            isSubmitting: isSubmittingCard,
-                          }}
-                          onSubmit={onSubmitCard}
-                          customButtons={(
-                            <Flex justifyContent="space-between" flexDirection={{ base: 'column', md: 'row' }} mt="10px" gap="10px">
-                              <Button
-                                type="submit"
-                                variant="default"
-                                width="100%"
-                                height="40px"
-                                mt="0"
-                                isLoading={isSubmittingPayment}
-                              >
-                                {t('pay-now')}
-                              </Button>
-                              <Button
-                                type="button"
-                                variant="default"
-                                width="100%"
-                                height="40px"
-                                mt="0"
-                                onClick={handleSaveCardForLater}
-                                isLoading={isSubmittingCard && !isSubmittingPayment}
-                                disabled={isSubmittingPayment}
-                              >
-                                {t('save-card-for-later')}
-                              </Button>
-                            </Flex>
-                          )}
-                        />
-                      </>
+                      <CardForm
+                        academyId={selectedPlan.owner.id}
+                        modalCardErrorProps={{
+                          declinedModalProps,
+                          openDeclinedModal,
+                          setOpenDeclinedModal,
+                          setDeclinedModalProps,
+                          handleTryAgain,
+                          disableClose: true,
+                          isSubmitting: isSubmittingCard,
+                        }}
+                        onSubmit={onSubmitCard}
+                        onSaveCard={handleSaveCardForLater}
+                      />
                     )
                   }
                 </>
