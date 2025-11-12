@@ -73,6 +73,10 @@ function CardFormContent({
         '::placeholder': {
           color: '#A0AEC0',
         },
+        ':-webkit-autofill': {
+          backgroundColor: '#FFF7E6',
+          color: fontColor,
+        },
       },
       invalid: {
         color: fontColor,
