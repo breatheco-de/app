@@ -57,12 +57,12 @@ function CardFormContent({
   });
 
   const stripeElementStyle = {
+    width: '100%',
     height: '50px',
     border: '1px solid',
     borderColor: input.borderColor,
     borderRadius: '3px',
     backgroundColor: 'transparent',
-    padding: '16px',
   };
 
   const stripeElementOptions = {
@@ -70,11 +70,17 @@ function CardFormContent({
       base: {
         fontSize: '16px',
         color: fontColor,
+        lineHeight: '50px',
+        backgroundColor: 'transparent',
         '::placeholder': {
           color: '#A0AEC0',
         },
         ':-webkit-autofill': {
-          backgroundColor: '#FFF7E6',
+          backgroundColor: 'transparent',
+          color: fontColor,
+          transition: 'background-color 100000s ease-in-out 0s',
+        },
+        ':-webkit-autofill::first-line': {
           color: fontColor,
         },
       },
