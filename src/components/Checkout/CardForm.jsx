@@ -63,6 +63,8 @@ function CardFormContent({
     borderColor: input.borderColor,
     borderRadius: '3px',
     backgroundColor: 'transparent',
+    overflow: 'hidden',
+    padding: '0 16px',
   };
 
   const stripeElementOptions = {
@@ -78,11 +80,8 @@ function CardFormContent({
         ':-webkit-autofill': {
           backgroundColor: 'transparent',
           color: fontColor,
-          transition: 'background-color 100000s ease-in-out 0s',
         },
-        ':-webkit-autofill::first-line': {
-          color: fontColor,
-        },
+
       },
       invalid: {
         color: fontColor,
@@ -255,6 +254,17 @@ function CardFormContent({
                         borderColor={hasError ? 'red.500' : input.borderColor}
                         borderRadius="3px"
                         _placeholder={{ color: '#A0AEC0' }}
+                        backgroundColor="transparent"
+                        sx={{
+                          '&:-webkit-autofill': {
+                            WebkitBoxShadow: '0 0 0 1000px rgba(35, 35, 35, 0) inset !important',
+                            transition: 'background-color 50000s ease-in-out 0s',
+                          },
+                          '&:-webkit-autofill:active': {
+                            WebkitBoxShadow: '0 0 0 1000pxrgba(35, 35, 35, 0) inset !important',
+                            boxShadow: '0 0 0 1000pxrgba(35, 35, 35, 0) inset !important',
+                          },
+                        }}
                         onChange={(e) => {
                           field.onChange(e);
                           setPaymentInfo('owner_name', e.target.value);
