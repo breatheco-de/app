@@ -122,20 +122,6 @@ function CardFormContent({
         }
         setIsSubmittingPayment(false);
         setCardErrors({ cardNumber: null, expiry: null, cvc: null, card: null });
-
-        switch (error.code) {
-          case 'incomplete_number':
-            setCardErrors((prev) => ({ ...prev, cardNumber: error.message }));
-            break;
-          case 'incomplete_expiry':
-            setCardErrors((prev) => ({ ...prev, expiry: error.message }));
-            break;
-          case 'incomplete_cvc':
-            setCardErrors((prev) => ({ ...prev, cvc: error.message }));
-            break;
-          default:
-            setCardErrors((prev) => ({ ...prev, card: error.message }));
-        }
         actions.setSubmitting(false);
         return;
       }
@@ -162,6 +148,18 @@ function CardFormContent({
   const handleSaveCard = async () => {
     if (!onSaveCard) return;
     setIsSubmittingCard(true);
+    try {
+      await nameValidation.validate({ owner_name: paymentInfo.owner_name }, { abortEarly: false });
+    } catch (validationError) {
+      setIsSubmittingCard(false);
+      if (validationError.inner && validationError.inner.length > 0) {
+        const ownerNameError = validationError.inner.find((err) => err.path === 'owner_name');
+        if (ownerNameError) {
+          setCardErrors((prev) => ({ ...prev, owner_name: ownerNameError.message }));
+        }
+      }
+      return;
+    }
 
     if (!stripe || !elements) {
       setIsSubmittingCard(false);
