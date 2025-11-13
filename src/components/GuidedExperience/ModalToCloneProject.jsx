@@ -278,8 +278,6 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
     return templateUrl;
   }
 
-  console.log('getFinalUrl', getFinalUrl());
-
   //__this is the video when selecting os open locally__
   const localIntro = t('common:learnpack.clone-modal.intro', {}, { returnObjects: true });
 

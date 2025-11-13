@@ -23,6 +23,7 @@ function useCohortHandler() {
     setCohortSession,
     setTaskCohortNull,
     setUserCapabilities,
+    setCapabilitiesCache,
     setCohortsAssingments,
     setReviewModalState,
     state,
@@ -32,6 +33,7 @@ function useCohortHandler() {
   const {
     cohortSession,
     userCapabilities,
+    capabilitiesCache,
     cohortsAssignments,
   } = state;
   const { createToast } = useCustomToast({ toastId: 'fetching-role-cohort-error' });
@@ -177,17 +179,31 @@ function useCohortHandler() {
   }) => {
     if (user) {
       const academyId = cohort?.academy?.id;
-      const currentAcademy = user.roles.find((role) => role.academy.id === academyId) || updatedUser?.roles.find((role) => role.academy.id === academyId);
-      if (currentAcademy) {
-        try {
-          const userRoles = await bc.auth().getRoles(currentAcademy?.role); // Roles
 
-          setUserCapabilities(userRoles.data.capabilities);
+      if (capabilitiesCache[academyId]) {
+        setUserCapabilities(capabilitiesCache[academyId]);
+        return;
+      }
+
+      const allAcademyRoles = user.roles.filter((role) => role.academy.id === academyId)
+        || updatedUser?.roles.filter((role) => role.academy.id === academyId) || [];
+
+      if (allAcademyRoles.length > 0) {
+        try {
+          const allCapabilitiesPromises = allAcademyRoles.map((academy) => bc.auth().getRoles(academy.role));
+          const allCapabilitiesResponses = await Promise.all(allCapabilitiesPromises);
+
+          const combinedCapabilities = [...new Set(
+            allCapabilitiesResponses.flatMap((response) => response.data.capabilities),
+          )];
+
+          setCapabilitiesCache(academyId, combinedCapabilities);
+          setUserCapabilities(combinedCapabilities);
         } catch (err) {
           console.log(err);
           createToast({
             position: 'top',
-            title: t('alert-message:error-fetching-role', { role: currentAcademy?.role }),
+            title: t('alert-message:error-fetching-role'),
             description: err.message,
             status: 'error',
             duration: 7000,

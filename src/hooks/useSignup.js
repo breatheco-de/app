@@ -576,6 +576,7 @@ const useSignup = () => {
           chosen_period: manyInstallmentsExists ? undefined : (selectedPlan?.period || 'HALF'),
           coupons: checkingData?.coupons,
           add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
+          payment_method: 'stripe',
         };
       }
       return {
@@ -665,6 +666,53 @@ const useSignup = () => {
       return transactionData;
     } catch (error) {
       console.error('Error handling payment bc.payment().pay', error);
+      return error;
+    }
+  };
+
+  const handleCoinbasePayment = async () => {
+    const manyInstallmentsExists = selectedPlan?.how_many_months > 0 || selectedPlan?.period === 'FINANCING';
+    const isTtrial = ['FREE', 'TRIAL'].includes(selectedPlan?.type);
+    if (isTtrial) {
+      createToast({
+        position: 'top',
+        title: t('common:error'),
+        description: t('signup:free-trial-no-crypto'),
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+      setIsSubmittingPayment(false);
+      return null;
+    }
+    const getRequests = () => {
+      if (!isTtrial) {
+        return {
+          type: checkingData?.type,
+          token: checkingData?.token,
+          how_many_installments: selectedPlan?.how_many_months || undefined,
+          chosen_period: manyInstallmentsExists ? undefined : (selectedPlan?.period || 'HALF'),
+          coupons: checkingData?.coupons,
+          add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
+          payment_method: 'coinbase',
+          return_url: `${window.location.origin}/crypto-payment-success`,
+        };
+      }
+      return null;
+    };
+    try {
+      const requestBody = getRequests();
+      const response = await bc.payment().pay({
+        country_code,
+        ...requestBody,
+        conversion_info: {
+          ...userSession,
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error('Error creating Coinbase charge:', error);
+      setIsSubmittingPayment(false);
       return error;
     }
   };
@@ -777,7 +825,6 @@ const useSignup = () => {
   const getPaymentMethods = async (ownerId) => {
     try {
       if (isAuthenticated) {
-        setLoader('paymentMethods', false);
         // const ownerId = selectedPlan.owner.id;
         setLoader('paymentMethods', true);
         const resp = await bc.payment({
@@ -793,6 +840,30 @@ const useSignup = () => {
     } catch (e) {
       console.log(e);
       setLoader('paymentMethods', false);
+    }
+  };
+
+  const getSavedCard = async (ownerId) => {
+    try {
+      if (isAuthenticated && ownerId) {
+        const resp = await bc.payment({ academy: ownerId }).getSavedCard();
+        if (resp.status < 400 && resp.data?.has_payment_method) {
+          const { data } = resp;
+          return data;
+        }
+      }
+      return null;
+    } catch (e) {
+      console.log('Error getting saved card:', e);
+      createToast({
+        position: 'top',
+        title: t('error'),
+        description: t('error-loading-saved-card'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return null;
     }
   };
 
@@ -1018,10 +1089,12 @@ const useSignup = () => {
     isSecondStep,
     isThirdStep,
     handlePayment,
+    handleCoinbasePayment,
     getChecking,
     getPaymentText,
     handleServiceToConsume,
     getPaymentMethods,
+    getSavedCard,
     getPriceWithDiscount,
     getSelfAppliedCoupon,
     applyDiscountCouponsToPlans,
