@@ -116,7 +116,10 @@ function Checkout() {
     liveClassServiceItem,
     isLiveClassSelected,
     toggleLiveClassSelection,
+    basePlanPrice,
     liveClassPrice,
+    liveClassOriginalPrice,
+    isOneTimeLiveClass,
     liveClassesCopy,
     removeManualCoupons,
   } = useCheckout();
@@ -149,26 +152,30 @@ function Checkout() {
     const suffix = currencyCode ? ` ${currencyCode}` : '';
     return `${currencySymbol}${amount.toFixed(2)}${suffix}`;
   };
-  const baseSubtotalValue = Number(selectedPlan?.price) || 0;
-  const formattedBaseSubtotal = selectedPlan?.price <= 0
-    ? selectedPlan?.priceText || formatMoney(0)
-    : formatMoney(baseSubtotalValue);
+  const addonOneTimeValue = isOneTimeLiveClass ? liveClassPrice : 0;
+  const addonOriginalValue = isOneTimeLiveClass ? liveClassOriginalPrice : 0;
+  const processedSubtotalValue = Number(processedPrice?.price);
+  const fallbackSubtotalValue = (basePlanPrice || 0) + addonOneTimeValue;
+  const effectiveSubtotalValue = Number.isFinite(processedSubtotalValue)
+    ? processedSubtotalValue + addonOneTimeValue
+    : fallbackSubtotalValue;
+  const formattedBaseSubtotal = formatMoney(Number.isFinite(processedSubtotalValue) ? processedSubtotalValue : basePlanPrice);
   const formattedAddonSubtotal = liveClassPrice > 0 ? formatMoney(liveClassPrice) : null;
   const totalNowAmount = (() => {
-    if (selectedPlan?.price <= 0) {
+    if (effectiveSubtotalValue <= 0) {
       if (liveClassPrice > 0) return formatMoney(liveClassPrice);
       return selectedPlan?.priceText || formatMoney(0);
     }
-    return formatMoney((processedPrice?.price ?? baseSubtotalValue) + liveClassPrice);
+    return formatMoney(effectiveSubtotalValue);
   })();
-  let originalTotalAmount = null;
-  if (selectedPlan?.price <= 0) {
-    if (liveClassPrice > 0) {
-      originalTotalAmount = formatMoney(liveClassPrice);
-    }
-  } else {
-    originalTotalAmount = formatMoney(baseSubtotalValue + liveClassPrice);
-  }
+  const originalSubtotalValue = Number(processedPrice?.originalPrice);
+  const effectiveOriginalValue = Number.isFinite(originalSubtotalValue)
+    ? originalSubtotalValue + addonOriginalValue
+    : ((basePlanPrice || 0) + addonOriginalValue);
+  const originalTotalAmount = Number.isFinite(originalSubtotalValue)
+    && effectiveOriginalValue > effectiveSubtotalValue
+    ? formatMoney(effectiveOriginalValue)
+    : null;
 
   useEffect(() => {
     const shouldShowPrereq = () => {

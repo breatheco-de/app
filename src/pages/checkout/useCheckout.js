@@ -102,7 +102,40 @@ const useCheckout = () => {
   const isPaymentSuccess = paymentStatus === 'success';
   const fixedCouponExist = allCoupons.some((coup) => coup.discount_type === 'FIXED_PRICE');
 
-  const addOnIdsFromQS = useMemo(() => parseAddOnIdsFromQuery(addOnsQS), [addOnsQS]);
+  const addOnIdsFromQS = useMemo(() => {
+    const queryValue = router.query?.add_ons;
+    if (Array.isArray(queryValue)) {
+      return parseAddOnIdsFromQuery(queryValue.join(','));
+    }
+    if (typeof queryValue === 'string') {
+      return parseAddOnIdsFromQuery(queryValue);
+    }
+    return parseAddOnIdsFromQuery(addOnsQS);
+  }, [router.query?.add_ons, addOnsQS]);
+
+  const updateAddOnsQuery = useCallback((ids) => {
+    const sortedIds = [...ids].sort((a, b) => a - b);
+    const currentSorted = [...addOnIdsFromQS].sort((a, b) => a - b);
+    const isSame = sortedIds.length === currentSorted.length
+      && sortedIds.every((id, index) => id === currentSorted[index]);
+    if (isSame) return;
+
+    const nextQuery = { ...router.query };
+    if (sortedIds.length > 0) {
+      nextQuery.add_ons = sortedIds.join(',');
+    } else {
+      delete nextQuery.add_ons;
+    }
+    router.replace({ pathname: router.pathname, query: nextQuery }, undefined, { shallow: true });
+  }, [addOnIdsFromQS, router]);
+
+  const basePlanPrice = useMemo(() => {
+    const planMatch = planData?.plans?.find((planOption) => planOption?.plan_id === selectedPlan?.plan_id);
+    const planPrice = Number(planMatch?.price);
+    if (Number.isFinite(planPrice) && planPrice > 0) return planPrice;
+    const selectedPrice = Number(selectedPlan?.price);
+    return Number.isFinite(selectedPrice) ? selectedPrice : 0;
+  }, [planData?.plans, selectedPlan?.plan_id, selectedPlan?.price]);
 
   const liveClassUnitPrice = useMemo(() => {
     if (!liveClassServiceItem) return 0;
@@ -110,7 +143,32 @@ const useCheckout = () => {
     return Number.isFinite(value) ? value : 0;
   }, [liveClassServiceItem]);
 
-  const liveClassPrice = useMemo(() => (isLiveClassSelected ? liveClassUnitPrice : 0), [isLiveClassSelected, liveClassUnitPrice]);
+  const liveClassBasePrice = useMemo(() => {
+    if (liveClassUnitPrice > 0) return liveClassUnitPrice;
+    const selectedPrice = Number(selectedPlan?.price) || 0;
+    const diff = selectedPrice - basePlanPrice;
+    return diff > 0 ? diff : 0;
+  }, [liveClassUnitPrice, selectedPlan?.price, basePlanPrice]);
+
+  const discountedLiveClassUnitPrice = useMemo(() => {
+    if (liveClassBasePrice <= 0) return 0;
+    let price = liveClassBasePrice;
+    allCoupons.forEach((appliedCoupon) => {
+      const result = getPriceWithDiscount(price, appliedCoupon);
+      if (result?.price !== undefined && Number.isFinite(result.price)) {
+        price = result.price;
+      }
+    });
+    return price;
+  }, [liveClassBasePrice, allCoupons, getPriceWithDiscount]);
+
+  const liveClassPrice = useMemo(() => (
+    isLiveClassSelected ? discountedLiveClassUnitPrice : 0
+  ), [discountedLiveClassUnitPrice, isLiveClassSelected]);
+
+  const liveClassOriginalPrice = useMemo(() => (
+    isLiveClassSelected ? liveClassBasePrice : 0
+  ), [isLiveClassSelected, liveClassBasePrice]);
 
   const liveClassPeriod = useMemo(() => (
     liveClassServiceItem?.periodicity
@@ -129,11 +187,14 @@ const useCheckout = () => {
     return map[normalized] || liveClassPeriod;
   }, [liveClassPeriod, t]);
 
+  const liveClassPlan = liveClassServiceItem?.plan || liveClassServiceItem?.plan_financing;
+  const isOneTimeLiveClass = Boolean(liveClassPlan);
+
   const formattedLiveClassUnitPrice = useMemo(() => (
-    liveClassUnitPrice > 0
-      ? `${currencySymbol}${liveClassUnitPrice.toFixed(2)}`
+    discountedLiveClassUnitPrice > 0
+      ? `${currencySymbol}${discountedLiveClassUnitPrice.toFixed(2)}`
       : ''
-  ), [currencySymbol, liveClassUnitPrice]);
+  ), [currencySymbol, discountedLiveClassUnitPrice]);
 
   const programName = useMemo(() => {
     const offerName = resolveLocalizedValue(
@@ -174,12 +235,18 @@ const useCheckout = () => {
       period: liveClassPeriodLabel,
     });
 
-    const defaultPrice = liveClassUnitPrice
-      ? t('live-classes.price-label', {
+    const defaultPrice = (() => {
+      if (!discountedLiveClassUnitPrice) return t('live-classes.price-included');
+      if (isOneTimeLiveClass) {
+        return t('live-classes.price-one-time', {
+          price: formattedLiveClassUnitPrice,
+        });
+      }
+      return t('live-classes.price-label', {
         price: formattedLiveClassUnitPrice,
         period: liveClassPeriodLabel,
-      })
-      : t('live-classes.price-included');
+      });
+    })();
 
     const defaultTitle = resolveLocalizedValue(planOffer?.details?.title) || t('live-classes.title');
     const defaultDescription = resolveLocalizedValue(planOffer?.details?.description) || t('live-classes.description');
@@ -196,6 +263,7 @@ const useCheckout = () => {
       toggleOff: getValue(['toggle_off', 'toggle.off']) || t('live-classes.toggle-off'),
       toggleAria: getValue(['toggle_aria', 'toggle.aria']) || t('live-classes.toggle-aria'),
       price: priceText || defaultPrice,
+      planLabel: '',
       program: programText,
       summaryLabel: getValue(['summary_label', 'summary']) || t('live-classes.addon-summary'),
       programsLabel: getValue(['programs_label', 'programs.title']) || t('live-classes.programs-label'),
@@ -206,11 +274,12 @@ const useCheckout = () => {
       noSchedule: getValue(['no_schedule', 'empty_label']) || t('live-classes.no-schedule'),
     };
   }, [
+    discountedLiveClassUnitPrice,
     formattedLiveClassUnitPrice,
     liveClassOfferDetails,
     liveClassPeriod,
     liveClassPeriodLabel,
-    liveClassUnitPrice,
+    liveClassPlan,
     programName,
     resolveLocalizedValue,
     t,
@@ -373,6 +442,7 @@ const useCheckout = () => {
         quarterly: false,
         halfYearly: false,
         planType: 'original',
+        selectedAddOns: addOnIdsFromQS.map((id) => ({ addOnId: id, qty: 1 })),
       });
 
       const accordionList = processedPlan?.featured_info?.map((info) => ({
@@ -393,8 +463,18 @@ const useCheckout = () => {
       const liveClassAddOn = (data?.add_ons || []).find((addOn) => addOn?.service?.consumer === 'LIVE_CLASS_JOIN');
       if (liveClassAddOn) {
         setLiveClassServiceItem(liveClassAddOn);
-        const selectedByQuery = addOnIdsFromQS.includes(liveClassAddOn?.id);
-        setIsLiveClassSelected(Boolean(liveClassAddOn?.is_default) || selectedByQuery);
+        const liveAddOnId = Number(liveClassAddOn?.id);
+        const selectedByQuery = addOnIdsFromQS.includes(liveAddOnId);
+        const shouldSelect = Boolean(liveClassAddOn?.is_default) || selectedByQuery;
+        setIsLiveClassSelected(shouldSelect);
+        if (Number.isFinite(liveAddOnId)) {
+          if (shouldSelect && !selectedByQuery) {
+            updateAddOnsQuery([...addOnIdsFromQS, liveAddOnId]);
+          }
+          if (!shouldSelect && selectedByQuery) {
+            updateAddOnsQuery(addOnIdsFromQS.filter((id) => id !== liveAddOnId));
+          }
+        }
       } else {
         setLiveClassServiceItem(null);
         setIsLiveClassSelected(false);
@@ -429,11 +509,14 @@ const useCheckout = () => {
     }
   };
 
-  const getCheckingData = async () => {
+  const getCheckingData = async (options = {}) => {
     try {
       setLoader('plan', true);
 
-      const checking = await getChecking(planData);
+      const effectiveAddOnIds = Array.isArray(options.overrideAddOnIds)
+        ? options.overrideAddOnIds
+        : addOnIdsFromQS;
+      const checking = await getChecking(planData, { overrideAddOnIds: effectiveAddOnIds });
 
       // Check if getChecking returned an error response
       if (checking?.status >= 400) {
@@ -481,17 +564,17 @@ const useCheckout = () => {
     }
 
     if (planFormated && isAuthenticated && planData && pathname !== '/renew') {
-      getCheckingData();
+      getCheckingData({ overrideAddOnIds: addOnIdsFromQS });
     }
     if (!isAuthenticated && !accessToken) {
       setLoader('plan', false);
     }
-  }, [isAuthenticated, router.locale, planData]);
+  }, [isAuthenticated, router.locale, planData, pathname, addOnIdsFromQS]);
 
   useEffect(() => {
     if (!userSelectedPlan || !planData) return;
     setCheckInfoLoader(true);
-    getChecking(planData)
+    getChecking(planData, { overrideAddOnIds: addOnIdsFromQS })
       .then((checking) => {
         const autoSelectedPlan = findAutoSelectedPlan(checking);
 
@@ -504,7 +587,14 @@ const useCheckout = () => {
       .catch(() => {
         setCheckInfoLoader(false);
       });
-  }, [userSelectedPlan]);
+  }, [userSelectedPlan, addOnIdsFromQS]);
+
+  useEffect(() => {
+    if (!liveClassServiceItem) return;
+    const liveId = Number(liveClassServiceItem?.id);
+    if (!Number.isFinite(liveId)) return;
+    setIsLiveClassSelected(addOnIdsFromQS.includes(liveId));
+  }, [addOnIdsFromQS, liveClassServiceItem?.id]);
 
   // useEffect for selfAppliedCoupons
   useEffect(() => {
@@ -580,18 +670,24 @@ const useCheckout = () => {
   };
 
   const calculateTotalPrice = () => {
-    const months = selectedPlan.how_many_months || 1;
-    const addOnTotal = liveClassPrice * months;
-    const discountedPrice = processedPrice?.price ?? 0;
-    const originalPrice = processedPrice?.originalPrice ?? 0;
+    const months = Number(selectedPlan?.how_many_months) || 1;
+    const discountedRecurring = Number.isFinite(Number(processedPrice?.price))
+      ? Number(processedPrice?.price)
+      : basePlanPrice;
+    const originalRecurring = Number.isFinite(Number(processedPrice?.originalPrice))
+      ? Number(processedPrice?.originalPrice)
+      : basePlanPrice;
+    const addonCharge = isOneTimeLiveClass ? liveClassPrice : 0;
 
-    if (processedPrice.discountType === 'FIXED_PRICE') {
-      const firstMonthPrice = discountedPrice;
-      const remainingMonthsPrice = originalPrice * (months - 1);
-      return (firstMonthPrice + remainingMonthsPrice + addOnTotal).toFixed(2);
+    if (processedPrice?.discountType === 'FIXED_PRICE') {
+      const firstMonthPrice = discountedRecurring + addonCharge;
+      const remainingMonthsPrice = originalRecurring * Math.max(0, months - 1);
+      return (firstMonthPrice + remainingMonthsPrice).toFixed(2);
     }
 
-    return ((discountedPrice * (selectedPlan.how_many_months ? selectedPlan.how_many_months : 1)) + addOnTotal).toFixed(2);
+    const periods = months > 0 ? months : 1;
+    const recurringTotal = discountedRecurring * periods;
+    return (recurringTotal + addonCharge).toFixed(2);
   };
 
   const renderPlanDetails = () => {
@@ -675,9 +771,12 @@ const useCheckout = () => {
       return financingText;
     }
 
-    if (selectedPlan?.price > 0 || selectedPlan?.price > 0) {
-      const originalPrice = selectedPlan?.price || selectedPlan?.price;
-      const discountedPrice = applyDiscounts(originalPrice, discountValues);
+    if (selectedPlan?.price > 0 || basePlanPrice > 0) {
+      const recurringPrice = Number.isFinite(basePlanPrice) && basePlanPrice > 0
+        ? basePlanPrice
+        : Number(selectedPlan?.price) || 0;
+
+      const discountedPrice = applyDiscounts(recurringPrice, discountValues);
 
       return (
         `${currencySymbol}${discountedPrice.toFixed(2)} / ${selectedPlan?.title || selectedPlan?.title}`
@@ -794,8 +893,36 @@ const useCheckout = () => {
   // STEP 4: clean up state on unmount
   useEffect(() => () => restartSignup(), []);
 
-  const toggleLiveClassSelection = () => {
-    setIsLiveClassSelected((prev) => !prev);
+  const toggleLiveClassSelection = async () => {
+    if (!liveClassServiceItem) return;
+    const liveAddOnId = Number(liveClassServiceItem?.id);
+    if (!Number.isFinite(liveAddOnId)) return;
+
+    const nextSelected = !isLiveClassSelected;
+    const nextIdsSet = new Set(addOnIdsFromQS);
+    if (nextSelected) nextIdsSet.add(liveAddOnId);
+    else nextIdsSet.delete(liveAddOnId);
+    const nextIds = Array.from(nextIdsSet);
+
+    setIsLiveClassSelected(nextSelected);
+    updateAddOnsQuery(nextIds);
+
+    if (planData && pathname !== '/renew') {
+      setCheckInfoLoader(true);
+      try {
+        const checking = await getChecking(planData, { overrideAddOnIds: nextIds });
+        const autoSelectedPlan = findAutoSelectedPlan(checking);
+        if (autoSelectedPlan) setSelectedPlan(autoSelectedPlan);
+        setOriginalPlan((prev) => ({
+          ...prev,
+          plans: checking?.plans || prev?.plans,
+          financingOptions: checking?.financingOptions || prev?.financingOptions,
+          paymentOptions: checking?.paymentOptions || prev?.paymentOptions,
+        }));
+      } finally {
+        setCheckInfoLoader(false);
+      }
+    }
   };
 
   return {
@@ -826,7 +953,10 @@ const useCheckout = () => {
     liveClassServiceItem,
     isLiveClassSelected,
     toggleLiveClassSelection,
+    basePlanPrice,
     liveClassPrice,
+    liveClassOriginalPrice,
+    isOneTimeLiveClass,
     liveClassesCopy,
     handleCoupon,
     removeManualCoupons,
