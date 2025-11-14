@@ -326,13 +326,13 @@ export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = f
       const originalPlan = planComparison?.original_plan;
       const suggestedPlan = planComparison?.suggested_plan;
 
-      const dataForOriginPlan = originalPlan.slug ? await processPlans(originalPlan, {
+      const dataForOriginPlan = originalPlan?.slug ? await processPlans(originalPlan, {
         quarterly: false,
         halfYearly: false,
         planType: 'original',
         country_code,
       }, translations) : {};
-      const dataForSuggestedPlan = suggestedPlan.slug ? await processPlans(suggestedPlan, {
+      const dataForSuggestedPlan = suggestedPlan?.slug ? await processPlans(suggestedPlan, {
         quarterly: false,
         halfYearly: false,
         planType: 'suggested',
