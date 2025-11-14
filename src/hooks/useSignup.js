@@ -140,7 +140,6 @@ const useSignup = () => {
     halfYearly = true,
     yearly = true,
     planType = '',
-    selectedAddOns: selectedAddOnsOverride,
   } = {}) => {
     try {
       const slug = encodeURIComponent(data?.slug);
@@ -324,36 +323,18 @@ const useSignup = () => {
           .filter((it) => Number.isFinite(it.addOnId) && it.addOnId > 0 && Number.isFinite(it.qty) && it.qty > 0);
       };
 
-      const normalizeSelections = (input) => {
-        if (!Array.isArray(input)) return [];
-        return input.map((sel) => {
-          if (sel == null) return null;
-          if (typeof sel === 'number') return { addOnId: sel, qty: 1 };
-          const addOnId = Number(sel?.addOnId ?? sel?.id ?? sel?.service ?? sel);
-          const qtyRaw = Number(sel?.qty ?? sel?.how_many ?? sel?.quantity ?? 1);
-          const qty = Number.isFinite(qtyRaw) && qtyRaw > 0 ? qtyRaw : 1;
-          return Number.isFinite(addOnId) && addOnId > 0 ? { addOnId, qty } : null;
-        }).filter((item) => item && Number.isFinite(item.addOnId));
-      };
-
       const computeMonthlyAddOnSum = (planObj, selections) => {
         const list = Array.isArray(planObj?.add_ons) ? planObj.add_ons : [];
         if (!list.length || !selections.length) return 0;
         return selections.reduce((acc, sel) => {
           const match = list.find((ao) => ao?.id === sel.addOnId);
           if (!match) return acc;
-          if (match?.plan || match?.plan_financing) return acc;
           const unit = Number(match?.price_per_unit) || 0;
-          const qty = Number(sel?.qty ?? sel?.how_many ?? 1);
-          return acc + (unit * qty);
+          return acc + (unit * sel.qty);
         }, 0);
       };
 
-      const hasOverrideSelections = selectedAddOnsOverride !== undefined;
-      const selectionsOverride = hasOverrideSelections ? normalizeSelections(selectedAddOnsOverride) : null;
-      const selections = hasOverrideSelections
-        ? selectionsOverride
-        : parseAddOnsQuery(addOnsSimple);
+      const selections = parseAddOnsQuery(addOnsSimple);
       const extraMonthly = computeMonthlyAddOnSum(data, selections);
 
       const applyAddOnsToPlan = (planItem) => {
@@ -405,10 +386,10 @@ const useSignup = () => {
  * @param {String} planSlug // Base plan slug to generate list of prices
  * @returns {Promise<object>} // Formated object of data with list of prices
  */
-  const generatePlan = async (planSlug, processOptions = {}) => {
+  const generatePlan = async (planSlug) => {
     try {
       const resp = await bc.payment({ country_code }).getPlan(planSlug);
-      const data = await processPlans(resp?.data, processOptions);
+      const data = await processPlans(resp?.data);
       return data;
     } catch (error) {
       console.error('Error generating plan:', error);
@@ -737,56 +718,38 @@ const useSignup = () => {
     }
   };
 
-  const getChecking = async (plansData, options = {}) => {
-    const overrideIds = Array.isArray(options.overrideAddOnIds) ? options.overrideAddOnIds : null;
-    let selections = [];
-    if (overrideIds) {
-      const uniqueIds = Array.from(new Set(overrideIds.map((id) => Number(id))))
-        .filter((id) => Number.isFinite(id) && id > 0);
-      selections = uniqueIds.map((id) => ({ addOnId: id, how_many: 1 }));
-    } else {
-      const src = (addOnsSimple || '').trim();
-      if (src) {
-        const tokens = src.split(',')
-          .map((tok) => tok.trim())
-          .filter((tok) => tok.length > 0);
+  const getChecking = async (plansData) => {
+    const src = (addOnsSimple || '').trim();
+    let addOnsArray = [];
+    if (src) {
+      // Parse add_on ids and optional quantities from QS: "add_ons=40,41:2"
+      const tokens = src.split(',')
+        .map((tok) => tok.trim())
+        .filter((tok) => tok.length > 0);
 
-        selections = tokens.map((tok) => {
-          const [idStr, qtyStr] = tok.split(':');
-          const addOnId = Number(idStr);
-          const qtyParsed = Number(qtyStr);
-          const how_many = Number.isFinite(qtyParsed) && qtyParsed > 0 ? qtyParsed : 1;
-          return { addOnId, how_many };
-        }).filter((sel) => Number.isFinite(sel.addOnId) && sel.addOnId > 0 && Number.isFinite(sel.how_many) && sel.how_many > 0);
-      }
+      const addOnSelections = tokens.map((tok) => {
+        const [idStr, qtyStr] = tok.split(':');
+        const addOnId = Number(idStr);
+        const qtyParsed = Number(qtyStr);
+        const how_many = Number.isFinite(qtyParsed) && qtyParsed > 0 ? qtyParsed : 1;
+        return { addOnId, how_many };
+      }).filter((sel) => Number.isFinite(sel.addOnId) && sel.addOnId > 0 && Number.isFinite(sel.how_many) && sel.how_many > 0);
+
+      // Map add_on.id -> service.id to comply with backend contract for service_items
+      const list = Array.isArray(plansData?.add_ons) ? plansData.add_ons : [];
+      addOnsArray = addOnSelections.map((sel) => {
+        const match = list.find((ao) => ao?.id === sel.addOnId);
+        const serviceId = match?.service?.id;
+        return { service: Number(serviceId), how_many: sel.how_many };
+      }).filter((it) => Number.isFinite(it.service) && it.service > 0 && Number.isFinite(it.how_many) && it.how_many > 0);
     }
-
-    const list = Array.isArray(plansData?.add_ons) ? plansData.add_ons : [];
-    const addOnPlanSlugs = [];
-    const addOnsArray = selections.map((sel) => {
-      const match = list.find((ao) => ao?.id === sel.addOnId);
-      const serviceId = match?.service?.id;
-      const slugFromPlan = match?.plan?.slug;
-      const slugFromFinancing = match?.plan_financing?.slug;
-      const planSlug = slugFromFinancing || slugFromPlan;
-      if (planSlug) addOnPlanSlugs.push(planSlug);
-      return { service: Number(serviceId), how_many: sel.how_many };
-    }).filter((it) => Number.isFinite(it.service) && it.service > 0 && Number.isFinite(it.how_many) && it.how_many > 0);
-
-    const pricingSelections = selections
-      .map((sel) => ({
-        addOnId: sel.addOnId,
-        qty: sel.how_many || 1,
-      }))
-      .filter((sel) => Number.isFinite(sel.addOnId) && sel.addOnId > 0 && Number.isFinite(sel.qty) && sel.qty > 0);
 
     const checkingBody = {
       type: 'PREVIEW',
-      plans: [plansData?.slug].filter((slug) => typeof slug === 'string' && slug.length > 0),
+      plans: [plansData?.slug],
       coupons: couponsQuery ? [couponsQuery] : undefined,
       country_code,
       service_items: addOnsArray,
-      add_ons: addOnPlanSlugs.filter((slug) => typeof slug === 'string' && slug.length > 0),
     };
 
     try {
@@ -795,7 +758,7 @@ const useSignup = () => {
 
       const currentPlan = data?.plans?.[0];
       const planSlug = encodeURIComponent(currentPlan?.slug);
-      const finalData = await generatePlan(planSlug, { selectedAddOns: pricingSelections });
+      const finalData = await generatePlan(planSlug);
 
       // Remove plan id to avoid conflict with the plan id in the checking data
       delete finalData.id;
@@ -1031,7 +994,7 @@ const useSignup = () => {
 
       onSubscribedToPlan(data);
 
-      const respData = await getChecking(data, { overrideAddOnIds: addOnsIds });
+      const respData = await getChecking(data);
 
       const respPayment = await handlePayment({
         ...respData,

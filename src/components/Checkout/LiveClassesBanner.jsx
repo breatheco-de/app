@@ -98,18 +98,11 @@ function LiveClassesBanner({
                 {copy?.shortDescription || label}
               </Text>
             </Flex>
-            <Flex direction="column" alignItems="flex-end">
-              {copy?.price && (
-                <Text fontSize="sm" fontWeight="600" color={hexColor.green}>
-                  {copy.price}
-                </Text>
-              )}
-              {copy?.planLabel && (
-                <Text fontSize="xs" color="gray.500">
-                  {copy.planLabel}
-                </Text>
-              )}
-            </Flex>
+            {copy?.price && (
+              <Text fontSize="sm" fontWeight="600" color={hexColor.green}>
+                {copy.price}
+              </Text>
+            )}
           </Flex>
         )}
       </Flex>
@@ -226,7 +219,6 @@ LiveClassesBanner.propTypes = {
     description: PropTypes.string,
     shortDescription: PropTypes.string,
     price: PropTypes.string,
-    planLabel: PropTypes.string,
     toggleOn: PropTypes.string,
     toggleOff: PropTypes.string,
     toggleAria: PropTypes.string,

@@ -36,7 +36,6 @@
     "title": "Live classes add-on",
     "description": "Attend live cohort sessions with proffesionals and keep your learning on track.",
     "price-label": "{{price}} per {{period}}",
-    "price-one-time": "{{price}} one-time payment",
     "price-included": "Live classes are included with this selection.",
     "toggle-on": "Live classes enabled",
     "toggle-off": "Add live classes",
@@ -49,7 +48,6 @@
     "class-range": "{{start}} - {{end}}",
     "program-label": "Program: {{name}}",
     "addon-summary": "Live classes add-on",
-    "plan-label": "Plan: {{name}}",
     "period": {
       "month": "month",
       "year": "year"
