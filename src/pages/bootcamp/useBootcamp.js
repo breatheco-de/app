@@ -271,7 +271,6 @@ export const useBootcamp = () => {
       };
 
       const formatedPlanData = await fetchSuggestedPlan(courseData?.plan_slug, translationsObj, 'mkt_plans', countryCode).then((finalData) => finalData);
-
       const modulesInfo = await getModulesInfo();
 
       const studentList = await bc.admissions({ roles: 'STUDENT' }).getPublicMembers()

@@ -209,6 +209,7 @@ const useCheckout = () => {
   const initializePlanData = async () => {
     try {
       const resp = await bc.payment({ country_code: location?.countryShort }).getPlan(planFormated);
+      console.log('resp', resp);
       const { data } = resp;
       setPlanData(data);
       const processedPlan = await processPlans(data, {
@@ -242,6 +243,7 @@ const useCheckout = () => {
       setDiscountValues(allCouponsApplied);
 
       setSuggestedPlans(suggestedPlanInfo[0]?.suggested_plan);
+
       if (pathname !== '/renew') {
         setSelectedPlan(defaultPlan);
       }
@@ -254,7 +256,8 @@ const useCheckout = () => {
         duration: 4000,
         isClosable: true,
       });
-      router.push('/pricing');
+      console.log(err);
+      // router.push('/pricing');
     }
   };
 

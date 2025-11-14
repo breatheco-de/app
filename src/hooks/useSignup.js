@@ -47,11 +47,12 @@ const useSignup = () => {
   const redirectedFrom = getStorageItem('redirected-from');
   const couponsQuery = getQueryString('coupons');
   const addOnsSimple = getQueryString('add_ons');
+  const countryCodeQueryString = getQueryString('country_code');
 
   const addOnsIds = parseAddOnIdsFromQuery(addOnsSimple);
 
   const defaultPlan = process.env.BASE_PLAN || 'basic';
-  const country_code = location?.countryShort;
+  const country_code = countryCodeQueryString || location?.countryShort;
 
   const subscriptionStatusDictionary = {
     PREPARING_FOR_COHORT: 'PREPARING_FOR_COHORT',
