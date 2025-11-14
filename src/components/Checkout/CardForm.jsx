@@ -487,6 +487,7 @@ CardForm.propTypes = {
     isSubmitting: PropTypes.bool,
   }),
   buttonText: PropTypes.string,
+  customButtons: PropTypes.node,
 };
 
 CardForm.defaultProps = {
@@ -495,6 +496,7 @@ CardForm.defaultProps = {
   onSaveCard: null,
   buttonText: '',
   modalCardErrorProps: {},
+  customButtons: null,
 };
 
 export default CardForm;

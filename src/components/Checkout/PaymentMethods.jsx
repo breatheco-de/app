@@ -15,6 +15,7 @@ import { reportDatalayer } from '../../utils/requests';
 import { getBrowserInfo } from '../../utils';
 import useSignup from '../../hooks/useSignup';
 import { SILENT_CODE } from '../../utils/variables';
+import useCustomToast from '../../hooks/useCustomToast';
 import CardForm from './CardForm';
 import Text from '../Text';
 import AcordionList from '../AcordionList';
