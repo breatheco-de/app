@@ -32,7 +32,6 @@ import bc from '../../services/breathecode';
 import ContactInformation from '../../components/Checkout/ContactInformation';
 import Summary from '../../components/Checkout/Summary';
 import PaymentInfo from '../../components/Checkout/PaymentInfo';
-import LiveClassesBanner from '../../components/Checkout/LiveClassesBanner';
 import Stepper from '../../components/Checkout/Stepper';
 import { removeSessionStorageItem } from '../../utils';
 import signupAction from '../../store/actions/signupAction';
@@ -112,15 +111,6 @@ function Checkout() {
     planId,
     fixedCouponExist,
     discountCoupon,
-    liveClassCohorts,
-    liveClassServiceItem,
-    isLiveClassSelected,
-    toggleLiveClassSelection,
-    basePlanPrice,
-    liveClassPrice,
-    liveClassOriginalPrice,
-    isOneTimeLiveClass,
-    liveClassesCopy,
     removeManualCoupons,
   } = useCheckout();
   const { query } = router;
@@ -146,36 +136,6 @@ function Checkout() {
   const [courseTitle, setCourseTitle] = useState('');
 
   const isPaymentSuccess = paymentStatus === 'success';
-  const currencyCode = selectedPlan?.currency?.code || originalPlan?.currency?.code || '';
-  const formatMoney = (amount) => {
-    if (!Number.isFinite(amount)) return `${currencySymbol}${amount}`;
-    const suffix = currencyCode ? ` ${currencyCode}` : '';
-    return `${currencySymbol}${amount.toFixed(2)}${suffix}`;
-  };
-  const addonOneTimeValue = isOneTimeLiveClass ? liveClassPrice : 0;
-  const addonOriginalValue = isOneTimeLiveClass ? liveClassOriginalPrice : 0;
-  const processedSubtotalValue = Number(processedPrice?.price);
-  const fallbackSubtotalValue = (basePlanPrice || 0) + addonOneTimeValue;
-  const effectiveSubtotalValue = Number.isFinite(processedSubtotalValue)
-    ? processedSubtotalValue + addonOneTimeValue
-    : fallbackSubtotalValue;
-  const formattedBaseSubtotal = formatMoney(Number.isFinite(processedSubtotalValue) ? processedSubtotalValue : basePlanPrice);
-  const formattedAddonSubtotal = liveClassPrice > 0 ? formatMoney(liveClassPrice) : null;
-  const totalNowAmount = (() => {
-    if (effectiveSubtotalValue <= 0) {
-      if (liveClassPrice > 0) return formatMoney(liveClassPrice);
-      return selectedPlan?.priceText || formatMoney(0);
-    }
-    return formatMoney(effectiveSubtotalValue);
-  })();
-  const originalSubtotalValue = Number(processedPrice?.originalPrice);
-  const effectiveOriginalValue = Number.isFinite(originalSubtotalValue)
-    ? originalSubtotalValue + addonOriginalValue
-    : ((basePlanPrice || 0) + addonOriginalValue);
-  const originalTotalAmount = Number.isFinite(originalSubtotalValue)
-    && effectiveOriginalValue > effectiveSubtotalValue
-    ? formatMoney(effectiveOriginalValue)
-    : null;
 
   useEffect(() => {
     const shouldShowPrereq = () => {
@@ -546,16 +506,6 @@ function Checkout() {
                           containerStyles={{ _hover: 'none' }}
                         />
                       )}
-                      {liveClassCohorts?.length > 0 && (
-                        <LiveClassesBanner
-                          cohorts={liveClassCohorts}
-                          serviceItem={liveClassServiceItem}
-                          isSelected={isLiveClassSelected}
-                          onToggle={toggleLiveClassSelection}
-                          locale={lang}
-                          copy={liveClassesCopy}
-                        />
-                      )}
                     </Flex>
                     {isSecondStep && (
                       <>
@@ -564,19 +514,11 @@ function Checkout() {
                             Subtotal:
                           </Text>
                           <Text size="18px" color="currentColor" lineHeight="normal">
-                            {formattedBaseSubtotal}
+                            {selectedPlan?.price <= 0
+                              ? selectedPlan?.priceText
+                              : `${currencySymbol}${selectedPlan?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
                           </Text>
                         </Flex>
-                        {formattedAddonSubtotal && (
-                          <Flex justifyContent="space-between" width="100%" marginTop="8px">
-                            <Text size="sm" color="gray.500">
-                              {liveClassesCopy?.summaryLabel}
-                            </Text>
-                            <Text size="sm" color="gray.500">
-                              {formattedAddonSubtotal}
-                            </Text>
-                          </Flex>
-                        )}
                         <Divider margin="6px 0" />
                         {showPaymentDetails && (
                           <Formik
@@ -684,13 +626,15 @@ function Checkout() {
                             {selectedPlan?.period !== 'ONE_TIME' ? t('total-now') : t('total')}
                           </Text>
                           <Flex gridGap="1rem">
-                            {allCoupons?.length > 0 && originalTotalAmount && (
+                            {allCoupons?.length > 0 && (
                               <Text size="18px" color="currentColor" textDecoration="line-through" opacity="0.5" lineHeight="normal">
-                                {originalTotalAmount}
+                                {`${currencySymbol}${selectedPlan?.price?.toFixed(2)}`}
                               </Text>
                             )}
                             <Text size="18px" color="currentColor" lineHeight="normal">
-                              {totalNowAmount}
+                              {selectedPlan?.price <= 0
+                                ? selectedPlan?.priceText
+                                : `${currencySymbol}${processedPrice?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
                             </Text>
                           </Flex>
                         </Flex>

@@ -1,10 +1,5 @@
 /* eslint-disable camelcase */
-import {
-  useState,
-  useEffect,
-  useMemo,
-  useCallback,
-} from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import bc from '../../services/breathecode';
@@ -22,40 +17,6 @@ const useCheckout = () => {
   const { t } = useTranslation('signup');
   const router = useRouter();
   const { query, pathname } = router;
-  const currentLocale = router.locale || 'en';
-
-  const resolveLocalizedValue = useCallback((value) => {
-    if (!value) return undefined;
-    if (typeof value === 'string') return value;
-    if (typeof value === 'object') {
-      const normalized = currentLocale?.toLowerCase();
-      if (normalized && value[normalized]) return value[normalized];
-      const short = normalized?.split('-')?.[0];
-      if (short && value[short]) return value[short];
-      if (value.en) return value.en;
-      const firstString = Object.values(value).find((val) => typeof val === 'string');
-      if (firstString) return firstString;
-    }
-    return undefined;
-  }, [currentLocale]);
-
-  const formatTemplate = (template, variables = {}) => {
-    if (typeof template !== 'string') return template;
-    return template.replace(/{{\s*(\w+)\s*}}/g, (_, key) => (variables[key] !== undefined ? variables[key] : ''));
-  };
-
-  const translateCopy = useCallback((raw, variables = {}) => {
-    if (typeof raw !== 'string') return raw;
-    const trimmed = raw.trim();
-    if (trimmed.startsWith('signup:')) {
-      const key = trimmed.replace('signup:', '');
-      return t(key, variables);
-    }
-    if (trimmed.startsWith('live-classes.')) {
-      return t(trimmed, variables);
-    }
-    return formatTemplate(trimmed, variables);
-  }, [t]);
   const [allCoupons, setAllCoupons] = useState([]);
   const [originalPlan, setOriginalPlan] = useState(null);
   const {
@@ -74,10 +35,6 @@ const useCheckout = () => {
   const [discountValues, setDiscountValues] = useState(undefined);
   const [checkInfoLoader, setCheckInfoLoader] = useState(false);
   const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
-  const [planOffer, setPlanOffer] = useState(null);
-  const [liveClassCohorts, setLiveClassCohorts] = useState([]);
-  const [isLiveClassSelected, setIsLiveClassSelected] = useState(false);
-  const [liveClassServiceItem, setLiveClassServiceItem] = useState(null);
   const currencySymbol = currenciesSymbols[originalPlan?.currency?.code] || '$';
 
   const { isAuthenticated } = useAuth();
@@ -101,190 +58,6 @@ const useCheckout = () => {
 
   const isPaymentSuccess = paymentStatus === 'success';
   const fixedCouponExist = allCoupons.some((coup) => coup.discount_type === 'FIXED_PRICE');
-
-  const addOnIdsFromQS = useMemo(() => {
-    const queryValue = router.query?.add_ons;
-    if (Array.isArray(queryValue)) {
-      return parseAddOnIdsFromQuery(queryValue.join(','));
-    }
-    if (typeof queryValue === 'string') {
-      return parseAddOnIdsFromQuery(queryValue);
-    }
-    return parseAddOnIdsFromQuery(addOnsQS);
-  }, [router.query?.add_ons, addOnsQS]);
-
-  const updateAddOnsQuery = useCallback((ids) => {
-    const sortedIds = [...ids].sort((a, b) => a - b);
-    const currentSorted = [...addOnIdsFromQS].sort((a, b) => a - b);
-    const isSame = sortedIds.length === currentSorted.length
-      && sortedIds.every((id, index) => id === currentSorted[index]);
-    if (isSame) return;
-
-    const nextQuery = { ...router.query };
-    if (sortedIds.length > 0) {
-      nextQuery.add_ons = sortedIds.join(',');
-    } else {
-      delete nextQuery.add_ons;
-    }
-    router.replace({ pathname: router.pathname, query: nextQuery }, undefined, { shallow: true });
-  }, [addOnIdsFromQS, router]);
-
-  const basePlanPrice = useMemo(() => {
-    const planMatch = planData?.plans?.find((planOption) => planOption?.plan_id === selectedPlan?.plan_id);
-    const planPrice = Number(planMatch?.price);
-    if (Number.isFinite(planPrice) && planPrice > 0) return planPrice;
-    const selectedPrice = Number(selectedPlan?.price);
-    return Number.isFinite(selectedPrice) ? selectedPrice : 0;
-  }, [planData?.plans, selectedPlan?.plan_id, selectedPlan?.price]);
-
-  const liveClassUnitPrice = useMemo(() => {
-    if (!liveClassServiceItem) return 0;
-    const value = Number(liveClassServiceItem?.price_per_unit ?? liveClassServiceItem?.price ?? 0);
-    return Number.isFinite(value) ? value : 0;
-  }, [liveClassServiceItem]);
-
-  const liveClassBasePrice = useMemo(() => {
-    if (liveClassUnitPrice > 0) return liveClassUnitPrice;
-    const selectedPrice = Number(selectedPlan?.price) || 0;
-    const diff = selectedPrice - basePlanPrice;
-    return diff > 0 ? diff : 0;
-  }, [liveClassUnitPrice, selectedPlan?.price, basePlanPrice]);
-
-  const discountedLiveClassUnitPrice = useMemo(() => {
-    if (liveClassBasePrice <= 0) return 0;
-    let price = liveClassBasePrice;
-    allCoupons.forEach((appliedCoupon) => {
-      const result = getPriceWithDiscount(price, appliedCoupon);
-      if (result?.price !== undefined && Number.isFinite(result.price)) {
-        price = result.price;
-      }
-    });
-    return price;
-  }, [liveClassBasePrice, allCoupons, getPriceWithDiscount]);
-
-  const liveClassPrice = useMemo(() => (
-    isLiveClassSelected ? discountedLiveClassUnitPrice : 0
-  ), [discountedLiveClassUnitPrice, isLiveClassSelected]);
-
-  const liveClassOriginalPrice = useMemo(() => (
-    isLiveClassSelected ? liveClassBasePrice : 0
-  ), [isLiveClassSelected, liveClassBasePrice]);
-
-  const liveClassPeriod = useMemo(() => (
-    liveClassServiceItem?.periodicity
-    || liveClassServiceItem?.period
-    || 'month'
-  ), [liveClassServiceItem]);
-
-  const liveClassPeriodLabel = useMemo(() => {
-    const map = {
-      month: t('live-classes.period.month'),
-      monthly: t('live-classes.period.month'),
-      year: t('live-classes.period.year'),
-      yearly: t('live-classes.period.year'),
-    };
-    const normalized = String(liveClassPeriod || '').toLowerCase();
-    return map[normalized] || liveClassPeriod;
-  }, [liveClassPeriod, t]);
-
-  const liveClassPlan = liveClassServiceItem?.plan || liveClassServiceItem?.plan_financing;
-  const isOneTimeLiveClass = Boolean(liveClassPlan);
-
-  const formattedLiveClassUnitPrice = useMemo(() => (
-    discountedLiveClassUnitPrice > 0
-      ? `${currencySymbol}${discountedLiveClassUnitPrice.toFixed(2)}`
-      : ''
-  ), [currencySymbol, discountedLiveClassUnitPrice]);
-
-  const programName = useMemo(() => {
-    const offerName = resolveLocalizedValue(
-      planOffer?.original_plan?.title
-      || planOffer?.original_plan?.name,
-    );
-    const fallback = resolveLocalizedValue(originalPlan?.title) || originalPlan?.title;
-    return offerName || fallback || '';
-  }, [planOffer, originalPlan]);
-
-  const liveClassOfferDetails = useMemo(() => (
-    planOffer?.details?.live_class_addon
-    || planOffer?.details?.live_class
-    || planOffer?.details?.live_classes
-    || {}
-  ), [planOffer]);
-
-  const liveClassesCopy = useMemo(() => {
-    const getValue = (keys, variables = {}) => {
-      const list = Array.isArray(keys) ? keys : [keys];
-      for (let index = 0; index < list.length; index += 1) {
-        const path = list[index];
-        if (typeof path === 'string' && path.length > 0) {
-          const raw = path.split('.').reduce((acc, key) => (
-            acc && acc[key] !== undefined ? acc[key] : undefined
-          ), liveClassOfferDetails);
-          const localized = resolveLocalizedValue(raw);
-          if (localized !== undefined && localized !== null && localized !== '') {
-            return translateCopy(localized, variables);
-          }
-        }
-      }
-      return undefined;
-    };
-
-    const priceText = getValue(['price_label', 'banner.price'], {
-      price: formattedLiveClassUnitPrice,
-      period: liveClassPeriodLabel,
-    });
-
-    const defaultPrice = (() => {
-      if (!discountedLiveClassUnitPrice) return t('live-classes.price-included');
-      if (isOneTimeLiveClass) {
-        return t('live-classes.price-one-time', {
-          price: formattedLiveClassUnitPrice,
-        });
-      }
-      return t('live-classes.price-label', {
-        price: formattedLiveClassUnitPrice,
-        period: liveClassPeriodLabel,
-      });
-    })();
-
-    const defaultTitle = resolveLocalizedValue(planOffer?.details?.title) || t('live-classes.title');
-    const defaultDescription = resolveLocalizedValue(planOffer?.details?.description) || t('live-classes.description');
-    const programText = programName
-      ? getValue(['program_label', 'program'], { name: programName, program: programName })
-        || t('live-classes.program-label', { name: programName })
-      : '';
-
-    return {
-      title: getValue(['title', 'banner.title', 'heading']) || defaultTitle,
-      description: getValue(['description', 'banner.description', 'body']) || defaultDescription,
-      shortDescription: getValue(['short_description', 'banner.short_description']) || '',
-      toggleOn: getValue(['toggle_on', 'toggle.on']) || t('live-classes.toggle-on'),
-      toggleOff: getValue(['toggle_off', 'toggle.off']) || t('live-classes.toggle-off'),
-      toggleAria: getValue(['toggle_aria', 'toggle.aria']) || t('live-classes.toggle-aria'),
-      price: priceText || defaultPrice,
-      planLabel: '',
-      program: programText,
-      summaryLabel: getValue(['summary_label', 'summary']) || t('live-classes.addon-summary'),
-      programsLabel: getValue(['programs_label', 'programs.title']) || t('live-classes.programs-label'),
-      timezoneTemplate: getValue(['timezone_label', 'timezone'], { timezone: '{{timezone}}' })
-        || t('live-classes.timezone', { timezone: '{{timezone}}' }),
-      classRangeTemplate: getValue(['class_range', 'classRange'], { start: '{{start}}', end: '{{end}}' })
-        || t('live-classes.class-range', { start: '{{start}}', end: '{{end}}' }),
-      noSchedule: getValue(['no_schedule', 'empty_label']) || t('live-classes.no-schedule'),
-    };
-  }, [
-    discountedLiveClassUnitPrice,
-    formattedLiveClassUnitPrice,
-    liveClassOfferDetails,
-    liveClassPeriod,
-    liveClassPeriodLabel,
-    liveClassPlan,
-    programName,
-    resolveLocalizedValue,
-    t,
-    translateCopy,
-  ]);
 
   const processedPrice = useMemo(() => {
     let pricingData = { ...selectedPlan };
@@ -436,13 +209,13 @@ const useCheckout = () => {
   const initializePlanData = async () => {
     try {
       const resp = await bc.payment({ country_code: location?.countryShort }).getPlan(planFormated);
+      console.log('resp', resp);
       const { data } = resp;
       setPlanData(data);
       const processedPlan = await processPlans(data, {
         quarterly: false,
         halfYearly: false,
         planType: 'original',
-        selectedAddOns: addOnIdsFromQS.map((id) => ({ addOnId: id, qty: 1 })),
       });
 
       const accordionList = processedPlan?.featured_info?.map((info) => ({
@@ -451,8 +224,9 @@ const useCheckout = () => {
       })) || [];
 
       let accordionListWithAddOns = accordionList;
-      if (addOnIdsFromQS.length > 0) {
-        const selectedAddOns = (data?.add_ons || []).filter((ao) => addOnIdsFromQS.includes(ao?.id));
+      if (addOnsQS) {
+        const addOnIds = parseAddOnIdsFromQuery(addOnsQS);
+        const selectedAddOns = (data?.add_ons || []).filter((ao) => addOnIds.includes(ao?.id));
         const addOnsAccordion = selectedAddOns.map((ao) => ({
           title: ao?.service?.title || slugToTitle(ao?.service?.slug),
           description: '',
@@ -460,38 +234,15 @@ const useCheckout = () => {
         accordionListWithAddOns = [...accordionList, ...addOnsAccordion];
       }
 
-      const liveClassAddOn = (data?.add_ons || []).find((addOn) => addOn?.service?.consumer === 'LIVE_CLASS_JOIN');
-      if (liveClassAddOn) {
-        setLiveClassServiceItem(liveClassAddOn);
-        const liveAddOnId = Number(liveClassAddOn?.id);
-        const selectedByQuery = addOnIdsFromQS.includes(liveAddOnId);
-        const shouldSelect = Boolean(liveClassAddOn?.is_default) || selectedByQuery;
-        setIsLiveClassSelected(shouldSelect);
-        if (Number.isFinite(liveAddOnId)) {
-          if (shouldSelect && !selectedByQuery) {
-            updateAddOnsQuery([...addOnIdsFromQS, liveAddOnId]);
-          }
-          if (!shouldSelect && selectedByQuery) {
-            updateAddOnsQuery(addOnIdsFromQS.filter((id) => id !== liveAddOnId));
-          }
-        }
-      } else {
-        setLiveClassServiceItem(null);
-        setIsLiveClassSelected(false);
-      }
-
       const defaultPlan = processedPlan?.plans?.find((item) => item?.plan_id === planId)
         || processedPlan?.plans?.[0] || {};
 
-      const { data: planOfferResponse } = await bc.payment({ original_plan: processedPlan?.slug }).planOffer();
-      const primaryOffer = Array.isArray(planOfferResponse) ? planOfferResponse[0] : null;
+      const { data: suggestedPlanInfo } = await bc.payment({ original_plan: processedPlan?.slug }).planOffer();
 
-      const { data: allCouponsApplied } = await bc.payment({ coupons: [couponQuery || coupon], plan: primaryOffer?.suggested_plan?.slug || processedPlan?.slug }).verifyCoupon();
+      const { data: allCouponsApplied } = await bc.payment({ coupons: [couponQuery || coupon], plan: suggestedPlanInfo[0]?.suggested_plan.slug || processedPlan?.slug }).verifyCoupon();
       setDiscountValues(allCouponsApplied);
 
-      setSuggestedPlans(primaryOffer?.suggested_plan);
-      setPlanOffer(primaryOffer);
-      setLiveClassCohorts(Array.isArray(primaryOffer?.live_cohorts) ? primaryOffer.live_cohorts : []);
+      setSuggestedPlans(suggestedPlanInfo[0]?.suggested_plan);
 
       if (pathname !== '/renew') {
         setSelectedPlan(defaultPlan);
@@ -505,18 +256,16 @@ const useCheckout = () => {
         duration: 4000,
         isClosable: true,
       });
-      router.push('/pricing');
+      console.log(err);
+      // router.push('/pricing');
     }
   };
 
-  const getCheckingData = async (options = {}) => {
+  const getCheckingData = async () => {
     try {
       setLoader('plan', true);
 
-      const effectiveAddOnIds = Array.isArray(options.overrideAddOnIds)
-        ? options.overrideAddOnIds
-        : addOnIdsFromQS;
-      const checking = await getChecking(planData, { overrideAddOnIds: effectiveAddOnIds });
+      const checking = await getChecking(planData);
 
       // Check if getChecking returned an error response
       if (checking?.status >= 400) {
@@ -564,17 +313,17 @@ const useCheckout = () => {
     }
 
     if (planFormated && isAuthenticated && planData && pathname !== '/renew') {
-      getCheckingData({ overrideAddOnIds: addOnIdsFromQS });
+      getCheckingData();
     }
     if (!isAuthenticated && !accessToken) {
       setLoader('plan', false);
     }
-  }, [isAuthenticated, router.locale, planData, pathname, addOnIdsFromQS]);
+  }, [isAuthenticated, router.locale, planData]);
 
   useEffect(() => {
     if (!userSelectedPlan || !planData) return;
     setCheckInfoLoader(true);
-    getChecking(planData, { overrideAddOnIds: addOnIdsFromQS })
+    getChecking(planData)
       .then((checking) => {
         const autoSelectedPlan = findAutoSelectedPlan(checking);
 
@@ -587,14 +336,7 @@ const useCheckout = () => {
       .catch(() => {
         setCheckInfoLoader(false);
       });
-  }, [userSelectedPlan, addOnIdsFromQS]);
-
-  useEffect(() => {
-    if (!liveClassServiceItem) return;
-    const liveId = Number(liveClassServiceItem?.id);
-    if (!Number.isFinite(liveId)) return;
-    setIsLiveClassSelected(addOnIdsFromQS.includes(liveId));
-  }, [addOnIdsFromQS, liveClassServiceItem?.id]);
+  }, [userSelectedPlan]);
 
   // useEffect for selfAppliedCoupons
   useEffect(() => {
@@ -670,24 +412,15 @@ const useCheckout = () => {
   };
 
   const calculateTotalPrice = () => {
-    const months = Number(selectedPlan?.how_many_months) || 1;
-    const discountedRecurring = Number.isFinite(Number(processedPrice?.price))
-      ? Number(processedPrice?.price)
-      : basePlanPrice;
-    const originalRecurring = Number.isFinite(Number(processedPrice?.originalPrice))
-      ? Number(processedPrice?.originalPrice)
-      : basePlanPrice;
-    const addonCharge = isOneTimeLiveClass ? liveClassPrice : 0;
+    const months = selectedPlan.how_many_months || 1;
 
-    if (processedPrice?.discountType === 'FIXED_PRICE') {
-      const firstMonthPrice = discountedRecurring + addonCharge;
-      const remainingMonthsPrice = originalRecurring * Math.max(0, months - 1);
+    if (processedPrice.discountType === 'FIXED_PRICE') {
+      const firstMonthPrice = processedPrice.price;
+      const remainingMonthsPrice = processedPrice.originalPrice * (months - 1);
       return (firstMonthPrice + remainingMonthsPrice).toFixed(2);
     }
 
-    const periods = months > 0 ? months : 1;
-    const recurringTotal = discountedRecurring * periods;
-    return (recurringTotal + addonCharge).toFixed(2);
+    return (processedPrice.price * (selectedPlan.how_many_months ? selectedPlan.how_many_months : 1)).toFixed(2);
   };
 
   const renderPlanDetails = () => {
@@ -771,12 +504,9 @@ const useCheckout = () => {
       return financingText;
     }
 
-    if (selectedPlan?.price > 0 || basePlanPrice > 0) {
-      const recurringPrice = Number.isFinite(basePlanPrice) && basePlanPrice > 0
-        ? basePlanPrice
-        : Number(selectedPlan?.price) || 0;
-
-      const discountedPrice = applyDiscounts(recurringPrice, discountValues);
+    if (selectedPlan?.price > 0 || selectedPlan?.price > 0) {
+      const originalPrice = selectedPlan?.price || selectedPlan?.price;
+      const discountedPrice = applyDiscounts(originalPrice, discountValues);
 
       return (
         `${currencySymbol}${discountedPrice.toFixed(2)} / ${selectedPlan?.title || selectedPlan?.title}`
@@ -893,38 +623,6 @@ const useCheckout = () => {
   // STEP 4: clean up state on unmount
   useEffect(() => () => restartSignup(), []);
 
-  const toggleLiveClassSelection = async () => {
-    if (!liveClassServiceItem) return;
-    const liveAddOnId = Number(liveClassServiceItem?.id);
-    if (!Number.isFinite(liveAddOnId)) return;
-
-    const nextSelected = !isLiveClassSelected;
-    const nextIdsSet = new Set(addOnIdsFromQS);
-    if (nextSelected) nextIdsSet.add(liveAddOnId);
-    else nextIdsSet.delete(liveAddOnId);
-    const nextIds = Array.from(nextIdsSet);
-
-    setIsLiveClassSelected(nextSelected);
-    updateAddOnsQuery(nextIds);
-
-    if (planData && pathname !== '/renew') {
-      setCheckInfoLoader(true);
-      try {
-        const checking = await getChecking(planData, { overrideAddOnIds: nextIds });
-        const autoSelectedPlan = findAutoSelectedPlan(checking);
-        if (autoSelectedPlan) setSelectedPlan(autoSelectedPlan);
-        setOriginalPlan((prev) => ({
-          ...prev,
-          plans: checking?.plans || prev?.plans,
-          financingOptions: checking?.financingOptions || prev?.financingOptions,
-          paymentOptions: checking?.paymentOptions || prev?.paymentOptions,
-        }));
-      } finally {
-        setCheckInfoLoader(false);
-      }
-    }
-  };
-
   return {
     couponError,
     setCouponError,
@@ -939,8 +637,6 @@ const useCheckout = () => {
     allCoupons,
     processedPrice,
     originalPlan,
-    planOffer,
-    programName,
     discountCode,
     setDiscountCode,
     currencySymbol,
@@ -949,15 +645,6 @@ const useCheckout = () => {
     planId,
     discountCoupon,
     setDiscountCoupon,
-    liveClassCohorts,
-    liveClassServiceItem,
-    isLiveClassSelected,
-    toggleLiveClassSelection,
-    basePlanPrice,
-    liveClassPrice,
-    liveClassOriginalPrice,
-    isOneTimeLiveClass,
-    liveClassesCopy,
     handleCoupon,
     removeManualCoupons,
   };
