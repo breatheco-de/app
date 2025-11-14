@@ -22,7 +22,6 @@ import AcordionList from '../AcordionList';
 import LoaderScreen from '../LoaderScreen';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
-import useCustomToast from '../../hooks/useCustomToast';
 
 function PaymentMethods({
   setShowPaymentDetails,
