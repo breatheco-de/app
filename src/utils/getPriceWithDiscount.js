@@ -1,44 +1,71 @@
 import useTranslation from 'next-translate/useTranslation';
 
 // Exporting handleCoupons so it can be used independently
-export const handlePriceTextWithCoupon = (priceText, allDiscounts, plan) => {
-  if (!allDiscounts || allDiscounts.length === 0 || plan.price === 0) return priceText;
+export const handlePriceTextWithCoupon = (priceText, allDiscounts) => {
+  if (!priceText || !allDiscounts || allDiscounts.length === 0) return priceText;
 
-  const currencySymbol = priceText.replace(/[\d.,]/g, '');
-  let discountedPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));
+  const priceTextStr = String(priceText);
+
+  const hasInstallments = priceTextStr.includes('x');
+
+  const currencySymbol = priceTextStr.replace(/[\d.,xX]/g, '').trim();
+
+  let basePart = priceTextStr;
+  let installmentsSuffix = '';
+
+  if (hasInstallments) {
+    const [left, right] = priceTextStr.split(/x/i);
+    basePart = left || priceTextStr;
+
+    const months = right ? right.replace(/[^\d]/g, '').trim() : '';
+    if (months) {
+      installmentsSuffix = ` x ${months}`;
+    }
+  }
+
+  let discountedPrice = parseFloat(basePart.replace(/[^\d.]/g, ''));
+
+  if (!Number.isFinite(discountedPrice) || discountedPrice <= 0) return priceTextStr;
 
   allDiscounts.forEach((discount) => {
-    if (discount.discount_type === 'PERCENT_OFF') {
-      discountedPrice -= (discountedPrice * discount.discount_value);
+    const value = discount?.discount_value;
+    const type = discount?.discount_type;
+
+    if (!value) return;
+
+    if (type === 'PERCENT_OFF') {
+      discountedPrice -= (discountedPrice * value);
     } else {
-      discountedPrice -= discount.discount_value;
+      discountedPrice -= value;
     }
   });
 
-  discountedPrice = parseFloat(discountedPrice.toFixed(2));
+  discountedPrice = Number(discountedPrice.toFixed(2));
 
-  // Only show decimals if they're not .00
-  const formattedPrice = discountedPrice % 1 === 0 ? discountedPrice.toFixed(0) : discountedPrice.toFixed(2);
-  return currencySymbol + formattedPrice;
+  const formattedPrice = discountedPrice % 1 === 0
+    ? discountedPrice.toFixed(0)
+    : discountedPrice.toFixed(2);
+
+  return `${currencySymbol}${formattedPrice}${installmentsSuffix}`;
 };
 
 const getPlanPrice = (plan, planList, allDiscounts, t) => {
   if (plan?.plan_slug) {
     if (plan.period === 'YEAR') {
       return t('signup:info.enroll-yearly-subscription', {
-        price: handlePriceTextWithCoupon(plan.pricePerMonthText, allDiscounts, plan),
+        price: handlePriceTextWithCoupon(plan.pricePerMonthText, allDiscounts),
       });
     }
     if (plan.period === 'MONTH') {
       return t('signup:info.enroll-monthly-subscription', {
-        price: handlePriceTextWithCoupon(plan.priceText, allDiscounts, plan),
+        price: handlePriceTextWithCoupon(plan.priceText, allDiscounts),
       });
     }
     if (plan.period === 'ONE_TIME') {
-      return `${t('common:enroll-for-connector')} ${handlePriceTextWithCoupon(plan.priceText, allDiscounts, plan)}, ${t('signup:info.one-time-payment')}`;
+      return `${t('common:enroll-for-connector')} ${handlePriceTextWithCoupon(plan.priceText, allDiscounts)}, ${t('signup:info.one-time-payment')}`;
     }
     if (plan.period === 'FINANCING') {
-      return `${handlePriceTextWithCoupon(plan.priceText, allDiscounts, plan)} ${t('signup:info.installments')}`;
+      return `${handlePriceTextWithCoupon(plan.priceText, allDiscounts)} ${t('signup:info.installments')}`;
     }
     if (plan?.type === 'TRIAL') {
       return t('common:start-free-trial');
@@ -58,11 +85,9 @@ const getPlanPrice = (plan, planList, allDiscounts, t) => {
   return t('common:enroll');
 };
 
-// Create a React hook wrapper to use in components
 export const usePlanPrice = () => {
   const { t } = useTranslation('course');
   return (plan, planList, allDiscounts) => getPlanPrice(plan, planList, allDiscounts, t);
 };
 
-// Export the raw function for special cases that provide their own translation function
 export default getPlanPrice;

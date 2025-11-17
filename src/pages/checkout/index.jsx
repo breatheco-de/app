@@ -100,7 +100,6 @@ function Checkout() {
     setUserSelectedPlan,
     setDiscountCoupon,
     couponError,
-    checkInfoLoader,
     processedPrice,
     allCoupons,
     originalPlan,
@@ -390,279 +389,391 @@ function Checkout() {
           overflowX="hidden"
           maxWidth={{ base: '100%', md: '50%' }}
         >
-          {checkInfoLoader
-            ? <LoaderScreen background={backgroundColor3} />
-            : (
-              <Flex display={{ base: isPaymentSuccess ? 'none' : 'flex', md: 'flex' }} flexDirection="column" width={{ base: 'auto', md: '100%' }} maxWidth="490px" margin={{ base: '2rem 10px 2rem 10px', md: isThirdStep ? '4rem 0' : '6.2rem 0' }} height="100%" zIndex={10}>
-                {originalPlan?.title ? (
-                  <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="16px" borderRadius="22px" background={isThirdStep ? 'transparent' : backgroundColor}>
-                    <Text size="18px">
-                      {t('you-are-getting')}
-                    </Text>
-                    <Flex gridGap="7px" width="full">
-                      <Flex flexDirection="column" gridGap="7px" justifyContent="center" width="100%" ref={flexRef}>
-                        <Heading fontSize={isThirdStep ? '38px' : '24px'} display="flex" alignItems="center" gap="10px">
-                          {!isThirdStep && <Icon icon="4Geeks-avatar" width="35px" height="35px" maxHeight="35px" borderRadius="50%" background="blue.default" />}
-                          {originalPlan?.title.split(' ').map((word) => {
-                            const firstLetter = word.match(/[a-zA-Z]/);
-                            if (!firstLetter) return word;
-                            const { index } = firstLetter;
-                            return word.slice(0, index) + word.charAt(index).toUpperCase() + word.slice(index + 1);
-                          }).join(' ')}
-                        </Heading>
-                        {selectedPlan?.description && isThirdStep && (
-                          <Text fontSize="16px" py="10px">{selectedPlan.description}</Text>
-                        )}
-                        <Flex justifyContent="space-between" width="full" alignItems="center">
-                          {showPaymentDetails && renderPlanDetails() && (
-                            <Text size="16px" color="green.400">
-                              {renderPlanDetails()}
-                            </Text>
-                          )}
-                          {!planId && selectedPlan?.type !== 'FREE' && (originalPlan?.financingOptions.length > 0 || originalPlan?.hasSubscriptionMethod) && showPaymentDetails && (
-                            <Flex flexDirection="column" gap="4px">
-                              <Heading as="h3" size="sm" width="100%" position="relative">
-                                <Menu>
-                                  <MenuButton
-                                    as={Button}
-                                    background={useColorModeValue('#eefaf8', 'blue.400')}
-                                    _hover={{ backgroundColor: useColorModeValue('blue.50', 'blue.1000') }}
-                                    _active="none"
-                                    padding="8px"
-                                    borderRadius="md"
-                                    display="flex"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    onClick={() => setIsOpenned(true)}
-                                  >
-                                    <Box as="span" display="flex" alignItems="center" flex="1" fontSize="16px" textAlign="left">
-                                      <Text size="md" color={useColorModeValue('blue.1000', '#eefaf8')}>{t('see-financing-opt')}</Text>
-                                      <Icon icon="arrowDown" color={useColorModeValue('', '#eefaf8')} />
-                                    </Box>
-                                  </MenuButton>
-                                  <MenuList
-                                    boxShadow="lg"
-                                    borderRadius="lg"
-                                    zIndex="10"
-                                    padding="0"
-                                    width={menuWidth}
-                                    border="none"
-                                  >
-                                    {originalPlan.plans.map((option) => (
-                                      <MenuItem
-                                        key={option.plan_id}
-                                        onClick={() => setUserSelectedPlan(option)}
-                                        fontSize="md"
-                                        color="auto"
-                                        background={option.plan_id === selectedPlan?.plan_id && useColorModeValue('green.50', 'green.200')}
-                                        _hover={option.plan_id === selectedPlan?.plan_id ? { backgrorund: useColorModeValue('green.50', 'green.200') } : { background: 'none' }}
-                                        padding="10px"
-                                      >
-                                        <Flex justifyContent="space-between" alignItems="center" width="100%">
-                                          <Text fontSize="md" flex="1" color={option.plan_id === selectedPlan?.plan_id ? useColorModeValue('#25BF6C', 'green') : 'auto'}>
-                                            {originalPlan.hasSubscriptionMethod
-                                              ? getPlanPriceText(option, allCoupons, originalPlan, t)
-                                              : `${handlePriceTextWithCoupon(option.priceText, allCoupons, originalPlan.plans)} / ${option.title}`}
-                                          </Text>
-                                          {option.plan_id === selectedPlan?.plan_id
-                                            && (
-                                              <Icon icon="checked2" width="12px" height="12" color={useColorModeValue('#25BF6C', 'green')} />
-                                            )}
-                                        </Flex>
-                                      </MenuItem>
-                                    ))}
-                                  </MenuList>
-                                </Menu>
-                              </Heading>
-                            </Flex>
-                          )}
-                        </Flex>
-
-                      </Flex>
-                    </Flex>
-                    <Divider borderBottomWidth="2px" />
-                    <Flex flexDirection="column" gridGap="4px" width="100%" mt={!prerequisites.length > 0 && '1rem'}>
-                      {prerequisites.length > 0 && (
-                        <Button
-                          size="xs"
-                          variant="inline"
-                          onClick={() => { setCurrentPrereqIndex(0); setPrereqModalOpen(true); }}
-                          leftIcon={<Icon icon="warning" width="13px" height="13px" marginBottom="2px" />}
-                          alignSelf="flex-start"
-                          fontSize="13px"
-                          fontWeight="400"
-                          padding="0"
-                          color="yellow.500"
-                        >
-                          {t('signup:view-course-warning', { courseName: courseTitle || '' })}
-                        </Button>
-                      )}
-                      {originalPlan?.accordionList?.length > 0 && (
-                        <AcordionList
-                          list={originalPlan?.accordionList}
-                          leftIcon="checked2"
-                          iconColor={hexColor.blueDefault}
-                          border="none"
-                          containerStyles={{ _hover: 'none' }}
+          {loader.summary && (
+            <LoaderScreen background={backgroundColor3} />
+          )}
+          <Flex
+            display={{ base: isPaymentSuccess ? 'none' : 'flex', md: 'flex' }}
+            flexDirection="column"
+            width={{ base: 'auto', md: '100%' }}
+            maxWidth="490px"
+            margin={{
+              base: '2rem 10px 2rem 10px',
+              md: isThirdStep ? '4rem 0' : '6.2rem 0',
+            }}
+            height="100%"
+            zIndex={10}
+          >
+            {originalPlan?.title ? (
+              <Flex
+                alignItems="start"
+                flexDirection="column"
+                gridGap="10px"
+                padding="16px"
+                borderRadius="22px"
+                background={isThirdStep ? 'transparent' : backgroundColor}
+              >
+                <Text size="18px">
+                  {t('you-are-getting')}
+                </Text>
+                <Flex gridGap="7px" width="full">
+                  <Flex
+                    flexDirection="column"
+                    gridGap="7px"
+                    justifyContent="center"
+                    width="100%"
+                    ref={flexRef}
+                  >
+                    <Heading
+                      fontSize={isThirdStep ? '38px' : '24px'}
+                      display="flex"
+                      alignItems="center"
+                      gap="10px"
+                    >
+                      {!isThirdStep && (
+                        <Icon
+                          icon="4Geeks-avatar"
+                          width="35px"
+                          height="35px"
+                          maxHeight="35px"
+                          borderRadius="50%"
+                          background="blue.default"
                         />
                       )}
-                    </Flex>
-                    {isSecondStep && (
-                      <>
-                        <Flex justifyContent="space-between" width="100%" padding="3rem 0px 0">
-                          <Text size="18px" color="currentColor" lineHeight="normal">
-                            Subtotal:
-                          </Text>
-                          <Text size="18px" color="currentColor" lineHeight="normal">
-                            {selectedPlan?.price <= 0
-                              ? selectedPlan?.priceText
-                              : `${currencySymbol}${selectedPlan?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
-                          </Text>
-                        </Flex>
-                        <Divider margin="6px 0" />
-                        {showPaymentDetails && (
-                          <Formik
-                            initialValues={{ coupons: couponValue || '' }}
-                            onSubmit={(_, actions) => {
-                              setCouponError(false);
-                              handleCoupon(discountCode, actions);
-                            }}
-                          >
-                            {({ isSubmitting }) => (
-                              <Form style={{ display: isPaymentSuccess ? 'none' : 'block', width: '100%' }}>
-                                <Flex gridGap="15px" width="100%">
-                                  <InputGroup size="md">
-                                    <Input
-                                      value={discountCode}
-                                      borderColor={couponError ? 'red.light' : 'inherit'}
-                                      disabled={discountCoupon?.slug || isPaymentSuccess}
-                                      width="100%"
-                                      _disabled={{
-                                        borderColor: discountCoupon?.slug ? 'success' : 'inherit',
-                                        opacity: 1,
-                                      }}
-                                      letterSpacing="0.05em"
-                                      placeholder="Discount code"
-                                      onChange={(e) => {
-                                        const { value } = e.target;
-                                        const couponInputValue = value.replace(/[^a-zA-Z0-9-\s]/g, '');
-                                        setDiscountCode(couponInputValue.replace(/\s/g, '-'));
-                                        if (value === '') {
-                                          setDiscountCoupon(null);
-                                          setCouponError(false);
-                                        }
-                                      }}
-                                    />
-                                    {discountCoupon?.slug && (
-                                      <InputRightElement width="35px">
-                                        <Button
-                                          variant="unstyled"
-                                          aria-label="Remove coupon"
-                                          minWidth="auto"
-                                          padding="10px"
-                                          height="auto"
-                                          onClick={() => {
-                                            setDiscountCode('');
-                                            removeSessionStorageItem('coupon');
-                                            setDiscountCoupon(null);
-                                            removeManualCoupons();
-                                          }}
-                                        >
-                                          <Icon icon="close" color="currentColor" width="10px" height="10px" />
-                                        </Button>
-                                      </InputRightElement>
-                                    )}
-                                  </InputGroup>
-                                  {!discountCoupon?.slug && !isPaymentSuccess && (
-                                    <Button
-                                      width="auto"
-                                      type="submit"
-                                      isLoading={isSubmitting}
-                                      height="auto"
-                                      variant="outline"
-                                      fontSize="17px"
-                                    >
-                                      {`+ ${t('add')}`}
-                                    </Button>
-                                  )}
-                                </Flex>
-                              </Form>
-                            )}
-                          </Formik>
-                        )}
-                        {couponError && (
-                          <Text
-                            paddingStart="3px"
-                            size="sm"
-                            color="red"
-                            dangerouslySetInnerHTML={{
-                              __html: t('coupon-not-valid', {
-                                plan: originalPlan?.title.split(' ').map((word) => {
-                                  const firstLetter = word.match(/[a-zA-Z]/);
-                                  if (!firstLetter) return word;
-                                  const { index } = firstLetter;
-                                  return word.slice(0, index) + word.charAt(index).toUpperCase() + word.slice(index + 1);
-                                }).join(' '),
-                              }),
-                            }}
-                          />
-                        )}
-
-                        {allCoupons?.length > 0
-                          && allCoupons.map((coup) => (
-                            <Flex key={coup?.slug} direction="row" justifyContent="space-between" w="100%" marginTop="10px">
-                              <Text size="lg">{coup?.slug}</Text>
-                              <Box borderRadius="4px" padding="5px" background={getDiscountValue(coup) ? hexColor.greenLight2 : ''}>
-                                <Text color={hexColor.green} fontWeight="700">
-                                  {getDiscountValue(coup)}
-                                </Text>
-                              </Box>
-                            </Flex>
-                          ))}
-
-                        <Divider margin="6px 0" />
-                        <Flex justifyContent="space-between" width="100%">
-                          <Text size="18px" color="currentColor" lineHeight="normal">
-                            {selectedPlan?.period !== 'ONE_TIME' ? t('total-now') : t('total')}
-                          </Text>
-                          <Flex gridGap="1rem">
-                            {allCoupons?.length > 0 && (
-                              <Text size="18px" color="currentColor" textDecoration="line-through" opacity="0.5" lineHeight="normal">
-                                {`${currencySymbol}${selectedPlan?.price?.toFixed(2)}`}
-                              </Text>
-                            )}
-                            <Text size="18px" color="currentColor" lineHeight="normal">
-                              {selectedPlan?.price <= 0
-                                ? selectedPlan?.priceText
-                                : `${currencySymbol}${processedPrice?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
-                            </Text>
-                          </Flex>
-                        </Flex>
-                        {selectedPlan?.period !== 'ONE_TIME' && selectedPlan?.price > 0 && (
-                          <Flex justifyContent="space-between" width="100%">
-                            <Text size="18px" color="currentColor" lineHeight="normal">
-                              {t('after-all-payments')}
-                            </Text>
-                            <Text size="18px" color="currentColor" lineHeight="normal">
-                              {selectedPlan.price <= 0
-                                ? selectedPlan.priceText
-                                : `${currencySymbol}${calculateTotalPrice()} ${selectedPlan.currency?.code}`}
-                            </Text>
-                          </Flex>
-                        )}
-                        {fixedCouponExist && (
-                          <Text fontWeight="300" size="xs" marginTop="10px">
-                            {t('fixed-price-disclaimer')}
-                          </Text>
-                        )}
-                      </>
+                      {originalPlan?.title.split(' ').map((word) => {
+                        const firstLetter = word.match(/[a-zA-Z]/);
+                        if (!firstLetter) return word;
+                        const { index } = firstLetter;
+                        return word.slice(0, index) + word.charAt(index).toUpperCase() + word.slice(index + 1);
+                      }).join(' ')}
+                    </Heading>
+                    {selectedPlan?.description && isThirdStep && (
+                      <Text fontSize="16px" py="10px">
+                        {selectedPlan.description}
+                      </Text>
                     )}
+                    <Flex
+                      justifyContent="space-between"
+                      width="full"
+                      alignItems="center"
+                    >
+                      {showPaymentDetails && renderPlanDetails() && (
+                        <Text size="16px" color="green.400">
+                          {renderPlanDetails()}
+                        </Text>
+                      )}
+                      {!planId
+                        && selectedPlan?.type !== 'FREE'
+                        && (originalPlan?.financingOptions.length > 0
+                          || originalPlan?.hasSubscriptionMethod)
+                        && showPaymentDetails && (
+                          <Flex flexDirection="column" gap="4px">
+                            <Heading as="h3" size="sm" width="100%" position="relative">
+                              <Menu>
+                                <MenuButton
+                                  as={Button}
+                                  background={useColorModeValue('#eefaf8', 'blue.400')}
+                                  _hover={{
+                                    backgroundColor: useColorModeValue('blue.50', 'blue.1000'),
+                                  }}
+                                  _active="none"
+                                  padding="8px"
+                                  borderRadius="md"
+                                  display="flex"
+                                  justifyContent="space-between"
+                                  alignItems="center"
+                                  onClick={() => setIsOpenned(true)}
+                                >
+                                  <Box
+                                    as="span"
+                                    display="flex"
+                                    alignItems="center"
+                                    flex="1"
+                                    fontSize="16px"
+                                    textAlign="left"
+                                  >
+                                    <Text size="md" color={useColorModeValue('blue.1000', '#eefaf8')}>
+                                      {t('see-financing-opt')}
+                                    </Text>
+                                    <Icon icon="arrowDown" color={useColorModeValue('', '#eefaf8')} />
+                                  </Box>
+                                </MenuButton>
+                                <MenuList
+                                  boxShadow="lg"
+                                  borderRadius="lg"
+                                  zIndex="10"
+                                  padding="0"
+                                  width={menuWidth}
+                                  border="none"
+                                >
+                                  {originalPlan.plans.map((option) => (
+                                    <MenuItem
+                                      key={option.plan_id}
+                                      onClick={() => setUserSelectedPlan(option)}
+                                      fontSize="md"
+                                      color="auto"
+                                      background={
+                                        option.plan_id === selectedPlan?.plan_id
+                                          && useColorModeValue('green.50', 'green.200')
+                                      }
+                                      _hover={
+                                        option.plan_id === selectedPlan?.plan_id
+                                          ? { backgrorund: useColorModeValue('green.50', 'green.200') }
+                                          : { background: 'none' }
+                                      }
+                                      padding="10px"
+                                    >
+                                      <Flex
+                                        justifyContent="space-between"
+                                        alignItems="center"
+                                        width="100%"
+                                      >
+                                        <Text
+                                          fontSize="md"
+                                          flex="1"
+                                          color={
+                                            option.plan_id === selectedPlan?.plan_id
+                                              ? useColorModeValue('#25BF6C', 'green')
+                                              : 'auto'
+                                          }
+                                        >
+                                          {getPlanPriceText(option, allCoupons, originalPlan, t)}
+                                        </Text>
+                                        {option.plan_id === selectedPlan?.plan_id && (
+                                          <Icon
+                                            icon="checked2"
+                                            width="12px"
+                                            height="12"
+                                            color={useColorModeValue('#25BF6C', 'green')}
+                                          />
+                                        )}
+                                      </Flex>
+                                    </MenuItem>
+                                  ))}
+                                </MenuList>
+                              </Menu>
+                            </Heading>
+                          </Flex>
+                      )}
+                    </Flex>
                   </Flex>
-                ) : (
-                  <Skeleton height="350px" width="490px" borderRadius="11px" zIndex={10} opacity={1} />
+                </Flex>
+                <Divider borderBottomWidth="2px" />
+                <Flex
+                  flexDirection="column"
+                  gridGap="4px"
+                  width="100%"
+                  mt={!prerequisites.length > 0 && '1rem'}
+                >
+                  {prerequisites.length > 0 && (
+                    <Button
+                      size="xs"
+                      variant="inline"
+                      onClick={() => { setCurrentPrereqIndex(0); setPrereqModalOpen(true); }}
+                      leftIcon={(
+                        <Icon
+                          icon="warning"
+                          width="13px"
+                          height="13px"
+                          marginBottom="2px"
+                        />
+                      )}
+                      alignSelf="flex-start"
+                      fontSize="13px"
+                      fontWeight="400"
+                      padding="0"
+                      color="yellow.500"
+                    >
+                      {t('signup:view-course-warning', { courseName: courseTitle || '' })}
+                    </Button>
+                  )}
+                  {originalPlan?.accordionList?.length > 0 && (
+                    <AcordionList
+                      list={originalPlan?.accordionList}
+                      leftIcon="checked2"
+                      iconColor={hexColor.blueDefault}
+                      border="none"
+                      containerStyles={{ _hover: 'none' }}
+                    />
+                  )}
+                </Flex>
+                {isSecondStep && (
+                  <>
+                    <Flex justifyContent="space-between" width="100%" padding="3rem 0px 0">
+                      <Text size="18px" color="currentColor" lineHeight="normal">
+                        Subtotal:
+                      </Text>
+                      <Text size="18px" color="currentColor" lineHeight="normal">
+                        {selectedPlan?.price <= 0
+                          ? selectedPlan?.priceText
+                          : `${currencySymbol}${selectedPlan?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
+                      </Text>
+                    </Flex>
+                    <Divider margin="6px 0" />
+                    {showPaymentDetails && (
+                      <Formik
+                        initialValues={{ coupons: couponValue || '' }}
+                        onSubmit={(_, actions) => {
+                          setCouponError(false);
+                          handleCoupon(discountCode, actions);
+                        }}
+                      >
+                        {({ isSubmitting }) => (
+                          <Form style={{ display: isPaymentSuccess ? 'none' : 'block', width: '100%' }}>
+                            <Flex gridGap="15px" width="100%">
+                              <InputGroup size="md">
+                                <Input
+                                  value={discountCode}
+                                  borderColor={couponError ? 'red.light' : 'inherit'}
+                                  disabled={discountCoupon?.slug || isPaymentSuccess}
+                                  width="100%"
+                                  _disabled={{
+                                    borderColor: discountCoupon?.slug ? 'success' : 'inherit',
+                                    opacity: 1,
+                                  }}
+                                  letterSpacing="0.05em"
+                                  placeholder="Discount code"
+                                  onChange={(e) => {
+                                    const { value } = e.target;
+                                    const couponInputValue = value.replace(/[^a-zA-Z0-9-\s]/g, '');
+                                    setDiscountCode(couponInputValue.replace(/\s/g, '-'));
+                                    if (value === '') {
+                                      setDiscountCoupon(null);
+                                      setCouponError(false);
+                                    }
+                                  }}
+                                />
+                                {discountCoupon?.slug && (
+                                  <InputRightElement width="35px">
+                                    <Button
+                                      variant="unstyled"
+                                      aria-label="Remove coupon"
+                                      minWidth="auto"
+                                      padding="10px"
+                                      height="auto"
+                                      onClick={() => {
+                                        setDiscountCode('');
+                                        removeSessionStorageItem('coupon');
+                                        setDiscountCoupon(null);
+                                        removeManualCoupons();
+                                      }}
+                                    >
+                                      <Icon icon="close" color="currentColor" width="10px" height="10px" />
+                                    </Button>
+                                  </InputRightElement>
+                                )}
+                              </InputGroup>
+                              {!discountCoupon?.slug && !isPaymentSuccess && (
+                                <Button
+                                  width="auto"
+                                  type="submit"
+                                  isLoading={isSubmitting}
+                                  height="auto"
+                                  variant="outline"
+                                  fontSize="17px"
+                                >
+                                  {`+ ${t('add')}`}
+                                </Button>
+                              )}
+                            </Flex>
+                          </Form>
+                        )}
+                      </Formik>
+                    )}
+                    {couponError && (
+                      <Text
+                        paddingStart="3px"
+                        size="sm"
+                        color="red"
+                        dangerouslySetInnerHTML={{
+                          __html: t('coupon-not-valid', {
+                            plan: originalPlan?.title.split(' ').map((word) => {
+                              const firstLetter = word.match(/[a-zA-Z]/);
+                              if (!firstLetter) return word;
+                              const { index } = firstLetter;
+                              return word.slice(0, index) + word.charAt(index).toUpperCase() + word.slice(index + 1);
+                            }).join(' '),
+                          }),
+                        }}
+                      />
+                    )}
+
+                    {allCoupons?.length > 0
+                      && allCoupons.map((coup) => (
+                        <Flex
+                          key={coup?.slug}
+                          direction="row"
+                          justifyContent="space-between"
+                          w="100%"
+                          marginTop="10px"
+                        >
+                          <Text size="lg">{coup?.slug}</Text>
+                          <Box
+                            borderRadius="4px"
+                            padding="5px"
+                            background={getDiscountValue(coup) ? hexColor.greenLight2 : ''}
+                          >
+                            <Text color={hexColor.green} fontWeight="700">
+                              {getDiscountValue(coup)}
+                            </Text>
+                          </Box>
+                        </Flex>
+                      ))}
+
+                    <Divider margin="6px 0" />
+                    <Flex justifyContent="space-between" width="100%">
+                      <Text size="18px" color="currentColor" lineHeight="normal">
+                        {selectedPlan?.period !== 'ONE_TIME' ? t('total-now') : t('total')}
+                      </Text>
+                      <Flex gridGap="1rem">
+                        {allCoupons?.length > 0 && (
+                          <Text
+                            size="18px"
+                            color="currentColor"
+                            textDecoration="line-through"
+                            opacity="0.5"
+                            lineHeight="normal"
+                          >
+                            {`${currencySymbol}${selectedPlan?.price?.toFixed(2)}`}
+                          </Text>
+                        )}
+                        <Text size="18px" color="currentColor" lineHeight="normal">
+                          {selectedPlan?.price <= 0
+                            ? selectedPlan?.priceText
+                            : `${currencySymbol}${processedPrice?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
+                        </Text>
+                      </Flex>
+                    </Flex>
+                    {selectedPlan?.period !== 'ONE_TIME' && selectedPlan?.price > 0 && (
+                      <Flex justifyContent="space-between" width="100%">
+                        <Text size="18px" color="currentColor" lineHeight="normal">
+                          {t('after-all-payments')}
+                        </Text>
+                        <Text size="18px" color="currentColor" lineHeight="normal">
+                          {selectedPlan.price <= 0
+                            ? selectedPlan.priceText
+                            : `${currencySymbol}${calculateTotalPrice()} ${selectedPlan.currency?.code}`}
+                        </Text>
+                      </Flex>
+                    )}
+                    {fixedCouponExist && (
+                      <Text fontWeight="300" size="xs" marginTop="10px">
+                        {t('fixed-price-disclaimer')}
+                      </Text>
+                    )}
+                  </>
                 )}
               </Flex>
+            ) : (
+              <Skeleton
+                height="350px"
+                width="490px"
+                borderRadius="11px"
+                zIndex={10}
+                opacity={1}
+              />
             )}
+          </Flex>
         </Flex>
       </Flex>
     </Box>

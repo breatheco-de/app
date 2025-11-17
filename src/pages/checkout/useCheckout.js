@@ -33,7 +33,6 @@ const useCheckout = () => {
   const [couponError, setCouponError] = useState(false);
   const [suggestedPlans, setSuggestedPlans] = useState(undefined);
   const [discountValues, setDiscountValues] = useState(undefined);
-  const [checkInfoLoader, setCheckInfoLoader] = useState(false);
   const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
   const currencySymbol = currenciesSymbols[originalPlan?.currency?.code] || '$';
 
@@ -197,7 +196,9 @@ const useCheckout = () => {
 
   const findAutoSelectedPlan = (checking) => {
     const plans = checking?.plans || [];
-    const sortedPlans = plans.sort((a, b) => (a.how_many_months || 0) - (b.how_many_months || 0));
+    const sortedPlans = [...plans].sort(
+      (a, b) => (a.how_many_months || 0) - (b.how_many_months || 0),
+    );
     const defaultAutoSelectedPlan = sortedPlans[0];
     const autoSelectedPlanByQueryString = checking?.plans?.find(
       (item) => item?.plan_id === (planId || userSelectedPlan?.plan_id),
@@ -209,7 +210,6 @@ const useCheckout = () => {
   const initializePlanData = async () => {
     try {
       const resp = await bc.payment({ country_code: location?.countryShort }).getPlan(planFormated);
-      console.log('resp', resp);
       const { data } = resp;
       setPlanData(data);
       const processedPlan = await processPlans(data, {
@@ -256,7 +256,6 @@ const useCheckout = () => {
         duration: 4000,
         isClosable: true,
       });
-      console.log(err);
       // router.push('/pricing');
     }
   };
@@ -264,6 +263,7 @@ const useCheckout = () => {
   const getCheckingData = async () => {
     try {
       setLoader('plan', true);
+      setLoader('summary', true);
 
       const checking = await getChecking(planData);
 
@@ -276,6 +276,7 @@ const useCheckout = () => {
         });
         handleStep(stepsEnum.SUMMARY);
         setLoader('plan', false);
+        setLoader('summary', false);
         return;
       }
 
@@ -294,8 +295,10 @@ const useCheckout = () => {
         handleStep(stepsEnum.SUMMARY);
       }
       setLoader('plan', false);
+      setLoader('summary', false);
     } catch (error) {
       setLoader('plan', false);
+      setLoader('summary', false);
       createToast({
         position: 'top',
         title: t('alert-message:no-plan-configuration'),
@@ -322,7 +325,8 @@ const useCheckout = () => {
 
   useEffect(() => {
     if (!userSelectedPlan || !planData) return;
-    setCheckInfoLoader(true);
+
+    setLoader('summary', true);
     getChecking(planData)
       .then((checking) => {
         const autoSelectedPlan = findAutoSelectedPlan(checking);
@@ -331,10 +335,11 @@ const useCheckout = () => {
         if (stepIndex >= stepsEnum.PAYMENT) {
           handleStep(stepsEnum.PAYMENT);
         }
-        setCheckInfoLoader(false);
       })
       .catch(() => {
-        setCheckInfoLoader(false);
+      })
+      .finally(() => {
+        setLoader('summary', false);
       });
   }, [userSelectedPlan]);
 
@@ -549,6 +554,58 @@ const useCheckout = () => {
     });
   }, [router.locale, isLoadingLocation, callbackUrl, pathname]);
 
+  /**
+ * Checkout flow overview
+ *
+ * This hook (`useCheckout`) orquestrates the end-to-end checkout logic:
+ *  - Plan bootstrap (STEP 1)
+ *  - Auto-applied coupons (STEP 1.1)
+ *  - Checking / preview of current plan (STEP 2)
+ *  - User changing pricing option (STEP 2b)
+ *  - Applying/syncing coupons once the bag/checking exists (STEP 3)
+ *  - Protection against reload while payment is in progress
+ *  - Cleanup of Redux signup state on unmount
+ *
+ * Overview:
+ *  1) initializePlanData()
+ *     - Fetches the base plan from Breathecode with country_code.
+ *     - Normalizes it with useSignup.processPlans (plans, paymentOptions, financingOptions, featured_info).
+ *     - Builds the accordion list (plan benefits + optional add_ons).
+ *     - Picks a default plan and stores it in Redux as selectedPlan / originalPlan.
+ *
+ *  2) Auto coupon (useEffect -> getSelfAppliedCoupon)
+ *     - If there's an auto-applied coupon for the plan, store it in Redux (selfAppliedCoupon).
+ *
+ *  3) Checking preview (getCheckingData + useSignup.getChecking)
+ *     - When the user is authenticated and planData is ready, create a PREVIEW "bag":
+ *       - Breathecode returns plans, type, token, coupons, add_ons and totals.
+ *       - We merge that with a normalized plan (generatePlan) and store it in checkingData.
+ *     - From checkingData, we auto-select the best plan (findAutoSelectedPlan) into selectedPlan.
+ *     - If there is at least one payable plan, move to PAYMENT.
+ *       Otherwise, subscribeFreePlan and go directly to SUMMARY.
+ *
+ *  4) User changes pricing option (userSelectedPlan)
+ *     - When the pricing option (monthly / yearly / financing) changes, rerun getChecking(planData)
+ *       to refresh checkingData and selectedPlan, keeping the right-hand summary in sync.
+ *
+ *  5) Coupons lifecycle
+ *     - Once checkingData.id exists, we:
+ *       - Apply the main coupon (couponValue) with handleCoupon.
+ *       - Keep allCoupons in sync with the backend bag using saveCouponToBag.
+ *
+ *  6) Payments (handled in useSignup, consumed by PaymentInfo)
+ *     - Card payments (Stripe): handlePayment(...)
+ *       - Uses selectedPlan + checkingData to build the pay() body, sends it to Breathecode,
+ *         reports 'purchase' to the dataLayer and redirects the user.
+ *     - Crypto payments (Coinbase): handleCoinbasePayment()
+ *       - For non-free/non-trial plans, builds a pay() request with payment_method: 'coinbase'
+ *         and a return_url to /crypto-payment-success.
+ *
+ *  7) Renew flow (pathname === '/renew')
+ *     - Some effects early-return when the path is '/renew' (e.g. STEP 2 and STEP 2b),
+ *       so the renew page can reuse the hook while controlling its own flow.
+ */
+
   // STEP 1.1: Auto-coupon for plan if available
   // Ensures the discount is applied from the start.
   useEffect(() => {
@@ -574,12 +631,12 @@ const useCheckout = () => {
   }, [isAuthenticated, router.locale, planData, pathname]);
 
   // STEP 2b: user changes option (monthly/annual/financing)
-  // Re-run preview and refresh the right-hand summary.
+  // Re-run preview and refresh the right-hand summary without showing a full loader.
   useEffect(() => {
     if (pathname === '/renew') return;
-
     if (!userSelectedPlan || !planData) return;
-    setCheckInfoLoader(true);
+
+    setLoader('summary', true);
     getChecking(planData)
       .then((checking) => {
         const autoSelectedPlan = findAutoSelectedPlan(checking);
@@ -588,10 +645,11 @@ const useCheckout = () => {
         if (stepIndex >= stepsEnum.PAYMENT) {
           handleStep(stepsEnum.PAYMENT);
         }
-        setCheckInfoLoader(false);
       })
       .catch(() => {
-        setCheckInfoLoader(false);
+      })
+      .finally(() => {
+        setLoader('summary', false);
       });
   }, [userSelectedPlan, pathname]);
 
@@ -626,7 +684,6 @@ const useCheckout = () => {
   return {
     couponError,
     setCouponError,
-    checkInfoLoader,
     userSelectedPlan,
     renderPlanDetails,
     calculateTotalPrice,
