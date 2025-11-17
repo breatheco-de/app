@@ -301,7 +301,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   if (variant === 'small') {
     return (
       <>
-        <Box mt="10px" display="flex" gap="10px" flexDirection={{ base: 'column', md: 'row' }} alignItems={{ base: 'stretch', md: 'flex-start' }}>
+        <Box mt="10px" display="flex" gap="10px" flexDirection={publicView ? 'column' : { base: 'column', md: 'row' }} alignItems={publicView ? 'stretch' : { base: 'stretch', md: 'flex-start' }}>
           <Box background="blue.default" padding="8px" borderRadius="8px" display="flex" alignItems="center" gap="10px" flex="1">
             {(startWithLearnpack) && (
               <Icon icon="learnpack" />
@@ -401,11 +401,11 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
           mt="16px"
           display="flex"
           gap="16px"
-          flexDirection={{
+          flexDirection={publicView ? 'column' : {
             base: 'column',
             md: 'row',
           }}
-          alignItems={{ base: 'stretch', md: 'center' }}
+          alignItems={publicView ? 'stretch' : { base: 'stretch', md: 'center' }}
         >
           <ButtonsHandler
             currentAsset={currentAsset}
