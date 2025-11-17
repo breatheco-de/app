@@ -227,46 +227,6 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
             md: 'center',
           }}
         >
-          {currentAsset?.solution_url && currentAsset?.asset_type !== 'LESSON' && currentAsset?.asset_type !== 'ANSWER' && (
-            <Popover
-              trigger="hover"
-              placement="top"
-              closeOnBlur={false}
-            >
-              <PopoverTrigger>
-                <Button
-                  cursor="pointer"
-                  as="a"
-                  href={currentAsset.solution_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  size="sm"
-                  width={variant === 'extra-small' && '100%'}
-                  padding="21px 8px"
-                  fontSize="14px"
-                  fontWeight="500"
-                  border="1px solid"
-                  borderColor={hexColor.borderColor}
-                  background="none"
-                  color={fontColor}
-                  _hover={variant === 'extra-small' && 'none'}
-                  _active={variant === 'extra-small' && 'none'}
-                  style={{ textDecoration: 'none', color: fontColor, WebkitTextFillColor: fontColor }}
-                >
-                  <Box display="flex" alignItems="center" gap="6px">
-                    <Icon icon="file" width="16px" height="16px" color={fontColor} />
-                    {tSyllabus('view-solution')}
-                  </Box>
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent width="auto" maxWidth="200px">
-                <PopoverArrow />
-                <PopoverBody padding="8px 12px" margin="0" fontSize="14px">
-                  {tSyllabus('review-model-solution')}
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
-          )}
           <Box
             background="blue.default"
             display="inline-flex"
@@ -292,16 +252,6 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
               publicView={publicView}
             />
           </Box>
-        </Box>
-        {showCloneModal && renderModal()}
-      </>
-    );
-  }
-
-  if (variant === 'small') {
-    return (
-      <>
-        <Box mt="10px" display="flex" gap="10px" flexDirection={{ base: 'column', md: 'row' }} alignItems={{ base: 'stretch', md: 'flex-start' }}>
           {currentAsset?.solution_url && currentAsset?.asset_type !== 'LESSON' && currentAsset?.asset_type !== 'ANSWER' && (
             <Popover
               trigger="hover"
@@ -324,6 +274,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
                   borderColor={hexColor.borderColor}
                   background="none"
                   color={fontColor}
+                  borderRadius="9px"
                   _hover={variant === 'extra-small' && 'none'}
                   _active={variant === 'extra-small' && 'none'}
                   style={{ textDecoration: 'none', color: fontColor, WebkitTextFillColor: fontColor }}
@@ -342,6 +293,16 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
               </PopoverContent>
             </Popover>
           )}
+        </Box>
+        {showCloneModal && renderModal()}
+      </>
+    );
+  }
+
+  if (variant === 'small') {
+    return (
+      <>
+        <Box mt="10px" display="flex" gap="10px" flexDirection={{ base: 'column', md: 'row' }} alignItems={{ base: 'stretch', md: 'flex-start' }}>
           <Box background="blue.default" padding="8px" borderRadius="8px" display="flex" alignItems="center" gap="10px" flex="1">
             {(startWithLearnpack) && (
               <Icon icon="learnpack" />
@@ -371,6 +332,47 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
               </Box>
             </Box>
           </Box>
+          {currentAsset?.solution_url && currentAsset?.asset_type !== 'LESSON' && currentAsset?.asset_type !== 'ANSWER' && (
+            <Popover
+              trigger="hover"
+              placement="top"
+              closeOnBlur={false}
+            >
+              <PopoverTrigger>
+                <Button
+                  cursor="pointer"
+                  as="a"
+                  href={currentAsset.solution_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="sm"
+                  width={variant === 'extra-small' && '100%'}
+                  padding="21px 8px"
+                  fontSize="14px"
+                  fontWeight="500"
+                  border="1px solid"
+                  borderColor={hexColor.borderColor}
+                  background="none"
+                  color={fontColor}
+                  borderRadius="9px"
+                  _hover={variant === 'extra-small' && 'none'}
+                  _active={variant === 'extra-small' && 'none'}
+                  style={{ textDecoration: 'none', color: fontColor, WebkitTextFillColor: fontColor }}
+                >
+                  <Box display="flex" alignItems="center" gap="6px">
+                    <Icon icon="file" width="16px" height="16px" color={fontColor} />
+                    {tSyllabus('view-solution')}
+                  </Box>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent width="auto" maxWidth="200px">
+                <PopoverArrow />
+                <PopoverBody padding="8px 12px" margin="0" fontSize="14px">
+                  {tSyllabus('review-model-solution')}
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+          )}
         </Box>
         {showCloneModal && renderModal()}
       </>
@@ -406,6 +408,15 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
           }}
           alignItems={{ base: 'stretch', md: 'center' }}
         >
+          <ButtonsHandler
+            currentAsset={currentAsset}
+            handleStartLearnpack={handleStartLearnpack}
+            setShowCloneModal={setShowCloneModal}
+            startWithLearnpack={startWithLearnpack}
+            openWithLearnpackNoSaas={openWithLearnpackNoSaas}
+            variant={variant}
+            isStarted={isStarted}
+          />
           {currentAsset?.solution_url && currentAsset?.asset_type !== 'LESSON' && currentAsset?.asset_type !== 'ANSWER' && (
             <Popover
               trigger="hover"
@@ -428,6 +439,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
                   borderColor={hexColor.borderColor}
                   background="none"
                   color={fontColor}
+                  borderRadius="9px"
                   _hover={variant === 'extra-small' && 'none'}
                   _active={variant === 'extra-small' && 'none'}
                   style={{ textDecoration: 'none', color: fontColor, WebkitTextFillColor: fontColor }}
@@ -446,15 +458,6 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
               </PopoverContent>
             </Popover>
           )}
-          <ButtonsHandler
-            currentAsset={currentAsset}
-            handleStartLearnpack={handleStartLearnpack}
-            setShowCloneModal={setShowCloneModal}
-            startWithLearnpack={startWithLearnpack}
-            openWithLearnpackNoSaas={openWithLearnpackNoSaas}
-            variant={variant}
-            isStarted={isStarted}
-          />
         </Box>
       </Box>
       {showCloneModal && renderModal()}
