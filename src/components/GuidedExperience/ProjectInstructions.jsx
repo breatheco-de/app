@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Skeleton,
+  Link,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -132,6 +133,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
 
 function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isStarted, publicViewLearnpack, publicView, ...rest }) {
   const { t } = useTranslation('common');
+  const { t: tSyllabus } = useTranslation('syllabus');
   const { cohorts } = useAuth();
   const { currentTask } = useModuleHandler();
   const { user } = useAuth();
@@ -208,29 +210,63 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
     return (
       <>
         <Box
-          background="blue.default"
-          display="inline-flex"
+          display="flex"
           gap="10px"
-          padding="5px"
-          borderRadius="8px"
           flexDirection={{
             base: 'column',
             md: 'row',
           }}
+          alignItems={{
+            base: 'stretch',
+            md: 'center',
+          }}
         >
-          {(startWithLearnpack) && (
-            <Icon icon="learnpack" />
+          {currentAsset?.solution_url && currentAsset?.asset_type !== 'LESSON' && currentAsset?.asset_type !== 'ANSWER' && (
+            <Button
+              cursor="pointer"
+              as="a"
+              href={currentAsset.solution_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              size="sm"
+              width={variant === 'extra-small' && '100%'}
+              padding="21px 8px"
+              fontSize="14px"
+              fontWeight="500"
+              background={variant === 'extra-small' ? 'yellow.400' : 'gray.200'}
+              color="black"
+              _hover={variant === 'extra-small' && 'none'}
+              _active={variant === 'extra-small' && 'none'}
+              style={{ color: 'black', textDecoration: 'none' }}
+            >
+              {tSyllabus('view-solution')}
+            </Button>
           )}
-          <ButtonsHandler
-            currentAsset={currentAsset}
-            handleStartLearnpack={handleStartLearnpack}
-            setShowCloneModal={setShowCloneModal}
-            startWithLearnpack={startWithLearnpack}
-            openWithLearnpackNoSaas={openWithLearnpackNoSaas}
-            learnpackUrlFromPublicView={publicViewLearnpack}
-            variant={variant}
-            publicView={publicView}
-          />
+          <Box
+            background="blue.default"
+            display="inline-flex"
+            gap="10px"
+            padding="5px"
+            borderRadius="8px"
+            flexDirection={{
+              base: 'column',
+              md: 'row',
+            }}
+          >
+            {(startWithLearnpack) && (
+              <Icon icon="learnpack" />
+            )}
+            <ButtonsHandler
+              currentAsset={currentAsset}
+              handleStartLearnpack={handleStartLearnpack}
+              setShowCloneModal={setShowCloneModal}
+              startWithLearnpack={startWithLearnpack}
+              openWithLearnpackNoSaas={openWithLearnpackNoSaas}
+              learnpackUrlFromPublicView={publicViewLearnpack}
+              variant={variant}
+              publicView={publicView}
+            />
+          </Box>
         </Box>
         {showCloneModal && renderModal()}
       </>
@@ -240,32 +276,55 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   if (variant === 'small') {
     return (
       <>
-        <Box mt="10px" background="blue.default" padding="8px" borderRadius="8px" display="flex" alignItems="center" gap="10px">
-          {(startWithLearnpack) && (
-            <Icon icon="learnpack" />
-          )}
-          <Box>
-            <Text color="white" size="md">
-              {t('learnpack.choose-open')}
-            </Text>
-            <Box
-              mt="10px"
-              display="flex"
-              gap="10px"
-              flexDirection={{
-                base: 'column',
-                md: 'row',
-              }}
+        <Box mt="10px" display="flex" gap="10px" flexDirection={{ base: 'column', md: 'row' }} alignItems={{ base: 'stretch', md: 'flex-start' }}>
+          {currentAsset?.solution_url && currentAsset?.asset_type !== 'LESSON' && currentAsset?.asset_type !== 'ANSWER' && (
+            <Button
+              cursor="pointer"
+              as="a"
+              href={currentAsset.solution_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              size="sm"
+              width={variant === 'extra-small' && '100%'}
+              padding="4px 8px"
+              fontSize="14px"
+              fontWeight="500"
+              background={variant === 'extra-small' ? 'none' : 'gray.200'}
+              color="black"
+              _hover={variant === 'extra-small' && 'none'}
+              _active={variant === 'extra-small' && 'none'}
+              style={{ color: 'black', textDecoration: 'none' }}
             >
-              <ButtonsHandler
-                currentAsset={currentAsset}
-                handleStartLearnpack={handleStartLearnpack}
-                setShowCloneModal={setShowCloneModal}
-                startWithLearnpack={startWithLearnpack}
-                openWithLearnpackNoSaas={openWithLearnpackNoSaas}
-                variant={variant}
-                isStarted={isStarted}
-              />
+              {tSyllabus('view-solution')}
+            </Button>
+          )}
+          <Box background="blue.default" padding="8px" borderRadius="8px" display="flex" alignItems="center" gap="10px" flex="1">
+            {(startWithLearnpack) && (
+              <Icon icon="learnpack" />
+            )}
+            <Box>
+              <Text color="white" size="md">
+                {t('learnpack.choose-open')}
+              </Text>
+              <Box
+                mt="10px"
+                display="flex"
+                gap="10px"
+                flexDirection={{
+                  base: 'column',
+                  md: 'row',
+                }}
+              >
+                <ButtonsHandler
+                  currentAsset={currentAsset}
+                  handleStartLearnpack={handleStartLearnpack}
+                  setShowCloneModal={setShowCloneModal}
+                  startWithLearnpack={startWithLearnpack}
+                  openWithLearnpackNoSaas={openWithLearnpackNoSaas}
+                  variant={variant}
+                  isStarted={isStarted}
+                />
+              </Box>
             </Box>
           </Box>
         </Box>
@@ -301,7 +360,29 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
             base: 'column',
             md: 'row',
           }}
+          alignItems={{ base: 'stretch', md: 'center' }}
         >
+          {currentAsset?.solution_url && currentAsset?.asset_type !== 'LESSON' && currentAsset?.asset_type !== 'ANSWER' && (
+            <Button
+              cursor="pointer"
+              as="a"
+              href={currentAsset.solution_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              size="sm"
+              width={variant === 'extra-small' && '100%'}
+              padding="4px 8px"
+              fontSize="14px"
+              fontWeight="500"
+              background={variant === 'extra-small' ? 'none' : 'gray.200'}
+              color="black"
+              _hover={variant === 'extra-small' && 'none'}
+              _active={variant === 'extra-small' && 'none'}
+              style={{ color: 'black', textDecoration: 'none' }}
+            >
+              {tSyllabus('view-solution')}
+            </Button>
+          )}
           <ButtonsHandler
             currentAsset={currentAsset}
             handleStartLearnpack={handleStartLearnpack}
