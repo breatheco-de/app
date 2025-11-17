@@ -5,7 +5,11 @@ import {
   Box,
   Button,
   Skeleton,
-  Link,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverBody,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -18,6 +22,7 @@ import Text from '../Text';
 import Icon from '../Icon';
 import useAuth from '../../hooks/useAuth';
 import { addQueryToURL } from '../../utils';
+import useStyle from '../../hooks/useStyle';
 
 const ModalToCloneProject = lazy(() => import('./ModalToCloneProject'));
 
@@ -139,6 +144,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   const { user } = useAuth();
   const { state } = useCohortHandler();
   const { cohortSession } = state;
+  const { hexColor, fontColor } = useStyle();
   const [showCloneModal, setShowCloneModal] = useState(false);
   const [vendors, setVendors] = useState([]);
   const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
@@ -222,25 +228,44 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
           }}
         >
           {currentAsset?.solution_url && currentAsset?.asset_type !== 'LESSON' && currentAsset?.asset_type !== 'ANSWER' && (
-            <Button
-              cursor="pointer"
-              as="a"
-              href={currentAsset.solution_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              size="sm"
-              width={variant === 'extra-small' && '100%'}
-              padding="21px 8px"
-              fontSize="14px"
-              fontWeight="500"
-              background={variant === 'extra-small' ? 'yellow.400' : 'gray.200'}
-              color="black"
-              _hover={variant === 'extra-small' && 'none'}
-              _active={variant === 'extra-small' && 'none'}
-              style={{ color: 'black', textDecoration: 'none' }}
+            <Popover
+              trigger="hover"
+              placement="top"
+              closeOnBlur={false}
             >
-              {tSyllabus('view-solution')}
-            </Button>
+              <PopoverTrigger>
+                <Button
+                  cursor="pointer"
+                  as="a"
+                  href={currentAsset.solution_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="sm"
+                  width={variant === 'extra-small' && '100%'}
+                  padding="21px 8px"
+                  fontSize="14px"
+                  fontWeight="500"
+                  border="1px solid"
+                  borderColor={hexColor.borderColor}
+                  background="none"
+                  color={fontColor}
+                  _hover={variant === 'extra-small' && 'none'}
+                  _active={variant === 'extra-small' && 'none'}
+                  style={{ textDecoration: 'none', color: fontColor, WebkitTextFillColor: fontColor }}
+                >
+                  <Box display="flex" alignItems="center" gap="6px">
+                    <Icon icon="file" width="16px" height="16px" color={fontColor} />
+                    {tSyllabus('view-solution')}
+                  </Box>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent width="auto" maxWidth="200px">
+                <PopoverArrow />
+                <PopoverBody padding="8px 12px" margin="0" fontSize="14px">
+                  {tSyllabus('review-model-solution')}
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
           )}
           <Box
             background="blue.default"
@@ -278,25 +303,44 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
       <>
         <Box mt="10px" display="flex" gap="10px" flexDirection={{ base: 'column', md: 'row' }} alignItems={{ base: 'stretch', md: 'flex-start' }}>
           {currentAsset?.solution_url && currentAsset?.asset_type !== 'LESSON' && currentAsset?.asset_type !== 'ANSWER' && (
-            <Button
-              cursor="pointer"
-              as="a"
-              href={currentAsset.solution_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              size="sm"
-              width={variant === 'extra-small' && '100%'}
-              padding="4px 8px"
-              fontSize="14px"
-              fontWeight="500"
-              background={variant === 'extra-small' ? 'none' : 'gray.200'}
-              color="black"
-              _hover={variant === 'extra-small' && 'none'}
-              _active={variant === 'extra-small' && 'none'}
-              style={{ color: 'black', textDecoration: 'none' }}
+            <Popover
+              trigger="hover"
+              placement="top"
+              closeOnBlur={false}
             >
-              {tSyllabus('view-solution')}
-            </Button>
+              <PopoverTrigger>
+                <Button
+                  cursor="pointer"
+                  as="a"
+                  href={currentAsset.solution_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="sm"
+                  width={variant === 'extra-small' && '100%'}
+                  padding="21px 8px"
+                  fontSize="14px"
+                  fontWeight="500"
+                  border="1px solid"
+                  borderColor={hexColor.borderColor}
+                  background="none"
+                  color={fontColor}
+                  _hover={variant === 'extra-small' && 'none'}
+                  _active={variant === 'extra-small' && 'none'}
+                  style={{ textDecoration: 'none', color: fontColor, WebkitTextFillColor: fontColor }}
+                >
+                  <Box display="flex" alignItems="center" gap="6px">
+                    <Icon icon="file" width="16px" height="16px" color={fontColor} />
+                    {tSyllabus('view-solution')}
+                  </Box>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent width="auto" maxWidth="200px">
+                <PopoverArrow />
+                <PopoverBody padding="8px 12px" margin="0" fontSize="14px">
+                  {tSyllabus('review-model-solution')}
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
           )}
           <Box background="blue.default" padding="8px" borderRadius="8px" display="flex" alignItems="center" gap="10px" flex="1">
             {(startWithLearnpack) && (
@@ -363,25 +407,44 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
           alignItems={{ base: 'stretch', md: 'center' }}
         >
           {currentAsset?.solution_url && currentAsset?.asset_type !== 'LESSON' && currentAsset?.asset_type !== 'ANSWER' && (
-            <Button
-              cursor="pointer"
-              as="a"
-              href={currentAsset.solution_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              size="sm"
-              width={variant === 'extra-small' && '100%'}
-              padding="4px 8px"
-              fontSize="14px"
-              fontWeight="500"
-              background={variant === 'extra-small' ? 'none' : 'gray.200'}
-              color="black"
-              _hover={variant === 'extra-small' && 'none'}
-              _active={variant === 'extra-small' && 'none'}
-              style={{ color: 'black', textDecoration: 'none' }}
+            <Popover
+              trigger="hover"
+              placement="top"
+              closeOnBlur={false}
             >
-              {tSyllabus('view-solution')}
-            </Button>
+              <PopoverTrigger>
+                <Button
+                  cursor="pointer"
+                  as="a"
+                  href={currentAsset.solution_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="sm"
+                  width={variant === 'extra-small' && '100%'}
+                  padding="21px 8px"
+                  fontSize="14px"
+                  fontWeight="500"
+                  border="1px solid"
+                  borderColor={hexColor.borderColor}
+                  background="none"
+                  color={fontColor}
+                  _hover={variant === 'extra-small' && 'none'}
+                  _active={variant === 'extra-small' && 'none'}
+                  style={{ textDecoration: 'none', color: fontColor, WebkitTextFillColor: fontColor }}
+                >
+                  <Box display="flex" alignItems="center" gap="6px">
+                    <Icon icon="file" width="16px" height="16px" color={fontColor} />
+                    {tSyllabus('view-solution')}
+                  </Box>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent width="auto" maxWidth="200px">
+                <PopoverArrow />
+                <PopoverBody padding="8px 12px" margin="0" fontSize="14px">
+                  {tSyllabus('review-model-solution')}
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
           )}
           <ButtonsHandler
             currentAsset={currentAsset}
