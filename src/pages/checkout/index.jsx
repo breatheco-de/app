@@ -20,6 +20,7 @@ import {
   ModalContent,
   ModalBody,
   ModalFooter,
+  Switch,
 } from '@chakra-ui/react';
 import { useState, useEffect, useRef } from 'react';
 import getT from 'next-translate/getT';
@@ -111,6 +112,10 @@ function Checkout() {
     fixedCouponExist,
     discountCoupon,
     removeManualCoupons,
+    togglePlanAddon,
+    bagTotals,
+    planAddonsDisplay,
+    couponBreakdown,
   } = useCheckout();
   const { query } = router;
   const [showPaymentDetails, setShowPaymentDetails] = useState(true);
@@ -389,7 +394,7 @@ function Checkout() {
           overflowX="hidden"
           maxWidth={{ base: '100%', md: '50%' }}
         >
-          {loader.summary && (
+          {loader.summary && !loader.plan && (
             <LoaderScreen background={backgroundColor3} />
           )}
           <Flex
@@ -514,7 +519,7 @@ function Checkout() {
                                       color="auto"
                                       background={
                                         option.plan_id === selectedPlan?.plan_id
-                                          && useColorModeValue('green.50', 'green.200')
+                                        && useColorModeValue('green.50', 'green.200')
                                       }
                                       _hover={
                                         option.plan_id === selectedPlan?.plan_id
@@ -596,17 +601,79 @@ function Checkout() {
                       containerStyles={{ _hover: 'none' }}
                     />
                   )}
+                  {planAddonsDisplay?.length > 0 && (
+                    <Box mt="16px" width="100%">
+                      <Text size="15px" fontWeight="400" mb="8px">
+                        {t('signup:plan-addons.section-title')}
+                      </Text>
+                      {planAddonsDisplay.map((addonInfo) => {
+                        const {
+                          addonTitle,
+                          addonDescription,
+                          isSelected,
+                          originalAddon,
+                          discountedAddon,
+                          hasDiscount,
+                          slug,
+                        } = addonInfo;
+                        return (
+                          <Flex
+                            key={slug}
+                            justifyContent="space-between"
+                            alignItems="center"
+                            py="10px"
+                          >
+                            <Box pr="12px">
+                              <Flex gap="10px">
+                                <Text size="sm" fontWeight="600">
+                                  {addonTitle}
+                                </Text>
+                                {discountedAddon !== null && (
+                                  <Text size="sm" fontWeight="600" color="green.400">
+                                    {`${currencySymbol}${discountedAddon.toFixed(2)} / ${t('one_payment')}`}
+                                  </Text>
+                                )}
+                                {hasDiscount && originalAddon !== null && (
+                                  <Text
+                                    size="xs"
+                                    textDecoration="line-through"
+                                    opacity={0.6}
+                                  >
+                                    {`${currencySymbol}${originalAddon.toFixed(2)}`}
+                                  </Text>
+                                )}
+                              </Flex>
+                              {addonDescription && (
+                                <Text size="xs" color="gray.500">
+                                  {addonDescription}
+                                </Text>
+                              )}
+                            </Box>
+                            <Box textAlign="right">
+                              <Switch
+                                mt="4px"
+                                isChecked={isSelected}
+                                onChange={() => togglePlanAddon(slug)}
+                                colorScheme="green"
+                              />
+                            </Box>
+                          </Flex>
+                        );
+                      })}
+                    </Box>
+                  )}
                 </Flex>
                 {isSecondStep && (
                   <>
                     <Flex justifyContent="space-between" width="100%" padding="3rem 0px 0">
                       <Text size="18px" color="currentColor" lineHeight="normal">
-                        Subtotal:
+                        {t('subtotal-before-discount')}
                       </Text>
                       <Text size="18px" color="currentColor" lineHeight="normal">
-                        {selectedPlan?.price <= 0
-                          ? selectedPlan?.priceText
-                          : `${currencySymbol}${selectedPlan?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
+                        {bagTotals && selectedPlan && `${currencySymbol}${bagTotals.originalTotal.toFixed(2)} ${selectedPlan.currency?.code}`}
+                        {!bagTotals && (selectedPlan?.price <= 0) && selectedPlan?.priceText}
+                        {!bagTotals && selectedPlan?.price > 0
+                          && `${currencySymbol}${selectedPlan?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
                       </Text>
                     </Flex>
                     <Divider margin="6px 0" />
@@ -643,25 +710,33 @@ function Checkout() {
                                     }
                                   }}
                                 />
-                                {discountCoupon?.slug && (
-                                  <InputRightElement width="35px">
-                                    <Button
-                                      variant="unstyled"
-                                      aria-label="Remove coupon"
-                                      minWidth="auto"
-                                      padding="10px"
-                                      height="auto"
-                                      onClick={() => {
-                                        setDiscountCode('');
-                                        removeSessionStorageItem('coupon');
-                                        setDiscountCoupon(null);
-                                        removeManualCoupons();
-                                      }}
-                                    >
-                                      <Icon icon="close" color="currentColor" width="10px" height="10px" />
-                                    </Button>
-                                  </InputRightElement>
-                                )}
+                                {discountCoupon?.slug && (() => {
+                                  const couponFromUrl = query?.coupon || query?.coupons;
+                                  const isCouponFromUrl = couponFromUrl && (
+                                    discountCoupon.slug === couponFromUrl.replace(/[^a-zA-Z0-9-\s]/g, '')
+                                  );
+                                  if (isCouponFromUrl) return null;
+
+                                  return (
+                                    <InputRightElement width="35px">
+                                      <Button
+                                        variant="unstyled"
+                                        aria-label="Remove coupon"
+                                        minWidth="auto"
+                                        padding="10px"
+                                        height="auto"
+                                        onClick={() => {
+                                          setDiscountCode('');
+                                          removeSessionStorageItem('coupon');
+                                          setDiscountCoupon(null);
+                                          removeManualCoupons();
+                                        }}
+                                      >
+                                        <Icon icon="close" color="currentColor" width="10px" height="10px" />
+                                      </Button>
+                                    </InputRightElement>
+                                  );
+                                })()}
                               </InputGroup>
                               {!discountCoupon?.slug && !isPaymentSuccess && (
                                 <Button
@@ -699,26 +774,57 @@ function Checkout() {
                     )}
 
                     {allCoupons?.length > 0
-                      && allCoupons.map((coup) => (
-                        <Flex
-                          key={coup?.slug}
-                          direction="row"
-                          justifyContent="space-between"
-                          w="100%"
-                          marginTop="10px"
-                        >
-                          <Text size="lg">{coup?.slug}</Text>
-                          <Box
-                            borderRadius="4px"
-                            padding="5px"
-                            background={getDiscountValue(coup) ? hexColor.greenLight2 : ''}
-                          >
-                            <Text color={hexColor.green} fontWeight="700">
-                              {getDiscountValue(coup)}
-                            </Text>
+                      && allCoupons.map((coup) => {
+                        const breakdownItems = couponBreakdown
+                          ?.filter((item) => item.couponSlug === coup?.slug) || [];
+
+                        return (
+                          <Box key={coup?.slug} w="100%" marginTop="10px">
+                            <Flex
+                              direction="row"
+                              justifyContent="space-between"
+                              alignItems="center"
+                              w="100%"
+                            >
+                              <Text size="lg">{coup?.slug}</Text>
+                              <Box
+                                borderRadius="4px"
+                                padding="5px"
+                                background={getDiscountValue(coup) ? hexColor.greenLight2 : ''}
+                              >
+                                <Text color={hexColor.green} fontWeight="700">
+                                  {getDiscountValue(coup)}
+                                </Text>
+                              </Box>
+                            </Flex>
+
+                            {breakdownItems.map((item) => (
+                              <Flex
+                                key={`${item.couponSlug}-${item.targetType}-${item.targetSlug}`}
+                                width="100%"
+                                mt="4px"
+                                alignItems="center"
+                                gridGap="8px"
+                              >
+                                <Text size="xs" color="gray.500">
+                                  {item.targetName}
+                                </Text>
+                                <Text
+                                  size="xs"
+                                  color="gray.500"
+                                  textDecoration="line-through"
+                                  opacity={0.6}
+                                >
+                                  {`${currencySymbol}${item.before.toFixed(2)}`}
+                                </Text>
+                                <Text size="xs" color="gray.500">
+                                  {`${currencySymbol}${item.after.toFixed(2)}`}
+                                </Text>
+                              </Flex>
+                            ))}
                           </Box>
-                        </Flex>
-                      ))}
+                        );
+                      })}
 
                     <Divider margin="6px 0" />
                     <Flex justifyContent="space-between" width="100%">
@@ -726,25 +832,33 @@ function Checkout() {
                         {selectedPlan?.period !== 'ONE_TIME' ? t('total-now') : t('total')}
                       </Text>
                       <Flex gridGap="1rem">
-                        {allCoupons?.length > 0 && (
-                          <Text
-                            size="18px"
-                            color="currentColor"
-                            textDecoration="line-through"
-                            opacity="0.5"
-                            lineHeight="normal"
-                          >
-                            {`${currencySymbol}${selectedPlan?.price?.toFixed(2)}`}
+                        {bagTotals ? (
+                          <>
+                            {bagTotals.originalTotal !== bagTotals.discountedTotal && (
+                              <Text
+                                size="18px"
+                                color="currentColor"
+                                textDecoration="line-through"
+                                opacity="0.5"
+                                lineHeight="normal"
+                              >
+                                {`${currencySymbol}${bagTotals.originalTotal.toFixed(2)}`}
+                              </Text>
+                            )}
+                            <Text size="18px" color="currentColor" lineHeight="normal">
+                              {`${currencySymbol}${bagTotals.discountedTotal.toFixed(2)} ${selectedPlan?.currency?.code}`}
+                            </Text>
+                          </>
+                        ) : (
+                          <Text size="18px" color="currentColor" lineHeight="normal">
+                            {selectedPlan?.price <= 0
+                              ? selectedPlan?.priceText
+                              : `${currencySymbol}${processedPrice?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
                           </Text>
                         )}
-                        <Text size="18px" color="currentColor" lineHeight="normal">
-                          {selectedPlan?.price <= 0
-                            ? selectedPlan?.priceText
-                            : `${currencySymbol}${processedPrice?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
-                        </Text>
                       </Flex>
                     </Flex>
-                    {selectedPlan?.period !== 'ONE_TIME' && selectedPlan?.price > 0 && (
+                    {selectedPlan?.period === 'FINANCING' && selectedPlan?.price > 0 && (
                       <Flex justifyContent="space-between" width="100%">
                         <Text size="18px" color="currentColor" lineHeight="normal">
                           {t('after-all-payments')}
