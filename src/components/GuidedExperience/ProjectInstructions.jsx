@@ -138,7 +138,6 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
 
 function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isStarted, publicViewLearnpack, publicView, ...rest }) {
   const { t } = useTranslation('common');
-  const { t: tSyllabus } = useTranslation('syllabus');
   const { cohorts } = useAuth();
   const { currentTask } = useModuleHandler();
   const { user } = useAuth();
@@ -218,11 +217,11 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
         <Box
           display="flex"
           gap="10px"
-          flexDirection={{
+          flexDirection={publicView ? 'column' : {
             base: 'column',
             md: 'row',
           }}
-          alignItems={{
+          alignItems={publicView ? 'stretch' : {
             base: 'stretch',
             md: 'center',
           }}
@@ -281,14 +280,14 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
                 >
                   <Box display="flex" alignItems="center" gap="6px">
                     <Icon icon="file" width="16px" height="16px" color={fontColor} />
-                    {tSyllabus('view-solution')}
+                    {t('view-solution')}
                   </Box>
                 </Button>
               </PopoverTrigger>
               <PopoverContent width="auto" maxWidth="200px">
                 <PopoverArrow />
                 <PopoverBody padding="8px 12px" margin="0" fontSize="14px">
-                  {tSyllabus('review-model-solution')}
+                  {t('review-model-solution')}
                 </PopoverBody>
               </PopoverContent>
             </Popover>
@@ -302,7 +301,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   if (variant === 'small') {
     return (
       <>
-        <Box mt="10px" display="flex" gap="10px" flexDirection={{ base: 'column', md: 'row' }} alignItems={{ base: 'stretch', md: 'flex-start' }}>
+        <Box mt="10px" display="flex" gap="10px" flexDirection={publicView ? 'column' : { base: 'column', md: 'row' }} alignItems={publicView ? 'stretch' : { base: 'stretch', md: 'flex-start' }}>
           <Box background="blue.default" padding="8px" borderRadius="8px" display="flex" alignItems="center" gap="10px" flex="1">
             {(startWithLearnpack) && (
               <Icon icon="learnpack" />
@@ -361,14 +360,14 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
                 >
                   <Box display="flex" alignItems="center" gap="6px">
                     <Icon icon="file" width="16px" height="16px" color={fontColor} />
-                    {tSyllabus('view-solution')}
+                    {t('view-solution')}
                   </Box>
                 </Button>
               </PopoverTrigger>
               <PopoverContent width="auto" maxWidth="200px">
                 <PopoverArrow />
                 <PopoverBody padding="8px 12px" margin="0" fontSize="14px">
-                  {tSyllabus('review-model-solution')}
+                  {t('review-model-solution')}
                 </PopoverBody>
               </PopoverContent>
             </Popover>
@@ -402,11 +401,11 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
           mt="16px"
           display="flex"
           gap="16px"
-          flexDirection={{
+          flexDirection={publicView ? 'column' : {
             base: 'column',
             md: 'row',
           }}
-          alignItems={{ base: 'stretch', md: 'center' }}
+          alignItems={publicView ? 'stretch' : { base: 'stretch', md: 'center' }}
         >
           <ButtonsHandler
             currentAsset={currentAsset}
@@ -446,14 +445,14 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
                 >
                   <Box display="flex" alignItems="center" gap="6px">
                     <Icon icon="file" width="16px" height="16px" color={fontColor} />
-                    {tSyllabus('view-solution')}
+                    {t('view-solution')}
                   </Box>
                 </Button>
               </PopoverTrigger>
               <PopoverContent width="auto" maxWidth="200px">
                 <PopoverArrow />
                 <PopoverBody padding="8px 12px" margin="0" fontSize="14px">
-                  {tSyllabus('review-model-solution')}
+                  {t('review-model-solution')}
                 </PopoverBody>
               </PopoverContent>
             </Popover>
