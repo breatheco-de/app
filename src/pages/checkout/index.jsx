@@ -601,67 +601,74 @@ function Checkout() {
                       containerStyles={{ _hover: 'none' }}
                     />
                   )}
-                  {planAddonsDisplay?.length > 0 && (
-                    <Box mt="16px" width="100%">
-                      <Text size="15px" fontWeight="400" mb="8px">
-                        {t('signup:plan-addons.section-title')}
-                      </Text>
-                      {planAddonsDisplay.map((addonInfo) => {
-                        const {
-                          addonTitle,
-                          addonDescription,
-                          isSelected,
-                          originalAddon,
-                          discountedAddon,
-                          hasDiscount,
-                          slug,
-                        } = addonInfo;
-                        return (
-                          <Flex
-                            key={slug}
-                            justifyContent="space-between"
-                            alignItems="center"
-                            py="10px"
-                          >
-                            <Box pr="12px">
-                              <Flex gap="10px">
-                                <Text size="sm" fontWeight="600">
-                                  {addonTitle}
-                                </Text>
-                                {discountedAddon !== null && (
-                                  <Text size="sm" fontWeight="600" color="green.400">
-                                    {`${currencySymbol}${discountedAddon.toFixed(2)} / ${t('one_payment')}`}
+                  {(() => {
+                    const filteredAddons = planAddonsDisplay?.filter((addonInfo) => (isPaymentSuccess ? addonInfo.isSelected : true)) || [];
+                    return filteredAddons.length > 0 && (
+                      <Box mt="16px" width="100%">
+                        <Text size="15px" fontWeight="400" mb="8px">
+                          {isPaymentSuccess
+                            ? t('signup:plan-addons.section-title-included')
+                            : t('signup:plan-addons.section-title')}
+                        </Text>
+                        {filteredAddons.map((addonInfo) => {
+                          const {
+                            addonTitle,
+                            addonDescription,
+                            isSelected,
+                            originalAddon,
+                            discountedAddon,
+                            hasDiscount,
+                            slug,
+                          } = addonInfo;
+                          return (
+                            <Flex
+                              key={slug}
+                              justifyContent="space-between"
+                              alignItems="center"
+                              py="10px"
+                            >
+                              <Box pr="12px">
+                                <Flex gap="10px">
+                                  <Text size="sm" fontWeight="600">
+                                    {addonTitle}
+                                  </Text>
+                                  {discountedAddon !== null && (
+                                    <Text size="sm" fontWeight="600" color="green.400">
+                                      {`${currencySymbol}${discountedAddon.toFixed(2)} / ${t('one_payment')}`}
+                                    </Text>
+                                  )}
+                                  {hasDiscount && originalAddon !== null && (
+                                    <Text
+                                      size="xs"
+                                      textDecoration="line-through"
+                                      opacity={0.6}
+                                    >
+                                      {`${currencySymbol}${originalAddon.toFixed(2)}`}
+                                    </Text>
+                                  )}
+                                </Flex>
+                                {addonDescription && (
+                                  <Text size="xs" color="gray.500">
+                                    {addonDescription}
                                   </Text>
                                 )}
-                                {hasDiscount && originalAddon !== null && (
-                                  <Text
-                                    size="xs"
-                                    textDecoration="line-through"
-                                    opacity={0.6}
-                                  >
-                                    {`${currencySymbol}${originalAddon.toFixed(2)}`}
-                                  </Text>
-                                )}
-                              </Flex>
-                              {addonDescription && (
-                                <Text size="xs" color="gray.500">
-                                  {addonDescription}
-                                </Text>
+                              </Box>
+                              {!isPaymentSuccess && (
+                                <Box textAlign="right">
+                                  <Switch
+                                    mt="4px"
+                                    isChecked={isSelected}
+                                    onChange={() => togglePlanAddon(slug)}
+                                    colorScheme="green"
+                                  />
+                                </Box>
                               )}
-                            </Box>
-                            <Box textAlign="right">
-                              <Switch
-                                mt="4px"
-                                isChecked={isSelected}
-                                onChange={() => togglePlanAddon(slug)}
-                                colorScheme="green"
-                              />
-                            </Box>
-                          </Flex>
-                        );
-                      })}
-                    </Box>
-                  )}
+                            </Flex>
+                          );
+                        })}
+                      </Box>
+                    );
+                  })()}
                 </Flex>
                 {isSecondStep && (
                   <>

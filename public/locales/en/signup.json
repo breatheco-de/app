@@ -16,7 +16,8 @@
     "read-more-link": "https://4geeks.com/mastering-technical-knowledge"
   },
   "plan-addons": {
-    "section-title": "You can also include:"
+    "section-title": "You can also include:",
+    "section-title-included": "Also included:"
   },
   "view-course-warning": "View course prerequisites for {{courseName}}",
   "free_trial_one_payment": "{{description}} and then {{currency}}{{price}} one time",
