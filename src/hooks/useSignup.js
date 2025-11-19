@@ -67,6 +67,7 @@ const useSignup = () => {
     selectedPlan,
     paymentStatus,
     isSubmittingPayment,
+    selectedPlanAddons,
   } = state;
 
   const isPaymentIdle = paymentStatus === 'idle';
@@ -718,7 +719,7 @@ const useSignup = () => {
     }
   };
 
-  const getChecking = async (plansData) => {
+  const getChecking = async (plansData, planAddonsOverride) => {
     const src = (addOnsSimple || '').trim();
     let addOnsArray = [];
     if (src) {
@@ -744,9 +745,12 @@ const useSignup = () => {
       }).filter((it) => Number.isFinite(it.service) && it.service > 0 && Number.isFinite(it.how_many) && it.how_many > 0);
     }
 
+    const planAddons = Array.isArray(planAddonsOverride) ? planAddonsOverride : selectedPlanAddons;
+
     const checkingBody = {
       type: 'PREVIEW',
       plans: [plansData?.slug],
+      plan_addons: Array.isArray(planAddons) && planAddons.length > 0 ? planAddons : undefined,
       coupons: couponsQuery ? [couponsQuery] : undefined,
       country_code,
       service_items: addOnsArray,
@@ -764,10 +768,23 @@ const useSignup = () => {
       delete finalData.id;
 
       if (response.status < 400) {
-        const result = {
+        const rawCoupons = Array.isArray(data?.coupons) ? data.coupons : [];
+        const normalizedCoupons = rawCoupons
+          .map((coup) => (typeof coup === 'string' ? coup : coup?.slug))
+          .filter((slug) => typeof slug === 'string' && slug.length > 0);
+
+        const merged = {
           ...data,
           ...finalData,
         };
+
+        const result = {
+          ...merged,
+          coupons: normalizedCoupons,
+          coupons_detail: rawCoupons,
+          checking_raw: data,
+        };
+
         setCheckingData(result);
         return result;
       }

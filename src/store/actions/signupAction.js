@@ -73,6 +73,10 @@ const signupAction = () => {
     type: SET_SELF_APPLIED_COUPON,
     payload,
   });
+  const setSelectedPlanAddons = (payload) => dispatch({
+    type: 'SET_SELECTED_PLAN_ADDONS',
+    payload,
+  });
 
   const setDeclinedPayment = (payload) => dispatch({
     type: SET_DECLINED_PAYMENT,
@@ -101,6 +105,7 @@ const signupAction = () => {
     restartSignup,
     setService,
     setDeclinedPayment,
+    setSelectedPlanAddons,
   };
 };
 
