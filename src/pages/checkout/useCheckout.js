@@ -490,6 +490,7 @@ const useCheckout = () => {
   const initializePlanData = async () => {
     try {
       const resp = await bc.payment({ country_code: location?.countryShort }).getPlan(planFormated);
+      console.log('resp', resp);
       const { data } = resp;
       setPlanData(data);
       const processedPlan = await processPlans(data, {
@@ -544,7 +545,7 @@ const useCheckout = () => {
         duration: 4000,
         isClosable: true,
       });
-      // router.push('/pricing');
+      router.push('/pricing');
     }
   };
 
