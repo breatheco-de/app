@@ -15,6 +15,10 @@
     "read-more": "Read the science behind it.",
     "read-more-link": "https://4geeks.com/mastering-technical-knowledge"
   },
+  "plan-addons": {
+    "section-title": "You can also include:",
+    "section-title-included": "Also included:"
+  },
   "view-course-warning": "View course prerequisites for {{courseName}}",
   "free_trial_one_payment": "{{description}} and then {{currency}}{{price}} one time",
   "free_trial_multiple_payments": "{{description}} and then {{numPayments}} payments of {{currency}}{{firstPrice}} or {{currency}}{{oneTimePrice}} one time",
@@ -504,5 +508,6 @@
         }
       ]
     }
-  }
+  },
+  "subtotal-before-discount": "Subtotal (before discount)"
 }
