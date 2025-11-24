@@ -113,6 +113,9 @@ function CoursePage() {
     backgroundColor8,
     assetCount,
     BASE_COURSE,
+    partnerDisplay,
+    partnerIcon,
+    partnerLogo,
 
     // Functions
     setShowModal,
@@ -195,38 +198,56 @@ function CoursePage() {
               </Flex>
             </Flex>
 
-            {/* Students count */}
-            <Flex alignItems="center" gridGap="16px">
-              <Flex>
-                {initialDataIsFetching ? (
-                  <AvatarSkeletonWrapped
-                    quantity={3}
-                    max={3}
-                    margin="0 -21px 0 0 !important"
-                    size={{ base: '30px', md: '40px' }}
-                  />
-                ) : (
-                  imageSource.map((imageUrl, index) => (
-                    <Image
-                      key={imageUrl}
-                      margin={index < limitViewStudents - 1 ? '0 -21px 0 0' : '0'}
-                      src={imageUrl}
-                      width={{ base: '30px', md: '40px' }}
-                      height={{ base: '30px', md: '40px' }}
-                      borderRadius="50%"
-                      objectFit="cover"
-                      alt={`Student image ${index + 1}`}
+            <Flex justifyContent="space-between">
+              {/* Students count */}
+              <Flex alignItems="center" gridGap="16px">
+                <Flex>
+                  {initialDataIsFetching ? (
+                    <AvatarSkeletonWrapped
+                      quantity={3}
+                      max={3}
+                      margin="0 -21px 0 0 !important"
+                      size={{ base: '30px', md: '40px' }}
                     />
-                  ))
-                )}
+                  ) : (
+                    imageSource.map((imageUrl, index) => (
+                      <Image
+                        key={imageUrl}
+                        margin={index < limitViewStudents - 1 ? '0 -21px 0 0' : '0'}
+                        src={imageUrl}
+                        width={{ base: '30px', md: '40px' }}
+                        height={{ base: '30px', md: '40px' }}
+                        borderRadius="50%"
+                        objectFit="cover"
+                        alt={`Student image ${index + 1}`}
+                      />
+                    ))
+                  )}
+                </Flex>
+                {initialDataIsFetching
+                  ? <SkeletonText margin="0 0 0 21px" width="10rem" noOfLines={1} />
+                  : (
+                    <Text size={{ base: '14', md: '16px' }} color="currentColor" fontWeight={400}>
+                      {students?.length > 20 ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : t('students-enrolled')}
+                    </Text>
+                  )}
               </Flex>
-              {initialDataIsFetching
-                ? <SkeletonText margin="0 0 0 21px" width="10rem" noOfLines={1} />
-                : (
-                  <Text size={{ base: '14', md: '16px' }} color="currentColor" fontWeight={400}>
-                    {students?.length > 20 ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : t('students-enrolled')}
-                  </Text>
-                )}
+              {partnerDisplay && (
+                <Flex alignItems="center" gridGap="12px" marginRight="16px">
+                  <Icon icon="4Geeks-logo" width="80px" height="auto" secondColor={fontColor} />
+                  {partnerIcon ? (
+                    <Icon icon={partnerIcon} width="70px" height="auto" color={fontColor} />
+                  ) : (
+                    <Image
+                      src={partnerLogo}
+                      alt="Partner logo"
+                      maxHeight="70px"
+                      maxWidth="200px"
+                      objectFit="contain"
+                    />
+                  )}
+                </Flex>
+              )}
             </Flex>
 
             <Flex flexDirection="column" gridGap="24px">
