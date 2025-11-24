@@ -48,6 +48,8 @@ export const useBootcamp = () => {
   const [planData, setPlanData] = useState({});
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [liveClasses, setLiveClasses] = useState([]);
+  const [isLoadingLiveClasses, setIsLoadingLiveClasses] = useState(false);
   const { location, isLoadingLocation } = useSession();
   const router = useRouter();
   const translationsObj = getTranslations(t);
@@ -318,6 +320,34 @@ export const useBootcamp = () => {
         modulesInfo,
       });
       setPlanData(formatedPlanData);
+
+      // Get live classes for syllabuses
+      if (Array.isArray(courseData?.syllabus) && courseData.syllabus.length > 0) {
+        setIsLoadingLiveClasses(true);
+        const syllabusIds = courseData.syllabus
+          .map((syllabus) => syllabus?.id)
+          .filter((id) => id != null);
+
+        if (syllabusIds.length > 0) {
+          try {
+            // Pass syllabus IDs as comma-separated string
+            const { data: liveClassesData } = await bc.events({
+              syllabus: syllabusIds.join(','),
+              upcoming: true,
+            }).publicLiveClass();
+
+            setLiveClasses(Array.isArray(liveClassesData) ? liveClassesData : []);
+          } catch (err) {
+            error('Error fetching live classes:', err);
+            setLiveClasses([]);
+          } finally {
+            setIsLoadingLiveClasses(false);
+          }
+        } else {
+          setIsLoadingLiveClasses(false);
+        }
+      }
+
       setInitialDataIsFetching(false);
     } catch (errorMsg) {
       error('Error fetching course data:', errorMsg);
@@ -570,6 +600,8 @@ export const useBootcamp = () => {
     partnerIcon,
     partnerLogo,
     suggestedPlanAddonsSlugs,
+    liveClasses,
+    isLoadingLiveClasses,
 
     // Functions
     setShowModal,
