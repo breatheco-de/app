@@ -95,12 +95,19 @@ export const useBootcamp = () => {
       return null;
     }, data?.course_translation?.landing_variables);
 
-    return result !== null ? result : t(slug, params, options);
+    if (result !== null) return result;
+    if (options.noFallback) return null;
+
+    const translation = t(slug, params, options);
+    return translation !== slug ? translation : null;
   };
 
   const faqList = getAlternativeTranslation('faq', {}, { returnObjects: true }) || [];
   const features = getAlternativeTranslation('features', {}, { returnObjects: true }) || {};
   const featuredBullets = getAlternativeTranslation('featured-bullets', {}, { returnObjects: true }) || [];
+  const partnerIcon = getAlternativeTranslation('partner-icon', {}, { noFallback: true });
+  const partnerLogo = getAlternativeTranslation('partner-logo', {}, { noFallback: true });
+  const partnerDisplay = partnerIcon || partnerLogo || null;
   const countryCode = location?.countryShort;
 
   const studentsImages = t(`students-course-images.${data?.slug}`, {}, { returnObjects: true });
@@ -126,7 +133,7 @@ export const useBootcamp = () => {
     router.push(joinedCohort.selectedProgramSlug);
   };
 
-  const redirectToCohortIfItsReady = async ({ withAlert = true, callback = () => {} } = {}) => {
+  const redirectToCohortIfItsReady = async ({ withAlert = true, callback = () => { } } = {}) => {
     const { cohorts: userCohorts } = await reSetUserAndCohorts();
     const alreadyHaveThisCohort = userCohorts?.some((cohort) => cohort?.id === cohortId);
 
@@ -273,12 +280,13 @@ export const useBootcamp = () => {
       const formatedPlanData = await fetchSuggestedPlan(courseData?.plan_slug, translationsObj, 'mkt_plans', countryCode).then((finalData) => finalData);
       const modulesInfo = await getModulesInfo();
 
-      const studentList = await bc.admissions({ roles: 'STUDENT' }).getPublicMembers()
+      const studentList = await bc.admissions({ roles: 'STUDENT', cohort_id: courseData?.cohort?.id }).getPublicMembers()
         .then((respMembers) => respMembers.data)
         .catch((err) => {
           error('Error fetching cohort users:', err);
           return [];
         });
+
       const uniqueStudents = studentList?.length > 0 ? studentList?.filter((student, index, self) => self.findIndex((l) => (
         l.user.id === student.user.id
       )) === index) : [];
@@ -552,6 +560,9 @@ export const useBootcamp = () => {
     backgroundColor8,
     assetCount,
     BASE_COURSE,
+    partnerDisplay,
+    partnerIcon,
+    partnerLogo,
 
     // Functions
     setShowModal,
