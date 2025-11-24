@@ -65,6 +65,7 @@ export const useBootcamp = () => {
     (relatedSubscription.valid_until && new Date(relatedSubscription.valid_until) > new Date())
     || (relatedSubscription.next_payment_at && new Date(relatedSubscription.next_payment_at) > new Date())
   );
+  console.log(instructors);
   const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE || relatedSubscription?.status === SUBS_STATUS.FULLY_PAID || cancelledButValid;
 
   const planList = planData?.planList || [];
