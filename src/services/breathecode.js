@@ -311,6 +311,7 @@ const breathecode = {
       meOnlineEvents: () => axios.get(`${url}/me?online_event=true${parseQuerys(query, true)}`),
       meCheckin: () => axios.get(`${url}/me/event/checkin${qs}`),
       liveClass: () => axios.get(`${url}/me/event/liveclass${qs}`),
+      publicLiveClass: () => axios.get(`${url}/public/event/liveclass${qs}`),
       joinLiveClass: (liveClassHash) => axios.get(`${url}/me/event/liveclass/join/${liveClassHash}${qs}`),
       applyEvent: (eventId, payload, token) => axios.post(`${url}/me/event/${eventId}/checkin${qs}`, payload, {
         headers: token && {
