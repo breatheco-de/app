@@ -116,6 +116,7 @@ function CoursePage() {
     partnerDisplay,
     partnerIcon,
     partnerLogo,
+    suggestedPlanAddonsSlugs,
 
     // Functions
     setShowModal,
@@ -596,6 +597,7 @@ function CoursePage() {
             externalSelection={financeSelected}
             title={getAlternativeTranslation('pricing-title')}
             subtitle={getAlternativeTranslation('pricing-subtitle')}
+            suggestedPlanAddonsSlugs={suggestedPlanAddonsSlugs}
             plan={data?.plan_slug}
             course={data?.slug}
             cohortId={cohortId}
