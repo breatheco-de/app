@@ -57,12 +57,14 @@ function CardFormContent({
   });
 
   const stripeElementStyle = {
+    width: '100%',
     height: '50px',
     border: '1px solid',
     borderColor: input.borderColor,
     borderRadius: '3px',
     backgroundColor: 'transparent',
-    padding: '16px',
+    overflow: 'hidden',
+    padding: '0 16px',
   };
 
   const stripeElementOptions = {
@@ -70,9 +72,16 @@ function CardFormContent({
       base: {
         fontSize: '16px',
         color: fontColor,
+        lineHeight: '50px',
+        backgroundColor: 'transparent',
         '::placeholder': {
           color: '#A0AEC0',
         },
+        ':-webkit-autofill': {
+          backgroundColor: 'transparent',
+          color: fontColor,
+        },
+
       },
       invalid: {
         color: fontColor,
@@ -113,20 +122,6 @@ function CardFormContent({
         }
         setIsSubmittingPayment(false);
         setCardErrors({ cardNumber: null, expiry: null, cvc: null, card: null });
-
-        switch (error.code) {
-          case 'incomplete_number':
-            setCardErrors((prev) => ({ ...prev, cardNumber: error.message }));
-            break;
-          case 'incomplete_expiry':
-            setCardErrors((prev) => ({ ...prev, expiry: error.message }));
-            break;
-          case 'incomplete_cvc':
-            setCardErrors((prev) => ({ ...prev, cvc: error.message }));
-            break;
-          default:
-            setCardErrors((prev) => ({ ...prev, card: error.message }));
-        }
         actions.setSubmitting(false);
         return;
       }
@@ -153,6 +148,18 @@ function CardFormContent({
   const handleSaveCard = async () => {
     if (!onSaveCard) return;
     setIsSubmittingCard(true);
+    try {
+      await nameValidation.validate({ owner_name: paymentInfo.owner_name }, { abortEarly: false });
+    } catch (validationError) {
+      setIsSubmittingCard(false);
+      if (validationError.inner && validationError.inner.length > 0) {
+        const ownerNameError = validationError.inner.find((err) => err.path === 'owner_name');
+        if (ownerNameError) {
+          setCardErrors((prev) => ({ ...prev, owner_name: ownerNameError.message }));
+        }
+      }
+      return;
+    }
 
     if (!stripe || !elements) {
       setIsSubmittingCard(false);
@@ -245,6 +252,17 @@ function CardFormContent({
                         borderColor={hasError ? 'red.500' : input.borderColor}
                         borderRadius="3px"
                         _placeholder={{ color: '#A0AEC0' }}
+                        backgroundColor="transparent"
+                        sx={{
+                          '&:-webkit-autofill': {
+                            WebkitBoxShadow: '0 0 0 1000px rgba(35, 35, 35, 0) inset !important',
+                            transition: 'background-color 50000s ease-in-out 0s',
+                          },
+                          '&:-webkit-autofill:active': {
+                            WebkitBoxShadow: '0 0 0 1000pxrgba(35, 35, 35, 0) inset !important',
+                            boxShadow: '0 0 0 1000pxrgba(35, 35, 35, 0) inset !important',
+                          },
+                        }}
                         onChange={(e) => {
                           field.onChange(e);
                           setPaymentInfo('owner_name', e.target.value);

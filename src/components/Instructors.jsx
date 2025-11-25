@@ -39,19 +39,30 @@ function Instructors({ isLoading, list, limit, tryRigobot, ...rest }) {
               min: 1,
               max: 20,
             });
-            return (
-              <Flex key={instructor?.user?.id} alignItems="center" gridGap="8px" minWidth="200px" padding="4px 8px" background={featuredColor3} borderRadius="43">
-                <Avatar src={avatarPicture || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`} />
-                <Flex flexDirection="column" gridGap="6px" mr="1rem">
-                  <Text size="14px" fontWeight={700} lineHeight="normal">
-                    {`${instructor?.user?.first_name} ${instructor?.user?.last_name}`}
-                  </Text>
-                  <Text size="14px" lineHeight="normal">
-                    {instructor?.role === 'TEACHER' ? t('main-instructor') : t('teacher-assistant')}
-                  </Text>
+            const instructorBio = instructor?.user?.profile?.bio;
+            const hasBio = instructorBio && instructorBio.trim().length > 0;
 
+            return (
+              <Tooltip
+                key={instructor?.user?.id}
+                label={instructorBio || ''}
+                aria-label={`Bio for ${instructor?.user?.first_name} ${instructor?.user?.last_name}`}
+                placement="top"
+                borderRadius="4px"
+                isDisabled={!hasBio}
+              >
+                <Flex alignItems="center" gridGap="8px" minWidth="200px" padding="4px 8px" background={featuredColor3} borderRadius="43">
+                  <Avatar src={avatarPicture || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`} />
+                  <Flex flexDirection="column" gridGap="6px" mr="1rem">
+                    <Text size="14px" fontWeight={700} lineHeight="normal">
+                      {`${instructor?.user?.first_name} ${instructor?.user?.last_name}`}
+                    </Text>
+                    <Text size="14px" lineHeight="normal">
+                      {instructor?.role === 'TEACHER' ? t('main-instructor') : t('teacher-assistant')}
+                    </Text>
+                  </Flex>
                 </Flex>
-              </Flex>
+              </Tooltip>
             );
           })}
         <Tooltip label={t('tooltip-ai-tutor')} aria-label="Tooltip for Rigobot" placement="top" borderRadius="4px">

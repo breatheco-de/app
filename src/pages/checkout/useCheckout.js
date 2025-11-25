@@ -240,7 +240,28 @@ const useCheckout = () => {
   const planAddonsDisplay = useMemo(() => {
     if (!checkingData?.plan_addons || !originalPlan) return [];
 
-    return checkingData.plan_addons.map((planAddon) => getPlanAddonsDisplayData({
+    // Get plan_addons from querystring
+    const planAddonsQuery = getQueryString('plan_addons');
+
+    if (!planAddonsQuery) {
+      return [];
+    }
+
+    // Parse allowed slugs from querystring
+    const allowedSlugs = planAddonsQuery
+      .split(',')
+      .map((slug) => slug.trim())
+      .filter((slug) => slug.length > 0);
+
+    // If querystring exists but no valid slugs, show nothing
+    if (allowedSlugs.length === 0) {
+      return [];
+    }
+
+    // Filter plan addons by allowed slugs
+    const filteredPlanAddons = checkingData.plan_addons.filter((planAddon) => allowedSlugs.includes(planAddon?.slug));
+
+    return filteredPlanAddons.map((planAddon) => getPlanAddonsDisplayData({
       planAddon,
       originalPlan,
       lang,

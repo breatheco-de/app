@@ -20,6 +20,7 @@ function MktShowPrices({
   plan,
   course,
   onBeforeCheckout,
+  suggestedPlanAddonsSlugs,
   ...rest
 }) {
   const { t } = useTranslation('course');
@@ -52,13 +53,17 @@ function MktShowPrices({
         subtitle={subtitle}
         list={planProps?.paymentOptions?.length > 0 ? planProps?.paymentOptions : planProps?.consumableOptions}
         handleUpgrade={(item) => {
-          const querys = new URLSearchParams({
+          const queryParams = {
             plan: item?.plan_slug,
             plan_id: item?.plan_id,
             cohort: cohortId,
             coupon: queryCoupon || coupon,
             course,
-          }).toString();
+          };
+          if (suggestedPlanAddonsSlugs) {
+            queryParams.plan_addons = suggestedPlanAddonsSlugs;
+          }
+          const querys = new URLSearchParams(queryParams).toString();
           const doPush = () => router.push(`/checkout?${querys}`);
           if (typeof onBeforeCheckout === 'function') {
             onBeforeCheckout(doPush);
@@ -98,6 +103,7 @@ MktShowPrices.propTypes = {
   pricingMktInfo: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
   externalPlanProps: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
   course: PropTypes.string,
+  suggestedPlanAddonsSlugs: PropTypes.string,
   paymentSwitchPlacement: PropTypes.oneOf(['outer', 'inner']),
   onBeforeCheckout: PropTypes.func,
 };
@@ -112,6 +118,7 @@ MktShowPrices.defaultProps = {
   pricingMktInfo: [],
   course: '',
   paymentSwitchPlacement: 'outer',
+  suggestedPlanAddonsSlugs: null,
   onBeforeCheckout: null,
 };
 
