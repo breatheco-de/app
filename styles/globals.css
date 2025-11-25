@@ -562,6 +562,15 @@ body.chakra-ui-dark .anchorjs-link {
   max-width: 100vw !important;
 }
 
+/* Stripe Elements autofill fix - box-shadow hack */
+.chakra-ui-light .StripeElement iframe {
+  box-shadow: 0 0 0 1000px #FFFFFF inset !important;
+}
+
+.chakra-ui-dark .StripeElement iframe {
+  box-shadow: 0 0 0 1000px #17202A inset !important;
+}
+
 /* body {
 	overflow: auto !important;
 }
