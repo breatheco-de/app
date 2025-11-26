@@ -19,10 +19,50 @@ export const config = {
 
 async function middleware(req) {
   const url = req.nextUrl.clone();
-  const { href, origin } = url;
-  let fullPath = url.pathname;
+  const { href, origin, searchParams, pathname } = url;
+  let fullPath = pathname;
   log('DEBUG fullPath:', fullPath, 'search:', url.search);
 
+  const assetPagePatterns = [
+    /^\/how-to\/[^/]+$/,
+    /^\/es\/how-to\/[^/]+$/,
+    /^\/como\/[^/]+$/,
+    /^\/es\/como\/[^/]+$/,
+    /^\/lesson\/[^/]+$/,
+    /^\/es\/lesson\/[^/]+$/,
+    /^\/interactive-coding-tutorial\/[^/]+$/,
+    /^\/es\/interactive-coding-tutorial\/[^/]+$/,
+    /^\/interactive-exercise\/[^/]+$/,
+    /^\/es\/interactive-exercise\/[^/]+$/,
+  ];
+
+  const isIndividualPage = assetPagePatterns.some((pattern) => pattern.test(pathname));
+
+  if (isIndividualPage) {
+    const invalidParams = [
+      'page', // should not be in individual assets
+      'slug',
+      'search',
+      'techs',
+      'difficulty',
+      'withVideo',
+    ];
+    let hasInvalidParams = false;
+
+    invalidParams.forEach((param) => {
+      if (searchParams.has(param)) {
+        searchParams.delete(param);
+        hasInvalidParams = true;
+      }
+    });
+
+    if (hasInvalidParams) {
+      url.search = searchParams.toString();
+      log(`Middleware: removing invalid params from individual page: ${pathname}`);
+      log(`Middleware: redirecting ${href} → ${url.toString()}`);
+      return NextResponse.redirect(url, 301);
+    }
+  }
   const localeMatch = fullPath.match(/^\/(es|en|us)(\/|$)/);
   const localePrefix = localeMatch ? localeMatch[1] : null;
 
