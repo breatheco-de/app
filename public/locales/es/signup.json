@@ -15,6 +15,10 @@
     "read-more": "Lee la ciencia detrás de esto.",
     "read-more-link": "https://4geeks.com/es/mastering-technical-knowledge"
   },
+  "plan-addons": {
+    "section-title": "También puedes incluir:",
+    "section-title-included": "También se incluyó:"
+  },
   "view-course-warning": "Ver prerrequisitos del curso {{courseName}}",
   "free_trial_one_payment": "{{description}} y luego {{currency}}{{price}} único pago",
   "free_trial_multiple_payments": "{{description}} y luego {{numPayments}} pagos de {{currency}}{{firstPrice}} o un único pago de {{currency}}{{oneTimePrice}}",
@@ -34,8 +38,23 @@
   "you-are-getting": "Estás obteniendo",
   "plan-is-ready": "¡Ya estas casi listo! Para finalizar, presiona el botón azul mas abajo que dice \"Empezar a aprender\"",
   "payment-success": "Pago exitoso",
+  "wait-a-few-seconds": "Espera unos segundos mientras confirmamos tu pago...",
   "payment-failed": "Pago fallido",
+  "verifying-payment": "Verificando tu pago",
+  "waiting-for-payment": "Esperando pago...",
+  "processing-payment": "Procesando tu pago...",
   "discount-applied": "Descuento aplicado",
+  "pay-with-coinbase": "Pagar con Coinbase",
+  "please-fill-all-fields": "Por favor completa todos los campos",
+  "coinbase-status-error": "Hubo un problema al confirmar tu pago con Coinbase. Espera unos segundos y contacta al soporte si no recibes tu suscripción.",
+  "timeout-reached": "Tiempo de espera para pago con Coinbase alcanzado. Por favor intenta de nuevo.",
+  "payments-remaining": "pagos restantes",
+  "expires": "Expira",
+  "new-card": "Nueva tarjeta",
+  "pay-now": "Pagar ahora",
+  "save-card-for-later": "Guardar tarjeta para después",
+  "card-saved-successfully": "Tarjeta guardada correctamente",
+  "success": "Éxito",
   "course-details": "Detalles del plan",
   "see-financing-opt": "Opciones de financiamiento",
   "one_payment_description": "Acceso a cientos de ejercicios, proyectos tutoriales para desarrollar y cursos en las tecnologías más buscadas",
@@ -59,6 +78,7 @@
   "select-payment-plan": "Selecciona un plan de pago:",
   "what-you-will-get": "Lo que obtendrás:",
   "free-trial": "Prueba gratuita",
+  "free-trial-no-crypto": "No puedes pagar con criptomonedas en una prueba gratuita",
   "contact-information": "Información",
   "choose-your-class": "Elige tu clase",
   "summary": "Resumen",
@@ -135,6 +155,7 @@
   "payment-not-processed": "El pago no pudo ser procesado",
   "card-declined": "La tarjeta fue rechazada, por favor intenta de nuevo con otra tarjeta o contacta a tu banco",
   "payment-error": "Se produjo un error inesperado durante el proceso de pago, por favor contacta al soporte",
+  "payment-method-error": "Se produjo un error al cargar el método de pago.",
   "info": {
     "this-plan-includes": "Este plan incluye",
     "will-pay-monthly": "Pagarás ${{price}} dólares {{qty_months}} veces, por un total de ${{total_amount}}. El primer pago será hoy y el próximo el {{next_month}}.",
@@ -193,7 +214,29 @@
     "validate-email-description": "Enviamos un correo electrónico de confirmación a: <strong>{{email}}</strong>, verifica tu correo electrónico y haz clic en el enlace de confirmación.",
     "email-sent-to": "Enviamos un correo electrónico de confirmación a {{email}}!",
     "email-already-sent": "Tienes una invitación pendiente enviada hace menos de 1 día, revisa tu correo",
-    "coupon-already-applied": "El cupón ya esta siendo aplicado"
+    "coupon-already-applied": "El cupón ya esta siendo aplicado",
+    "already-renewed": "Suscripción Ya Renovada",
+    "already-renewed-description": "Este ciclo de suscripción ya fue pagado el {{paidDate}}. Tu próximo pago vence el {{nextDate}}.",
+    "error-loading-payment-methods": "Error cargando métodos de pago",
+    "missing-subscription-id": "ID de Suscripción no encontrada",
+    "missing-subscription-id-description": "Por favor proporciona subscription_id o plan_financing_id en la URL",
+    "multiple-subscription-ids": "Múltiples IDs de Suscripción",
+    "multiple-subscription-ids-description": "Por favor proporciona solo un ID: subscription_id o plan_financing_id, no ambos",
+    "payment-overdue": "Pago Vencido",
+    "payment-overdue-description": "Tu pago está vencido. Por favor contacta soporte.",
+    "subscription-deprecated-status": "La suscripción está deprecada",
+    "subscription-deprecated-status-description": "Esta suscripción no puede renovarse.",
+    "subscription-cancelled-status": "La suscripción está cancelada",
+    "subscription-cancelled-status-description": "Esta suscripción no puede renovarse porque está cancelada.",
+    "subscription-expired-status": "La suscripción está expirada",
+    "subscription-expired-status-description": "Esta suscripción está expirada; por favor contacta soporte.",
+    "error-loading-subscription": "Error cargando la suscripción",
+    "subscription-not-found": "Suscripción no encontrada",
+    "subscription-not-found-description": "La suscripción que intentas renovar no fue encontrada. Por favor verifica el enlace e inténtalo de nuevo.",
+    "subscription-not-yours": "Acceso denegado",
+    "subscription-not-yours-description": "Esta suscripción no te pertenece. Solo puedes renovar tus propias suscripciones.",
+    "subscription-invalid-status": "Estado de suscripción inválido",
+    "subscription-invalid-status-description": "Esta suscripción no puede ser renovada porque no está activa. Por favor contacta soporte si crees que esto es un error."
   },
   "alert-message-validate-email": {
     "title": "Verificar correo electrónico",
@@ -253,7 +296,6 @@
     "description": "Encontramos planes con mentorías disponibles para ti, selecciona uno antes de continuar:",
     "select-text": "Seleccionar experiencia",
     "cohort-connector": "Cohorte: {{name}}",
-    "subscription-not-found": "Suscripción no encontrada",
     "no-plan-found-for-service": "No tienes ninguna suscripción relacionado con el siguiente servicio:"
   },
   "get-premium": "Obtener Premium",
@@ -465,5 +507,6 @@
         }
       ]
     }
-  }
+  },
+  "subtotal-before-discount": "Subtotal (antes de descuentos)"
 }

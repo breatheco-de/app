@@ -2,6 +2,7 @@ import {
   SET_COHORT_SESSION,
   SET_TASK_COHORT_NULL,
   SET_USER_CAPABILITIES,
+  SET_CAPABILITIES_CACHE,
   SET_COHORTS_ASSIGNMENTS,
   SET_REVIEW_MODAL_STATE,
 } from '../types';
@@ -11,6 +12,7 @@ const initialState = {
   cohortsAssignments: {},
   taskCohortNull: [],
   userCapabilities: [],
+  capabilitiesCache: {},
   reviewModalState: {
     isOpen: false,
     currentTask: null,
@@ -41,6 +43,16 @@ const cohortHandlerReducer = (state = initialState, action) => {
       return {
         ...state,
         userCapabilities,
+      };
+    }
+    case SET_CAPABILITIES_CACHE: {
+      const { academyId, capabilities } = action.payload;
+      return {
+        ...state,
+        capabilitiesCache: {
+          ...state.capabilitiesCache,
+          [academyId]: capabilities,
+        },
       };
     }
     case SET_COHORTS_ASSIGNMENTS: {

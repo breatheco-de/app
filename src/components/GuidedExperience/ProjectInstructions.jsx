@@ -5,6 +5,11 @@ import {
   Box,
   Button,
   Skeleton,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverBody,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -17,6 +22,7 @@ import Text from '../Text';
 import Icon from '../Icon';
 import useAuth from '../../hooks/useAuth';
 import { addQueryToURL } from '../../utils';
+import useStyle from '../../hooks/useStyle';
 
 const ModalToCloneProject = lazy(() => import('./ModalToCloneProject'));
 
@@ -83,10 +89,27 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
   return (
     <>
       {startWithLearnpack ? (
-        <Button cursor="pointer" as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
-          {isStarted ? t('common:learnpack.continue-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })
-            : t('common:learnpack.start-interactive-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
-        </Button>
+        <Box display="flex" gap="10px" flexDirection={{ base: 'column', md: 'row' }}>
+          <Button cursor="pointer" as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
+            {isStarted ? t('common:learnpack.continue-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })
+              : t('common:learnpack.start-interactive-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+          </Button>
+          <Button
+            cursor="pointer"
+            size="sm"
+            padding="4px 8px"
+            fontSize="14px"
+            fontWeight="500"
+            background="gray.200"
+            color="blue.default"
+            onClick={() => {
+              setShowCloneModal(true);
+            }}
+            {...rest}
+          >
+            {t('common:learnpack.open-locally', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+          </Button>
+        </Box>
       ) : (
         <Button
           cursor="pointer"
@@ -120,6 +143,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   const { user } = useAuth();
   const { state } = useCohortHandler();
   const { cohortSession } = state;
+  const { hexColor, fontColor } = useStyle();
   const [showCloneModal, setShowCloneModal] = useState(false);
   const [vendors, setVendors] = useState([]);
   const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
@@ -191,29 +215,83 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
     return (
       <>
         <Box
-          background="blue.default"
-          display="inline-flex"
+          display="flex"
           gap="10px"
-          padding="5px"
-          borderRadius="8px"
-          flexDirection={{
+          flexDirection={publicView ? 'column' : {
             base: 'column',
             md: 'row',
           }}
+          alignItems={publicView ? 'stretch' : {
+            base: 'stretch',
+            md: 'center',
+          }}
         >
-          {(startWithLearnpack) && (
-            <Icon icon="learnpack" />
+          <Box
+            background="blue.default"
+            display="inline-flex"
+            gap="10px"
+            padding="5px"
+            borderRadius="8px"
+            flexDirection={{
+              base: 'column',
+              md: 'row',
+            }}
+          >
+            {(startWithLearnpack) && (
+              <Icon icon="learnpack" />
+            )}
+            <ButtonsHandler
+              currentAsset={currentAsset}
+              handleStartLearnpack={handleStartLearnpack}
+              setShowCloneModal={setShowCloneModal}
+              startWithLearnpack={startWithLearnpack}
+              openWithLearnpackNoSaas={openWithLearnpackNoSaas}
+              learnpackUrlFromPublicView={publicViewLearnpack}
+              variant={variant}
+              publicView={publicView}
+            />
+          </Box>
+          {currentAsset?.solution_url && currentAsset?.asset_type !== 'LESSON' && currentAsset?.asset_type !== 'ANSWER' && (
+            <Popover
+              trigger="hover"
+              placement="top"
+              closeOnBlur={false}
+            >
+              <PopoverTrigger>
+                <Button
+                  cursor="pointer"
+                  as="a"
+                  href={currentAsset.solution_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="sm"
+                  width={variant === 'extra-small' && '100%'}
+                  padding="21px 8px"
+                  fontSize="14px"
+                  fontWeight="500"
+                  border="1px solid"
+                  borderColor={hexColor.borderColor}
+                  background="none"
+                  color={fontColor}
+                  borderRadius="9px"
+                  _hover={variant === 'extra-small' && 'none'}
+                  _active={variant === 'extra-small' && 'none'}
+                  style={{ textDecoration: 'none', color: fontColor, WebkitTextFillColor: fontColor }}
+                >
+                  <Box display="flex" alignItems="center" gap="6px">
+                    <Icon icon="file" width="16px" height="16px" color={fontColor} />
+                    {t('view-solution')}
+                  </Box>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent width="auto" maxWidth="200px">
+                <PopoverArrow />
+                <PopoverBody padding="8px 12px" margin="0" fontSize="14px">
+                  {t('review-model-solution')}
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
           )}
-          <ButtonsHandler
-            currentAsset={currentAsset}
-            handleStartLearnpack={handleStartLearnpack}
-            setShowCloneModal={setShowCloneModal}
-            startWithLearnpack={startWithLearnpack}
-            openWithLearnpackNoSaas={openWithLearnpackNoSaas}
-            learnpackUrlFromPublicView={publicViewLearnpack}
-            variant={variant}
-            publicView={publicView}
-          />
         </Box>
         {showCloneModal && renderModal()}
       </>
@@ -223,34 +301,77 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   if (variant === 'small') {
     return (
       <>
-        <Box mt="10px" background="blue.default" padding="8px" borderRadius="8px" display="flex" alignItems="center" gap="10px">
-          {(startWithLearnpack) && (
-            <Icon icon="learnpack" />
-          )}
-          <Box>
-            <Text color="white" size="md">
-              {t('learnpack.choose-open')}
-            </Text>
-            <Box
-              mt="10px"
-              display="flex"
-              gap="10px"
-              flexDirection={{
-                base: 'column',
-                md: 'row',
-              }}
-            >
-              <ButtonsHandler
-                currentAsset={currentAsset}
-                handleStartLearnpack={handleStartLearnpack}
-                setShowCloneModal={setShowCloneModal}
-                startWithLearnpack={startWithLearnpack}
-                openWithLearnpackNoSaas={openWithLearnpackNoSaas}
-                variant={variant}
-                isStarted={isStarted}
-              />
+        <Box mt="10px" display="flex" gap="10px" flexDirection={publicView ? 'column' : { base: 'column', md: 'row' }} alignItems={publicView ? 'stretch' : { base: 'stretch', md: 'flex-start' }}>
+          <Box background="blue.default" padding="8px" borderRadius="8px" display="flex" alignItems="center" gap="10px" flex="1">
+            {(startWithLearnpack) && (
+              <Icon icon="learnpack" />
+            )}
+            <Box>
+              <Text color="white" size="md">
+                {t('learnpack.choose-open')}
+              </Text>
+              <Box
+                mt="10px"
+                display="flex"
+                gap="10px"
+                flexDirection={{
+                  base: 'column',
+                  md: 'row',
+                }}
+              >
+                <ButtonsHandler
+                  currentAsset={currentAsset}
+                  handleStartLearnpack={handleStartLearnpack}
+                  setShowCloneModal={setShowCloneModal}
+                  startWithLearnpack={startWithLearnpack}
+                  openWithLearnpackNoSaas={openWithLearnpackNoSaas}
+                  variant={variant}
+                  isStarted={isStarted}
+                />
+              </Box>
             </Box>
           </Box>
+          {currentAsset?.solution_url && currentAsset?.asset_type !== 'LESSON' && currentAsset?.asset_type !== 'ANSWER' && (
+            <Popover
+              trigger="hover"
+              placement="top"
+              closeOnBlur={false}
+            >
+              <PopoverTrigger>
+                <Button
+                  cursor="pointer"
+                  as="a"
+                  href={currentAsset.solution_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="sm"
+                  width={variant === 'extra-small' && '100%'}
+                  padding="21px 8px"
+                  fontSize="14px"
+                  fontWeight="500"
+                  border="1px solid"
+                  borderColor={hexColor.borderColor}
+                  background="none"
+                  color={fontColor}
+                  borderRadius="9px"
+                  _hover={variant === 'extra-small' && 'none'}
+                  _active={variant === 'extra-small' && 'none'}
+                  style={{ textDecoration: 'none', color: fontColor, WebkitTextFillColor: fontColor }}
+                >
+                  <Box display="flex" alignItems="center" gap="6px">
+                    <Icon icon="file" width="16px" height="16px" color={fontColor} />
+                    {t('view-solution')}
+                  </Box>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent width="auto" maxWidth="200px">
+                <PopoverArrow />
+                <PopoverBody padding="8px 12px" margin="0" fontSize="14px">
+                  {t('review-model-solution')}
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+          )}
         </Box>
         {showCloneModal && renderModal()}
       </>
@@ -280,10 +401,11 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
           mt="16px"
           display="flex"
           gap="16px"
-          flexDirection={{
+          flexDirection={publicView ? 'column' : {
             base: 'column',
             md: 'row',
           }}
+          alignItems={publicView ? 'stretch' : { base: 'stretch', md: 'center' }}
         >
           <ButtonsHandler
             currentAsset={currentAsset}
@@ -294,6 +416,47 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
             variant={variant}
             isStarted={isStarted}
           />
+          {currentAsset?.solution_url && currentAsset?.asset_type !== 'LESSON' && currentAsset?.asset_type !== 'ANSWER' && (
+            <Popover
+              trigger="hover"
+              placement="top"
+              closeOnBlur={false}
+            >
+              <PopoverTrigger>
+                <Button
+                  cursor="pointer"
+                  as="a"
+                  href={currentAsset.solution_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="sm"
+                  width={variant === 'extra-small' && '100%'}
+                  padding="21px 8px"
+                  fontSize="14px"
+                  fontWeight="500"
+                  border="1px solid"
+                  borderColor={hexColor.borderColor}
+                  background="none"
+                  color={fontColor}
+                  borderRadius="9px"
+                  _hover={variant === 'extra-small' && 'none'}
+                  _active={variant === 'extra-small' && 'none'}
+                  style={{ textDecoration: 'none', color: fontColor, WebkitTextFillColor: fontColor }}
+                >
+                  <Box display="flex" alignItems="center" gap="6px">
+                    <Icon icon="file" width="16px" height="16px" color={fontColor} />
+                    {t('view-solution')}
+                  </Box>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent width="auto" maxWidth="200px">
+                <PopoverArrow />
+                <PopoverBody padding="8px 12px" margin="0" fontSize="14px">
+                  {t('review-model-solution')}
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+          )}
         </Box>
       </Box>
       {showCloneModal && renderModal()}

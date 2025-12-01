@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { Avatar, Box, Button, Flex, Image, SkeletonText, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
+import { Avatar, Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon, Box, Button, Flex, Image, SkeletonText, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
 import Head from 'next/head';
 import Icon from '../../components/Icon';
 import Text from '../../components/Text';
@@ -113,6 +113,11 @@ function CoursePage() {
     backgroundColor8,
     assetCount,
     BASE_COURSE,
+    partnerDisplay,
+    partnerIcon,
+    partnerLogo,
+    suggestedPlanAddonsSlugs,
+    liveClasses,
 
     // Functions
     setShowModal,
@@ -195,38 +200,56 @@ function CoursePage() {
               </Flex>
             </Flex>
 
-            {/* Students count */}
-            <Flex alignItems="center" gridGap="16px">
-              <Flex>
-                {initialDataIsFetching ? (
-                  <AvatarSkeletonWrapped
-                    quantity={3}
-                    max={3}
-                    margin="0 -21px 0 0 !important"
-                    size={{ base: '30px', md: '40px' }}
-                  />
-                ) : (
-                  imageSource.map((imageUrl, index) => (
-                    <Image
-                      key={imageUrl}
-                      margin={index < limitViewStudents - 1 ? '0 -21px 0 0' : '0'}
-                      src={imageUrl}
-                      width={{ base: '30px', md: '40px' }}
-                      height={{ base: '30px', md: '40px' }}
-                      borderRadius="50%"
-                      objectFit="cover"
-                      alt={`Student image ${index + 1}`}
+            <Flex justifyContent="space-between">
+              {/* Students count */}
+              <Flex alignItems="center" gridGap="16px">
+                <Flex>
+                  {initialDataIsFetching ? (
+                    <AvatarSkeletonWrapped
+                      quantity={3}
+                      max={3}
+                      margin="0 -21px 0 0 !important"
+                      size={{ base: '30px', md: '40px' }}
                     />
-                  ))
-                )}
+                  ) : (
+                    imageSource.map((imageUrl, index) => (
+                      <Image
+                        key={imageUrl}
+                        margin={index < limitViewStudents - 1 ? '0 -21px 0 0' : '0'}
+                        src={imageUrl}
+                        width={{ base: '30px', md: '40px' }}
+                        height={{ base: '30px', md: '40px' }}
+                        borderRadius="50%"
+                        objectFit="cover"
+                        alt={`Student image ${index + 1}`}
+                      />
+                    ))
+                  )}
+                </Flex>
+                {initialDataIsFetching
+                  ? <SkeletonText margin="0 0 0 21px" width="10rem" noOfLines={1} />
+                  : (
+                    <Text size={{ base: '14', md: '16px' }} color="currentColor" fontWeight={400}>
+                      {students?.length > 20 ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : t('students-enrolled')}
+                    </Text>
+                  )}
               </Flex>
-              {initialDataIsFetching
-                ? <SkeletonText margin="0 0 0 21px" width="10rem" noOfLines={1} />
-                : (
-                  <Text size={{ base: '14', md: '16px' }} color="currentColor" fontWeight={400}>
-                    {students?.length > 20 ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : t('students-enrolled')}
-                  </Text>
-                )}
+              {partnerDisplay && (
+                <Flex alignItems="center" gridGap="12px" marginRight="16px">
+                  <Icon icon="4Geeks-logo" width="80px" height="auto" secondColor={fontColor} />
+                  {partnerIcon ? (
+                    <Icon icon={partnerIcon} width="70px" height="auto" color={fontColor} />
+                  ) : (
+                    <Image
+                      src={partnerLogo}
+                      alt="Partner logo"
+                      maxHeight="70px"
+                      maxWidth="200px"
+                      objectFit="contain"
+                    />
+                  )}
+                </Flex>
+              )}
             </Flex>
 
             <Flex flexDirection="column" gridGap="24px">
@@ -362,6 +385,80 @@ function CoursePage() {
                       </>
                     )}
                   </Flex>
+                  {liveClasses && liveClasses.length > 0 && (
+                    <Box mt="1rem" padding="0 18px 18px">
+                      <Accordion allowToggle defaultIndex={[0]}>
+                        <AccordionItem border="none">
+                          <AccordionButton padding="0" _hover={{ background: 'transparent' }}>
+                            <Flex flexDirection="column" alignItems="flex-start" width="100%" gridGap="8px">
+                              <Flex alignItems="center" gridGap="8px" width="100%">
+                                <Icon icon="live-event-opaque" width="24px" height="24px" color={hexColor.blueDefault} />
+                                <Text size="14px" fontWeight={700} color={hexColor.blueDefault} flex="1" textAlign="left">
+                                  {t('live-classes-available')}
+                                </Text>
+                                <AccordionIcon color={hexColor.blueDefault} />
+                              </Flex>
+                              <Text size="13px" color="gray.600" lineHeight="normal" width="100%" textAlign="left">
+                                {getAlternativeTranslation('live-classes-description', {}, { noFallback: true }) || t('live-classes-description')}
+                              </Text>
+                            </Flex>
+                          </AccordionButton>
+                          <AccordionPanel padding="12px 0 0 0">
+                            <Flex flexDirection="column">
+                              {liveClasses.map((liveClass, index) => {
+                                const startDate = liveClass?.starting_at ? new Date(liveClass.starting_at) : null;
+                                const endDate = liveClass?.ending_at || liveClass?.ended_at ? new Date(liveClass.ending_at || liveClass.ended_at) : null;
+                                const currentTime = new Date();
+
+                                // Check if the live class is currently happening
+                                const isCurrentlyLive = startDate && endDate && startDate <= currentTime && endDate > currentTime;
+
+                                const formattedDate = startDate ? startDate.toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                }) : '';
+                                return (
+                                  <Box key={liveClass?.id || liveClass?.hash}>
+                                    <Flex alignItems="center" justifyContent="space-between" padding="8px 0">
+                                      <Text size="13px" color="gray.700" lineHeight="normal" textAlign="left">
+                                        {formattedDate || liveClass?.title || ''}
+                                      </Text>
+                                      {isCurrentlyLive && (
+                                        <Flex
+                                          alignItems="center"
+                                          gridGap="4px"
+                                          background="red.500"
+                                          color="white"
+                                          padding="1px 8px"
+                                          borderRadius="full"
+                                          fontSize="11px"
+                                          fontWeight={700}
+                                          marginLeft="8px"
+                                        >
+                                          <Text>{t('common:live-now')}</Text>
+                                          <Box
+                                            width="6px"
+                                            height="6px"
+                                            borderRadius="full"
+                                            background="white"
+                                          />
+                                        </Flex>
+                                      )}
+                                    </Flex>
+                                    {index < liveClasses.length - 1 && (
+                                      <Box borderBottom="1px solid" borderColor="gray.200" />
+                                    )}
+                                  </Box>
+                                );
+                              })}
+                            </Flex>
+                          </AccordionPanel>
+                        </AccordionItem>
+                      </Accordion>
+                    </Box>
+                  )}
                   <Flex flexDirection="column" mt="1rem" gridGap="14px" padding="0 18px 18px">
                     {features?.showOnSignup?.length > 0 && features?.showOnSignup?.map((item, index) => {
                       const lastNumberForBorder = features.showOnSignup.length - 1;
@@ -575,6 +672,7 @@ function CoursePage() {
             externalSelection={financeSelected}
             title={getAlternativeTranslation('pricing-title')}
             subtitle={getAlternativeTranslation('pricing-subtitle')}
+            suggestedPlanAddonsSlugs={suggestedPlanAddonsSlugs}
             plan={data?.plan_slug}
             course={data?.slug}
             cohortId={cohortId}

@@ -171,8 +171,8 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
   const { user, isAuthenticatedWithRigobot, conntectToRigobot, cohorts } = useAuth();
   const { rigo, isRigoInitialized } = useRigo();
   const { featuredLight, hexColor } = useStyle();
-  const { cohortSession } = useCohortHandler();
   const { isWhiteLabelFeatureEnabled } = useWhiteLabel();
+  const { cohortSession, handleShortcutClick } = useCohortHandler();
   const [mentors, setMentors] = useState([]);
   const [showStudentsModal, setShowStudentsModal] = useState(false);
   const [openAttendance, setOpenAttendance] = useState(false);
@@ -402,7 +402,7 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
             {shortcuts.map((shortcut) => (
               <CustomButton
                 key={languageFix(shortcut.label, lang)}
-                onClick={() => window.open(languageFix(shortcut.url, lang), '_blank')}
+                onClick={() => handleShortcutClick(shortcut)}
                 infoTooltip={{
                   leftComponent: renderShortcutIcon(shortcut, '19px'),
                   title: languageFix(shortcut.label, lang),

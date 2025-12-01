@@ -47,11 +47,12 @@ const useSignup = () => {
   const redirectedFrom = getStorageItem('redirected-from');
   const couponsQuery = getQueryString('coupons');
   const addOnsSimple = getQueryString('add_ons');
+  const countryCodeQueryString = getQueryString('country_code');
 
   const addOnsIds = parseAddOnIdsFromQuery(addOnsSimple);
 
   const defaultPlan = process.env.BASE_PLAN || 'basic';
-  const country_code = location?.countryShort;
+  const country_code = countryCodeQueryString || location?.countryShort;
 
   const subscriptionStatusDictionary = {
     PREPARING_FOR_COHORT: 'PREPARING_FOR_COHORT',
@@ -66,6 +67,7 @@ const useSignup = () => {
     selectedPlan,
     paymentStatus,
     isSubmittingPayment,
+    selectedPlanAddons,
   } = state;
 
   const isPaymentIdle = paymentStatus === 'idle';
@@ -576,6 +578,7 @@ const useSignup = () => {
           chosen_period: manyInstallmentsExists ? undefined : (selectedPlan?.period || 'HALF'),
           coupons: checkingData?.coupons,
           add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
+          payment_method: 'stripe',
         };
       }
       return {
@@ -669,7 +672,54 @@ const useSignup = () => {
     }
   };
 
-  const getChecking = async (plansData) => {
+  const handleCoinbasePayment = async () => {
+    const manyInstallmentsExists = selectedPlan?.how_many_months > 0 || selectedPlan?.period === 'FINANCING';
+    const isTtrial = ['FREE', 'TRIAL'].includes(selectedPlan?.type);
+    if (isTtrial) {
+      createToast({
+        position: 'top',
+        title: t('common:error'),
+        description: t('signup:free-trial-no-crypto'),
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+      setIsSubmittingPayment(false);
+      return null;
+    }
+    const getRequests = () => {
+      if (!isTtrial) {
+        return {
+          type: checkingData?.type,
+          token: checkingData?.token,
+          how_many_installments: selectedPlan?.how_many_months || undefined,
+          chosen_period: manyInstallmentsExists ? undefined : (selectedPlan?.period || 'HALF'),
+          coupons: checkingData?.coupons,
+          add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
+          payment_method: 'coinbase',
+          return_url: `${window.location.origin}/crypto-payment-success`,
+        };
+      }
+      return null;
+    };
+    try {
+      const requestBody = getRequests();
+      const response = await bc.payment().pay({
+        country_code,
+        ...requestBody,
+        conversion_info: {
+          ...userSession,
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error('Error creating Coinbase charge:', error);
+      setIsSubmittingPayment(false);
+      return error;
+    }
+  };
+
+  const getChecking = async (plansData, planAddonsOverride) => {
     const src = (addOnsSimple || '').trim();
     let addOnsArray = [];
     if (src) {
@@ -695,9 +745,12 @@ const useSignup = () => {
       }).filter((it) => Number.isFinite(it.service) && it.service > 0 && Number.isFinite(it.how_many) && it.how_many > 0);
     }
 
+    const planAddons = Array.isArray(planAddonsOverride) ? planAddonsOverride : selectedPlanAddons;
+
     const checkingBody = {
       type: 'PREVIEW',
       plans: [plansData?.slug],
+      plan_addons: Array.isArray(planAddons) && planAddons.length > 0 ? planAddons : undefined,
       coupons: couponsQuery ? [couponsQuery] : undefined,
       country_code,
       service_items: addOnsArray,
@@ -715,10 +768,23 @@ const useSignup = () => {
       delete finalData.id;
 
       if (response.status < 400) {
-        const result = {
+        const rawCoupons = Array.isArray(data?.coupons) ? data.coupons : [];
+        const normalizedCoupons = rawCoupons
+          .map((coup) => (typeof coup === 'string' ? coup : coup?.slug))
+          .filter((slug) => typeof slug === 'string' && slug.length > 0);
+
+        const merged = {
           ...data,
           ...finalData,
         };
+
+        const result = {
+          ...merged,
+          coupons: normalizedCoupons,
+          coupons_detail: rawCoupons,
+          checking_raw: data,
+        };
+
         setCheckingData(result);
         return result;
       }
@@ -777,7 +843,6 @@ const useSignup = () => {
   const getPaymentMethods = async (ownerId) => {
     try {
       if (isAuthenticated) {
-        setLoader('paymentMethods', false);
         // const ownerId = selectedPlan.owner.id;
         setLoader('paymentMethods', true);
         const resp = await bc.payment({
@@ -793,6 +858,30 @@ const useSignup = () => {
     } catch (e) {
       console.log(e);
       setLoader('paymentMethods', false);
+    }
+  };
+
+  const getSavedCard = async (ownerId) => {
+    try {
+      if (isAuthenticated && ownerId) {
+        const resp = await bc.payment({ academy: ownerId }).getSavedCard();
+        if (resp.status < 400 && resp.data?.has_payment_method) {
+          const { data } = resp;
+          return data;
+        }
+      }
+      return null;
+    } catch (e) {
+      console.log('Error getting saved card:', e);
+      createToast({
+        position: 'top',
+        title: t('error'),
+        description: t('error-loading-saved-card'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return null;
     }
   };
 
@@ -894,17 +983,6 @@ const useSignup = () => {
             ...coupon,
             plan,
           });
-        } else {
-          const userCoupons = await bc.payment({ plan }).getMyUserCoupons();
-          const firstAuto = userCoupons.data
-            .filter((c) => c.auto === true && c.is_valid === true)
-            .sort((a, b) => new Date(a.offered_at) - new Date(b.offered_at))[0];
-          if (firstAuto) {
-            setSelfAppliedCoupon({
-              ...firstAuto,
-              plan,
-            });
-          }
         }
       }
     } catch (e) {
@@ -966,7 +1044,6 @@ const useSignup = () => {
 
       if (respPayment?.status_code >= 400) {
         setPaymentStatus('error');
-        console.log('wililililili', respPayment?.detail);
         setDeclinedPayment({
           title: t('transaction-denied'),
           description: respPayment?.detail || t('payment-not-processed'),
@@ -1030,10 +1107,12 @@ const useSignup = () => {
     isSecondStep,
     isThirdStep,
     handlePayment,
+    handleCoinbasePayment,
     getChecking,
     getPaymentText,
     handleServiceToConsume,
     getPaymentMethods,
+    getSavedCard,
     getPriceWithDiscount,
     getSelfAppliedCoupon,
     applyDiscountCouponsToPlans,

@@ -70,7 +70,7 @@ function ChangeCardPage() {
       >
         <Text fontSize="xl" fontWeight="bold" mb={4}>{t('change-card-info')}</Text>
         {!isSuccess ? (
-          <CardForm onSubmit={handleCardSubmit} buttonText={t('change-card-info-action')} />
+          <CardForm academyId={user?.id} onSubmit={handleCardSubmit} buttonText={t('change-card-info-action')} />
         ) : (
           <>
             <Box

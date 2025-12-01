@@ -49,7 +49,16 @@ function OlComponent({ children }) {
   return (<ol className="md-bullet">{children}</ol>);
 }
 function ImgComponent(props) {
-  return (<Img className="MDImg" alt={props?.alt} src={props?.src} />);
+  const transformImageUrl = (url) => {
+    if (!url || typeof url !== 'string') return url;
+    if (url.includes('github.com') && url.includes('/blob/')) {
+      return url.replace('https://github.com', 'https://raw.githubusercontent.com').replace('/blob', '');
+    }
+    return url;
+  };
+
+  const imageSrc = transformImageUrl(props?.src);
+  return (<Img className="MDImg" alt={props?.alt} src={imageSrc} />);
 }
 function ParagraphComponent({ children }) {
   return (<MDText>{children}</MDText>);

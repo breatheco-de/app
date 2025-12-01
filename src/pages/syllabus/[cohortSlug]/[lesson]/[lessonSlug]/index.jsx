@@ -320,7 +320,11 @@ function SyllabusContent() {
     if (taskTodo.length > 0) {
       const foundTask = taskTodo.find((el) => (
         el.task_type === assetTypeValues[lesson]
-        && (translations.includes(el.associated_slug) || currentAsset?.aliases?.includes(el.associated_slug))
+        && (
+          el.associated_slug === lessonSlug
+          || translations.includes(el.associated_slug)
+          || currentAsset?.aliases?.includes(el.associated_slug)
+        )
       ));
       setCurrentTask(foundTask);
     }
@@ -862,6 +866,17 @@ function SyllabusContent() {
             onToggle={onToggle}
             handleStartDay={handleStartDay}
             grantSyllabusAccess={grantAccess}
+            isStudent={!professionalRoles.includes(cohortSession?.cohort_user?.role)}
+            teacherInstructions={{
+              existContentToShow: extendedInstructions !== null,
+              actionHandler: () => {
+                setExtendedIsEnabled(!extendedIsEnabled);
+                if (extendedIsEnabled === false) {
+                  scrollTop();
+                }
+              },
+              actionState: extendedIsEnabled,
+            }}
           />
         ) : (
           <TimelineSidebar
@@ -1090,7 +1105,7 @@ function SyllabusContent() {
                           <Box background={featuredColor} width="100%" height={isAvailableAsSaas ? '100%' : '100vh'} borderRadius="14px">
                             <iframe
                               id="iframe"
-                              src={`https://assessment.4geeks.com/quiz/${quizSlug}?isAnon=true&token=${accessToken}&academy=${cohortSession?.academy?.id}`}
+                              src={`https://assessment.4geeks.com/quiz/${quizSlug}?isAnon=${!cohortSession?.enable_assessments_telemetry}&token=${accessToken}&academy=${cohortSession?.academy?.id}`}
                               style={{
                                 width: '100%',
                                 height: '100%',
