@@ -419,14 +419,27 @@ const useCheckout = () => {
     }
   };
 
-  const removeManualCoupons = () => {
+  const removeManualCoupons = async () => {
     setAllCoupons((prev) => {
       const filtered = prev.filter((c) => c?.source !== 'manual');
       return filtered;
     });
     if (checkingData?.id) {
-      setLoader('summary', true);
-      saveCouponToBag([''], checkingData.id, '', true);
+      try {
+        setLoader('summary', true);
+        await saveCouponToBag([''], checkingData.id, '', true);
+        if (planData) {
+          const checking = await getChecking(planData, selectedPlanAddons);
+          const autoSelectedPlan = findAutoSelectedPlan(checking);
+          if (autoSelectedPlan) {
+            setSelectedPlan(autoSelectedPlan);
+          }
+        }
+      } catch (error) {
+        console.error('Error removing manual coupons:', error);
+      } finally {
+        setLoader('summary', false);
+      }
     }
   };
 
