@@ -153,26 +153,21 @@ function ConnectGithubRigobot({ ...rest }) {
                 </Text>
               </>
             ) : (
-              <Tooltip label={!user?.github?.username ? t('rigobot-requires-github-connection') : ''} placement="top">
-                <Button
-                  variant="link"
-                  fontSize="16px"
-                  isDisabled={!user?.github?.username}
-                  _hover={{ textDecoration: 'none' }}
-                  margin={{ base: '0 14px 0 14px', sm: '0 0 0 24px' }}
-                  textAlign="start"
-                  color="blue.default"
-                  cursor="pointer"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (user?.github?.username) {
-                      conntectToRigobot();
-                    }
-                  }}
-                >
-                  {t('connect-rigobot')}
-                </Button>
-              </Tooltip>
+              <Button
+                variant="link"
+                fontSize="16px"
+                _hover={{ textDecoration: 'none' }}
+                margin={{ base: '0 14px 0 14px', sm: '0 0 0 24px' }}
+                textAlign="start"
+                color="blue.default"
+                cursor="pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  conntectToRigobot();
+                }}
+              >
+                {t('connect-rigobot')}
+              </Button>
             )}
           </Box>
         </InputGroup>

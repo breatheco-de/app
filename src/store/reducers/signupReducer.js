@@ -15,6 +15,7 @@ const initialState = {
   },
   planData: null,
   selectedPlan: null,
+  selectedPlanAddons: null,
   loader: {
     plan: true,
   },
@@ -85,6 +86,12 @@ const signupReducer = (state = initialState, action) => {
       return {
         ...state,
         selectedService: action.payload,
+      };
+    }
+    case 'SET_SELECTED_PLAN_ADDONS': {
+      return {
+        ...state,
+        selectedPlanAddons: action.payload,
       };
     }
 

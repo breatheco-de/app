@@ -15,6 +15,10 @@
     "read-more": "Read the science behind it.",
     "read-more-link": "https://4geeks.com/mastering-technical-knowledge"
   },
+  "plan-addons": {
+    "section-title": "You can also include:",
+    "section-title-included": "Also included:"
+  },
   "view-course-warning": "View course prerequisites for {{courseName}}",
   "free_trial_one_payment": "{{description}} and then {{currency}}{{price}} one time",
   "free_trial_multiple_payments": "{{description}} and then {{numPayments}} payments of {{currency}}{{firstPrice}} or {{currency}}{{oneTimePrice}} one time",
@@ -34,8 +38,22 @@
   "you-are-getting": "You are getting",
   "plan-is-ready": "You're almost ready! To finish, press the blue button below that says 'Start Learning'.",
   "payment-success": "Payment successful",
+  "wait-a-few-seconds": "Wait a few seconds while we confirm your payment...",
   "payment-failed": "Payment failed",
+  "waiting-for-payment": "Waiting for payment...",
+  "processing-payment": "Processing your payment...",
   "discount-applied": "Discount applied",
+  "pay-with-coinbase": "Pay with Coinbase",
+  "please-fill-all-fields": "Please fill all fields",
+  "coinbase-status-error": "We had a problem confirming your payment with Coinbase. Wait a few seconds and contact support if you don't get your subscription.",
+  "timeout-reached": "Timeout for payment with Coinbase reached. Please try again.",
+  "payments-remaining": "payments remaining",
+  "expires": "Expires",
+  "new-card": "New card",
+  "pay-now": "Pay now",
+  "save-card-for-later": "Save my card for later",
+  "card-saved-successfully": "Card saved successfully",
+  "success": "Success",
   "see-financing-opt": "See financing options",
   "course-details": "Plan details",
   "one_payment_description": "Access hundreds of exercises, projects tutorials to develop and courses in the most wanted technologies",
@@ -44,6 +62,7 @@
   "half_yearly_payment_description": "Access hundreds of exercises, projects tutorials to develop and courses in the most wanted technologies",
   "yearly_payment_description": "Access hundreds of exercises, projects tutorials to develop and courses in the most wanted technologies",
   "financing_many_months_description": "You will pay {{currency}}{{monthly_price}} for {{many_months}} months and get access hundreds of exercises, projects tutorials to develop and courses in the most wanted technologies",
+  "free-trial-no-crypto": "You cannot pay with cryptocurrencies in a free trial",
   "connector_duration_trial": "trial",
   "what-includes": "What includes?",
   "continue-learning": "Continue learning",
@@ -135,6 +154,7 @@
   "payment-not-processed": "Payment could not be processed",
   "card-declined": "The card was declined, please try again with another card or contact your bank",
   "payment-error": "An unexpected error occurred during the payment process, please contact support",
+  "payment-method-error": "An error occurred while loading the payment method.",
   "info": {
     "this-plan-includes": "This plan includes",
     "will-pay-monthly": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}. The first payment will be today and the next payment will be {{next_month}}.",
@@ -193,7 +213,29 @@
     "validate-email-description": "We sent a confirmation email to: <strong>{{email}}</strong>, please check your email and click on the confirmation link.",
     "email-sent-to": "We sent you a confirmation email to {{email}}!",
     "email-already-sent": "You have a pending invitation sent less than 1 day ago, check your email",
-    "coupon-already-applied": "Coupon already applied"
+    "coupon-already-applied": "Coupon already applied",
+    "already-renewed": "Subscription Already Renewed",
+    "already-renewed-description": "This subscription cycle was already paid on {{paidDate}}. Your next payment is due on {{nextDate}}.",
+    "error-loading-payment-methods": "Error loading payment methods",
+    "missing-subscription-id": "Missing Subscription ID",
+    "missing-subscription-id-description": "Please provide either subscription_id or plan_financing_id in the URL",
+    "multiple-subscription-ids": "Multiple Subscription IDs",
+    "multiple-subscription-ids-description": "Please provide only one ID: either subscription_id or plan_financing_id, not both",
+    "payment-overdue": "Payment Overdue",
+    "payment-overdue-description": "Your payment is overdue.",
+    "subscription-deprecated-status": "Subscription is deprecated",
+    "subscription-deprecated-status-description": "This subscription cannot be renewed.",
+    "subscription-cancelled-status": "Subscription is cancelled",
+    "subscription-cancelled-status-description": "This subscription cannot be renewed because it's cancelled.",
+    "subscription-expired-status": "Subscription status is expired",
+    "subscription-expired-status-description": "This subscription is expired; please contact support.",
+    "error-loading-subscription": "Error loading subscription",
+    "subscription-not-found": "Subscription not found",
+    "subscription-not-found-description": "The subscription you're trying to renew was not found. Please check the link and try again.",
+    "subscription-not-yours": "Access denied",
+    "subscription-not-yours-description": "This subscription doesn't belong to you. You can only renew your own subscriptions.",
+    "subscription-invalid-status": "Invalid subscription status",
+    "subscription-invalid-status-description": "This subscription cannot be renewed because it's not active. Please contact support if you believe this is an error."
   },
   "alert-message-validate-email": {
     "title": "Verify email",
@@ -253,7 +295,6 @@
     "description": "We have plans with mentoring available for you, select one before continuing:",
     "select-text": "Select experience",
     "cohort-connector": "Cohort: {{name}}",
-    "subscription-not-found": "Subscription not found",
     "no-plan-found-for-service": "You don't have any subscription related to the following services:"
   },
   "get-premium": "Get Premium",
@@ -467,5 +508,6 @@
         }
       ]
     }
-  }
+  },
+  "subtotal-before-discount": "Subtotal (before discount)"
 }

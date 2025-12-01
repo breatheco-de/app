@@ -23,7 +23,7 @@ function SyllabusModule({
   const currentTasks = showPendingTasks ? filteredContentByPending : filteredContent;
   const cohortId = cohortData?.id || cohortData?.cohort_id;
 
-  const handleStartDay = () => {
+  const handleStartDay = async () => {
     const updatedTasks = (content || [])?.map((l) => ({
       ...l,
       title: l.title,
@@ -32,6 +32,7 @@ function SyllabusModule({
       task_type: l.task_type,
       cohort: cohortId,
     }));
+
     reportDatalayer({
       dataLayer: {
         event: 'open_syllabus_module',
@@ -40,18 +41,24 @@ function SyllabusModule({
         agent: getBrowserInfo(),
       },
     });
-    startDay({
-      cohort: cohortData,
-      newTasks: updatedTasks,
-    });
 
-    if (content && content.length > 0) {
-      const firstModule = content[0];
-      const langPrefix = lang !== 'en' ? `/${lang}` : '';
-      const moduleSlug = firstModule?.slug?.slug || firstModule.slug;
-      const moduleType = firstModule.task_type.toLowerCase();
-      const url = `${langPrefix}/syllabus/${cohortData.slug}/${moduleType}/${moduleSlug}`;
-      window.location.href = url;
+    try {
+      await startDay({
+        cohort: cohortData,
+        newTasks: updatedTasks,
+      });
+
+      if (content && content.length > 0) {
+        const firstModule = content[0];
+        const langPrefix = lang !== 'en' ? `/${lang}` : '';
+        const moduleSlug = firstModule?.slug?.slug || firstModule.slug;
+        const moduleType = firstModule.type?.toLowerCase() || firstModule.task_type?.toLowerCase();
+        const url = `${langPrefix}/syllabus/${cohortData.slug}/${moduleType}/${moduleSlug}`;
+
+        window.location.href = url;
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 

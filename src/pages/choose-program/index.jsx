@@ -93,8 +93,8 @@ function chooseProgram() {
   const allSyllabus = useMemo(() => {
     const syllabus = [];
 
-    cohorts.forEach(({ syllabus_version: syllabusVersion }) => {
-      if (!syllabus.includes(syllabusVersion.slug)) syllabus.push(syllabusVersion.slug);
+    cohorts?.forEach(({ syllabus_version: syllabusVersion }) => {
+      if (!syllabus.includes(syllabusVersion?.slug)) syllabus.push(syllabusVersion?.slug);
     });
     return syllabus;
   }, [cohorts]);
@@ -173,11 +173,9 @@ function chooseProgram() {
           if (!cohortIsReady) {
             const { cohorts: myCohorts } = await fetchUserAndCohorts();
             setCohorts(myCohorts);
-            console.log('revalidated on:', new Date().toLocaleString());
             setIsRevalidating(false);
           } else {
             setIsRevalidating(false);
-            console.log('Start learning!');
             removeStorageItem('subscription-process');
           }
         }

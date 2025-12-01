@@ -55,6 +55,7 @@ const breathecode = {
       register: (payload) => axios.post(`${url}/user/register`, payload),
       subscribe: (payload) => axios.post(`${url}/subscribe/`, { ...payload }),
       removeGithub: () => axios.delete(`${url}/github/me`),
+      checkDiscordServer: (serverId, cohortSlug) => axios.get(`${url}/discord/server/${serverId}/${cohortSlug}`),
     };
   },
 
@@ -269,6 +270,12 @@ const breathecode = {
       subscriptions: () => axios.get(`${url}/me/subscription${qs}`),
       pay: (data) => axios.post(`${url}/pay${qs}`, data),
       addCard: (data) => axios.post(`${url}/card${qs}`, data),
+      getSavedCard: () => axios.get(`${url}/card${qs}`),
+      getStripePublishableKey: () => axios.get(`${url}/academy/publishable-key${qs}`),
+      renew: (data) => axios.post(`${url}/renew${qs}`, data),
+      renewSubscription: (data) => axios.post(`${url}/renew/subscription${qs}`, data),
+      renewPlanFinancing: (data) => axios.post(`${url}/renew/planfinancing${qs}`, data),
+      getCoinbaseCharge: (chargeId) => axios.get(`${url}/coinbase/charge/${chargeId}${qs}`),
       cancelSubscription: (id) => axios.put(`${url}/subscription/${id}/cancel${qs}`),
       cancelMySubscription: (id) => axios.put(`${url}/me/subscription/${id}/cancel${qs}`),
       reactivateMySubscription: (id) => axios.put(`${url}/me/subscription/${id}/reactivate${qs}`),
