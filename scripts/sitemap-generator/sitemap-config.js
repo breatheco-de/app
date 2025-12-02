@@ -92,8 +92,8 @@ function addPageWithHrefLang(pagePath, index, data) {
 
     return ['default', 'us', 'en'].includes(lang) ? `<xhtml:link rel="alternate" hreflang="x-default" href="${urlAlternate}" />
     <xhtml:link rel="alternate" hreflang="${locationLang[lang] || 'en'}" href="${urlAlternate}" />` : `
-    <xhtml:link rel="alternate" hrefLang="${locationLang[lang]}" href="${urlAlternate}" />`;
-  }) : '';
+    <xhtml:link rel="alternate" hreflang="${locationLang[lang]}" href="${urlAlternate}" />`;
+  }).join('\n    ') : '';
   return `${index === 0 ? '<url>' : '  <url>'}
     <loc>${`${websiteUrl}${route}`}</loc>
     ${hreflangs}

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Avatar, Box, Divider, Flex } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
@@ -14,7 +13,6 @@ import { BREATHECODE_HOST } from '../../utils/variables';
 import Icon from '../Icon';
 import Link from '../NextChakraLink';
 import { reportDatalayer } from '../../utils/requests';
-import { parseQuerys } from '../../utils/url';
 import Heading from '../Heading';
 
 const getAssetPath = (asset) => {
@@ -48,8 +46,6 @@ export const getDifficultyColors = (currDifficulty) => {
 
 function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest }) {
   const { t, lang } = useTranslation('live-event');
-  const router = useRouter();
-  const { query } = router;
   const { featuredColor, borderColor, backgroundColor, fontColor } = useStyle();
   const [date, setDate] = useState({});
   const language = data?.lang;
@@ -79,9 +75,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
 
   const getLink = () => {
     if (isLesson || isExercise || isProject || isHowTo) {
-      const { search, techs, difficulty, withVideo } = query;
-      const searchParams = parseQuerys({ search, techs, difficulty, withVideo });
-      return `${langConnector}/${assetPath}/${data.slug}${searchParams}`;
+      return `${langConnector}/${assetPath}/${data.slug}`;
     }
     return `/${data.slug}`;
   };
@@ -152,8 +146,13 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
             </Box>
           ) : (
             <Flex flexDirection="row" justifyContent="space-between">
-              <Link
-                href={getLink()}
+              <Box
+                as="span"
+                cursor="pointer"
+                textDecoration="none"
+                _hover={{
+                  textDecoration: 'underline',
+                }}
                 onClick={() => {
                   reportDatalayer({
                     dataLayer: {
@@ -165,6 +164,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
                       agent: getBrowserInfo(),
                     },
                   });
+                  window.location.href = getLink();
                 }}
                 _after={{
                   content: '""',
@@ -173,7 +173,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
                 }}
               >
                 {data?.title}
-              </Link>
+              </Box>
               <Icon icon="arrowRight" color={fontColor} width="15px" height="15px" />
             </Flex>
           )}
