@@ -101,7 +101,7 @@ function WhiteLabelProvider({ children }) {
     try {
       const { data } = await bc.admissions().getAcademy(WHITE_LABEL_ACADEMY);
 
-      const features = data?.white_label_features || null;
+      const features = data?.academy_features || null;
 
       if (features) {
         setCachedFeatures(features);

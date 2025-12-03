@@ -2,13 +2,12 @@ import {
   Box, Flex, IconButton, Avatar, Stack, Collapse, useColorModeValue,
   useDisclosure, useColorMode, Popover, PopoverTrigger,
   PopoverContent, PopoverArrow, Button, Divider,
-  useBreakpointValue,
+  useBreakpointValue, Image,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import {
   useState, memo, useEffect,
 } from 'react';
-import Image from 'next/image';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -263,7 +262,7 @@ function Navbar({ translations, pageProps }) {
                   style={{
                     maxHeight: '35px',
                     minHeight: '35px',
-                    objectFit: 'cover',
+                    objectFit: 'contain',
                     filter: imageFilter,
                   }}
                   alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
@@ -286,7 +285,7 @@ function Navbar({ translations, pageProps }) {
                   style={{
                     maxHeight: '50px',
                     minHeight: '50px',
-                    objectFit: pageProps?.existsWhiteLabel ? 'contain' : 'cover',
+                    objectFit: 'contain',
                     filter: imageFilter,
                   }}
                   alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
