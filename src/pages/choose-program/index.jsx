@@ -20,6 +20,7 @@ import useStyle from '../../hooks/useStyle';
 import useCustomToast from '../../hooks/useCustomToast';
 import useSignup from '../../hooks/useSignup';
 import useSubscriptions from '../../hooks/useSubscriptions';
+import useWhiteLabel from '../../hooks/useWhiteLabel';
 import LiveEvent from '../../components/LiveEvent';
 import NextChakraLink from '../../components/NextChakraLink';
 import { SimpleSkeleton } from '../../components/Skeleton';
@@ -78,9 +79,16 @@ function chooseProgram() {
   const [referralCoupon, setReferralCoupon] = useState(null);
   const { createToast } = useCustomToast({ toastId: 'invitation-error-accepted' });
   const { hexColor } = useStyle();
+  const { isWhiteLabelFeatureEnabled } = useWhiteLabel();
   const isClosedLateModal = getStorageItem('isClosedLateModal');
   const TwentyFourHoursInMinutes = 720;
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
+
+  const canShowReferralProgram = isWhiteLabelFeatureEnabled('allow_referral_program');
+  const canShowEvents = isWhiteLabelFeatureEnabled('allow_events');
+  const canShowMentoring = isWhiteLabelFeatureEnabled('allow_mentoring');
+  const canShowFeedbackWidget = isWhiteLabelFeatureEnabled('allow_feedback_widget');
+  const canShowCommunityWidget = isWhiteLabelFeatureEnabled('allow_community_widget');
 
   const allSyllabus = useMemo(() => {
     const syllabus = [];
@@ -92,6 +100,14 @@ function chooseProgram() {
   }, [cohorts]);
 
   const getServices = async (userRoles) => {
+    if (!canShowMentoring) {
+      setMentorshipServices({
+        isLoading: false,
+        data: [],
+      });
+      return;
+    }
+
     if (userRoles?.length > 0) {
       delete axios.defaults.headers.common.Academy;
       const mentorshipPromises = await userRoles.map((role) => bc.mentorship({ academy: role?.academy?.id }, true).getService()
@@ -233,6 +249,8 @@ function chooseProgram() {
   }, [cohorts, cohortsAssignments]);
 
   useEffect(() => {
+    if (!canShowEvents) return;
+
     bc.events({ upcoming: true, limit: 20 }).meOnlineEvents()
       .then(({ data }) => {
         const results = data?.results || [];
@@ -265,7 +283,7 @@ function chooseProgram() {
         return existentLiveClasses;
       });
     });
-  }, []);
+  }, [canShowEvents]);
 
   useEffect(() => {
     if (user?.date_joined) {
@@ -283,6 +301,11 @@ function chooseProgram() {
   }, [user]);
 
   const getReferralCoupon = async () => {
+    if (!canShowReferralProgram) {
+      setLoadingReferral(false);
+      return;
+    }
+
     setLoadingReferral(true);
     const response = await bc.payment().getMyCoupon();
     if (response?.data?.length > 0) {
@@ -293,7 +316,7 @@ function chooseProgram() {
 
   useEffect(() => {
     getReferralCoupon();
-  }, []);
+  }, [canShowReferralProgram]);
 
   const getPendingInvites = async () => {
     try {
@@ -616,32 +639,38 @@ function chooseProgram() {
           )}
         </Box>
         <Flex flexDirection="column" gridGap="42px" flex={{ base: 1, md: 0.3 }}>
-          <Box zIndex={10}>
-            <ReferralFeatured couponData={referralCoupon} isLoading={loadingReferral} />
-          </Box>
-          <Box zIndex={10}>
-            <LiveEvent
-              featureLabel={t('common:live-event.title')}
-              featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-              mainClasses={liveClasses?.length > 0 ? liveClasses : []}
-              otherEvents={events}
-              margin="0 auto"
-              cohorts={cohorts}
-            />
-          </Box>
-          <Box zIndex={10}>
-            {!mentorshipServices.isLoading && mentorshipServices?.data?.length > 0 && (
-              <SupportSidebar
-                allCohorts={cohorts}
-                allSyllabus={allSyllabus}
-                services={mentorshipServices.data}
-                subscriptions={allSubscriptions}
+          {canShowReferralProgram && (
+            <Box zIndex={10}>
+              <ReferralFeatured couponData={referralCoupon} isLoading={loadingReferral} />
+            </Box>
+          )}
+          {canShowEvents && (
+            <Box zIndex={10}>
+              <LiveEvent
+                featureLabel={t('common:live-event.title')}
+                featureReadMoreUrl={t('common:live-event.readMoreUrl')}
+                mainClasses={liveClasses?.length > 0 ? liveClasses : []}
+                otherEvents={events}
+                margin="0 auto"
+                cohorts={cohorts}
               />
-            )}
-          </Box>
-          <Feedback />
+            </Box>
+          )}
+          {canShowMentoring && (
+            <Box zIndex={10}>
+              {!mentorshipServices.isLoading && mentorshipServices?.data?.length > 0 && (
+                <SupportSidebar
+                  allCohorts={cohorts}
+                  allSyllabus={allSyllabus}
+                  services={mentorshipServices.data}
+                  subscriptions={allSubscriptions}
+                />
+              )}
+            </Box>
+          )}
+          {canShowFeedbackWidget && <Feedback />}
 
-          {cohorts.every((elem) => elem.available_as_saas) && (
+          {canShowCommunityWidget && cohorts.every((elem) => elem.available_as_saas) && (
             <NextChakraLink
               href={t('whats-app-link')}
               aria-label="4Geeks Academy community"
