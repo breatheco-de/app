@@ -155,6 +155,21 @@
       "label": "Dashboard",
       "private": true,
       "href": "/choose-program"
+    },
+    {
+      "label": "More ways of learning",
+      "private": true,
+      "href": "https://4geeks.com",
+      "icon": "4GeeksIcon",
+      "image": "/static/images/4geeks.png",
+      "description": "Miami Tech Works is part of 4Geeks learning community. Go to 4Geeks.com for more interactive lessons, workshops, mentorhips, and learning with AI.",
+      "with_popover": {
+        "active": true,
+        "title": "Take me to 4Geeks.com",
+        "link": "https://4geeks.com"
+      },
+      "type": "marketing",
+      "subMenu": []
     }
   ],
   "languages": [
