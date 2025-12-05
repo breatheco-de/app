@@ -48,6 +48,8 @@ export const useBootcamp = () => {
   const [planData, setPlanData] = useState({});
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [liveClasses, setLiveClasses] = useState([]);
+  const [isLoadingLiveClasses, setIsLoadingLiveClasses] = useState(false);
   const { location, isLoadingLocation } = useSession();
   const router = useRouter();
   const translationsObj = getTranslations(t);
@@ -76,6 +78,11 @@ export const useBootcamp = () => {
   const reviewsData = t('course:reviews', {}, { returnObjects: true });
   const reviewsForCurrentCourse = reviewsData[data?.slug] || reviewsData[data?.plan_slug];
 
+  // Get suggested plan addons slugs from course (it's an array of strings, not objects)
+  const suggestedPlanAddonsSlugs = Array.isArray(data?.suggested_plan_addon) && data.suggested_plan_addon.length > 0
+    ? data.suggested_plan_addon.filter((slug) => slug && typeof slug === 'string' && slug.length > 0).join(',')
+    : null;
+
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
     plan: featuredPlanToEnroll?.plan_slug,
     has_available_cohorts: planData?.has_available_cohorts,
@@ -84,7 +91,8 @@ export const useBootcamp = () => {
     course_title: data?.course_translation?.title,
     coupon: getQueryString('coupon'),
     course: data?.slug,
-  }) : `?plan=${data?.plan_slug}&cohort=${cohortId}&course=${data?.slug}`;
+    ...(suggestedPlanAddonsSlugs && { plan_addons: suggestedPlanAddonsSlugs }),
+  }) : `?plan=${data?.plan_slug}&cohort=${cohortId}&course=${data?.slug}${suggestedPlanAddonsSlugs ? `&plan_addons=${suggestedPlanAddonsSlugs}` : ''}`;
 
   const featurePrice = planPriceFormatter(featuredPlanToEnroll, planList, allDiscounts);
 
@@ -95,12 +103,19 @@ export const useBootcamp = () => {
       return null;
     }, data?.course_translation?.landing_variables);
 
-    return result !== null ? result : t(slug, params, options);
+    if (result !== null) return result;
+    if (options.noFallback) return null;
+
+    const translation = t(slug, params, options);
+    return translation !== slug ? translation : null;
   };
 
   const faqList = getAlternativeTranslation('faq', {}, { returnObjects: true }) || [];
   const features = getAlternativeTranslation('features', {}, { returnObjects: true }) || {};
   const featuredBullets = getAlternativeTranslation('featured-bullets', {}, { returnObjects: true }) || [];
+  const partnerIcon = getAlternativeTranslation('partner-icon', {}, { noFallback: true });
+  const partnerLogo = getAlternativeTranslation('partner-logo', {}, { noFallback: true });
+  const partnerDisplay = partnerIcon || partnerLogo || null;
   const countryCode = location?.countryShort;
 
   const studentsImages = t(`students-course-images.${data?.slug}`, {}, { returnObjects: true });
@@ -126,7 +141,7 @@ export const useBootcamp = () => {
     router.push(joinedCohort.selectedProgramSlug);
   };
 
-  const redirectToCohortIfItsReady = async ({ withAlert = true, callback = () => {} } = {}) => {
+  const redirectToCohortIfItsReady = async ({ withAlert = true, callback = () => { } } = {}) => {
     const { cohorts: userCohorts } = await reSetUserAndCohorts();
     const alreadyHaveThisCohort = userCohorts?.some((cohort) => cohort?.id === cohortId);
 
@@ -273,12 +288,13 @@ export const useBootcamp = () => {
       const formatedPlanData = await fetchSuggestedPlan(courseData?.plan_slug, translationsObj, 'mkt_plans', countryCode).then((finalData) => finalData);
       const modulesInfo = await getModulesInfo();
 
-      const studentList = await bc.admissions({ roles: 'STUDENT' }).getPublicMembers()
+      const studentList = await bc.admissions({ roles: 'STUDENT', cohort_id: courseData?.cohort?.id }).getPublicMembers()
         .then((respMembers) => respMembers.data)
         .catch((err) => {
           error('Error fetching cohort users:', err);
           return [];
         });
+
       const uniqueStudents = studentList?.length > 0 ? studentList?.filter((student, index, self) => self.findIndex((l) => (
         l.user.id === student.user.id
       )) === index) : [];
@@ -304,6 +320,34 @@ export const useBootcamp = () => {
         modulesInfo,
       });
       setPlanData(formatedPlanData);
+
+      // Get live classes for syllabuses
+      if (Array.isArray(courseData?.syllabus) && courseData.syllabus.length > 0) {
+        setIsLoadingLiveClasses(true);
+        const syllabusIds = courseData.syllabus
+          .map((syllabus) => syllabus?.id)
+          .filter((id) => id != null);
+
+        if (syllabusIds.length > 0) {
+          try {
+            // Pass syllabus IDs as comma-separated string
+            const { data: liveClassesData } = await bc.events({
+              syllabus: syllabusIds.join(','),
+              upcoming: true,
+            }).publicLiveClass();
+
+            setLiveClasses(Array.isArray(liveClassesData) ? liveClassesData : []);
+          } catch (err) {
+            error('Error fetching live classes:', err);
+            setLiveClasses([]);
+          } finally {
+            setIsLoadingLiveClasses(false);
+          }
+        } else {
+          setIsLoadingLiveClasses(false);
+        }
+      }
+
       setInitialDataIsFetching(false);
     } catch (errorMsg) {
       error('Error fetching course data:', errorMsg);
@@ -552,6 +596,12 @@ export const useBootcamp = () => {
     backgroundColor8,
     assetCount,
     BASE_COURSE,
+    partnerDisplay,
+    partnerIcon,
+    partnerLogo,
+    suggestedPlanAddonsSlugs,
+    liveClasses,
+    isLoadingLiveClasses,
 
     // Functions
     setShowModal,

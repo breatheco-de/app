@@ -240,7 +240,28 @@ const useCheckout = () => {
   const planAddonsDisplay = useMemo(() => {
     if (!checkingData?.plan_addons || !originalPlan) return [];
 
-    return checkingData.plan_addons.map((planAddon) => getPlanAddonsDisplayData({
+    // Get plan_addons from querystring
+    const planAddonsQuery = getQueryString('plan_addons');
+
+    if (!planAddonsQuery) {
+      return [];
+    }
+
+    // Parse allowed slugs from querystring
+    const allowedSlugs = planAddonsQuery
+      .split(',')
+      .map((slug) => slug.trim())
+      .filter((slug) => slug.length > 0);
+
+    // If querystring exists but no valid slugs, show nothing
+    if (allowedSlugs.length === 0) {
+      return [];
+    }
+
+    // Filter plan addons by allowed slugs
+    const filteredPlanAddons = checkingData.plan_addons.filter((planAddon) => allowedSlugs.includes(planAddon?.slug));
+
+    return filteredPlanAddons.map((planAddon) => getPlanAddonsDisplayData({
       planAddon,
       originalPlan,
       lang,
@@ -398,14 +419,27 @@ const useCheckout = () => {
     }
   };
 
-  const removeManualCoupons = () => {
+  const removeManualCoupons = async () => {
     setAllCoupons((prev) => {
       const filtered = prev.filter((c) => c?.source !== 'manual');
       return filtered;
     });
     if (checkingData?.id) {
-      setLoader('summary', true);
-      saveCouponToBag([''], checkingData.id, '', true);
+      try {
+        setLoader('summary', true);
+        await saveCouponToBag([''], checkingData.id, '', true);
+        if (planData) {
+          const checking = await getChecking(planData, selectedPlanAddons);
+          const autoSelectedPlan = findAutoSelectedPlan(checking);
+          if (autoSelectedPlan) {
+            setSelectedPlan(autoSelectedPlan);
+          }
+        }
+      } catch (error) {
+        console.error('Error removing manual coupons:', error);
+      } finally {
+        setLoader('summary', false);
+      }
     }
   };
 

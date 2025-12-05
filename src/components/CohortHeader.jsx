@@ -27,6 +27,7 @@ import useAuth from '../hooks/useAuth';
 import useCohortHandler from '../hooks/useCohortHandler';
 import useStyle from '../hooks/useStyle';
 import useRigo from '../hooks/useRigo';
+import useWhiteLabel from '../hooks/useWhiteLabel';
 import { SimpleSkeleton } from './Skeleton';
 import Heading from './Heading';
 import Text from './Text';
@@ -170,6 +171,7 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
   const { user, isAuthenticatedWithRigobot, conntectToRigobot, cohorts } = useAuth();
   const { rigo, isRigoInitialized } = useRigo();
   const { featuredLight, hexColor } = useStyle();
+  const { isWhiteLabelFeatureEnabled } = useWhiteLabel();
   const { cohortSession, handleShortcutClick } = useCohortHandler();
   const [mentors, setMentors] = useState([]);
   const [showStudentsModal, setShowStudentsModal] = useState(false);
@@ -180,7 +182,12 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
   const rigobotModalInfo = t('common:rigobot', {}, { returnObjects: true });
   const shortcuts = Array.isArray(cohortSession?.shortcuts) ? cohortSession?.shortcuts : [];
 
+  const canShowEvents = isWhiteLabelFeatureEnabled('allow_events');
+  const canShowMentoring = isWhiteLabelFeatureEnabled('allow_mentoring');
+
   const fetchServices = async () => {
+    if (!canShowMentoring) return;
+
     try {
       const { data } = await bc.mentorship({
         status: 'ACTIVE',
@@ -210,7 +217,7 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
     if (cohortSession && cohortSession.cohort_user.role !== 'STUDENT') {
       fetchStudents();
     }
-  }, [cohortSession]);
+  }, [cohortSession, canShowMentoring]);
 
   const hasGithub = user?.github && user.github.username !== '';
 
@@ -286,60 +293,64 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
           <Flex gap="16px" wrap="wrap" flexDirection="row" width={{ base: '100%', sm: 'auto' }}>
             {cohortSession.cohort_user.role === 'STUDENT' ? (
               <>
-                <Popover placement="bottom-start" isOpen={isOpen} onClose={onClose}>
-                  <PopoverTrigger>
-                    <Box onClick={onOpen}>
-                      <CustomButton
-                        infoTooltip={{
-                          leftComponent: <Icon icon="live-event-opaque" width="19px" height="19px" color={hexColor.blueDefault} />,
-                          title: t('common:see-upcoming-events'),
-                          description: t('common:see-upcoming-events-description'),
-                          learnMoreLink: '/docs/knowledge-base-4geeks/live-events-workshops-and-classes',
-                        }}
-                      >
-                        <Icon icon="live-event-opaque" width="42px" height="42px" />
-                        <Text textAlign="center" color={hexColor.blueDefault}>
-                          {labelLive}
-                        </Text>
-                      </CustomButton>
-                    </Box>
-                  </PopoverTrigger>
-                  <PopoverContent width="290px">
-                    <PopoverArrow width="20px !important" height="10px !important" left="-62px !important" />
-                    <PopoverBody
-                      display="flex"
-                      flexDirection="column"
-                      alignItems="center"
-                      background={hexColor.lightGreyBackground}
-                      borderRadius="8px"
-                      padding="8px"
-                      paddingBottom="0 !important"
-                    >
-                      <LiveEventWidgetV2
-                        mainClasses={liveClasses || []}
-                        otherEvents={upcomingEvents || []}
-                        cohorts={cohorts || []}
+                {canShowEvents && (
+                  <Popover placement="bottom-start" isOpen={isOpen} onClose={onClose}>
+                    <PopoverTrigger>
+                      <Box onClick={onOpen}>
+                        <CustomButton
+                          infoTooltip={{
+                            leftComponent: <Icon icon="live-event-opaque" width="19px" height="19px" color={hexColor.blueDefault} />,
+                            title: t('common:see-upcoming-events'),
+                            description: t('common:see-upcoming-events-description'),
+                            learnMoreLink: '/docs/knowledge-base-4geeks/live-events-workshops-and-classes',
+                          }}
+                        >
+                          <Icon icon="live-event-opaque" width="42px" height="42px" />
+                          <Text textAlign="center" color={hexColor.blueDefault}>
+                            {labelLive}
+                          </Text>
+                        </CustomButton>
+                      </Box>
+                    </PopoverTrigger>
+                    <PopoverContent width="290px">
+                      <PopoverArrow width="20px !important" height="10px !important" left="-62px !important" />
+                      <PopoverBody
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="center"
                         background={hexColor.lightGreyBackground}
-                        padding="0"
-                      />
-                    </PopoverBody>
-                  </PopoverContent>
-                </Popover>
+                        borderRadius="8px"
+                        padding="8px"
+                        paddingBottom="0 !important"
+                      >
+                        <LiveEventWidgetV2
+                          mainClasses={liveClasses || []}
+                          otherEvents={upcomingEvents || []}
+                          cohorts={cohorts || []}
+                          background={hexColor.lightGreyBackground}
+                          padding="0"
+                        />
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                )}
 
-                <CustomButton
-                  onClick={() => router.push('/mentorship/schedule')}
-                  infoTooltip={{
-                    leftComponent: <Box><ProfilesSection size="19px" max={2} profiles={mentors} /></Box>,
-                    title: t('common:mentorships'),
-                    description: t('common:mentorship-description'),
-                    learnMoreLink: '/docs/knowledge-base-4geeks/mentoring-sessions',
-                  }}
-                >
-                  <ProfilesSection size={{ base: '30px', sm: '40px' }} max={2} profiles={mentors} />
-                  <Text textAlign="center" color={hexColor.blueDefault}>
-                    {labelMentors}
-                  </Text>
-                </CustomButton>
+                {canShowMentoring && (
+                  <CustomButton
+                    onClick={() => router.push('/mentorship/schedule')}
+                    infoTooltip={{
+                      leftComponent: <Box><ProfilesSection size="19px" max={2} profiles={mentors} /></Box>,
+                      title: t('common:mentorships'),
+                      description: t('common:mentorship-description'),
+                      learnMoreLink: '/docs/knowledge-base-4geeks/mentoring-sessions',
+                    }}
+                  >
+                    <ProfilesSection size={{ base: '30px', sm: '40px' }} max={2} profiles={mentors} />
+                    <Text textAlign="center" color={hexColor.blueDefault}>
+                      {labelMentors}
+                    </Text>
+                  </CustomButton>
+                )}
 
                 {isRigoInitialized && (
                   <CustomButton onClick={onRigobotModalOpen}>
