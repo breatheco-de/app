@@ -6,7 +6,7 @@
 
 ```bash
 # If bun has not been installed in your work environment (Gitpod, Codespaces, and more)
-npm install -g bun 
+npm install -g bun #espacio demas
 ```
 
 2. Install packages:
@@ -15,9 +15,9 @@ npm install -g bun
 bun install
 ```
 
-3. Copy `.env.example` content to `.env.development` and `.env.production`
+3. Copy the content of \.env.example` to `.env.development` and `.env.production``
 
-4. Then generate required files before start:
+4. Then, generate required files before starting:
 
 ```bash
 bun prepare-repo
@@ -45,7 +45,7 @@ The `pages/api` directory is mapped to `/api/*`. Files in this directory are tre
 
 ### Reset cached lesson:
 
-Assets are cached internally for better performance, you can reset an asset with the following request:
+Assets are cached internally for better performance. You can reset an asset with the following request:
 
 ```bash
 PUT https://4geeks.com/api/asset/<slug>
@@ -53,7 +53,7 @@ PUT https://4geeks.com/api/asset/<slug>
 
 ### Get cached lesson:
 
-You can open the redis terminal in vercel and type: `GET <asset_slug>` to get the latest asset json from the breathecode API. [Here is an example](https://www.awesomescreenshot.com/image/45567980?key=5be790828078a884b05a6f6598510541).
+You can open the Redis terminal in Vercel and type: \GET <asset_slug>` to get the latest asset JSON from the Breathecode API.` [Here is an example](https://www.awesomescreenshot.com/image/45567980?key=5be790828078a884b05a6f6598510541).
 
 ## Learn More
 
