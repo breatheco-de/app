@@ -13,6 +13,8 @@ import NextChakraLink from '../components/NextChakraLink';
 import Text from '../components/Text';
 import Heading from '../components/Heading';
 import useCustomToast from '../hooks/useCustomToast';
+import SimpleModal from '../components/SimpleModal';
+import ReactPlayerV2 from '../components/ReactPlayerV2';
 
 function FormField({ name, label, type = 'text', isReadOnly = false, placeholder }) {
   return (
@@ -50,6 +52,8 @@ function AcceptInvite() {
   const [pageLoader, setPageLoader] = useState(true);
   const [isLogging, setIsLogging] = useState(false);
   const [isAccepted, setIsAccepted] = useState(false);
+  const [welcomeVideo, setWelcomeVideo] = useState(null);
+  const [isWelcomeVideoModalOpen, setIsWelcomeVideoModalOpen] = useState(false);
 
   useEffect(() => {
     const initialize = async () => {
@@ -68,6 +72,22 @@ function AcceptInvite() {
         if (user && user.email === data.email) setUserNewInvite(true);
 
         setInvite(data);
+
+        // Parse welcome_video if it exists
+        if (data.welcome_video) {
+          try {
+            const parsedVideo = typeof data.welcome_video === 'string'
+              ? JSON.parse(data.welcome_video)
+              : data.welcome_video;
+
+            if (parsedVideo && parsedVideo.url) {
+              setWelcomeVideo(parsedVideo);
+              setIsWelcomeVideoModalOpen(true);
+            }
+          } catch (parseError) {
+            console.error('Error parsing welcome_video:', parseError);
+          }
+        }
       } catch (error) {
         setIsAccepted(true);
       } finally {
@@ -258,7 +278,7 @@ function AcceptInvite() {
                   first_name: invite?.first_name,
                   last_name: invite?.last_name,
                   email: invite?.email,
-                  phone: '',
+                  phone: invite?.phone || '',
                   password: '',
                   passwordConfirmation: '',
                 }}
@@ -283,11 +303,8 @@ function AcceptInvite() {
                       <FormField name="email" label={t('common:email')} type="email" isReadOnly placeholder="jhon.doe@gmail.com" />
                     </Flex>
 
-                    <Flex mt="20px">
+                    <Flex mt="20px" gap="5px">
                       <FormField name="password" label={t('Choose your password')} type="password" placeholder="***********" />
-                    </Flex>
-
-                    <Flex mt="20px">
                       <FormField
                         name="passwordConfirmation"
                         label={t('Repeat your password')}
@@ -316,6 +333,27 @@ function AcceptInvite() {
             )}
           </Flex>
         )}
+      {welcomeVideo && (
+        <SimpleModal
+          isOpen={isWelcomeVideoModalOpen}
+          onClose={() => setIsWelcomeVideoModalOpen(false)}
+          size="xl"
+          isCentered
+          hideCloseButton={false}
+          closeOnOverlayClick
+        >
+          <Box width="100%" padding="20px">
+            <ReactPlayerV2
+              url={welcomeVideo.url}
+              controls
+              width="100%"
+              height="auto"
+              thumbnail={welcomeVideo.preview_image}
+              autoPlay
+            />
+          </Box>
+        </SimpleModal>
+      )}
     </>
   );
 }
