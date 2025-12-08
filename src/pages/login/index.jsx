@@ -2,16 +2,18 @@ import {
   Flex, Stack, Box, Image,
 } from '@chakra-ui/react';
 // import I from 'next/image';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 // import logo from '../../../public/static/images/bc_logo.png';
 import getT from 'next-translate/getT';
 import PropTypes from 'prop-types';
 import Login from '../../components/Forms/LogIn';
 import useAuth from '../../hooks/useAuth';
+import useWhiteLabel from '../../hooks/useWhiteLabel';
 import Icon from '../../components/Icon';
-import { isWindow } from '../../utils';
+import { isWindow, languageFix } from '../../utils';
 import logoData from '../../../public/logo.json';
+import MarkDownParser from '../../components/MarkDownParser';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'login');
@@ -40,6 +42,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 function LoginView({ existsWhiteLabel }) {
   const { user } = useAuth();
   const router = useRouter();
+  const { whiteLabelParams, isLoading } = useWhiteLabel();
 
   useEffect(() => {
     if (user !== null && user !== undefined) {
@@ -53,6 +56,21 @@ function LoginView({ existsWhiteLabel }) {
       }
     }
   }, [user]);
+
+  // Obtener el contenido de markdown según el idioma actual desde el contexto
+  const markdownContent = useMemo(() => {
+    if (!whiteLabelParams) return null;
+
+    const params = whiteLabelParams.white_label_params || whiteLabelParams;
+    if (!params) return null;
+
+    const locale = router.locale === 'default' ? 'en' : router.locale;
+    const content = languageFix(params, locale);
+
+    return content && typeof content === 'string' && content.trim().length > 0 ? content : null;
+  }, [whiteLabelParams, router.locale]);
+
+  const shouldShowMarkdown = !!(existsWhiteLabel && markdownContent && !isLoading);
 
   return (
     <Stack minH={{ base: 'auto', md: '93vh' }} direction={{ md: 'row' }}>
@@ -89,14 +107,30 @@ function LoginView({ existsWhiteLabel }) {
           xl: 'block',
         }}
       >
-        {/* <Box width="100%"> */}
-        <Image
-          height="100%"
-          width="100%"
-          objectFit="cover"
-          src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80"
-        />
-        {/* </Box> */}
+        {shouldShowMarkdown ? (
+          <Box
+            height="100%"
+            width="100%"
+            overflowY="auto"
+            padding="2rem"
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            className="markdown-body"
+          >
+            <Box maxWidth="600px" width="100%">
+              <MarkDownParser content={markdownContent} />
+            </Box>
+          </Box>
+        ) : (
+          <Image
+            height="100%"
+            width="100%"
+            objectFit="cover"
+            src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80"
+          />
+        )}
       </Flex>
     </Stack>
   );

@@ -7,22 +7,24 @@ const initialState = {
   isLoading: true,
   features: null,
   isWhiteLabel: false,
+  whiteLabelParams: null,
 };
 
 const WhiteLabelContext = createContext(initialState);
 
 const CACHE_KEY = 'white-label-features-cache';
-const CACHE_VERSION = '1.0'; // Increment this to invalidate cache
+const CACHE_VERSION = '1.1'; // Increment this to invalidate cache
 
 const reducer = (state, action) => {
   switch (action.type) {
     case 'INIT': {
-      const { features, isWhiteLabel } = action.payload;
+      const { features, isWhiteLabel, whiteLabelParams } = action.payload;
       return {
         ...state,
         isLoading: false,
         features,
         isWhiteLabel,
+        whiteLabelParams,
       };
     }
     case 'SET_LOADING': {
@@ -46,13 +48,29 @@ function WhiteLabelProvider({ children }) {
     return state.features.features[featureKey] !== false;
   };
 
+  const parseWhiteLabelParams = (params) => {
+    if (!params) return null;
+    if (typeof params === 'string') {
+      try {
+        return JSON.parse(params);
+      } catch (e) {
+        console.error('Error parsing white_label_params:', e);
+        return null;
+      }
+    }
+    return params;
+  };
+
   const getCachedFeatures = () => {
     try {
       const cached = sessionStorage.getItem(CACHE_KEY);
       if (cached) {
         const parsed = JSON.parse(cached);
         if (parsed.version === CACHE_VERSION && parsed.academy === WHITE_LABEL_ACADEMY) {
-          return parsed.data;
+          return {
+            features: parsed.data,
+            whiteLabelParams: parsed.whiteLabelParams || null,
+          };
         }
       }
       return null;
@@ -61,12 +79,13 @@ function WhiteLabelProvider({ children }) {
     }
   };
 
-  const setCachedFeatures = (features) => {
+  const setCachedFeatures = (features, whiteLabelParams) => {
     try {
       sessionStorage.setItem(CACHE_KEY, JSON.stringify({
         version: CACHE_VERSION,
         academy: WHITE_LABEL_ACADEMY,
         data: features,
+        whiteLabelParams,
         timestamp: new Date().toISOString(),
       }));
     } catch (error) {
@@ -86,13 +105,14 @@ function WhiteLabelProvider({ children }) {
       return;
     }
 
-    const cachedFeatures = getCachedFeatures();
-    if (cachedFeatures) {
+    const cachedData = getCachedFeatures();
+    if (cachedData) {
       dispatch({
         type: 'INIT',
         payload: {
-          features: cachedFeatures,
+          features: cachedData.features,
           isWhiteLabel: true,
+          whiteLabelParams: cachedData.whiteLabelParams,
         },
       });
       return;
@@ -102,9 +122,10 @@ function WhiteLabelProvider({ children }) {
       const { data } = await bc.admissions().getAcademy(WHITE_LABEL_ACADEMY);
 
       const features = data?.academy_features || null;
+      const whiteLabelParams = parseWhiteLabelParams(data?.white_label_params);
 
       if (features) {
-        setCachedFeatures(features);
+        setCachedFeatures(features, whiteLabelParams);
       }
 
       dispatch({
@@ -112,6 +133,7 @@ function WhiteLabelProvider({ children }) {
         payload: {
           features,
           isWhiteLabel: features !== null,
+          whiteLabelParams,
         },
       });
     } catch (error) {
@@ -121,6 +143,7 @@ function WhiteLabelProvider({ children }) {
         payload: {
           features: null,
           isWhiteLabel: false,
+          whiteLabelParams: null,
         },
       });
     }
@@ -135,6 +158,7 @@ function WhiteLabelProvider({ children }) {
     isWhiteLabelFeatureEnabled,
     showMarketingNavigation: state.features?.navigation?.show_marketing_navigation !== false,
     customLinks: state.features?.navigation?.custom_links || [],
+    whiteLabelParams: state.whiteLabelParams,
   }), [state]);
 
   return (
