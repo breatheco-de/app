@@ -61,11 +61,8 @@ function LoginView({ existsWhiteLabel }) {
   const markdownContent = useMemo(() => {
     if (!whiteLabelParams) return null;
 
-    const params = whiteLabelParams.white_label_params || whiteLabelParams;
-    if (!params) return null;
-
     const locale = router.locale === 'default' ? 'en' : router.locale;
-    const content = languageFix(params, locale);
+    const content = languageFix(whiteLabelParams, locale);
 
     return content && typeof content === 'string' && content.trim().length > 0 ? content : null;
   }, [whiteLabelParams, router.locale]);
