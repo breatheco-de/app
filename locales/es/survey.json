@@ -12,5 +12,30 @@
     "select": "Selecciona una opción",
     "score":"Por favor selecciona una puntuación entre 1 y 10",
     "previous": "Atras",
-    "next": "Siguiente"
+    "next": "Siguiente",
+    "title": "Encuesta Anónima",
+    "actions": {
+        "submit": "Enviar",
+        "submitting": "Enviando...",
+        "close": "Cerrar"
+    },
+    "validation": {
+        "required": "Este campo es obligatorio",
+        "likert-invalid": "Por favor selecciona un valor entre 1 y {{scale}}",
+        "max-length": "La longitud máxima es de {{max}} caracteres",
+        "please-fix-errors": "Por favor corrige los errores antes de enviar"
+    },
+    "error": {
+        "submit-failed": "Error al enviar la encuesta. Por favor intenta de nuevo.",
+        "already-answered": "Esta encuesta ya ha sido respondida"
+    },
+    "success": {
+        "thank-you": "¡Gracias por tu opinión! 😁"
+    },
+    "context": {
+        "completion-message": "Recientemente completaste: {{asset}}",
+        "asset": "este recurso"
+    },
+    "character": "carácter",
+    "characters": "caracteres"
   }
