@@ -12,5 +12,30 @@
     "select": "Select an option",
     "score":"Please choose one score between 1 and 10",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "title": "Anonymous Survey",
+    "actions": {
+        "submit": "Submit",
+        "submitting": "Submitting...",
+        "close": "Close"
+    },
+    "validation": {
+        "required": "This field is required",
+        "likert-invalid": "Please select a value between 1 and {{scale}}",
+        "max-length": "Maximum length is {{max}} characters",
+        "please-fix-errors": "Please fix the errors before submitting"
+    },
+    "error": {
+        "submit-failed": "Failed to submit survey. Please try again.",
+        "already-answered": "This survey has already been answered"
+    },
+    "success": {
+        "thank-you": "Thank you for your feedback! 😁"
+    },
+    "context": {
+        "completion-message": "You recently completed: {{asset}}",
+        "asset": "this asset"
+    },
+    "character": "character",
+    "characters": "characters"
   }

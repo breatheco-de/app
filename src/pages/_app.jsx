@@ -22,7 +22,9 @@ import { WhiteLabelProvider } from '../context/WhiteLabelContext';
 import Footer from '../components/Footer';
 import Helmet from '../components/Helmet';
 import InterceptionLoader from '../components/InterceptionLoader';
+import SurveyListener from '../components/Survey/SurveyListener';
 import { customColorModeManager, updateThemeFromUrlParam } from '../../modifyTheme';
+import useAuth from '../hooks/useAuth';
 
 import '../../styles/globals.css';
 import '../../styles/react-tags-input.css';
@@ -43,6 +45,37 @@ import useCustomToast from '../hooks/useCustomToast';
 function InternalLinkComponent(props) {
   return <Link {...props} />;
 }
+
+function AppContent({ Component, pagePropsData, pageProps }) {
+  const { user } = useAuth();
+
+  return (
+    <SessionProvider>
+      <Navbar pageProps={pagePropsData} translations={pageProps?.translations} />
+      <InterceptionLoader />
+
+      <PrismicProvider internalLinkComponent={InternalLinkComponent}>
+        <PrismicPreview repositoryName={repositoryName}>
+          <Component {...pagePropsData} />
+        </PrismicPreview>
+      </PrismicProvider>
+
+      <Footer pageProps={pagePropsData} />
+      <SurveyListener userId={user?.id} />
+    </SessionProvider>
+  );
+}
+
+AppContent.propTypes = {
+  Component: PropTypes.elementType.isRequired,
+  pagePropsData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  pageProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+};
+
+AppContent.defaultProps = {
+  pagePropsData: {},
+  pageProps: {},
+};
 
 function App({ Component, pageProps }) {
   const domainName = process.env.DOMAIN_NAME;
@@ -92,18 +125,7 @@ function App({ Component, pageProps }) {
         >
           <WhiteLabelProvider>
             <AuthProvider pageProps={pageProps}>
-              <SessionProvider>
-                <Navbar pageProps={pagePropsData} translations={pageProps?.translations} />
-                <InterceptionLoader />
-
-                <PrismicProvider internalLinkComponent={InternalLinkComponent}>
-                  <PrismicPreview repositoryName={repositoryName}>
-                    <Component {...pagePropsData} />
-                  </PrismicPreview>
-                </PrismicProvider>
-
-                <Footer pageProps={pagePropsData} />
-              </SessionProvider>
+              <AppContent Component={Component} pagePropsData={pagePropsData} pageProps={pageProps} />
             </AuthProvider>
           </WhiteLabelProvider>
         </ChakraProvider>
