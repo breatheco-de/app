@@ -215,9 +215,13 @@ const breathecode = {
   },
   feedback: () => {
     const url = `${host}/feedback`;
+    const qs = parseQuerys({});
     return {
       getSurvey: (id) => axios.get(`${url}/user/me/survey/${id}/questions`),
       sendVote: (arg) => axios.put(`${url}/user/me/answer/${arg.entity_id}`, { ...arg }),
+      getSurveyResponse: (responseId) => axios.get(`${url}/user/me/survey/response/${responseId}`),
+      getPendingSurveyResponses: () => axios.get(`${url}/user/me/survey/response?status=PENDING${qs}`),
+      submitSurveyAnswer: (responseId, answers) => axios.post(`${url}/user/me/survey/response/${responseId}/answer`, { answers }),
     };
   },
   mentorship: (query = {}, connector = false) => {
