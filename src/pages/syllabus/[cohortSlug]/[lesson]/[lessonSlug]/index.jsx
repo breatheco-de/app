@@ -305,6 +305,23 @@ function SyllabusContent() {
     }
   }, [currentTask]);
 
+  useEffect(() => {
+    if (currentTask?.id && currentTask?.task_type === 'EXERCISE' && cohortSession) {
+      const fetchExerciseTask = async () => {
+        try {
+          const { data: updatedTask } = await bc.assignments().getTask(currentTask.id);
+          if (updatedTask) {
+            updateTask(updatedTask, cohortSession);
+          }
+        } catch (error) {
+          console.error('Error fetching exercise task telemetry:', error);
+        }
+      };
+
+      fetchExerciseTask();
+    }
+  }, [currentTask?.id]);
+
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
     return () => {
