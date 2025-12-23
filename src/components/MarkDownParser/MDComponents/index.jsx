@@ -16,6 +16,7 @@ import Image from '../../Image';
 import MermaidRenderer from '../MermaidRenderer';
 import useRigo from '../../../hooks/useRigo';
 import Icon from '../../Icon';
+import CommunityModal from '../../CommunityModal';
 
 export function generateId(children) {
   const text = children ? children
@@ -92,6 +93,8 @@ function RigoLink({ children, href }) {
 
 export function MDLink({ children, href }) {
   const { isRigoInitialized } = useRigo();
+  const [isCommunityModalOpen, setIsCommunityModalOpen] = useState(false);
+
   function isExternalUrl(url) {
     try {
       const baseUrl = process.env.DOMAIN_NAME || '';
@@ -121,9 +124,46 @@ export function MDLink({ children, href }) {
     return url.startsWith('https://4geeks.com/ask?query=');
   }
 
+  function isCommunityLink(url) {
+    return url.startsWith('https://4geeks.com/community');
+  }
+
   const external = isExternalUrl(href);
   const isRigLink = isRigoQuestion(href);
-  return isRigLink && isRigoInitialized ? <RigoLink href={href}>{children}</RigoLink> : (
+  const isCommLink = isCommunityLink(href);
+
+  const handleCommunityClick = (e) => {
+    e.preventDefault();
+    setIsCommunityModalOpen(true);
+  };
+
+  if (isRigLink && isRigoInitialized) {
+    return <RigoLink href={href}>{children}</RigoLink>;
+  }
+
+  if (isCommLink) {
+    return (
+      <>
+        <Link
+          as="a"
+          href={href}
+          fontSize="inherit"
+          color="blue.400"
+          fontWeight="700"
+          overflowWrap="anywhere"
+          onClick={handleCommunityClick}
+        >
+          {children}
+        </Link>
+        <CommunityModal
+          isOpen={isCommunityModalOpen}
+          onClose={() => setIsCommunityModalOpen(false)}
+        />
+      </>
+    );
+  }
+
+  return (
     <Link
       as="a"
       href={href}

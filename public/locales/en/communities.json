@@ -1,0 +1,15 @@
+{
+  "title": "Join Our Communities",
+  "description": "Connect with other learners and get help from our community",
+  "join": "Join",
+  "whatsapp": {
+    "es": {
+      "name": "WhatsApp Community (Spanish)",
+      "description": "Join our Spanish-speaking community on WhatsApp"
+    },
+    "en": {
+      "name": "WhatsApp Community (English)",
+      "description": "Join our English-speaking community on WhatsApp"
+    }
+  }
+}

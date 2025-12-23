@@ -1,0 +1,15 @@
+{
+  "title": "Únete a Nuestras Comunidades",
+  "description": "Conéctate con otros estudiantes y obtén ayuda de nuestra comunidad",
+  "join": "Unirse",
+  "whatsapp": {
+    "es": {
+      "name": "Comunidad de WhatsApp (Español)",
+      "description": "Únete a nuestra comunidad de habla hispana en WhatsApp"
+    },
+    "en": {
+      "name": "Comunidad de WhatsApp (Inglés)",
+      "description": "Únete a nuestra comunidad de habla inglesa en WhatsApp"
+    }
+  }
+}
