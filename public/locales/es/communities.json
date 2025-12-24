@@ -3,6 +3,11 @@
   "description": "Conéctate con otros estudiantes y obtén ayuda de nuestra comunidad",
   "join": "Unirse",
   "linkText": "Únete a nuestras comunidades",
+  "seo": {
+    "title": "Únete a Nuestras Comunidades - 4Geeks Academy",
+    "description": "Conéctate con otros estudiantes y obtén ayuda de nuestra comunidad. Únete a nuestras comunidades de WhatsApp en inglés y español.",
+    "keywords": ["comunidad", "4geeks", "whatsapp", "estudiantes", "soporte"]
+  },
   "whatsapp": {
     "es": {
       "name": "Comunidad de WhatsApp (Español)",
