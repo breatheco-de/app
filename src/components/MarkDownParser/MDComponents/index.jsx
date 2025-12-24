@@ -17,6 +17,7 @@ import MermaidRenderer from '../MermaidRenderer';
 import useRigo from '../../../hooks/useRigo';
 import Icon from '../../Icon';
 import CommunityModal from '../../CommunityModal';
+import { communitiesConfig } from '../../../config/communitiesConfig';
 
 export function generateId(children) {
   const text = children ? children
@@ -91,9 +92,37 @@ function RigoLink({ children, href }) {
   );
 }
 
+function CommunityLink({ children, onOpenModal }) {
+  const handleClick = (e) => {
+    e.preventDefault();
+    if (onOpenModal) {
+      onOpenModal();
+    }
+  };
+
+  return (
+    <button
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '5px',
+        border: '1px solid #109DD3',
+        borderRadius: '13px',
+        padding: '4px 17px',
+      }}
+      type="button"
+      onClick={handleClick}
+    >
+      <Icon icon="message" width="28px" height="28px" />
+      <span>{children}</span>
+    </button>
+  );
+}
+
 export function MDLink({ children, href }) {
   const { isRigoInitialized } = useRigo();
   const [isCommunityModalOpen, setIsCommunityModalOpen] = useState(false);
+  const { t } = useTranslation('communities');
 
   function isExternalUrl(url) {
     try {
@@ -132,11 +161,6 @@ export function MDLink({ children, href }) {
   const isRigLink = isRigoQuestion(href);
   const isCommLink = isCommunityLink(href);
 
-  const handleCommunityClick = (e) => {
-    e.preventDefault();
-    setIsCommunityModalOpen(true);
-  };
-
   if (isRigLink && isRigoInitialized) {
     return <RigoLink href={href}>{children}</RigoLink>;
   }
@@ -144,17 +168,11 @@ export function MDLink({ children, href }) {
   if (isCommLink) {
     return (
       <>
-        <Link
-          as="a"
-          href={href}
-          fontSize="inherit"
-          color="blue.400"
-          fontWeight="700"
-          overflowWrap="anywhere"
-          onClick={handleCommunityClick}
+        <CommunityLink
+          onOpenModal={() => setIsCommunityModalOpen(true)}
         >
-          {children}
-        </Link>
+          {t(communitiesConfig.linkText || 'linkText')}
+        </CommunityLink>
         <CommunityModal
           isOpen={isCommunityModalOpen}
           onClose={() => setIsCommunityModalOpen(false)}
@@ -679,6 +697,11 @@ Code.defaultProps = {
 RigoLink.propTypes = {
   children: PropTypes.node.isRequired,
   href: PropTypes.string.isRequired,
+};
+
+CommunityLink.propTypes = {
+  children: PropTypes.node.isRequired,
+  onOpenModal: PropTypes.func.isRequired,
 };
 MDLink.propTypes = {
   children: PropTypes.node.isRequired,

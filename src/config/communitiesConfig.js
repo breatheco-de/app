@@ -8,6 +8,7 @@ export const COMMUNITY_TYPES = {
 export const communitiesConfig = {
   title: 'title',
   description: 'description',
+  linkText: 'linkText',
   communities: [
     {
       id: 'whatsapp-es',
