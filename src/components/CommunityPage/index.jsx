@@ -73,7 +73,7 @@ function CommunityPage({ mainImage }) {
         )}
         <Box
           margin="0 auto"
-          maxWidth={{ base: '100%', md: '900px' }}
+          maxWidth={{ base: '100%', md: '1000px' }}
           borderRadius="16px"
           overflow="hidden"
           boxShadow="0 10px 30px rgba(0, 0, 0, 0.1)"
