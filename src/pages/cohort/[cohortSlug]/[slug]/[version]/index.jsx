@@ -8,6 +8,7 @@ import {
   keyframes, usePrefersReducedMotion, Avatar,
   Img, Modal, ModalBody, ModalCloseButton, ModalContent,
   ModalHeader, ModalOverlay, Button, Accordion, AccordionItem, AccordionButton, AccordionPanel,
+  Tooltip,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -55,9 +56,12 @@ import useStyle from '../../../../../hooks/useStyle';
 import Feedback from '../../../../../components/Feedback';
 import useCustomToast from '../../../../../hooks/useCustomToast';
 import ReviewModal, { stages } from '../../../../../components/ReviewModal';
+import ConnectGithubRigobot from '../../../../../components/ConnectGithubRigobot';
+import SimpleModal from '../../../../../components/SimpleModal';
 
 function Dashboard() {
   const { t, lang } = useTranslation('dashboard');
+  const { t: tChooseProgram } = useTranslation('choose-program');
   const { createToast, closeToast } = useCustomToast({ toastId: 'fetching-teachers-students-nsync-cohort' });
   const router = useRouter();
 
@@ -74,7 +78,8 @@ function Dashboard() {
   const [liveClasses, setLiveClasses] = useState([]);
   const [certificates, setCertificates] = useState([]);
   const [isLoadingAssigments, setIsLoadingAssigments] = useState(true);
-  const { isAuthenticated, cohorts, reSetUserAndCohorts } = useAuth();
+  const [showRigobotModal, setShowRigobotModal] = useState(false);
+  const { isAuthenticated, cohorts, reSetUserAndCohorts, user, isAuthenticatedWithRigobot } = useAuth();
   const { rigo, isRigoInitialized } = useRigo();
 
   const isBelowTablet = getBrowserSize()?.width < 768;
@@ -92,7 +97,7 @@ function Dashboard() {
   const { cohortSession, taskCohortNull, cohortsAssignments, reviewModalState } = state;
 
   const {
-    featuredColor, hexColor, modal, featuredLight, borderColor, disabledColor2, fontColor2, fontColor3, lightColor, backgroundColor2, backgroundColor3,
+    featuredColor, hexColor, modal, featuredLight, borderColor, disabledColor2, fontColor2, fontColor3, lightColor, backgroundColor2, backgroundColor3, backgroundColor, fontColor,
   } = useStyle();
 
   const { cohortSlug } = router.query;
@@ -526,6 +531,29 @@ function Dashboard() {
 
   const openGithubModalHandler = () => setShowWarningModal(true);
 
+  const openRigobot = async () => {
+    try {
+      if (isAuthenticatedWithRigobot) {
+        rigo.updateOptions({
+          showBubble: true,
+          welcomeMessage: tChooseProgram('rigo-chat.welcome-message', { firstName: user?.first_name, cohortName: cohortSession?.name }),
+          highlight: true,
+          collapsed: false,
+          purposeSlug: '4geekscom-public-agent',
+        });
+      } else setShowRigobotModal(true);
+    } catch (e) {
+      console.log(e);
+      createToast({
+        position: 'top',
+        title: t('alert-message:error-ai-chat'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
   return (
     <Container minHeight="93vh" display="flex" flexDirection="column" maxW="none" padding="0">
       <Modal
@@ -910,15 +938,45 @@ function Dashboard() {
                     )}
 
                     {!cohortSession?.available_as_saas && cohortSession?.current_module && dailyModuleData && (
-                      <CallToAction
-                        background="blue.default"
-                        margin="40px 0 auto 0"
-                        title={t('callToAction.title')}
-                        href={`#${slugify(dailyModuleData.label)}`}
-                        text={languageFix(dailyModuleData.description, lang)}
-                        buttonText={t('callToAction.buttonText')}
-                        width={{ base: '100%', md: 'fit-content' }}
-                      />
+                      <>
+                        <CallToAction
+                          background="blue.default"
+                          margin="40px 0 auto 0"
+                          title={t('callToAction.title')}
+                          href={`#${slugify(dailyModuleData.label)}`}
+                          text={languageFix(dailyModuleData.description, lang)}
+                          buttonText={t('callToAction.buttonText')}
+                          width={{ base: '100%', md: 'fit-content' }}
+                        />
+                        {isRigoInitialized && (
+                          <Box margin="20px 0" display="flex" justifyContent="flex-start">
+                            <Tooltip label={t('common:get-help-rigobot')} placement="top">
+                              <Button
+                                display="flex"
+                                flexDirection="row"
+                                alignItems="center"
+                                justifyContent="center"
+                                width="auto"
+                                height="auto"
+                                padding="12px 20px"
+                                borderRadius="full"
+                                background={backgroundColor}
+                                border="1px solid"
+                                borderColor={borderColor}
+                                variant="outline"
+                                onClick={openRigobot}
+                                gridGap="10px"
+                                style={{ color: fontColor, textDecoration: 'none' }}
+                              >
+                                <Icon icon="rigobot-avatar-tiny" width="24px" height="24px" />
+                                <Text size="15px" fontWeight="500">
+                                  {t('common:get-help-rigobot')}
+                                </Text>
+                              </Button>
+                            </Tooltip>
+                          </Box>
+                        )}
+                      </>
                     )}
 
                     {(!cohortSession?.intro_video || ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_user?.role) || (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 3)) && (
@@ -1278,6 +1336,22 @@ function Dashboard() {
           </ModalBody>
         </ModalContent>
       </Modal>
+      <SimpleModal
+        size="md"
+        isOpen={showRigobotModal}
+        onClose={() => setShowRigobotModal(false)}
+      >
+        <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px" paddingBottom="10px">
+          <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid" borderColor={hexColor.blueDefault} width="91px" height="91px" borderRadius="50px" />
+          <Text
+            size="17px"
+            textAlign="center"
+          >
+            {t('common:connect-with-rigobot')}
+          </Text>
+          <ConnectGithubRigobot width="100%" />
+        </Box>
+      </SimpleModal>
     </Container>
   );
 }
