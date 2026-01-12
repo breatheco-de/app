@@ -127,7 +127,7 @@ function Program({ cohort, onOpenModal, setLateModalProps }) {
         completedQuizzes: task?.completed,
       };
     }
-    return ({});
+    return {};
   }) : [];
 
   return (
