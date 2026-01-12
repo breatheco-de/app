@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { subMinutes } from 'date-fns';
-import { memo, useState } from 'react';
+import { memo, useState, useMemo } from 'react';
 import { getAssignmentsCount } from '../../utils/cohorts';
 import useStyle from '../../hooks/useStyle';
 import ProgramCard from '../ProgramCard';
@@ -19,9 +19,58 @@ function Program({ cohort, onOpenModal, setLateModalProps }) {
   const { state: programsList } = useProgramList();
   const signInDate = cohort.cohort_user.created_at;
   const currentCohort = programsList?.[cohort.slug];
-  const tasks = cohortsAssignments[cohort.slug]?.tasks;
-  const syllabus = cohortsAssignments[cohort.slug]?.syllabus;
-  const assignmentsData = getAssignmentsCount({ syllabus, tasks });
+  
+  const { combinedTasks, combinedSyllabus } = useMemo(() => {
+    const hasMicroCohorts = cohort?.micro_cohorts?.length > 0;
+    
+    if (hasMicroCohorts) {
+      const allTasks = [];
+      cohort.micro_cohorts.forEach((microCohort) => {
+        const microTasks = cohortsAssignments[microCohort.slug]?.tasks || [];
+        allTasks.push(...microTasks);
+      });
+
+      const allDays = [];
+      let firstMicroSyllabus = null;
+      
+      cohort.micro_cohorts.forEach((microCohort) => {
+        const microSyllabus = cohortsAssignments[microCohort.slug]?.syllabus;
+        if (microSyllabus) {
+          if (!firstMicroSyllabus) {
+            firstMicroSyllabus = microSyllabus;
+          }
+          
+          if (microSyllabus?.json?.days) {
+            allDays.push(...microSyllabus.json.days);
+          } else if (microSyllabus?.json?.modules) {
+            allDays.push(...microSyllabus.json.modules);
+          }
+        }
+      });
+      
+      const mergedSyllabus = allDays.length > 0 && firstMicroSyllabus ? {
+        ...firstMicroSyllabus,
+        json: {
+          ...firstMicroSyllabus.json,
+          days: allDays,
+        },
+      } : null;
+      
+      return {
+        combinedTasks: allTasks,
+        combinedSyllabus: mergedSyllabus,
+      };
+    }
+    
+    return {
+      combinedTasks: cohortsAssignments[cohort.slug]?.tasks || [],
+      combinedSyllabus: cohortsAssignments[cohort.slug]?.syllabus || null,
+    };
+  }, [cohort, cohortsAssignments]);
+  
+  const assignmentsData = useMemo(() => {
+    return getAssignmentsCount({ syllabus: combinedSyllabus, tasks: combinedTasks });
+  }, [combinedSyllabus, combinedTasks]);
 
   const isAvailableAsSaas = cohort.cohort_user?.role === 'TEACHER' ? false : cohort.available_as_saas;
 
