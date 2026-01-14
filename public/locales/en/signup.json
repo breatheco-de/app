@@ -219,6 +219,8 @@
     "error-loading-payment-methods": "Error loading payment methods",
     "missing-subscription-id": "Missing Subscription ID",
     "missing-subscription-id-description": "Please provide either subscription_id or plan_financing_id in the URL",
+    "missing-plan-slug": "Plan not found",
+    "missing-plan-slug-description": "Please provide a plan in the URL",
     "multiple-subscription-ids": "Multiple Subscription IDs",
     "multiple-subscription-ids-description": "Please provide only one ID: either subscription_id or plan_financing_id, not both",
     "payment-overdue": "Payment Overdue",
