@@ -20,5 +20,6 @@
     "assignments-length": "Current list of {{total}} assignments"
   },
   "no-content-to-show": "No hay nada que ver aquí, por favor selecciona otra cohorte",
-  "no-attendance-list-found": "No se encontró ninguna lista de asistencia, tome la primera asistencia <br /> en esta cohorte e intente nuevamente"
+  "no-attendance-list-found": "No se encontró ninguna lista de asistencia, tome la primera asistencia <br /> en esta cohorte e intente nuevamente",
+  "status": "Estado"
 }
