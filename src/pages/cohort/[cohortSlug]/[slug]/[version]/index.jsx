@@ -401,6 +401,18 @@ function Dashboard() {
   }, [cohortSession]);
 
   useEffect(() => {
+    if (cohortSession?.slug) {
+      const payload = {
+        related_type: 'admissions.CohortUser',
+        related_id: cohortSession?.cohort_user?.id,
+      };
+      bc.activity().postMeActivity('read_cohort_dashboard', payload).catch((error) => {
+        console.error('Error reporting activity: ', error);
+      });
+    }
+  }, [cohortSession?.slug, cohortSession?.id]);
+
+  useEffect(() => {
     getTasksWithoutCohort({ setModalIsOpen });
   }, [sortedAssignments]);
 

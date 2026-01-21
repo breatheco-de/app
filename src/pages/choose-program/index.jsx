@@ -212,6 +212,14 @@ function chooseProgram() {
     }
   }, [cohorts, cohortMembers, subscriptionLoading, subscriptions]);
 
+  useEffect(() => {
+    if (user) {
+      bc.activity().postMeActivity('read_dashboard').catch((error) => {
+        console.error('Error reporting activity: ', error);
+      });
+    }
+  }, [user?.id]);
+
   const processCohort = async (cohort) => {
     if (cohort?.slug) {
       const isFinantialStatusLate = cohort.cohort_user.finantial_status === 'LATE' || cohort.cohort_user.educational_status === 'SUSPENDED';
