@@ -78,7 +78,7 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
 
   const isTaskApproved = (task) => {
     if (task.task_type === 'PROJECT') {
-      return task.revision_status === 'APPROVED';
+      return task.revision_status === 'APPROVED' || task.revision_status === 'IGNORED';
     }
     return task.task_status === 'DONE';
   };
@@ -106,7 +106,7 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
           acc[curr.task_type] = {
             total: 1,
             icon: curr.icon,
-            done: curr.task_status === 'DONE' ? 1 : 0,
+            done: curr.task_status === 'DONE' || (curr.task_type === 'PROJECT' && curr.revision_status === 'IGNORED') ? 1 : 0,
             pendingRevision: pendingRevisionsCount,
             approved: isApproved ? 1 : 0,
             rejected: isRejected ? 1 : 0,
@@ -114,7 +114,9 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
           };
         } else {
           acc[curr.task_type].total += 1;
-          if (curr.task_status === 'DONE') acc[curr.task_type].done += 1;
+          if (curr.task_status === 'DONE' || (curr.task_type === 'PROJECT' && curr.revision_status === 'IGNORED')) {
+            acc[curr.task_type].done += 1;
+          }
           if (isApproved) acc[curr.task_type].approved += 1;
           if (isRejected) acc[curr.task_type].rejected += 1;
           if (isPendingProject) acc[curr.task_type].pending += 1;
