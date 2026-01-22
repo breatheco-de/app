@@ -217,6 +217,7 @@ function Attendance() {
           user: student.user,
           days,
           percentage: calcDaysAverage(days),
+          educational_status: student.educational_status,
         };
       });
 
@@ -444,19 +445,28 @@ function Attendance() {
             {loadStatus.loading === false && loadStatus.status === 'success' && sortedByNameAndAttendance.map((student) => {
               const fullName = `${student.user.first_name} ${student.user.last_name}`;
               const percentAttendance = `${student.percentage}% ${t('attendance')}`;
+              const studentStatus = student.educational_status || 'ACTIVE';
 
               return (
                 <DottedTimeline
-                  key={student.id}
+                  key={student.user.id}
                   label={(
-                    <Flex gridGap="10px" alignItems="center">
-                      <Avatar
-                        src={student.user.profile?.avatar_url}
-                        width="25px"
-                        height="25px"
-                        style={{ userSelect: 'none' }}
-                      />
-                      <p>{fullName}</p>
+                    <Flex gridGap="10px" alignItems="center" width="100%" justifyContent="space-between">
+                      <Flex gridGap="10px" alignItems="center">
+                        <Avatar
+                          src={student.user.profile?.avatar_url}
+                          width="25px"
+                          height="25px"
+                          style={{ userSelect: 'none' }}
+                        />
+                        <p>{fullName}</p>
+                      </Flex>
+                      <Text fontSize="12px" fontWeight={500} color={hexColor.fontColor3}>
+                        {t('status')}
+                        :
+                        {' '}
+                        {studentStatus}
+                      </Text>
                     </Flex>
                   )}
                   dots={student.days}

@@ -781,14 +781,25 @@ function SyllabusContent() {
   const openRigobot = async () => {
     try {
       if (isAuthenticatedWithRigobot) {
-        rigo.updateOptions({
-          showBubble: false,
-          target: '#rigo-chat',
-          welcomeMessage: t('rigo-chat.welcome-message', { firstName: user?.first_name, lessonName: currentAsset?.title }),
-          highlight: true,
-          collapsed: false,
-          purposeSlug: '4geekscom-public-agent',
-        });
+        if (isAvailableAsSaas) {
+          rigo.updateOptions({
+            showBubble: false,
+            target: '#rigo-chat',
+            welcomeMessage: t('rigo-chat.welcome-message', { firstName: user?.first_name, lessonName: currentAsset?.title }),
+            highlight: true,
+            collapsed: false,
+            purposeSlug: '4geekscom-public-agent',
+          });
+        } else {
+          const options = {
+            showBubble: true,
+            welcomeMessage: t('rigo-chat.welcome-message', { firstName: user?.first_name, lessonName: currentAsset?.title }),
+            highlight: true,
+            collapsed: false,
+            purposeSlug: '4geekscom-public-agent',
+          };
+          rigo.updateOptions(options);
+        }
       } else setShowRigobotModal(true);
     } catch (e) {
       console.log(e);
@@ -873,7 +884,7 @@ function SyllabusContent() {
           />
         )}
 
-        <ScrollTop />
+        {isAvailableAsSaas && <ScrollTop />}
 
         {isAvailableAsSaas ? (
           <GuidedExperienceSidebar
@@ -1178,6 +1189,28 @@ function SyllabusContent() {
                                   onlyModal
                                   withParty
                                 />
+                              )}
+                              {isRigoInitialized && (isLesson || isProject) && (
+                                <Tooltip label={t('get-help')} placement="top">
+                                  <Button
+                                    display="flex"
+                                    flexDirection="column"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    width="auto"
+                                    height="auto"
+                                    padding="8px 16px"
+                                    borderRadius="4px"
+                                    background={backgroundColor}
+                                    border="1px solid"
+                                    borderColor={commonBorderColor}
+                                    variant="outline"
+                                    onClick={openRigobot}
+                                    style={{ color: fontColor, textDecoration: 'none' }}
+                                  >
+                                    <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="24px" height="24px" />
+                                  </Button>
+                                </Tooltip>
                               )}
                             </Box>
                             <Box display="flex" gridGap="3rem">
