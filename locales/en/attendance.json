@@ -20,5 +20,6 @@
     "assignments-length": "Current list of {{total}} assignments"
   },
   "no-content-to-show": "Nothing to see here, please select another cohort",
-  "no-attendance-list-found": "No attendance list found, please take the first attendance <br /> in this cohort and try again"
+  "no-attendance-list-found": "No attendance list found, please take the first attendance <br /> in this cohort and try again",
+  "status": "Status"
 }
