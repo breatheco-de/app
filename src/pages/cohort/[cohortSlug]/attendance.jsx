@@ -462,7 +462,10 @@ function Attendance() {
                         <p>{fullName}</p>
                       </Flex>
                       <Text fontSize="12px" fontWeight={500} color={hexColor.fontColor3}>
-                        {t('status')}: {studentStatus}
+                        {t('status')}
+                        :
+                        {' '}
+                        {studentStatus}
                       </Text>
                     </Flex>
                   )}
