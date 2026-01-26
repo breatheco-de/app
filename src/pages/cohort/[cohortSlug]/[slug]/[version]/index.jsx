@@ -401,7 +401,16 @@ function Dashboard() {
   }, [cohortSession]);
 
   useEffect(() => {
-    if (cohortSession?.slug) {
+    if (cohortSession?.slug && cohortSession?.id) {
+      const activityLogStr = sessionStorage.getItem('activityLog');
+      const activityLog = activityLogStr ? JSON.parse(activityLogStr) : [];
+
+      if (activityLog.includes(`read_cohort_dashboard_${cohortSession?.id}`)) {
+        return;
+      }
+      activityLog.push(`read_cohort_dashboard_${cohortSession?.id}`);
+      sessionStorage.setItem('activityLog', JSON.stringify(activityLog));
+
       const payload = {
         related_type: 'admissions.CohortUser',
         related_id: cohortSession?.cohort_user?.id,

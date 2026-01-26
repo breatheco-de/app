@@ -214,6 +214,15 @@ function chooseProgram() {
 
   useEffect(() => {
     if (user) {
+      const activityLogStr = sessionStorage.getItem('activityLog');
+      const activityLog = activityLogStr ? JSON.parse(activityLogStr) : [];
+
+      if (activityLog.includes('read_dashboard')) {
+        return;
+      }
+      activityLog.push('read_dashboard');
+      sessionStorage.setItem('activityLog', JSON.stringify(activityLog));
+
       bc.activity().postMeActivity('read_dashboard').catch((error) => {
         console.error('Error reporting activity: ', error);
       });
