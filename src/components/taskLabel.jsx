@@ -11,6 +11,12 @@ function TaskLabel({ currentTask, t }) {
           msg: t('status.delivered') || 'Delivered',
         };
       }
+      if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'IGNORED') {
+        return {
+          status: 'delivered',
+          msg: t('status.delivered') || 'Delivered',
+        };
+      }
       if (currentTask.revision_status === 'APPROVED') {
         return {
           status: 'approved',
