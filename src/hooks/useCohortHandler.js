@@ -854,16 +854,19 @@ function useCohortHandler() {
       }
 
       if (!freeTrialSub && !isCancelledButValid) {
+        console.log('no free trial and not cancelled but valid');
         showToastAndRedirect(currentCohortSlug);
         return;
       }
 
       if (expiredCourse) {
+        console.log('expired course');
         showToastAndRedirect(currentCohortSlug);
         return;
       }
 
       if (now > freeTrialExpDate) {
+        console.log('now > freeTrialExpDate');
         showToastAndRedirect(currentCohortSlug);
         return;
       }

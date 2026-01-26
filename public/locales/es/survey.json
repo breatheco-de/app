@@ -27,7 +27,14 @@
     },
     "error": {
         "submit-failed": "Error al enviar la encuesta. Por favor intenta de nuevo.",
-        "already-answered": "Esta encuesta ya ha sido respondida"
+        "already-answered": "Esta encuesta ya ha sido respondida",
+        "survey-not-found": "Encuesta no encontrada o ha expirado",
+        "title": "Error"
+    },
+    "loading": "Cargando encuesta...",
+    "login-required": {
+        "title": "Inicio de sesión requerido",
+        "description": "Por favor inicia sesión para completar esta encuesta"
     },
     "success": {
         "thank-you": "¡Gracias por tu opinión! 😁"
