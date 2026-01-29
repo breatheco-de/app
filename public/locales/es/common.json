@@ -245,6 +245,7 @@
     },
     "start-exercise": "Empezar ejercicio",
     "recommended": "Recomendado",
+    "or": "o",
     "install-specific-version": "Instala {{name}} con la versión {{version}} en tu ordenador",
     "banner-description": "Es crucial instalar la versión especificada, de lo contrario, el proyecto puede no ejecutarse correctamente. Instala la versión {{version}}.",
     "open-in-learnpack-button": {
@@ -303,7 +304,7 @@
         "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo"
       },
       "agent-os": {
-        "label": "Abrir el proyecto sin VSCode",
+        "label": "Abrir el proyecto con VSCode",
         "description": "Usa la terminal de la computadora para entrar en la carpeta creada e inicia Learnpack: \n```bash\n$ cd {{repoName}}\n$ learnpack start\n```",
         "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo"
       },
