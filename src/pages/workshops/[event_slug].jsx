@@ -280,6 +280,7 @@ function Workshop({ eventData, asset }) {
   const eventNotExists = !event?.slug;
   const isAuth = isAuthenticated && user?.id;
   const recordingUrl = event?.recording_url;
+  const isAwesomeScreenshotRecording = recordingUrl?.toLowerCase?.().includes('awesomescreenshot.com');
   const alreadyApplied = users.some((l) => l?.attendee?.id === user?.id) || applied;
 
   const getWording = () => {
@@ -1159,7 +1160,11 @@ function Workshop({ eventData, asset }) {
                         )}
                         onClick={() => {
                           if (finishedEvent && recordingUrl) {
-                            setIsVideoModalOpen(true);
+                            if (isAwesomeScreenshotRecording) {
+                              window.open(recordingUrl, '_blank', 'noopener,noreferrer');
+                            } else {
+                              setIsVideoModalOpen(true);
+                            }
                           } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
                           else handleJoin();
                         }}
@@ -1229,18 +1234,65 @@ function Workshop({ eventData, asset }) {
                   headContent={readyToJoinEvent ? (
                     <Box position="relative" zIndex={1} width="100%" height={177}>
                       {recordingUrl ? (
-                        <ReactPlayerV2
-                          url={recordingUrl}
-                          withThumbnail
-                          withModal
-                          preview
-                          isPlayDisabled={!isAuthenticated}
-                          previewDuration={10}
-                          thumbnailStyle={{
-                            borderRadius: '17px 17px 0 0',
-                          }}
-                          margin="0 0 12px 0"
-                        />
+                        isAwesomeScreenshotRecording ? (
+                          <Flex
+                            as="button"
+                            type="button"
+                            width="100%"
+                            height={177}
+                            position="relative"
+                            overflow="hidden"
+                            alignItems="center"
+                            justifyContent="center"
+                            borderRadius="17px 17px 0 0"
+                            cursor="pointer"
+                            onClick={() => window.open(recordingUrl, '_blank', 'noopener,noreferrer')}
+                            _hover={{ opacity: 0.95 }}
+                            transition="opacity 0.2s"
+                          >
+                            <Image
+                              src={randomImage}
+                              position="absolute"
+                              top={0}
+                              left={0}
+                              width="100%"
+                              height="100%"
+                              objectFit="cover"
+                              alt=""
+                              pointerEvents="none"
+                            />
+                            <Flex
+                              position="absolute"
+                              alignItems="center"
+                              justifyContent="center"
+                              width="100%"
+                              height="100%"
+                              backgroundColor="rgba(0, 0, 0, 0.4)"
+                            >
+                              <IconButton
+                                aria-label={t('watch-workshop-recording')}
+                                icon={<Icon icon="play2" width="40px" height="40px" borderRadius="6px" padding="4px" />}
+                                backgroundColor="rgba(0, 0, 0, 0.5)"
+                                _hover={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+                                size="lg"
+                                borderRadius="full"
+                              />
+                            </Flex>
+                          </Flex>
+                        ) : (
+                          <ReactPlayerV2
+                            url={recordingUrl}
+                            withThumbnail
+                            withModal
+                            preview
+                            isPlayDisabled={!isAuthenticated}
+                            previewDuration={10}
+                            thumbnailStyle={{
+                              borderRadius: '17px 17px 0 0',
+                            }}
+                            margin="0 0 12px 0"
+                          />
+                        )
                       ) : (
                         <Image src={randomImage} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" alt="head banner" />
                       )}
@@ -1295,7 +1347,11 @@ function Workshop({ eventData, asset }) {
                       }}
                       onClick={() => {
                         if (finishedEvent && recordingUrl) {
-                          setIsVideoModalOpen(true);
+                          if (isAwesomeScreenshotRecording) {
+                            window.open(recordingUrl, '_blank', 'noopener,noreferrer');
+                          } else {
+                            setIsVideoModalOpen(true);
+                          }
                         } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
                         else handleJoin();
                       }}
