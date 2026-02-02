@@ -149,6 +149,7 @@ const breathecode = {
         },
       }),
       getMeActivity: () => axios.get(`${url}/me/activity${qs}`),
+      postMeActivity: (activitySlug, payload) => axios.post(`${url}/me/activity/report/${activitySlug}${qs}`, payload),
       getActivityReport: (academyId) => axios.get(`${url}/report${qs}`, {
         headers: academyId && {
           academy: academyId,
