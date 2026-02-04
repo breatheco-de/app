@@ -247,6 +247,7 @@
     },
     "start-exercise": "Start exercise",
     "recommended": "Recommended",
+    "or": "or",
     "install-specific-version": "Install {{name}} with version {{version}} in your computer",
     "banner-description": "It's crucial to install the version specified, otherwise the project may not run correctly. Install version {{version}}",
     "open-in-learnpack-button": {
@@ -305,7 +306,7 @@
         "description": "Make sure you have the <a href=\"https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode\" target=\"_blank\">LearnPack extension</a> installed, open the folder in VSCode and type <span class=\"highlight-command\">learnpack start</span> on your vscode terminal."
       },
       "agent-os": {
-        "label": "Open the project without VSCode",
+        "label": "Open the project with VSCode",
         "description": "Use your computer terminal to get inside your recently created folder and start learnpack: \n```bash\n$ cd {{repoName}}\n$ learnpack start\n```"
       },
       "project-readme": {
