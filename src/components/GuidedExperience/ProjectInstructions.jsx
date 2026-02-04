@@ -89,17 +89,17 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
   return (
     <>
       {startWithLearnpack ? (
-        <Box display="flex" gap="10px" flexDirection={{ base: 'column', md: 'row' }} alignItems={{ base: 'stretch', md: 'center' }} flexWrap="wrap">
-          <Box display="flex" flexDirection="column" alignItems={{ base: 'stretch', md: 'flex-start' }} gap="4px">
+        <Box display="flex" gap="10px" flexDirection={{ base: 'column', md: 'row' }} alignItems={{ base: 'stretch', md: 'flex-start' }} flexWrap="wrap">
+          <Box display="flex" flexDirection="column" alignItems={{ base: 'stretch', md: 'center' }} gap="4px">
             <Button cursor="pointer" as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
               {isStarted ? t('common:learnpack.continue-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })
                 : t('common:learnpack.start-interactive-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
             </Button>
-            <Text fontSize="12px" color="white" fontWeight="500">
+            <Text fontSize="12px" color="white" fontWeight="500" textAlign="center">
               {t('learnpack.recommended')}
             </Text>
           </Box>
-          <Text alignSelf="center" color="white" fontSize="14px" display={{ base: 'block', md: 'block' }}>
+          <Text alignSelf={{ base: 'center', md: 'flex-start' }} color="white" fontSize="14px" display={{ base: 'block', md: 'block' }} paddingTop={{ base: '0px', md: '4px' }}>
             {t('learnpack.or')}
           </Text>
           <Button
@@ -110,6 +110,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
             fontWeight="500"
             background="gray.200"
             color="blue.default"
+            alignSelf={{ base: 'stretch', md: 'flex-start' }}
             onClick={() => {
               setShowCloneModal(true);
             }}
