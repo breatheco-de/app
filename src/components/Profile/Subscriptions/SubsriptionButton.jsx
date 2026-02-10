@@ -130,6 +130,23 @@ function SubsriptionButton({
         isComponent: true,
         component: (
           <>
+            {isExpired && planSlug && (
+              <Button
+                onClick={() => router.push(`/checkout?plan=${planSlug}`)}
+                marginTop="5px"
+                textAlign="center"
+                userSelect="none"
+                justifyContent="center"
+                fontSize="sm"
+                fontWeight={700}
+                color="white"
+                width="100%"
+                background="blue.default"
+                _hover={{ opacity: 0.8 }}
+              >
+                {t('subscription.renew-subscription')}
+              </Button>
+            )}
             {isPaymentIssue && (
               <Button
                 onClick={() => {
