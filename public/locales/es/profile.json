@@ -120,6 +120,7 @@
     "manage-subscription": "Administrar suscripción",
     "contact-support": "Chatea con soporte",
     "renew-subscription": "Renovar suscripción",
+    "plan-not-available": "Este plan ya no está disponible. Por favor contacta a soporte para asistencia.",
     "duration-cancelled": "Duración: Cancelada",
     "cancel-modal": {
       "title": "Cancelar suscripción",
