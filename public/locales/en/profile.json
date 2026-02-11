@@ -131,6 +131,8 @@
     "payment-up-to-date": "Payments are up to date",
     "reactivate-subscription": "Reactivate subscription",
     "contact-support": "Chat with support",
+    "renew-subscription": "Renew subscription",
+    "plan-not-available": "This plan is no longer available. Please contact support for assistance.",
     "manage-subscription": "Manage subscription",
     "duration-cancelled": "Duration: Cancelled",
     "cancel-modal": {
