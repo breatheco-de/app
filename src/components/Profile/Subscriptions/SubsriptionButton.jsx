@@ -8,6 +8,7 @@ import useSubscriptions from '../../../hooks/useSubscriptions';
 import useCustomToast from '../../../hooks/useCustomToast';
 import { reportDatalayer } from '../../../utils/requests';
 import { getBrowserInfo } from '../../../utils';
+import bc from '../../../services/breathecode';
 
 function SubsriptionButton({
   subscription, setSubscriptionProps, onOpenCancelSubscription, children, allSubscriptions, ...restStyles
@@ -30,6 +31,34 @@ function SubsriptionButton({
   const isPaymentIssue = status === 'PAYMENT_ISSUE';
 
   const { getPlanOffer, reactivateSubscription } = useSubscriptions();
+  const handleRenewSubscription = async () => {
+    try {
+      setIsLoading(true);
+      const response = await bc.payment({ status: 'ACTIVE' }).getPlan(planSlug);
+      if (response?.status < 400 && response?.data) {
+        router.push(`/checkout?plan=${planSlug}`);
+      } else {
+        createToast({
+          position: 'top',
+          title: t('subscription.plan-not-available'),
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      createToast({
+        position: 'top',
+        title: t('subscription.plan-not-available'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handlePlanOffer = async () => {
     try {
       setIsLoading(true);
@@ -130,6 +159,24 @@ function SubsriptionButton({
         isComponent: true,
         component: (
           <>
+            {isExpired && planSlug && (
+              <Button
+                onClick={handleRenewSubscription}
+                isLoading={isLoading}
+                marginTop="5px"
+                textAlign="center"
+                userSelect="none"
+                justifyContent="center"
+                fontSize="sm"
+                fontWeight={700}
+                color="white"
+                width="100%"
+                background="blue.default"
+                _hover={{ opacity: 0.8 }}
+              >
+                {t('subscription.renew-subscription')}
+              </Button>
+            )}
             {isPaymentIssue && (
               <Button
                 onClick={() => {
