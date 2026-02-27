@@ -86,56 +86,41 @@
             {
                 "features": [
                     {
-                        "description": "Prueba nuestros modelos de IA entrenados internamente que pueden revisar tu código constantemente y darte retroalimentación, consejos mientras programas y más.",
-                        "title": "Clases en vivo"
+                        "title": "Inteligencia Artificial Aplicada"
                     }
                 ],
                 "service": {
-                    "slug": "clases-en-vivo"
+                    "slug": "ai-engineering"
                 }
             },
             {
                 "features": [
                     {
-                        "description": "Accede a lecturas, ejercicios y clases grabadas disponibles en todo momento.",
-                        "title": "Plataforma con recursos prácticos"
+                        "title": "Ingeniería de Prompts"
                     }
                 ],
                 "service": {
-                    "slug": "plataforma-con-recursos-practicos"
+                    "slug": "prompt-engineering"
                 }
             },
             {
                 "features": [
                     {
-                        "description": "Recibe asesoría, comparte avances y resuelve dudas en una comunidad activa y cercana.",
-                        "title": "Comunidad exclusiva en WhatsApp"
+                        "title": "Optimización de Perfiles Profesionales"
                     }
                 ],
                 "service": {
-                    "slug": "comunidad-exclusiva-en-whatsapp"
+                    "slug": "professional-profile-optimization"
                 }
             },
             {
                 "features": [
                     {
-                        "description": "Obtén un 50% de descuento en sesiones personalizadas para llevar tu perfil al siguiente nivel.",
-                        "title": "Descuento en sesiones de coaching"
+                        "title": "Las ultimas tecnicas de IA y Linkedin para maximizar tus posibilidades de encontrar trabajo como AI Engineer"
                     }
                 ],
                 "service": {
-                    "slug": "descuento-en-sesiones-de-coaching"
-                }
-            },
-            {
-                "features": [
-                    {
-                        "description": "Descarga recursos clave para mejorar tu CV, negociar tu salario y hacer networking.",
-                        "title": "Guías y plantillas"
-                    }
-                ],
-                "service": {
-                    "slug": "guias-y-plantillas"
+                    "slug": "professional-profile-optimization"
                 }
             }
         ]

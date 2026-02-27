@@ -140,6 +140,90 @@ function Checkout() {
   const [courseTitle, setCourseTitle] = useState('');
 
   const isPaymentSuccess = paymentStatus === 'success';
+  const planDetails = renderPlanDetails();
+  const selectedPlanPriceNumber = Number(selectedPlan?.price);
+  const processedPlanPriceNumber = Number(processedPrice?.price);
+  const planSlugForBreakdown = selectedPlan?.plan_slug || originalPlan?.plan_slug;
+  const planBreakdownItems = (couponBreakdown || [])
+    .filter((item) => item?.targetType === 'plan' && item?.targetSlug === planSlugForBreakdown);
+  const breakdownOriginalPrice = planBreakdownItems.length > 0 ? Number(planBreakdownItems[0]?.before) : null;
+  const breakdownDiscountedPrice = planBreakdownItems.length > 0
+    ? Number(planBreakdownItems[planBreakdownItems.length - 1]?.after)
+    : null;
+
+  const getPricePairBySelectedPeriod = () => {
+    const period = selectedPlan?.period;
+    const toNumber = (value) => {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : null;
+    };
+
+    if (!period) {
+      return {
+        original: selectedPlanPriceNumber,
+        discounted: processedPlanPriceNumber,
+      };
+    }
+
+    if (period === 'MONTH') {
+      const original = toNumber(checkingData?.amount_per_month) ?? selectedPlanPriceNumber;
+      const discounted = toNumber(checkingData?.discounted_amount_per_month) ?? processedPlanPriceNumber;
+      return { original, discounted };
+    }
+
+    if (period === 'QUARTER') {
+      const original = toNumber(checkingData?.amount_per_quarter) ?? selectedPlanPriceNumber;
+      const discounted = toNumber(checkingData?.discounted_amount_per_quarter) ?? processedPlanPriceNumber;
+      return { original, discounted };
+    }
+
+    if (period === 'HALF') {
+      const original = toNumber(checkingData?.amount_per_half) ?? selectedPlanPriceNumber;
+      const discounted = toNumber(checkingData?.discounted_amount_per_half) ?? processedPlanPriceNumber;
+      return { original, discounted };
+    }
+
+    if (period === 'YEAR') {
+      const original = toNumber(checkingData?.amount_per_year) ?? selectedPlanPriceNumber;
+      const discounted = toNumber(checkingData?.discounted_amount_per_year) ?? processedPlanPriceNumber;
+      return { original, discounted };
+    }
+
+    if (period === 'FINANCING') {
+      const original = selectedPlanPriceNumber;
+      const discounted = (
+        toNumber(checkingData?.discounted_monthly_price)
+        ?? toNumber(selectedPlan?.discounted_monthly_price)
+        ?? processedPlanPriceNumber
+      );
+      return { original, discounted };
+    }
+
+    return {
+      original: selectedPlanPriceNumber,
+      discounted: processedPlanPriceNumber,
+    };
+  };
+
+  const { original: periodOriginalPrice, discounted: periodDiscountedPrice } = getPricePairBySelectedPeriod();
+  const baseOriginalPrice = Number.isFinite(breakdownOriginalPrice) ? breakdownOriginalPrice : periodOriginalPrice;
+  const baseDiscountedPrice = Number.isFinite(breakdownDiscountedPrice)
+    ? breakdownDiscountedPrice
+    : periodDiscountedPrice;
+  const hasPlanPriceDiscount = (
+    !selectedPlan?.isFreeTier
+    && Number.isFinite(baseOriginalPrice)
+    && baseOriginalPrice > 0
+    && Number.isFinite(baseDiscountedPrice)
+    && baseDiscountedPrice < baseOriginalPrice
+  );
+  const originalPlanPriceText = hasPlanPriceDiscount
+    ? `${currencySymbol}${baseOriginalPrice.toFixed(2)}`
+    : null;
+  const discountedPlanPriceText = hasPlanPriceDiscount
+    ? `${currencySymbol}${baseDiscountedPrice.toFixed(2)}`
+    : null;
+  const selectedPlanTitle = selectedPlan?.title ? ` / ${selectedPlan.title}` : '';
 
   useEffect(() => {
     const shouldShowPrereq = () => {
@@ -462,10 +546,21 @@ function Checkout() {
                       width="full"
                       alignItems="center"
                     >
-                      {showPaymentDetails && renderPlanDetails() && (
-                        <Text size="16px" color="green.400">
-                          {renderPlanDetails()}
-                        </Text>
+                      {showPaymentDetails && planDetails && (
+                        hasPlanPriceDiscount ? (
+                          <Flex alignItems="center" gap="8px">
+                            <Text size="16px" color="green.400" textDecoration="line-through" opacity={0.7}>
+                              {originalPlanPriceText}
+                            </Text>
+                            <Text size="16px" color="green.400">
+                              {`${discountedPlanPriceText}${selectedPlanTitle}`}
+                            </Text>
+                          </Flex>
+                        ) : (
+                          <Text size="16px" color="green.400">
+                            {planDetails}
+                          </Text>
+                        )
                       )}
                       {!planId
                         && selectedPlan?.type !== 'FREE'
