@@ -307,6 +307,17 @@ function ShowPrices({
                 )}
               </Flex>
               <Flex flexDirection="column" alignItems="center" mb={{ base: 4, md: 0 }}>
+                {selectedPlan.lastPrice && (
+                  <Text
+                    as="span"
+                    fontSize="md"
+                    color="white"
+                    opacity={0.8}
+                    textDecoration="line-through"
+                  >
+                    {selectedPlan.lastPrice}
+                  </Text>
+                )}
                 <Text
                   fontSize={{ base: '4xl', md: '40px' }}
                   fontWeight="bold"
@@ -321,11 +332,6 @@ function ShowPrices({
                     </Text>
                   )}
                 </Text>
-                <Flex gap="10px" alignItems="center" direction="column">
-                  <Text as="span" fontSize="md" color="#01455E" textDecoration="line-through">
-                    {selectedPlan.lastPrice}
-                  </Text>
-                </Flex>
                 {shouldShowSavingsPill && selfAppliedCoupon && (
                   <Box
                     bg="black"
@@ -344,13 +350,6 @@ function ShowPrices({
                         : t('yearly-savings', { months: monthsSaved })}
                     </Text>
                   </Box>
-                )}
-                {!selfAppliedCoupon && (
-                  <Flex gap="10px" alignItems="center" direction="column">
-                    <Text as="span" fontSize="md" color="#01455E" textDecoration="line-through">
-                      {selectedPlan.lastPrice}
-                    </Text>
-                  </Flex>
                 )}
               </Flex>
               <Button
