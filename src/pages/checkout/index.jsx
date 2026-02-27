@@ -497,14 +497,11 @@ function Checkout() {
               <Flex
                 alignItems="start"
                 flexDirection="column"
-                gridGap="10px"
+                gridGap={{ base: '4px', md: '6px' }}
                 padding="16px"
                 borderRadius="22px"
                 background={isThirdStep ? 'transparent' : backgroundColor}
               >
-                <Text size="18px">
-                  {t('you-are-getting')}
-                </Text>
                 <Flex gridGap="7px" width="full">
                   <Flex
                     flexDirection="column"
@@ -659,6 +656,9 @@ function Checkout() {
                   </Flex>
                 </Flex>
                 <Divider borderBottomWidth="2px" />
+                <Text fontSize="15px">
+                  {t('you-are-getting')}
+                </Text>
                 <Flex
                   flexDirection="column"
                   gridGap="4px"
@@ -690,6 +690,7 @@ function Checkout() {
                   {originalPlan?.accordionList?.length > 0 && (
                     <AcordionList
                       list={originalPlan?.accordionList}
+                      titleAsHtml
                       leftIcon="checked2"
                       iconColor={hexColor.blueDefault}
                       border="none"

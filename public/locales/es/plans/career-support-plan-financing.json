@@ -86,7 +86,7 @@
             {
                 "features": [
                     {
-                        "title": "Inteligencia Artificial Aplicada"
+                        "title": "Curso de Inteligencia Artificial Aplicada (<del>$99.99</del>)"
                     }
                 ],
                 "service": {
@@ -96,7 +96,7 @@
             {
                 "features": [
                     {
-                        "title": "Ingeniería de Prompts"
+                        "title": "Curso de Ingeniería de Prompts (<del>$99.99</del>)"
                     }
                 ],
                 "service": {
@@ -106,7 +106,7 @@
             {
                 "features": [
                     {
-                        "title": "Optimización de Perfiles Profesionales"
+                        "title": "Curso de Optimización de Perfiles Profesionales (<del>$99.99</del>)"
                     }
                 ],
                 "service": {
@@ -116,11 +116,21 @@
             {
                 "features": [
                     {
-                        "title": "Aprenderás las últimas técnicas de IA y Linkedin para maximizar tus posibilidades de encontrar trabajo"
+                        "title": "Aprende <strong>50+ secretos de IA y LinkedIn</strong> para destacar en el mercado laboral."
                     }
                 ],
                 "service": {
                     "slug": "professional-profile-optimization"
+                }
+            },
+            {
+                "features": [
+                    {
+                        "title": "<strong>más de 1000 estudiantes de 4Geeks han conseguido trabajo</strong> con estos secretos"
+                    }
+                ],
+                "service": {
+                    "slug": "job-guarantee"
                 }
             }
         ]
