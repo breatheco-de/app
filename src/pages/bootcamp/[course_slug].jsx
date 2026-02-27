@@ -75,7 +75,6 @@ function CoursePage() {
     isFetching,
     initialDataIsFetching,
     financeSelected,
-    allDiscounts,
     imageSource,
     assignmentList,
     assetCountByType,
