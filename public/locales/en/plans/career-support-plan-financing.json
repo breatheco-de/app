@@ -86,7 +86,7 @@
             {
                 "features": [
                     {
-                        "title": "Applied Artificial Intelligence Course (<del>$99.99</del>)"
+                        "title": "Applied Artificial Intelligence Course (valued at $99.99)"
                     }
                 ],
                 "service": {
@@ -96,7 +96,7 @@
             {
                 "features": [
                     {
-                        "title": "Prompt Engineering Course (<del>$99.99</del>)"
+                        "title": "Prompt Engineering Course (valued at $99.99)"
                     }
                 ],
                 "service": {
@@ -106,7 +106,17 @@
             {
                 "features": [
                     {
-                        "title": "Professional Profile Optimization Course (<del>$99.99</del>)"
+                        "title": "Professional Profile Optimization Course (valued at $99.99)"
+                    }
+                ],
+                "service": {
+                    "slug": "professional-profile-optimization"
+                }
+            },            
+            {
+                "features": [
+                    {
+                        "title": "<strong>50+ LinkedIn and AI secrets</strong> to stand out in the labor market."
                     }
                 ],
                 "service": {
@@ -116,21 +126,11 @@
             {
                 "features": [
                     {
-                        "title": "Learn <strong>50+ LinkedIn and AI secrets</strong> to stand out in the labor market."
+                        "title": "A clear step-by-step plan to <strong>land interviews in 30 days</strong>"
                     }
                 ],
                 "service": {
-                    "slug": "professional-profile-optimization"
-                }
-            },
-            {
-                "features": [
-                    {
-                        "title": "<strong>More than 1000 4Geeks students land a job</strong> with these secrets"
-                    }
-                ],
-                "service": {
-                    "slug": "job-guarantee"
+                    "slug": "mentoring-session-discounts"
                 }
             }
         ]

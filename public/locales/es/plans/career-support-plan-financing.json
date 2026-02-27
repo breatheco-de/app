@@ -86,7 +86,7 @@
             {
                 "features": [
                     {
-                        "title": "Curso de Inteligencia Artificial Aplicada (<del>$99.99</del>)"
+                        "title": "Curso de Inteligencia Artificial Aplicada (valorado en $99.99)"
                     }
                 ],
                 "service": {
@@ -96,7 +96,7 @@
             {
                 "features": [
                     {
-                        "title": "Curso de Ingeniería de Prompts (<del>$99.99</del>)"
+                        "title": "Curso de Ingeniería de Prompts (valorado en $99.99)"
                     }
                 ],
                 "service": {
@@ -106,7 +106,7 @@
             {
                 "features": [
                     {
-                        "title": "Curso de Optimización de Perfiles Profesionales (<del>$99.99</del>)"
+                        "title": "Curso de Optimización de Perfiles Profesionales (valorado en $99.99)"
                     }
                 ],
                 "service": {
@@ -116,7 +116,7 @@
             {
                 "features": [
                     {
-                        "title": "Aprende <strong>50+ secretos de IA y LinkedIn</strong> para destacar en el mercado laboral."
+                        "title": "<strong>50+ secretos de IA y LinkedIn</strong> para destacar en el mercado laboral."
                     }
                 ],
                 "service": {
@@ -126,11 +126,23 @@
             {
                 "features": [
                     {
-                        "title": "<strong>más de 1000 estudiantes de 4Geeks han conseguido trabajo</strong> con estos secretos"
+                        "title": "Un plan claro paso a paso para <strong>conseguir entrevistas en 30 días</strong>"
                     }
                 ],
                 "service": {
-                    "slug": "job-guarantee"
+                    "slug": "mentoring-session-discounts"
+                }
+            }
+        ],
+        "checkout_features_2": [
+            {
+                "features": [
+                    {
+                        "title": "Un plan claro paso a paso para conseguir entrevistas en 30 días"
+                    }
+                ],
+                "service": {
+                    "slug": "mentoring-session-discounts"
                 }
             }
         ]
