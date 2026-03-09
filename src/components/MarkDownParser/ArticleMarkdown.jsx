@@ -14,7 +14,7 @@ import { languageFix } from '../../utils';
 function ArticleMarkdown({
   content, withToc, frontMatter, titleRightSide, currentTask, currentData,
   showLineNumbers, showInlineLineNumbers, assetData, isGuidedExperience, showTeachAlert,
-  cohortModule,
+  cohortModule, isProject,
 }) {
   const { subTasks } = useModuleHandler();
   const { t, lang } = useTranslation('syllabus');
@@ -61,6 +61,7 @@ function ArticleMarkdown({
         assetData={assetData}
         currentTask={currentTask}
         content={content}
+        isProject={isProject}
       />
     </>
   );
@@ -79,6 +80,7 @@ ArticleMarkdown.propTypes = {
   isGuidedExperience: PropTypes.bool,
   showTeachAlert: PropTypes.bool,
   cohortModule: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.number, PropTypes.array])),
+  isProject: PropTypes.bool,
 };
 ArticleMarkdown.defaultProps = {
   content: '',
@@ -93,6 +95,7 @@ ArticleMarkdown.defaultProps = {
   isGuidedExperience: false,
   showTeachAlert: false,
   cohortModule: null,
+  isProject: false,
 };
 
 export default ArticleMarkdown;
