@@ -470,14 +470,14 @@ export function MDTable({ children }) {
   );
 }
 
-export function MDHeading({ children, tagType }) {
+export function MDHeading({ children, tagType, id: idOverride }) {
   const variantsStyle = {
     h1: 'sm',
     h2: 'sm',
     h3: '18px',
     h4: '16px',
   };
-  const id = generateId(children);
+  const id = idOverride ?? generateId(children);
 
   return (
     <Heading
@@ -653,10 +653,12 @@ BeforeAfter.propTypes = {
 MDHeading.propTypes = {
   children: PropTypes.node.isRequired,
   tagType: PropTypes.string,
+  id: PropTypes.string,
 };
 
 MDHeading.defaultProps = {
   tagType: 'h2',
+  id: undefined,
 };
 
 MDCheckbox.propTypes = {

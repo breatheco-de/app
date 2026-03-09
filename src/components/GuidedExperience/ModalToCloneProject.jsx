@@ -90,20 +90,19 @@ function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID,
   const provisioningLinks = generateProvisioningLinks();
 
   const scrollToMarkdown = () => {
-    const markdownBody = document.getElementById('markdown-body');
-    if (!markdownBody) return;
-
-    const threshold = 200;
-    const currentScrollPosition = window.scrollY || document.documentElement.scrollTop;
-    const targetPosition = markdownBody.getBoundingClientRect().top + currentScrollPosition;
-
-    const scrollDistance = Math.abs(currentScrollPosition - targetPosition);
-
-    if (scrollDistance > threshold) {
-      markdownBody.scrollIntoView({ block: 'start', behavior: 'smooth' });
-    }
-
     onClose();
+    const scrollTarget = () => {
+      const readmeEl = document.getElementById('readme');
+      if (readmeEl) {
+        readmeEl.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        return;
+      }
+      const markdownBody = document.getElementById('markdown-body');
+      if (markdownBody) {
+        markdownBody.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      }
+    };
+    setTimeout(scrollTarget, 350);
   };
 
   return (
