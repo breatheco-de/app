@@ -20,25 +20,39 @@ function usePusher({ userId, onSurveyReceived, onCourseCompleted }) {
 
     // Pusher configuration - these should be set as environment variables
     const PUSHER_KEY = process.env.NEXT_PUBLIC_PUSHER_KEY || '';
-    const PUSHER_CLUSTER = process.env.NEXT_PUBLIC_PUSHER_CLUSTER || 'us2';
+    const PUSHER_HOST = process.env.NEXT_PUBLIC_PUSHER_HOST || 'stream.4geeks.ai';
+    const PUSHER_PORT = process.env.NEXT_PUBLIC_PUSHER_PORT || 443;
 
-    console.log('[Pusher] Checking configuration - PUSHER_KEY exists:', !!PUSHER_KEY, 'PUSHER_CLUSTER:', PUSHER_CLUSTER);
+    console.log('[Pusher] Checking configuration - PUSHER_KEY exists:', !!PUSHER_KEY, 'PUSHER_HOST:', PUSHER_HOST);
 
     if (!PUSHER_KEY) {
       console.warn('[Pusher] ⚠️ Pusher key not configured. Surveys will not work.');
       console.warn('[Pusher] Please set NEXT_PUBLIC_PUSHER_KEY in your .env file');
       return undefined;
     }
+    if (!PUSHER_HOST) {
+      console.warn('[Pusher] ⚠️ Pusher host not configured.');
+      console.warn('[Pusher] Please set NEXT_PUBLIC_PUSHER_HOST in your .env file');
+      return undefined;
+    }
+    if (!PUSHER_PORT) {
+      console.warn('[Pusher] ⚠️ Pusher port not configured.');
+      console.warn('[Pusher] Please set NEXT_PUBLIC_PUSHER_PORT in your .env file');
+      return undefined;
+    }
 
     console.log('[Pusher] ✅ PUSHER_KEY found, initializing Pusher...');
-    console.log('[Pusher] Initializing Pusher with cluster:', PUSHER_CLUSTER);
+    console.log('[Pusher] Initializing Pusher with host:', PUSHER_HOST);
 
     // Initialize Pusher
     const pusher = new Pusher(PUSHER_KEY, {
-      cluster: PUSHER_CLUSTER,
+      wsHost: PUSHER_HOST,
+      wsPort: PUSHER_PORT,
+      forceTLS: true,
       encrypted: true,
+      disableStats: true,
+      enabledTransports: ['ws', 'wss'],
     });
-
     // Add connection event listeners for debugging
     pusher.connection.bind('connected', () => {
       console.log('[Pusher] Connected to Pusher');

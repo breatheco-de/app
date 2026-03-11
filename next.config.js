@@ -170,6 +170,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     RIGOBOT_HOST: process.env.RIGOBOT_HOST,
     NEXT_PUBLIC_IP_API_KEY: process.env.NEXT_PUBLIC_IP_API_KEY,
     NEXT_PUBLIC_PUSHER_KEY: process.env.NEXT_PUBLIC_PUSHER_KEY,
-    NEXT_PUBLIC_PUSHER_CLUSTER: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
+    NEXT_PUBLIC_PUSHER_HOST: process.env.NEXT_PUBLIC_PUSHER_HOST,
+    NEXT_PUBLIC_PUSHER_PORT: process.env.NEXT_PUBLIC_PUSHER_PORT,
   },
 })));
