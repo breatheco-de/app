@@ -19,35 +19,35 @@ function usePusher({ userId, onSurveyReceived, onCourseCompleted }) {
     console.log('[Pusher] Passed initial checks, proceeding with initialization...');
 
     // Pusher configuration - these should be set as environment variables
-    const PUSHER_KEY = process.env.NEXT_PUBLIC_PUSHER_KEY || '';
-    const PUSHER_HOST = process.env.NEXT_PUBLIC_PUSHER_HOST || 'stream.4geeks.ai';
-    const PUSHER_PORT = process.env.NEXT_PUBLIC_PUSHER_PORT || 443;
+    const SOKETI_KEY = process.env.NEXT_PUBLIC_SOKETI_KEY || '';
+    const SOKETI_HOST = process.env.NEXT_PUBLIC_SOKETI_HOST || 'stream.4geeks.ai';
+    const SOKETI_PORT = process.env.NEXT_PUBLIC_SOKETI_PORT || 443;
 
-    console.log('[Pusher] Checking configuration - PUSHER_KEY exists:', !!PUSHER_KEY, 'PUSHER_HOST:', PUSHER_HOST);
+    console.log('[Pusher] Checking configuration - SOKETI_KEY exists:', !!SOKETI_KEY, 'SOKETI_HOST:', SOKETI_HOST);
 
-    if (!PUSHER_KEY) {
-      console.warn('[Pusher] ⚠️ Pusher key not configured. Surveys will not work.');
-      console.warn('[Pusher] Please set NEXT_PUBLIC_PUSHER_KEY in your .env file');
+    if (!SOKETI_KEY) {
+      console.warn('[Pusher] ⚠️ Soketi key not configured. Surveys will not work.');
+      console.warn('[Pusher] Please set NEXT_PUBLIC_SOKETI_KEY in your .env file');
       return undefined;
     }
-    if (!PUSHER_HOST) {
-      console.warn('[Pusher] ⚠️ Pusher host not configured.');
-      console.warn('[Pusher] Please set NEXT_PUBLIC_PUSHER_HOST in your .env file');
+    if (!SOKETI_HOST) {
+      console.warn('[Pusher] ⚠️ Soketi host not configured. Surveys will not work.');
+      console.warn('[Pusher] Please set NEXT_PUBLIC_SOKETI_HOST in your .env file');
       return undefined;
     }
-    if (!PUSHER_PORT) {
-      console.warn('[Pusher] ⚠️ Pusher port not configured.');
-      console.warn('[Pusher] Please set NEXT_PUBLIC_PUSHER_PORT in your .env file');
+    if (!SOKETI_PORT) {
+      console.warn('[Pusher] ⚠️ Soketi port not configured. Surveys will not work.');
+      console.warn('[Pusher] Please set NEXT_PUBLIC_SOKETI_PORT in your .env file');
       return undefined;
     }
 
-    console.log('[Pusher] ✅ PUSHER_KEY found, initializing Pusher...');
-    console.log('[Pusher] Initializing Pusher with host:', PUSHER_HOST);
+    console.log('[Pusher] ✅ SOKETI_KEY found, initializing Pusher...');
+    console.log('[Pusher] Initializing Pusher to connect to Soketi host:', SOKETI_HOST);
 
     // Initialize Pusher
-    const pusher = new Pusher(PUSHER_KEY, {
-      wsHost: PUSHER_HOST,
-      wsPort: PUSHER_PORT,
+    const pusher = new Pusher(SOKETI_KEY, {
+      wsHost: SOKETI_HOST,
+      wsPort: SOKETI_PORT,
       forceTLS: true,
       encrypted: true,
       disableStats: true,
@@ -55,11 +55,11 @@ function usePusher({ userId, onSurveyReceived, onCourseCompleted }) {
     });
     // Add connection event listeners for debugging
     pusher.connection.bind('connected', () => {
-      console.log('[Pusher] Connected to Pusher');
+      console.log('[Pusher] Connected to Soketi');
     });
 
     pusher.connection.bind('disconnected', () => {
-      console.log('[Pusher] Disconnected from Pusher');
+      console.log('[Pusher] Disconnected from Soketi');
     });
 
     pusher.connection.bind('error', (err) => {
