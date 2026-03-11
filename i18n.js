@@ -1,7 +1,7 @@
 module.exports = {
   pages: {
     // Enable translations for the following pages
-    '*': ['common', 'navbar', 'footer', 'alert-message', 'share', 'live-event', 'call-to-action', 'code-viewer', 'program-card', 'final-project', 'profile', 'login', 'signup', 'survey'],
+    '*': ['common', 'navbar', 'footer', 'alert-message', 'share', 'live-event', 'call-to-action', 'code-viewer', 'program-card', 'final-project', 'profile', 'login', 'signup', 'survey', 'communities'],
     '/': ['home', 'social', 'pricing'],
     '/[uid]': ['workshops'],
     '/login': ['login', 'signup'],
@@ -38,6 +38,7 @@ module.exports = {
     '/workshops/[event_slug]': ['workshops', 'signup'],
     '/join/cohort/[id]': ['dashboard', 'signup'],
     '/podcast': ['podcast'],
+    '/community': ['communities'],
     '/accept-invite': ['accept-invite', 'signup'],
     '/bootcamp/[course_slug]': ['course', 'dashboard'],
   },
