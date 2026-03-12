@@ -23,7 +23,7 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
-import { es, en } from 'date-fns/locale';
+import { es, enUS } from 'date-fns/locale';
 import { useReward } from 'react-rewards';
 import useCohortHandler from '../hooks/useCohortHandler';
 import useStyle from '../hooks/useStyle';
@@ -36,7 +36,7 @@ import { stages } from './ReviewModal';
 import { getColorVariations } from '../utils';
 import useSocialShare from '../hooks/useSocialShare';
 
-const locales = { es, en };
+const locales = { es, en: enUS };
 
 function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, tasks }) {
   const containerRef = useRef(null);
