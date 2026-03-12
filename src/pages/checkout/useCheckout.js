@@ -17,6 +17,10 @@ import useCustomToast from '../../hooks/useCustomToast';
 
 const getBagTotalsForSelectedPlan = (checkingData, selectedPlan, processedPrice) => {
   if (!selectedPlan) return null;
+  const toNumber = (value) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
 
   const {
     amount_per_month: amountPerMonth = 0,
@@ -33,6 +37,8 @@ const getBagTotalsForSelectedPlan = (checkingData, selectedPlan, processedPrice)
   } = checkingData || {};
 
   const { period, price } = selectedPlan;
+  const selectedPlanPrice = toNumber(price);
+  const processedPlanPrice = toNumber(processedPrice?.price);
   let baseOriginal = 0;
   let baseDiscounted = 0;
 
@@ -41,11 +47,9 @@ const getBagTotalsForSelectedPlan = (checkingData, selectedPlan, processedPrice)
   // monthly price (from backend if available, otherwise from
   // processedPrice) as the discounted value.
   if (period === 'FINANCING') {
-    const originalMonthly = typeof price === 'number' ? price : 0;
+    const originalMonthly = selectedPlanPrice;
 
-    const discountedMonthlyFromProcessed = typeof processedPrice?.price === 'number'
-      ? processedPrice.price
-      : undefined;
+    const discountedMonthlyFromProcessed = processedPlanPrice > 0 ? processedPlanPrice : undefined;
 
     const discountedMonthly = [
       discountedMonthlyFromChecking,
@@ -64,20 +68,20 @@ const getBagTotalsForSelectedPlan = (checkingData, selectedPlan, processedPrice)
   }
 
   if (period === 'MONTH') {
-    baseOriginal = amountPerMonth || 0;
-    baseDiscounted = (discountedAmountPerMonth ?? amountPerMonth) || 0;
+    baseOriginal = toNumber(amountPerMonth) || selectedPlanPrice;
+    baseDiscounted = toNumber(discountedAmountPerMonth ?? amountPerMonth) || processedPlanPrice || selectedPlanPrice;
   } else if (period === 'QUARTER') {
-    baseOriginal = amountPerQuarter || 0;
-    baseDiscounted = (discountedAmountPerQuarter ?? amountPerQuarter) || 0;
+    baseOriginal = toNumber(amountPerQuarter) || selectedPlanPrice;
+    baseDiscounted = toNumber(discountedAmountPerQuarter ?? amountPerQuarter) || processedPlanPrice || selectedPlanPrice;
   } else if (period === 'HALF') {
-    baseOriginal = amountPerHalf || 0;
-    baseDiscounted = (discountedAmountPerHalf ?? amountPerHalf) || 0;
+    baseOriginal = toNumber(amountPerHalf) || selectedPlanPrice;
+    baseDiscounted = toNumber(discountedAmountPerHalf ?? amountPerHalf) || processedPlanPrice || selectedPlanPrice;
   } else if (period === 'YEAR') {
-    baseOriginal = amountPerYear || 0;
-    baseDiscounted = (discountedAmountPerYear ?? amountPerYear) || 0;
+    baseOriginal = toNumber(amountPerYear) || selectedPlanPrice;
+    baseDiscounted = toNumber(discountedAmountPerYear ?? amountPerYear) || processedPlanPrice || selectedPlanPrice;
   } else {
-    baseOriginal = price || 0;
-    baseDiscounted = typeof processedPrice?.price === 'number' ? processedPrice.price : (price || 0);
+    baseOriginal = selectedPlanPrice;
+    baseDiscounted = processedPlanPrice || selectedPlanPrice;
   }
 
   const originalTotal = baseOriginal + (planAddonsAmount || 0);
@@ -667,14 +671,23 @@ const useCheckout = () => {
   };
 
   useEffect(() => {
+    if (pathname === '/renew') return;
     if (!userSelectedPlan || !planData) return;
+
+    const accessToken = getStorageItem('accessToken');
+    // Keep UI stable immediately when switching options from dropdown.
+    setSelectedPlan(userSelectedPlan);
+
+    // In step 1 (anonymous), do not call checking yet; use selected plan data directly.
+    if (!isAuthenticated && !accessToken) return;
 
     setLoader('summary', true);
     getChecking(planData, selectedPlanAddons)
       .then((checking) => {
         const autoSelectedPlan = findAutoSelectedPlan(checking);
-
-        setSelectedPlan(autoSelectedPlan);
+        if (autoSelectedPlan) {
+          setSelectedPlan(autoSelectedPlan);
+        }
         if (stepIndex >= stepsEnum.PAYMENT) {
           handleStep(stepsEnum.PAYMENT);
         }
@@ -684,7 +697,7 @@ const useCheckout = () => {
       .finally(() => {
         setLoader('summary', false);
       });
-  }, [userSelectedPlan]);
+  }, [userSelectedPlan, planData, pathname, isAuthenticated, selectedPlanAddons]);
 
   // useEffect for selfAppliedCoupons
   useEffect(() => {
@@ -982,29 +995,6 @@ const useCheckout = () => {
       setLoader('plan', false);
     }
   }, [isAuthenticated, router.locale, planData, pathname]);
-
-  // STEP 2b: user changes option (monthly/annual/financing)
-  // Re-run preview and refresh the right-hand summary without showing a full loader.
-  useEffect(() => {
-    if (pathname === '/renew') return;
-    if (!userSelectedPlan || !planData) return;
-
-    setLoader('summary', true);
-    getChecking(planData)
-      .then((checking) => {
-        const autoSelectedPlan = findAutoSelectedPlan(checking);
-
-        setSelectedPlan(autoSelectedPlan);
-        if (stepIndex >= stepsEnum.PAYMENT) {
-          handleStep(stepsEnum.PAYMENT);
-        }
-      })
-      .catch(() => {
-      })
-      .finally(() => {
-        setLoader('summary', false);
-      });
-  }, [userSelectedPlan, pathname]);
 
   // STEP 3: Apply coupon once checking/bag exists
   // Updates Subtotal/Total in the right-hand summary.

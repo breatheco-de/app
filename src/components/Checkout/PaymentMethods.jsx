@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef } from 'react';
+﻿import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, Flex, Button, RadioGroup, Stack, Radio, Image,
+  Box, Flex, Button, RadioGroup, Stack, Radio, Image, Spinner,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Heading from '../Heading';
@@ -28,6 +28,7 @@ function PaymentMethods({
   onPaymentSuccess,
   handleRenewalPayment,
   handleCoinbaseRenewalPayment,
+  hideSectionTitle,
 }) {
   const { t } = useTranslation('signup');
   const { isAuthenticated } = useAuth();
@@ -62,6 +63,9 @@ function PaymentMethods({
   const [savedCard, setSavedCard] = useState(null);
   const [isCoinbaseLoading, setIsCoinbaseLoading] = useState(false);
   const [inSuccessView, setInSuccessView] = useState(false);
+  const [accordionIndex, setAccordionIndex] = useState(null);
+  const [showInitialInlineLoader, setShowInitialInlineLoader] = useState(hideSectionTitle);
+  const [hasAttemptedMethodsFetch, setHasAttemptedMethodsFetch] = useState(false);
   const popupMonitorRef = useRef(null);
   const coinbasePollRef = useRef(null);
   const popupRef = useRef(null);
@@ -75,16 +79,59 @@ function PaymentMethods({
     jcb: 'https://js.stripe.com/v3/fingerprinted/img/jcb-271fd06e6e7a2c52692ffa91a95fb64f.svg',
     unionpay: 'https://js.stripe.com/v3/fingerprinted/img/unionpay-8a10aefc7295216c338ba4e1224627a1.svg',
   };
+  const orderedPaymentMethods = [...paymentMethods].sort((a, b) => {
+    if (a?.is_credit_card && !b?.is_credit_card) return -1;
+    if (!a?.is_credit_card && b?.is_credit_card) return 1;
+    return 0;
+  });
+  const shouldShowMethodsLoader = !hideSectionTitle && loader.paymentMethods && paymentMethods.length === 0;
+  const shouldShowInlineMethodsLoader = hideSectionTitle
+    && paymentMethods.length === 0
+    && (showInitialInlineLoader || loader.paymentMethods);
+  const defaultCreditCardIndex = orderedPaymentMethods.findIndex((method) => method.is_credit_card);
 
   useEffect(() => {
-    if (selectedPlan?.owner?.id && isAuthenticated) {
+    if (defaultCreditCardIndex >= 0) {
+      setAccordionIndex(defaultCreditCardIndex);
+    }
+  }, [defaultCreditCardIndex]);
+
+  useEffect(() => {
+    if (loader.paymentMethods) {
+      setHasAttemptedMethodsFetch(true);
+      setShowInitialInlineLoader(true);
+      return;
+    }
+    if (paymentMethods.length > 0) {
+      setShowInitialInlineLoader(false);
+      return;
+    }
+    if (hasAttemptedMethodsFetch && !loader.paymentMethods) {
+      setShowInitialInlineLoader(false);
+    }
+  }, [loader.paymentMethods, paymentMethods.length, hasAttemptedMethodsFetch]);
+
+  const handleAccordionChange = (nextIndex) => {
+    if (Array.isArray(nextIndex)) {
+      setAccordionIndex(nextIndex.length > 0 ? nextIndex[0] : null);
+      return;
+    }
+    if (typeof nextIndex === 'number' && nextIndex >= 0) {
+      setAccordionIndex(nextIndex);
+      return;
+    }
+    setAccordionIndex(null);
+  };
+
+  useEffect(() => {
+    if (selectedPlan?.owner?.id) {
       getPaymentMethods(selectedPlan.owner.id);
     }
   }, [selectedPlan?.owner?.id, isAuthenticated]);
 
   useEffect(() => {
     const fetchSavedCard = async () => {
-      if (!selectedPlan?.owner?.id || !isAuthenticated) {
+      if (!selectedPlan?.owner?.id) {
         setLoader('savedCard', false);
         return;
       }
@@ -382,22 +429,33 @@ function PaymentMethods({
 
   return (
     <>
-      <Heading size="18px">{t('payment-methods')}</Heading>
-      <Box
-        as="hr"
-        width="20%"
-        margin="12px 0 18px 0"
-        border="0px"
-        h="1px"
-        background={fontColor}
-      />
-      {(loader.paymentMethods || loader.savedCard) && (
+      {!hideSectionTitle && (
+        <>
+          <Heading size="18px">{t('payment-methods')}</Heading>
+          <Box
+            as="hr"
+            width="20%"
+            margin="12px 0 18px 0"
+            border="0px"
+            h="1px"
+            background={fontColor}
+          />
+        </>
+      )}
+      {shouldShowMethodsLoader && (
         <LoaderScreen />
       )}
       <Flex flexDirection="column" gridGap="4px" width="100%" mt="1rem">
+        {shouldShowInlineMethodsLoader && (
+          <Flex justifyContent="center" alignItems="center" minHeight="90px" width="100%">
+            <Spinner color={hexColor.blueDefault} thickness="3px" />
+          </Flex>
+        )}
         <AcordionList
           width="100%"
-          list={paymentMethods.map((method) => {
+          index={typeof accordionIndex === 'number' ? accordionIndex : undefined}
+          onChange={handleAccordionChange}
+          list={orderedPaymentMethods.map((method) => {
             if (!method.is_credit_card && !method.is_crypto) {
               return {
                 ...method,
@@ -475,7 +533,7 @@ function PaymentMethods({
                             <Box display="flex">
                               <Image src={CARD_ICONS[savedCard.card_brand?.toLowerCase()]} alt={savedCard.card_brand} width="24px" height="18px" marginRight="8px" />
                               <Text>
-                                ••••
+                                â€¢â€¢â€¢â€¢
                                 {' '}
                                 {savedCard?.card_last4}
                               </Text>
@@ -575,10 +633,9 @@ function PaymentMethods({
           gridGap="0"
           containerStyles={{
             gridGap: '8px',
-            allowToggle: true,
           }}
+          allowToggle
           descriptionStyle={{ padding: '10px 0 0 0' }}
-          defaultIndex={paymentMethods.length === 1 ? paymentMethods?.findIndex((method) => method.is_credit_card) : undefined}
         />
       </Flex>
     </>
@@ -590,6 +647,7 @@ PaymentMethods.propTypes = {
   onPaymentSuccess: PropTypes.func,
   handleRenewalPayment: PropTypes.func,
   handleCoinbaseRenewalPayment: PropTypes.func,
+  hideSectionTitle: PropTypes.bool,
 };
 
 PaymentMethods.defaultProps = {
@@ -597,6 +655,7 @@ PaymentMethods.defaultProps = {
   onPaymentSuccess: () => { },
   handleRenewalPayment: null,
   handleCoinbaseRenewalPayment: null,
+  hideSectionTitle: false,
 };
 
 export default PaymentMethods;

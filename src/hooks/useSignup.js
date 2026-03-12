@@ -53,6 +53,8 @@ const useSignup = () => {
 
   const defaultPlan = process.env.BASE_PLAN || 'basic';
   const country_code = countryCodeQueryString || location?.countryShort;
+  const hasSessionToken = Boolean(getQueryString('token') || getStorageItem('accessToken'));
+  const canRequestPaymentData = hasSessionToken || isAuthenticated;
 
   const subscriptionStatusDictionary = {
     PREPARING_FOR_COHORT: 'PREPARING_FOR_COHORT',
@@ -862,8 +864,7 @@ const useSignup = () => {
 
   const getPaymentMethods = async (ownerId) => {
     try {
-      if (isAuthenticated) {
-        // const ownerId = selectedPlan.owner.id;
+      if (canRequestPaymentData && ownerId) {
         setLoader('paymentMethods', true);
         const resp = await bc.payment({
           academy_id: ownerId,
@@ -883,7 +884,7 @@ const useSignup = () => {
 
   const getSavedCard = async (ownerId) => {
     try {
-      if (isAuthenticated && ownerId) {
+      if (canRequestPaymentData && ownerId) {
         const resp = await bc.payment({ academy: ownerId }).getSavedCard();
         if (resp.status < 400 && resp.data?.has_payment_method) {
           const { data } = resp;
