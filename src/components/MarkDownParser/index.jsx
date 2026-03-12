@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkGemoji from 'remark-gemoji';
@@ -21,6 +21,24 @@ import useModuleHandler from '../../hooks/useModuleHandler';
 import CodeViewer, { languagesLabels, languagesNames } from '../CodeViewer';
 import DynamicCallToAction from '../DynamicCallToAction';
 
+const IsProjectContext = createContext(false);
+
+function getHeadingText(children) {
+  if (typeof children === 'string') return children;
+  if (Array.isArray(children)) return children.join('');
+  return String(children ?? '');
+}
+
+function MarkdownH1Heading({ children }) {
+  const isProject = useContext(IsProjectContext);
+  const text = getHeadingText(children);
+  const isReadme = isProject && text.trim().toUpperCase() === 'README';
+  return (
+    <MDHeading tagType="h1" id={isReadme ? 'readme' : undefined}>
+      {children}
+    </MDHeading>
+  );
+}
 function MarkdownH2Heading({ children }) {
   return (
     <MDHeading tagType="h2">
@@ -166,7 +184,7 @@ function ListComponent({ subtaskFirstLoad, newSubTasks, setNewSubTasks, subTasks
 
 function MarkDownParser({
   content, currentTask,
-  showLineNumbers, showInlineLineNumbers, assetData,
+  showLineNumbers, showInlineLineNumbers, assetData, isProject,
 }) {
   const [subtaskFirstLoad, setSubtaskFirstLoad] = useState(false);
   const [newSubTasks, setNewSubTasks] = useState([]);
@@ -271,7 +289,7 @@ function MarkDownParser({
   }, [content]);
 
   return (
-    <>
+    <IsProjectContext.Provider value={isProject}>
       <ReactMarkdown
         // gemoji plugin
         remarkPlugins={[remarkGfm, remarkGemoji, remarkMath]}
@@ -280,7 +298,7 @@ function MarkDownParser({
           div: Wrapper,
           a: MDLink,
           code: ({ ...props }) => Code({ ...props, showLineNumbers, showInlineLineNumbers }),
-          h1: MarkdownH2Heading,
+          h1: MarkdownH1Heading,
           h2: MarkdownH2Heading,
           h3: MarkdownH3Heading,
           h4: MarkdownH4Heading,
@@ -302,7 +320,7 @@ function MarkDownParser({
       >
         {preParsedContent}
       </ReactMarkdown>
-    </>
+    </IsProjectContext.Provider>
   );
 }
 
@@ -312,6 +330,7 @@ MarkDownParser.propTypes = {
   showLineNumbers: PropTypes.bool,
   showInlineLineNumbers: PropTypes.bool,
   assetData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object])),
+  isProject: PropTypes.bool,
 };
 MarkDownParser.defaultProps = {
   content: '',
@@ -319,6 +338,7 @@ MarkDownParser.defaultProps = {
   showLineNumbers: true,
   showInlineLineNumbers: true,
   assetData: null,
+  isProject: false,
 };
 
 export default MarkDownParser;

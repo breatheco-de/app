@@ -59,12 +59,16 @@ function SyllabusActivity({
   const langLink = lang !== 'en' ? `/${lang}` : '';
   const taskTranslations = lang === 'en' ? (data?.translations?.en || data?.translations?.us) : (data?.translations?.[lang] || {});
 
+  const isProject = data?.task_type === 'PROJECT' || data?.type === 'PROJECT';
   const baseLink = `${langLink}/syllabus/${cohortSlug || cohortSession?.slug}/${data.type.toLowerCase()}/${taskTranslations?.slug || currentTask?.associated_slug}`;
   const generateLink = () => {
+    let generatedUrl;
     if (cohortSlug) {
-      return `/main-cohort/${cohortSession?.slug}${baseLink}`;
+      generatedUrl = `/main-cohort/${cohortSession?.slug}${baseLink}`;
+    } else {
+      generatedUrl = baseLink;
     }
-    return baseLink;
+    return isProject ? `${generatedUrl}#readme` : generatedUrl;
   };
   const link = isDisabled ? '#disabled' : generateLink();
 

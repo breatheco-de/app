@@ -4,7 +4,7 @@ import axios from 'axios';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useAuth from './useAuth';
-import { getStorageItem, getBrowserInfo, languageFix } from '../utils';
+import { getStorageItem, getBrowserInfo, languageFix, removeStorageItem } from '../utils';
 import useCohortAction from '../store/actions/cohortAction';
 import { processRelatedAssignments } from '../utils/cohorts';
 import { reportDatalayer } from '../utils/requests';
@@ -237,7 +237,7 @@ function useCohortHandler() {
         let currentCohort = prefetchedCohorts.find((c) => c.slug === cohortSlug);
 
         //we make sure that we have already loaded the data of the cohort and its micro cohorts
-        if (!currentCohort || (currentCohort.micro_cohorts.length > 0 && !currentCohort.micro_cohorts.every((cohort) => myCohorts.some(({ slug }) => cohort.slug === slug)))) {
+        if (!currentCohort || (Array.isArray(currentCohort.micro_cohorts) && currentCohort.micro_cohorts.length > 0 && !currentCohort.micro_cohorts.every((cohort) => myCohorts.some(({ slug }) => cohort.slug === slug)))) {
           const { cohorts: fetchedCohorts } = await fetchUserAndCohorts();
           setCohorts(fetchedCohorts);
           prefetchedCohorts = fetchedCohorts;
@@ -251,7 +251,7 @@ function useCohortHandler() {
           return router.push('/choose-program');
         }
 
-        if (currentCohort.cohort_user.finantial_status === 'LATE') {
+        if (currentCohort?.cohort_user?.finantial_status === 'LATE') {
           createToast({
             position: 'top',
             title: t('alert-message:finantial-late'),
@@ -262,7 +262,9 @@ function useCohortHandler() {
           return router.push('/choose-program');
         }
 
-        const cohorts = currentCohort.micro_cohorts.length > 0 ? prefetchedCohorts.filter((c) => currentCohort.micro_cohorts.some((elem) => elem.slug === c.slug)) : [currentCohort];
+        const cohorts = Array.isArray(currentCohort.micro_cohorts) && currentCohort.micro_cohorts.length > 0
+          ? prefetchedCohorts.filter((c) => currentCohort.micro_cohorts.some((elem) => elem.slug === c.slug))
+          : [currentCohort];
 
         await getCohortsModules(cohorts);
 
@@ -280,7 +282,8 @@ function useCohortHandler() {
         duration: 7000,
         isClosable: true,
       });
-      return localStorage.removeItem('cohortSession');
+      removeStorageItem('cohortSession');
+      return undefined;
     }
   };
 
