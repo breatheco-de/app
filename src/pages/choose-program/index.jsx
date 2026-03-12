@@ -510,8 +510,8 @@ function chooseProgram() {
           size="md"
           dangerouslySetInnerHTML={{
             __html: t('late-payment.description', {
-              cohort_name: lateModalProps.data[0]?.name,
-              academy_name: lateModalProps.data?.[0]?.academy?.name,
+              cohort_name: lateModalProps.data?.[0]?.cohort?.name || lateModalProps.data?.[0]?.name || '',
+              academy_name: lateModalProps.data?.[0]?.cohort?.academy?.name || lateModalProps.data?.[0]?.academy?.name || '',
             }),
           }}
         />
