@@ -19,7 +19,6 @@ module.exports = {
     '/lessons': ['lesson'],
     '/project/[slug]': ['projects'],
     '/checkout': ['signup'],
-    '/checkout-v2': ['signup'],
     '/interactive-coding-tutorial/[slug]': ['projects', 'exercises'],
     '/interactive-coding-tutorials': ['projects'],
     '/interactive-exercise/[slug]': ['exercises', 'workshops'],

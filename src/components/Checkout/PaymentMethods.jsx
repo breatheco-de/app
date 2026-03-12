@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
   Box, Flex, Button, RadioGroup, Stack, Radio, Image, Spinner,

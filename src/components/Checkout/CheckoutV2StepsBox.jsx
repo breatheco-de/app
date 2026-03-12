@@ -33,7 +33,7 @@ function CheckoutV2StepsBox({ courseChoosed, setShowPaymentDetails, setVerifyEma
   const router = useRouter();
   const { userSession, location } = useSession();
   const { input } = useStyle();
-  const { createToast } = useCustomToast({ toastId: 'checkout-v2-user-form' });
+  const { createToast } = useCustomToast({ toastId: 'checkout-user-form' });
   const { state, handleStep } = signupAction();
   const { stepsEnum } = useSignup();
   const { stepIndex } = state;
