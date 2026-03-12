@@ -533,7 +533,7 @@ function PaymentMethods({
                             <Box display="flex">
                               <Image src={CARD_ICONS[savedCard.card_brand?.toLowerCase()]} alt={savedCard.card_brand} width="24px" height="18px" marginRight="8px" />
                               <Text>
-                                â€¢â€¢â€¢â€¢
+                                ****
                                 {' '}
                                 {savedCard?.card_last4}
                               </Text>
