@@ -134,7 +134,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     GOOGLE_GEO_KEY: process.env.GOOGLE_GEO_KEY,
     CAPTCHA_KEY: process.env.CAPTCHA_KEY,
     RIGOBOT_HASH: process.env.RIGOBOT_HASH,
-    BREATHECODE_PAYMENT: process.env.BREATHECODE_PAYMENT,
+    BREATHECODE_PAYMENT: process.env.BREATHECODE_PAYMENT || '',
   },
   images: {
     // Whitelist for image providers

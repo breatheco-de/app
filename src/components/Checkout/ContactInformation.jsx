@@ -59,6 +59,7 @@ function ContactInformation({
           showVerifyEmail={false}
           courseChoosed={courseChoosed}
           extraFields={['phone']}
+          submitText={t('start-payment')}
           maxWidth={{ base: 'auto', lg: '490px' }}
           onHandleSubmit={(data) => {
             setVerifyEmailProps({

@@ -11,7 +11,8 @@ import { usePersistentBySession } from '../../hooks/usePersistent';
 import { usePlanPrice } from '../../utils/getPriceWithDiscount';
 import useSession from '../../hooks/useSession';
 import bc from '../../services/breathecode';
-import { generateCohortSyllabusModules } from '../../lib/admissions';
+import { getCohort } from '../../lib/admissions';
+import { processRelatedAssignments } from '../../utils/cohorts';
 import { adjustNumberBeetwenMinMax, cleanObject, setStorageItem, isWindow, getBrowserInfo, getQueryString } from '../../utils';
 import { parseQuerys } from '../../utils/url';
 import { BREATHECODE_HOST, ORIGIN_HOST, BASE_COURSE } from '../../utils/variables';
@@ -95,6 +96,12 @@ export const useBootcamp = () => {
   }) : `?plan=${data?.plan_slug}&cohort=${cohortId}&course=${data?.slug}${suggestedPlanAddonsSlugs ? `&plan_addons=${suggestedPlanAddonsSlugs}` : ''}`;
 
   const featurePrice = planPriceFormatter(featuredPlanToEnroll, planList, allDiscounts);
+  const featurePriceOriginal = planPriceFormatter(featuredPlanToEnroll, planList, []);
+  const hasFeaturePriceDiscount = (
+    allDiscounts.length > 0
+    && !featuredPlanToEnroll?.isFreeTier
+    && featurePriceOriginal !== featurePrice
+  );
 
   const getAlternativeTranslation = (slug, params = {}, options = {}) => {
     const keys = slug.split('.');
@@ -225,7 +232,50 @@ export const useBootcamp = () => {
 
       setData(courseData);
 
-      const cohortSyllabus = await generateCohortSyllabusModules(courseData?.cohort?.id);
+      const cohortSyllabus = await (async () => {
+        try {
+          const cohort = await getCohort(courseData?.cohort?.id);
+          const syllabusSlug = cohort?.syllabus_version?.slug;
+          const syllabusVersion = cohort?.syllabus_version?.version;
+
+          const { data: syllabusData } = await bc.admissions({
+            slug: syllabusSlug,
+            version: syllabusVersion,
+          }).getPublicSyllabusVersion();
+
+          const syllabusItem = Array.isArray(syllabusData) ? syllabusData[0] : syllabusData;
+          const cohortSyllabusList = syllabusItem?.json?.days || syllabusItem?.json?.modules || [];
+
+          const newModulesStruct = cohortSyllabusList.map((module) => {
+            const relatedAssignments = processRelatedAssignments(module);
+            const { content, filteredContent, filteredContentByPending } = relatedAssignments;
+            return {
+              id: module?.id,
+              title: module?.label || '',
+              description: module?.description || '',
+              content,
+              exists_activities: content?.length > 0,
+              filteredContent,
+              filteredContentByPending: content?.length > 0 ? filteredContentByPending : null,
+              duration_in_days: module?.duration_in_days || null,
+              teacherInstructions: module?.teacher_instructions || '',
+              extendedInstructions: module.extended_instructions || '>:warning: No available instruction found for this module',
+              keyConcepts: module['key-concepts'],
+            };
+          });
+
+          return {
+            syllabus: {
+              ...syllabusItem,
+              modules: newModulesStruct,
+            },
+            cohort: cohort || {},
+          };
+        } catch (err) {
+          error('Error fetching cohort syllabus:', err);
+          return {};
+        }
+      })();
 
       const getModulesInfo = async () => {
         try {
@@ -246,6 +296,8 @@ export const useBootcamp = () => {
             });
           });
 
+          console.log('exercises', projects);
+
           const filterAssets = (assets, isFeatured) => assets.filter((asset) => {
             const hasTranslation = asset?.translations && asset?.translations[language];
             if (!hasTranslation) return false;
@@ -254,10 +306,27 @@ export const useBootcamp = () => {
             return isFeatured ? featuredAssetSlugs.includes(assetSlug) : !featuredAssetSlugs.includes(assetSlug);
           });
 
-          let combinedFeaturedAssets = [
+          // Featured assets found inside the syllabus
+          const featuredFromSyllabus = [
             ...filterAssets(exercises, true),
             ...filterAssets(projects, true),
           ];
+
+          // Identify featured slugs NOT found in the syllabus
+          const foundSlugs = featuredFromSyllabus.map((asset) => asset?.translations?.[language]?.slug);
+          const externalSlugs = featuredAssetSlugs
+            .map((s) => s.trim())
+            .filter((slug) => slug && !foundSlugs.includes(slug));
+
+          // Fetch external assets from the registry API
+          const externalAssets = await Promise.all(
+            externalSlugs.map((slug) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${slug}`)
+              .then((resp) => resp.json())
+              .then((assetData) => (assetData?.slug ? assetData : null))
+              .catch(() => null)),
+          );
+
+          let combinedFeaturedAssets = [...featuredFromSyllabus];
 
           if (combinedFeaturedAssets.length < 3) {
             const remainingNeeded = 3 - combinedFeaturedAssets.length;
@@ -269,15 +338,20 @@ export const useBootcamp = () => {
             combinedFeaturedAssets = [...combinedFeaturedAssets, ...additionalItems];
           }
 
-          const assignmentsFetch = await Promise.all(
+          // Fetch full data for syllabus-based featured assets
+          const syllabusAssignmentsFetch = await Promise.all(
             combinedFeaturedAssets.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[language]?.slug}`)
               .then((assignmentResp) => assignmentResp.json())
-              .catch(() => [])),
+              .catch(() => null)),
           );
+
+          const validExternalAssets = externalAssets.filter(Boolean);
+          const validSyllabusAssets = syllabusAssignmentsFetch.filter(Boolean);
+          const allAssignments = [...validExternalAssets, ...validSyllabusAssets];
 
           return {
             count: assetTypeCount,
-            assignmentList: assignmentsFetch.filter(Boolean),
+            assignmentList: allAssignments,
           };
         } catch (errorMsg) {
           error('Error fetching module info:', errorMsg);
@@ -336,7 +410,21 @@ export const useBootcamp = () => {
               upcoming: true,
             }).publicLiveClass();
 
-            setLiveClasses(Array.isArray(liveClassesData) ? liveClassesData : []);
+            const sortedLiveClasses = Array.isArray(liveClassesData)
+              ? [...liveClassesData].sort((a, b) => {
+                const now = new Date();
+                const aStart = a?.starting_at ? new Date(a.starting_at) : null;
+                const aEnd = a?.ending_at || a?.ended_at ? new Date(a.ending_at || a.ended_at) : null;
+                const bStart = b?.starting_at ? new Date(b.starting_at) : null;
+                const bEnd = b?.ending_at || b?.ended_at ? new Date(b.ending_at || b.ended_at) : null;
+                const aIsLive = aStart && aEnd && aStart <= now && aEnd > now;
+                const bIsLive = bStart && bEnd && bStart <= now && bEnd > now;
+                if (aIsLive && !bIsLive) return -1;
+                if (!aIsLive && bIsLive) return 1;
+                return (aStart || 0) - (bStart || 0);
+              })
+              : [];
+            setLiveClasses(sortedLiveClasses);
           } catch (err) {
             error('Error fetching live classes:', err);
             setLiveClasses([]);
@@ -578,6 +666,8 @@ export const useBootcamp = () => {
     isVisibilityPublic,
     courseColor,
     featurePrice,
+    featurePriceOriginal,
+    hasFeaturePriceDiscount,
     featuredPlanToEnroll,
     enrollQuerys,
     benefitsBullets,

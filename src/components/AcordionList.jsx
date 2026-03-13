@@ -6,11 +6,21 @@ import Icon from './Icon';
 
 function AcordionList({
   defaultIndex, allowMultiple, list, color, iconColor, paddingButton, titleStyle,
-  highlightColor, containerStyles, unstyled, descriptionStyle, leftIcon, expanderText, featuresStyle, allowToggle, ...rest
+  highlightColor, containerStyles, unstyled, descriptionStyle, leftIcon, expanderText, featuresStyle, allowToggle, titleAsHtml, index, onChange, ...rest
 }) {
   const { t } = useTranslation();
   return list?.length > 0 && (
-    <Accordion defaultIndex={defaultIndex} allowMultiple={allowMultiple} display="flex" flexDirection="column" gridGap="16px" allowToggle={allowToggle} {...containerStyles}>
+    <Accordion
+      defaultIndex={defaultIndex}
+      index={index}
+      onChange={onChange}
+      allowMultiple={allowMultiple}
+      display="flex"
+      flexDirection="column"
+      gridGap="16px"
+      allowToggle={allowToggle}
+      {...containerStyles}
+    >
       {list?.map((item, i) => (
         <AccordionItem
           display="flex"
@@ -38,9 +48,21 @@ function AcordionList({
                   {leftIcon && (
                     <Icon icon={leftIcon} color={iconColor} width="16px" height="16px" marginRight="10px" />
                   )}
-                  <Box as="span" flex="1" fontSize="14px" textAlign="left" textTransform="uppercase" {...titleStyle}>
-                    {item?.title}
-                  </Box>
+                  {titleAsHtml ? (
+                    <Box
+                      as="span"
+                      flex="1"
+                      fontSize="14px"
+                      textAlign="left"
+                      textTransform="uppercase"
+                      dangerouslySetInnerHTML={{ __html: item?.title || '' }}
+                      {...titleStyle}
+                    />
+                  ) : (
+                    <Box as="span" flex="1" fontSize="14px" textAlign="left" textTransform="uppercase" {...titleStyle}>
+                      {item?.title}
+                    </Box>
+                  )}
                   {expanderText && (
                     <Text fontSize="13px">
                       {!isExpanded ? expanderText : `${t('common:hide')} ${expanderText.toLowerCase()}`}
@@ -110,6 +132,9 @@ AcordionList.propTypes = {
   expanderText: PropTypes.string,
   featuresStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
   allowToggle: PropTypes.bool,
+  titleAsHtml: PropTypes.bool,
+  index: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
+  onChange: PropTypes.func,
 };
 AcordionList.defaultProps = {
   defaultIndex: null,
@@ -127,5 +152,8 @@ AcordionList.defaultProps = {
   expanderText: '',
   featuresStyle: {},
   allowToggle: false,
+  titleAsHtml: false,
+  index: undefined,
+  onChange: undefined,
 };
 export default AcordionList;

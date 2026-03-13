@@ -4,7 +4,7 @@ import axios from 'axios';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useAuth from './useAuth';
-import { getStorageItem, getBrowserInfo, languageFix } from '../utils';
+import { getStorageItem, getBrowserInfo, languageFix, removeStorageItem } from '../utils';
 import useCohortAction from '../store/actions/cohortAction';
 import { processRelatedAssignments } from '../utils/cohorts';
 import { reportDatalayer } from '../utils/requests';
@@ -237,7 +237,7 @@ function useCohortHandler() {
         let currentCohort = prefetchedCohorts.find((c) => c.slug === cohortSlug);
 
         //we make sure that we have already loaded the data of the cohort and its micro cohorts
-        if (!currentCohort || (currentCohort.micro_cohorts.length > 0 && !currentCohort.micro_cohorts.every((cohort) => myCohorts.some(({ slug }) => cohort.slug === slug)))) {
+        if (!currentCohort || (Array.isArray(currentCohort.micro_cohorts) && currentCohort.micro_cohorts.length > 0 && !currentCohort.micro_cohorts.every((cohort) => myCohorts.some(({ slug }) => cohort.slug === slug)))) {
           const { cohorts: fetchedCohorts } = await fetchUserAndCohorts();
           setCohorts(fetchedCohorts);
           prefetchedCohorts = fetchedCohorts;
@@ -251,7 +251,7 @@ function useCohortHandler() {
           return router.push('/choose-program');
         }
 
-        if (currentCohort.cohort_user.finantial_status === 'LATE') {
+        if (currentCohort?.cohort_user?.finantial_status === 'LATE') {
           createToast({
             position: 'top',
             title: t('alert-message:finantial-late'),
@@ -262,7 +262,9 @@ function useCohortHandler() {
           return router.push('/choose-program');
         }
 
-        const cohorts = currentCohort.micro_cohorts.length > 0 ? prefetchedCohorts.filter((c) => currentCohort.micro_cohorts.some((elem) => elem.slug === c.slug)) : [currentCohort];
+        const cohorts = Array.isArray(currentCohort.micro_cohorts) && currentCohort.micro_cohorts.length > 0
+          ? prefetchedCohorts.filter((c) => currentCohort.micro_cohorts.some((elem) => elem.slug === c.slug))
+          : [currentCohort];
 
         await getCohortsModules(cohorts);
 
@@ -280,7 +282,8 @@ function useCohortHandler() {
         duration: 7000,
         isClosable: true,
       });
-      return localStorage.removeItem('cohortSession');
+      removeStorageItem('cohortSession');
+      return undefined;
     }
   };
 
@@ -787,6 +790,13 @@ function useCohortHandler() {
   };
 
   const checkNavigationAvailability = () => {
+    console.log('[checkNavigationAvailability] called', {
+      hasAllSubscriptions: !!allSubscriptions,
+      allSubscriptionsLength: allSubscriptions?.length,
+      cohortSessionId: cohortSession?.id,
+      isAuthenticated,
+    });
+
     const showToastAndRedirect = (programSlug) => {
       router.push({
         pathname: '/checkout',
@@ -805,11 +815,46 @@ function useCohortHandler() {
     };
 
     if (allSubscriptions) {
+      // Listado de todos los cohort sets de cada sub (cohort actual esperado: 1533 - AI Engineering Introduction)
+      const cohortSetsBySub = allSubscriptions?.map((sub) => {
+        const set = sub.selected_cohort_set;
+        const cohorts = set?.cohorts ?? [];
+        return {
+          subId: sub.id,
+          status: sub.status,
+          planSlug: sub.plans?.[0]?.slug,
+          cohortSet: set ? { id: set.id, slug: set.slug, name: set.name } : null,
+          cohortsInSet: cohorts.map((c) => ({ id: c.id, slug: c.slug, name: c.name })),
+          includesCohort1533: cohorts.some((c) => c.id === cohortSession.id),
+        };
+      });
+      console.log('[checkNavigationAvailability] Cohort sets por subscription (cohort actual:', cohortSession?.id, cohortSession?.slug, ')', cohortSetsBySub);
+
+      // Resumen por sub para el filtro
+      const allSubsSummary = allSubscriptions?.map((sub) => ({
+        id: sub.id,
+        status: sub.status,
+        valid_until: sub.valid_until,
+        hasSelectedCohortSet: !!sub.selected_cohort_set,
+        cohortIdsInSet: sub.selected_cohort_set?.cohorts?.map((c) => c.id) ?? [],
+        includesCurrentCohort: sub.selected_cohort_set?.cohorts?.some((c) => c.id === cohortSession.id),
+        planSlug: sub.plans?.[0]?.slug,
+      }));
+      console.log('[checkNavigationAvailability] ALL subscriptions (filtering by cohort id:', cohortSession?.id, ')', allSubsSummary);
+
       const cohortSubscriptions = allSubscriptions?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
       const currentCohortSlug = cohortSubscriptions[0]?.plans[0]?.slug;
 
+      console.log('[checkNavigationAvailability] cohortSubscriptions (filtered for this cohort)', {
+        cohortSubscriptionsLength: cohortSubscriptions?.length,
+        currentCohortSlug,
+        cohortSubscriptions: cohortSubscriptions?.map((s) => ({ id: s.id, status: s.status, valid_until: s.valid_until })),
+      });
+
       if (cohortSubscriptions.length === 0) {
+        console.log('[checkNavigationAvailability] redirect: no cohort subscriptions for this cohort');
         if (isAuthenticated) {
+          console.log('[checkNavigationAvailability] redirect -> choose-program');
           createToast({
             position: 'top',
             title: t('alert-message:access-denied'),
@@ -822,6 +867,7 @@ function useCohortHandler() {
             locale: lang,
           });
         } else {
+          console.log('[checkNavigationAvailability] redirect -> login (not authenticated)');
           createToast({
             position: 'top',
             title: t('alert-message:login-required'),
@@ -849,26 +895,33 @@ function useCohortHandler() {
       );
 
       if (fullyPaidSub) {
+        console.log('[checkNavigationAvailability] access granted: fullyPaidSub', { subId: fullyPaidSub?.id, status: fullyPaidSub?.status });
         setGrantAccess(true);
         return;
       }
 
       if (!freeTrialSub && !isCancelledButValid) {
+        console.log('[checkNavigationAvailability] redirect -> checkout: no free trial and not cancelled-but-valid', { freeTrialSub: !!freeTrialSub, isCancelledButValid });
         showToastAndRedirect(currentCohortSlug);
         return;
       }
 
       if (expiredCourse) {
+        console.log('[checkNavigationAvailability] redirect -> checkout: expiredCourse', { expiredCourseId: expiredCourse?.id, status: expiredCourse?.status });
         showToastAndRedirect(currentCohortSlug);
         return;
       }
 
       if (now > freeTrialExpDate) {
+        console.log('[checkNavigationAvailability] redirect -> checkout: free trial expired', { now: now.toISOString(), freeTrialExpDate: freeTrialExpDate?.toISOString() });
         showToastAndRedirect(currentCohortSlug);
         return;
       }
 
+      console.log('[checkNavigationAvailability] access granted: free trial or cancelled-but-valid');
       setGrantAccess(true);
+    } else {
+      console.log('[checkNavigationAvailability] no allSubscriptions, skipping');
     }
   };
 

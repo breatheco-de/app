@@ -17,6 +17,15 @@ function CouponTopBar({ ...rest }) {
 
   // Since we are not showing the price after discount, we can give the price as cero
   const { discount } = getPriceWithDiscount(0, selfAppliedCoupon);
+  const formattedDiscount = (() => {
+    if (typeof discount !== 'string') return discount;
+    if (!discount.includes('%')) return discount;
+
+    const numericDiscount = Number.parseFloat(discount.replace('%', ''));
+    if (!Number.isFinite(numericDiscount)) return discount;
+
+    return `${Math.floor(numericDiscount)}%`;
+  })();
 
   const differenceInWeeks = (date1, date2) => {
     // Convert both dates to milliseconds
@@ -56,7 +65,7 @@ function CouponTopBar({ ...rest }) {
       <Box maxWidth="1280px" margin="auto" display="flex" justifyContent="space-between" alignItems="center">
         <Flex alignItems="center" justifyContent="center" gap="10px" flexDirection="row" flexWrap="wrap">
           <Text color="#FFF" fontSize={{ base: '12px', md: '18px' }} fontFamily="inter">
-            {t('coupon-bar.headline', { discount })}
+            {t('coupon-bar.headline', { discount: formattedDiscount })}
           </Text>
           <Flex gap="10px">
             <Text color="#FFF" fontSize={{ base: '12px', md: '17px' }} fontFamily="inter" fontWeight="900">

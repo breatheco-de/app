@@ -19,6 +19,7 @@ function SyllabusModule({
   const { t, lang } = useTranslation('dashboard');
   const { state, startDay } = useCohortHandler();
   const { taskCohortNull } = state;
+
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
   const currentTasks = showPendingTasks ? filteredContentByPending : filteredContent;
   const cohortId = cohortData?.id || cohortData?.cohort_id;
@@ -170,11 +171,11 @@ function SyllabusModule({
 
 SyllabusModule.propTypes = {
   index: PropTypes.number.isRequired,
-  title: PropTypes.string,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   slug: PropTypes.string,
   content: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   filteredContent: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
-  description: PropTypes.string,
+  description: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   cohortData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   filteredContentByPending: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   showPendingTasks: PropTypes.bool,

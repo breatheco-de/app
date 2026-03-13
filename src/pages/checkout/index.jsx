@@ -30,10 +30,8 @@ import { Form, Formik } from 'formik';
 import useCheckout from './useCheckout';
 import { getDataContentProps } from '../../utils/file';
 import bc from '../../services/breathecode';
-import ContactInformation from '../../components/Checkout/ContactInformation';
+import CheckoutV2StepsBox from '../../components/Checkout/CheckoutV2StepsBox';
 import Summary from '../../components/Checkout/Summary';
-import PaymentInfo from '../../components/Checkout/PaymentInfo';
-import Stepper from '../../components/Checkout/Stepper';
 import { removeSessionStorageItem } from '../../utils';
 import signupAction from '../../store/actions/signupAction';
 import LoaderScreen from '../../components/LoaderScreen';
@@ -80,12 +78,21 @@ export const getStaticProps = async ({ locale, locales }) => {
 };
 
 function getPlanPriceText(option, allCoupons, originalPlan, t) {
+  const compactPeriodLabel = (label = '') => {
+    const normalized = String(label).toLowerCase();
+    if (normalized.includes('yearly payment')) return 'Year';
+    if (normalized.includes('monthly payment')) return 'Month';
+    if (normalized.includes('quarterly payment')) return 'Quarter';
+    if (normalized.includes('half yearly payment')) return 'Half-year';
+    if (normalized.includes('one payment')) return 'One payment';
+    return label;
+  };
   const priceText = handlePriceTextWithCoupon(option.priceText, allCoupons, originalPlan.plans);
   if (option.pricePerMonthText) {
     const perMonth = handlePriceTextWithCoupon(option.pricePerMonthText, allCoupons, originalPlan.plans);
-    return `${priceText} / ${option.title}, (${perMonth}${t('signup:info.per-month')})`;
+    return `${priceText} / ${compactPeriodLabel(option.title)}, (${perMonth}${t('signup:info.per-month')})`;
   }
-  return `${priceText} / ${option.title}`;
+  return `${priceText} / ${compactPeriodLabel(option.title)}`;
 }
 
 function Checkout() {
@@ -126,7 +133,7 @@ function Checkout() {
   const {
     isFirstStep, isSecondStep, isThirdStep,
   } = useSignup();
-  const { stepIndex, checkingData, paymentStatus, selectedPlan, alreadyEnrolled, loader } = state;
+  const { checkingData, paymentStatus, selectedPlan, alreadyEnrolled, loader } = state;
   const flexRef = useRef(null);
   const [menuWidth, setMenuWidth] = useState('auto');
   const [isOpenned, setIsOpenned] = useState(false);
@@ -140,6 +147,100 @@ function Checkout() {
   const [courseTitle, setCourseTitle] = useState('');
 
   const isPaymentSuccess = paymentStatus === 'success';
+  const planDetails = renderPlanDetails();
+  const compactSelectedPlanTitle = (title = '') => {
+    const normalized = String(title).toLowerCase();
+    if (normalized.includes('yearly payment')) return 'Year';
+    if (normalized.includes('monthly payment')) return 'Month';
+    if (normalized.includes('quarterly payment')) return 'Quarter';
+    if (normalized.includes('half yearly payment')) return 'Half-year';
+    if (normalized.includes('one payment')) return 'One payment';
+    return title;
+  };
+  const toFiniteNumber = (value) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+  const selectedPlanPriceNumber = toFiniteNumber(selectedPlan?.price);
+  const processedPlanPriceNumber = toFiniteNumber(processedPrice?.price);
+  const summaryCurrencyCode = selectedPlan?.currency?.code || originalPlan?.currency?.code || '';
+  const planSlugForBreakdown = selectedPlan?.plan_slug || originalPlan?.plan_slug;
+  const planBreakdownItems = (couponBreakdown || [])
+    .filter((item) => item?.targetType === 'plan' && item?.targetSlug === planSlugForBreakdown);
+  const breakdownOriginalPrice = planBreakdownItems.length > 0 ? toFiniteNumber(planBreakdownItems[0]?.before) : null;
+  const breakdownDiscountedPrice = planBreakdownItems.length > 0
+    ? toFiniteNumber(planBreakdownItems[planBreakdownItems.length - 1]?.after)
+    : null;
+
+  const getPricePairBySelectedPeriod = () => {
+    const period = selectedPlan?.period;
+    if (!period) {
+      return {
+        original: selectedPlanPriceNumber ?? 0,
+        discounted: processedPlanPriceNumber ?? selectedPlanPriceNumber ?? 0,
+      };
+    }
+
+    if (period === 'MONTH') {
+      const original = toFiniteNumber(checkingData?.amount_per_month) ?? selectedPlanPriceNumber ?? 0;
+      const discounted = toFiniteNumber(checkingData?.discounted_amount_per_month) ?? processedPlanPriceNumber ?? original;
+      return { original, discounted };
+    }
+
+    if (period === 'QUARTER') {
+      const original = toFiniteNumber(checkingData?.amount_per_quarter) ?? selectedPlanPriceNumber ?? 0;
+      const discounted = toFiniteNumber(checkingData?.discounted_amount_per_quarter) ?? processedPlanPriceNumber ?? original;
+      return { original, discounted };
+    }
+
+    if (period === 'HALF') {
+      const original = toFiniteNumber(checkingData?.amount_per_half) ?? selectedPlanPriceNumber ?? 0;
+      const discounted = toFiniteNumber(checkingData?.discounted_amount_per_half) ?? processedPlanPriceNumber ?? original;
+      return { original, discounted };
+    }
+
+    if (period === 'YEAR') {
+      const original = toFiniteNumber(checkingData?.amount_per_year) ?? selectedPlanPriceNumber ?? 0;
+      const discounted = toFiniteNumber(checkingData?.discounted_amount_per_year) ?? processedPlanPriceNumber ?? original;
+      return { original, discounted };
+    }
+
+    if (period === 'FINANCING') {
+      const original = selectedPlanPriceNumber ?? 0;
+      const discounted = (
+        toFiniteNumber(checkingData?.discounted_monthly_price)
+        ?? toFiniteNumber(selectedPlan?.discounted_monthly_price)
+        ?? processedPlanPriceNumber
+        ?? original
+      );
+      return { original, discounted };
+    }
+
+    return {
+      original: selectedPlanPriceNumber ?? 0,
+      discounted: processedPlanPriceNumber ?? selectedPlanPriceNumber ?? 0,
+    };
+  };
+
+  const { original: periodOriginalPrice, discounted: periodDiscountedPrice } = getPricePairBySelectedPeriod();
+  const baseOriginalPrice = Number.isFinite(breakdownOriginalPrice) ? breakdownOriginalPrice : periodOriginalPrice;
+  const baseDiscountedPrice = Number.isFinite(breakdownDiscountedPrice)
+    ? breakdownDiscountedPrice
+    : periodDiscountedPrice;
+  const hasPlanPriceDiscount = (
+    !selectedPlan?.isFreeTier
+    && Number.isFinite(baseOriginalPrice)
+    && baseOriginalPrice > 0
+    && Number.isFinite(baseDiscountedPrice)
+    && baseDiscountedPrice < baseOriginalPrice
+  );
+  const originalPlanPriceText = hasPlanPriceDiscount
+    ? `${currencySymbol}${baseOriginalPrice.toFixed(2)}`
+    : null;
+  const discountedPlanPriceText = hasPlanPriceDiscount
+    ? `${currencySymbol}${baseDiscountedPrice.toFixed(2)}`
+    : null;
+  const selectedPlanTitle = selectedPlan?.title ? ` / ${compactSelectedPlanTitle(selectedPlan.title)}` : '';
 
   useEffect(() => {
     const shouldShowPrereq = () => {
@@ -270,9 +371,6 @@ function Checkout() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      {loader.plan && (
-        <LoaderScreen />
-      )}
       <ModalInfo
         headerStyles={{ textAlign: 'center' }}
         title={t('signup:alert-message.validate-email-title')}
@@ -291,7 +389,13 @@ function Checkout() {
         )}
         isOpen={(verifyEmailProps.state) || (planFormated && verifyEmailProps.state)}
         buttonHandlerStyles={{ variant: 'default' }}
-        actionHandler={async () => {
+        actionHandler={() => {
+          setVerifyEmailProps({
+            ...verifyEmailProps,
+            state: false,
+          });
+        }}
+        closeActionHandler={async () => {
           const inviteId = verifyEmailProps?.data?.id;
           const resp = await bc.auth().resendConfirmationEmail(inviteId);
 
@@ -314,7 +418,8 @@ function Checkout() {
             });
           }
         }}
-        handlerText={t('signup:resend')}
+        handlerText={t('signup:continue-to-purchase')}
+        closeText={t('signup:resend')}
         forceHandlerAndClose
         onClose={() => {
           setVerifyEmailProps({
@@ -363,20 +468,12 @@ function Checkout() {
           maxWidth={{ base: '100%', md: '50%' }}
           overflow="auto"
         >
-          {/* Stepper */}
-          <Stepper
-            stepIndex={stepIndex}
-            isFreeTier={Boolean(checkingData?.isTrial || checkingData?.isTotallyFree || selectedPlan?.isFreeTier)}
-          />
-          {isFirstStep && (
-            <ContactInformation
+          {(isFirstStep || isSecondStep) && (
+            <CheckoutV2StepsBox
               courseChoosed={course}
+              setShowPaymentDetails={setShowPaymentDetails}
               setVerifyEmailProps={setVerifyEmailProps}
             />
-          )}
-
-          {isSecondStep && (
-            <PaymentInfo setShowPaymentDetails={setShowPaymentDetails} />
           )}
 
           {isThirdStep && (
@@ -404,7 +501,7 @@ function Checkout() {
             maxWidth="490px"
             margin={{
               base: '2rem 10px 2rem 10px',
-              md: isThirdStep ? '4rem 0' : '6.2rem 0',
+              md: isThirdStep ? '4rem 0' : '2rem 0',
             }}
             height="100%"
             zIndex={10}
@@ -413,14 +510,11 @@ function Checkout() {
               <Flex
                 alignItems="start"
                 flexDirection="column"
-                gridGap="10px"
+                gridGap={{ base: '4px', md: '6px' }}
                 padding="16px"
                 borderRadius="22px"
                 background={isThirdStep ? 'transparent' : backgroundColor}
               >
-                <Text size="18px">
-                  {t('you-are-getting')}
-                </Text>
                 <Flex gridGap="7px" width="full">
                   <Flex
                     flexDirection="column"
@@ -462,10 +556,21 @@ function Checkout() {
                       width="full"
                       alignItems="center"
                     >
-                      {showPaymentDetails && renderPlanDetails() && (
-                        <Text size="16px" color="green.400">
-                          {renderPlanDetails()}
-                        </Text>
+                      {showPaymentDetails && planDetails && (
+                        hasPlanPriceDiscount ? (
+                          <Flex alignItems="center" gap="8px">
+                            <Text size="16px" color="green.400" textDecoration="line-through" opacity={0.7}>
+                              {originalPlanPriceText}
+                            </Text>
+                            <Text size="16px" color="green.400">
+                              {`${discountedPlanPriceText}${selectedPlanTitle}`}
+                            </Text>
+                          </Flex>
+                        ) : (
+                          <Text size="16px" color="green.400">
+                            {planDetails}
+                          </Text>
+                        )
                       )}
                       {!planId
                         && selectedPlan?.type !== 'FREE'
@@ -564,6 +669,9 @@ function Checkout() {
                   </Flex>
                 </Flex>
                 <Divider borderBottomWidth="2px" />
+                <Text fontSize="15px">
+                  {t('you-are-getting')}
+                </Text>
                 <Flex
                   flexDirection="column"
                   gridGap="4px"
@@ -595,6 +703,7 @@ function Checkout() {
                   {originalPlan?.accordionList?.length > 0 && (
                     <AcordionList
                       list={originalPlan?.accordionList}
+                      titleAsHtml
                       leftIcon="checked2"
                       iconColor={hexColor.blueDefault}
                       border="none"
@@ -670,17 +779,17 @@ function Checkout() {
                     );
                   })()}
                 </Flex>
-                {isSecondStep && (
+                {(isFirstStep || isSecondStep) && (
                   <>
                     <Flex justifyContent="space-between" width="100%" padding="3rem 0px 0">
                       <Text size="18px" color="currentColor" lineHeight="normal">
                         {t('subtotal-before-discount')}
                       </Text>
                       <Text size="18px" color="currentColor" lineHeight="normal">
-                        {bagTotals && selectedPlan && `${currencySymbol}${bagTotals.originalTotal.toFixed(2)} ${selectedPlan.currency?.code}`}
+                        {bagTotals && selectedPlan && `${currencySymbol}${bagTotals.originalTotal.toFixed(2)} ${summaryCurrencyCode}`}
                         {!bagTotals && (selectedPlan?.price <= 0) && selectedPlan?.priceText}
                         {!bagTotals && selectedPlan?.price > 0
-                          && `${currencySymbol}${selectedPlan?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
+                          && `${currencySymbol}${(selectedPlanPriceNumber ?? 0).toFixed(2)} ${summaryCurrencyCode}`}
                       </Text>
                     </Flex>
                     <Divider margin="6px 0" />
@@ -784,6 +893,20 @@ function Checkout() {
                       && allCoupons.map((coup) => {
                         const breakdownItems = couponBreakdown
                           ?.filter((item) => item.couponSlug === coup?.slug) || [];
+                        const fallbackBreakdownItems = (
+                          breakdownItems.length === 0
+                          && Number.isFinite(baseOriginalPrice)
+                          && Number.isFinite(baseDiscountedPrice)
+                          && baseDiscountedPrice < baseOriginalPrice
+                        ) ? [{
+                            couponSlug: coup?.slug,
+                            targetType: 'plan',
+                            targetSlug: selectedPlan?.plan_slug || originalPlan?.plan_slug || '',
+                            targetName: selectedPlan?.title || originalPlan?.title || '',
+                            before: baseOriginalPrice,
+                            after: baseDiscountedPrice,
+                          }] : [];
+                        const itemsToShow = breakdownItems.length > 0 ? breakdownItems : fallbackBreakdownItems;
 
                         return (
                           <Box key={coup?.slug} w="100%" marginTop="10px">
@@ -805,7 +928,7 @@ function Checkout() {
                               </Box>
                             </Flex>
 
-                            {breakdownItems.map((item) => (
+                            {itemsToShow.map((item) => (
                               <Flex
                                 key={`${item.couponSlug}-${item.targetType}-${item.targetSlug}`}
                                 width="100%"
@@ -853,14 +976,14 @@ function Checkout() {
                               </Text>
                             )}
                             <Text size="18px" color="currentColor" lineHeight="normal">
-                              {`${currencySymbol}${bagTotals.discountedTotal.toFixed(2)} ${selectedPlan?.currency?.code}`}
+                              {`${currencySymbol}${bagTotals.discountedTotal.toFixed(2)} ${summaryCurrencyCode}`}
                             </Text>
                           </>
                         ) : (
                           <Text size="18px" color="currentColor" lineHeight="normal">
                             {selectedPlan?.price <= 0
                               ? selectedPlan?.priceText
-                              : `${currencySymbol}${processedPrice?.price?.toFixed(2)} ${selectedPlan?.currency?.code}`}
+                              : `${currencySymbol}${(processedPlanPriceNumber ?? selectedPlanPriceNumber ?? 0).toFixed(2)} ${summaryCurrencyCode}`}
                           </Text>
                         )}
                       </Flex>
@@ -873,7 +996,7 @@ function Checkout() {
                         <Text size="18px" color="currentColor" lineHeight="normal">
                           {selectedPlan.price <= 0
                             ? selectedPlan.priceText
-                            : `${currencySymbol}${calculateTotalPrice()} ${selectedPlan.currency?.code}`}
+                            : `${currencySymbol}${calculateTotalPrice()} ${summaryCurrencyCode}`}
                         </Text>
                       </Flex>
                     )}

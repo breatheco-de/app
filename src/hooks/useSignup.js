@@ -53,6 +53,8 @@ const useSignup = () => {
 
   const defaultPlan = process.env.BASE_PLAN || 'basic';
   const country_code = countryCodeQueryString || location?.countryShort;
+  const hasSessionToken = Boolean(getQueryString('token') || getStorageItem('accessToken'));
+  const canRequestPaymentData = hasSessionToken || isAuthenticated;
 
   const subscriptionStatusDictionary = {
     PREPARING_FOR_COHORT: 'PREPARING_FOR_COHORT',
@@ -123,6 +125,26 @@ const useSignup = () => {
     many_months_payment: (qty) => t('signup:many_months_payment', { qty }),
   };
 
+  const getCheckoutFeaturedInfo = async (planSlug, fallbackFeaturedInfo) => {
+    const customCheckoutFeaturedInfo = translations.checkout_featured_info(planSlug);
+    if (Array.isArray(customCheckoutFeaturedInfo)) return customCheckoutFeaturedInfo;
+
+    if (typeof window === 'undefined') return fallbackFeaturedInfo;
+
+    const localeToUse = locale || 'en';
+    try {
+      const response = await fetch(`/locales/${localeToUse}/plans/${planSlug}.json`);
+      if (!response.ok) return fallbackFeaturedInfo;
+
+      const planTranslation = await response.json();
+      const checkoutFeatures = planTranslation?.info?.checkout_features;
+
+      return Array.isArray(checkoutFeatures) ? checkoutFeatures : fallbackFeaturedInfo;
+    } catch (error) {
+      return fallbackFeaturedInfo;
+    }
+  };
+
   /**
  * Process the plans data and return the formatted data.
  *
@@ -148,7 +170,7 @@ const useSignup = () => {
       if (!resp) {
         throw new Error('The plan does not exist');
       }
-      const featuredInfo = Array.isArray(translations.checkout_featured_info(data?.slug)) ? translations.checkout_featured_info(data?.slug) : resp?.data;
+      const featuredInfo = await getCheckoutFeaturedInfo(data?.slug, resp?.data);
       const owner = data?.owner;
 
       const existsAmountPerHalf = data?.price_per_half > 0;
@@ -842,8 +864,7 @@ const useSignup = () => {
 
   const getPaymentMethods = async (ownerId) => {
     try {
-      if (isAuthenticated) {
-        // const ownerId = selectedPlan.owner.id;
+      if (canRequestPaymentData && ownerId) {
         setLoader('paymentMethods', true);
         const resp = await bc.payment({
           academy_id: ownerId,
@@ -863,7 +884,7 @@ const useSignup = () => {
 
   const getSavedCard = async (ownerId) => {
     try {
-      if (isAuthenticated && ownerId) {
+      if (canRequestPaymentData && ownerId) {
         const resp = await bc.payment({ academy: ownerId }).getSavedCard();
         if (resp.status < 400 && resp.data?.has_payment_method) {
           const { data } = resp;

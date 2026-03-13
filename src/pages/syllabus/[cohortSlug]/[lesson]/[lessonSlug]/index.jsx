@@ -201,6 +201,22 @@ function SyllabusContent() {
     }
   };
 
+  useEffect(() => {
+    if (!isProject || !readme || isQuiz || ipynbHtmlUrl) return undefined;
+    const hasReadmeHash = typeof window !== 'undefined' && (window.location.hash === '#readme' || router.asPath?.endsWith('#readme'));
+    if (!hasReadmeHash) return undefined;
+
+    const scrollToReadme = () => {
+      const readmeEl = document.getElementById('readme');
+      if (readmeEl) {
+        readmeEl.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      }
+    };
+
+    const timer = setTimeout(scrollToReadme, 100);
+    return () => clearTimeout(timer);
+  }, [isProject, readme, isQuiz, ipynbHtmlUrl, router.asPath]);
+
   const handleStartDay = async (module = null, avoidRedirect = false) => {
     const moduleToUpdate = module?.content || nextModule.content;
     const updatedTasks = moduleToUpdate?.map((l) => ({

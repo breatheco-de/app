@@ -200,7 +200,7 @@ function SignupForm({
       actions.setSubmitting(false);
       createToast({
         position: 'top',
-        title: t('alert-message:error-signup'),
+        title: t('alert-message.error-signup'),
         status: 'error',
         isClosable: true,
         duration: 6000,
