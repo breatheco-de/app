@@ -11,7 +11,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import { es, en } from 'date-fns/locale';
+import { es, enUS } from 'date-fns/locale';
 import { formatDistanceStrict } from 'date-fns';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
@@ -69,7 +69,7 @@ function Navbar({ translations, pageProps }) {
   const parsedDateJoined = user?.date_joined || new Date();
 
   const locales = {
-    en,
+    en: enUS,
     es,
   };
 
