@@ -1547,8 +1547,8 @@ function SyllabusContent() {
                   value: selectedSyllabus?.id || defaultSelectedSyllabus?.id,
                   slug: selectedSyllabus?.slug || defaultSelectedSyllabus?.slug,
                   label: selectedSyllabus?.id
-                    ? `#${selectedSyllabus?.id} - ${selectedSyllabus?.label[lang === 'en' ? 'us' : lang] || selectedSyllabus?.label}`
-                    : `#${defaultSelectedSyllabus?.id} - ${defaultSelectedSyllabus?.label[lang === 'en' ? 'us' : lang] || defaultSelectedSyllabus?.label}`,
+                    ? `#${selectedSyllabus?.id} - ${languageFix(selectedSyllabus?.label, lang)}`
+                    : `#${defaultSelectedSyllabus?.id} - ${languageFix(defaultSelectedSyllabus?.label, lang)}`,
                 }}
                 onChange={({ value }) => {
                   setCurrentSelectedModule(parseInt(value, 10));
@@ -1556,7 +1556,7 @@ function SyllabusContent() {
                 options={sortedAssignments.map((module) => ({
                   value: module?.id,
                   slug: module.slug,
-                  label: `#${module?.id} - ${module?.label[lang === 'en' ? 'us' : lang] || module?.label}`,
+                  label: `#${module?.id} - ${languageFix(module?.label, lang)}`,
                 }))}
               />
             )}
@@ -1564,14 +1564,19 @@ function SyllabusContent() {
 
           <Box display="flex" flexDirection="column" background={featuredColor} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
             <Heading as="h2" size="sm" style={{ margin: '0' }}>
-              {`${label[lang === 'en' ? 'us' : lang] || label} - `}
+              {`${languageFix(label, lang)} - `}
               {t('teacherSidebar.module-duration', { duration: selectedSyllabus?.duration_in_days || currentModule?.duration_in_days || 1 })}
             </Heading>
-            <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
-              {teacherInstructions}
-            </Text>
+            <Box fontSize="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
+              <MarkDownParser content={languageFix(teacherInstructions, lang) || ''} />
+            </Box>
           </Box>
-          <MarkDownParser content={extendedInstructions?.content || ''} />
+          {![
+            '>:warning: No available instruction found for this module',
+            '>:warning: No se encontró instrucción disponible para este módulo',
+          ].includes(selectedSyllabus?.extendedInstructions) && (
+            <MarkDownParser content={extendedInstructions?.content || ''} />
+          )}
         </SimpleModal>
       )}
       <ReviewModal
