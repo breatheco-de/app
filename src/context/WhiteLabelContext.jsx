@@ -13,7 +13,15 @@ const initialState = {
 const WhiteLabelContext = createContext(initialState);
 
 const CACHE_KEY = 'white-label-features-cache';
-const CACHE_VERSION = '1.1'; // Increment this to invalidate cache
+const CACHE_VERSION = '1.2';
+
+const featureFlagMapping = {
+  allow_referral_program: 'marketing.referral_program.enabled',
+  allow_events: 'events.enabled',
+  allow_mentoring: 'mentorship.enabled',
+  allow_feedback_widget: 'feedback.widget.enabled',
+  allow_community_widget: 'community.widget.enabled',
+};
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -41,11 +49,35 @@ const reducer = (state, action) => {
 function WhiteLabelProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  /**
+   * Get a nested value from an object using a dot-notation path
+   * @param {Object} obj - The object to search
+   * @param {string} path - The dot-notation path (e.g., 'events.enabled')
+   * @returns {any} The value at the path, or undefined if not found
+   */
+  const getNestedValue = (obj, path) => {
+    if (!obj || !path) return undefined;
+    return path.split('.').reduce((current, key) => current?.[key], obj);
+  };
+
   const isWhiteLabelFeatureEnabled = (featureKey) => {
-    if (!state.isWhiteLabel || !state.features?.features) {
+    if (!state.isWhiteLabel || !state.features) {
       return true;
     }
-    return state.features.features[featureKey] !== false;
+
+    // Mapear la clave antigua a la nueva ruta si existe
+    const mappedKey = featureFlagMapping[featureKey] || featureKey;
+
+    if (mappedKey.includes('.')) {
+      const value = getNestedValue(state.features, mappedKey);
+      return value !== false;
+    }
+
+    if (state.features.features) {
+      return state.features.features[featureKey] !== false;
+    }
+
+    return true;
   };
 
   const parseWhiteLabelParams = (params) => {

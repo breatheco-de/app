@@ -29,7 +29,8 @@ function ProjectSubmitButton({
 }) {
   const { t } = useTranslation('dashboard');
   const taskIsApproved = allowText && currentTask?.revision_status === 'APPROVED';
-  const isButtonDisabled = currentTask === null || taskIsApproved;
+  const taskIsIgnored = currentTask?.revision_status === 'IGNORED';
+  const isButtonDisabled = currentTask === null || taskIsApproved || taskIsIgnored;
 
   const handleCloseFile = () => {
     closePopover();

@@ -201,6 +201,22 @@ function SyllabusContent() {
     }
   };
 
+  useEffect(() => {
+    if (!isProject || !readme || isQuiz || ipynbHtmlUrl) return undefined;
+    const hasReadmeHash = typeof window !== 'undefined' && (window.location.hash === '#readme' || router.asPath?.endsWith('#readme'));
+    if (!hasReadmeHash) return undefined;
+
+    const scrollToReadme = () => {
+      const readmeEl = document.getElementById('readme');
+      if (readmeEl) {
+        readmeEl.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      }
+    };
+
+    const timer = setTimeout(scrollToReadme, 100);
+    return () => clearTimeout(timer);
+  }, [isProject, readme, isQuiz, ipynbHtmlUrl, router.asPath]);
+
   const handleStartDay = async (module = null, avoidRedirect = false) => {
     const moduleToUpdate = module?.content || nextModule.content;
     const updatedTasks = moduleToUpdate?.map((l) => ({
@@ -781,14 +797,25 @@ function SyllabusContent() {
   const openRigobot = async () => {
     try {
       if (isAuthenticatedWithRigobot) {
-        rigo.updateOptions({
-          showBubble: false,
-          target: '#rigo-chat',
-          welcomeMessage: t('rigo-chat.welcome-message', { firstName: user?.first_name, lessonName: currentAsset?.title }),
-          highlight: true,
-          collapsed: false,
-          purposeSlug: '4geekscom-public-agent',
-        });
+        if (isAvailableAsSaas) {
+          rigo.updateOptions({
+            showBubble: false,
+            target: '#rigo-chat',
+            welcomeMessage: t('rigo-chat.welcome-message', { firstName: user?.first_name, lessonName: currentAsset?.title }),
+            highlight: true,
+            collapsed: false,
+            purposeSlug: '4geekscom-public-agent',
+          });
+        } else {
+          const options = {
+            showBubble: true,
+            welcomeMessage: t('rigo-chat.welcome-message', { firstName: user?.first_name, lessonName: currentAsset?.title }),
+            highlight: true,
+            collapsed: false,
+            purposeSlug: '4geekscom-public-agent',
+          };
+          rigo.updateOptions(options);
+        }
       } else setShowRigobotModal(true);
     } catch (e) {
       console.log(e);
@@ -873,7 +900,7 @@ function SyllabusContent() {
           />
         )}
 
-        <ScrollTop />
+        {isAvailableAsSaas && <ScrollTop />}
 
         {isAvailableAsSaas ? (
           <GuidedExperienceSidebar
@@ -1178,6 +1205,28 @@ function SyllabusContent() {
                                   onlyModal
                                   withParty
                                 />
+                              )}
+                              {isRigoInitialized && (isLesson || isProject) && (
+                                <Tooltip label={t('get-help')} placement="top">
+                                  <Button
+                                    display="flex"
+                                    flexDirection="column"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    width="auto"
+                                    height="auto"
+                                    padding="8px 16px"
+                                    borderRadius="4px"
+                                    background={backgroundColor}
+                                    border="1px solid"
+                                    borderColor={commonBorderColor}
+                                    variant="outline"
+                                    onClick={openRigobot}
+                                    style={{ color: fontColor, textDecoration: 'none' }}
+                                  >
+                                    <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="24px" height="24px" />
+                                  </Button>
+                                </Tooltip>
                               )}
                             </Box>
                             <Box display="flex" gridGap="3rem">

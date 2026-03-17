@@ -75,7 +75,6 @@ function CoursePage() {
     isFetching,
     initialDataIsFetching,
     financeSelected,
-    allDiscounts,
     imageSource,
     assignmentList,
     assetCountByType,
@@ -95,6 +94,8 @@ function CoursePage() {
     isVisibilityPublic,
     courseColor,
     featurePrice,
+    featurePriceOriginal,
+    hasFeaturePriceDiscount,
     featuredPlanToEnroll,
     enrollQuerys,
     benefitsBullets,
@@ -138,6 +139,11 @@ function CoursePage() {
       ? [customContactImage, supportProfileImages[0], supportProfileImages[1]]
       : supportProfileImages;
   })();
+  const priceRegex = /([$€£]\s?\d+(?:[.,]\d+)?)/;
+  const originalPriceMatch = featurePriceOriginal?.match(priceRegex)?.[0] || '';
+  const currentPriceMatch = featurePrice?.match(priceRegex)?.[0] || '';
+  const featurePricePrefix = currentPriceMatch ? featurePrice.split(currentPriceMatch)[0] : '';
+  const featurePriceSuffix = currentPriceMatch ? featurePrice.split(currentPriceMatch)[1] : '';
 
   const showFullBubble = useBreakpointValue({ base: false, md: true });
 
@@ -353,8 +359,26 @@ function CoursePage() {
                         >
                           <Flex flexDirection="column" alignItems="center">
                             <Text fontSize={!featuredPlanToEnroll?.isFreeTier ? '16px' : '14px'}>
-                              {allDiscounts.length > 0 && '🔥'}
-                              {featurePrice}
+                              {hasFeaturePriceDiscount && originalPriceMatch && currentPriceMatch ? (
+                                <>
+                                  🔥
+                                  {featurePricePrefix}
+                                  <Text
+                                    as="span"
+                                    textDecoration="line-through"
+                                    fontSize="inherit"
+                                    fontWeight="inherit"
+                                    lineHeight="inherit"
+                                    marginRight="6px"
+                                  >
+                                    {originalPriceMatch}
+                                  </Text>
+                                  {currentPriceMatch}
+                                  {featurePriceSuffix}
+                                </>
+                              ) : (
+                                featurePrice
+                              )}
                             </Text>
                           </Flex>
                         </Button>
@@ -405,7 +429,7 @@ function CoursePage() {
                           </AccordionButton>
                           <AccordionPanel padding="12px 0 0 0">
                             <Flex flexDirection="column">
-                              {liveClasses.map((liveClass, index) => {
+                              {liveClasses.slice(0, 4).map((liveClass, index) => {
                                 const startDate = liveClass?.starting_at ? new Date(liveClass.starting_at) : null;
                                 const endDate = liveClass?.ending_at || liveClass?.ended_at ? new Date(liveClass.ending_at || liveClass.ended_at) : null;
                                 const currentTime = new Date();
@@ -419,6 +443,7 @@ function CoursePage() {
                                   hour: '2-digit',
                                   minute: '2-digit',
                                 }) : '';
+                                const visibleCount = Math.min(liveClasses.length, 4);
                                 return (
                                   <Box key={liveClass?.id || liveClass?.hash}>
                                     <Flex alignItems="center" justifyContent="space-between" padding="8px 0">
@@ -447,12 +472,17 @@ function CoursePage() {
                                         </Flex>
                                       )}
                                     </Flex>
-                                    {index < liveClasses.length - 1 && (
+                                    {index < visibleCount - 1 && (
                                       <Box borderBottom="1px solid" borderColor="gray.200" />
                                     )}
                                   </Box>
                                 );
                               })}
+                              {liveClasses.length > 4 && (
+                                <Text size="13px" color={hexColor.blueDefault} fontWeight={600} textAlign="center" padding="8px 0 0">
+                                  {t('and-x-more-live-classes', { count: liveClasses.length - 4 > 100 ? '+100' : liveClasses.length - 4 })}
+                                </Text>
+                              )}
                             </Flex>
                           </AccordionPanel>
                         </AccordionItem>

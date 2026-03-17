@@ -1,0 +1,138 @@
+{
+    "info": {
+        "type": "Change your career",
+        "title": "Learn at your own pace with feedback and live events",
+        "description": "All the content you need to change your career in 15 days",
+        "button": {
+            "variant": "default",
+            "color": "#000000",
+            "background": "#fff",
+            "title": "Get Plan"
+        },
+        "service_items": {
+            "title": "Everything in Fly Solo plus...",
+            "items": [
+                {
+                    "label": "Live workshops"
+                },
+                {
+                    "label": "Discount on one-on-one mentoring sessions"
+                }
+            ]
+        },
+        "featured_info": [
+            {
+                "service": {
+                    "slug": "live-learning",
+                    "title": "Live classes",
+                    "icon": "video"
+                },
+                "features": [
+                    {
+                        "description": "Learn directly from experts every Tuesday and Thursday through Google Meet."
+                    }
+                ]
+            },
+            {
+                "service": {
+                    "slug": "interactive-platform",
+                    "title": "Platform with practical resources",
+                    "icon": "message"
+                },
+                "features": [
+                    {
+                        "description": "Access readings, exercises, and recorded classes available at any time."
+                    }
+                ]
+            },
+            {
+                "service": {
+                    "slug": "access-to-community",
+                    "title": "Exclusive WhatsApp community",
+                    "icon": "community"
+                },
+                "features": [
+                    {
+                        "description": "Get guidance, share your progress, and solve questions in an active and close community."
+                    }
+                ]
+            },
+            {
+                "service": {
+                    "slug": "mentoring-session-discounts",
+                    "title": "Discount on coaching sessions",
+                    "icon": "certificate"
+                },
+                "features": [
+                    {
+                        "description": "Get a 50% discount on personalized sessions to take your profile to the next level."
+                    }
+                ]
+            },
+            {
+                "service": {
+                    "slug": "guides-and-templates",
+                    "title": "Guides and templates",
+                    "icon": "message"
+                },
+                "features": [
+                    {
+                        "description": "Download key resources to improve your resume, negotiate your salary, and build networking skills."
+                    }
+                ]
+            }
+        ],
+        "checkout_features": [
+            {
+                "features": [
+                    {
+                        "title": "Applied Artificial Intelligence Course (valued at $99.99)"
+                    }
+                ],
+                "service": {
+                    "slug": "ai-engineering"
+                }
+            },
+            {
+                "features": [
+                    {
+                        "title": "Prompt Engineering Course (valued at $99.99)"
+                    }
+                ],
+                "service": {
+                    "slug": "prompt-engineering"
+                }
+            },
+            {
+                "features": [
+                    {
+                        "title": "Professional Profile Optimization Course (valued at $99.99)"
+                    }
+                ],
+                "service": {
+                    "slug": "professional-profile-optimization"
+                }
+            },            
+            {
+                "features": [
+                    {
+                        "title": "<strong>50+ LinkedIn and AI secrets</strong> to stand out in the labor market."
+                    }
+                ],
+                "service": {
+                    "slug": "professional-profile-optimization"
+                }
+            },
+            {
+                "features": [
+                    {
+                        "title": "A clear step-by-step plan to <strong>land interviews in 30 days</strong>"
+                    }
+                ],
+                "service": {
+                    "slug": "mentoring-session-discounts"
+                }
+            }
+        ]
+    }
+}

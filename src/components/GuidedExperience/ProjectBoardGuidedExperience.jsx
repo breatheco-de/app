@@ -114,6 +114,11 @@ function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
           label: t('pending-tooltip'),
           bg: hexColor.warning,
         };
+      case 'IGNORED':
+        return {
+          label: t('approved-tooltip'),
+          bg: hexColor.green,
+        };
       default:
         return {
           label: null,
@@ -123,6 +128,9 @@ function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
   };
 
   const tooltipInfo = getTooltipInfo(currentTask?.revision_status);
+  const statusText = (currentTask?.task_status === 'DONE' && currentTask?.revision_status === 'IGNORED')
+    ? 'approved'
+    : currentTask?.revision_status?.toLowerCase();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -179,7 +187,7 @@ function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
                       color="white"
                       textAlign="center"
                     >
-                      {`${t('assignments:type.project')} ${t(`assignments:status.${currentTask?.revision_status?.toLowerCase()}`).toLowerCase()}`}
+                      {`${t('assignments:type.project')} ${t(`assignments:status.${statusText}`).toLowerCase()}`}
                     </Text>
                     <Icon
                       alignSelf="center"

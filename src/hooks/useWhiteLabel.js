@@ -6,7 +6,10 @@ import WhiteLabelContext from '../context/WhiteLabelContext';
  * @returns {Object} White label context with features and helper methods
  * @example
  * const { isWhiteLabelFeatureEnabled, features, isWhiteLabel } = useWhiteLabel();
+ * // Usar claves antiguas (mapeadas automáticamente)
  * const canShowEvents = isWhiteLabelFeatureEnabled('allow_events');
+ * // O usar nuevas rutas directamente
+ * const canShowEvents = isWhiteLabelFeatureEnabled('events.enabled');
  */
 const useWhiteLabel = () => {
   const context = useContext(WhiteLabelContext);

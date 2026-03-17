@@ -12,9 +12,12 @@ function SyllabusMarkdownComponent({
   const blankText = t('blank-page', { url: currentBlankProps?.url });
 
   if (ipynbHtmlUrl === null && readme && currentBlankProps?.target !== 'blank' && grantSyllabusAccess) {
+    const isProject = lesson?.toLowerCase() === 'project' || currentData?.asset_type === 'PROJECT';
+    const projectContent = isProject ? `# README\n\n---\n\n${readme.content || ''}` : readme.content;
     return (
       <ArticleMarkdown
-        content={readme.content}
+        content={projectContent}
+        isProject={isProject}
         withToc={lesson?.toLowerCase() === 'read'}
         isGuidedExperience={isGuidedExperience}
         frontMatter={{

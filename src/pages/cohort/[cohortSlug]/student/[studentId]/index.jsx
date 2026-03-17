@@ -770,7 +770,7 @@ function StudentReport() {
             </Box>
           )}
           <Box padding="0 10px">
-            {activities.map((activity) => {
+            {activities?.length > 0 && activities.map((activity) => {
               const { kind } = activity;
               const template = activitiesTemplate[kind];
 

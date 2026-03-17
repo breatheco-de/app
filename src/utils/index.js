@@ -447,7 +447,10 @@ function decodeBase64(encoded) {
   return decoded;
 }
 
-const languageFix = (text, lan) => text?.[lan] ?? text?.us ?? text;
+const languageFix = (text, lan) => {
+  const result = text?.[lan] ?? text?.us ?? text;
+  return (typeof result === 'string' || typeof result === 'number') ? result : '';
+};
 
 const getBrowserInfo = () => {
   const ua = navigator.userAgent.toLowerCase();
