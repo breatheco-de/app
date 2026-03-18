@@ -222,6 +222,9 @@ const breathecode = {
       sendVote: (arg) => axios.put(`${url}/user/me/answer/${arg.entity_id}`, { ...arg }),
       getSurveyResponse: (responseId) => axios.get(`${url}/user/me/survey/response/${responseId}`),
       getPendingSurveyResponses: () => axios.get(`${url}/user/me/survey/response?status=PENDING${qs}`),
+      getSurveyByToken: (token) => axios.get(`${url}/survey/response/by_token/${token}`),
+      markSurveyOpened: (surveyResponseId) => axios.post(`${url}/survey/response/${surveyResponseId}/opened`),
+      saveSurveyPartial: (surveyResponseId, answers) => axios.post(`${url}/survey/response/${surveyResponseId}/partial`, { answers }),
       submitSurveyAnswer: (responseId, answers) => axios.post(`${url}/user/me/survey/response/${responseId}/answer`, { answers }),
     };
   },
