@@ -27,7 +27,14 @@
     },
     "error": {
         "submit-failed": "Failed to submit survey. Please try again.",
-        "already-answered": "This survey has already been answered"
+        "already-answered": "This survey has already been answered",
+        "survey-not-found": "Survey not found or has expired",
+        "title": "Error"
+    },
+    "loading": "Loading survey...",
+    "login-required": {
+        "title": "Login Required",
+        "description": "Please log in to complete this survey"
     },
     "success": {
         "thank-you": "Thank you for your feedback! 😁"
