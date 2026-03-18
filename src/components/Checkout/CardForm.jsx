@@ -223,7 +223,17 @@ function CardFormContent({
         isSubmitting={isSubmittingCard}
         {...modalCardErrorProps}
       />
-      <Box display="flex" width={{ base: 'auto', lg: '490px' }} height="auto" flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={backgroundColor} p={{ base: '20px 0', md: '30px 0' }} borderRadius="15px">
+      <Box
+        display="flex"
+        width="100%"
+        maxWidth="100%"
+        minWidth="0"
+        height="auto"
+        flexDirection="column"
+        background={backgroundColor}
+        p={{ base: '20px 0', md: '30px 0' }}
+        borderRadius="15px"
+      >
         <Formik
           initialValues={{
             owner_name: paymentInfo.owner_name || '',
@@ -353,7 +363,8 @@ function CardFormContent({
                   <Flex justifyContent="space-between" flexDirection={{ base: 'column', md: 'row' }} mt="10px" gap="10px">
                     <Button
                       type="submit"
-                      width="100%"
+                      width={{ base: '100%', md: 'auto' }}
+                      flex={1}
                       variant="default"
                       isLoading={isSubmittingPayment}
                       height="40px"
@@ -365,7 +376,8 @@ function CardFormContent({
                     {onSaveCard && (
                       <Button
                         type="button"
-                        width="100%"
+                        width={{ base: '100%', md: 'auto' }}
+                        flex={1}
                         variant="default"
                         height="40px"
                         mt="0"

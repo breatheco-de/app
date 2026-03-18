@@ -6,11 +6,21 @@ import Icon from './Icon';
 
 function AcordionList({
   defaultIndex, allowMultiple, list, color, iconColor, paddingButton, titleStyle,
-  highlightColor, containerStyles, unstyled, descriptionStyle, leftIcon, expanderText, featuresStyle, allowToggle, titleAsHtml, ...rest
+  highlightColor, containerStyles, unstyled, descriptionStyle, leftIcon, expanderText, featuresStyle, allowToggle, titleAsHtml, index, onChange, ...rest
 }) {
   const { t } = useTranslation();
   return list?.length > 0 && (
-    <Accordion defaultIndex={defaultIndex} allowMultiple={allowMultiple} display="flex" flexDirection="column" gridGap="16px" allowToggle={allowToggle} {...containerStyles}>
+    <Accordion
+      defaultIndex={defaultIndex}
+      index={index}
+      onChange={onChange}
+      allowMultiple={allowMultiple}
+      display="flex"
+      flexDirection="column"
+      gridGap="16px"
+      allowToggle={allowToggle}
+      {...containerStyles}
+    >
       {list?.map((item, i) => (
         <AccordionItem
           display="flex"
@@ -123,6 +133,8 @@ AcordionList.propTypes = {
   featuresStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
   allowToggle: PropTypes.bool,
   titleAsHtml: PropTypes.bool,
+  index: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
+  onChange: PropTypes.func,
 };
 AcordionList.defaultProps = {
   defaultIndex: null,
@@ -141,5 +153,7 @@ AcordionList.defaultProps = {
   featuresStyle: {},
   allowToggle: false,
   titleAsHtml: false,
+  index: undefined,
+  onChange: undefined,
 };
 export default AcordionList;
