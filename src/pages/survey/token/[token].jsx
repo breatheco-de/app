@@ -6,7 +6,7 @@ import {
   Spinner,
   Stack,
 } from '@chakra-ui/react';
-import { useSurveyToken } from './useSurveyToken';
+import { useSurveyToken } from '../../../hooks/useSurveyToken';
 import SurveyForm from '../../../components/Survey/SurveyForm';
 import Login from '../../../components/Forms/LogIn';
 import Heading from '../../../components/Heading';

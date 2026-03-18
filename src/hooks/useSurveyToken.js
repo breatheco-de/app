@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import useAuth from '../../../hooks/useAuth';
-import bc from '../../../services/breathecode';
-import useCustomToast from '../../../hooks/useCustomToast';
-import { isWindow } from '../../../utils';
+import useAuth from './useAuth';
+import bc from '../services/breathecode';
+import useCustomToast from './useCustomToast';
+import { isWindow } from '../utils';
 
 export const useSurveyToken = () => {
   // 1. State Declarations
