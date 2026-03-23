@@ -126,7 +126,16 @@ function useCohortHandler() {
 
       const cohortsToFetch = cohorts.filter((cohort) => !preFechedCohorts.some(({ slug }) => slug === cohort.slug));
 
-      const syllabusPromises = cohortsToFetch.map((cohort) => bc.admissions().academySyllabus(cohort.academy.id, cohort.syllabus_version.slug, cohort.syllabus_version.version).then((res) => ({ cohort: cohort.id, ...res })));
+      const mainCohortSlug = router?.query?.mainCohortSlug;
+      const admissionsForSyllabus = bc.admissions(
+        mainCohortSlug ? { 'macro-cohort': mainCohortSlug } : {},
+      );
+
+      const syllabusPromises = cohortsToFetch.map((cohort) => admissionsForSyllabus.academySyllabus(
+        cohort.academy.id,
+        cohort.syllabus_version.slug,
+        cohort.syllabus_version.version,
+      ).then((res) => ({ cohort: cohort.id, ...res })));
       const tasksPromises = cohortsToFetch.map((cohort) => bc.assignments({ cohort: cohort.id, limit: 1000 }).getMeTasks().then((res) => ({ cohort: cohort.id, ...res })));
       const allResults = await Promise.all([
         ...syllabusPromises,

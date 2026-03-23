@@ -532,8 +532,6 @@ function SyllabusContent() {
     }
   }, [selectedSyllabus, lang]);
 
-  console.log('selectedSyllabus', selectedSyllabus);
-
   const teacherActions = professionalRoles.includes(cohortSession?.cohort_user?.role)
     ? [
       {
