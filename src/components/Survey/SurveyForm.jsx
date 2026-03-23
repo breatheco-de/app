@@ -2,13 +2,8 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import {
   Box,
   Button,
+  Container,
   Flex,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Text,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
@@ -21,15 +16,14 @@ import bc from '../../services/breathecode';
 import useCustomToast from '../../hooks/useCustomToast';
 import useAuth from '../../hooks/useAuth';
 
-function SurveyModal({ isOpen, survey, onClose }) {
+function SurveyForm({ survey, onComplete }) {
   const { t } = useTranslation('survey');
-  const { modal, borderColor2, fontColor2 } = useStyle();
+  const { fontColor2 } = useStyle();
   const { createToast } = useCustomToast({ toastId: 'survey-submit' });
   const { cohorts } = useAuth();
   const [answers, setAnswers] = useState({});
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
-  const [hasSubmitted, setHasSubmitted] = useState(false);
   const openedSentRef = useRef(false);
 
   // Get cohort name from slug
@@ -41,9 +35,9 @@ function SurveyModal({ isOpen, survey, onClose }) {
     return cohort?.name || null;
   }, [survey?.trigger_context?.cohort_slug, cohorts]);
 
-  // Send "opened" event when modal opens (only once per survey)
+  // Send "opened" event when component mounts (only once per survey)
   useEffect(() => {
-    if (isOpen && survey?.survey_response_id && !openedSentRef.current) {
+    if (survey?.survey_response_id && !openedSentRef.current) {
       const markOpened = async () => {
         try {
           await bc.feedback().markSurveyOpened(survey.survey_response_id);
@@ -54,7 +48,7 @@ function SurveyModal({ isOpen, survey, onClose }) {
       };
       markOpened();
     }
-  }, [isOpen, survey?.survey_response_id]);
+  }, [survey?.survey_response_id]);
 
   // Reset state when survey changes
   useEffect(() => {
@@ -62,7 +56,6 @@ function SurveyModal({ isOpen, survey, onClose }) {
       setAnswers({});
       setErrors({});
       setSubmitting(false);
-      setHasSubmitted(false);
       openedSentRef.current = false;
     }
   }, [survey?.survey_response_id]);
@@ -72,7 +65,6 @@ function SurveyModal({ isOpen, survey, onClose }) {
       ...prev,
       [questionId]: value,
     }));
-    // Clear error for this question when user starts answering
     if (errors[questionId]) {
       setErrors((prev) => {
         const newErrors = { ...prev };
@@ -131,16 +123,17 @@ function SurveyModal({ isOpen, survey, onClose }) {
       const response = await bc.feedback().submitSurveyAnswer(survey.survey_response_id, answers);
 
       if (response.status === 200 || response.status === 201) {
-        setHasSubmitted(true);
         createToast({
           position: 'top',
           status: 'success',
           title: t('success.thank-you'),
           duration: 3000,
         });
-        // Close modal after a short delay
+        // Call onComplete callback after a short delay
         setTimeout(() => {
-          onClose();
+          if (onComplete && typeof onComplete === 'function') {
+            onComplete();
+          }
         }, 1000);
       } else {
         throw new Error('Unexpected response status');
@@ -149,16 +142,18 @@ function SurveyModal({ isOpen, survey, onClose }) {
       const errorMessage = error.response?.data?.detail || error.message || t('error.submit-failed');
       const errorSlug = error.response?.data?.slug;
 
-      // Handle specific error cases
       if (errorSlug === 'survey-already-answered') {
-        setHasSubmitted(true);
         createToast({
           position: 'top',
           status: 'info',
           title: t('error.already-answered'),
           duration: 3000,
         });
-        onClose();
+        setTimeout(() => {
+          if (onComplete && typeof onComplete === 'function') {
+            onComplete();
+          }
+        }, 1000);
       } else if (errorSlug === 'missing-required-answer') {
         createToast({
           position: 'top',
@@ -179,120 +174,74 @@ function SurveyModal({ isOpen, survey, onClose }) {
     }
   };
 
-  const savePartial = async () => {
-    const hasAnswers = Object.keys(answers).length > 0;
-    if (!hasAnswers || hasSubmitted || !survey?.survey_response_id) {
-      return;
-    }
-
-    try {
-      await bc.feedback().saveSurveyPartial(survey.survey_response_id, answers);
-    } catch (error) {
-      console.error('Error saving partial survey:', error);
-    }
-  };
-
-  const handleClose = async () => {
-    if (submitting) {
-      return;
-    }
-
-    // Save partial if user has answered at least one question and hasn't submitted
-    const hasAnswers = Object.keys(answers).length > 0;
-    if (hasAnswers && !hasSubmitted) {
-      await savePartial();
-    }
-
-    onClose();
-  };
-
   if (!survey) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} size="md" isCentered closeOnOverlayClick={!submitting} scrollBehavior="inside">
-      <ModalOverlay />
-      <ModalContent background={modal.background2} maxWidth="600px" maxHeight="90vh" display="flex" flexDirection="column">
-        <ModalHeader
-          borderBottom={1}
-          borderStyle="solid"
-          borderColor={borderColor2}
-          paddingBottom="16px"
-          flexShrink={0}
+    <Container maxW="800px" padding="24px">
+      <Box marginBottom="32px">
+        <Heading size="lg" color={fontColor2} marginBottom="16px">
+          {t('title')}
+        </Heading>
+        {survey.trigger_context && survey.trigger_context.trigger_type && (
+          <Box
+            marginTop="20px"
+            padding="12px"
+            borderRadius="8px"
+            backgroundColor="blue.50"
+            border="1px solid"
+            borderColor="blue.200"
+          >
+            <Text size="14px" color="blue.700">
+              {t('context.completion-message', {
+                asset: cohortName || survey.trigger_context.asset_slug || survey.trigger_context.cohort_slug || t('context.asset'),
+              })}
+            </Text>
+          </Box>
+        )}
+      </Box>
+
+      <Flex direction="column" gridGap="24px" marginBottom="32px">
+        {survey.questions?.map((question) => {
+          let QuestionComponent = null;
+          if (question.type === 'likert_scale') {
+            QuestionComponent = LikertScaleQuestion;
+          } else if (question.type === 'open_question') {
+            QuestionComponent = OpenQuestion;
+          }
+
+          if (!QuestionComponent) {
+            return null;
+          }
+
+          return (
+            <QuestionComponent
+              key={question.id}
+              question={question}
+              value={answers[question.id]}
+              onChange={(value) => handleAnswerChange(question.id, value)}
+              error={errors[question.id]}
+            />
+          );
+        })}
+      </Flex>
+
+      <Flex justifyContent="flex-end" gridGap="12px">
+        <Button
+          variant="default"
+          onClick={handleSubmit}
+          disabled={submitting}
+          isLoading={submitting}
+          loadingText={t('actions.submitting')}
+          size="lg"
         >
-          <Heading size="md" color={fontColor2}>
-            {t('title')}
-          </Heading>
-        </ModalHeader>
-        {!submitting && <ModalCloseButton />}
-        <ModalBody padding="24px" overflowY="auto" flex="1">
-          {survey.trigger_context && survey.trigger_context.trigger_type && (
-            <Box
-              marginBottom="20px"
-              padding="12px"
-              borderRadius="8px"
-              backgroundColor="blue.50"
-              border="1px solid"
-              borderColor="blue.200"
-            >
-              <Text size="14px" color="blue.700">
-                {t('context.completion-message', {
-                  asset: cohortName || survey.trigger_context.asset_slug || survey.trigger_context.cohort_slug || t('context.asset'),
-                })}
-              </Text>
-            </Box>
-          )}
-
-          <Flex direction="column" gridGap="24px">
-            {survey.questions?.map((question) => {
-              let QuestionComponent = null;
-              if (question.type === 'likert_scale') {
-                QuestionComponent = LikertScaleQuestion;
-              } else if (question.type === 'open_question') {
-                QuestionComponent = OpenQuestion;
-              }
-
-              if (!QuestionComponent) {
-                return null;
-              }
-
-              return (
-                <QuestionComponent
-                  key={question.id}
-                  question={question}
-                  value={answers[question.id]}
-                  onChange={(value) => handleAnswerChange(question.id, value)}
-                  error={errors[question.id]}
-                />
-              );
-            })}
-          </Flex>
-
-          <Flex marginTop="32px" justifyContent="flex-end" gridGap="12px" flexShrink={0}>
-            <Button
-              variant="outline"
-              onClick={handleClose}
-              disabled={submitting}
-            >
-              {t('actions.close')}
-            </Button>
-            <Button
-              variant="default"
-              onClick={handleSubmit}
-              disabled={submitting}
-              isLoading={submitting}
-              loadingText={t('actions.submitting')}
-            >
-              {t('actions.submit')}
-            </Button>
-          </Flex>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+          {t('actions.submit')}
+        </Button>
+      </Flex>
+    </Container>
   );
 }
 
-SurveyModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
+SurveyForm.propTypes = {
   survey: PropTypes.shape({
     survey_response_id: PropTypes.number.isRequired,
     questions: PropTypes.arrayOf(
@@ -317,11 +266,12 @@ SurveyModal.propTypes = {
       completed_at: PropTypes.string,
     }),
   }),
-  onClose: PropTypes.func.isRequired,
+  onComplete: PropTypes.func,
 };
 
-SurveyModal.defaultProps = {
+SurveyForm.defaultProps = {
   survey: null,
+  onComplete: null,
 };
 
-export default SurveyModal;
+export default SurveyForm;

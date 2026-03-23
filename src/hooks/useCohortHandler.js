@@ -126,7 +126,16 @@ function useCohortHandler() {
 
       const cohortsToFetch = cohorts.filter((cohort) => !preFechedCohorts.some(({ slug }) => slug === cohort.slug));
 
-      const syllabusPromises = cohortsToFetch.map((cohort) => bc.admissions().academySyllabus(cohort.academy.id, cohort.syllabus_version.slug, cohort.syllabus_version.version).then((res) => ({ cohort: cohort.id, ...res })));
+      const mainCohortSlug = router?.query?.mainCohortSlug;
+      const admissionsForSyllabus = bc.admissions(
+        mainCohortSlug ? { 'macro-cohort': mainCohortSlug } : {},
+      );
+
+      const syllabusPromises = cohortsToFetch.map((cohort) => admissionsForSyllabus.academySyllabus(
+        cohort.academy.id,
+        cohort.syllabus_version.slug,
+        cohort.syllabus_version.version,
+      ).then((res) => ({ cohort: cohort.id, ...res })));
       const tasksPromises = cohortsToFetch.map((cohort) => bc.assignments({ cohort: cohort.id, limit: 1000 }).getMeTasks().then((res) => ({ cohort: cohort.id, ...res })));
       const allResults = await Promise.all([
         ...syllabusPromises,
@@ -161,7 +170,14 @@ function useCohortHandler() {
 
       return assignmentsMap;
     } catch (e) {
-      console.log(e);
+      console.error('[useCohortHandler] getTasksWithoutCohort error', {
+        message: e?.message,
+        status: e?.response?.status,
+        data: e?.response?.data,
+        code: e?.code,
+        url: e?.config?.url,
+        method: e?.config?.method,
+      });
       createToast({
         position: 'top',
         title: t('alert-message:error-fetching-syllabus'),
@@ -200,7 +216,14 @@ function useCohortHandler() {
           setCapabilitiesCache(academyId, combinedCapabilities);
           setUserCapabilities(combinedCapabilities);
         } catch (err) {
-          console.log(err);
+          console.error('[useCohortHandler] getCohortUserCapabilities error', {
+            message: err?.message,
+            status: err?.response?.status,
+            data: err?.response?.data,
+            code: err?.code,
+            url: err?.config?.url,
+            method: err?.config?.method,
+          });
           createToast({
             position: 'top',
             title: t('alert-message:error-fetching-role'),
@@ -434,7 +457,14 @@ function useCohortHandler() {
         });
       }
     } catch (error) {
-      console.log(error);
+      console.error('[useCohortHandler] changeTaskStatus error', {
+        message: error?.message,
+        status: error?.response?.status,
+        data: error?.response?.data,
+        code: error?.code,
+        url: error?.config?.url,
+        method: error?.config?.method,
+      });
       createToast({
         position: 'top',
         title: isProject ? t('alert-message:delivery-error') : t('alert-message:assignment-update-error'),
@@ -992,7 +1022,14 @@ function useCohortHandler() {
         window.open(languageFix(shortcut.url, lang), '_blank');
       }
     } catch (e) {
-      console.log(e);
+      console.error('[useCohortHandler] openShortcut error', {
+        message: e?.message,
+        status: e?.response?.status,
+        data: e?.response?.data,
+        code: e?.code,
+        url: e?.config?.url,
+        method: e?.config?.method,
+      });
       createToast({
         position: 'top',
         title: tSignup('alert-message:module-start-error'),

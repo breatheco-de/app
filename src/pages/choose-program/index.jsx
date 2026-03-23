@@ -394,7 +394,14 @@ function chooseProgram() {
         });
       }
     } catch (e) {
-      console.log(e);
+      console.error('[choose-program] acceptInvite error', {
+        message: e?.message,
+        status: e?.response?.status,
+        data: e?.response?.data,
+        code: e?.code,
+        url: e?.config?.url,
+        method: e?.config?.method,
+      });
       createToast({
         title: t('alert-message:invitation-error'),
         status: 'error',
@@ -435,7 +442,14 @@ function chooseProgram() {
         });
       }
     } catch (e) {
-      console.log(e);
+      console.error('[choose-program] acceptProfileAcademy error', {
+        message: e?.message,
+        status: e?.response?.status,
+        data: e?.response?.data,
+        code: e?.code,
+        url: e?.config?.url,
+        method: e?.config?.method,
+      });
       createToast({
         title: t('alert-message:invitation-error'),
         status: 'error',

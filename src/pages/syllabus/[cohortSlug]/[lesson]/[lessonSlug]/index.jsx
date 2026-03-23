@@ -114,7 +114,8 @@ function SyllabusContent() {
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const taskBarBackground = useColorModeValue('#DCE9FF', 'gray.dark');
 
-  const { label, teacherInstructions, keyConcepts } = selectedSyllabus;
+  const { label, teacherInstructions: teacherInstructionsRaw, keyConcepts } = selectedSyllabus;
+  const normalizedTeacherInstructions = languageFix(teacherInstructionsRaw, lang);
 
   const firstTask = nextModule?.content[0];
   const lastPrevTask = prevModule?.content && prevModule.content[prevModule.content.length - 1];
@@ -525,11 +526,11 @@ function SyllabusContent() {
 
   useEffect(() => {
     if (selectedSyllabus.extendedInstructions) {
-      const content = selectedSyllabus.extendedInstructions;
+      const content = languageFix(selectedSyllabus.extendedInstructions, lang);
       const markdown = getMarkDownContent(content);
       setExtendedInstructions(markdown);
     }
-  }, [selectedSyllabus]);
+  }, [selectedSyllabus, lang]);
 
   const teacherActions = professionalRoles.includes(cohortSession?.cohort_user?.role)
     ? [
@@ -1568,14 +1569,14 @@ function SyllabusContent() {
               {t('teacherSidebar.module-duration', { duration: selectedSyllabus?.duration_in_days || currentModule?.duration_in_days || 1 })}
             </Heading>
             <Box fontSize="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
-              <MarkDownParser content={languageFix(teacherInstructions, lang) || ''} />
+              <MarkDownParser content={normalizedTeacherInstructions || ''} />
             </Box>
           </Box>
           {![
             '>:warning: No available instruction found for this module',
             '>:warning: No se encontró instrucción disponible para este módulo',
           ].includes(selectedSyllabus?.extendedInstructions) && (
-            <MarkDownParser content={extendedInstructions?.content || ''} />
+            <MarkDownParser content={languageFix(extendedInstructions?.content, lang) || ''} />
           )}
         </SimpleModal>
       )}
