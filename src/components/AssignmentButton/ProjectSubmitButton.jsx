@@ -132,7 +132,7 @@ ProjectSubmitButton.defaultProps = {
   currentAssetData: {},
   currentTask: {},
   sendProject: () => { },
-  onClickHandler: () => { },
+  onClickHandler: undefined,
   closePopover: () => { },
   isPopoverOpen: false,
   allowText: false,

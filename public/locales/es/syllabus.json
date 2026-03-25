@@ -6,6 +6,8 @@
   "solution-video": "Ver solución",
   "watch-intro": "Ver introducción",
   "get-help": "Pide ayuda a Rigobot",
+  "share-approved-project": "Comparte tu proyecto aprobado en redes sociales (X, LinkedIn, Facebook)",
+  "share-project-tooltip-pending": "Comparte tu proyecto entregado: está pendiente de revisión del profesor",
   "connect-rigobot-message": "Debes conectar tu cuenta con Github y Rigobot",
   "connect-rigobot": "Conectar con Rigobot",
   "rigo-chat": {

@@ -135,7 +135,7 @@ function AssignmentButton({
             ...prevState,
             isChangingTaskStatus: false,
           }));
-          onClickHandler();
+          onClickHandler?.();
         });
     }
   };
@@ -235,7 +235,7 @@ AssignmentButton.propTypes = {
 AssignmentButton.defaultProps = {
   currentTask: null,
   allowText: false,
-  onClickHandler: () => { },
+  onClickHandler: undefined,
   currentAssetData: null,
   togglePendingSubtasks: () => { },
   isGuidedExperience: false,

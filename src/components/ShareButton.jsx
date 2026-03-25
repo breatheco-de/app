@@ -2,7 +2,7 @@
 import { useState, memo, useEffect } from 'react';
 import {
   Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader,
-  ModalOverlay, Stack,
+  ModalOverlay, Stack, Tooltip,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -15,14 +15,14 @@ import useStyle from '../hooks/useStyle';
 import { getBrowserInfo } from '../utils';
 
 function ShareButton({
-  variant, title, shareText, message, link, socials, withParty, onlyModal, currentTask, onClose,
+  variant, title, shareText, message, link, socials, withParty, onlyModal, onlyIconTrigger, currentTask, onClose, tooltipLabel,
 }) {
   const { t } = useTranslation('profile');
   const [party, setParty] = useState(true);
   const [isOpen, setIsOpen] = useState(onlyModal || false);
   const [copied, setCopied] = useState(false);
   const {
-    borderColor, lightColor, modal,
+    borderColor, lightColor, modal, backgroundColor, hexColor, fontColor,
   } = useStyle();
   const { featuredBackground, background, hoverBackground } = modal;
 
@@ -49,11 +49,35 @@ function ShareButton({
     navigator.clipboard.writeText(link);
   };
 
+  const openShareModal = () => setIsOpen(true);
+
   return (
     <>
-      <Button display={onlyModal ? 'none' : 'block'} variant={variant} onClick={() => setIsOpen(true)} style={{ height: 'auto' }} textTransform="uppercase">
-        {t('share:button-text')}
-      </Button>
+      {!onlyModal && onlyIconTrigger && (
+        <Tooltip label={tooltipLabel || t('share:tooltip-default')} placement="top">
+          <Button
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            width="40px"
+            height="40px"
+            background={backgroundColor}
+            padding="12px"
+            borderRadius="full"
+            variant="default"
+            onClick={openShareModal}
+            aria-label={tooltipLabel || t('share:tooltip-default')}
+            style={{ color: fontColor, textDecoration: 'none' }}
+          >
+            <Icon style={{ margin: 'auto', display: 'block' }} icon="open" color={hexColor.blueDefault} width="16px" height="16px" />
+          </Button>
+        </Tooltip>
+      )}
+      {!onlyModal && !onlyIconTrigger && (
+        <Button variant={variant} onClick={openShareModal} style={{ height: 'auto' }} textTransform="uppercase">
+          {t('share:button-text')}
+        </Button>
+      )}
       <Modal
         isOpen={isOpen}
         onClose={() => {
@@ -180,6 +204,8 @@ function ShareButton({
 ShareButton.propTypes = {
   variant: PropTypes.string,
   onlyModal: PropTypes.bool,
+  onlyIconTrigger: PropTypes.bool,
+  tooltipLabel: PropTypes.string,
   title: PropTypes.string,
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   socials: PropTypes.arrayOf(PropTypes.shape({
@@ -197,6 +223,8 @@ ShareButton.propTypes = {
 
 ShareButton.defaultProps = {
   onlyModal: false,
+  onlyIconTrigger: false,
+  tooltipLabel: '',
   variant: 'default',
   title: '',
   currentTask: null,
