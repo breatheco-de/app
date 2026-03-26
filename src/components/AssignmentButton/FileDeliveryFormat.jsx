@@ -228,7 +228,7 @@ FileDeliveryFormat.defaultProps = {
   currentTask: {},
   sendProject: () => {},
   closePopover: () => {},
-  onClickHandler: () => {},
+  onClickHandler: undefined,
 };
 
 export default FileDeliveryFormat;

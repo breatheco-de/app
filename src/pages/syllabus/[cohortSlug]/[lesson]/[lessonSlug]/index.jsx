@@ -77,7 +77,6 @@ function SyllabusContent() {
   const [showSolutionVideo, setShowSolutionVideo] = useState(false);
   const [selectedSyllabus, setSelectedSyllabus] = useState({});
   const [defaultSelectedSyllabus, setDefaultSelectedSyllabus] = useState({});
-  const [showModal, setShowModal] = useState(false);
   const [showRigobotModal, setShowRigobotModal] = useState(false);
   const [readmeUrlPathname, setReadmeUrlPathname] = useState(null);
   const [openTargetBlankModal, setOpenTargetBlankModal] = useState(null);
@@ -379,15 +378,13 @@ function SyllabusContent() {
     if (isAuthenticated && (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false)) setGrantAccess(true);
   }, [cohortSession, areSubscriptionsFetched, isAuthenticated]);
 
-  const sendProject = async ({ task, githubUrl, taskStatus, flags, showShareModal = true }) => {
-    if (showShareModal) setShowModal(true);
+  const sendProject = async ({ task, githubUrl, taskStatus, flags }) => {
     await updateAssignment({
       task, githubUrl, taskStatus, flags,
     });
   };
 
   const cleanCurrentData = () => {
-    setShowModal(false);
     setCurrentAsset(null);
     setCurrentSelectedModule(null);
     setReadme(null);
@@ -397,7 +394,6 @@ function SyllabusContent() {
   };
 
   const restoreCurrentState = () => {
-    setShowModal(false);
     setOpenNextModuleModal(false);
     setOpenNextPageModal(false);
     setOpenTargetBlankModal(false);
@@ -729,10 +725,31 @@ function SyllabusContent() {
     }
   };
 
+  const projectShareMessage = useMemo(() => {
+    const title = currentTask?.title || '';
+    const rev = currentTask?.revision_status;
+    if (rev === 'APPROVED' || rev === 'IGNORED') {
+      return t('dashboard:share-message-approved', { title });
+    }
+    return t('dashboard:share-message', { title });
+  }, [currentTask?.title, currentTask?.revision_status, t]);
+
   const { socials, shareLink } = useSocialShare({
     info: currentTask,
-    shareMessage: t('dashboard:share-message', { title: currentTask?.title }),
+    shareMessage: projectShareMessage,
   });
+
+  const shareProjectRevisionAllowsShare = ['PENDING', 'APPROVED', 'IGNORED'].includes(
+    currentTask?.revision_status,
+  );
+  const showProjectShareUi = isProject
+    && currentTask?.task_status === 'DONE'
+    && currentTask?.revision_status !== 'REJECTED'
+    && shareProjectRevisionAllowsShare;
+
+  const shareProjectTooltip = (currentTask?.revision_status === 'APPROVED' || currentTask?.revision_status === 'IGNORED')
+    ? t('share-approved-project')
+    : t('share-project-tooltip-pending');
   const prevPage = async () => {
     setClickedPage(previousAssignment);
 
@@ -1195,16 +1212,15 @@ function SyllabusContent() {
                                 sendProject={sendProject}
                                 currentAssetData={currentAsset}
                               />
-                              {currentTask?.task_status === 'DONE' && showModal && (
+                              {showProjectShareUi && (
                                 <ShareButton
-                                  variant="outline"
+                                  onlyIconTrigger
+                                  tooltipLabel={shareProjectTooltip}
                                   title={t('projects:share-certificate.title')}
                                   shareText={t('projects:delivery.share-via', { project: currentTask?.title })}
                                   link={shareLink}
                                   socials={socials}
                                   currentTask={currentTask}
-                                  onlyModal
-                                  withParty
                                 />
                               )}
                               {isRigoInitialized && (isLesson || isProject) && (
@@ -1280,7 +1296,29 @@ function SyllabusContent() {
                         )}
                         {isAvailableAsSaas && (
                           <Box className="controls-panel" bottom="0" height="110px" padding="20px 0" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
-                            <Box ref={controlsContainerRef} bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={taskBarBackground} justifyContent="center" display="flex" gridGap="20px">
+                            <Box
+                              ref={controlsContainerRef}
+                              position="fixed"
+                              zIndex={1400}
+                              bottom={{ base: '20px', md: '50px' }}
+                              left={{ base: '50%', lg: 'auto' }}
+                              right={{ base: 'auto', lg: '24px' }}
+                              transform={{ base: 'translateX(-50%)', lg: 'none' }}
+                              maxW={{ base: 'min(calc(100vw - 16px), 100%)', lg: 'none' }}
+                              width="fit-content"
+                              padding="15px"
+                              borderRadius="12px"
+                              background={taskBarBackground}
+                              justifyContent="center"
+                              display="flex"
+                              flexWrap="nowrap"
+                              overflowX={{ base: 'auto', lg: 'visible' }}
+                              gridGap="20px"
+                              sx={{
+                                scrollbarWidth: 'thin',
+                                WebkitOverflowScrolling: 'touch',
+                              }}
+                            >
                               {isRigoInitialized && (isLesson || isProject) && (
                                 <Tooltip label={t('get-help')} placement="top">
                                   <Button
@@ -1377,16 +1415,15 @@ function SyllabusContent() {
                                   portalled
                                 />
                               )}
-                              {currentTask?.task_status === 'DONE' && showModal && (
+                              {showProjectShareUi && (
                                 <ShareButton
-                                  variant="outline"
+                                  onlyIconTrigger
+                                  tooltipLabel={shareProjectTooltip}
                                   title={t('projects:share-certificate.title')}
                                   shareText={t('projects:delivery.share-via', { project: currentTask?.title })}
                                   link={shareLink}
                                   socials={socials}
                                   currentTask={currentTask}
-                                  onlyModal
-                                  withParty
                                 />
                               )}
                             </Box>

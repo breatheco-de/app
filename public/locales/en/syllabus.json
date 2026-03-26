@@ -6,6 +6,8 @@
   "solution-video": "Solution video",
   "watch-intro": "Watch intro",
   "get-help": "Get help from Rigobot",
+  "share-approved-project": "Share your approved project on social media (X, LinkedIn, Facebook)",
+  "share-project-tooltip-pending": "Share your submitted project—it is pending teacher review",
   "connect-rigobot-message": "You must connect your account to Github and to Rigobot",
   "connect-rigobot": "Connect with Rigobot",
   "rigo-chat": {
