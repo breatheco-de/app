@@ -447,15 +447,16 @@ function useCohortHandler() {
             agent: getBrowserInfo(),
           },
         });
-      } else {
-        createToast({
-          position: 'top',
-          title: isProject ? t('alert-message:delivery-error') : t('alert-message:assignment-update-error'),
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
+        return { success: true, task: response.data };
       }
+      createToast({
+        position: 'top',
+        title: isProject ? t('alert-message:delivery-error') : t('alert-message:assignment-update-error'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return { success: false };
     } catch (error) {
       console.error('[useCohortHandler] changeTaskStatus error', {
         message: error?.message,
@@ -472,6 +473,7 @@ function useCohortHandler() {
         duration: 5000,
         isClosable: true,
       });
+      return { success: false };
     }
   };
 

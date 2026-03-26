@@ -89,6 +89,7 @@ function SyllabusContent() {
   const [learnpackStart, setLearnpackStart] = useState(false);
   const [showTeachAlert, setShowTeachAlert] = useState(false);
   const [alertedModuleId, setAlertedModuleId] = useState(null);
+  const [showPostDeliveryShareModal, setShowPostDeliveryShareModal] = useState(false);
   const {
     getCohortUserCapabilities, getCohortData, cohortSession, sortedAssignments, setCohortSession, taskTodo,
     updateAssignment, startDay, updateTask, reviewModalState, handleCloseReviewModal,
@@ -378,10 +379,13 @@ function SyllabusContent() {
     if (isAuthenticated && (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false)) setGrantAccess(true);
   }, [cohortSession, areSubscriptionsFetched, isAuthenticated]);
 
-  const sendProject = async ({ task, githubUrl, taskStatus, flags }) => {
-    await updateAssignment({
+  const sendProject = async ({ task, githubUrl, taskStatus, flags, showShareModal }) => {
+    const result = await updateAssignment({
       task, githubUrl, taskStatus, flags,
     });
+    if (result?.success && showShareModal && task?.task_type === 'PROJECT') {
+      setShowPostDeliveryShareModal(true);
+    }
   };
 
   const cleanCurrentData = () => {
@@ -747,9 +751,6 @@ function SyllabusContent() {
     && currentTask?.revision_status !== 'REJECTED'
     && shareProjectRevisionAllowsShare;
 
-  const shareProjectTooltip = (currentTask?.revision_status === 'APPROVED' || currentTask?.revision_status === 'IGNORED')
-    ? t('share-approved-project')
-    : t('share-project-tooltip-pending');
   const prevPage = async () => {
     setClickedPage(previousAssignment);
 
@@ -1215,9 +1216,9 @@ function SyllabusContent() {
                               {showProjectShareUi && (
                                 <ShareButton
                                   onlyIconTrigger
-                                  tooltipLabel={shareProjectTooltip}
-                                  title={t('projects:share-certificate.title')}
-                                  shareText={t('projects:delivery.share-via', { project: currentTask?.title })}
+                                  tooltipLabel={t('projects:delivery.share-my-progress')}
+                                  title={t('projects:delivery.share-my-progress')}
+                                  shareText={t('share:share-via')}
                                   link={shareLink}
                                   socials={socials}
                                   currentTask={currentTask}
@@ -1418,9 +1419,9 @@ function SyllabusContent() {
                               {showProjectShareUi && (
                                 <ShareButton
                                   onlyIconTrigger
-                                  tooltipLabel={shareProjectTooltip}
-                                  title={t('projects:share-certificate.title')}
-                                  shareText={t('projects:delivery.share-via', { project: currentTask?.title })}
+                                  tooltipLabel={t('projects:delivery.share-my-progress')}
+                                  title={t('projects:delivery.share-my-progress')}
+                                  shareText={t('share:share-via')}
                                   link={shareLink}
                                   socials={socials}
                                   currentTask={currentTask}
@@ -1444,6 +1445,18 @@ function SyllabusContent() {
         positioningRef={controlsContainerRef}
         title={videoModalTitle}
       />
+      {isProject && showPostDeliveryShareModal && (
+        <ShareButton
+          onlyModal
+          withParty
+          title={t('projects:delivery.share-my-progress')}
+          shareText={t('share:share-via')}
+          link={shareLink}
+          socials={socials}
+          currentTask={currentTask}
+          onClose={() => setShowPostDeliveryShareModal(false)}
+        />
+      )}
       <SimpleModal
         size="md"
         isOpen={showRigobotModal}
