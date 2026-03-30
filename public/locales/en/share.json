@@ -1,5 +1,6 @@
 {
   "title": "Share your progress",
+  "tooltip-default": "Share on social media",
   "share-via": "Share your progress via:",
   "message": "Sharing your progress publicly not only make you feel better, but your friends, family, and recruiters will recognize your progress; you will also rank higher on social media platforms, and help you build up on your personal branding. <a class='link' target='_blank' rel='noopener noreferrer' href='/lesson/learn-in-public'>Read more about the benefits of learning in public.</a>",
   "button-text": "Share",
