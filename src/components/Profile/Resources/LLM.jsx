@@ -10,6 +10,7 @@ import {
 } from 'react';
 import Text from '../../Text';
 import Icon from '../../Icon';
+import NextChakraLink from '../../NextChakraLink';
 import Select from '../../ReactSelect';
 import SimpleModal from '../../SimpleModal';
 import useCustomToast from '../../../hooks/useCustomToast';
@@ -483,18 +484,36 @@ function LLM() {
             </Button>
           </Flex>
 
-          {/* eslint-disable-next-line no-nested-ternary -- loading / empty / list */}
-          {isLoadingList ? (
+          {isLoadingList && (
             <Text size="md" fontWeight="400">
               {t('llm.loading')}
             </Text>
-          ) : keys.length === 0 ? (
-            <Text size="md" fontWeight="400">
-              {llmKeysForbidden
-                ? t('llm.no-consumable')
-                : loadKeysError || t('llm.no-keys')}
-            </Text>
-          ) : (
+          )}
+
+          {!isLoadingList && keys.length === 0 && (
+            llmKeysForbidden ? (
+              <Text size="md" fontWeight="400">
+                {t('llm.no-consumable')}
+                {' '}
+                <NextChakraLink
+                  href="/pricing"
+                  color="blue.default"
+                  fontWeight="700"
+                  textDecoration="none"
+                  _hover={{ textDecoration: 'underline' }}
+                >
+                  {t('llm.pricing-page')}
+                </NextChakraLink>
+                .
+              </Text>
+            ) : (
+              <Text size="md" fontWeight="400">
+                {loadKeysError || t('llm.no-keys')}
+              </Text>
+            )
+          )}
+
+          {!isLoadingList && keys.length > 0 && (
             <VStack spacing={0} align="stretch" width="100%" divider={<Divider />}>
               {keys.map((item, index) => {
                 const tokenId = item?.token_id;
