@@ -1,5 +1,6 @@
 {
   "title": "Comparte tu progreso",
+  "tooltip-default": "Compartir en redes sociales",
   "share-via": "Comparte tu progreso a través de:",
   "message": "Compartir tu progreso públicamente no solo te hace sentir mejor. Tus amigos, familiares y reclutadores reconocerán tu progreso, obtendrás mayor visibilidad en las plataformas de redes sociales y mejorarás tu marca personal como profesional. <a class='link' target='_blank' rel='noopener noreferrer' href='/lesson/aprender-en-publico'>Lee más sobre los beneficios de aprender en público.</a>",
   "button-text": "Compartir",

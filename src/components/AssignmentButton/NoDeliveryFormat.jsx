@@ -38,7 +38,7 @@ NoDeliveryFormat.defaultProps = {
   currentTask: {},
   sendProject: () => {},
   closePopover: () => {},
-  onClickHandler: () => {},
+  onClickHandler: undefined,
 };
 
 export default NoDeliveryFormat;

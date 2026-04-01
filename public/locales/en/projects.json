@@ -12,6 +12,7 @@
   "description": "Practice and develop your coding skills by building real live interactive autograded projects with solutions and video tutorials",
   "backToProjects": "Back to Projects",
   "delivery": {
+    "share-my-progress": "Share my progress",
     "share-via": "Your project '{{project}}' has been delivered and is now pending review. Congratulations on your progress! Share your progress and celebrate this achievement."
   },
   "table": {

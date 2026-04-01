@@ -195,7 +195,7 @@ FlagsDeliveryFormat.defaultProps = {
   currentTask: {},
   sendProject: () => { },
   closePopover: () => { },
-  onClickHandler: () => { },
+  onClickHandler: undefined,
   statusText: '',
 };
 

@@ -41,10 +41,10 @@ function SyllabusActivity({
   const sendProject = async ({
     task, githubUrl, taskStatus, flags,
   }) => {
-    await updateAssignment({
+    const result = await updateAssignment({
       task, githubUrl, taskStatus, flags,
     });
-    setShowModal(true);
+    if (result?.success) setShowModal(true);
   };
 
   const isDone = currentTask?.task_status === 'DONE' || currentTask?.revision_status === 'APPROVED';
@@ -122,8 +122,8 @@ function SyllabusActivity({
       {currentTask?.task_status === 'DONE' && showModal && (
         <ShareButton
           variant="outline"
-          title={t('projects:share-certificate.title')}
-          shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
+          title={t('projects:delivery.share-my-progress')}
+          shareText={t('share:share-via')}
           link={shareLink}
           socials={socials}
           currentTask={currentTask}

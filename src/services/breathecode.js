@@ -120,7 +120,7 @@ const breathecode = {
       }),
       academySyllabus: (academyId, slug, version) => {
         if (!slug) throw new Error('Missing slug');
-        else return axios.get(`${url}/academy/${academyId}/syllabus/${slug}/version/${version}`);
+        return axios.get(`${url}/academy/${academyId}/syllabus/${slug}/version/${version}${qs}`);
       },
       publicSyllabus: (slug, version) => axios.get(`${url}/syllabus/${slug}/version/${version || '1'}${qs}`, {
         headers: {

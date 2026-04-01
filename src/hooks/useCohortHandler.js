@@ -126,7 +126,16 @@ function useCohortHandler() {
 
       const cohortsToFetch = cohorts.filter((cohort) => !preFechedCohorts.some(({ slug }) => slug === cohort.slug));
 
-      const syllabusPromises = cohortsToFetch.map((cohort) => bc.admissions().academySyllabus(cohort.academy.id, cohort.syllabus_version.slug, cohort.syllabus_version.version).then((res) => ({ cohort: cohort.id, ...res })));
+      const mainCohortSlug = router?.query?.mainCohortSlug;
+      const admissionsForSyllabus = bc.admissions(
+        mainCohortSlug ? { 'macro-cohort': mainCohortSlug } : {},
+      );
+
+      const syllabusPromises = cohortsToFetch.map((cohort) => admissionsForSyllabus.academySyllabus(
+        cohort.academy.id,
+        cohort.syllabus_version.slug,
+        cohort.syllabus_version.version,
+      ).then((res) => ({ cohort: cohort.id, ...res })));
       const tasksPromises = cohortsToFetch.map((cohort) => bc.assignments({ cohort: cohort.id, limit: 1000 }).getMeTasks().then((res) => ({ cohort: cohort.id, ...res })));
       const allResults = await Promise.all([
         ...syllabusPromises,
@@ -438,15 +447,16 @@ function useCohortHandler() {
             agent: getBrowserInfo(),
           },
         });
-      } else {
-        createToast({
-          position: 'top',
-          title: isProject ? t('alert-message:delivery-error') : t('alert-message:assignment-update-error'),
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
+        return { success: true, task: response.data };
       }
+      createToast({
+        position: 'top',
+        title: isProject ? t('alert-message:delivery-error') : t('alert-message:assignment-update-error'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return { success: false };
     } catch (error) {
       console.error('[useCohortHandler] changeTaskStatus error', {
         message: error?.message,
@@ -463,6 +473,7 @@ function useCohortHandler() {
         duration: 5000,
         isClosable: true,
       });
+      return { success: false };
     }
   };
 
