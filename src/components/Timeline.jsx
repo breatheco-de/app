@@ -71,10 +71,16 @@ function Timeline({
   };
 
   const getAssignmentTitle = (item) => {
-    if (!item?.translations) return item?.title;
-
-    return lang === 'en' ? (item?.translations?.en?.title || item?.translations?.us?.title)
-      : (item?.translations?.[lang]?.title || item?.title);
+    if (!item) return '';
+    const fromTranslations = lang === 'en' || lang === 'us'
+      ? (item.translations?.en?.title || item.translations?.us?.title)
+      : item.translations?.[lang]?.title;
+    return (
+      fromTranslations
+      || item.title
+      || item.name
+      || (typeof item.slug === 'string' ? item.slug.replace(/-/g, ' ') : '')
+    );
   };
 
   const getAssignmentStatusIndicator = (item) => {

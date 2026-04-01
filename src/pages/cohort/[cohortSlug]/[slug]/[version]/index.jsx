@@ -206,7 +206,7 @@ function Dashboard() {
         const { cohorts: updatedCohorts } = await reSetUserAndCohorts();
 
         const microCohorts = updatedCohorts.filter((c) => cohortSession.micro_cohorts.some((mc) => mc.slug === c.slug));
-        await getCohortsModules(microCohorts);
+        await getCohortsModules(microCohorts, { explicitBatchMacroSlug: cohortSession.slug });
 
         setShowSyncMicroModal(false);
       }

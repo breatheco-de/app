@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import useAuth from './useAuth';
 import { getStorageItem, getBrowserInfo, languageFix, removeStorageItem } from '../utils';
 import useCohortAction from '../store/actions/cohortAction';
-import { processRelatedAssignments } from '../utils/cohorts';
+import { getMacroSlugForCohortSyllabus, processRelatedAssignments } from '../utils/cohorts';
 import { reportDatalayer } from '../utils/requests';
 import bc from '../services/breathecode';
 import { BREATHECODE_HOST, DOMAIN_NAME } from '../utils/variables';
@@ -115,7 +115,7 @@ function useCohortHandler() {
     return assignmentsRecopilated;
   };
 
-  const getCohortsModules = async (cohorts) => {
+  const getCohortsModules = async (cohorts, macroSlugOptions = {}) => {
     try {
       const assignmentsMap = {};
 
@@ -126,16 +126,17 @@ function useCohortHandler() {
 
       const cohortsToFetch = cohorts.filter((cohort) => !preFechedCohorts.some(({ slug }) => slug === cohort.slug));
 
-      const mainCohortSlug = router?.query?.mainCohortSlug;
-      const admissionsForSyllabus = bc.admissions(
-        mainCohortSlug ? { 'macro-cohort': mainCohortSlug } : {},
-      );
-
-      const syllabusPromises = cohortsToFetch.map((cohort) => admissionsForSyllabus.academySyllabus(
-        cohort.academy.id,
-        cohort.syllabus_version.slug,
-        cohort.syllabus_version.version,
-      ).then((res) => ({ cohort: cohort.id, ...res })));
+      const syllabusPromises = cohortsToFetch.map((cohort) => {
+        const macroSlug = getMacroSlugForCohortSyllabus(cohort, cohorts, macroSlugOptions);
+        const admissionsForSyllabus = bc.admissions(
+          macroSlug ? { 'macro-cohort': macroSlug } : {},
+        );
+        return admissionsForSyllabus.academySyllabus(
+          cohort.academy.id,
+          cohort.syllabus_version.slug,
+          cohort.syllabus_version.version,
+        ).then((res) => ({ cohort: cohort.id, ...res }));
+      });
       const tasksPromises = cohortsToFetch.map((cohort) => bc.assignments({ cohort: cohort.id, limit: 1000 }).getMeTasks().then((res) => ({ cohort: cohort.id, ...res })));
       const allResults = await Promise.all([
         ...syllabusPromises,
@@ -251,6 +252,7 @@ function useCohortHandler() {
 
   const getCohortData = async ({
     cohortSlug,
+    routeMacroSlug,
   }) => {
     try {
       // Fetch cohort data with pathName structure
@@ -289,7 +291,8 @@ function useCohortHandler() {
           ? prefetchedCohorts.filter((c) => currentCohort.micro_cohorts.some((elem) => elem.slug === c.slug))
           : [currentCohort];
 
-        await getCohortsModules(cohorts);
+        const explicitBatchMacroSlug = currentCohort.micro_cohorts?.length ? currentCohort.slug : undefined;
+        await getCohortsModules(cohorts, { routeMacroSlug, explicitBatchMacroSlug });
 
         setCohortSession(currentCohort);
         return currentCohort;
