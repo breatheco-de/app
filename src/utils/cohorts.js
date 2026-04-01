@@ -286,3 +286,74 @@ export const getAssignmentsCount = ({
     percentage: percentageLimited,
   };
 };
+
+/**
+ * Totales de lecciones/proyectos/etc. a partir de módulos ya serializados (`cohortsAssignments[*].modules`),
+ * la misma estructura que usa el dashboard y el timeline. Así los números coinciden con el syllabus
+ * devuelto por la API (p. ej. con `macro-cohort`), sin re-calcular desde un merge manual de `json.days`.
+ */
+export const getAssignmentsCountFromModules = (modules, tasks) => {
+  if (!Array.isArray(modules) || modules.length === 0) {
+    return getAssignmentsCount({ syllabus: null, tasks: tasks || [] });
+  }
+
+  const bucket = { lessons: [], replits: [], assignments: [], quizzes: [] };
+  const byTaskType = {
+    LESSON: 'lessons',
+    EXERCISE: 'replits',
+    PROJECT: 'assignments',
+    QUIZ: 'quizzes',
+  };
+
+  modules.forEach((mod) => {
+    /* Contenido completo del módulo en syllabus (no filteredContent: solo actividades ya “abiertas”) */
+    (mod.content || []).forEach((item) => {
+      const taskType = item?.task_type;
+      const key = byTaskType[taskType];
+      if (!key) return;
+      if (typeof item === 'string') {
+        bucket[key].push({ slug: item });
+      } else {
+        const slug = item.slug ?? item?.associated_slug;
+        if (!slug) return;
+        bucket[key].push({ ...item, slug });
+      }
+    });
+  });
+
+  const syntheticSyllabus = {
+    json: {
+      days: [{
+        lessons: bucket.lessons,
+        replits: bucket.replits,
+        assignments: bucket.assignments,
+        quizzes: bucket.quizzes,
+      }],
+    },
+  };
+
+  return getAssignmentsCount({ syllabus: syntheticSyllabus, tasks: tasks || [] });
+};
+
+/**
+ * Slug del macro cohort para query `macro-cohort` al pedir el syllabus de un micro.
+ * Prioridad: lo que venga de la ruta (vista) → batch explícito → macro padre en la misma lista de cohorts.
+ *
+ * @param {Object} cohort - Cohort cuyo syllabus se está pidiendo
+ * @param {Object[]} cohortsInRequest - Lista pasada a getCohortsModules (macro + micros o solo micros)
+ * @param {Object} [options]
+ * @param {string} [options.routeMacroSlug] - p. ej. router.query.mainCohortSlug en `/main-cohort/[mainCohortSlug]/syllabus/...`
+ * @param {string} [options.explicitBatchMacroSlug] - macro cuando el batch son solo micros (dashboard del macro)
+ * @returns {string|null}
+ */
+export function getMacroSlugForCohortSyllabus(cohort, cohortsInRequest, options = {}) {
+  const { routeMacroSlug, explicitBatchMacroSlug } = options;
+  if (routeMacroSlug) return routeMacroSlug;
+  if (explicitBatchMacroSlug) return explicitBatchMacroSlug;
+  const parentMacro = cohortsInRequest?.find(
+    (c) => c.slug !== cohort.slug
+      && Array.isArray(c.micro_cohorts)
+      && c.micro_cohorts.some((mc) => mc.slug === cohort.slug || mc.id === cohort.id),
+  );
+  return parentMacro?.slug || null;
+}
