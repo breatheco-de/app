@@ -11,8 +11,10 @@
   "view-certificate": "View certificate",
   "my-subscriptions": "My Subscriptions",
   "my-resources": "My Resources",
+  "my-resources-description": "Resources are services that give you access to external tools for learning and building projects.",
   "llm": {
     "title": "LLM API Keys",
+    "description": "LLM API keys are credentials that let you make AI requests to multiple models through a unified AI gateway, including a free monthly budget that applies to your request usage.",
     "generate": "Generate Key",
     "loading": "Loading API keys…",
     "no-keys": "You don't have any LLM API keys yet.",
@@ -26,8 +28,12 @@
     "key-alias-required": "Please enter a key name.",
     "key-copied": "Key copied to clipboard.",
     "key-copy-error": "Couldn't copy key. Please copy it manually.",
+    "no-plans": "You don't have any active plans.",
+    "select-plan": "Plan",
     "generate-modal": {
       "title": "Generate LLM API Key",
+      "plan-label": "Plan whose monthly free budget covers this key’s usage",
+      "alias-label": "Key name",
       "description": "Enter a name for your key.",
       "alias-placeholder": "e.g. my-first-key",
       "token-description": "Your API key:",

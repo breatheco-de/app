@@ -6,13 +6,15 @@ import { es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import {
-  useCallback, useEffect, useState,
+  useCallback, useEffect, useMemo, useState,
 } from 'react';
 import Text from '../../Text';
 import Icon from '../../Icon';
+import Select from '../../ReactSelect';
 import SimpleModal from '../../SimpleModal';
 import useCustomToast from '../../../hooks/useCustomToast';
 import useStyle from '../../../hooks/useStyle';
+import useSubscriptions from '../../../hooks/useSubscriptions';
 import bc from '../../../services/breathecode';
 
 function tryParseDetailAsObject(detail) {
@@ -89,6 +91,7 @@ function LLMKeyCard({
   keyAlias,
   usageText,
   createdAtText,
+  planTitle,
   onDelete,
   isDeleteLoading,
   deleteAriaLabel,
@@ -121,16 +124,27 @@ function LLMKeyCard({
           </Box>
         </Flex>
         <Flex alignItems="center" gridGap="12px" flexShrink={0}>
-          {createdAtText && (
-            <Text
-              size="sm"
-              fontWeight="400"
-              color="gray.500"
-              display={{ base: 'none', md: 'block' }}
-            >
-              {createdAtText}
-            </Text>
-          )}
+          <Box>
+            {createdAtText && (
+              <Text
+                size="sm"
+                fontWeight="400"
+                display={{ base: 'none', md: 'block' }}
+              >
+                {createdAtText}
+              </Text>
+            )}
+            {planTitle ? (
+              <Text
+                size="sm"
+                fontWeight="400"
+                color="gray.500"
+                display={{ base: 'none', md: 'block' }}
+              >
+                {planTitle}
+              </Text>
+            ) : null}
+          </Box>
           <Button
             variant="outline"
             border="none"
@@ -161,6 +175,7 @@ LLMKeyCard.propTypes = {
   keyAlias: PropTypes.string.isRequired,
   usageText: PropTypes.string.isRequired,
   createdAtText: PropTypes.string,
+  planTitle: PropTypes.string,
   onDelete: PropTypes.func.isRequired,
   isDeleteLoading: PropTypes.bool,
   deleteAriaLabel: PropTypes.string.isRequired,
@@ -168,18 +183,60 @@ LLMKeyCard.propTypes = {
 
 LLMKeyCard.defaultProps = {
   createdAtText: '',
+  planTitle: '',
   isDeleteLoading: false,
 };
+
+function getPlanTitle(plan, lang) {
+  const translation = plan?.translations?.find((tr) => tr.lang?.startsWith(lang));
+  if (translation?.title) return translation.title;
+  const fallback = plan?.translations?.[0]?.title;
+  return fallback || plan?.title || plan?.slug || '—';
+}
 
 function LLM() {
   const { borderColor2 } = useStyle();
   const { t, lang } = useTranslation('profile');
   const { createToast } = useCustomToast();
+  const { state: subsState } = useSubscriptions();
+
+  const planOptions = useMemo(() => {
+    const subs = subsState.subscriptions?.subscriptions ?? [];
+    const financings = subsState.subscriptions?.plan_financings ?? [];
+    const seenAcademies = new Set();
+    const options = [];
+    const allowedStatuses = new Set(['ACTIVE', 'FREE_TRIAL', 'CANCELLED', 'PAYMENT_ISSUE']);
+
+    [...subs, ...financings].forEach((entry) => {
+      const entryAcademyId = entry?.academy?.id;
+      if (entryAcademyId == null || seenAcademies.has(entryAcademyId)) return;
+      if (!allowedStatuses.has(entry?.status)) return;
+
+      const hasLlmConsumable = (entry?.plans ?? []).some((plan) => plan?.service_items?.some(
+        (si) => si?.service?.consumer === 'MONTHLY_LLM_BUDGET',
+      ));
+      if (!hasLlmConsumable) return;
+
+      seenAcademies.add(entryAcademyId);
+      const plan = entry?.plans?.[0];
+      if (plan) {
+        options.push({ plan, academyId: entryAcademyId });
+      }
+    });
+
+    return options;
+  }, [subsState.subscriptions]);
+
+  const selectOptions = useMemo(() => planOptions.map((opt, idx) => ({
+    value: idx,
+    label: getPlanTitle(opt.plan, lang),
+  })), [planOptions, lang]);
 
   const [keys, setKeys] = useState([]);
   const [isLoadingList, setIsLoadingList] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
+  const [selectedPlanOption, setSelectedPlanOption] = useState(null);
   const [keyAliasInput, setKeyAliasInput] = useState('');
   const [generatedTokenId, setGeneratedTokenId] = useState('');
   const [keyToDelete, setKeyToDelete] = useState(null);
@@ -200,7 +257,13 @@ function LLM() {
       if (res?.status >= 200 && res?.status < 300) {
         setLlmKeysForbidden(false);
         setLoadKeysError('');
-        setKeys(Array.isArray(res.data) ? res.data : []);
+        const list = Array.isArray(res.data) ? res.data : [];
+        const sorted = list.slice().sort((a, b) => {
+          const aDate = Date.parse(a?.created_at || 0);
+          const bDate = Date.parse(b?.created_at || 0);
+          return bDate - aDate;
+        });
+        setKeys(sorted);
       } else {
         setLlmKeysForbidden(false);
         setKeys([]);
@@ -228,6 +291,7 @@ function LLM() {
 
   const openGenerateModal = () => {
     setIsGenerateModalOpen(true);
+    setSelectedPlanOption(planOptions.length === 1 ? selectOptions[0] : null);
     setKeyAliasInput('');
     setGeneratedTokenId('');
   };
@@ -235,11 +299,14 @@ function LLM() {
   const closeGenerateModal = () => {
     setIsGenerateModalOpen(false);
     setIsGenerating(false);
+    setSelectedPlanOption(null);
     setKeyAliasInput('');
     setGeneratedTokenId('');
   };
-
   const handleGenerate = async () => {
+    const selected = selectedPlanOption ? planOptions[selectedPlanOption.value] : null;
+    if (!selected) return;
+
     const alias = keyAliasInput.trim();
     if (!alias) {
       createToast({
@@ -250,12 +317,10 @@ function LLM() {
     }
     setIsGenerating(true);
     try {
-      const res = await bc.provisioning().generateLLMKey({ key_alias: alias });
-      if (res?.status === 403) {
-        setLlmKeysForbidden(true);
-        closeGenerateModal();
-        return;
-      }
+      const res = await bc.provisioning().generateLLMKey(
+        { key_alias: alias, plan_slug: selected?.plan?.slug },
+        selected.academyId,
+      );
       if (res?.status >= 200 && res?.status < 300) {
         const tokenId = res?.data?.key;
         if (!tokenId) {
@@ -395,9 +460,14 @@ function LLM() {
             flexWrap="wrap"
             gridGap={{ base: '10px', md: '12px' }}
           >
-            <Text fontSize="16px" fontWeight="700">
-              {t('llm.title')}
-            </Text>
+            <Box width="80%" mb="18px">
+              <Text fontSize="16px" fontWeight="700">
+                {t('llm.title')}
+              </Text>
+              <Text fontSize="14px" color="gray.600">
+                {t('llm.description')}
+              </Text>
+            </Box>
             <Button
               variant="default"
               backgroundColor="blue.default"
@@ -432,6 +502,7 @@ function LLM() {
                 const keyAlias = item?.key_alias ?? '—';
                 const usageText = t('llm.key-usage', { usage: formatSpendValue(item?.spend) });
                 const createdAtText = formatCreatedAt(item?.created_at);
+                const planTitle = item?.metadata?.plan_title ?? '';
                 return (
                   <Box
                     key={tokenId != null ? String(tokenId) : `llm-key-${index}`}
@@ -442,6 +513,7 @@ function LLM() {
                       keyAlias={keyAlias}
                       usageText={usageText}
                       createdAtText={createdAtText}
+                      planTitle={planTitle}
                       deleteAriaLabel={t('llm.key-delete-aria')}
                       onDelete={() => {
                         if (tokenId == null || academyId == null) return;
@@ -468,15 +540,35 @@ function LLM() {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody display="flex" flexDirection="column" gridGap="12px">
-            <>
-              <Text size="md">{t('llm.generate-modal.description')}</Text>
-              <Input
-                value={keyAliasInput}
-                placeholder={t('llm.generate-modal.alias-placeholder')}
-                onChange={(e) => setKeyAliasInput(e.target.value)}
-                disabled={generatedTokenId}
-              />
-            </>
+            {!generatedTokenId && (
+              <>
+                {planOptions.length === 0 && (
+                  <Text size="sm" color="gray.500">{t('llm.no-plans')}</Text>
+                )}
+                {planOptions.length > 1 && (
+                  <Box>
+                    <Text size="md" fontWeight="600" mb="6px">{t('llm.generate-modal.plan-label')}</Text>
+                    <Select
+                      fontWeight="500"
+                      id="cohort-select"
+                      fontSize="15px"
+                      value={selectedPlanOption}
+                      options={selectOptions}
+                      placeholder={t('llm.select-plan')}
+                      onChange={(opt) => setSelectedPlanOption(opt)}
+                    />
+                  </Box>
+                )}
+                <Box>
+                  <Text size="md" fontWeight="600" mb="6px">{t('llm.generate-modal.alias-label')}</Text>
+                  <Input
+                    value={keyAliasInput}
+                    placeholder={t('llm.generate-modal.alias-placeholder')}
+                    onChange={(e) => setKeyAliasInput(e.target.value)}
+                  />
+                </Box>
+              </>
+            )}
             {generatedTokenId && (
               <>
                 <Text size="md">{t('llm.generate-modal.token-description')}</Text>
@@ -536,6 +628,7 @@ function LLM() {
                 <Button
                   variant="default"
                   isLoading={isGenerating}
+                  isDisabled={!selectedPlanOption || planOptions.length === 0}
                   textTransform="uppercase"
                   fontSize="13px"
                   onClick={handleGenerate}
