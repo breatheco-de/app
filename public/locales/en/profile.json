@@ -10,6 +10,46 @@
   "my-certificates": "My Certificates",
   "view-certificate": "View certificate",
   "my-subscriptions": "My Subscriptions",
+  "my-resources": "My Resources",
+  "my-resources-description": "Resources are services that give you access to external tools for learning and building projects.",
+  "llm": {
+    "title": "LLM API Keys",
+    "description": "LLM API keys are credentials that let you make AI requests to multiple models through a unified AI gateway, including a free monthly budget that applies to your request usage.",
+    "generate": "Generate Key",
+    "loading": "Loading API keys…",
+    "no-keys": "You don't have any LLM API keys yet.",
+    "no-consumable": "To use this feature, get a plan that includes the Free Monthly LLM Budget.",
+    "pricing-page": "View available plans",
+    "load-error": "We couldn't load your API keys.",
+    "action-error": "Something went wrong. Please try again.",
+    "key-usage": "Usage: {{usage}}",
+    "key-created-at": "Created: {{date}}",
+    "key-delete-aria": "Remove API key",
+    "key-delete-success": "API key removed.",
+    "key-alias-required": "Please enter a key name.",
+    "key-copied": "Key copied to clipboard.",
+    "key-copy-error": "Couldn't copy key. Please copy it manually.",
+    "no-plans": "You don't have any active plans.",
+    "select-plan": "Plan",
+    "generate-modal": {
+      "title": "Generate LLM API Key",
+      "plan-label": "Plan whose monthly free budget covers this key’s usage",
+      "alias-label": "Key name",
+      "description": "Enter a name for your key.",
+      "alias-placeholder": "e.g. my-first-key",
+      "token-description": "Your API key:",
+      "token-warning": "For security, this value will only be shown once.",
+      "cancel": "Cancel",
+      "generate": "Generate",
+      "close": "Close"
+    },
+    "delete-modal": {
+      "title": "Delete API key",
+      "description": "Are you sure you want to delete this API key?",
+      "close": "No, go back",
+      "confirm": "Yes, delete"
+    }
+  },
   "no-certificates": "There are no certificates to show yet, finish your final project and get it immediately",
   "remove": "Remove",
   "profile-updated": "Profile Updated",
@@ -42,6 +82,11 @@
     {
       "title": "Referral Program",
       "value": "referral-program",
+      "disabled": false
+    },
+    {
+      "title": "Resources",
+      "value": "resources",
       "disabled": false
     }
   ],

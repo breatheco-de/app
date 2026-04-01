@@ -338,6 +338,17 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       academyVendors: (academy) => axios.get(`${url}/academy/${academy}/provisioningprofile${qs}`),
+      getLLMKeys: () => axios.get(`${url}/me/llm/keys${qs}`),
+      generateLLMKey: (data, academyId) => axios.post(`${url}/me/llm/keys`, data, {
+        headers: {
+          academy: academyId,
+        },
+      }),
+      deleteLLMKey: (tokenId, academyId) => axios.delete(`${url}/me/llm/keys/${tokenId}`, {
+        headers: {
+          academy: academyId,
+        },
+      }),
     };
   },
 };
