@@ -1,0 +1,21 @@
+{
+  "title": "Join Our Communities",
+  "description": "Connect with other learners and get help from our community",
+  "join": "Join",
+  "linkText": "Join our communities",
+  "seo": {
+    "title": "Join Our Communities - 4Geeks Academy",
+    "description": "Connect with other learners and get help from our community. Join our WhatsApp communities in English and Spanish.",
+    "keywords": ["community", "4geeks", "whatsapp", "learners", "support"]
+  },
+  "whatsapp": {
+    "es": {
+      "name": "WhatsApp Community (Spanish)",
+      "description": "Join our Spanish-speaking community on WhatsApp"
+    },
+    "en": {
+      "name": "WhatsApp Community (English)",
+      "description": "Join our English-speaking community on WhatsApp"
+    }
+  }
+}
