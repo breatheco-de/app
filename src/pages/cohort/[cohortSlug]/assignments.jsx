@@ -38,6 +38,70 @@ import FinalProjects from '../../../components/Assignments/FinalProjects';
 import StudentAssignments from '../../../components/Assignments/StudentAssignments';
 import axiosInstance from '../../../axios';
 import useCustomToast from '../../../hooks/useCustomToast';
+import { sortMicroCohortsLikeDashboard } from '../../../utils/cohorts';
+
+function extractAssignmentsFromSyllabusDays(json) {
+  if (!json?.days) return [];
+  const chunks = json.days
+    .filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object')
+    .map((obj) => obj.assignments);
+  return [].concat(...chunks);
+}
+
+/** Varias llamadas getStudentsWithTasks (una por micro); devuelve tareas unificadas por user.id */
+function mergeTasksFromMicroStudentPages(microResultsArrays) {
+  const tasksByUserId = new Map();
+  const userSeenInMicro = new Set();
+  (microResultsArrays || []).forEach((microRows) => {
+    if (!Array.isArray(microRows)) return;
+    microRows.forEach((row) => {
+      const uid = row.user?.id;
+      if (uid == null) return;
+      userSeenInMicro.add(uid);
+      if (!tasksByUserId.has(uid)) tasksByUserId.set(uid, []);
+      const acc = tasksByUserId.get(uid);
+      const seenIds = new Set(acc.map((task) => task.id));
+      (row.tasks || []).forEach((task) => {
+        if (task?.id != null && !seenIds.has(task.id)) {
+          acc.push(task);
+          seenIds.add(task.id);
+        }
+      });
+    });
+  });
+  return { tasksByUserId, userSeenInMicro };
+}
+
+/** Límites por micro al listar proyectos en una macro (misma API que cohort simple, sin backend nuevo). */
+const MACRO_COHORT_TASKS_LIMIT_PER_MICRO = 500;
+
+/** Une listas de tareas de varias cohortes y ordena como la vista de proyectos (pendientes de revisión primero). */
+/** Next.js puede devolver query params duplicados como array. */
+function singleQueryParam(value) {
+  if (value == null || value === '') return undefined;
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function mergeAndSortCohortProjectTasks(resultArrays) {
+  const byId = new Map();
+  (resultArrays || []).forEach((arr) => {
+    if (!Array.isArray(arr)) return;
+    arr.forEach((task) => {
+      if (task?.id != null) byId.set(task.id, task);
+    });
+  });
+  const merged = [...byId.values()];
+  const isPendingReview = (t) => t.task_status === 'DONE' && t.revision_status === 'PENDING';
+  merged.sort((a, b) => {
+    const pa = isPendingReview(a) ? 0 : 1;
+    const pb = isPendingReview(b) ? 0 : 1;
+    if (pa !== pb) return pa - pb;
+    const da = a.delivered_at ? new Date(a.delivered_at).getTime() : 0;
+    const db = b.delivered_at ? new Date(b.delivered_at).getTime() : 0;
+    return db - da;
+  });
+  return merged;
+}
 
 function Assignments() {
   const { t } = useTranslation('assignments');
@@ -114,6 +178,7 @@ function Assignments() {
   const [syllabusData, setSyllabusData] = useState({
     assignments: [],
   });
+  const [microSyllabusBySlug, setMicroSyllabusBySlug] = useState({});
   const [personalCohorts, setPersonalCohorts] = useState([]);
   const [typeLabel, setTypeLabel] = useState(typeList.find((option) => option.value === query.task_type) || {
     label: t('type.project'),
@@ -126,6 +191,7 @@ function Assignments() {
     value: 'active',
   }]);
   const [statusLabel, setStatusLabel] = useState(statusList.find((option) => option.value === query.status));
+  const [microCohortLabel, setMicroCohortLabel] = useState(null);
   const [openFilter, setOpenFilter] = useState(false);
   const [currentView, setCurrentView] = useState(Number(query.view) || 0);
   const [sort, setSort] = useState(query.sort || undefined);
@@ -152,16 +218,66 @@ function Assignments() {
 
   const getFilterAssignments = (cohortId, academyId, limit = 20, offset = 0, appendMore = false) => {
     setLoadStatus({ loading: true, status: 'loading' });
-    bc.assignments({
-      limit,
-      offset,
+
+    const microsAll = sortMicroCohortsLikeDashboard(
+      selectedCohort?.micro_cohorts || [],
+      selectedCohort?.cohorts_order,
+    );
+    const isMacroWithMicros = microsAll.length > 0;
+    const microCohortSlug = singleQueryParam(query.micro_cohort);
+    let microsForFetch = microsAll.filter((m) => m?.id != null || m?.slug != null);
+    if (isMacroWithMicros && microCohortSlug) {
+      const picked = microsForFetch.filter((m) => m.slug === microCohortSlug);
+      if (picked.length > 0) microsForFetch = picked;
+    }
+
+    const assignmentQuery = (lim, off) => ({
+      limit: lim,
+      offset: off,
       task_type: typeLabel?.value || undefined,
       student: router.query.student || undefined,
       sort,
       educational_status: educationalLabel.length > 0 ? educationalLabel.map((val) => val.value).join(',').toUpperCase() : undefined,
       like: query.project,
       ...reverseStatus(query.status),
-    })
+    });
+
+    const onFetchError = (error) => {
+      createToast({
+        position: 'top',
+        title: t('alert-message:error-fetching-tasks'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+      console.error('There was an error fetching the tasks', error);
+    };
+
+    if (isMacroWithMicros) {
+      if (appendMore) {
+        setLoadStatus({ loading: false, status: 'idle' });
+        return;
+      }
+      Promise.all(
+        microsForFetch.map((micro) => bc.assignments(assignmentQuery(MACRO_COHORT_TASKS_LIMIT_PER_MICRO, 0))
+          .getCohortAssignments({ id: micro.id ?? micro.slug, academy: academyId })
+          .then((projectList) => projectList.data || {})
+          .catch(() => ({ results: [], count: 0 }))),
+      )
+        .then((dataList) => {
+          const arrays = dataList.map((d) => d.results || []);
+          const merged = mergeAndSortCohortProjectTasks(arrays);
+          setContextState({
+            allTasks: merged,
+            tasksCount: merged.length,
+          });
+        })
+        .catch(onFetchError)
+        .finally(() => setLoadStatus({ loading: false, status: 'idle' }));
+      return;
+    }
+
+    bc.assignments(assignmentQuery(limit, offset))
       .getCohortAssignments({ id: cohortId, academy: academyId })
       .then((projectList) => {
         const allTasks = projectList.data?.results;
@@ -171,18 +287,27 @@ function Assignments() {
           tasksCount: projectList.data?.count,
         });
       })
-      .catch((error) => {
-        createToast({
-          position: 'top',
-          title: t('alert-message:error-fetching-tasks'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-        console.error('There was an error fetching the tasks', error);
-      })
+      .catch(onFetchError)
       .finally(() => setLoadStatus({ loading: false, status: 'idle' }));
   };
+
+  useEffect(() => {
+    if (!selectedCohort?.micro_cohorts?.length) {
+      setMicroCohortLabel(null);
+      return;
+    }
+    const micros = sortMicroCohortsLikeDashboard(
+      selectedCohort.micro_cohorts,
+      selectedCohort.cohorts_order,
+    );
+    const slug = singleQueryParam(query.micro_cohort);
+    if (slug && typeof slug === 'string') {
+      const m = micros.find((c) => c.slug === slug);
+      setMicroCohortLabel(m ? { value: m.slug, label: m.name, id: m.id } : null);
+    } else {
+      setMicroCohortLabel(null);
+    }
+  }, [selectedCohort, query.micro_cohort]);
 
   const getDefaultStudent = () => {
     if (query.student) {
@@ -217,63 +342,165 @@ function Assignments() {
   }, [cohorts]);
 
   useEffect(() => {
-    if (selectedCohort && selectedCohort.id) {
-      setCohortSession(selectedCohort);
-      bc.admissions().cohort(selectedCohort.slug, (selectedCohort.academy.id || academy))
-        .then(async ({ data }) => {
-          const syllabusInfo = await bc.admissions().syllabus(data.syllabus_version.slug, data.syllabus_version.version, academy);
-          if (syllabusInfo?.data) {
-            let assignments = syllabusInfo.data.json.days.filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object').map((obj) => obj.assignments);
-            assignments = [].concat(...assignments);
-            if (query.project) {
-              const filteredProject = assignments.find((project) => project.slug === query.project);
-              if (filteredProject) setProjectLabel({ label: filteredProject.title, value: filteredProject.slug });
+    if (!selectedCohort?.id) return undefined;
+
+    setCohortSession(selectedCohort);
+
+    const academyId = selectedCohort.academy?.id || academy;
+    const micros = sortMicroCohortsLikeDashboard(
+      selectedCohort.micro_cohorts || [],
+      selectedCohort.cohorts_order,
+    );
+    let cancelled = false;
+
+    const showSyllabusError = (err) => {
+      console.log(err);
+      createToast({
+        position: 'top',
+        title: t('alert-message:error-fetching-cohorts'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+    };
+
+    const applyProjectQuery = (assignments) => {
+      if (router.query.project) {
+        const filteredProject = assignments.find((project) => project.slug === router.query.project);
+        if (filteredProject) setProjectLabel({ label: filteredProject.title, value: filteredProject.slug });
+      }
+    };
+
+    if (Array.isArray(micros) && micros.length > 0) {
+      (async () => {
+        const map = {};
+        const bySlugSeen = new Map();
+        const perMicroResults = await Promise.all(
+          micros.map(async (micro) => {
+            let slug = micro.syllabus_version?.slug;
+            let version = micro.syllabus_version?.version;
+            if (slug == null || version == null) {
+              try {
+                const { data: cohortData } = await bc.admissions().cohort(micro.slug, academyId);
+                slug = cohortData.syllabus_version?.slug;
+                version = cohortData.syllabus_version?.version;
+              } catch (err) {
+                showSyllabusError(err);
+                return null;
+              }
             }
-            setSyllabusData({
-              assignments,
-            });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          createToast({
-            position: 'top',
-            title: t('alert-message:error-fetching-cohorts'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
+            try {
+              // Misma API que el dashboard: `macro-cohort` aplica overrides del syllabus del macro al JSON base de la micro.
+              const syllabusQuery = selectedCohort.syllabus_version?.slug
+                ? { 'macro-cohort': selectedCohort.slug }
+                : {};
+              const syllabusInfo = await bc.admissions(syllabusQuery).syllabus(slug, version, academyId);
+              if (cancelled || !syllabusInfo?.data?.json) return null;
+              const assignments = extractAssignmentsFromSyllabusDays(syllabusInfo.data.json);
+              return { micro, assignments };
+            } catch (err) {
+              showSyllabusError(err);
+              return null;
+            }
+          }),
+        );
+        if (cancelled) return;
+        perMicroResults.filter(Boolean).forEach((row) => {
+          const { micro, assignments } = row;
+          map[micro.slug] = { name: micro.name, assignments };
+          assignments.forEach((a) => {
+            if (a?.slug && !bySlugSeen.has(a.slug)) bySlugSeen.set(a.slug, a);
           });
         });
+        setMicroSyllabusBySlug(map);
+        const merged = [...bySlugSeen.values()];
+        setSyllabusData({ assignments: merged });
+        applyProjectQuery(merged);
+      })();
+    } else {
+      bc.admissions().cohort(selectedCohort.slug, academyId)
+        .then(async ({ data }) => {
+          const syllabusInfo = await bc.admissions().syllabus(data.syllabus_version.slug, data.syllabus_version.version, academy);
+          if (cancelled || !syllabusInfo?.data) return;
+          const assignments = extractAssignmentsFromSyllabusDays(syllabusInfo.data.json);
+          setMicroSyllabusBySlug({});
+          setSyllabusData({ assignments });
+          applyProjectQuery(assignments);
+        })
+        .catch(showSyllabusError);
     }
+
+    return () => {
+      cancelled = true;
+    };
   }, [selectedCohort]);
 
-  const loadStudents = (limit = 20, offset = 0, appendMore = false) => {
+  const loadStudents = async (limit = 20, offset = 0, appendMore = false) => {
     setLoadStatus({ loading: true, status: 'loading' });
     const academyId = selectedCohort.academy.id || academy;
     const { slug } = selectedCohort;
-    bc.admissions({
+
+    const admissionsBase = {
       limit,
       offset,
       sort,
       users: query.student,
       educational_status: educationalLabel.length > 0 ? educationalLabel.map((val) => val.value).join(',').toUpperCase() : undefined,
-    })
-      .getStudentsWithTasks(slug, academyId)
-      .then((res) => {
-        const students = appendMore ? [...currentStudentList, ...res.data.results] : res?.data?.results;
-        setCurrentStudentList(students);
-        setCurrentStudentCount(res?.data?.count);
-      })
-      .catch(() => {
-        createToast({
-          position: 'top',
-          title: t('alert-message:error-fetching-students'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
+    };
+
+    const sortedMicros = sortMicroCohortsLikeDashboard(
+      selectedCohort.micro_cohorts || [],
+      selectedCohort.cohorts_order,
+    );
+    const isMacro = sortedMicros.length > 0;
+
+    try {
+      const res = await bc.admissions(admissionsBase).getStudentsWithTasks(slug, academyId);
+      let rows = res?.data?.results || [];
+
+      if (isMacro && rows.length > 0) {
+        const userIdsCsv = rows.map((r) => r.user.id).filter((id) => id != null).join(',');
+        const edu = admissionsBase.educational_status;
+
+        const microPages = await Promise.all(
+          sortedMicros.map((micro) => bc.admissions({
+            limit: 2000,
+            offset: 0,
+            sort,
+            users: userIdsCsv,
+            educational_status: edu,
+          })
+            .getStudentsWithTasks(micro.slug, academyId)
+            .then((r) => r?.data?.results || [])
+            .catch(() => [])),
+        );
+
+        const { tasksByUserId, userSeenInMicro } = mergeTasksFromMicroStudentPages(microPages);
+
+        rows = rows.map((row) => {
+          const uid = row.user?.id;
+          if (uid == null) return row;
+          if (!userSeenInMicro.has(uid)) return row;
+          return {
+            ...row,
+            tasks: tasksByUserId.get(uid) || [],
+          };
         });
-      })
-      .finally(() => setLoadStatus({ loading: false, status: 'idle' }));
+      }
+
+      setCurrentStudentList((prev) => (appendMore ? [...prev, ...rows] : rows));
+      setCurrentStudentCount(res?.data?.count ?? 0);
+    } catch {
+      createToast({
+        position: 'top',
+        title: t('alert-message:error-fetching-students'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+    } finally {
+      setLoadStatus({ loading: false, status: 'idle' });
+    }
   };
 
   const loadFinalProjects = async () => {
@@ -350,13 +577,16 @@ function Assignments() {
   const closeFilterModal = () => setOpenFilter(false);
 
   const applyFilters = () => {
-    const { project, student, status, task_type, educational_status, ...params } = router.query;
+    const {
+      project, student, status, task_type, educational_status, micro_cohort, ...params
+    } = router.query;
     const filter = {};
     if (projectLabel) filter.project = projectLabel.value;
     if (studentLabel) filter.student = studentLabel.id;
     if (statusLabel) filter.status = statusLabel.value;
     if (typeLabel) filter.task_type = typeLabel.value;
     if (educationalLabel.length > 0) filter.educational_status = educationalLabel.map((val) => val.value).join(',').toUpperCase();
+    if (microCohortLabel?.value) filter.micro_cohort = microCohortLabel.value;
     router.push({
       query: {
         ...params,
@@ -367,12 +597,15 @@ function Assignments() {
   };
 
   const clearFilters = () => {
-    const { project, student, status, task_type, educational_status, ...params } = router.query;
+    const {
+      project, student, status, task_type, educational_status, micro_cohort, ...params
+    } = router.query;
     setProjectLabel(null);
     setStudentLabel(null);
     setStatusLabel(null);
     setTypeLabel(null);
     setEducationalLabel([]);
+    setMicroCohortLabel(null);
     router.push({
       query: {
         ...params,
@@ -685,6 +918,37 @@ function Assignments() {
                 />
               </Box>
             )}
+            {currentView === 1 && selectedCohort?.micro_cohorts?.length > 0 && (
+              <Box marginBottom="10px">
+                <ReactSelect
+                  id="micro-cohort-select"
+                  placeholder={t('filter.micro-cohort')}
+                  isClearable
+                  value={microCohortLabel || ''}
+                  height="50px"
+                  fontSize="15px"
+                  onChange={(selected) => {
+                    setMicroCohortLabel(
+                      selected != null
+                        ? {
+                          value: selected.value,
+                          label: selected.label,
+                          id: selected.id,
+                        }
+                        : null,
+                    );
+                  }}
+                  options={sortMicroCohortsLikeDashboard(
+                    selectedCohort.micro_cohorts,
+                    selectedCohort.cohorts_order,
+                  ).map((m) => ({
+                    value: m.slug,
+                    label: m.name,
+                    id: m.id,
+                  }))}
+                />
+              </Box>
+            )}
             {currentView === 1 && (
               <Box marginBottom="10px">
                 <ReactSelect
@@ -794,6 +1058,12 @@ function Assignments() {
             updpateAssignment={updpateAssignment}
             count={currentStudentCount}
             loadStudents={loadStudents}
+            isMacroCohort={Array.isArray(selectedCohort?.micro_cohorts) && selectedCohort.micro_cohorts.length > 0}
+            microCohortOrder={sortMicroCohortsLikeDashboard(
+              selectedCohort?.micro_cohorts || [],
+              selectedCohort?.cohorts_order,
+            )}
+            microSyllabusBySlug={microSyllabusBySlug}
           />
         )}
         {currentView === 1 && (
