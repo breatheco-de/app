@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { subMinutes } from 'date-fns';
 import { memo, useState, useMemo } from 'react';
-import { getAssignmentsCount } from '../../utils/cohorts';
+import { getAssignmentsCount, getAssignmentsCountFromModules } from '../../utils/cohorts';
 import useStyle from '../../hooks/useStyle';
 import ProgramCard from '../ProgramCard';
 import useCohortHandler from '../../hooks/useCohortHandler';
@@ -20,7 +20,7 @@ function Program({ cohort, onOpenModal, setLateModalProps }) {
   const signInDate = cohort.cohort_user.created_at;
   const currentCohort = programsList?.[cohort.slug];
 
-  const { combinedTasks, combinedSyllabus } = useMemo(() => {
+  const { combinedTasks, combinedSyllabus, combinedModules } = useMemo(() => {
     const hasMicroCohorts = cohort?.micro_cohorts?.length > 0;
 
     if (hasMicroCohorts) {
@@ -56,19 +56,30 @@ function Program({ cohort, onOpenModal, setLateModalProps }) {
         },
       } : null;
 
+      const modules = cohort.micro_cohorts.flatMap(
+        (mc) => cohortsAssignments[mc.slug]?.modules || [],
+      );
+
       return {
         combinedTasks: allTasks,
         combinedSyllabus: mergedSyllabus,
+        combinedModules: modules,
       };
     }
 
     return {
       combinedTasks: cohortsAssignments[cohort.slug]?.tasks || [],
       combinedSyllabus: cohortsAssignments[cohort.slug]?.syllabus || null,
+      combinedModules: cohortsAssignments[cohort.slug]?.modules || [],
     };
   }, [cohort, cohortsAssignments]);
 
-  const assignmentsData = useMemo(() => getAssignmentsCount({ syllabus: combinedSyllabus, tasks: combinedTasks }), [combinedSyllabus, combinedTasks]);
+  const assignmentsData = useMemo(() => {
+    if (combinedModules.length > 0) {
+      return getAssignmentsCountFromModules(combinedModules, combinedTasks);
+    }
+    return getAssignmentsCount({ syllabus: combinedSyllabus, tasks: combinedTasks });
+  }, [combinedModules, combinedSyllabus, combinedTasks]);
 
   const isAvailableAsSaas = cohort.cohort_user?.role === 'TEACHER' ? false : cohort.available_as_saas;
 

@@ -17,6 +17,7 @@ import Subscriptions from '../../components/Profile/Subscriptions';
 import Certificates from '../../components/Profile/Certificates';
 import Information from '../../components/Profile/Information';
 import ReferralProgram from '../../components/Profile/ReferralProgram';
+import Resources from '../../components/Profile/Resources/index';
 import useCustomToast from '../../hooks/useCustomToast';
 
 function Profile() {
@@ -46,6 +47,8 @@ function Profile() {
     '/profile/subscriptions#': 2,
     '/profile/referral-program': canShowReferralProgram ? 3 : -1,
     '/profile/referral-program#': canShowReferralProgram ? 3 : -1,
+    '/profile/resources': 4,
+    '/profile/resources#': 4,
   };
   const currentPathCleaned = cleanQueryStrings(asPath);
 
@@ -133,6 +136,9 @@ function Profile() {
                 <ReferralProgram />
               </TabPanel>
             )}
+            <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
+              <Resources />
+            </TabPanel>
           </TabPanels>
         </Tabs>
       </GridContainer>
