@@ -15,6 +15,7 @@
   "cancel": "Cancel",
   "error-msg": "Something went wrong while synchronizing the cohort",
   "educational-status": "Educational Status",
+  "syllabus-no-projects-in-cohort": "This cohort's syllabus has no projects.",
   "delivered-percentage": "% delivered",
   "last-deliver": "Last delivery: {{date}} ago",
   "no-deliver": "No deliveries yet",
@@ -60,6 +61,7 @@
   },
   "filter": {
     "type": "Filter by Type",
+    "micro-cohort": "Filter by micro cohort",
     "project": "Filter by Project",
     "student": "Filter by Student",
     "status": "Filter by Status",
