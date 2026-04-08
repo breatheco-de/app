@@ -357,3 +357,26 @@ export function getMacroSlugForCohortSyllabus(cohort, cohortsInRequest, options 
   );
   return parentMacro?.slug || null;
 }
+
+/**
+ * Orden de micro-cohortes igual que en el dashboard del macro
+ * (`cohort/[slug]/[slug]/[version]/index.jsx`: sortMicroCohorts).
+ *
+ * @param {Array<{ id: number|string, slug?: string }>} microCohorts
+ * @param {string|null|undefined} cohortsOrderCsv - IDs separados por coma (campo cohorts_order del macro)
+ * @returns {Array<typeof microCohorts[0]>} copia ordenada
+ */
+export function sortMicroCohortsLikeDashboard(microCohorts, cohortsOrderCsv) {
+  if (!Array.isArray(microCohorts) || microCohorts.length === 0) return [];
+  const trimmedOrder = typeof cohortsOrderCsv === 'string' ? cohortsOrderCsv.trim() : '';
+  const cohortsOrder = trimmedOrder.length > 0 ? trimmedOrder.split(',').map((s) => s.trim()).filter(Boolean) : null;
+  const copy = [...microCohorts];
+  if (Array.isArray(cohortsOrder) && cohortsOrder.length > 0) {
+    copy.sort((a, b) => {
+      const idA = a?.id != null && a.id !== '' ? String(a.id) : '';
+      const idB = b?.id != null && b.id !== '' ? String(b.id) : '';
+      return cohortsOrder.indexOf(idA) - cohortsOrder.indexOf(idB);
+    });
+  }
+  return copy;
+}
