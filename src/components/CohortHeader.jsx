@@ -23,6 +23,7 @@ import { format as formatDate } from 'date-fns';
 import { es } from 'date-fns/locale';
 import PropTypes from 'prop-types';
 import bc from '../services/breathecode';
+import { getAllCohortStudents } from '../lib/admissions';
 import useAuth from '../hooks/useAuth';
 import useCohortHandler from '../hooks/useCohortHandler';
 import useStyle from '../hooks/useStyle';
@@ -202,9 +203,8 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
   const fetchStudents = async () => {
     try {
       if (!cohortSession?.slug) return;
-      const { data } = await bc.admissions({ limit: 20 }).getStudents(cohortSession.slug, cohortSession?.academy?.id);
-      const { results } = data || {};
-      setStudents(Array.isArray(results) ? results : []);
+      const list = await getAllCohortStudents(cohortSession.slug, cohortSession?.academy?.id);
+      if (Array.isArray(list)) setStudents(list);
     } catch (e) {
       // no-op
     }
