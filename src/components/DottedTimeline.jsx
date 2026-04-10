@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
-import { Box, Flex, Tooltip } from '@chakra-ui/react';
+import {
+  Box, Flex, Tooltip,
+} from '@chakra-ui/react';
 import { useRef } from 'react';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
@@ -29,7 +31,7 @@ function DotsScrollRow({ dots, onClickDots, emptyDotsMessage, rowKeyPrefix }) {
       >
         {dots?.length > 0 && dots.map((dot, i) => (
           <Box
-            key={`${rowKeyPrefix || 'dot'}-${[dot.associated_slug, dot.slug, dot.label, dot.color, dot.borderColor].filter(Boolean).join('|')}`}
+            key={`${rowKeyPrefix || 'dot'}-${dot.dotRowKey || [dot.associated_slug, dot.slug, dot.label, dot.color, dot.borderColor, i].filter((x) => x !== undefined && x !== '').join('|')}`}
             padding="5px 0"
             borderBottom="2px solid"
             borderColor={dot.highlight ? highLightColor : 'transparent'}
@@ -90,12 +92,12 @@ function DottedTimeline({
 
   return (
     <Flex borderRadius="17px" flexDirection="column" gridGap="4px" width={width} padding="20px 29px" border="1px solid" borderColor={borderColor} background={backgroundColor2}>
-      <Flex justifyContent="space-between" fontWeight={700}>
-        <Text size="15px" color={fontColor2}>
+      <Flex justifyContent="space-between" alignItems="flex-start" gridGap="12px" fontWeight={700}>
+        <Box flex="1" minW={0} fontSize="15px" color={fontColor2}>
           {label && label}
-        </Text>
+        </Box>
         {help.length > 2 && (
-          <Text size="md" color={fontColor2}>
+          <Text size="md" color={fontColor2} flexShrink={0}>
             {help}
           </Text>
         )}

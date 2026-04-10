@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import useAuth from './useAuth';
 import { getStorageItem, getBrowserInfo, languageFix, removeStorageItem } from '../utils';
 import useCohortAction from '../store/actions/cohortAction';
-import { getMacroSlugForCohortSyllabus, processRelatedAssignments } from '../utils/cohorts';
+import { getMacroSlugForCohortSyllabus, processRelatedAssignments, sortMicroCohortsLikeDashboard } from '../utils/cohorts';
 import { reportDatalayer } from '../utils/requests';
 import bc from '../services/breathecode';
 import { BREATHECODE_HOST, DOMAIN_NAME } from '../utils/variables';
@@ -353,21 +353,74 @@ function useCohortHandler() {
   };
 
   const taskTodo = useMemo(() => {
-    if (cohortSession && cohortSession.slug in cohortsAssignments) {
+    if (!cohortSession) return [];
+    const micros = sortMicroCohortsLikeDashboard(
+      cohortSession.micro_cohorts || [],
+      cohortSession?.cohorts_order,
+    );
+    if (micros.length > 0) {
+      const allTasks = [];
+      micros.forEach((microCohort) => {
+        const microTasks = cohortsAssignments[microCohort.slug]?.tasks || [];
+        allTasks.push(...microTasks);
+      });
+      return allTasks;
+    }
+    if (cohortSession.slug in cohortsAssignments) {
       return cohortsAssignments[cohortSession.slug].tasks;
     }
     return [];
   }, [cohortsAssignments, cohortSession]);
 
   const cohortProgram = useMemo(() => {
-    if (cohortSession && cohortSession.slug in cohortsAssignments) {
+    if (!cohortSession) return null;
+    const micros = sortMicroCohortsLikeDashboard(
+      cohortSession.micro_cohorts || [],
+      cohortSession?.cohorts_order,
+    );
+    if (micros.length > 0) {
+      const allDays = [];
+      let firstMicroSyllabus = null;
+      micros.forEach((microCohort) => {
+        const microSyllabus = cohortsAssignments[microCohort.slug]?.syllabus;
+        if (microSyllabus) {
+          if (!firstMicroSyllabus) firstMicroSyllabus = microSyllabus;
+          if (microSyllabus?.json?.days) {
+            allDays.push(...microSyllabus.json.days);
+          } else if (microSyllabus?.json?.modules) {
+            allDays.push(...microSyllabus.json.modules);
+          }
+        }
+      });
+      if (allDays.length > 0 && firstMicroSyllabus) {
+        return {
+          ...firstMicroSyllabus,
+          json: {
+            ...firstMicroSyllabus.json,
+            days: allDays,
+          },
+        };
+      }
+      return null;
+    }
+    if (cohortSession.slug in cohortsAssignments) {
       return cohortsAssignments[cohortSession.slug].syllabus;
     }
     return null;
   }, [cohortsAssignments, cohortSession]);
 
   const sortedAssignments = useMemo(() => {
-    if (cohortSession?.slug in cohortsAssignments) return cohortsAssignments[cohortSession.slug].modules;
+    if (!cohortSession) return [];
+    const micros = sortMicroCohortsLikeDashboard(
+      cohortSession.micro_cohorts || [],
+      cohortSession?.cohorts_order,
+    );
+    if (micros.length > 0) {
+      return micros.flatMap((mc) => cohortsAssignments[mc.slug]?.modules || []);
+    }
+    if (cohortSession.slug in cohortsAssignments) {
+      return cohortsAssignments[cohortSession.slug].modules;
+    }
     return [];
   }, [cohortsAssignments, cohortSession]);
 
