@@ -84,13 +84,34 @@ export const generateCohortSyllabusModules = async (id) => {
   }
 };
 
+const normalizeStudentsResponse = (data) => {
+  if (Array.isArray(data?.results)) return data.results;
+  if (Array.isArray(data)) return data;
+  return [];
+};
+
+const sortStudentsByName = (list) => list.sort(
+  (a, b) => a.user.first_name.localeCompare(b.user.first_name),
+);
+
+/** Estudiantes del cohort (una petición, hasta 100). */
+export const getAllCohortStudents = async (slug, academyId, params = {}) => {
+  try {
+    const response = await bc.admissions({ ...params, limit: 100 }).getStudents(slug, academyId);
+    return sortStudentsByName(normalizeStudentsResponse(response.data));
+  } catch (err) {
+    return err;
+  }
+};
+
 export const getStudents = async (slug, academyId, params = {}) => {
   try {
-    const { data } = await bc.admissions(params).getStudents(slug, academyId);
-    const sortedStudents = data.sort(
-      (a, b) => a.user.first_name.localeCompare(b.user.first_name),
-    );
-    return sortedStudents;
+    const hasPaging = params.limit !== undefined || params.offset !== undefined;
+    if (hasPaging) {
+      const response = await bc.admissions(params).getStudents(slug, academyId);
+      return sortStudentsByName(normalizeStudentsResponse(response.data));
+    }
+    return await getAllCohortStudents(slug, academyId, params);
   } catch (err) {
     return err;
   }

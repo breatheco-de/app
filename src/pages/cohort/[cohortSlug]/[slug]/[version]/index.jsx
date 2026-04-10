@@ -55,6 +55,7 @@ import FinalProject from '../../../../../components/FinalProject';
 import useStyle from '../../../../../hooks/useStyle';
 import Feedback from '../../../../../components/Feedback';
 import useCustomToast from '../../../../../hooks/useCustomToast';
+import { sortMicroCohortsLikeDashboard } from '../../../../../utils/cohorts';
 import ReviewModal, { stages } from '../../../../../components/ReviewModal';
 import ConnectGithubRigobot from '../../../../../components/ConnectGithubRigobot';
 import SimpleModal from '../../../../../components/SimpleModal';
@@ -206,7 +207,7 @@ function Dashboard() {
         const { cohorts: updatedCohorts } = await reSetUserAndCohorts();
 
         const microCohorts = updatedCohorts.filter((c) => cohortSession.micro_cohorts.some((mc) => mc.slug === c.slug));
-        await getCohortsModules(microCohorts);
+        await getCohortsModules(microCohorts, { explicitBatchMacroSlug: cohortSession.slug });
 
         setShowSyncMicroModal(false);
       }
@@ -541,15 +542,6 @@ function Dashboard() {
     return filtered.length !== 0;
   }) : sortedAssignments;
 
-  const cohortsOrder = cohortSession?.cohorts_order?.split(',');
-
-  const sortMicroCohorts = (a, b) => {
-    if (Array.isArray(cohortsOrder)) {
-      return cohortsOrder.indexOf(a.id.toString()) - cohortsOrder.indexOf(b.id.toString());
-    }
-    return 0;
-  };
-
   const openGithubModalHandler = () => setShowWarningModal(true);
 
   const openRigobot = async () => {
@@ -788,19 +780,20 @@ function Dashboard() {
                   {!isLoadingAssigments ? (
                     <Box display="flex" flexDirection="column" gap="20px">
                       {hasMicroCohorts
-                        ? cohorts.filter((cohort) => cohortSession.micro_cohorts.some((elem) => elem.slug === cohort.slug))
-                          .sort(sortMicroCohorts)
-                          .map((microCohort) => (
-                            <CohortPanel
-                              key={microCohort.slug}
-                              cohort={microCohort}
-                              modules={cohortsAssignments[microCohort.slug]?.modules}
-                              tasks={cohortsAssignments[microCohort.slug]?.tasks}
-                              mainCohort={cohortSession}
-                              onOpenReviewModal={handleOpenReviewModal}
-                              certificate={certificates?.find((cert) => cert.cohort.id === microCohort.id)}
-                            />
-                          ))
+                        ? sortMicroCohortsLikeDashboard(
+                          cohorts.filter((cohort) => cohortSession.micro_cohorts.some((elem) => elem.slug === cohort.slug)),
+                          cohortSession?.cohorts_order,
+                        ).map((microCohort) => (
+                          <CohortPanel
+                            key={microCohort.slug}
+                            cohort={microCohort}
+                            modules={cohortsAssignments[microCohort.slug]?.modules}
+                            tasks={cohortsAssignments[microCohort.slug]?.tasks}
+                            mainCohort={cohortSession}
+                            onOpenReviewModal={handleOpenReviewModal}
+                            certificate={certificates?.find((cert) => cert.cohort.id === microCohort.id)}
+                          />
+                        ))
                         : (
                           <CohortPanel openByDefault cohort={cohortSession} modules={sortedAssignments} certificate={certificates?.find((cert) => cert.cohort.id === cohortSession.id)} />
                         )}
