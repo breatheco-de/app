@@ -6,6 +6,7 @@ import {
   Box,
   Avatar,
   Flex,
+  Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import bc from '../../services/breathecode';
@@ -18,6 +19,91 @@ import LoaderScreen from '../LoaderScreen';
 import InfiniteScroll from '../InfiniteScroll';
 import { ORIGIN_HOST } from '../../utils/variables';
 import useCustomToast from '../../hooks/useCustomToast';
+import Icon from '../Icon';
+import Text from '../Text';
+
+const MacroStudentProgressCard = forwardRef(({
+  studentHeaderNode,
+  extraTimelines,
+  mergedDots,
+  mergedEmptyMessage,
+  onClickDots,
+}, ref) => {
+  const { t } = useTranslation('assignments');
+  const { hexColor, fontColor2 } = useStyle();
+  const [showMicroBreakdown, setShowMicroBreakdown] = useState(false);
+
+  const label = (
+    <Flex align="flex-start" justify="space-between" w="100%" gridGap="12px" flexWrap="wrap">
+      <Box flex="1" minW="180px">
+        {studentHeaderNode}
+      </Box>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        flexShrink={0}
+        alignSelf="flex-start"
+        h="auto"
+        py="4px"
+        px="8px"
+        color={fontColor2}
+        onClick={() => setShowMicroBreakdown((v) => !v)}
+        aria-expanded={showMicroBreakdown}
+        _hover={{ bg: 'blackAlpha.50' }}
+      >
+        <Flex align="center" gridGap="6px">
+          <Text size="sm" fontWeight={600} color={fontColor2}>
+            {t('macro-progress-breakdown-toggle')}
+          </Text>
+          <Icon
+            icon="arrowDown"
+            width="14px"
+            height="14px"
+            color={hexColor.fontColor2}
+            style={{
+              transform: showMicroBreakdown ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.2s ease',
+            }}
+          />
+        </Flex>
+      </Button>
+    </Flex>
+  );
+
+  return (
+    <Box ref={ref}>
+      <DottedTimeline
+        onClickDots={onClickDots}
+        label={label}
+        dots={showMicroBreakdown ? [] : mergedDots}
+        extraTimelines={showMicroBreakdown ? extraTimelines : undefined}
+        emptyDotsMessage={showMicroBreakdown ? '' : mergedEmptyMessage}
+        helpText=""
+      />
+    </Box>
+  );
+});
+
+MacroStudentProgressCard.displayName = 'MacroStudentProgressCard';
+
+MacroStudentProgressCard.propTypes = {
+  studentHeaderNode: PropTypes.node.isRequired,
+  extraTimelines: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string.isRequired,
+    dots: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  })),
+  mergedDots: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  mergedEmptyMessage: PropTypes.string,
+  onClickDots: PropTypes.func,
+};
+
+MacroStudentProgressCard.defaultProps = {
+  extraTimelines: [],
+  mergedDots: [],
+  mergedEmptyMessage: '',
+  onClickDots: undefined,
+};
 
 const StudentsRows = forwardRef(({
   currentStudentList,
@@ -87,7 +173,19 @@ const StudentsRows = forwardRef(({
     'NOT-OPENED': hexColor.fontColor3,
   };
 
-  const studentHeader = (student, percentage, lastProjectDelivery, fullname) => (
+  const educationalStatusLabel = (raw) => {
+    const key = (raw || '').toLowerCase();
+    const map = {
+      active: 'educational-list.active',
+      postponed: 'educational-list.postponed',
+      graduated: 'educational-list.graduated',
+      suspended: 'educational-list.suspended',
+      dropped: 'educational-list.dropped',
+    };
+    return map[key] ? t(map[key]) : raw;
+  };
+
+  const studentHeader = (student, percentage, lastProjectDelivery, fullname, statusInlineLabel = null) => (
     <Flex gridGap="10px" alignItems="center">
       <Avatar
         src={student.user.profile?.avatar_url}
@@ -97,7 +195,35 @@ const StudentsRows = forwardRef(({
       />
       <Box>
         <p>
-          <NextChakraLink textDecoration="underline" href={`/cohort/${cohortSlug}/student/${student.user.id}?academy=${academy}`}>{fullname}</NextChakraLink>
+          <NextChakraLink
+            href={`/cohort/${cohortSlug}/student/${student.user.id}?academy=${academy}`}
+            color={hexColor.blueDefault}
+            fontWeight={600}
+            textDecoration="underline"
+            textUnderlineOffset="3px"
+            cursor="pointer"
+            title={t('open-student-profile')}
+            aria-label={`${t('open-student-profile')}: ${fullname}`}
+            _hover={{
+              color: hexColor.darkBlueDefault,
+              textDecoration: 'underline',
+            }}
+            _focusVisible={{
+              boxShadow: '0 0 0 3px rgb(66 153 225 / 60%)',
+              outline: 'none',
+              borderRadius: '2px',
+            }}
+          >
+            {fullname}
+          </NextChakraLink>
+          {statusInlineLabel != null && statusInlineLabel !== '' && (
+            <>
+              {' - '}
+              <Box as="span" fontWeight={700} color={hexColor.fontColor2}>
+                {statusInlineLabel}
+              </Box>
+            </>
+          )}
         </p>
         <small>{`${percentage}${t('delivered-percentage')}`}</small>
         {lastProjectDelivery?.delivered_at && (
@@ -203,16 +329,45 @@ const StudentsRows = forwardRef(({
             };
           });
 
+          let mergeIndex = 0;
+          const mergedDots = [];
+          microCohortOrder.forEach((micro) => {
+            const entry = microSyllabusBySlug[micro.slug];
+            const assignmentsList = entry?.assignments || [];
+            assignmentsList.forEach((elem) => {
+              const s = assignmentSlugFromElem(elem);
+              const studentTask = matchTaskForMicro(student, micro, s, selectedCohort);
+              const { mandatory } = elem;
+              mergedDots.push({
+                ...elem,
+                ...studentTask,
+                label: elem.title,
+                highlight: mandatory,
+                user,
+                color: statusColors[getStatus(studentTask)] || 'gray',
+                dotRowKey: `${micro.slug}-${s || 'assignment'}-${mergeIndex}`,
+              });
+              mergeIndex += 1;
+            });
+          });
+          const mergedEmptyMessage = totalDenom === 0 ? t('syllabus-no-projects-in-cohort') : '';
+
           return (
-            <Box key={student.id} ref={ref || null}>
-              <DottedTimeline
-                onClickDots={showSingleTask}
-                label={studentHeader(student, percentage, lastProjectDelivery, fullname)}
-                dots={[]}
-                extraTimelines={extraTimelines}
-                helpText={`${t('educational-status')}: ${student.educational_status}`}
-              />
-            </Box>
+            <MacroStudentProgressCard
+              key={student.id}
+              ref={ref || null}
+              studentHeaderNode={studentHeader(
+                student,
+                percentage,
+                lastProjectDelivery,
+                fullname,
+                educationalStatusLabel(student.educational_status),
+              )}
+              extraTimelines={extraTimelines}
+              mergedDots={mergedDots}
+              mergedEmptyMessage={mergedEmptyMessage}
+              onClickDots={showSingleTask}
+            />
           );
         }
 
