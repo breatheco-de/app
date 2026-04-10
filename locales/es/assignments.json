@@ -152,5 +152,7 @@
     "person-has-commented": "{{name}} ha comentado:",
     "go-to-review": "Ir a la revisión",
     "teacher-has-not-reviewed-files": "Tu profesor aún no ha revisado ningún archivo. Inténtalo de nuevo más tarde."
-  }
+  },
+  "open-student-profile": "Abrir perfil del estudiante",
+  "macro-progress-breakdown-toggle": "Desglose por microcohort"
 }
