@@ -125,6 +125,7 @@ const StudentsRows = forwardRef(({
 
   const getStatus = (task) => {
     if (!task) return 'NOT-OPENED';
+    if (!task.task_status && !task.revision_status) return 'NOT-OPENED';
     if (task.task_status === 'DONE' && task.revision_status === 'PENDING') return 'DELIVERED';
     if (task.task_status === 'PENDING' && task.revision_status === 'PENDING') return 'UNDELIVERED';
     return task.revision_status;
@@ -248,13 +249,18 @@ const StudentsRows = forwardRef(({
   /** Slug del ítem del syllabus (a veces solo viene associated_slug). */
   const assignmentSlugFromElem = (elem) => elem?.slug ?? elem?.associated_slug;
 
+  const taskMatchesAssignmentSlug = (task, slug) => {
+    if (!task || !slug) return false;
+    return task.associated_slug === slug || task.slug === slug;
+  };
+
   /**
    * Varias tareas pueden compartir associated_slug por reintentos/cohort distintos.
    * Prioridad: cohort micro → sin cohort → cohort macro → primera.
    */
   const matchTaskForMicro = (student, micro, slug, macroCohort) => {
     if (!slug || !Array.isArray(student.tasks)) return undefined;
-    const candidates = student.tasks.filter((task) => task.associated_slug === slug);
+    const candidates = student.tasks.filter((task) => taskMatchesAssignmentSlug(task, slug));
     if (!candidates.length) return undefined;
 
     const microRef = { id: micro.id, slug: micro.slug };
@@ -268,6 +274,16 @@ const StudentsRows = forwardRef(({
       || (macroRef ? pick((task) => sameCohortIdOrSlug(task.cohort, macroRef)) : undefined)
       || candidates[0]
     );
+  };
+
+  const matchTaskForCohort = (student, slug, cohortRef) => {
+    if (!slug || !Array.isArray(student.tasks)) return undefined;
+    const candidates = student.tasks.filter((task) => taskMatchesAssignmentSlug(task, slug));
+    if (!candidates.length) return undefined;
+    if (!cohortRef) return candidates[0];
+    return candidates.find((task) => sameCohortIdOrSlug(task.cohort, cohortRef))
+      || candidates.find((task) => !task.cohort)
+      || candidates[0];
   };
 
   const hasMicroLayout = isMacroCohort
@@ -380,7 +396,8 @@ const StudentsRows = forwardRef(({
           )
           : 0;
         const dots = (syllabusData.assignments || []).map((elem) => {
-          const studentTask = student.tasks.find((task) => task.associated_slug === elem.slug);
+          const assignmentSlug = assignmentSlugFromElem(elem);
+          const studentTask = matchTaskForCohort(student, assignmentSlug, selectedCohort);
           const { mandatory } = elem;
           return {
             ...elem,
@@ -481,7 +498,7 @@ function StudentAssignments({
         externalFile={currentTask?.file}
       />
       <NoInfoModal
-        isOpen={currentTask && !currentTask.status}
+        isOpen={currentTask && currentTask.status === 'NOT-OPENED'}
         onClose={() => setCurrentTask(null)}
         selectedCohort={selectedCohort}
       />
