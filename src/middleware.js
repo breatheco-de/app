@@ -13,7 +13,7 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    '/((?!api|static|_next/static|_next/image|favicon.ico).*)',
+    '/((?!api|static|_next|favicon.ico).*)',
   ],
 };
 
@@ -22,6 +22,10 @@ async function middleware(req) {
   const { href, origin, searchParams, pathname } = url;
   let fullPath = pathname;
   log('DEBUG fullPath:', fullPath, 'search:', url.search);
+
+  if (pathname.startsWith('/_next/') || req.headers.get('x-nextjs-data') === '1') {
+    return NextResponse.next();
+  }
 
   const assetPagePatterns = [
     /^\/how-to\/[^/]+$/,
