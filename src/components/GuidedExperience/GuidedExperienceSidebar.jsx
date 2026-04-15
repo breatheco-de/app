@@ -47,7 +47,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
         await handleStartDay(nextModule, true);
       }
       const assignment = nextModule.content[0];
-      onClickAssignment(null, assignment);
+      onClickAssignment(null, assignment, nextModule?.id);
     } catch (e) {
       console.log(e);
     } finally {
@@ -64,7 +64,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
         await handleStartDay(prevModule, true);
       }
       const assignment = prevModule.content[0];
-      onClickAssignment(null, assignment);
+      onClickAssignment(null, assignment, prevModule?.id);
     } catch (e) {
       console.log(e);
     } finally {
@@ -217,6 +217,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
                 assignments={currentModule.filteredContent}
                 technologies={currentModule.technologies || []}
                 onClickAssignment={onClickAssignment}
+                moduleId={currentModule?.id}
                 flex="1"
               />
               <Divider borderColor="#D3DBE9" />
