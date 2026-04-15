@@ -21,6 +21,7 @@ import { ORIGIN_HOST } from '../../utils/variables';
 import useCustomToast from '../../hooks/useCustomToast';
 import Icon from '../Icon';
 import Text from '../Text';
+import useAssignments from '../../store/actions/assignmentsAction';
 
 const MacroStudentProgressCard = forwardRef(({
   studentHeaderNode,
@@ -122,6 +123,7 @@ const StudentsRows = forwardRef(({
   const { formatTimeString } = useFormatTimeString();
   const { createToast } = useCustomToast({ toastId: 'student-assignment-review-error' });
   const { hexColor } = useStyle();
+  const { contextState } = useAssignments();
 
   const getStatus = (task) => {
     if (!task) return 'NOT-OPENED';
@@ -254,36 +256,75 @@ const StudentsRows = forwardRef(({
     return task.associated_slug === slug || task.slug === slug;
   };
 
+  const getStudentTaskPool = (student) => {
+    const directTasks = Array.isArray(student?.tasks) ? student.tasks : [];
+    if (!isMacroCohort) return directTasks;
+
+    const tasksFromProjects = (contextState?.allTasks || []).filter((task) => task?.user?.id === student?.user?.id);
+    if (!tasksFromProjects.length) return directTasks;
+
+    const byId = new Map();
+    [...directTasks, ...tasksFromProjects].forEach((task) => {
+      if (task?.id != null) byId.set(task.id, task);
+    });
+    return [...byId.values()];
+  };
+
+  const taskStatusRank = (task) => {
+    if (!task) return -1;
+    if (task.revision_status === 'APPROVED') return 5;
+    if (task.task_status === 'DONE' && task.revision_status === 'PENDING') return 4;
+    if (task.revision_status === 'REJECTED') return 3;
+    if (task.task_status === 'PENDING' && task.revision_status === 'PENDING') return 2;
+    return 1;
+  };
+
+  const taskTimestamp = (task) => {
+    const raw = task?.delivered_at || task?.updated_at || task?.created_at;
+    const ts = raw ? new Date(raw).getTime() : 0;
+    return Number.isNaN(ts) ? 0 : ts;
+  };
+
+  const pickBestTask = (tasks = []) => tasks
+    .slice()
+    .sort((a, b) => {
+      const rankDiff = taskStatusRank(b) - taskStatusRank(a);
+      if (rankDiff !== 0) return rankDiff;
+      return taskTimestamp(b) - taskTimestamp(a);
+    })[0];
+
   /**
    * Varias tareas pueden compartir associated_slug por reintentos/cohort distintos.
    * Prioridad: cohort micro → sin cohort → cohort macro → primera.
    */
   const matchTaskForMicro = (student, micro, slug, macroCohort) => {
-    if (!slug || !Array.isArray(student.tasks)) return undefined;
-    const candidates = student.tasks.filter((task) => taskMatchesAssignmentSlug(task, slug));
+    if (!slug) return undefined;
+    const taskPool = getStudentTaskPool(student);
+    const candidates = taskPool.filter((task) => taskMatchesAssignmentSlug(task, slug));
     if (!candidates.length) return undefined;
 
     const microRef = { id: micro.id, slug: micro.slug };
     const macroRef = macroCohort ? { id: macroCohort.id, slug: macroCohort.slug } : null;
 
-    const pick = (pred) => candidates.find(pred);
+    const pick = (pred) => pickBestTask(candidates.filter(pred));
 
     return (
       pick((task) => sameCohortIdOrSlug(task.cohort, microRef))
       || pick((task) => !task.cohort)
       || (macroRef ? pick((task) => sameCohortIdOrSlug(task.cohort, macroRef)) : undefined)
-      || candidates[0]
+      || pickBestTask(candidates)
     );
   };
 
   const matchTaskForCohort = (student, slug, cohortRef) => {
-    if (!slug || !Array.isArray(student.tasks)) return undefined;
-    const candidates = student.tasks.filter((task) => taskMatchesAssignmentSlug(task, slug));
+    if (!slug) return undefined;
+    const taskPool = getStudentTaskPool(student);
+    const candidates = taskPool.filter((task) => taskMatchesAssignmentSlug(task, slug));
     if (!candidates.length) return undefined;
-    if (!cohortRef) return candidates[0];
-    return candidates.find((task) => sameCohortIdOrSlug(task.cohort, cohortRef))
-      || candidates.find((task) => !task.cohort)
-      || candidates[0];
+    if (!cohortRef) return pickBestTask(candidates);
+    return pickBestTask(candidates.filter((task) => sameCohortIdOrSlug(task.cohort, cohortRef)))
+      || pickBestTask(candidates.filter((task) => !task.cohort))
+      || pickBestTask(candidates);
   };
 
   const hasMicroLayout = isMacroCohort
