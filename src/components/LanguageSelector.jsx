@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import {
@@ -14,7 +14,6 @@ import useTranslation from 'next-translate/useTranslation';
 import styles from '../../styles/flags.module.css';
 import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
-import NextChakraLink from './NextChakraLink';
 import useSession from '../hooks/useSession';
 
 function LanguageSelector({ display, translations, ...rest }) {
@@ -27,6 +26,7 @@ function LanguageSelector({ display, translations, ...rest }) {
 
   const languages = t('navbar:languages', {}, { returnObjects: true });
   const [languagesOpen, setLanguagesOpen] = useState(false);
+  const isNavigatingRef = useRef(false);
   const currentLanguage = languages.filter((l) => l.value === locale)[0];
   const externalTranslations = userSession?.translations || translations;
   const translationsPropsExists = externalTranslations?.length > 0;
@@ -41,6 +41,46 @@ function LanguageSelector({ display, translations, ...rest }) {
     } catch (e) {
       console.log(e);
     }
+  };
+
+  const normalizeLocalePath = (targetPath) => {
+    const currentPath = targetPath || '/';
+    return currentPath.replace(/^\/(es|en|us)(?=\/|$)/, '') || '/';
+  };
+
+  const isPublicAssetPath = (targetPath) => {
+    const pathWithoutQuery = (targetPath || '').split('?')[0];
+    return /^\/(es\/)?(lesson|how-to|como|interactive-coding-tutorial|interactive-exercise)\/[^/]+$/.test(pathWithoutQuery);
+  };
+
+  const getNavigationTarget = (targetLocale, targetPath) => {
+    const currentPath = targetPath || '/';
+
+    if (translationsPropsExists) {
+      const cacheBust = isPublicAssetPath(currentPath) ? `__langSwitch=${Date.now()}` : '';
+      const separator = currentPath.includes('?') ? '&' : '?';
+
+      return {
+        href: cacheBust ? `${currentPath}${separator}${cacheBust}` : currentPath,
+        as: currentPath,
+        locale: false,
+      };
+    }
+
+    const normalizedPath = normalizeLocalePath(targetPath);
+    let visiblePath = normalizedPath;
+    if (targetLocale !== 'en') {
+      visiblePath = normalizedPath === '/' ? `/${targetLocale}` : `/${targetLocale}${normalizedPath}`;
+    }
+    const cacheBust = isPublicAssetPath(targetPath) ? `__langSwitch=${Date.now()}` : '';
+    const separator = normalizedPath.includes('?') ? '&' : '?';
+    const href = cacheBust ? `${normalizedPath}${separator}${cacheBust}` : normalizedPath;
+
+    return {
+      href,
+      as: visiblePath,
+      locale: targetLocale,
+    };
   };
 
   return (
@@ -99,32 +139,50 @@ function LanguageSelector({ display, translations, ...rest }) {
             const value = translationsPropsExists ? currLang?.value : l.value;
             const label = translationsPropsExists ? currLang?.label : l.label;
             const path = translationsPropsExists ? l?.link : router.asPath;
-
-            const cleanedPath = (path === '/' && value !== 'en') ? '' : path;
-            const link = cleanedPath;
+            const navigationTarget = getNavigationTarget(value, path);
 
             return (
-              <NextChakraLink
+              <Box
+                as="button"
+                type="button"
                 width="100%"
                 key={value}
-                href={link}
-                locale={value}
                 alignSelf="center"
                 display="flex"
                 gridGap={5}
                 fontWeight="bold"
                 textDecoration="none"
+                textAlign="left"
+                background="transparent"
+                border="none"
+                cursor="pointer"
                 opacity={locale === value ? 1 : 0.75}
                 _hover={{
                   opacity: 1,
                 }}
                 onClick={async () => {
-                  await updateSettingsLang(l.value);
+                  if (isNavigatingRef.current || locale === value) {
+                    setLanguagesOpen(false);
+                    return;
+                  }
+
+                  isNavigatingRef.current = true;
+                  await updateSettingsLang(value);
+                  setLanguagesOpen(false);
+                  router.push(
+                    navigationTarget.href,
+                    navigationTarget.as,
+                    { locale: navigationTarget.locale },
+                  ).catch(() => {
+                    isNavigatingRef.current = false;
+                  }).finally(() => {
+                    isNavigatingRef.current = false;
+                  });
                 }}
               >
                 <Box className={`${styles.flag} ${styles[value]}`} width="25px" height="25px" />
                 {label}
-              </NextChakraLink>
+              </Box>
             );
           })}
         </Box>
