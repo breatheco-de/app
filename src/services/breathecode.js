@@ -338,6 +338,30 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       academyVendors: (academy) => axios.get(`${url}/academy/${academy}/provisioningprofile${qs}`),
+      getMyVPS: () => axios.get(`${url}/me/vps${qs}`),
+      getMyVpsById: (vpsId) => axios.get(`${url}/me/vps/${vpsId}${qs}`),
+      requestMyVPS: (data = {}, academyId) => axios.post(`${url}/me/vps`, data, {
+        ...(academyId ? {
+          headers: {
+            academy: academyId,
+          },
+        } : {}),
+      }),
+      getProvisioningAcademies: (academyId) => axios.get(`${url}/academy/provisioningacademy${qs}`, {
+        headers: {
+          academy: academyId,
+        },
+      }),
+      getProvisioningVendorOptions: (provisioningAcademyId, academyId) => axios.get(`${url}/academy/provisioningacademy/${provisioningAcademyId}/vendor-options${qs}`, {
+        headers: {
+          academy: academyId,
+        },
+      }),
+      getAcademyProvisioningVendors: (academyId) => axios.get(`${url}/academy/vendor${qs}`, {
+        headers: {
+          academy: academyId,
+        },
+      }),
       getLLMKeys: () => axios.get(`${url}/me/llm/keys${qs}`),
       generateLLMKey: (data, academyId) => axios.post(`${url}/me/llm/keys`, data, {
         headers: {

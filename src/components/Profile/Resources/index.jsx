@@ -4,6 +4,7 @@ import { Box } from '@chakra-ui/react';
 import Text from '../../Text';
 import { location } from '../../../utils';
 import LLM from './LLM';
+import VPS from './VPS';
 
 function Resources() {
   const { t } = useTranslation('profile');
@@ -24,7 +25,7 @@ function Resources() {
         </Text>
       </Box>
       <LLM />
-
+      <VPS />
     </>
   );
 }
