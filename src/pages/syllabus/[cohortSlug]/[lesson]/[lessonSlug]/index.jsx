@@ -144,6 +144,7 @@ function SyllabusContent() {
   const lastPrevTask = prevModule?.content && prevModule.content[prevModule.content.length - 1];
 
   const { cohortSlug, lesson, lessonSlug, mainCohortSlug: mainCohortSlugQuery } = router.query;
+  const routeModuleId = Array.isArray(router.query?.moduleId) ? router.query.moduleId[0] : router.query?.moduleId;
   const routeMacroSlug = typeof mainCohortSlugQuery === 'string'
     ? mainCohortSlugQuery
     : mainCohortSlugQuery?.[0];
@@ -159,7 +160,24 @@ function SyllabusContent() {
     ? section.filteredContentByPending
     : section.filteredContent));
 
-  const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug || l.translations?.[language]?.slug === lessonSlug || (currentAsset?.id && l.translations?.[language]?.slug === currentAsset.slug)));
+  const moduleMatchesLessonSlug = (section) => section?.some(
+    (l) => l.slug === lessonSlug
+      || l.translations?.[language]?.slug === lessonSlug
+      || (currentAsset?.id && l.translations?.[language]?.slug === currentAsset.slug),
+  );
+
+  const routeModuleIndex = routeModuleId != null
+    ? sortedAssignments.findIndex((section, idx) => String(section?.id) === String(routeModuleId)
+      || String(section?.slug) === String(routeModuleId)
+      || String(idx) === String(routeModuleId))
+    : -1;
+
+  const routeModuleContainsCurrentSlug = routeModuleIndex >= 0
+    && moduleMatchesLessonSlug(filteredCurrentAssignments[routeModuleIndex]);
+
+  const currentModuleIndex = routeModuleContainsCurrentSlug
+    ? routeModuleIndex
+    : filteredCurrentAssignments.findIndex((s) => moduleMatchesLessonSlug(s));
 
   const currentModule = sortedAssignments[currentModuleIndex];
 
@@ -430,12 +448,13 @@ function SyllabusContent() {
     setOpenTargetBlankModal(false);
   };
 
-  const onClickAssignment = (e, item) => {
+  const onClickAssignment = (e, item, moduleId) => {
     router.push({
       query: {
         ...router.query,
         lesson: item.type?.toLowerCase(),
         lessonSlug: item?.slug,
+        moduleId: moduleId ?? undefined,
       },
     });
     cleanCurrentData();

@@ -15,7 +15,7 @@ import Icon from './Icon';
 import Text from './Text';
 
 function Timeline({
-  title, assignments, technologies, width, onClickAssignment, showPendingTasks, variant,
+  title, assignments, technologies, width, onClickAssignment, showPendingTasks, variant, moduleId,
 }) {
   const { t, lang } = useTranslation('syllabus');
   const router = useRouter();
@@ -66,7 +66,7 @@ function Timeline({
   const handleClick = (e, item) => {
     e.preventDefault();
     e.stopPropagation();
-    onClickAssignment(e, item);
+    onClickAssignment(e, item, moduleId);
     scrollTop();
   };
 
@@ -241,6 +241,7 @@ Timeline.propTypes = {
   onClickAssignment: PropTypes.func,
   showPendingTasks: PropTypes.bool,
   variant: PropTypes.string,
+  moduleId: PropTypes.number,
 };
 
 Timeline.defaultProps = {
@@ -251,6 +252,7 @@ Timeline.defaultProps = {
   onClickAssignment: () => { },
   showPendingTasks: false,
   variant: '',
+  moduleId: undefined,
 };
 
 export default memo(Timeline);

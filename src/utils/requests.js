@@ -137,8 +137,12 @@ const getAsset = async (type = '', extraQuerys = {}, category = '', onlyFirstFet
     .catch((err) => {
       console.error(`\nError: GET_ASSET in (/v1/registry/asset${qsRequest}): \n`);
       console.error(err, '\n\n');
-      return [];
+      return { results: [], count: 0 };
     });
+
+  if (!response || typeof response !== 'object') response = { results: [], count: 0 };
+  if (!Array.isArray(response.results)) response.results = [];
+  if (typeof response.count !== 'number') response.count = response.results.length;
 
   log(`Generating ${category}: ${response.results.length} recopilated of ${response.count} assets`);
 
@@ -166,7 +170,7 @@ const getAsset = async (type = '', extraQuerys = {}, category = '', onlyFirstFet
       .catch((err) => {
         console.error(`\nError: GET_ASSET in (/v1/registry/asset${newQsRequests}): \n`);
         console.error(err, '\n\n');
-        return [];
+        return { results: [], count: 0 };
       });
 
     if (response.results) {

@@ -214,7 +214,7 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
       const moduleFirstAssignment = module?.content?.[0];
       if (!moduleFirstAssignment) return;
 
-      let syllabusRoute = `/syllabus/${cohort.slug}/${moduleFirstAssignment.type.toLowerCase()}/${moduleFirstAssignment.slug}`;
+      let syllabusRoute = `/syllabus/${cohort.slug}/${moduleFirstAssignment.type.toLowerCase()}/${moduleFirstAssignment.slug}?moduleId=${module.id}`;
       if (mainCohort) syllabusRoute = `/main-cohort/${mainCohort.slug}/${syllabusRoute}`;
 
       router.push(syllabusRoute);
