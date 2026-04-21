@@ -18,9 +18,45 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
   const [telemetryReport, setTelemetryReport] = useState([]);
 
   const isExerciseStarted = !!currentTask?.assignment_telemetry;
-  const canStartInteractiveExercise = !!currentAsset?.interactive && !!currentAsset?.learnpack_deploy_url;
+  const isInteractiveExercise = !!currentAsset?.interactive && !!currentAsset?.learnpack_deploy_url;
 
   useEffect(() => {
+    const defaultTelemetryReport = [{
+      label: t('completion-percentage'),
+      icon: 'graph-up',
+      value: '0%',
+    }, {
+      label: t('total-steps'),
+      icon: 'list',
+      value: '0',
+    }, {
+      label: t('total-time'),
+      icon: 'clock',
+      value: '0 min',
+    }, {
+      label: t('successful-compiles'),
+      icon: 'documentVerified',
+      value: 0,
+    }, {
+      label: t('successful-tests'),
+      icon: 'sync-success',
+      value: 0,
+    }, {
+      label: t('total-errors'),
+      icon: 'sync-error',
+      value: 0,
+    }];
+
+    if (!isInteractiveExercise) {
+      setTelemetryReport([]);
+      return;
+    }
+
+    if (!isExerciseStarted) {
+      setTelemetryReport(defaultTelemetryReport);
+      return;
+    }
+
     if (isExerciseStarted) {
       const { steps, workout_session: workoutSession, last_interaction_at: lastInteractionAt } = currentTask.assignment_telemetry;
       const completedSteps = steps.reduce((acum, elem) => {
@@ -96,7 +132,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
         value: errors,
       }]);
     }
-  }, [currentTask]);
+  }, [currentTask, isInteractiveExercise, isExerciseStarted, t]);
 
   reportDatalayer({
     dataLayer: {
@@ -160,17 +196,17 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
             >
               <Box
                 display="flex"
-                flexDirection={{ base: 'column', md: isExerciseStarted ? 'column' : 'row' }}
+                flexDirection={{ base: 'column', md: isInteractiveExercise ? 'column' : 'row' }}
                 width="100%"
                 height="100%"
-                gap={!isExerciseStarted && '10px'}
+                gap={!isInteractiveExercise && '10px'}
               >
                 <Flex
                   flexDirection="column"
                   overflowY="hidden"
                   maxWidth={{
                     base: 'none',
-                    md: !isExerciseStarted && currentAsset?.intro_video_url ? '50%' : '100%',
+                    md: !isInteractiveExercise && currentAsset?.intro_video_url ? '50%' : '100%',
                   }}
                   flexGrow={1}
                 >
@@ -181,8 +217,8 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                     className={`horizontal-sroll ${colorMode}`}
                     overflowY="auto"
                     flexGrow={1}
-                    paddingRight={isExerciseStarted && '8px'}
-                    maxHeight={isExerciseStarted && '70px'}
+                    paddingRight={isInteractiveExercise && '8px'}
+                    maxHeight={isInteractiveExercise && '70px'}
                   >
                     <Text color="white" size="l">
                       {currentAsset?.description}
@@ -221,7 +257,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                 )}
               </Box>
 
-              {isExerciseStarted && (
+              {isInteractiveExercise && (
                 <Box
                   width="100%"
                   display="flex"
@@ -245,17 +281,15 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
               )}
             </Box>
 
-            {canStartInteractiveExercise && (
-              <ProjectInstructions
-                currentAsset={currentAsset}
-                handleStartLearnpack={handleStartLearnpack}
-                isStarted={isExerciseStarted}
-                flexGrow="1"
-                display="flex"
-                flexDirection="column"
-                justifyContent="center"
-              />
-            )}
+            <ProjectInstructions
+              currentAsset={currentAsset}
+              handleStartLearnpack={handleStartLearnpack}
+              isStarted={isExerciseStarted}
+              flexGrow="1"
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+            />
           </>
         )}
     </Box>
