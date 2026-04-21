@@ -24,12 +24,12 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
     {
       label: t('total-steps'),
       icon: 'list',
-      value: '0',
+      value: '0/0',
     },
     {
       label: t('total-time'),
       icon: 'clock',
-      value: '0 hs',
+      value: '0 min',
     },
     {
       label: t('successful-compiles'),
@@ -50,9 +50,19 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
   const [telemetryReport, setTelemetryReport] = useState(getZeroTelemetryReport);
 
   const isExerciseStarted = !!currentTask?.assignment_telemetry;
-  const showTelemetrySummary = true;
+  const isInteractiveExercise = !!currentAsset?.interactive && !!currentAsset?.learnpack_deploy_url;
 
   useEffect(() => {
+    if (!isInteractiveExercise) {
+      setTelemetryReport([]);
+      return;
+    }
+
+    if (!isExerciseStarted) {
+      setTelemetryReport(getZeroTelemetryReport());
+      return;
+    }
+
     if (isExerciseStarted) {
       const { steps, workout_session: workoutSession, last_interaction_at: lastInteractionAt } = currentTask.assignment_telemetry;
       const completedSteps = steps.reduce((acum, elem) => {
@@ -127,10 +137,8 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
         icon: 'sync-error',
         value: errors,
       }]);
-    } else {
-      setTelemetryReport(getZeroTelemetryReport());
     }
-  }, [currentTask, isExerciseStarted, t]);
+  }, [currentTask, isInteractiveExercise, isExerciseStarted, t]);
 
   reportDatalayer({
     dataLayer: {
@@ -194,17 +202,17 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
             >
               <Box
                 display="flex"
-                flexDirection={{ base: 'column', md: showTelemetrySummary ? 'column' : 'row' }}
+                flexDirection={{ base: 'column', md: isInteractiveExercise ? 'column' : 'row' }}
                 width="100%"
                 height="100%"
-                gap={!showTelemetrySummary && '10px'}
+                gap={!isInteractiveExercise && '10px'}
               >
                 <Flex
                   flexDirection="column"
                   overflowY="hidden"
                   maxWidth={{
                     base: 'none',
-                    md: !showTelemetrySummary && currentAsset?.intro_video_url ? '50%' : '100%',
+                    md: !isInteractiveExercise && currentAsset?.intro_video_url ? '50%' : '100%',
                   }}
                   flexGrow={1}
                 >
@@ -215,8 +223,8 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                     className={`horizontal-sroll ${colorMode}`}
                     overflowY="auto"
                     flexGrow={1}
-                    paddingRight={showTelemetrySummary && '8px'}
-                    maxHeight={showTelemetrySummary && '70px'}
+                    paddingRight={isInteractiveExercise && '8px'}
+                    maxHeight={isInteractiveExercise && '70px'}
                   >
                     <Text color="white" size="l">
                       {currentAsset?.description}
@@ -255,7 +263,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                 )}
               </Box>
 
-              {showTelemetrySummary && (
+              {isInteractiveExercise && (
                 <Box
                   width="100%"
                   display="flex"
