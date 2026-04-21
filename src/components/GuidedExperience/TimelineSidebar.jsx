@@ -159,6 +159,7 @@ function TimelineSidebar({
                     technologies={section.technologies || []}
                     title={section.label}
                     onClickAssignment={onClickAssignment}
+                    moduleId={section.id}
                   />
                 </Box>
               );

@@ -15,45 +15,51 @@ import { reportDatalayer } from '../../utils/requests';
 function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnpack, iframeURL, learnpackStart, setLearnpackStart, onCloseExercise }) {
   const { t } = useTranslation('syllabus');
   const { colorMode } = useStyle();
-  const [telemetryReport, setTelemetryReport] = useState([]);
+  const getZeroTelemetryReport = () => ([
+    {
+      label: t('completion-percentage'),
+      icon: 'graph-up',
+      value: '0%',
+    },
+    {
+      label: t('total-steps'),
+      icon: 'list',
+      value: '0/0',
+    },
+    {
+      label: t('total-time'),
+      icon: 'clock',
+      value: '0 min',
+    },
+    {
+      label: t('successful-compiles'),
+      icon: 'documentVerified',
+      value: 0,
+    },
+    {
+      label: t('successful-tests'),
+      icon: 'sync-success',
+      value: 0,
+    },
+    {
+      label: t('total-errors'),
+      icon: 'sync-error',
+      value: 0,
+    },
+  ]);
+  const [telemetryReport, setTelemetryReport] = useState(getZeroTelemetryReport);
 
   const isExerciseStarted = !!currentTask?.assignment_telemetry;
   const isInteractiveExercise = !!currentAsset?.interactive && !!currentAsset?.learnpack_deploy_url;
 
   useEffect(() => {
-    const defaultTelemetryReport = [{
-      label: t('completion-percentage'),
-      icon: 'graph-up',
-      value: '0%',
-    }, {
-      label: t('total-steps'),
-      icon: 'list',
-      value: '0',
-    }, {
-      label: t('total-time'),
-      icon: 'clock',
-      value: '0 min',
-    }, {
-      label: t('successful-compiles'),
-      icon: 'documentVerified',
-      value: 0,
-    }, {
-      label: t('successful-tests'),
-      icon: 'sync-success',
-      value: 0,
-    }, {
-      label: t('total-errors'),
-      icon: 'sync-error',
-      value: 0,
-    }];
-
     if (!isInteractiveExercise) {
       setTelemetryReport([]);
       return;
     }
 
     if (!isExerciseStarted) {
-      setTelemetryReport(defaultTelemetryReport);
+      setTelemetryReport(getZeroTelemetryReport());
       return;
     }
 
