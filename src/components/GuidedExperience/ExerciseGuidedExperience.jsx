@@ -50,7 +50,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
   const [telemetryReport, setTelemetryReport] = useState(getZeroTelemetryReport);
 
   const isExerciseStarted = !!currentTask?.assignment_telemetry;
-  const showTelemetrySummary = true;
+  const canStartInteractiveExercise = !!currentAsset?.interactive && !!currentAsset?.learnpack_deploy_url;
 
   useEffect(() => {
     if (isExerciseStarted) {
@@ -279,15 +279,17 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
               )}
             </Box>
 
-            <ProjectInstructions
-              currentAsset={currentAsset}
-              handleStartLearnpack={handleStartLearnpack}
-              isStarted={isExerciseStarted}
-              flexGrow="1"
-              display="flex"
-              flexDirection="column"
-              justifyContent="center"
-            />
+            {canStartInteractiveExercise && (
+              <ProjectInstructions
+                currentAsset={currentAsset}
+                handleStartLearnpack={handleStartLearnpack}
+                isStarted={isExerciseStarted}
+                flexGrow="1"
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+              />
+            )}
           </>
         )}
     </Box>
