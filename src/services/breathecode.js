@@ -340,13 +340,7 @@ const breathecode = {
       academyVendors: (academy) => axios.get(`${url}/academy/${academy}/provisioningprofile${qs}`),
       getMyVPS: () => axios.get(`${url}/me/vps${qs}`),
       getMyVpsById: (vpsId) => axios.get(`${url}/me/vps/${vpsId}${qs}`),
-      requestMyVPS: (data = {}, academyId) => axios.post(`${url}/me/vps`, data, {
-        ...(academyId ? {
-          headers: {
-            academy: academyId,
-          },
-        } : {}),
-      }),
+      requestMyVPS: (data = {}) => axios.post(`${url}/me/vps`, data),
       getProvisioningAcademies: (academyId) => axios.get(`${url}/academy/provisioningacademy${qs}`, {
         headers: {
           academy: academyId,

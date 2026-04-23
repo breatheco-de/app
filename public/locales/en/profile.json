@@ -98,15 +98,24 @@
     "modal": {
       "title": "Request VPS",
       "description": "Choose the provider and configuration for your VPS.",
+      "billing-source-label": "Use VPS credits from",
+      "option-from-consumable": "Standalone credits — {{academy}}",
+      "loading-consumables": "Loading your available credits…",
       "loading-providers": "Loading available providers…",
+      "loading-plans": "Loading your plans…",
       "loading-options": "Loading provider options…",
       "load-providers-error": "We couldn't load the VPS providers for your academy.",
       "load-options-error": "We couldn't load the options for this provider.",
       "no-providers": "Your academy does not have any VPS providers configured.",
       "no-academies": "We couldn't determine your academy from your subscriptions, so we can't load VPS providers.",
+      "academy-label": "Academy",
+      "select-provider-heading": "Select a provider for your VPS",
+      "vendor-card-subtitle": "VPS hosting",
       "provider-label": "Provider",
       "provider-placeholder": "Select a provider",
       "plan-label": "Plan",
+      "configure-provider": "Configure {{provider}}",
+      "no-options-schema": "This provider does not define configurable options.",
       "unsupported-provider": "This VPS provider is not supported in the student UI yet. Contact support.",
       "unsupported-provider-suffix": "unsupported in student UI",
       "only-unsupported-providers": "Your academy has VPS vendors configured, but none are supported in the student UI yet. Contact support.",
@@ -125,7 +134,13 @@
         "template": "Template",
         "datacenter": "Datacenter"
       },
+      "specs": {
+        "cpu": "CPU",
+        "ram": "RAM",
+        "disk": "Disk"
+      },
       "cancel": "Cancel",
+      "back": "Back",
       "confirm": "Request VPS"
     }
   },
