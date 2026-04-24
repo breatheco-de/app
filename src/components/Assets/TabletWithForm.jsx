@@ -7,7 +7,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { getStorageItem } from '../../utils';
-import noLearnpackAssets from '../../../public/no-learnpack-in-cloud.json';
 import useAuth from '../../hooks/useAuth';
 import Heading from '../Heading';
 import Text from '../Text';
@@ -35,10 +34,9 @@ const TabletWithForm = React.forwardRef(({
   const userToken = getStorageItem('accessToken');
   const textColor = commonTextColor || lightColor;
   const conversionTechnologies = technologies?.map((item) => item?.slug).join(',');
-  const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
 
   const buildLearnpackUrl = () => {
-    if (!asset?.learnpack_deploy_url || noLearnpackIncluded.includes(asset?.slug)) return null;
+    if (!asset?.learnpack_deploy_url) return null;
 
     const currentLang = lang === 'en' ? 'us' : lang;
     const theme = currentThemeValue;
