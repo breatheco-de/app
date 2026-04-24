@@ -23,7 +23,7 @@ import { es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import {
-  useCallback, useEffect, useState,
+  useCallback, useEffect, useMemo, useState,
 } from 'react';
 import Text from '../../Text';
 import Icon from '../../Icon';
@@ -31,6 +31,7 @@ import NextChakraLink from '../../NextChakraLink';
 import VPSRequestModal from './VPSRequestModal';
 import useStyle from '../../../hooks/useStyle';
 import useCustomToast from '../../../hooks/useCustomToast';
+import useSubscriptions from '../../../hooks/useSubscriptions';
 import bc from '../../../services/breathecode';
 import profileHandlers from '../Subscriptions/handlers';
 
@@ -196,9 +197,9 @@ function VpsCard({
         padding="10px"
       >
         <Flex
-          alignItems="flex-end"
+          alignItems={{ base: 'flex-start', md: 'flex-end' }}
           justifyContent="space-between"
-          flexWrap="wrap"
+          flexDirection={{ base: 'column', md: 'row' }}
           width="100%"
           gridGap={{ base: '8px', md: '12px' }}
         >
@@ -211,7 +212,7 @@ function VpsCard({
               size="sm"
               fontWeight="400"
               flexShrink={0}
-              textAlign="right"
+              textAlign={{ base: 'left', md: 'right' }}
             >
               {createdAtText}
             </Text>
@@ -260,6 +261,7 @@ function VPS() {
   const { t, lang } = useTranslation('profile');
   const { createToast } = useCustomToast();
   const { statusStyles } = profileHandlers();
+  const { state: subsState } = useSubscriptions();
 
   const [vpsList, setVpsList] = useState([]);
   const [isLoadingList, setIsLoadingList] = useState(true);
@@ -272,6 +274,23 @@ function VPS() {
   const [credentialsLoadError, setCredentialsLoadError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [requestModalOpen, setRequestModalOpen] = useState(false);
+
+  const planTitleBySlug = useMemo(() => {
+    const subscriptions = subsState?.subscriptions?.subscriptions ?? [];
+    const planFinancings = subsState?.subscriptions?.plan_financings ?? [];
+    const sources = [...subscriptions, ...planFinancings];
+    const titleBySlug = {};
+
+    sources.forEach((source) => {
+      const plan = source?.plans?.[0];
+      const slug = typeof plan?.slug === 'string' ? plan.slug.trim() : '';
+      const title = typeof plan?.title === 'string' ? plan.title.trim() : '';
+      if (!slug || !title) return;
+      if (!titleBySlug[slug]) titleBySlug[slug] = title;
+    });
+
+    return titleBySlug;
+  }, [subsState?.subscriptions]);
   const openRequestModal = useCallback(() => {
     setRequestModalOpen(true);
   }, []);
@@ -394,13 +413,13 @@ function VPS() {
         <Box width="100%">
           <Flex
             direction={{ base: 'column', md: 'row' }}
-            alignItems="center"
-            justifyContent={{ base: 'center', md: 'space-between' }}
+            alignItems={{ base: 'flex-start', md: 'center' }}
+            justifyContent={{ base: 'flex-start', md: 'space-between' }}
             mb={{ base: '18px', md: '14px' }}
             flexWrap="wrap"
             gridGap={{ base: '10px', md: '12px' }}
           >
-            <Box width="80%" mb="18px">
+            <Box width={{ base: '100%', md: '80%' }} mb="18px">
               <Text fontSize="16px" fontWeight="700">
                 {t('vps.title')}
               </Text>
@@ -414,6 +433,7 @@ function VPS() {
               color="white"
               fontSize="15px"
               textTransform="uppercase"
+              alignSelf={{ base: 'center', md: 'auto' }}
               title={!canRequestVps ? t('vps.cannot-request') : undefined}
               isDisabled={!canRequestVps}
               onClick={openRequestModal}
@@ -459,7 +479,7 @@ function VPS() {
 
           {!isLoadingList && !loadListError && vpsList.length > 0 && (
           <SimpleGrid
-            columns={{ base: 1, md: 2 }}
+            columns={{ base: 1, lg: 2 }}
             spacing={{ base: 4, md: 6 }}
             width="100%"
             alignItems="stretch"
@@ -470,7 +490,11 @@ function VPS() {
               const ipText = item?.ip_address ? t('vps.ip-label', { ip: item.ip_address }) : '';
               const providerValue = item?.vendor?.name ?? item?.vendor?.slug ?? item?.vendor ?? '';
               const providerText = providerValue ? t('vps.provider-label', { provider: providerValue }) : '';
-              const planText = item?.plan_slug ? t('vps.plan-label', { plan: item.plan_slug }) : '';
+              const planValue = item?.plan_title
+                ?? item?.plan?.title
+                ?? planTitleBySlug[item?.plan_slug]
+                ?? item?.plan_slug;
+              const planText = planValue ? t('vps.plan-label', { plan: planValue }) : '';
               const createdAtText = formatVpsCreatedAt(item?.created_at);
               const { styleKey, labelKey } = getVpsStatusPillConfig(item?.status);
               const pillStyle = statusStyles[styleKey] || statusStyles.error;
