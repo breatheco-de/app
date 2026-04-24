@@ -1,5 +1,5 @@
 /* eslint-disable no-unsafe-optional-chaining */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import {
@@ -15,7 +15,7 @@ import ModalInfo from '../ModalInfo';
 import useStyle from '../../hooks/useStyle';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import { getAttendanceList, saveCohortAttendancy } from '../../lib/admissions';
-import { getAttendance } from '../../utils/cohorts';
+import { getAttendance, sortMicroCohortsLikeDashboard } from '../../utils/cohorts';
 import { languageFix } from '../../utils';
 import useCustomToast from '../../hooks/useCustomToast';
 
@@ -23,17 +23,16 @@ function AttendanceModal({
   title, message, isOpen, onClose, students,
 }) {
   const { t, lang } = useTranslation('dashboard');
-  const { setCohortSession, cohortSession, sortedAssignments } = useCohortHandler();
+  const { setCohortSession, cohortSession, sortedAssignments, cohortsAssignments } = useCohortHandler();
   const [historyLog, setHistoryLog] = useState();
   const [day, setDay] = useState(cohortSession.current_day);
   const [attendanceTaken, setAttendanceTaken] = useState({});
-  const [currentModule, setCurrentModule] = useState(cohortSession.current_module);
+  const [moduleListIndex, setModuleListIndex] = useState(0);
   const [autoSelect, setAutoSelect] = useState(false);
   // const [defaultDay, setDefaultDay] = useState(0);
   const [checked, setChecked] = useState([]);
   const [defaultProps, setDefaultProps] = useState({
     current_day: 0,
-    current_module: 0,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [openWarn, setOpenWarn] = useState(false);
@@ -44,6 +43,34 @@ function AttendanceModal({
 
   const { lightColor, borderColor } = useStyle();
 
+  const attendanceModuleOptgroups = useMemo(() => {
+    const micros = sortMicroCohortsLikeDashboard(
+      cohortSession?.micro_cohorts || [],
+      cohortSession?.cohorts_order,
+    );
+    if (micros.length === 0) return null;
+
+    const groups = [];
+    let listIndex = 0;
+    micros.forEach((mc) => {
+      const modules = cohortsAssignments[mc.slug]?.modules || [];
+      if (modules.length === 0) return;
+      const options = modules.map((module) => {
+        const entry = { module, listIndex };
+        listIndex += 1;
+        return entry;
+      });
+      const groupLabel = languageFix(mc.name, lang) || mc.name || mc.slug;
+      groups.push({ key: String(mc.id ?? mc.slug), groupLabel, options });
+    });
+    return groups.length > 0 ? groups : null;
+  }, [
+    cohortSession?.cohorts_order,
+    cohortSession?.micro_cohorts,
+    cohortsAssignments,
+    lang,
+  ]);
+
   const { getCheckboxProps } = useCheckboxGroup({
     onChange: setChecked,
     value: checked,
@@ -51,7 +78,15 @@ function AttendanceModal({
   const cohortDurationInDays = cohortSession?.syllabus_version.duration_in_days;
 
   const currentCohortDay = cohortSession?.current_day;
-  const currentCohortModule = cohortSession?.current_module;
+  const resolvedModuleId = sortedAssignments[moduleListIndex]?.id;
+
+  useEffect(() => {
+    if (sortedAssignments.length === 0) return;
+    const id = cohortSession?.current_module;
+    if (id == null || id < 0) return;
+    const idx = sortedAssignments.findIndex((a) => a.id === id);
+    if (idx !== -1) setModuleListIndex(idx);
+  }, [cohortSession?.current_module, sortedAssignments]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -78,21 +113,21 @@ function AttendanceModal({
 
       setChecked(checkedStudents);
       if (autoSelect) {
-        setCurrentModule(attendanceTaken?.current_module || -1);
-      } else {
-        setCurrentModule(currentModule);
+        const id = attendanceTaken?.current_module;
+        if (id != null && id >= 0) {
+          const idx = sortedAssignments.findIndex((a) => a.id === id);
+          setModuleListIndex(idx >= 0 ? idx : 0);
+        }
       }
     }
-  }, [attendanceTaken.attendanceStudents]);
+  }, [attendanceTaken?.attendanceStudents, sortedAssignments, autoSelect]);
 
   const getDailyModuleData = () => {
-    if (sortedAssignments.length > 0) {
-      const dailyModule = sortedAssignments.find(
-        (assignment) => assignment.id === currentModule,
-      );
-      const prevDailyModule = sortedAssignments.find(
-        (assignment) => assignment.id === (currentModule - 1),
-      );
+    if (sortedAssignments.length > 0 && moduleListIndex >= 0) {
+      const dailyModule = sortedAssignments[moduleListIndex];
+      const prevDailyModule = moduleListIndex > 0
+        ? sortedAssignments[moduleListIndex - 1]
+        : null;
 
       return {
         dailyModule,
@@ -102,14 +137,11 @@ function AttendanceModal({
     return null;
   };
 
-  const currModuleData = getDailyModuleData()?.dailyModule;
-
   useEffect(() => {
     setDefaultProps({
       current_day: currentCohortDay,
-      current_module: currentCohortModule,
     });
-  }, [currentCohortDay, currentCohortModule]);
+  }, [currentCohortDay]);
 
   // function that checks if the attendance has been taken for the current day
   const attendanceWasTaken = () => {
@@ -121,7 +153,7 @@ function AttendanceModal({
   };
 
   const saveAttendancy = () => {
-    saveCohortAttendancy({ cohortSlug: cohortSession.slug, students, checked, currentModule })
+    saveCohortAttendancy({ cohortSlug: cohortSession.slug, students, checked, currentModule: resolvedModuleId })
       .then((data) => {
         setAttendanceList(data);
         createToast({
@@ -146,9 +178,9 @@ function AttendanceModal({
 
   const updateCohortDay = () => {
     setIsLoading(true);
-    if (currentModule > 0) {
+    if (resolvedModuleId > 0) {
       bc.admissions()
-        .updateCohort(cohortSession.id, { current_day: Number(day), current_module: currentModule })
+        .updateCohort(cohortSession.id, { current_day: Number(day), current_module: resolvedModuleId })
         .then(({ data }) => {
           saveAttendancy();
           setCohortSession({
@@ -182,22 +214,24 @@ function AttendanceModal({
     }
   };
 
+  const moduleDurationDays = sortedAssignments[moduleListIndex]?.duration_in_days;
+
   useEffect(() => {
     const arrayOfDays = Object.keys(attendanceList);
     const modulesRepeated = arrayOfDays.map((l) => {
-      if (attendanceList[l].current_module === currentModule) {
+      if (attendanceList[l].current_module === resolvedModuleId) {
         return attendanceList[l];
       }
       return null;
     }).filter((l) => l !== null);
-    const expecteFinish = modulesRepeated.filter((_, i) => i === currModuleData?.duration_in_days);
+    const expecteFinish = modulesRepeated.filter((_, i) => i === moduleDurationDays);
 
     setHistoryLog({
       repeated: modulesRepeated.length,
-      expected: currModuleData?.duration_in_days,
+      expected: moduleDurationDays,
       expecteFinish,
     });
-  }, [currentModule]);
+  }, [moduleListIndex, resolvedModuleId, sortedAssignments, attendanceList, moduleDurationDays]);
 
   const handleAttendance = () => {
     if (historyLog?.repeated >= historyLog?.expected) {
@@ -214,7 +248,7 @@ function AttendanceModal({
       setAttendanceTaken(data);
       setIsLoading(false);
     }
-  }, [attendanceList, students, currModuleData, day]);
+  }, [attendanceList, students, day]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -252,20 +286,35 @@ function AttendanceModal({
               <FormLabel htmlFor="current_module" color={lightColor} fontSize="12px">{t('attendance-modal.module')}</FormLabel>
               {sortedAssignments.length > 0 && (
                 <Select
-                  defaultValue={defaultProps.current_module}
-                  value={currentModule}
+                  value={String(moduleListIndex)}
                   onChange={(e) => {
-                    setCurrentModule(parseInt(e.target.value, 10));
+                    setModuleListIndex(parseInt(e.target.value, 10));
                     setAutoSelect(false);
                   }}
                   id="module"
                   placeholder="Select module"
                 >
-                  {sortedAssignments.map((module) => (
-                    <option key={module.id} value={module.id}>
-                      {`#${module.id} - ${languageFix(module?.label, lang)}`}
-                    </option>
-                  ))}
+                  {attendanceModuleOptgroups
+                    ? attendanceModuleOptgroups.map((group) => (
+                      <optgroup key={group.key} label={group.groupLabel}>
+                        {group.options.map(({ module, listIndex }) => (
+                          <option
+                            key={`${String(module.id)}-${languageFix(module?.label, lang) || 'module'}-i${String(listIndex)}`}
+                            value={String(listIndex)}
+                          >
+                            {`#${module.id} - ${languageFix(module?.label, lang)}`}
+                          </option>
+                        ))}
+                      </optgroup>
+                    ))
+                    : sortedAssignments.map((module, index) => (
+                      <option
+                        key={`${String(module.id)}-${languageFix(module?.label, lang) || 'module'}-i${String(index)}`}
+                        value={String(index)}
+                      >
+                        {`#${module.id} - ${languageFix(module?.label, lang)}`}
+                      </option>
+                    ))}
                 </Select>
               )}
             </FormControl>
@@ -341,7 +390,7 @@ function AttendanceModal({
             isOpen={openWarn}
             onClose={() => setOpenWarn(false)}
             htmlDescription={t('attendance-modal.warn-slower-teaching.description', {
-              module: getDailyModuleData()?.dailyModule?.label,
+              module: languageFix(getDailyModuleData()?.dailyModule?.label, lang),
               repeated: historyLog?.repeated + 1,
               expected: historyLog?.expected,
             })}
