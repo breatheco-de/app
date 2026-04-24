@@ -27,6 +27,7 @@ import {
 } from 'react';
 import Text from '../../Text';
 import Icon from '../../Icon';
+import NextChakraLink from '../../NextChakraLink';
 import Select from '../../ReactSelect';
 import useStyle from '../../../hooks/useStyle';
 import useCustomToast from '../../../hooks/useCustomToast';
@@ -51,7 +52,7 @@ function getVpsStatusPillConfig(status) {
     case 'PROVISIONING':
       return { styleKey: 'completed', labelKey: 'provisioning' };
     case 'ERROR':
-      return { styleKey: 'error', labelKey: 'error' };
+      return { styleKey: 'payment_issue', labelKey: 'error' };
     case 'DELETED':
       return { styleKey: 'cancelled', labelKey: 'deleted' };
     default:
@@ -63,28 +64,43 @@ function getVpsStatusPillConfig(status) {
 const CREDENTIAL_COPY_SLOT = '50px';
 const VPS_SERVER_CONSUMER = 'VPS_SERVER';
 
-function getPlanTitle(plan, lang) {
-  const translation = plan?.translations?.find((tr) => tr.lang?.startsWith(lang));
-  if (translation?.title) return translation.title;
-  const fallback = plan?.translations?.[0]?.title;
-  if (fallback) return fallback;
-  if (plan?.title) return plan.title;
-  if (typeof plan?.slug === 'string' && plan.slug.trim()) {
-    return plan.slug
-      .trim()
-      .replace(/[-_]+/g, ' ')
-      .replace(/\b\w/g, (m) => m.toUpperCase());
-  }
-  return '—';
-}
-
-/** Numeric string from API (MB) → rounded GB label like the reference UI. */
+/** RAM: numeric string treated as MB → rounded GB. */
 function formatSpecsGbFromMbString(value) {
   const s = String(value ?? '').trim();
   if (!s) return '—';
   const n = Number(s);
   if (Number.isFinite(n) && String(n) === s) return `${Math.round(n / 1024)} GB`;
   return s;
+}
+
+/** First `disk_info[].size.unit` if present (lowercase); else null → caller assumes MB. */
+function getDiskSizeUnitHintFromRaw(raw) {
+  const arr = raw?.disk_info;
+  if (!Array.isArray(arr) || arr.length === 0) return null;
+  const unit = arr[0]?.size?.unit;
+  if (typeof unit !== 'string' || !unit.trim()) return null;
+  return unit.trim().toLowerCase();
+}
+
+/**
+ * Disk: if `unitHint` is GiB/GB-style, value is already in that unit → show as GB.
+ * If no hint or unknown unit → assume MB and convert to GB.
+ */
+function formatSpecsDiskForDisplay(diskValueStr, unitHint) {
+  const s = String(diskValueStr ?? '').trim();
+  if (!s) return '—';
+  const n = Number(s);
+  if (!Number.isFinite(n) || String(n) !== s) return s;
+
+  const u = unitHint ? String(unitHint).toLowerCase() : '';
+  if (u === 'gib' || u === 'gb' || u === 'g') {
+    return `${Math.round(n)} GB`;
+  }
+  if (u === 'tb' || u === 'tib' || u === 't') {
+    return `${Math.round(n * 1024)} GB`;
+  }
+  // No disk_info / unknown unit → assume MB (same as RAM)
+  return `${Math.round(n / 1024)} GB`;
 }
 
 /** Numeric string → "N vCPU"; otherwise show as returned. */
@@ -96,6 +112,34 @@ function formatSpecsCpuLine(value) {
   return s;
 }
 
+/** Allowlist may list API ids or slugs (e.g. DigitalOcean). Prefer id when it matches, else slug. */
+function getVendorOptionMatchValue(raw, allowedSet) {
+  const idStr = raw?.id != null && String(raw.id).trim() !== '' ? String(raw.id).trim() : '';
+  const slugStr = typeof raw?.slug === 'string' && raw.slug.trim() !== '' ? raw.slug.trim() : '';
+  if (idStr && allowedSet.has(idStr)) return idStr;
+  if (slugStr && allowedSet.has(slugStr)) return slugStr;
+  return null;
+}
+
+/**
+ * Card-level meta info (city, country, continent, distribution).
+ * Separate from API `metadata`, which holds numeric specs (cpus, memory, disk).
+ */
+function buildOptionMetaInfo(raw) {
+  const distribution = typeof raw?.distribution === 'string' ? raw.distribution.trim() : '';
+  const definitions = [
+    ['city', typeof raw?.city === 'string' ? raw.city.trim() : ''],
+    ['country', typeof raw?.country === 'string' ? raw.country.trim() : ''],
+    ['continent', typeof raw?.continent === 'string' ? raw.continent.trim() : ''],
+    ['distribution', distribution],
+  ];
+  const metaInfo = {};
+  definitions.forEach(([key, value]) => {
+    if (value) metaInfo[key] = value;
+  });
+  return Object.keys(metaInfo).length ? metaInfo : null;
+}
+
 function getNormalizedVendorFieldOptions(field, vendorOptionsPayload, vendorSettings) {
   const optionsKey = field?.options_key;
   const settingsKey = field?.settings_key;
@@ -104,28 +148,34 @@ function getNormalizedVendorFieldOptions(field, vendorOptionsPayload, vendorSett
   const allowedSet = new Set(allowedValues.map((entry) => String(entry)));
 
   return rawOptions
-    .filter((raw) => allowedSet.has(String(raw?.id)))
     .map((raw) => {
-      const rawValue = raw?.id;
-      const rawLabel = raw?.name;
-      if (rawValue == null || rawLabel == null) return null;
-      const city = typeof raw?.city === 'string' ? raw.city.trim() : '';
-      const continent = typeof raw?.continent === 'string' ? raw.continent.trim() : '';
-      const meta = raw?.metadata;
-      const specsCard = meta && typeof meta === 'object' && !Array.isArray(meta)
+      const matchValue = getVendorOptionMatchValue(raw, allowedSet);
+      if (matchValue == null) return null;
+      const rawLabel = raw?.name ?? raw?.description ?? raw?.slug;
+      if (rawLabel == null || String(rawLabel).trim() === '') return null;
+      const meta = raw?.metadata && typeof raw.metadata === 'object' && !Array.isArray(raw.metadata)
+        ? raw.metadata
+        : null;
+      const metaInfo = buildOptionMetaInfo(raw);
+      const cpus = String(meta?.cpus ?? raw?.vcpus ?? '').trim();
+      const memory = String(meta?.memory ?? raw?.memory ?? '').trim();
+      const diskSpace = String(meta?.disk_space ?? raw?.disk ?? '').trim();
+      const diskUnitHint = getDiskSizeUnitHintFromRaw(raw);
+      const specsCard = cpus !== '' && memory !== '' && diskSpace !== ''
         ? {
-          id: String(rawValue),
+          id: String(matchValue),
           name: String(rawLabel),
-          cpus: String(meta.cpus ?? ''),
-          memory: String(meta.memory ?? ''),
-          diskSpace: String(meta.disk_space ?? ''),
+          cpus,
+          memory,
+          diskSpace,
+          diskUnitHint,
         }
         : null;
 
       return {
-        value: rawValue,
+        value: matchValue,
         label: String(rawLabel),
-        ...(city || continent ? { city: city || undefined, continent: continent || undefined } : {}),
+        ...(metaInfo ? { metaInfo } : {}),
         ...(specsCard ? { specsCard } : {}),
       };
     })
@@ -339,7 +389,6 @@ function VPS() {
   const [isLoadingList, setIsLoadingList] = useState(true);
   const [loadListError, setLoadListError] = useState('');
   const [canRequestVps, setCanRequestVps] = useState(false);
-  const [canRequestMetaMissing, setCanRequestMetaMissing] = useState(false);
 
   const [credentialsModalOpen, setCredentialsModalOpen] = useState(false);
   const [credentialsLoading, setCredentialsLoading] = useState(false);
@@ -483,8 +532,10 @@ function VPS() {
           const academyName = source?.academy?.name;
           if (!plan || academyId == null) return;
 
+          const planTitle = typeof plan?.title === 'string' ? plan.title.trim() : '';
           const planSlug = typeof plan?.slug === 'string' ? plan.slug.trim() : '';
-          const planKey = planSlug || String(plan?.id ?? getPlanTitle(plan, lang));
+          const planLabel = planTitle || planSlug || '—';
+          const planKey = planSlug || String(plan?.id ?? planLabel);
           const dedupeKey = `${academyId}::${planKey}`;
           const prev = byDedupeKey.get(dedupeKey);
           if (!prev) {
@@ -507,7 +558,11 @@ function VPS() {
 
         const options = Array.from(byDedupeKey.values()).map(({ item, plan, academyId, academyName }) => ({
           value: item.id,
-          label: getPlanTitle(plan, lang),
+          label: (
+            (typeof plan?.title === 'string' && plan.title.trim())
+            || (typeof plan?.slug === 'string' && plan.slug.trim())
+            || '—'
+          ),
           academyId,
           academyName,
           planSlug: typeof plan?.slug === 'string' ? plan.slug.trim() : '',
@@ -701,7 +756,6 @@ function VPS() {
       if (!(res?.status >= 200 && res?.status < 300)) {
         setVpsList([]);
         setCanRequestVps(false);
-        setCanRequestMetaMissing(false);
         setLoadListError(getProvisioningErrorMessage(res, t('vps.load-error')));
         return;
       }
@@ -709,12 +763,10 @@ function VPS() {
       const payload = res?.data || {};
       setVpsList(payload?.results || []);
       setCanRequestVps(payload?.can_request_vps === true);
-      setCanRequestMetaMissing(false);
       setLoadListError('');
     } catch (err) {
       setVpsList([]);
       setCanRequestVps(false);
-      setCanRequestMetaMissing(false);
       setLoadListError(getProvisioningErrorMessage(err?.response ?? err, t('vps.load-error')));
     } finally {
       setIsLoadingList(false);
@@ -884,13 +936,13 @@ function VPS() {
         status: 'success',
       });
       closeRequestModal();
-      fetchVpsList();
     } catch (err) {
       createToast({
         title: getProvisioningErrorMessage(err?.response ?? err, t('vps.load-error')),
         status: 'error',
       });
     } finally {
+      fetchVpsList();
       setSubmittingVpsRequest(false);
     }
   }, [
@@ -905,13 +957,6 @@ function VPS() {
     t,
     selectedVendorSelections,
   ]);
-
-  let requestDisabledReason = '';
-  if (canRequestMetaMissing) {
-    requestDisabledReason = t('vps.can-request-meta-missing');
-  } else if (!canRequestVps) {
-    requestDisabledReason = t('vps.cannot-request');
-  }
 
   return (
     <>
@@ -951,8 +996,8 @@ function VPS() {
               color="white"
               fontSize="15px"
               textTransform="uppercase"
-              title={requestDisabledReason || undefined}
-              isDisabled={Boolean(requestDisabledReason)}
+              title={!canRequestVps ? t('vps.cannot-request') : undefined}
+              isDisabled={!canRequestVps}
               onClick={openRequestModal}
             >
               <Text fontSize="15px" fontWeight="700">
@@ -960,12 +1005,6 @@ function VPS() {
               </Text>
             </Button>
           </Flex>
-
-          {/* {requestDisabledReason && (
-          <Text size="sm" color="gray.600" mb="10px">
-            {requestDisabledReason}
-          </Text>
-        )} */}
 
           {isLoadingList && (
           <Text size="md" fontWeight="400">
@@ -981,7 +1020,22 @@ function VPS() {
 
           {!isLoadingList && !loadListError && vpsList.length === 0 && (
           <Text size="md" fontWeight="400">
-            {t('vps.no-vps')}
+            {canRequestVps ? t('vps.no-vps') : t('vps.cannot-request')}
+            {!canRequestVps && (
+              <>
+                {' '}
+                <NextChakraLink
+                  href="/pricing"
+                  color="blue.default"
+                  fontWeight="700"
+                  textDecoration="none"
+                  _hover={{ textDecoration: 'underline' }}
+                >
+                  {t('vps.pricing-page')}
+                </NextChakraLink>
+                .
+              </>
+            )}
           </Text>
           )}
 
@@ -1176,7 +1230,9 @@ function VPS() {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody display="flex" flexDirection="column" gridGap="12px" py="16px">
-            <Text size="sm" color="gray.600">{t('vps.modal.description')}</Text>
+            {requestStep === 'provider' && (
+              <Text size="sm" color="gray.600">{t('vps.modal.description')}</Text>
+            )}
 
             {(subsState.isLoading || loadingVpsConsumables) && (
               <Text size="sm" color="gray.600">{t('vps.modal.loading-plans')}</Text>
@@ -1332,7 +1388,7 @@ function VPS() {
                         const value = selectedVendorSelections?.[selectionKey];
                         const selectedOption = normalizedOptions.find((opt) => opt.value === value) || null;
                         const fieldLabel = lang === 'es' ? field?.label_es : field?.label_en;
-                        const showLocationOnPills = normalizedOptions.some((o) => o.city || o.continent);
+                        const showMetaInfoOnPills = normalizedOptions.some((o) => Object.values(o.metaInfo || {}).some(Boolean));
 
                         return (
                           <Box
@@ -1439,6 +1495,18 @@ function VPS() {
                                               >
                                                 {opt.specsCard.name}
                                               </Text>
+                                              {Object.values(opt.metaInfo || {}).some(Boolean) ? (
+                                                <ChakraText
+                                                  fontSize="11px"
+                                                  fontWeight="500"
+                                                  color="gray.500"
+                                                  lineHeight="short"
+                                                  textAlign="left"
+                                                  noOfLines={1}
+                                                >
+                                                  {Object.values(opt.metaInfo || {}).filter(Boolean).join(' · ')}
+                                                </ChakraText>
+                                              ) : null}
                                             </Box>
                                           </Flex>
                                           <Flex alignItems="stretch" justifyContent="space-between" gap="6px" width="100%">
@@ -1463,7 +1531,7 @@ function VPS() {
                                                 {t('vps.modal.specs.disk')}
                                               </ChakraText>
                                               <ChakraText fontSize="13px" fontWeight="700" color="gray.700" textAlign="center" whiteSpace="nowrap">
-                                                {formatSpecsGbFromMbString(opt.specsCard.diskSpace)}
+                                                {formatSpecsDiskForDisplay(opt.specsCard.diskSpace, opt.specsCard.diskUnitHint)}
                                               </ChakraText>
                                             </Box>
                                           </Flex>
@@ -1507,7 +1575,7 @@ function VPS() {
                                               {opt.label}
                                             </Text>
                                           </Flex>
-                                          {showLocationOnPills && (opt.city || opt.continent) ? (
+                                          {showMetaInfoOnPills && Object.values(opt.metaInfo || {}).some(Boolean) ? (
                                             <ChakraText
                                               as="span"
                                               fontSize="12px"
@@ -1517,7 +1585,7 @@ function VPS() {
                                               flexShrink={0}
                                               whiteSpace="nowrap"
                                             >
-                                              {[opt.city, opt.continent].filter(Boolean).join(' · ')}
+                                              {Object.values(opt.metaInfo || {}).filter(Boolean).join(' · ')}
                                             </ChakraText>
                                           ) : null}
                                         </Flex>
