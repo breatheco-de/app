@@ -72,7 +72,8 @@ function SyllabusContent() {
   const [extendedInstructions, setExtendedInstructions] = useState(null);
   const [extendedIsEnabled, setExtendedIsEnabled] = useState(false);
   const [showPendingTasks, setShowPendingTasks] = useState(false);
-  const [currentSelectedModule, setCurrentSelectedModule] = useState(null);
+
+  const [teacherModuleListIndex, setTeacherModuleListIndex] = useState(null);
   const [openNextModuleModal, setOpenNextModuleModal] = useState(false);
   const [quizSlug, setQuizSlug] = useState(null);
   const [showSolutionVideo, setShowSolutionVideo] = useState(false);
@@ -435,7 +436,7 @@ function SyllabusContent() {
 
   const cleanCurrentData = () => {
     setCurrentAsset(null);
-    setCurrentSelectedModule(null);
+    setTeacherModuleListIndex(null);
     setReadme(null);
     setIpynbHtmlUrl(null);
     setCurrentBlankProps(null);
@@ -550,17 +551,31 @@ function SyllabusContent() {
     };
   }, [router, lessonSlug, cohortSession, sortedAssignments.length]);
 
+  const teacherInstructionModuleIndex = useMemo(
+    () => sortedAssignments.findIndex(
+      (l) => l.content?.some((m) => m.slug === lessonSlug),
+    ),
+    [sortedAssignments, lessonSlug],
+  );
+
   useEffect(() => {
-    const currentSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
-    const currModuleIndex = sortedAssignments.findIndex(
-      (l) => l.content.some((m) => m.slug === lessonSlug),
-    );
-    const nextModuleData = sortedAssignments[currModuleIndex + 1];
-    const prevModuleData = sortedAssignments[currModuleIndex - 1];
+    setTeacherModuleListIndex(null);
+  }, [lessonSlug]);
+
+  useEffect(() => {
+    const nextModuleData = sortedAssignments[teacherInstructionModuleIndex + 1];
+    const prevModuleData = sortedAssignments[teacherInstructionModuleIndex - 1];
 
     const defaultSyllabus = sortedAssignments.find(
       (l) => l.content.find((m) => m.slug === lessonSlug),
     );
+
+    const activeIndex = teacherModuleListIndex != null
+      ? teacherModuleListIndex
+      : teacherInstructionModuleIndex;
+    const currentSyllabus = activeIndex >= 0
+      ? sortedAssignments[activeIndex]
+      : null;
 
     if (defaultSyllabus) {
       setSelectedSyllabus(currentSyllabus || defaultSyllabus);
@@ -568,7 +583,22 @@ function SyllabusContent() {
       setPrevModule(prevModuleData);
       setDefaultSelectedSyllabus(defaultSyllabus);
     }
-  }, [sortedAssignments, lessonSlug, currentSelectedModule]);
+  }, [sortedAssignments, lessonSlug, teacherModuleListIndex, teacherInstructionModuleIndex]);
+
+  const moduleOptionsForInstructions = useMemo(
+    () => sortedAssignments.map((mod, i) => ({
+      value: String(i),
+      label: `#${mod?.id} - ${languageFix(mod?.label, lang)}`,
+    })),
+    [sortedAssignments, lang],
+  );
+  let activeInstructionModuleListIndex = 0;
+  if (teacherModuleListIndex != null) {
+    activeInstructionModuleListIndex = teacherModuleListIndex;
+  } else if (teacherInstructionModuleIndex >= 0) {
+    activeInstructionModuleListIndex = teacherInstructionModuleIndex;
+  }
+  const moduleInstructionSelectValue = moduleOptionsForInstructions[activeInstructionModuleListIndex] ?? null;
 
   useEffect(() => {
     if (selectedSyllabus.extendedInstructions) {
@@ -1666,21 +1696,11 @@ function SyllabusContent() {
                 fontSize="25px"
                 placeholder={t('common:select-cohort')}
                 noOptionsMessage={() => t('common:no-options-message')}
-                defaultValue={{
-                  value: selectedSyllabus?.id || defaultSelectedSyllabus?.id,
-                  slug: selectedSyllabus?.slug || defaultSelectedSyllabus?.slug,
-                  label: selectedSyllabus?.id
-                    ? `#${selectedSyllabus?.id} - ${languageFix(selectedSyllabus?.label, lang)}`
-                    : `#${defaultSelectedSyllabus?.id} - ${languageFix(defaultSelectedSyllabus?.label, lang)}`,
+                value={moduleInstructionSelectValue}
+                onChange={(opt) => {
+                  if (opt) setTeacherModuleListIndex(parseInt(opt.value, 10));
                 }}
-                onChange={({ value }) => {
-                  setCurrentSelectedModule(parseInt(value, 10));
-                }}
-                options={sortedAssignments.map((module) => ({
-                  value: module?.id,
-                  slug: module.slug,
-                  label: `#${module?.id} - ${languageFix(module?.label, lang)}`,
-                }))}
+                options={moduleOptionsForInstructions}
               />
             )}
           </Box>
