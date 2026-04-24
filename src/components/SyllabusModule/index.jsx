@@ -54,7 +54,7 @@ function SyllabusModule({
         const langPrefix = lang !== 'en' ? `/${lang}` : '';
         const moduleSlug = firstModule?.slug?.slug || firstModule.slug;
         const moduleType = firstModule.type?.toLowerCase() || firstModule.task_type?.toLowerCase();
-        const url = `${langPrefix}/syllabus/${cohortData.slug}/${moduleType}/${moduleSlug}`;
+        const url = `${langPrefix}/syllabus/${cohortData.slug}/${moduleType}/${moduleSlug}?moduleId=${index}`;
 
         window.location.href = url;
       }

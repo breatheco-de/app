@@ -16,6 +16,7 @@ import useStyle from '../../hooks/useStyle';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import { getAttendanceList, saveCohortAttendancy } from '../../lib/admissions';
 import { getAttendance } from '../../utils/cohorts';
+import { languageFix } from '../../utils';
 import useCustomToast from '../../hooks/useCustomToast';
 
 function AttendanceModal({
@@ -260,17 +261,11 @@ function AttendanceModal({
                   id="module"
                   placeholder="Select module"
                 >
-                  {sortedAssignments.map((module) => {
-                    // Use 'us' if lang is 'en', otherwise use lang
-                    const labelLang = lang === 'en' ? 'us' : lang;
-                    // If the label doesn't exist for the language, use the label directly
-                    const moduleLabel = module.label[labelLang] || module.label;
-                    return (
-                      <option key={module.id} value={module.id}>
-                        {`#${module.id} - ${moduleLabel}`}
-                      </option>
-                    );
-                  })}
+                  {sortedAssignments.map((module) => (
+                    <option key={module.id} value={module.id}>
+                      {`#${module.id} - ${languageFix(module?.label, lang)}`}
+                    </option>
+                  ))}
                 </Select>
               )}
             </FormControl>

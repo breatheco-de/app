@@ -15,6 +15,7 @@
   "cancel": "Cancel",
   "error-msg": "Something went wrong while synchronizing the cohort",
   "educational-status": "Educational Status",
+  "syllabus-no-projects-in-cohort": "This cohort's syllabus has no projects.",
   "delivered-percentage": "% delivered",
   "last-deliver": "Last delivery: {{date}} ago",
   "no-deliver": "No deliveries yet",
@@ -60,6 +61,7 @@
   },
   "filter": {
     "type": "Filter by Type",
+    "micro-cohort": "Filter by micro cohort",
     "project": "Filter by Project",
     "student": "Filter by Student",
     "status": "Filter by Status",
@@ -151,5 +153,7 @@
     "person-has-commented": "{{name}} has commented:",
     "go-to-review": "Go to review",
     "teacher-has-not-reviewed-files": "Your teacher has not reviewed any files yet. try again later."
-  }
+  },
+  "open-student-profile": "Open student profile",
+  "macro-progress-breakdown-toggle": "Micro-cohort breakdown"
 }

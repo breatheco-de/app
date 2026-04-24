@@ -13,7 +13,6 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import noLearnpackAssets from '../../../public/no-learnpack-in-cloud.json';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useModuleHandler from '../../hooks/useModuleHandler';
 import bc from '../../services/breathecode';
@@ -26,10 +25,22 @@ import useStyle from '../../hooks/useStyle';
 
 const ModalToCloneProject = lazy(() => import('./ModalToCloneProject'));
 
+function isGithubRepoUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  try {
+    const href = url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
+    const { hostname } = new URL(href);
+    return hostname === 'github.com' || hostname === 'www.github.com';
+  } catch {
+    return false;
+  }
+}
+
 export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, learnpackUrlFromPublicView, startWithLearnpack, openWithLearnpackNoSaas, variant, isStarted, publicView, ...rest }) {
   const { t, lang } = useTranslation('common');
   const { cohorts } = useAuth();
 
+  const showOpenLocallyOption = isGithubRepoUrl(currentAsset?.url);
   const isExternalExercise = currentAsset.external && currentAsset.asset_type === 'EXERCISE';
   const noSaaSCohortsAvailable = cohorts.some((c) => c?.available_as_saas === false) && publicView;
 
@@ -99,25 +110,29 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
               {t('learnpack.recommended')}
             </Text>
           </Box>
-          <Text alignSelf={{ base: 'center', md: 'flex-start' }} color="white" fontSize="14px" display={{ base: 'block', md: 'block' }} paddingTop={{ base: '0px', md: '4px' }}>
-            {t('learnpack.or')}
-          </Text>
-          <Button
-            cursor="pointer"
-            size="sm"
-            padding="4px 8px"
-            fontSize="14px"
-            fontWeight="500"
-            background="gray.200"
-            color="blue.default"
-            alignSelf={{ base: 'stretch', md: 'flex-start' }}
-            onClick={() => {
-              setShowCloneModal(true);
-            }}
-            {...rest}
-          >
-            {t('common:learnpack.open-locally', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
-          </Button>
+          {showOpenLocallyOption && (
+            <>
+              <Text alignSelf={{ base: 'center', md: 'flex-start' }} color="white" fontSize="14px" display={{ base: 'block', md: 'block' }} paddingTop={{ base: '0px', md: '4px' }}>
+                {t('learnpack.or')}
+              </Text>
+              <Button
+                cursor="pointer"
+                size="sm"
+                padding="4px 8px"
+                fontSize="14px"
+                fontWeight="500"
+                background="gray.200"
+                color="blue.default"
+                alignSelf={{ base: 'stretch', md: 'flex-start' }}
+                onClick={() => {
+                  setShowCloneModal(true);
+                }}
+                {...rest}
+              >
+                {t('common:learnpack.open-locally', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+              </Button>
+            </>
+          )}
         </Box>
       ) : (
         <Button
@@ -155,7 +170,6 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   const { hexColor, fontColor } = useStyle();
   const [showCloneModal, setShowCloneModal] = useState(false);
   const [vendors, setVendors] = useState([]);
-  const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
 
   const fetchProvisioningVendors = async (academyId) => {
     try {
@@ -201,10 +215,9 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
     fetchVendors();
   }, [cohortSession, cohorts]);
 
-  const NoSaasOnPublicView = cohorts.some((c) => c?.available_as_saas === false);
   const isInteractive = currentAsset?.interactive;
   const isExternalExercise = currentAsset?.external && currentAsset?.asset_type === 'EXERCISE';
-  const startWithLearnpack = currentAsset?.learnpack_deploy_url && cohortSession?.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
+  const startWithLearnpack = currentAsset?.learnpack_deploy_url && cohortSession?.available_as_saas && currentAsset?.grading !== 'incremental';
   const openWithLearnpackNoSaas = isExternalExercise && currentAsset?.learnpack_deploy_url && !cohortSession?.available_as_saas;
 
   const renderModal = () => (

@@ -48,6 +48,7 @@ import useSocialShare from '../../../../../hooks/useSocialShare';
 
 function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
+  const { t: tDashboard } = useTranslation('dashboard');
   const router = useRouter();
   const { createToast } = useCustomToast({ toastId: 'ai-chat-access-error' });
 
@@ -117,10 +118,36 @@ function SyllabusContent() {
   const { label, teacherInstructions: teacherInstructionsRaw, keyConcepts } = selectedSyllabus;
   const normalizedTeacherInstructions = languageFix(teacherInstructionsRaw, lang);
 
+  const teacherSidebarAvail = useMemo(() => {
+    const extendedPlaceholder = tDashboard('teacher-sidebar.no-instructions');
+    const ext = selectedSyllabus?.extendedInstructions;
+    const teacher = selectedSyllabus?.teacherInstructions;
+    const hasRealExtended = Boolean(
+      ext && String(ext).trim().length > 0 && ext !== extendedPlaceholder,
+    );
+    const hasRealTeacher = Boolean(teacher && String(teacher).trim().length > 0);
+    const hasContent = hasRealExtended || hasRealTeacher;
+    const isStudentRole = cohortSession?.cohort_user?.role
+      ? !professionalRoles.includes(cohortSession.cohort_user.role)
+      : true;
+    return {
+      hasContent, hasRealExtended, hasRealTeacher, isStudentRole,
+    };
+  }, [
+    selectedSyllabus?.extendedInstructions,
+    selectedSyllabus?.teacherInstructions,
+    cohortSession?.cohort_user?.role,
+    tDashboard,
+  ]);
+
   const firstTask = nextModule?.content[0];
   const lastPrevTask = prevModule?.content && prevModule.content[prevModule.content.length - 1];
 
-  const { cohortSlug, lesson, lessonSlug } = router.query;
+  const { cohortSlug, lesson, lessonSlug, mainCohortSlug: mainCohortSlugQuery } = router.query;
+  const routeModuleId = Array.isArray(router.query?.moduleId) ? router.query.moduleId[0] : router.query?.moduleId;
+  const routeMacroSlug = typeof mainCohortSlugQuery === 'string'
+    ? mainCohortSlugQuery
+    : mainCohortSlugQuery?.[0];
 
   const language = router.locale === 'en' ? 'us' : router.locale;
 
@@ -133,7 +160,24 @@ function SyllabusContent() {
     ? section.filteredContentByPending
     : section.filteredContent));
 
-  const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug || l.translations?.[language]?.slug === lessonSlug || (currentAsset?.id && l.translations?.[language]?.slug === currentAsset.slug)));
+  const moduleMatchesLessonSlug = (section) => section?.some(
+    (l) => l.slug === lessonSlug
+      || l.translations?.[language]?.slug === lessonSlug
+      || (currentAsset?.id && l.translations?.[language]?.slug === currentAsset.slug),
+  );
+
+  const routeModuleIndex = routeModuleId != null
+    ? sortedAssignments.findIndex((section, idx) => String(section?.id) === String(routeModuleId)
+      || String(section?.slug) === String(routeModuleId)
+      || String(idx) === String(routeModuleId))
+    : -1;
+
+  const routeModuleContainsCurrentSlug = routeModuleIndex >= 0
+    && moduleMatchesLessonSlug(filteredCurrentAssignments[routeModuleIndex]);
+
+  const currentModuleIndex = routeModuleContainsCurrentSlug
+    ? routeModuleIndex
+    : filteredCurrentAssignments.findIndex((s) => moduleMatchesLessonSlug(s));
 
   const currentModule = sortedAssignments[currentModuleIndex];
 
@@ -242,6 +286,7 @@ function SyllabusContent() {
   const setCohortAndAssignments = async () => {
     const cohort = await getCohortData({
       cohortSlug,
+      routeMacroSlug,
     });
     getCohortUserCapabilities({
       cohort,
@@ -403,12 +448,13 @@ function SyllabusContent() {
     setOpenTargetBlankModal(false);
   };
 
-  const onClickAssignment = (e, item) => {
+  const onClickAssignment = (e, item, moduleId) => {
     router.push({
       query: {
         ...router.query,
         lesson: item.type?.toLowerCase(),
         lessonSlug: item?.slug,
+        moduleId: moduleId ?? undefined,
       },
     });
     cleanCurrentData();
@@ -529,8 +575,34 @@ function SyllabusContent() {
       const content = languageFix(selectedSyllabus.extendedInstructions, lang);
       const markdown = getMarkDownContent(content);
       setExtendedInstructions(markdown);
+    } else {
+      setExtendedInstructions(null);
     }
   }, [selectedSyllabus, lang]);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'development' || !isAvailableAsSaas) return;
+    if (!cohortSession?.cohort_user) return;
+    console.debug('[Syllabus] teacher instructions UI', {
+      cohortRole: cohortSession.cohort_user.role,
+      hiddenForStudents: teacherSidebarAvail.isStudentRole,
+      hasRealTeacherMarkdown: teacherSidebarAvail.hasRealTeacher,
+      hasRealExtendedInstructions: teacherSidebarAvail.hasRealExtended,
+      showInstructorSidebarTools: teacherSidebarAvail.hasContent && !teacherSidebarAvail.isStudentRole,
+      moduleId: selectedSyllabus?.id,
+      note: teacherSidebarAvail.isStudentRole
+        ? 'Students never see the yellow teacher instructions block (GuidedExperienceSidebar / TimelineSidebar use !isStudent).'
+        : undefined,
+    });
+  }, [
+    isAvailableAsSaas,
+    cohortSession?.cohort_user,
+    teacherSidebarAvail.hasContent,
+    teacherSidebarAvail.isStudentRole,
+    teacherSidebarAvail.hasRealTeacher,
+    teacherSidebarAvail.hasRealExtended,
+    selectedSyllabus?.id,
+  ]);
 
   const teacherActions = professionalRoles.includes(cohortSession?.cohort_user?.role)
     ? [
@@ -931,7 +1003,7 @@ function SyllabusContent() {
             grantSyllabusAccess={grantAccess}
             isStudent={!professionalRoles.includes(cohortSession?.cohort_user?.role)}
             teacherInstructions={{
-              existContentToShow: extendedInstructions !== null,
+              existContentToShow: teacherSidebarAvail.hasContent,
               actionHandler: () => {
                 setExtendedIsEnabled(!extendedIsEnabled);
                 if (extendedIsEnabled === false) {
@@ -950,7 +1022,7 @@ function SyllabusContent() {
             onToggle={onToggle}
             isStudent={!professionalRoles.includes(cohortSession?.cohort_user?.role)}
             teacherInstructions={{
-              existContentToShow: extendedInstructions !== null,
+              existContentToShow: teacherSidebarAvail.hasContent,
               actionHandler: () => {
                 setExtendedIsEnabled(!extendedIsEnabled);
                 if (extendedIsEnabled === false) {
@@ -1579,7 +1651,7 @@ function SyllabusContent() {
           }
         }}
       />
-      {extendedInstructions !== null && (
+      {teacherSidebarAvail.hasContent && (
         <SimpleModal isOpen={extendedIsEnabled} onClose={() => setExtendedIsEnabled(false)} padding="2rem 0 2rem 0" style={{ margin: '3rem 0' }} size={{ md: '2xl', base: 'xl' }}>
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
             <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
