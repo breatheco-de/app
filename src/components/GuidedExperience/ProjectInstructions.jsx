@@ -13,7 +13,6 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import noLearnpackAssets from '../../../public/no-learnpack-in-cloud.json';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useModuleHandler from '../../hooks/useModuleHandler';
 import bc from '../../services/breathecode';
@@ -171,7 +170,6 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   const { hexColor, fontColor } = useStyle();
   const [showCloneModal, setShowCloneModal] = useState(false);
   const [vendors, setVendors] = useState([]);
-  const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
 
   const fetchProvisioningVendors = async (academyId) => {
     try {
@@ -217,10 +215,9 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
     fetchVendors();
   }, [cohortSession, cohorts]);
 
-  const NoSaasOnPublicView = cohorts.some((c) => c?.available_as_saas === false);
   const isInteractive = currentAsset?.interactive;
   const isExternalExercise = currentAsset?.external && currentAsset?.asset_type === 'EXERCISE';
-  const startWithLearnpack = currentAsset?.learnpack_deploy_url && cohortSession?.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
+  const startWithLearnpack = currentAsset?.learnpack_deploy_url && cohortSession?.available_as_saas && currentAsset?.grading !== 'incremental';
   const openWithLearnpackNoSaas = isExternalExercise && currentAsset?.learnpack_deploy_url && !cohortSession?.available_as_saas;
 
   const renderModal = () => (

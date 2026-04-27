@@ -455,13 +455,13 @@ function LLM() {
         <Box width="100%">
           <Flex
             direction={{ base: 'column', md: 'row' }}
-            alignItems="center"
-            justifyContent={{ base: 'center', md: 'space-between' }}
+            alignItems={{ base: 'flex-start', md: 'center' }}
+            justifyContent={{ base: 'flex-start', md: 'space-between' }}
             mb={{ base: '18px', md: '14px' }}
             flexWrap="wrap"
             gridGap={{ base: '10px', md: '12px' }}
           >
-            <Box width="80%" mb="18px">
+            <Box width={{ base: '100%', md: '80%' }} mb="18px">
               <Text fontSize="16px" fontWeight="700">
                 {t('llm.title')}
               </Text>
@@ -475,6 +475,7 @@ function LLM() {
               color="white"
               fontSize="15px"
               textTransform="uppercase"
+              alignSelf={{ base: 'center', md: 'auto' }}
               isDisabled={llmKeysForbidden}
               onClick={openGenerateModal}
             >
