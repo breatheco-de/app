@@ -84,6 +84,34 @@
       }
     }
   }, {
+    "slug": "curso-ai-engineering",
+    "icon": "data-science",
+    "color": "#7C3AED",
+    "utm": {
+      "source": "4geeks.com",
+      "medium": "dropdown",
+      "campaign": "ai-engineering"
+    },
+    "course_translation": {
+      "title": "AI Engineering",
+      "description": "Conviértete en AI Engineer y aprende a construir, integrar y desplegar productos impulsados por inteligencia artificial usando LLMs, automatización y prácticas modernas de ingeniería de software, con mentoría experta y la opción de una garantía de empleo.",
+      "landing_variables": {
+        "card": [{
+          "icon": "book",
+          "title": "Salario promedio por año:",
+          "value": "$95K-$135K+"
+        }, {
+          "icon": "strength",
+          "title": "Posiciones laborales:",
+          "value": "1.3 millones de nuevos roles globalmente"
+        }, {
+          "icon": "key",
+          "title": "Crecimiento proyectado:",
+          "value": "70% durante la próxima década"
+        }]
+      }
+    }
+  }, {
     "slug": "curso-datascience-machine-learning",
     "icon": "laptop-code",
     "color": "#FFB718",

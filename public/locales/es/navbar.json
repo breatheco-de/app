@@ -26,15 +26,19 @@
           "description": "Transición hacia carreras tecnológicas, con mentoría y soporte ilimitados de por vida. Te equipa con las habilidades necesarias para enfrentar desafíos del mundo real y te conecta con oportunidades de la industria.",
           "subMenu": [
             {
-              "href": "https://4geeksacademy.com/es/coding-bootcamps/desarrollador-full-stack",
-              "label": "Desarrollo full stack"
+              "href": "https://4geeksacademy.com/en/career-programs/ai-engineering",
+              "label": "AI Engineering"
             },
             {
-              "href": "https://4geeksacademy.com/es/coding-bootcamps/curso-datascience-machine-learning",
+              "href": "https://4geeksacademy.com/en/career-programs/full-stack",
+              "label": "Desarrollo full stack con IA"
+            },
+            {
+              "href": "https://4geeksacademy.com/en/career-programs/data-science-ml",
               "label": "Ciencia de datos y machine learning"
             },
             {
-              "href": "https://4geeksacademy.com/es/coding-bootcamps/curso-ciberseguridad",
+              "href": "https://4geeksacademy.com/en/career-programs/cybersecurity",
               "label": "Ciberseguridad"
             }
           ]
