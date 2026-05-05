@@ -100,35 +100,6 @@
       "position": 2
     },
     {
-      "id": "workforce-development",
-      "label": "Build your workforce",
-      "bgColor": "#FFF4DC",
-      "titleColor": "#FFB718",
-      "description": "Connect people and companies through learning, talent, and training programs tailored to real market needs. Whether you're building your team or your future, this is where potential meets opportunity.",
-      "mainMenu": [
-        {
-          "label": "",
-          "id": "workforce-development",
-          "description": "",
-          "subMenu": [
-            {
-              "href": "https://www.4geeks.works/apprenticeship-landing",
-              "label": "Apprenticeship"
-            },
-            {
-              "href": "https://www.4geeks.works/hire-early-talent",
-              "label": "Find and hire talent"
-            },
-            {
-              "href": "https://www.4geeks.works/copia-de-apprenticeship",
-              "label": "Upskilling your team"
-            }
-          ]
-        }
-      ],
-      "position": 3
-    },
-    {
       "id": "live",
       "label": "Live",
       "bgColor": "#DFFFE8",
