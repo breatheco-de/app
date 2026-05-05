@@ -100,35 +100,6 @@
       "position": 2
     },
     {
-      "id": "read",
-      "label": "Para Empresas",
-      "bgColor": "#FFF4DC",
-      "titleColor": "#FFB718",
-      "description": "Programas de aprendizaje, captación de nuevo talento y/o capacitación adaptados a las necesidades del mercado. Ya sea que estés construyendo tu equipo o tu futuro, este es el lugar donde se encuentra la oportunidad.",
-      "mainMenu": [
-        {
-          "label": "",
-          "id": "workforce-development",
-          "description": "",
-          "subMenu": [
-            {
-              "href": "https://www.4geeks.works/apprenticeship-landing",
-              "label": "Apprenticeship"
-            },
-            {
-              "href": "https://www.4geeks.works/hire-early-talent",
-              "label": "Find and hire talent"
-            },
-            {
-              "href": "https://www.4geeks.works/copia-de-apprenticeship",
-              "label": "Upskilling your team"
-            }
-          ]
-        }
-      ],
-      "position": 3
-    },
-    {
       "id": "live",
       "label": "Aprende en vivo",
       "bgColor": "#DFFFE8",
