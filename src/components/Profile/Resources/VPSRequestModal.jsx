@@ -258,7 +258,7 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
       return undefined;
     }
 
-    const allowedStatuses = new Set(['ACTIVE', 'FREE_TRIAL', 'CANCELLED']);
+    const allowedStatuses = new Set(['ACTIVE', 'FREE_TRIAL', 'CANCELLED', 'FULLY_PAID']);
     const subscriptions = subsState.subscriptions?.subscriptions ?? [];
     const planFinancings = subsState.subscriptions?.plan_financings ?? [];
     const subscriptionsById = Object.fromEntries(subscriptions.map((s) => [String(s?.id), s]));
