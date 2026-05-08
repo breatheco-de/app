@@ -23,7 +23,7 @@ import { es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import {
-  useCallback, useEffect, useMemo, useState,
+  useCallback, useEffect, useMemo, useRef, useState,
 } from 'react';
 import Text from '../../Text';
 import Icon from '../../Icon';
@@ -257,6 +257,8 @@ VpsCard.defaultProps = {
 };
 
 function VPS() {
+  const VPS_POLL_INTERVAL_MS = 4000;
+  const VPS_POLL_MAX_ATTEMPTS = 20;
   const { borderColor2 } = useStyle();
   const { t, lang } = useTranslation('profile');
   const { createToast } = useCustomToast();
@@ -274,6 +276,7 @@ function VPS() {
   const [credentialsLoadError, setCredentialsLoadError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [requestModalOpen, setRequestModalOpen] = useState(false);
+  const isMountedRef = useRef(true);
 
   const planTitleBySlug = useMemo(() => {
     const subscriptions = subsState?.subscriptions?.subscriptions ?? [];
@@ -298,29 +301,62 @@ function VPS() {
   const closeRequestModal = useCallback(() => {
     setRequestModalOpen(false);
   }, []);
-  const fetchVpsList = useCallback(async () => {
-    setIsLoadingList(true);
+  const fetchVpsList = useCallback(async ({ withLoader = true } = {}) => {
+    if (withLoader && isMountedRef.current) setIsLoadingList(true);
     try {
       const res = await bc.provisioning().getMyVPS();
       if (!(res?.status >= 200 && res?.status < 300)) {
-        setVpsList([]);
-        setCanRequestVps(false);
-        setLoadListError(getProvisioningErrorMessage(res, t('vps.load-error')));
-        return;
+        if (isMountedRef.current) {
+          setVpsList([]);
+          setCanRequestVps(false);
+          setLoadListError(getProvisioningErrorMessage(res, t('vps.load-error')));
+        }
+        return { ok: false, results: [] };
       }
 
       const payload = res?.data || {};
-      setVpsList(payload?.results || []);
-      setCanRequestVps(payload?.can_request_vps === true);
-      setLoadListError('');
+      const results = payload?.results || [];
+      if (isMountedRef.current) {
+        setVpsList(results);
+        setCanRequestVps(payload?.can_request_vps === true);
+        setLoadListError('');
+      }
+      return { ok: true, results };
     } catch (err) {
-      setVpsList([]);
-      setCanRequestVps(false);
-      setLoadListError(getProvisioningErrorMessage(err?.response ?? err, t('vps.load-error')));
+      if (isMountedRef.current) {
+        setVpsList([]);
+        setCanRequestVps(false);
+        setLoadListError(getProvisioningErrorMessage(err?.response ?? err, t('vps.load-error')));
+      }
+      return { ok: false, results: [] };
     } finally {
-      setIsLoadingList(false);
+      if (withLoader && isMountedRef.current) setIsLoadingList(false);
     }
   }, [t]);
+
+  const pollVpsUntilResolved = useCallback(async () => {
+    const runAttempt = async (attempt) => {
+      const { ok, results } = await fetchVpsList({ withLoader: false });
+      const hasResolvedVps = (results || []).some((vps) => {
+        const status = String(vps?.status || '').toUpperCase();
+        return status === 'ACTIVE' || status === 'ERROR';
+      });
+      if (ok && hasResolvedVps) return;
+      if (!isMountedRef.current || attempt + 1 >= VPS_POLL_MAX_ATTEMPTS) return;
+
+      await new Promise((resolve) => { setTimeout(resolve, VPS_POLL_INTERVAL_MS); });
+      await runAttempt(attempt + 1);
+    };
+
+    await runAttempt(0);
+  }, [fetchVpsList, VPS_POLL_INTERVAL_MS, VPS_POLL_MAX_ATTEMPTS]);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // Load current user VPS list on mount.
   useEffect(() => {
@@ -662,7 +698,7 @@ function VPS() {
       <VPSRequestModal
         isOpen={requestModalOpen}
         onClose={closeRequestModal}
-        onSuccess={fetchVpsList}
+        onSuccess={pollVpsUntilResolved}
       />
     </>
   );
