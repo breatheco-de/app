@@ -88,11 +88,21 @@ function formatSpendValue(spend) {
   return String(`$${spend}`);
 }
 
+function getAcademyLabel(entry, lang) {
+  const academyName = typeof entry?.academy?.name === 'string' ? entry.academy.name.trim() : '';
+  if (academyName) return academyName;
+  const academyId = entry?.academy?.id;
+  if (academyId == null) return '—';
+  return lang === 'es' ? `Academia #${academyId}` : `Academy #${academyId}`;
+}
+
 function LLMKeyCard({
   keyAlias,
   usageText,
   createdAtText,
   planTitle,
+  onViewDetails,
+  viewDetailsLabel,
   onDelete,
   isDeleteLoading,
   deleteAriaLabel,
@@ -148,6 +158,14 @@ function LLMKeyCard({
           </Box>
           <Button
             variant="outline"
+            textTransform="uppercase"
+            fontSize="12px"
+            onClick={onViewDetails}
+          >
+            {viewDetailsLabel}
+          </Button>
+          <Button
+            variant="outline"
             border="none"
             aria-label={deleteAriaLabel}
             isLoading={isDeleteLoading}
@@ -177,6 +195,8 @@ LLMKeyCard.propTypes = {
   usageText: PropTypes.string.isRequired,
   createdAtText: PropTypes.string,
   planTitle: PropTypes.string,
+  onViewDetails: PropTypes.func.isRequired,
+  viewDetailsLabel: PropTypes.string.isRequired,
   onDelete: PropTypes.func.isRequired,
   isDeleteLoading: PropTypes.bool,
   deleteAriaLabel: PropTypes.string.isRequired,
@@ -201,49 +221,78 @@ function LLM() {
   const { createToast } = useCustomToast();
   const { state: subsState } = useSubscriptions();
 
-  const planOptions = useMemo(() => {
+  const llmConsumableOptions = useMemo(() => {
     const subs = subsState.subscriptions?.subscriptions ?? [];
     const financings = subsState.subscriptions?.plan_financings ?? [];
-    const seenAcademies = new Set();
+    const seenPairs = new Set();
     const options = [];
-    const allowedStatuses = new Set(['ACTIVE', 'FREE_TRIAL', 'CANCELLED', 'PAYMENT_ISSUE']);
+    const allowedStatuses = new Set(['ACTIVE', 'FREE_TRIAL', 'CANCELLED', 'PAYMENT_ISSUE', 'FULLY_PAID']);
 
     [...subs, ...financings].forEach((entry) => {
       const entryAcademyId = entry?.academy?.id;
-      if (entryAcademyId == null || seenAcademies.has(entryAcademyId)) return;
+      if (entryAcademyId == null) return;
       if (!allowedStatuses.has(entry?.status)) return;
 
-      const hasLlmConsumable = (entry?.plans ?? []).some((plan) => plan?.service_items?.some(
-        (si) => si?.service?.consumer === 'MONTHLY_LLM_BUDGET',
-      ));
-      if (!hasLlmConsumable) return;
-
-      seenAcademies.add(entryAcademyId);
-      const plan = entry?.plans?.[0];
-      if (plan) {
-        options.push({ plan, academyId: entryAcademyId });
-      }
+      (entry?.plans ?? []).forEach((plan) => {
+        const hasLlmConsumable = (plan?.service_items ?? []).some(
+          (si) => si?.service?.consumer === 'MONTHLY_LLM_BUDGET',
+        );
+        if (!hasLlmConsumable) return;
+        const planSlug = typeof plan?.slug === 'string' ? plan.slug.trim() : '';
+        if (!planSlug) return;
+        const pairKey = `${entryAcademyId}::${planSlug}`;
+        if (seenPairs.has(pairKey)) return;
+        seenPairs.add(pairKey);
+        options.push({
+          academyId: entryAcademyId,
+          academyLabel: getAcademyLabel(entry, lang),
+          planSlug,
+          planLabel: getPlanTitle(plan, lang),
+        });
+      });
     });
 
     return options;
-  }, [subsState.subscriptions]);
+  }, [subsState.subscriptions, lang]);
 
-  const selectOptions = useMemo(() => planOptions.map((opt, idx) => ({
-    value: idx,
-    label: getPlanTitle(opt.plan, lang),
-  })), [planOptions, lang]);
+  const academyOptions = useMemo(() => {
+    const seenAcademies = new Set();
+    return llmConsumableOptions.reduce((acc, option) => {
+      if (seenAcademies.has(option.academyId)) return acc;
+      seenAcademies.add(option.academyId);
+      acc.push({
+        value: option.academyId,
+        label: option.academyLabel,
+      });
+      return acc;
+    }, []);
+  }, [llmConsumableOptions]);
 
   const [keys, setKeys] = useState([]);
   const [isLoadingList, setIsLoadingList] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
+  const [selectedAcademyOption, setSelectedAcademyOption] = useState(null);
   const [selectedPlanOption, setSelectedPlanOption] = useState(null);
   const [keyAliasInput, setKeyAliasInput] = useState('');
   const [generatedTokenId, setGeneratedTokenId] = useState('');
+  const [generatedModels, setGeneratedModels] = useState([]);
+  const [keyDetails, setKeyDetails] = useState(null);
   const [keyToDelete, setKeyToDelete] = useState(null);
   const [isDeletingKey, setIsDeletingKey] = useState(false);
   const [llmKeysForbidden, setLlmKeysForbidden] = useState(false);
   const [loadKeysError, setLoadKeysError] = useState('');
+
+  const academyPlanOptions = useMemo(() => {
+    if (!selectedAcademyOption) return [];
+    return llmConsumableOptions
+      .filter((option) => option.academyId === selectedAcademyOption.value)
+      .map((option) => ({
+        value: option.planSlug,
+        label: option.planLabel,
+        academyId: option.academyId,
+      }));
+  }, [llmConsumableOptions, selectedAcademyOption]);
 
   const fetchKeys = useCallback(async () => {
     setIsLoadingList(true);
@@ -292,20 +341,64 @@ function LLM() {
 
   const openGenerateModal = () => {
     setIsGenerateModalOpen(true);
-    setSelectedPlanOption(planOptions.length === 1 ? selectOptions[0] : null);
+    setSelectedAcademyOption(null);
+    setSelectedPlanOption(null);
     setKeyAliasInput('');
     setGeneratedTokenId('');
+    setGeneratedModels([]);
   };
 
   const closeGenerateModal = () => {
     setIsGenerateModalOpen(false);
     setIsGenerating(false);
+    setSelectedAcademyOption(null);
     setSelectedPlanOption(null);
     setKeyAliasInput('');
     setGeneratedTokenId('');
+    setGeneratedModels([]);
   };
+
+  useEffect(() => {
+    if (!isGenerateModalOpen) return;
+
+    if (selectedAcademyOption == null && academyOptions.length === 1) {
+      setSelectedAcademyOption(academyOptions[0]);
+      return;
+    }
+
+    if (selectedAcademyOption != null) {
+      const selectedStillValid = academyOptions.some((opt) => opt.value === selectedAcademyOption.value);
+      if (!selectedStillValid) {
+        setSelectedAcademyOption(academyOptions.length === 1 ? academyOptions[0] : null);
+        setSelectedPlanOption(null);
+        return;
+      }
+    }
+
+    if (selectedAcademyOption == null && academyOptions.length > 1 && selectedPlanOption != null) {
+      setSelectedPlanOption(null);
+      return;
+    }
+
+    if (selectedAcademyOption != null && selectedPlanOption == null && academyPlanOptions.length === 1) {
+      setSelectedPlanOption(academyPlanOptions[0]);
+      return;
+    }
+
+    if (selectedPlanOption != null) {
+      const planStillValid = academyPlanOptions.some((opt) => opt.value === selectedPlanOption.value);
+      if (!planStillValid) setSelectedPlanOption(academyPlanOptions.length === 1 ? academyPlanOptions[0] : null);
+    }
+  }, [
+    isGenerateModalOpen,
+    academyOptions,
+    academyPlanOptions,
+    selectedAcademyOption,
+    selectedPlanOption,
+  ]);
+
   const handleGenerate = async () => {
-    const selected = selectedPlanOption ? planOptions[selectedPlanOption.value] : null;
+    const selected = selectedPlanOption;
     if (!selected) return;
 
     const alias = keyAliasInput.trim();
@@ -319,7 +412,7 @@ function LLM() {
     setIsGenerating(true);
     try {
       const res = await bc.provisioning().generateLLMKey(
-        { key_alias: alias, plan_slug: selected?.plan?.slug },
+        { key_alias: alias, plan_slug: selected?.value },
         selected.academyId,
       );
       if (res?.status >= 200 && res?.status < 300) {
@@ -332,6 +425,7 @@ function LLM() {
           return;
         }
         setGeneratedTokenId(String(tokenId));
+        setGeneratedModels(Array.isArray(res?.data?.models) ? res.data.models : []);
         await fetchKeys();
       } else {
         createToast({
@@ -411,6 +505,9 @@ function LLM() {
   const closeDeleteModal = () => {
     setKeyToDelete(null);
     setIsDeletingKey(false);
+  };
+  const closeDetailsModal = () => {
+    setKeyDetails(null);
   };
 
   const confirmDelete = async () => {
@@ -534,6 +631,14 @@ function LLM() {
                       usageText={usageText}
                       createdAtText={createdAtText}
                       planTitle={planTitle}
+                      viewDetailsLabel={t('llm.view-details')}
+                      onViewDetails={() => {
+                        setKeyDetails({
+                          keyAlias,
+                          usageText,
+                          models: Array.isArray(item?.models) ? item.models : [],
+                        });
+                      }}
                       deleteAriaLabel={t('llm.key-delete-aria')}
                       onDelete={() => {
                         if (tokenId == null || academyId == null) return;
@@ -562,18 +667,35 @@ function LLM() {
           <ModalBody display="flex" flexDirection="column" gridGap="12px">
             {!generatedTokenId && (
               <>
-                {planOptions.length === 0 && (
+                {academyOptions.length === 0 && (
                   <Text size="sm" color="gray.500">{t('llm.no-plans')}</Text>
                 )}
-                {planOptions.length > 1 && (
+                {academyOptions.length > 1 && (
+                  <Box>
+                    <Text size="md" fontWeight="600" mb="6px">{t('llm.generate-modal.academy-label')}</Text>
+                    <Select
+                      fontWeight="500"
+                      id="llm-academy-select"
+                      fontSize="15px"
+                      value={selectedAcademyOption}
+                      options={academyOptions}
+                      placeholder={t('llm.select-academy')}
+                      onChange={(opt) => {
+                        setSelectedAcademyOption(opt);
+                        setSelectedPlanOption(null);
+                      }}
+                    />
+                  </Box>
+                )}
+                {selectedAcademyOption && academyPlanOptions.length > 1 && (
                   <Box>
                     <Text size="md" fontWeight="600" mb="6px">{t('llm.generate-modal.plan-label')}</Text>
                     <Select
                       fontWeight="500"
-                      id="cohort-select"
+                      id="llm-plan-select"
                       fontSize="15px"
                       value={selectedPlanOption}
-                      options={selectOptions}
+                      options={academyPlanOptions}
                       placeholder={t('llm.select-plan')}
                       onChange={(opt) => setSelectedPlanOption(opt)}
                     />
@@ -629,6 +751,16 @@ function LLM() {
                   </InputRightElement>
                 </InputGroup>
                 <Text size="sm" color="gray.500">{t('llm.generate-modal.token-warning')}</Text>
+                {generatedModels.length > 0 && (
+                  <Box borderWidth="1px" borderColor={borderColor2} borderRadius="8px" p="12px">
+                    <Text size="sm" fontWeight="700" mb="8px">{t('llm.models-title')}</Text>
+                    <VStack align="stretch" spacing={1}>
+                      {generatedModels.map((model) => (
+                        <Text key={`generated-model-${model}`} size="sm">{model}</Text>
+                      ))}
+                    </VStack>
+                  </Box>
+                )}
               </>
             )}
           </ModalBody>
@@ -648,7 +780,7 @@ function LLM() {
                 <Button
                   variant="default"
                   isLoading={isGenerating}
-                  isDisabled={!selectedPlanOption || planOptions.length === 0}
+                  isDisabled={!selectedPlanOption || llmConsumableOptions.length === 0}
                   textTransform="uppercase"
                   fontSize="13px"
                   onClick={handleGenerate}
@@ -700,6 +832,39 @@ function LLM() {
             onClick={confirmDelete}
           >
             {t('llm.delete-modal.confirm')}
+          </Button>
+        </Flex>
+      </SimpleModal>
+      <SimpleModal
+        isOpen={!!keyDetails}
+        onClose={closeDetailsModal}
+        title={t('llm.details-modal.title')}
+        isCentered
+        headerStyles={{ textAlign: 'center', textTransform: 'uppercase' }}
+        bodyStyles={{ display: 'flex', flexDirection: 'column', gridGap: '12px' }}
+      >
+        <Flex justifyContent="space-between" alignItems="center" gridGap="10px" flexWrap="wrap">
+          <Text size="sm" fontWeight="700">{keyDetails?.usageText || '—'}</Text>
+          <Text size="sm" color="gray.600">{keyDetails?.keyAlias || '—'}</Text>
+        </Flex>
+        {Array.isArray(keyDetails?.models) && keyDetails.models.length > 0 && (
+          <Box borderWidth="1px" borderColor={borderColor2} borderRadius="8px" p="12px">
+            <Text size="sm" fontWeight="700" mb="8px">{t('llm.models-title')}</Text>
+            <VStack align="stretch" spacing={1}>
+              {keyDetails.models.map((model) => (
+                <Text key={`detail-model-${model}`} size="sm">{model}</Text>
+              ))}
+            </VStack>
+          </Box>
+        )}
+        <Flex justifyContent="center" pb="8px">
+          <Button
+            variant="default"
+            textTransform="uppercase"
+            fontSize="13px"
+            onClick={closeDetailsModal}
+          >
+            {t('llm.details-modal.close')}
           </Button>
         </Flex>
       </SimpleModal>
