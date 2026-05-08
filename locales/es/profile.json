@@ -29,10 +29,14 @@
     "key-alias-required": "Por favor ingresa un nombre para la clave.",
     "key-copied": "Clave copiada al portapapeles.",
     "key-copy-error": "No se pudo copiar la clave. Cópiala manualmente.",
+    "view-details": "Ver detalles",
+    "models-title": "Modelos",
     "no-plans": "No tienes planes activos.",
+    "select-academy": "Academia",
     "select-plan": "Selecciona un plan",
     "generate-modal": {
       "title": "Generar clave API para LLM",
+      "academy-label": "Academia",
       "plan-label": "Plan cuyo presupuesto mensual gratuito cubre el uso de esta llave",
       "alias-label": "Nombre de la clave",
       "description": "Ingresa un nombre para tu clave.",
@@ -48,6 +52,10 @@
       "description": "¿Estás seguro de que deseas eliminar esta clave API?",
       "close": "No, volver",
       "confirm": "Sí, eliminar"
+    },
+    "details-modal": {
+      "title": "Detalles de la clave API",
+      "close": "Cerrar"
     }
   },
   "vps": {

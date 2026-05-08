@@ -29,10 +29,14 @@
     "key-alias-required": "Please enter a key name.",
     "key-copied": "Key copied to clipboard.",
     "key-copy-error": "Couldn't copy key. Please copy it manually.",
+    "view-details": "View details",
+    "models-title": "Models",
     "no-plans": "You don't have any active plans.",
+    "select-academy": "Academy",
     "select-plan": "Plan",
     "generate-modal": {
       "title": "Generate LLM API Key",
+      "academy-label": "Academy",
       "plan-label": "Plan whose monthly free budget covers this key’s usage",
       "alias-label": "Key name",
       "description": "Enter a name for your key.",
@@ -48,6 +52,10 @@
       "description": "Are you sure you want to delete this API key?",
       "close": "No, go back",
       "confirm": "Yes, delete"
+    },
+    "details-modal": {
+      "title": "API key details",
+      "close": "Close"
     }
   },
   "vps": {
