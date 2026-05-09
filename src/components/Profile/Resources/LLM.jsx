@@ -215,6 +215,49 @@ function getPlanTitle(plan, lang) {
   return fallback || plan?.title || plan?.slug || '—';
 }
 
+function LLMKeyDetailsInfo({
+  hostLabel,
+  host,
+  modelsTitle,
+  models,
+  borderColor,
+}) {
+  if (!host && (!Array.isArray(models) || models.length === 0)) return null;
+  return (
+    <Box borderWidth="1px" borderColor={borderColor} borderRadius="8px" p="12px">
+      {host && (
+        <Text size="sm" mb={Array.isArray(models) && models.length > 0 ? '10px' : 0} wordBreak="break-all">
+          <Text as="span" size="sm" color="gray.600">{`${hostLabel}: `}</Text>
+          <Text as="span" size="sm" fontWeight="700">{host}</Text>
+        </Text>
+      )}
+      {Array.isArray(models) && models.length > 0 && (
+        <>
+          <Text size="sm" fontWeight="700" mb="8px">{modelsTitle}</Text>
+          <VStack align="stretch" spacing={1}>
+            {models.map((model) => (
+              <Text key={`llm-model-${model}`} size="sm">{model}</Text>
+            ))}
+          </VStack>
+        </>
+      )}
+    </Box>
+  );
+}
+
+LLMKeyDetailsInfo.propTypes = {
+  hostLabel: PropTypes.string.isRequired,
+  host: PropTypes.string,
+  modelsTitle: PropTypes.string.isRequired,
+  models: PropTypes.arrayOf(PropTypes.string),
+  borderColor: PropTypes.string.isRequired,
+};
+
+LLMKeyDetailsInfo.defaultProps = {
+  host: '',
+  models: [],
+};
+
 function LLM() {
   const { borderColor2 } = useStyle();
   const { t, lang } = useTranslation('profile');
@@ -276,6 +319,7 @@ function LLM() {
   const [selectedPlanOption, setSelectedPlanOption] = useState(null);
   const [keyAliasInput, setKeyAliasInput] = useState('');
   const [generatedTokenId, setGeneratedTokenId] = useState('');
+  const [generatedHost, setGeneratedHost] = useState('');
   const [generatedModels, setGeneratedModels] = useState([]);
   const [keyDetails, setKeyDetails] = useState(null);
   const [keyToDelete, setKeyToDelete] = useState(null);
@@ -345,6 +389,7 @@ function LLM() {
     setSelectedPlanOption(null);
     setKeyAliasInput('');
     setGeneratedTokenId('');
+    setGeneratedHost('');
     setGeneratedModels([]);
   };
 
@@ -355,6 +400,7 @@ function LLM() {
     setSelectedPlanOption(null);
     setKeyAliasInput('');
     setGeneratedTokenId('');
+    setGeneratedHost('');
     setGeneratedModels([]);
   };
 
@@ -425,6 +471,7 @@ function LLM() {
           return;
         }
         setGeneratedTokenId(String(tokenId));
+        setGeneratedHost(String(res?.data?.host || ''));
         setGeneratedModels(Array.isArray(res?.data?.models) ? res.data.models : []);
         await fetchKeys();
       } else {
@@ -636,6 +683,7 @@ function LLM() {
                         setKeyDetails({
                           keyAlias,
                           usageText,
+                          host: typeof item?.host === 'string' ? item.host : '',
                           models: Array.isArray(item?.models) ? item.models : [],
                         });
                       }}
@@ -751,16 +799,13 @@ function LLM() {
                   </InputRightElement>
                 </InputGroup>
                 <Text size="sm" color="gray.500">{t('llm.generate-modal.token-warning')}</Text>
-                {generatedModels.length > 0 && (
-                  <Box borderWidth="1px" borderColor={borderColor2} borderRadius="8px" p="12px">
-                    <Text size="sm" fontWeight="700" mb="8px">{t('llm.models-title')}</Text>
-                    <VStack align="stretch" spacing={1}>
-                      {generatedModels.map((model) => (
-                        <Text key={`generated-model-${model}`} size="sm">{model}</Text>
-                      ))}
-                    </VStack>
-                  </Box>
-                )}
+                <LLMKeyDetailsInfo
+                  hostLabel={t('llm.host-label')}
+                  host={generatedHost}
+                  modelsTitle={t('llm.models-title')}
+                  models={generatedModels}
+                  borderColor={borderColor2}
+                />
               </>
             )}
           </ModalBody>
@@ -847,16 +892,13 @@ function LLM() {
           <Text size="sm" fontWeight="700">{keyDetails?.usageText || '—'}</Text>
           <Text size="sm" color="gray.600">{keyDetails?.keyAlias || '—'}</Text>
         </Flex>
-        {Array.isArray(keyDetails?.models) && keyDetails.models.length > 0 && (
-          <Box borderWidth="1px" borderColor={borderColor2} borderRadius="8px" p="12px">
-            <Text size="sm" fontWeight="700" mb="8px">{t('llm.models-title')}</Text>
-            <VStack align="stretch" spacing={1}>
-              {keyDetails.models.map((model) => (
-                <Text key={`detail-model-${model}`} size="sm">{model}</Text>
-              ))}
-            </VStack>
-          </Box>
-        )}
+        <LLMKeyDetailsInfo
+          hostLabel={t('llm.host-label')}
+          host={keyDetails?.host}
+          modelsTitle={t('llm.models-title')}
+          models={Array.isArray(keyDetails?.models) ? keyDetails.models : []}
+          borderColor={borderColor2}
+        />
         <Flex justifyContent="center" pb="8px">
           <Button
             variant="default"

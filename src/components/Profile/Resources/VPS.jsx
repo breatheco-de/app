@@ -124,6 +124,7 @@ VpsCredentialCopyRow.propTypes = {
 function VpsCard({
   title,
   ipText,
+  errorMessageText,
   providerText,
   planText,
   createdAtText,
@@ -147,7 +148,7 @@ function VpsCard({
       pr={{ md: showOddColumnRightBorder ? 6 : 0 }}
     >
       <Flex
-        alignItems="flex-start"
+        alignItems="center"
         flexShrink={0}
         gridGap="12px"
         width="100%"
@@ -185,6 +186,11 @@ function VpsCard({
               {statusLabel}
             </ChakraText>
           </Flex>
+          {errorMessageText ? (
+            <Text fontSize="xs" color="gray.500" lineHeight="short">
+              {errorMessageText}
+            </Text>
+          ) : null}
           {ipText ? <Text fontSize="sm" color="gray.600">{ipText}</Text> : null}
         </Box>
       </Flex>
@@ -238,6 +244,7 @@ function VpsCard({
 VpsCard.propTypes = {
   title: PropTypes.string.isRequired,
   ipText: PropTypes.string,
+  errorMessageText: PropTypes.string,
   providerText: PropTypes.string,
   planText: PropTypes.string,
   createdAtText: PropTypes.string,
@@ -250,6 +257,7 @@ VpsCard.propTypes = {
 
 VpsCard.defaultProps = {
   ipText: '',
+  errorMessageText: '',
   providerText: '',
   planText: '',
   createdAtText: '',
@@ -334,16 +342,34 @@ function VPS() {
     }
   }, [t]);
 
-  const pollVpsUntilResolved = useCallback(async () => {
+  const pollVpsUntilResolved = useCallback(async (createdVpsId) => {
+    if (createdVpsId == null || String(createdVpsId).trim() === '') {
+      await fetchVpsList({ withLoader: false });
+      return;
+    }
+    const targetIdStr = String(createdVpsId);
+
     const runAttempt = async (attempt) => {
       const { ok, results } = await fetchVpsList({ withLoader: false });
-      const hasResolvedVps = (results || []).some((vps) => {
-        const status = String(vps?.status || '').toUpperCase();
-        return status === 'ACTIVE' || status === 'ERROR';
-      });
-      if (ok && hasResolvedVps) return;
-      if (!isMountedRef.current || attempt + 1 >= VPS_POLL_MAX_ATTEMPTS) return;
+      if (!ok) {
+        if (!isMountedRef.current || attempt + 1 >= VPS_POLL_MAX_ATTEMPTS) return;
+        await new Promise((resolve) => { setTimeout(resolve, VPS_POLL_INTERVAL_MS); });
+        await runAttempt(attempt + 1);
+        return;
+      }
 
+      const target = (results || []).find((vps) => String(vps?.id) === targetIdStr);
+      if (!target) {
+        if (!isMountedRef.current || attempt + 1 >= VPS_POLL_MAX_ATTEMPTS) return;
+        await new Promise((resolve) => { setTimeout(resolve, VPS_POLL_INTERVAL_MS); });
+        await runAttempt(attempt + 1);
+        return;
+      }
+
+      const status = String(target?.status || '').toUpperCase();
+      if (status === 'ACTIVE' || status === 'ERROR') return;
+
+      if (!isMountedRef.current || attempt + 1 >= VPS_POLL_MAX_ATTEMPTS) return;
       await new Promise((resolve) => { setTimeout(resolve, VPS_POLL_INTERVAL_MS); });
       await runAttempt(attempt + 1);
     };
@@ -534,6 +560,12 @@ function VPS() {
               const createdAtText = formatVpsCreatedAt(item?.created_at);
               const { styleKey, labelKey } = getVpsStatusPillConfig(item?.status);
               const pillStyle = statusStyles[styleKey] || statusStyles.error;
+              const statusUpper = String(item?.status || '').toUpperCase();
+              const errorMessageText = statusUpper === 'ERROR'
+                && typeof item?.error_message === 'string'
+                && item.error_message.trim()
+                ? item.error_message.trim()
+                : '';
               const isLast = idx === vpsList.length - 1;
               const isOddColumn = idx % 2 === 0;
               const showOddColumnRightBorder = isOddColumn && !isLast;
@@ -543,6 +575,7 @@ function VPS() {
                   key={String(itemId)}
                   title={title}
                   ipText={ipText}
+                  errorMessageText={errorMessageText}
                   providerText={providerText}
                   planText={planText}
                   createdAtText={createdAtText}
