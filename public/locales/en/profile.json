@@ -31,8 +31,14 @@
     "key-copy-error": "Couldn't copy key. Please copy it manually.",
     "view-details": "View details",
     "host-label": "Host",
-    "models-title": "Models",
+    "models-title": "Available models",
+    "key-details": {
+      "host-description": "Base URL of the LLM gateway. Use this host when making requests with this key.",
+      "models-description": "A model determines which AI system handles supported requests. You can specify one of these model identifiers when calling the service with this key.",
+      "copy-aria": "Copy to clipboard"
+    },
     "no-plans": "You don't have any active plans.",
+    "loading-plans": "Loading your available plans…",
     "select-academy": "Academy",
     "select-plan": "Plan",
     "generate-modal": {

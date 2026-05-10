@@ -31,8 +31,14 @@
     "key-copy-error": "No se pudo copiar la clave. Cópiala manualmente.",
     "view-details": "Ver detalles",
     "host-label": "Host",
-    "models-title": "Modelos",
+    "models-title": "Modelos disponibles",
+    "key-details": {
+      "host-description": "URL base del gateway LLM. Usa este host al hacer peticiones con esta clave.",
+      "models-description": "Son los identificadores de modelo que puedes usar al hacer peticiones a través de este gateway.",
+      "copy-aria": "Copiar al portapapeles"
+    },
     "no-plans": "No tienes planes activos.",
+    "loading-plans": "Cargando tus planes disponibles…",
     "select-academy": "Academia",
     "select-plan": "Selecciona un plan",
     "generate-modal": {
