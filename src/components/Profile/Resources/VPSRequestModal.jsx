@@ -773,7 +773,16 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
               {!loadingProvisioningVendors && !currentLoadProvidersError && currentProvisioningList.length > 0 && (
                 <Box>
                   <Text size="md" fontWeight="600" mb="10px">{t('vps.modal.select-provider-heading')}</Text>
-                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3} width="100%">
+                  <SimpleGrid
+                    columns={{
+                      base: 1,
+                      md: currentProvisioningList.length === 1 ? 1 : 2,
+                    }}
+                    spacing={3}
+                    width="100%"
+                    maxW={currentProvisioningList.length === 1 ? '520px' : undefined}
+                    mx={currentProvisioningList.length === 1 ? 'auto' : undefined}
+                  >
                     {currentProvisioningList.map((row, idx) => {
                       const vendorCardBackground = idx % 2 === 1 ? 'blue.light' : backgroundColor3;
                       return (

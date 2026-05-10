@@ -129,94 +129,105 @@ function LLMKeyCard({
   return (
     <Box width="100%">
       <Flex
-        alignItems={{ base: 'flex-start', md: 'center' }}
-        justifyContent="space-between"
         width="100%"
         flexDirection={{ base: 'column', md: 'row' }}
+        alignItems={{ base: 'stretch', md: 'center' }}
+        justifyContent="space-between"
         gap={{ base: 3, md: 4 }}
       >
-        <Flex alignItems="center" gridGap="12px" minWidth={0} flex="1">
-          <Box
-            minWidth="48px"
-            minHeight="48px"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            backgroundColor="blue.light"
-            borderRadius="50px"
-            flexShrink={0}
-          >
-            <Icon icon="key" width="24px" height="24px" />
-          </Box>
-          <Box minWidth={0}>
-            <Flex alignItems="center" gap="8px">
-              <Text fontSize="md" fontWeight="700">
-                {keyAlias}
+        <Flex alignItems="center" gap={3} flex={1} minWidth={0} width={{ base: '100%', md: 'auto' }}>
+          <Flex alignItems="center" gridGap="12px" minWidth={0} flex="1">
+            <Box
+              minWidth="48px"
+              minHeight="48px"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              backgroundColor="blue.light"
+              borderRadius="50px"
+              flexShrink={0}
+            >
+              <Icon icon="key" width="24px" height="24px" />
+            </Box>
+            <Box minWidth={0} flex="1">
+              <Flex alignItems="center" gap="8px" flexWrap="wrap">
+                <Text fontSize="md" fontWeight="700">
+                  {keyAlias}
+                </Text>
+                {planTitle ? (
+                  <Badge
+                    fontSize="11px"
+                    fontWeight="600"
+                    textTransform="none"
+                    borderRadius="lg"
+                    overflow="hidden"
+                    px="5px"
+                    textOverflow="ellipsis"
+                    whiteSpace="nowrap"
+                    title={planTitle}
+                  >
+                    {planTitle}
+                  </Badge>
+                ) : null}
+              </Flex>
+              <Text fontSize="sm" color="gray.600">
+                {usageText}
               </Text>
-              {planTitle ? (
-                <Badge
-                  fontSize="11px"
-                  fontWeight="600"
-                  textTransform="none"
-                  borderRadius="lg"
-                  overflow="hidden"
-                  px="5px"
-                  textOverflow="ellipsis"
-                  whiteSpace="nowrap"
-                  title={planTitle}
-                >
-                  {planTitle}
-                </Badge>
-              ) : null}
-            </Flex>
-            <Text fontSize="sm" color="gray.600">
-              {usageText}
-            </Text>
-          </Box>
+            </Box>
+          </Flex>
+          <Button
+            variant="outline"
+            border="none"
+            aria-label={deleteAriaLabel}
+            isLoading={isDeleteLoading}
+            flexShrink={0}
+            display={{ base: 'flex', md: 'none' }}
+            onClick={onDelete}
+          >
+            <Icon icon="close" width="15px" height="15px" color={hexColor.danger} />
+          </Button>
         </Flex>
+
         <Flex
-          alignItems="center"
-          justifyContent="flex-end"
+          flexDirection={{ base: 'column', md: 'row' }}
+          alignItems={{ base: 'center', md: 'center' }}
+          justifyContent={{ base: 'center', md: 'flex-end' }}
           gap={{ base: 2, md: 3 }}
-          flexShrink={0}
           width={{ base: '100%', md: 'auto' }}
+          flexShrink={0}
           ml={{ md: 'auto' }}
         >
-          <Flex
-            alignItems="flex-end"
-            gap={1}
-            display={{ base: 'none', md: 'flex' }}
-            flexShrink={0}
+          {createdAtText ? (
+            <Text
+              size="sm"
+              fontWeight="400"
+              color="gray.600"
+              whiteSpace="nowrap"
+              display={{ base: 'none', md: 'block' }}
+            >
+              {createdAtText}
+            </Text>
+          ) : null}
+          <Button
+            variant="outline"
+            color={hexColor.blueDefault}
+            borderColor={hexColor.blueDefault}
+            fontSize="13px"
+            textTransform="uppercase"
+            onClick={onViewDetails}
           >
-            {createdAtText ? (
-              <Text size="sm" fontWeight="400" color="gray.600" whiteSpace="nowrap">
-                {createdAtText}
-              </Text>
-            ) : null}
-
-          </Flex>
-          <Flex alignItems="center" gap={2} flexShrink={0}>
-            <Button
-              variant="outline"
-              color={hexColor.blueDefault}
-              borderColor={hexColor.blueDefault}
-              fontSize="13px"
-              textTransform="uppercase"
-              alignSelf={{ base: 'center', md: 'auto' }}
-              onClick={onViewDetails}
-            >
-              {viewDetailsLabel}
-            </Button>
-            <Button
-              variant="outline"
-              border="none"
-              aria-label={deleteAriaLabel}
-              isLoading={isDeleteLoading}
-              onClick={onDelete}
-            >
-              <Icon icon="close" width="15px" height="15px" color={hexColor.danger} />
-            </Button>
-          </Flex>
+            {viewDetailsLabel}
+          </Button>
+          <Button
+            variant="outline"
+            border="none"
+            aria-label={deleteAriaLabel}
+            isLoading={isDeleteLoading}
+            display={{ base: 'none', md: 'flex' }}
+            onClick={onDelete}
+          >
+            <Icon icon="close" width="15px" height="15px" color={hexColor.danger} />
+          </Button>
         </Flex>
       </Flex>
     </Box>
