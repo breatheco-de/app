@@ -34,7 +34,7 @@
     "models-title": "Modelos disponibles",
     "key-details": {
       "host-description": "URL base del gateway LLM. Usa este host al hacer peticiones con esta clave.",
-      "models-description": "Son los identificadores de modelo que puedes usar al hacer peticiones a través de este gateway.",
+      "models-description": "Un modelo determina qué sistema de IA entrenado atiende las peticiones permitidas. Puedes especificar uno de estos modelos al llamar al servicio con esta clave.",
       "copy-aria": "Copiar al portapapeles"
     },
     "no-plans": "No tienes planes activos.",
