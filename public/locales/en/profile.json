@@ -30,8 +30,15 @@
     "key-copied": "Key copied to clipboard.",
     "key-copy-error": "Couldn't copy key. Please copy it manually.",
     "view-details": "View details",
-    "models-title": "Models",
+    "host-label": "Host",
+    "models-title": "Available models",
+    "key-details": {
+      "host-description": "Base URL of the LLM gateway. Use this host when making requests with this key.",
+      "models-description": "A model determines which AI system handles supported requests. You can specify one of these model identifiers when calling the service with this key.",
+      "copy-aria": "Copy to clipboard"
+    },
     "no-plans": "You don't have any active plans.",
+    "loading-plans": "Loading your available plans…",
     "select-academy": "Academy",
     "select-plan": "Plan",
     "generate-modal": {
@@ -123,6 +130,13 @@
       "provider-placeholder": "Select a provider",
       "plan-label": "Select the plan that will cover this VPS",
       "configure-provider": "Configure {{provider}} settings",
+      "options-disabled-region": "Some choices are disabled because they are not available for the region you selected.",
+      "options-disabled-size": "Some sizes are disabled because they are not offered in the region you selected.",
+      "options-disabled-unavailable": "Some choices are marked as unavailable by the provider right now.",
+      "options-disabled-mixed": "Some choices are disabled because of your selected region or because the provider marked them unavailable.",
+      "option-disabled-tooltip-region": "Not available for the selected region",
+      "option-disabled-tooltip-size": "This size is not offered in the selected region",
+      "option-disabled-tooltip-unavailable": "Currently unavailable",
       "no-options-schema": "This provider does not define configurable options.",
       "missing-selection": "Please select all required options before requesting the VPS.",
       "specs": {

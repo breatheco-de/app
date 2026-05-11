@@ -43,8 +43,8 @@ function formatSpecsGbFromMbString(value) {
 }
 
 function getDiskSizeUnitHintFromRaw(raw) {
-  const arr = raw?.disk_info;
-  if (!Array.isArray(arr) || arr.length === 0) return null;
+  const arr = raw?.disk_info || [];
+  if (arr.length === 0) return null;
   const unit = arr[0]?.size?.unit;
   if (typeof unit !== 'string' || !unit.trim()) return null;
   return unit.trim().toLowerCase();
@@ -97,17 +97,70 @@ function buildOptionMetaInfo(raw) {
   return Object.keys(metaInfo).length ? metaInfo : null;
 }
 
-function getNormalizedVendorFieldOptions(field, vendorOptionsPayload, vendorSettings) {
+function isRegionField(field) {
+  const optionsKey = String(field?.options_key || '').trim().toLowerCase();
+  const selectionKey = String(field?.selection_key || '').trim().toLowerCase();
+  const settingsKey = String(field?.settings_key || '').trim().toLowerCase();
+  return optionsKey === 'regions' || selectionKey.includes('region') || settingsKey.includes('region');
+}
+
+function isVendorOptionMarkedUnavailable(raw) {
+  return raw && Object.prototype.hasOwnProperty.call(raw, 'available') && raw.available === false;
+}
+
+function getDisabledVendorOptionTooltipKey(disableReason) {
+  if (disableReason === 'vendor_unavailable') return 'option-disabled-tooltip-unavailable';
+  if (disableReason === 'size_not_in_region') return 'option-disabled-tooltip-size';
+  return 'option-disabled-tooltip-region';
+}
+
+function getVendorFieldDisabledOptionsHintKey(normalizedOptions) {
+  const disabled = normalizedOptions.filter((opt) => opt?.disabledByRegion);
+  if (disabled.length === 0) return null;
+  const reasons = new Set(
+    disabled.map((opt) => opt.disableReason).filter(Boolean),
+  );
+  if (reasons.size > 1) return 'options-disabled-mixed';
+  if (reasons.has('vendor_unavailable')) return 'options-disabled-unavailable';
+  if (reasons.has('size_not_in_region')) return 'options-disabled-size';
+  return 'options-disabled-region';
+}
+
+function getNormalizedVendorFieldOptions(field, vendorOptionsPayload, vendorSettings, context = {}) {
+  const {
+    selectedRegionSlug = '',
+    selectedRegionAllowedSizes = null,
+  } = context;
   const optionsKey = field?.options_key;
   const settingsKey = field?.settings_key;
-  const rawOptions = Array.isArray(vendorOptionsPayload?.[optionsKey]) ? vendorOptionsPayload[optionsKey] : [];
-  const allowedValues = Array.isArray(vendorSettings?.[settingsKey]) ? vendorSettings[settingsKey] : [];
+  const rawOptions = vendorOptionsPayload?.[optionsKey] || [];
+  const allowedValues = vendorSettings?.[settingsKey] || [];
   const allowedSet = new Set(allowedValues.map((entry) => String(entry)));
 
   return rawOptions
     .map((raw) => {
       const matchValue = getVendorOptionMatchValue(raw, allowedSet);
       if (matchValue == null) return null;
+      const optionRegions = (raw?.regions || []).map((region) => String(region)).filter(Boolean);
+      const selectedRegionNotInOptionRegions = String(selectedRegionSlug || '').trim()
+        && optionRegions.length > 0
+        && !optionRegions.includes(String(selectedRegionSlug || '').trim());
+      const selectedSizeNotInRegionSizesList = (
+        String(selectedRegionSlug || '').trim()
+        && String(optionsKey).toLowerCase() === 'sizes'
+        && selectedRegionAllowedSizes instanceof Set
+        && selectedRegionAllowedSizes.size > 0
+        && !selectedRegionAllowedSizes.has(String(matchValue))
+      );
+      let disableReason = null;
+      if (isVendorOptionMarkedUnavailable(raw)) {
+        disableReason = 'vendor_unavailable';
+      } else if (selectedRegionNotInOptionRegions) {
+        disableReason = 'not_available_in_region';
+      } else if (selectedSizeNotInRegionSizesList) {
+        disableReason = 'size_not_in_region';
+      }
+      const disabledByRegion = disableReason != null;
       const rawLabel = raw?.name ?? raw?.description ?? raw?.slug;
       if (rawLabel == null || String(rawLabel).trim() === '') return null;
       const meta = raw?.metadata && typeof raw.metadata === 'object' && !Array.isArray(raw.metadata)
@@ -132,6 +185,8 @@ function getNormalizedVendorFieldOptions(field, vendorOptionsPayload, vendorSett
       return {
         value: matchValue,
         label: String(rawLabel),
+        disableReason,
+        disabledByRegion,
         ...(metaInfo ? { metaInfo } : {}),
         ...(specsCard ? { specsCard } : {}),
       };
@@ -194,6 +249,31 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
   );
 
   const selectedProvisioningAcademyId = selectedConsumable?.academyId ?? null;
+  const vendorSchemaFields = selectedProvisioningVendor?.vendor?.settings_schema?.fields || [];
+
+  const orderedVendorSchemaFields = useMemo(() => {
+    const fields = [...vendorSchemaFields];
+    const regionIndex = fields.findIndex((field) => isRegionField(field));
+    if (regionIndex <= 0) return fields;
+    const [regionField] = fields.splice(regionIndex, 1);
+    return [regionField, ...fields];
+  }, [vendorSchemaFields]);
+
+  const selectedRegionSlug = useMemo(() => {
+    const key = orderedVendorSchemaFields.find((field) => isRegionField(field))?.selection_key || '';
+    if (!key) return '';
+    const rawValue = selectedVendorSelections?.[key];
+    return rawValue == null ? '' : String(rawValue).trim();
+  }, [orderedVendorSchemaFields, selectedVendorSelections]);
+
+  const selectedRegionAllowedSizes = useMemo(() => {
+    if (!selectedRegionSlug) return null;
+    const regionList = vendorOptionsPayload?.regions || [];
+    const selectedRegion = regionList.find((region) => String(region?.slug || '').trim() === selectedRegionSlug);
+    if (!selectedRegion) return null;
+    const sizes = (selectedRegion?.sizes || []).map((size) => String(size));
+    return new Set(sizes);
+  }, [selectedRegionSlug, vendorOptionsPayload]);
 
   const currentLoadProvidersError = useMemo(() => {
     if (selectedProvisioningAcademyId == null) return '';
@@ -205,19 +285,62 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
     return provisioningByAcademyId[String(selectedProvisioningAcademyId)] ?? [];
   }, [selectedProvisioningAcademyId, currentLoadProvidersError, provisioningByAcademyId]);
 
-  const isVendorSelectionComplete = useMemo(() => (selectedProvisioningVendor?.vendor?.settings_schema?.fields || []).every((field) => {
+  const isVendorSelectionComplete = useMemo(() => orderedVendorSchemaFields.every((field) => {
     const normalizedOptions = getNormalizedVendorFieldOptions(
       field,
       vendorOptionsPayload,
       selectedProvisioningVendor?.vendor_settings,
+      { selectedRegionSlug, selectedRegionAllowedSizes },
     );
     if (normalizedOptions.length === 0) return true;
     const isRequired = field?.required !== false;
     if (!isRequired) return true;
+    const enabledOptions = normalizedOptions.filter((opt) => !opt?.disabledByRegion);
+    if (enabledOptions.length === 0) return false;
     const selectionKey = field?.selection_key;
     const value = selectedVendorSelections?.[selectionKey];
-    return value != null && String(value).trim() !== '';
-  }), [selectedProvisioningVendor, selectedVendorSelections, vendorOptionsPayload]);
+    return enabledOptions.some((opt) => String(opt.value) === String(value ?? ''));
+  }), [
+    orderedVendorSchemaFields,
+    selectedProvisioningVendor,
+    selectedRegionAllowedSizes,
+    selectedRegionSlug,
+    selectedVendorSelections,
+    vendorOptionsPayload,
+  ]);
+
+  useEffect(() => {
+    if (!selectedProvisioningVendor || !vendorOptionsPayload || !selectedRegionSlug) return;
+    let changed = false;
+    const nextSelections = { ...selectedVendorSelections };
+    orderedVendorSchemaFields.forEach((field) => {
+      const selectionKey = field?.selection_key;
+      if (!selectionKey) return;
+      const currentValue = nextSelections?.[selectionKey];
+      if (currentValue == null || String(currentValue).trim() === '') return;
+      const normalizedOptions = getNormalizedVendorFieldOptions(
+        field,
+        vendorOptionsPayload,
+        selectedProvisioningVendor?.vendor_settings,
+        { selectedRegionSlug, selectedRegionAllowedSizes },
+      );
+      const stillValid = normalizedOptions.some(
+        (opt) => !opt?.disabledByRegion && String(opt.value) === String(currentValue),
+      );
+      if (!stillValid) {
+        delete nextSelections[selectionKey];
+        changed = true;
+      }
+    });
+    if (changed) setSelectedVendorSelections(nextSelections);
+  }, [
+    orderedVendorSchemaFields,
+    selectedProvisioningVendor,
+    selectedRegionAllowedSizes,
+    selectedRegionSlug,
+    selectedVendorSelections,
+    vendorOptionsPayload,
+  ]);
 
   const resetState = useCallback(() => {
     setRequestStep('provider');
@@ -279,7 +402,7 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
         const vpsServiceEntry = (payload?.voids ?? []).find(
           (entry) => String(entry?.slug || '').toLowerCase() === 'vps_server',
         );
-        const items = Array.isArray(vpsServiceEntry?.items) ? vpsServiceEntry.items : [];
+        const items = vpsServiceEntry?.items || [];
         const now = new Date();
         const uniqueValidConsumableCandidates = [];
         const seenAcademyPlanKeys = new Set();
@@ -408,7 +531,7 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
           const academyId = academyIds[idx];
           const key = String(academyId);
           if (res?.status >= 200 && res?.status < 300) {
-            const list = Array.isArray(res.data) ? res.data : [];
+            const list = res.data || [];
             provisioningVendorsByAcademyId[key] = list.filter(
               (row) => row?.vendor?.vendor_type === VPS_SERVER_CONSUMER,
             );
@@ -511,17 +634,21 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
       return;
     }
     const vendorSelection = {};
-    (selectedProvisioningVendor?.vendor?.settings_schema?.fields || []).forEach((field) => {
+    orderedVendorSchemaFields.forEach((field) => {
       const normalizedOptions = getNormalizedVendorFieldOptions(
         field,
         vendorOptionsPayload,
         selectedProvisioningVendor?.vendor_settings,
+        { selectedRegionSlug, selectedRegionAllowedSizes },
       );
       if (normalizedOptions.length === 0) return;
       const selectionKey = field?.selection_key;
       if (!selectionKey) return;
       const value = selectedVendorSelections?.[selectionKey];
-      if (value != null && String(value).trim() !== '') vendorSelection[selectionKey] = value;
+      const isEnabledValue = normalizedOptions.some(
+        (opt) => !opt?.disabledByRegion && String(opt.value) === String(value ?? ''),
+      );
+      if (isEnabledValue) vendorSelection[selectionKey] = value;
     });
     const payload = {
       consumable_id: selectedConsumable.consumableId,
@@ -538,7 +665,7 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
       }
       createToast({ title: t('vps.request-success'), status: 'success' });
       closeModal();
-      onSuccess();
+      onSuccess(res?.data?.id);
     } catch (err) {
       createToast({ title: getProvisioningErrorMessage(err?.response ?? err, t('vps.load-error')), status: 'error' });
     } finally {
@@ -549,6 +676,9 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
     selectedProvisioningAcademyId,
     selectedProvisioningVendor,
     isVendorSelectionComplete,
+    orderedVendorSchemaFields,
+    selectedRegionAllowedSizes,
+    selectedRegionSlug,
     vendorOptionsPayload,
     selectedVendorSelections,
     createToast,
@@ -643,7 +773,16 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
               {!loadingProvisioningVendors && !currentLoadProvidersError && currentProvisioningList.length > 0 && (
                 <Box>
                   <Text size="md" fontWeight="600" mb="10px">{t('vps.modal.select-provider-heading')}</Text>
-                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3} width="100%">
+                  <SimpleGrid
+                    columns={{
+                      base: 1,
+                      md: currentProvisioningList.length === 1 ? 1 : 2,
+                    }}
+                    spacing={3}
+                    width="100%"
+                    maxW={currentProvisioningList.length === 1 ? '520px' : undefined}
+                    mx={currentProvisioningList.length === 1 ? 'auto' : undefined}
+                  >
                     {currentProvisioningList.map((row, idx) => {
                       const vendorCardBackground = idx % 2 === 1 ? 'blue.light' : backgroundColor3;
                       return (
@@ -709,17 +848,18 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
               {!loadingVendorOptions && loadVendorOptionsError && (
                 <Text size="sm" color="red.500">{loadVendorOptionsError}</Text>
               )}
-              {!loadingVendorOptions && !loadVendorOptionsError && (selectedProvisioningVendor?.vendor?.settings_schema?.fields || []).length === 0 && (
+              {!loadingVendorOptions && !loadVendorOptionsError && orderedVendorSchemaFields.length === 0 && (
                 <Text size="sm" color="gray.500">{t('vps.modal.no-options-schema')}</Text>
               )}
-              {!loadingVendorOptions && !loadVendorOptionsError && (selectedProvisioningVendor?.vendor?.settings_schema?.fields || []).length > 0 && (
+              {!loadingVendorOptions && !loadVendorOptionsError && orderedVendorSchemaFields.length > 0 && (
                 <Box display="flex" flexDirection="column" gridGap="12px">
-                  {(selectedProvisioningVendor?.vendor?.settings_schema?.fields || [])
+                  {orderedVendorSchemaFields
                     .map((field) => {
                       const normalizedOptions = getNormalizedVendorFieldOptions(
                         field,
                         vendorOptionsPayload,
                         selectedProvisioningVendor?.vendor_settings,
+                        { selectedRegionSlug, selectedRegionAllowedSizes },
                       );
                       return normalizedOptions.length > 0 ? { field, normalizedOptions } : null;
                     })
@@ -730,6 +870,7 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
                       const selectedOption = normalizedOptions.find((opt) => opt.value === value) || null;
                       const fieldLabel = lang === 'es' ? field?.label_es : field?.label_en;
                       const showMetaInfoOnPills = normalizedOptions.some((o) => Object.values(o.metaInfo || {}).some(Boolean));
+                      const disabledOptionsHintKey = getVendorFieldDisabledOptionsHintKey(normalizedOptions);
 
                       return (
                         <Box
@@ -760,6 +901,11 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
                               </Text>
                             </Box>
                           </Flex>
+                          {disabledOptionsHintKey ? (
+                            <Text size="sm" color="gray.600" mb="10px" lineHeight="short">
+                              {t(`vps.modal.${disabledOptionsHintKey}`)}
+                            </Text>
+                          ) : null}
                           <Box
                             maxHeight={{ base: '220px', md: '280px' }}
                             overflowY="auto"
@@ -768,11 +914,16 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
                             <Flex flexWrap="wrap" gap="8px" alignItems="stretch">
                               {normalizedOptions.map((opt) => {
                                 const isSelected = selectedOption?.value === opt.value;
+                                const isOptionDisabled = Boolean(opt?.disabledByRegion);
+                                const disabledTooltipKey = isOptionDisabled
+                                  ? getDisabledVendorOptionTooltipKey(opt.disableReason)
+                                  : null;
                                 return (
                                   <Box
                                     key={`${selectionKey}-${String(opt.value)}`}
                                     as="button"
                                     type="button"
+                                    title={disabledTooltipKey ? t(`vps.modal.${disabledTooltipKey}`) : undefined}
                                     width={opt.specsCard ? 'max-content' : 'fit-content'}
                                     maxW={opt.specsCard ? '100%' : undefined}
                                     textAlign="left"
@@ -783,14 +934,16 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
                                     borderWidth="1px"
                                     borderColor={isSelected ? 'blue.default' : borderColor2}
                                     backgroundColor={isSelected ? 'blue.light' : backgroundColor3}
-                                    cursor="pointer"
+                                    cursor={isOptionDisabled ? 'not-allowed' : 'pointer'}
+                                    opacity={isOptionDisabled ? 0.55 : 1}
                                     transition="border-color 0.15s ease, background-color 0.15s ease"
-                                    _hover={{
+                                    _hover={isOptionDisabled ? {} : {
                                       borderColor: 'blue.default',
                                       backgroundColor: 'blue.light',
                                     }}
-                                    _active={{ filter: 'brightness(0.97)' }}
+                                    _active={isOptionDisabled ? {} : { filter: 'brightness(0.97)' }}
                                     onClick={() => {
+                                      if (isOptionDisabled) return;
                                       setSelectedVendorSelections((prev) => ({ ...prev, [selectionKey]: opt.value }));
                                     }}
                                   >
