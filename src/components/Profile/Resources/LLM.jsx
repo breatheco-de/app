@@ -1,5 +1,22 @@
 import {
-  Box, Button, Divider, Flex, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, VStack,
+  Badge,
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useColorModeValue,
+  VStack,
 } from '@chakra-ui/react';
 import { formatRelative } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -8,13 +25,13 @@ import PropTypes from 'prop-types';
 import {
   useCallback, useEffect, useMemo, useState,
 } from 'react';
+import useStyle from '../../../hooks/useStyle';
 import Text from '../../Text';
 import Icon from '../../Icon';
 import NextChakraLink from '../../NextChakraLink';
 import Select from '../../ReactSelect';
 import SimpleModal from '../../SimpleModal';
 import useCustomToast from '../../../hooks/useCustomToast';
-import useStyle from '../../../hooks/useStyle';
 import useSubscriptions from '../../../hooks/useSubscriptions';
 import bc from '../../../services/breathecode';
 
@@ -111,55 +128,92 @@ function LLMKeyCard({
 
   return (
     <Box width="100%">
-      <Flex alignItems="center" justifyContent="space-between" width="100%">
-        <Flex alignItems="center" gridGap="12px">
-          <Box
-            minWidth="48px"
-            minHeight="48px"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            backgroundColor="blue.light"
-            borderRadius="50px"
-            flexShrink={0}
-          >
-            <Icon icon="key" width="24px" height="24px" />
-          </Box>
-          <Box minWidth={0}>
-            <Text fontSize="md" fontWeight="700">
-              {keyAlias}
-            </Text>
-            <Text fontSize="sm" color="gray.600">
-              {usageText}
-            </Text>
-          </Box>
-        </Flex>
-        <Flex alignItems="center" gridGap="12px" flexShrink={0}>
-          <Box>
-            {createdAtText && (
-              <Text
-                size="sm"
-                fontWeight="400"
-                display={{ base: 'none', md: 'block' }}
-              >
-                {createdAtText}
+      <Flex
+        width="100%"
+        flexDirection={{ base: 'column', md: 'row' }}
+        alignItems={{ base: 'stretch', md: 'center' }}
+        justifyContent="space-between"
+        gap={{ base: 3, md: 4 }}
+      >
+        <Flex alignItems="center" gap={3} flex={1} minWidth={0} width={{ base: '100%', md: 'auto' }}>
+          <Flex alignItems="center" gridGap="12px" minWidth={0} flex="1">
+            <Box
+              minWidth="48px"
+              minHeight="48px"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              backgroundColor="blue.light"
+              borderRadius="50px"
+              flexShrink={0}
+            >
+              <Icon icon="key" width="24px" height="24px" />
+            </Box>
+            <Box minWidth={0} flex="1">
+              <Flex alignItems="center" gap="8px" flexWrap="wrap">
+                <Text fontSize="md" fontWeight="700">
+                  {keyAlias}
+                </Text>
+                {planTitle ? (
+                  <Badge
+                    fontSize="11px"
+                    fontWeight="600"
+                    textTransform="none"
+                    borderRadius="lg"
+                    overflow="hidden"
+                    px="5px"
+                    textOverflow="ellipsis"
+                    whiteSpace="nowrap"
+                    title={planTitle}
+                  >
+                    {planTitle}
+                  </Badge>
+                ) : null}
+              </Flex>
+              <Text fontSize="sm" color="gray.600">
+                {usageText}
               </Text>
-            )}
-            {planTitle ? (
-              <Text
-                size="sm"
-                fontWeight="400"
-                color="gray.500"
-                display={{ base: 'none', md: 'block' }}
-              >
-                {planTitle}
-              </Text>
-            ) : null}
-          </Box>
+            </Box>
+          </Flex>
           <Button
             variant="outline"
+            border="none"
+            aria-label={deleteAriaLabel}
+            isLoading={isDeleteLoading}
+            flexShrink={0}
+            display={{ base: 'flex', md: 'none' }}
+            onClick={onDelete}
+          >
+            <Icon icon="close" width="15px" height="15px" color={hexColor.danger} />
+          </Button>
+        </Flex>
+
+        <Flex
+          flexDirection={{ base: 'column', md: 'row' }}
+          alignItems={{ base: 'center', md: 'center' }}
+          justifyContent={{ base: 'center', md: 'flex-end' }}
+          gap={{ base: 2, md: 3 }}
+          width={{ base: '100%', md: 'auto' }}
+          flexShrink={0}
+          ml={{ md: 'auto' }}
+        >
+          {createdAtText ? (
+            <Text
+              size="sm"
+              fontWeight="400"
+              color="gray.600"
+              whiteSpace="nowrap"
+              display={{ base: 'none', md: 'block' }}
+            >
+              {createdAtText}
+            </Text>
+          ) : null}
+          <Button
+            variant="outline"
+            color={hexColor.blueDefault}
+            borderColor={hexColor.blueDefault}
+            fontSize="13px"
             textTransform="uppercase"
-            fontSize="12px"
             onClick={onViewDetails}
           >
             {viewDetailsLabel}
@@ -169,23 +223,13 @@ function LLMKeyCard({
             border="none"
             aria-label={deleteAriaLabel}
             isLoading={isDeleteLoading}
+            display={{ base: 'none', md: 'flex' }}
             onClick={onDelete}
           >
             <Icon icon="close" width="15px" height="15px" color={hexColor.danger} />
           </Button>
         </Flex>
       </Flex>
-      {createdAtText && (
-        <Text
-          size="sm"
-          fontWeight="400"
-          color="gray.500"
-          mt="4px"
-          display={{ base: 'block', md: 'none' }}
-        >
-          {createdAtText}
-        </Text>
-      )}
     </Box>
   );
 }
@@ -215,11 +259,249 @@ function getPlanTitle(plan, lang) {
   return fallback || plan?.title || plan?.slug || '—';
 }
 
+function applyVendorPrefixToModels(models, vendorName) {
+  if (!Array.isArray(models) || models.length === 0) return [];
+  const vendor = typeof vendorName === 'string' ? vendorName.trim().toLowerCase() : '';
+  if (!vendor) {
+    return models.map((m) => (typeof m === 'string' ? m : String(m ?? '')));
+  }
+  const prefix = `${vendor}/`;
+  return models.map((model) => {
+    const s = typeof model === 'string' ? model.trim() : String(model ?? '');
+    if (!s) return s;
+    const lower = s.toLowerCase();
+    if (lower.startsWith(`${vendor}/`) || lower === vendor) return s;
+    return `${prefix}${s}`;
+  });
+}
+
+function LlmHostCopyRow({
+  value,
+  onCopy,
+  copyAriaLabel,
+  inputBackgroundColor,
+  inputBorderColor,
+}) {
+  return (
+    <InputGroup size="md" display="flex" justifyContent="space-between">
+      <Input
+        value={value}
+        isReadOnly
+        bg={inputBackgroundColor}
+        borderColor={inputBorderColor}
+        borderRadius="3px"
+        cursor="pointer"
+        textOverflow="ellipsis"
+        overflow="hidden"
+        whiteSpace="nowrap"
+        marginRight="20px"
+        onClick={onCopy}
+      />
+      <InputRightElement
+        width="50px"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        borderRightRadius="3px"
+        backgroundColor="blue.default"
+      >
+        <Button
+          type="button"
+          size="sm"
+          variant="solid"
+          background="blue.default"
+          color="gray.800"
+          aria-label={copyAriaLabel}
+          minWidth="auto"
+          padding="6px"
+          height="32px"
+          _hover={{ color: 'none' }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onCopy();
+          }}
+        >
+          <Icon icon="copy" size="25px" />
+        </Button>
+      </InputRightElement>
+    </InputGroup>
+  );
+}
+
+LlmHostCopyRow.propTypes = {
+  value: PropTypes.string.isRequired,
+  onCopy: PropTypes.func.isRequired,
+  copyAriaLabel: PropTypes.string.isRequired,
+  inputBackgroundColor: PropTypes.string.isRequired,
+  inputBorderColor: PropTypes.string.isRequired,
+};
+
+function LlmModelCopyRow({
+  value,
+  onCopy,
+  copyAriaLabel,
+  inputBackgroundColor,
+  inputBorderColor,
+}) {
+  const { hexColor } = useStyle();
+  const copyStripBg = useColorModeValue('gray.200', 'gray.700');
+  const copyStripHoverBg = useColorModeValue('gray.300', 'gray.600');
+
+  return (
+    <InputGroup size="md" width="100%">
+      <InputLeftElement width="40px" height="40px" pointerEvents="none">
+        <Flex
+          width="40px"
+          height="36px"
+          alignItems="center"
+          justifyContent="center"
+          borderRadius="md"
+        >
+          <Icon icon="brain" width="22px" height="22px" color="#0097CF" />
+        </Flex>
+      </InputLeftElement>
+      <Input
+        value={value}
+        isReadOnly
+        bg={inputBackgroundColor}
+        borderColor={inputBorderColor}
+        borderRadius="3px"
+        cursor="pointer"
+        fontFamily="mono"
+        fontSize="sm"
+        textOverflow="ellipsis"
+        overflow="hidden"
+        whiteSpace="nowrap"
+        marginRight="50px"
+        onClick={onCopy}
+      />
+      <InputRightElement
+        width="50px"
+        height="40px"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        borderRightRadius="3px"
+        bg={copyStripBg}
+      >
+        <Button
+          type="button"
+          size="sm"
+          variant="solid"
+          aria-label={copyAriaLabel}
+          minWidth="auto"
+          width="100%"
+          height="100%"
+          borderRadius="0"
+          borderRightRadius="3px"
+          padding="6px"
+          _dark={{ color: 'gray.100' }}
+          _hover={{ bg: copyStripHoverBg }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onCopy();
+          }}
+        >
+          <Icon icon="copy" width="22px" height="22px" color={hexColor.fontColor2} />
+        </Button>
+      </InputRightElement>
+    </InputGroup>
+  );
+}
+
+LlmModelCopyRow.propTypes = {
+  value: PropTypes.string.isRequired,
+  onCopy: PropTypes.func.isRequired,
+  copyAriaLabel: PropTypes.string.isRequired,
+  inputBackgroundColor: PropTypes.string.isRequired,
+  inputBorderColor: PropTypes.string.isRequired,
+};
+
+function LLMKeyDetailsInfo({
+  hostLabel,
+  host,
+  modelsTitle,
+  models,
+  borderColor,
+  onCopyHost,
+}) {
+  const { t } = useTranslation('profile');
+  const { borderColor2, backgroundColor3 } = useStyle();
+
+  if (!host && (!Array.isArray(models) || models.length === 0)) return null;
+
+  const hostValue = typeof host === 'string' ? host.trim() : '';
+
+  return (
+    <Box>
+      {hostValue ? (
+        <Box borderWidth="1px" backgroundColor="gray.100" borderColor={borderColor} borderRadius="8px" p="12px" mb={Array.isArray(models) && models.length > 0 ? '14px' : 0}>
+          <Text size="sm" fontWeight="600" mb="6px">
+            {hostLabel}
+          </Text>
+          <Text size="sm" color="gray.600" mb="10px">
+            {t('llm.key-details.host-description')}
+          </Text>
+          <LlmHostCopyRow
+            value={hostValue}
+            onCopy={() => onCopyHost(hostValue)}
+            copyAriaLabel={t('llm.key-details.copy-aria')}
+            inputBackgroundColor={backgroundColor3}
+            inputBorderColor={borderColor2}
+          />
+        </Box>
+      ) : null}
+      {Array.isArray(models) && models.length > 0 && (
+        <Box
+          borderWidth="1px"
+          borderColor={borderColor}
+          borderRadius="8px"
+          p="12px"
+        >
+          <Text size="sm" fontWeight="600" mb="6px">
+            {modelsTitle}
+          </Text>
+          <Text size="sm" color="gray.600" mb="10px">
+            {t('llm.key-details.models-description')}
+          </Text>
+          <VStack align="stretch" spacing={3} width="100%">
+            {models.map((model) => (
+              <LlmModelCopyRow
+                key={`llm-model-${model}`}
+                value={model}
+                onCopy={() => onCopyHost(model)}
+                copyAriaLabel={t('llm.key-details.copy-aria')}
+                inputBackgroundColor={backgroundColor3}
+                inputBorderColor={borderColor2}
+              />
+            ))}
+          </VStack>
+        </Box>
+      )}
+    </Box>
+  );
+}
+
+LLMKeyDetailsInfo.propTypes = {
+  hostLabel: PropTypes.string.isRequired,
+  host: PropTypes.string,
+  modelsTitle: PropTypes.string.isRequired,
+  models: PropTypes.arrayOf(PropTypes.string),
+  borderColor: PropTypes.string.isRequired,
+  onCopyHost: PropTypes.func.isRequired,
+};
+
+LLMKeyDetailsInfo.defaultProps = {
+  host: '',
+  models: [],
+};
+
 function LLM() {
   const { borderColor2 } = useStyle();
   const { t, lang } = useTranslation('profile');
   const { createToast } = useCustomToast();
   const { state: subsState } = useSubscriptions();
+  const isLlmPlansLoading = subsState?.isLoading || !subsState?.areSubscriptionsFetched;
 
   const llmConsumableOptions = useMemo(() => {
     const subs = subsState.subscriptions?.subscriptions ?? [];
@@ -276,6 +558,7 @@ function LLM() {
   const [selectedPlanOption, setSelectedPlanOption] = useState(null);
   const [keyAliasInput, setKeyAliasInput] = useState('');
   const [generatedTokenId, setGeneratedTokenId] = useState('');
+  const [generatedHost, setGeneratedHost] = useState('');
   const [generatedModels, setGeneratedModels] = useState([]);
   const [keyDetails, setKeyDetails] = useState(null);
   const [keyToDelete, setKeyToDelete] = useState(null);
@@ -345,6 +628,7 @@ function LLM() {
     setSelectedPlanOption(null);
     setKeyAliasInput('');
     setGeneratedTokenId('');
+    setGeneratedHost('');
     setGeneratedModels([]);
   };
 
@@ -355,6 +639,7 @@ function LLM() {
     setSelectedPlanOption(null);
     setKeyAliasInput('');
     setGeneratedTokenId('');
+    setGeneratedHost('');
     setGeneratedModels([]);
   };
 
@@ -425,7 +710,13 @@ function LLM() {
           return;
         }
         setGeneratedTokenId(String(tokenId));
-        setGeneratedModels(Array.isArray(res?.data?.models) ? res.data.models : []);
+        setGeneratedHost(String(res?.data?.host || ''));
+        setGeneratedModels(
+          applyVendorPrefixToModels(
+            Array.isArray(res?.data?.models) ? res.data.models : [],
+            res?.data?.vendor_name,
+          ),
+        );
         await fetchKeys();
       } else {
         createToast({
@@ -463,6 +754,22 @@ function LLM() {
       });
     }
   };
+
+  const handleCopyHost = useCallback(async (value) => {
+    if (typeof value !== 'string' || !value) return;
+    try {
+      await navigator.clipboard.writeText(value);
+      createToast({
+        title: t('llm.key-copied'),
+        status: 'success',
+      });
+    } catch {
+      createToast({
+        title: t('llm.key-copy-error'),
+        status: 'error',
+      });
+    }
+  }, [createToast, t]);
 
   const handleDelete = async (tokenId, academyId) => {
     try {
@@ -573,7 +880,7 @@ function LLM() {
               fontSize="15px"
               textTransform="uppercase"
               alignSelf={{ base: 'center', md: 'auto' }}
-              isDisabled={llmKeysForbidden}
+              isDisabled={isLoadingList || llmKeysForbidden}
               onClick={openGenerateModal}
             >
               <Text fontSize="15px" fontWeight="700">
@@ -636,7 +943,11 @@ function LLM() {
                         setKeyDetails({
                           keyAlias,
                           usageText,
-                          models: Array.isArray(item?.models) ? item.models : [],
+                          host: typeof item?.host === 'string' ? item.host : '',
+                          models: applyVendorPrefixToModels(
+                            Array.isArray(item?.models) ? item.models : [],
+                            item?.vendor_name,
+                          ),
                         });
                       }}
                       deleteAriaLabel={t('llm.key-delete-aria')}
@@ -667,7 +978,10 @@ function LLM() {
           <ModalBody display="flex" flexDirection="column" gridGap="12px">
             {!generatedTokenId && (
               <>
-                {academyOptions.length === 0 && (
+                {isLlmPlansLoading && (
+                  <Text size="sm" color="gray.500">{t('llm.loading-plans')}</Text>
+                )}
+                {!isLlmPlansLoading && academyOptions.length === 0 && (
                   <Text size="sm" color="gray.500">{t('llm.no-plans')}</Text>
                 )}
                 {academyOptions.length > 1 && (
@@ -751,16 +1065,14 @@ function LLM() {
                   </InputRightElement>
                 </InputGroup>
                 <Text size="sm" color="gray.500">{t('llm.generate-modal.token-warning')}</Text>
-                {generatedModels.length > 0 && (
-                  <Box borderWidth="1px" borderColor={borderColor2} borderRadius="8px" p="12px">
-                    <Text size="sm" fontWeight="700" mb="8px">{t('llm.models-title')}</Text>
-                    <VStack align="stretch" spacing={1}>
-                      {generatedModels.map((model) => (
-                        <Text key={`generated-model-${model}`} size="sm">{model}</Text>
-                      ))}
-                    </VStack>
-                  </Box>
-                )}
+                <LLMKeyDetailsInfo
+                  hostLabel={t('llm.host-label')}
+                  host={generatedHost}
+                  modelsTitle={t('llm.models-title')}
+                  models={generatedModels}
+                  borderColor={borderColor2}
+                  onCopyHost={handleCopyHost}
+                />
               </>
             )}
           </ModalBody>
@@ -839,24 +1151,23 @@ function LLM() {
         isOpen={!!keyDetails}
         onClose={closeDetailsModal}
         title={t('llm.details-modal.title')}
+        size="2xl"
         isCentered
         headerStyles={{ textAlign: 'center', textTransform: 'uppercase' }}
         bodyStyles={{ display: 'flex', flexDirection: 'column', gridGap: '12px' }}
       >
         <Flex justifyContent="space-between" alignItems="center" gridGap="10px" flexWrap="wrap">
-          <Text size="sm" fontWeight="700">{keyDetails?.usageText || '—'}</Text>
-          <Text size="sm" color="gray.600">{keyDetails?.keyAlias || '—'}</Text>
+          <Text size="md" fontWeight="700">{keyDetails?.usageText || '—'}</Text>
+          <Text size="md" fontWeight="700">{keyDetails?.keyAlias || '—'}</Text>
         </Flex>
-        {Array.isArray(keyDetails?.models) && keyDetails.models.length > 0 && (
-          <Box borderWidth="1px" borderColor={borderColor2} borderRadius="8px" p="12px">
-            <Text size="sm" fontWeight="700" mb="8px">{t('llm.models-title')}</Text>
-            <VStack align="stretch" spacing={1}>
-              {keyDetails.models.map((model) => (
-                <Text key={`detail-model-${model}`} size="sm">{model}</Text>
-              ))}
-            </VStack>
-          </Box>
-        )}
+        <LLMKeyDetailsInfo
+          hostLabel={t('llm.host-label')}
+          host={keyDetails?.host}
+          modelsTitle={t('llm.models-title')}
+          models={Array.isArray(keyDetails?.models) ? keyDetails.models : []}
+          borderColor={borderColor2}
+          onCopyHost={handleCopyHost}
+        />
         <Flex justifyContent="center" pb="8px">
           <Button
             variant="default"

@@ -30,8 +30,15 @@
     "key-copied": "Clave copiada al portapapeles.",
     "key-copy-error": "No se pudo copiar la clave. Cópiala manualmente.",
     "view-details": "Ver detalles",
-    "models-title": "Modelos",
+    "host-label": "Host",
+    "models-title": "Modelos disponibles",
+    "key-details": {
+      "host-description": "URL base del gateway LLM. Usa este host al hacer peticiones con esta clave.",
+      "models-description": "Un modelo determina qué sistema de IA entrenado atiende las peticiones permitidas. Puedes especificar uno de estos modelos al llamar al servicio con esta clave.",
+      "copy-aria": "Copiar al portapapeles"
+    },
     "no-plans": "No tienes planes activos.",
+    "loading-plans": "Cargando tus planes disponibles…",
     "select-academy": "Academia",
     "select-plan": "Selecciona un plan",
     "generate-modal": {
@@ -123,6 +130,13 @@
       "provider-placeholder": "Selecciona un provider",
       "plan-label": "Selecciona el plan que cubrirá este VPS",
       "configure-provider": "Configura los ajustes de {{provider}}",
+      "options-disabled-region": "Algunas opciones están deshabilitadas porque no están disponibles para la región seleccionada.",
+      "options-disabled-size": "Algunos tamaños están deshabilitados porque la región seleccionada no los ofrece.",
+      "options-disabled-unavailable": "Algunas opciones están marcadas como no disponibles por el proveedor en este momento.",
+      "options-disabled-mixed": "Algunas opciones están deshabilitadas por la región elegida o porque el proveedor las marcó como no disponibles.",
+      "option-disabled-tooltip-region": "No disponible para la región seleccionada",
+      "option-disabled-tooltip-size": "Este tamaño no está disponible en la región seleccionada",
+      "option-disabled-tooltip-unavailable": "No disponible en este momento",
       "no-options-schema": "Este proveedor no define opciones configurables.",
       "missing-selection": "Selecciona todas las opciones requeridas antes de solicitar el VPS.",
       "specs": {
