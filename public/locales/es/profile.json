@@ -85,6 +85,25 @@
     "requested-at": "Solicitado: {{date}}",
     "plan-label": "Plan: {{plan}}",
     "view-credentials": "Ver credenciales",
+    "restart": {
+      "aria-label": "Reiniciar VPS",
+      "popover-title": "Reiniciar servidor",
+      "badge-reboot": "reboot",
+      "badge-power-cycle": "power cycle",
+      "unknown-mode-title": "Reinicio ({{mode}})",
+      "modes": {
+        "graceful": {
+          "title": "Reinicio ordenado",
+          "description": "Pide al sistema operativo apagarse de forma ordenada y volver a arrancar. Úsalo cuando el servidor responde con normalidad."
+        },
+        "forced": {
+          "title": "Reinicio forzado",
+          "description": "Corta la alimentación y el equipo vuelve a encender. Los procesos y servicios se detienen al instante, lo que puede aumentar el riesgo de corrupción de datos si algo estaba escribiendo en disco. Úsalo si el servidor está colgado o no responde a un reinicio ordenado."
+        }
+      },
+      "success": "Se inició el reinicio. El servidor puede no estar disponible unos instantes.",
+      "error": "No pudimos iniciar el reinicio. Inténtalo de nuevo."
+    },
     "credentials-modal": {
       "title": "Detalles de conexión",
       "loading": "Cargando credenciales…",

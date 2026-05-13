@@ -14,8 +14,17 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
   SimpleGrid,
   Text as ChakraText,
+  useColorModeValue,
+  useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import { formatRelative } from 'date-fns';
@@ -133,9 +142,32 @@ function VpsCard({
   showOddColumnRightBorder,
   isViewCredentialsDisabled,
   onViewCredentials,
+  isRestartDisabled,
+  isRestartLoading,
+  onRestartRequest,
+  restartModes,
 }) {
-  const { borderColor2, backgroundColor3 } = useStyle();
+  const { borderColor2, backgroundColor3, hexColor } = useStyle();
   const { t } = useTranslation('profile');
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const restartModeHoverBg = useColorModeValue('blue.light', 'featuredDark');
+
+  const handlePickRestartMode = async (mode) => {
+    onClose();
+    await onRestartRequest(mode);
+  };
+
+  const restartModeBadge = (mode) => {
+    if (mode === 'graceful') return t('vps.restart.badge-reboot');
+    if (mode === 'forced') return t('vps.restart.badge-power-cycle');
+    return null;
+  };
+
+  const restartModeIconColor = (mode) => {
+    if (mode === 'graceful') return hexColor.green;
+    if (mode === 'forced') return hexColor.yellowDefault;
+    return hexColor.blueDefault;
+  };
 
   return (
     <Box
@@ -224,18 +256,108 @@ function VpsCard({
             </Text>
           ) : null}
         </Flex>
-        <Box marginTop="auto" paddingTop="10px" width="100%">
+        <Flex marginTop="auto" paddingTop="10px" width="100%" alignItems="center" gap="10px">
           <Button
             variant="outline"
             size="sm"
-            width="100%"
+            flex="1"
+            minWidth={0}
             fontWeight="600"
             isDisabled={isViewCredentialsDisabled}
             onClick={onViewCredentials}
           >
             {t('vps.view-credentials')}
           </Button>
-        </Box>
+          {restartModes.length > 0 ? (
+            <Popover
+              isOpen={isOpen}
+              onOpen={onOpen}
+              onClose={onClose}
+              placement="top-start"
+              closeOnBlur
+              isLazy
+            >
+              <PopoverTrigger>
+                <IconButton
+                  aria-label={t('vps.restart.aria-label')}
+                  title={t('vps.restart.aria-label')}
+                  icon={<Icon icon="sync" size="25px" color={hexColor.blueDefault} />}
+                  background="transparent"
+                  border="none"
+                  size="sm"
+                  flexShrink={0}
+                  h="32px"
+                  minW="32px"
+                  px={1}
+                  isDisabled={isRestartDisabled}
+                  isLoading={isRestartLoading}
+                />
+              </PopoverTrigger>
+              <PopoverContent maxW="min(100vw - 32px, 420px)" width="420px">
+                <PopoverArrow />
+                <PopoverCloseButton />
+                <PopoverHeader fontWeight="700" fontSize="sm" pr="36px" pb={0}>
+                  {t('vps.restart.popover-title')}
+                </PopoverHeader>
+                <PopoverBody pb={3} pt={2}>
+                  <VStack spacing={1} align="stretch">
+                    {restartModes.map((mode) => {
+                      const badgeLabel = restartModeBadge(mode);
+                      return (
+                        <Button
+                          key={mode}
+                          type="button"
+                          variant="ghost"
+                          display="flex"
+                          flexDirection="row"
+                          alignItems="flex-start"
+                          justifyContent="flex-start"
+                          height="auto"
+                          py={2}
+                          px={2}
+                          gap={3}
+                          whiteSpace="normal"
+                          textAlign="left"
+                          isDisabled={isRestartLoading}
+                          _hover={{ bg: restartModeHoverBg }}
+                          onClick={() => handlePickRestartMode(mode)}
+                        >
+                          <Box flexShrink={0} pt="2px" display="flex" alignItems="center" justifyContent="center">
+                            <Icon icon="sync" size="22px" color={restartModeIconColor(mode)} />
+                          </Box>
+                          <Box flex="1" minWidth={0}>
+                            <Flex justifyContent="start" gap={2} mb="2px">
+                              <Text size="sm" fontWeight="700" minWidth={0}>
+                                {t(`vps.restart.modes.${mode}.title`, {}, { fallback: t('vps.restart.unknown-mode-title', { mode }) })}
+                              </Text>
+                              {badgeLabel ? (
+                                <ChakraText
+                                  backgroundColor="blue.light"
+                                  color="blue.default"
+                                  as="span"
+                                  fontSize="10px"
+                                  padding="2px 6px"
+                                  borderRadius="18px"
+                                  width="fit-content"
+
+                                >
+                                  {badgeLabel}
+                                </ChakraText>
+                              ) : null}
+                            </Flex>
+                            <Text size="xs" color="gray.600" fontWeight="400">
+                              {t(`vps.restart.modes.${mode}.description`, {}, { fallback: '' })}
+                            </Text>
+                          </Box>
+                        </Button>
+                      );
+                    })}
+                  </VStack>
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+          ) : null}
+        </Flex>
       </Box>
     </Box>
   );
@@ -253,6 +375,10 @@ VpsCard.propTypes = {
   showOddColumnRightBorder: PropTypes.bool.isRequired,
   isViewCredentialsDisabled: PropTypes.bool,
   onViewCredentials: PropTypes.func.isRequired,
+  isRestartDisabled: PropTypes.bool,
+  isRestartLoading: PropTypes.bool,
+  onRestartRequest: PropTypes.func.isRequired,
+  restartModes: PropTypes.arrayOf(PropTypes.string),
 };
 
 VpsCard.defaultProps = {
@@ -262,6 +388,9 @@ VpsCard.defaultProps = {
   planText: '',
   createdAtText: '',
   isViewCredentialsDisabled: false,
+  isRestartDisabled: true,
+  isRestartLoading: false,
+  restartModes: [],
 };
 
 function VPS() {
@@ -284,6 +413,7 @@ function VPS() {
   const [credentialsLoadError, setCredentialsLoadError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [requestModalOpen, setRequestModalOpen] = useState(false);
+  const [restartingVpsId, setRestartingVpsId] = useState(null);
   const isMountedRef = useRef(true);
 
   const planTitleBySlug = useMemo(() => {
@@ -434,6 +564,33 @@ function VPS() {
     }
   }, [t]);
 
+  const handleRestartVps = useCallback(async (vpsId, mode) => {
+    if (vpsId == null) return;
+    setRestartingVpsId(vpsId);
+    try {
+      const res = await bc.provisioning().restartMyVps(vpsId, { mode });
+      if (res?.status >= 200 && res?.status < 300) {
+        createToast({
+          title: t('vps.restart.success'),
+          status: 'success',
+        });
+        await fetchVpsList({ withLoader: false });
+      } else {
+        createToast({
+          title: getProvisioningErrorMessage(res, t('vps.restart.error')),
+          status: 'error',
+        });
+      }
+    } catch (err) {
+      createToast({
+        title: getProvisioningErrorMessage(err?.response ?? err, t('vps.restart.error')),
+        status: 'error',
+      });
+    } finally {
+      if (isMountedRef.current) setRestartingVpsId(null);
+    }
+  }, [createToast, fetchVpsList, t]);
+
   const handleCopyCredential = useCallback(async (raw) => {
     const str = raw == null ? '' : String(raw).trim();
     if (!str) {
@@ -569,6 +726,15 @@ function VPS() {
               const isLast = idx === vpsList.length - 1;
               const isOddColumn = idx % 2 === 0;
               const showOddColumnRightBorder = isOddColumn && !isLast;
+              const restartModes = Array.isArray(item?.restart_modes)
+                ? item.restart_modes
+                  .filter((m) => typeof m === 'string' && m.trim() !== '')
+                  .map((m) => m.trim())
+                : [];
+              const isRestartDisabled = item?.id == null
+                || statusUpper !== 'ACTIVE';
+              const isRestartLoading = restartingVpsId != null && item?.id != null
+                && String(restartingVpsId) === String(item.id);
 
               return (
                 <VpsCard
@@ -586,6 +752,10 @@ function VPS() {
                   onViewCredentials={() => {
                     if (item?.id != null) openCredentialsModal(item.id);
                   }}
+                  isRestartDisabled={isRestartDisabled}
+                  isRestartLoading={isRestartLoading}
+                  onRestartRequest={(mode) => handleRestartVps(item.id, mode)}
+                  restartModes={restartModes}
                 />
               );
             })}

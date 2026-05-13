@@ -85,6 +85,25 @@
     "requested-at": "Requested: {{date}}",
     "plan-label": "Plan: {{plan}}",
     "view-credentials": "View credentials",
+    "restart": {
+      "aria-label": "Restart VPS",
+      "popover-title": "Restart server",
+      "badge-reboot": "reboot",
+      "badge-power-cycle": "power cycle",
+      "unknown-mode-title": "Restart ({{mode}})",
+      "modes": {
+        "graceful": {
+          "title": "Graceful restart",
+          "description": "Asks the OS to shut down cleanly and boot again. Prefer this when the machine responds normally."
+        },
+        "forced": {
+          "title": "Forced restart",
+          "description": "Cuts power and turns the machine back on. Processes and services stop immediately, which may increase the risk of data corruption if something was writing to disk. Useful if the server is frozen or not responding to a graceful restart."
+        }
+      },
+      "success": "Restart was started. The server may be unavailable for a short time.",
+      "error": "We couldn't start the restart."
+    },
     "credentials-modal": {
       "title": "Connection details",
       "loading": "Loading credentials…",
