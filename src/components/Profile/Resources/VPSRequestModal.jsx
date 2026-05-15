@@ -134,7 +134,8 @@ function getNormalizedVendorFieldOptions(field, vendorOptionsPayload, vendorSett
   const optionsKey = field?.options_key;
   const settingsKey = field?.settings_key;
   const rawOptions = vendorOptionsPayload?.[optionsKey] || [];
-  const allowedValues = vendorSettings?.[settingsKey] || [];
+  const rawAllowed = vendorSettings?.[settingsKey];
+  const allowedValues = Array.isArray(rawAllowed) ? rawAllowed : [];
   const allowedSet = new Set(allowedValues.map((entry) => String(entry)));
 
   return rawOptions
