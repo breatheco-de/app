@@ -14,8 +14,18 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
   SimpleGrid,
+  Spinner,
   Text as ChakraText,
+  useColorModeValue,
+  useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import { formatRelative } from 'date-fns';
@@ -39,6 +49,10 @@ function getProvisioningErrorMessage(res, fallback) {
   const detail = res?.data?.detail;
   if (typeof detail === 'string' && detail.trim()) return detail.trim();
   return fallback;
+}
+
+function getAllowMidCycleRebuildFromVpsDetail(data) {
+  return data?.provisioning_academy?.vendor_settings?.allow_mid_cycle_rebuild === true;
 }
 
 /** Maps VPS API status to subscription-card pill styles (same keys as `statusStyles` in handlers). */
@@ -133,9 +147,40 @@ function VpsCard({
   showOddColumnRightBorder,
   isViewCredentialsDisabled,
   onViewCredentials,
+  isVpsListPolling,
+  isRestartDisabled,
+  isRestartLoading,
+  onRestartRequest,
+  restartModes,
+  showDeleteButton,
+  deleteAriaLabel,
+  onDeleteClick,
 }) {
-  const { borderColor2, backgroundColor3 } = useStyle();
+  const { borderColor2, backgroundColor3, hexColor } = useStyle();
   const { t } = useTranslation('profile');
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const restartModeHoverBg = useColorModeValue('blue.light', 'featuredDark');
+
+  useEffect(() => {
+    if (isVpsListPolling) onClose();
+  }, [isVpsListPolling, onClose]);
+
+  const handlePickRestartMode = async (mode) => {
+    onClose();
+    await onRestartRequest(mode);
+  };
+
+  const restartModeBadge = (mode) => {
+    if (mode === 'graceful') return t('vps.restart.badge-reboot');
+    if (mode === 'forced') return t('vps.restart.badge-power-cycle');
+    return null;
+  };
+
+  const restartModeIconColor = (mode) => {
+    if (mode === 'graceful') return hexColor.green;
+    if (mode === 'forced') return hexColor.yellowDefault;
+    return hexColor.blueDefault;
+  };
 
   return (
     <Box
@@ -148,7 +193,7 @@ function VpsCard({
       pr={{ md: showOddColumnRightBorder ? 6 : 0 }}
     >
       <Flex
-        alignItems="center"
+        alignItems="flex-start"
         flexShrink={0}
         gridGap="12px"
         width="100%"
@@ -174,17 +219,29 @@ function VpsCard({
             <Text fontSize="md" fontWeight="700">
               {title}
             </Text>
-            <ChakraText
+            <Flex
               as="span"
-              fontSize="12px"
-              fontWeight="700"
-              padding="4px 10px"
-              borderRadius="18px"
+              alignItems="center"
+              flexWrap="wrap"
+              gap="6px"
               width="fit-content"
-              {...pillStyle}
+              aria-busy={isVpsListPolling}
             >
-              {statusLabel}
-            </ChakraText>
+              <ChakraText
+                as="span"
+                fontSize="12px"
+                fontWeight="700"
+                padding="4px 10px"
+                borderRadius="18px"
+                width="fit-content"
+                {...pillStyle}
+              >
+                {statusLabel}
+              </ChakraText>
+              {isVpsListPolling ? (
+                <Spinner size="xs" color="blue.default" flexShrink={0} />
+              ) : null}
+            </Flex>
           </Flex>
           {errorMessageText ? (
             <Text fontSize="xs" color="gray.500" lineHeight="short">
@@ -193,6 +250,27 @@ function VpsCard({
           ) : null}
           {ipText ? <Text fontSize="sm" color="gray.600">{ipText}</Text> : null}
         </Box>
+        {showDeleteButton ? (
+          <Flex alignItems="center" justifyContent="center" height="100%">
+            <IconButton
+              type="button"
+              aria-label={deleteAriaLabel}
+              title={deleteAriaLabel}
+              icon={<Icon icon="close" size="18px" color={hexColor.danger} />}
+              variant="ghost"
+              size="sm"
+              flexShrink={0}
+              h="32px"
+              minW="32px"
+              mt="4px"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDeleteClick();
+              }}
+              isDisabled={isVpsListPolling}
+            />
+          </Flex>
+        ) : null}
       </Flex>
       <Box
         flex="1"
@@ -224,18 +302,109 @@ function VpsCard({
             </Text>
           ) : null}
         </Flex>
-        <Box marginTop="auto" paddingTop="10px" width="100%">
+        <Flex marginTop="auto" paddingTop="10px" width="100%" alignItems="center" gap="10px">
           <Button
             variant="outline"
             size="sm"
-            width="100%"
+            flex="1"
+            minWidth={0}
             fontWeight="600"
             isDisabled={isViewCredentialsDisabled}
+            isLoading={isVpsListPolling}
             onClick={onViewCredentials}
           >
             {t('vps.view-credentials')}
           </Button>
-        </Box>
+          {restartModes.length > 0 ? (
+            <Popover
+              isOpen={isOpen}
+              onOpen={onOpen}
+              onClose={onClose}
+              placement="top-start"
+              closeOnBlur
+              isLazy
+            >
+              <PopoverTrigger>
+                <IconButton
+                  aria-label={t('vps.restart.aria-label')}
+                  title={t('vps.restart.aria-label')}
+                  icon={<Icon icon="sync" size="25px" color={hexColor.blueDefault} />}
+                  background="transparent"
+                  border="none"
+                  size="sm"
+                  flexShrink={0}
+                  h="32px"
+                  minW="32px"
+                  px={1}
+                  isDisabled={isRestartDisabled || isVpsListPolling}
+                  isLoading={isRestartLoading}
+                />
+              </PopoverTrigger>
+              <PopoverContent maxW="min(100vw - 32px, 420px)" width="420px">
+                <PopoverArrow />
+                <PopoverCloseButton />
+                <PopoverHeader fontWeight="700" fontSize="sm" pr="36px" pb={0}>
+                  {t('vps.restart.popover-title')}
+                </PopoverHeader>
+                <PopoverBody pb={3} pt={2}>
+                  <VStack spacing={1} align="stretch">
+                    {restartModes.map((mode) => {
+                      const badgeLabel = restartModeBadge(mode);
+                      return (
+                        <Button
+                          key={mode}
+                          type="button"
+                          variant="ghost"
+                          display="flex"
+                          flexDirection="row"
+                          alignItems="flex-start"
+                          justifyContent="flex-start"
+                          height="auto"
+                          py={2}
+                          px={2}
+                          gap={3}
+                          whiteSpace="normal"
+                          textAlign="left"
+                          isDisabled={isRestartLoading || isVpsListPolling}
+                          _hover={{ bg: restartModeHoverBg }}
+                          onClick={() => handlePickRestartMode(mode)}
+                        >
+                          <Box flexShrink={0} pt="2px" display="flex" alignItems="center" justifyContent="center">
+                            <Icon icon="sync" size="22px" color={restartModeIconColor(mode)} />
+                          </Box>
+                          <Box flex="1" minWidth={0}>
+                            <Flex justifyContent="start" gap={2} mb="2px">
+                              <Text size="sm" fontWeight="700" minWidth={0}>
+                                {t(`vps.restart.modes.${mode}.title`, {}, { fallback: t('vps.restart.unknown-mode-title', { mode }) })}
+                              </Text>
+                              {badgeLabel ? (
+                                <ChakraText
+                                  backgroundColor="blue.light"
+                                  color="blue.default"
+                                  as="span"
+                                  fontSize="10px"
+                                  padding="2px 6px"
+                                  borderRadius="18px"
+                                  width="fit-content"
+
+                                >
+                                  {badgeLabel}
+                                </ChakraText>
+                              ) : null}
+                            </Flex>
+                            <Text size="xs" color="gray.600" fontWeight="400">
+                              {t(`vps.restart.modes.${mode}.description`, {}, { fallback: '' })}
+                            </Text>
+                          </Box>
+                        </Button>
+                      );
+                    })}
+                  </VStack>
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+          ) : null}
+        </Flex>
       </Box>
     </Box>
   );
@@ -252,7 +421,15 @@ VpsCard.propTypes = {
   pillStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.any])).isRequired,
   showOddColumnRightBorder: PropTypes.bool.isRequired,
   isViewCredentialsDisabled: PropTypes.bool,
+  isVpsListPolling: PropTypes.bool,
   onViewCredentials: PropTypes.func.isRequired,
+  isRestartDisabled: PropTypes.bool,
+  isRestartLoading: PropTypes.bool,
+  onRestartRequest: PropTypes.func.isRequired,
+  restartModes: PropTypes.arrayOf(PropTypes.string),
+  showDeleteButton: PropTypes.bool,
+  deleteAriaLabel: PropTypes.string,
+  onDeleteClick: PropTypes.func,
 };
 
 VpsCard.defaultProps = {
@@ -262,12 +439,19 @@ VpsCard.defaultProps = {
   planText: '',
   createdAtText: '',
   isViewCredentialsDisabled: false,
+  isVpsListPolling: false,
+  isRestartDisabled: true,
+  isRestartLoading: false,
+  restartModes: [],
+  showDeleteButton: false,
+  deleteAriaLabel: '',
+  onDeleteClick: () => {},
 };
 
 function VPS() {
   const VPS_POLL_INTERVAL_MS = 4000;
   const VPS_POLL_MAX_ATTEMPTS = 20;
-  const { borderColor2 } = useStyle();
+  const { borderColor2, hexColor } = useStyle();
   const { t, lang } = useTranslation('profile');
   const { createToast } = useCustomToast();
   const { statusStyles } = profileHandlers();
@@ -284,6 +468,15 @@ function VPS() {
   const [credentialsLoadError, setCredentialsLoadError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [requestModalOpen, setRequestModalOpen] = useState(false);
+  const [restartingVpsId, setRestartingVpsId] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteTargetVpsId, setDeleteTargetVpsId] = useState(null);
+  const [deleteDetailLoading, setDeleteDetailLoading] = useState(false);
+  const [deleteDetailError, setDeleteDetailError] = useState('');
+  const [allowMidCycleRebuild, setAllowMidCycleRebuild] = useState(false);
+  const [isDeletingVps, setIsDeletingVps] = useState(false);
+  const [vpsListUiPollId, setVpsListUiPollId] = useState(null);
+  const deleteDetailRequestSeqRef = useRef(0);
   const isMountedRef = useRef(true);
 
   const planTitleBySlug = useMemo(() => {
@@ -347,34 +540,74 @@ function VPS() {
       await fetchVpsList({ withLoader: false });
       return;
     }
-    const targetIdStr = String(createdVpsId);
+    setVpsListUiPollId(createdVpsId);
+    try {
+      const targetIdStr = String(createdVpsId);
 
-    const runAttempt = async (attempt) => {
-      const { ok, results } = await fetchVpsList({ withLoader: false });
-      if (!ok) {
+      const runAttempt = async (attempt) => {
+        const { ok, results } = await fetchVpsList({ withLoader: false });
+        if (!ok) {
+          if (!isMountedRef.current || attempt + 1 >= VPS_POLL_MAX_ATTEMPTS) return;
+          await new Promise((resolve) => { setTimeout(resolve, VPS_POLL_INTERVAL_MS); });
+          await runAttempt(attempt + 1);
+          return;
+        }
+
+        const target = (results || []).find((vps) => String(vps?.id) === targetIdStr);
+        if (!target) {
+          if (!isMountedRef.current || attempt + 1 >= VPS_POLL_MAX_ATTEMPTS) return;
+          await new Promise((resolve) => { setTimeout(resolve, VPS_POLL_INTERVAL_MS); });
+          await runAttempt(attempt + 1);
+          return;
+        }
+
+        const status = String(target?.status || '').toUpperCase();
+        if (status === 'ACTIVE' || status === 'ERROR') return;
+
         if (!isMountedRef.current || attempt + 1 >= VPS_POLL_MAX_ATTEMPTS) return;
         await new Promise((resolve) => { setTimeout(resolve, VPS_POLL_INTERVAL_MS); });
         await runAttempt(attempt + 1);
-        return;
-      }
+      };
 
-      const target = (results || []).find((vps) => String(vps?.id) === targetIdStr);
-      if (!target) {
+      await runAttempt(0);
+    } finally {
+      if (isMountedRef.current) setVpsListUiPollId(null);
+    }
+  }, [fetchVpsList, VPS_POLL_INTERVAL_MS, VPS_POLL_MAX_ATTEMPTS]);
+
+  const pollVpsUntilDeleted = useCallback(async (vpsId) => {
+    if (vpsId == null || String(vpsId).trim() === '') {
+      await fetchVpsList({ withLoader: false });
+      return;
+    }
+    setVpsListUiPollId(vpsId);
+    try {
+      const targetIdStr = String(vpsId);
+
+      const runAttempt = async (attempt) => {
+        const { ok, results } = await fetchVpsList({ withLoader: false });
+        if (!ok) {
+          if (!isMountedRef.current || attempt + 1 >= VPS_POLL_MAX_ATTEMPTS) return;
+          await new Promise((resolve) => { setTimeout(resolve, VPS_POLL_INTERVAL_MS); });
+          await runAttempt(attempt + 1);
+          return;
+        }
+
+        const target = (results || []).find((vps) => String(vps?.id) === targetIdStr);
+        if (!target) return;
+
+        const status = String(target?.status || '').toUpperCase();
+        if (status === 'DELETED') return;
+
         if (!isMountedRef.current || attempt + 1 >= VPS_POLL_MAX_ATTEMPTS) return;
         await new Promise((resolve) => { setTimeout(resolve, VPS_POLL_INTERVAL_MS); });
         await runAttempt(attempt + 1);
-        return;
-      }
+      };
 
-      const status = String(target?.status || '').toUpperCase();
-      if (status === 'ACTIVE' || status === 'ERROR') return;
-
-      if (!isMountedRef.current || attempt + 1 >= VPS_POLL_MAX_ATTEMPTS) return;
-      await new Promise((resolve) => { setTimeout(resolve, VPS_POLL_INTERVAL_MS); });
-      await runAttempt(attempt + 1);
-    };
-
-    await runAttempt(0);
+      await runAttempt(0);
+    } finally {
+      if (isMountedRef.current) setVpsListUiPollId(null);
+    }
   }, [fetchVpsList, VPS_POLL_INTERVAL_MS, VPS_POLL_MAX_ATTEMPTS]);
 
   useEffect(() => {
@@ -433,6 +666,133 @@ function VPS() {
       setCredentialsLoading(false);
     }
   }, [t]);
+
+  const handleRestartVps = useCallback(async (vpsId, mode) => {
+    if (vpsId == null) return;
+    setRestartingVpsId(vpsId);
+    try {
+      const res = await bc.provisioning().restartMyVps(vpsId, { mode });
+      if (res?.status >= 200 && res?.status < 300) {
+        createToast({
+          title: t('vps.restart.success'),
+          status: 'success',
+        });
+        await fetchVpsList({ withLoader: false });
+      } else {
+        createToast({
+          title: getProvisioningErrorMessage(res, t('vps.restart.error')),
+          status: 'error',
+        });
+      }
+    } catch (err) {
+      createToast({
+        title: getProvisioningErrorMessage(err?.response ?? err, t('vps.restart.error')),
+        status: 'error',
+      });
+    } finally {
+      if (isMountedRef.current) setRestartingVpsId(null);
+    }
+  }, [createToast, fetchVpsList, t]);
+
+  const resetDeleteVpsModal = useCallback(() => {
+    deleteDetailRequestSeqRef.current += 1;
+    setDeleteModalOpen(false);
+    setDeleteTargetVpsId(null);
+    setDeleteDetailLoading(false);
+    setDeleteDetailError('');
+    setAllowMidCycleRebuild(false);
+    setIsDeletingVps(false);
+  }, []);
+
+  const closeDeleteVpsModal = useCallback(() => {
+    if (isDeletingVps) return;
+    resetDeleteVpsModal();
+  }, [isDeletingVps, resetDeleteVpsModal]);
+
+  const loadVpsDetailForDelete = useCallback(async (vpsId) => {
+    deleteDetailRequestSeqRef.current += 1;
+    const seq = deleteDetailRequestSeqRef.current;
+    if (!isMountedRef.current) return;
+    setDeleteDetailLoading(true);
+    setDeleteDetailError('');
+    setAllowMidCycleRebuild(false);
+    try {
+      const res = await bc.provisioning().getMyVpsById(vpsId);
+      if (deleteDetailRequestSeqRef.current !== seq || !isMountedRef.current) return;
+      if (res?.status >= 200 && res?.status < 300) {
+        setAllowMidCycleRebuild(getAllowMidCycleRebuildFromVpsDetail(res.data || {}));
+      } else {
+        setDeleteDetailError(getProvisioningErrorMessage(res, t('vps.delete.load-detail-error')));
+      }
+    } catch (err) {
+      if (deleteDetailRequestSeqRef.current === seq && isMountedRef.current) {
+        setDeleteDetailError(getProvisioningErrorMessage(err?.response ?? err, t('vps.delete.load-detail-error')));
+      }
+    } finally {
+      if (deleteDetailRequestSeqRef.current === seq && isMountedRef.current) {
+        setDeleteDetailLoading(false);
+      }
+    }
+  }, [t]);
+
+  const openDeleteVpsModal = useCallback((vps) => {
+    if (vps?.id == null) return;
+    setDeleteModalOpen(true);
+    setDeleteTargetVpsId(vps.id);
+    setDeleteDetailError('');
+    setAllowMidCycleRebuild(false);
+    loadVpsDetailForDelete(vps.id);
+  }, [loadVpsDetailForDelete]);
+
+  const handleConfirmDeleteVps = useCallback(async () => {
+    const vpsId = deleteTargetVpsId;
+    if (vpsId == null) return;
+    if (deleteDetailLoading || deleteDetailError) return;
+
+    setIsDeletingVps(true);
+    try {
+      const res = await bc.provisioning().deleteMyVps(vpsId);
+      if (!isMountedRef.current) return;
+      if (res?.status >= 200 && res?.status < 300) {
+        createToast({
+          title: t('vps.delete.success'),
+          status: 'success',
+        });
+        const credId = credentialsDetail?.id;
+        if (credentialsModalOpen && credId != null && String(credId) === String(vpsId)) {
+          closeCredentialsModal();
+        }
+        resetDeleteVpsModal();
+        await pollVpsUntilDeleted(vpsId);
+      } else {
+        createToast({
+          title: getProvisioningErrorMessage(res, t('vps.delete.error')),
+          status: 'error',
+        });
+      }
+    } catch (err) {
+      if (isMountedRef.current) {
+        createToast({
+          title: getProvisioningErrorMessage(err?.response ?? err, t('vps.delete.error')),
+          status: 'error',
+        });
+      }
+    } finally {
+      if (isMountedRef.current) setIsDeletingVps(false);
+    }
+  }, [
+    closeCredentialsModal,
+    createToast,
+    credentialsDetail?.id,
+    credentialsModalOpen,
+    deleteDetailError,
+    deleteDetailLoading,
+    deleteTargetVpsId,
+    fetchVpsList,
+    pollVpsUntilDeleted,
+    resetDeleteVpsModal,
+    t,
+  ]);
 
   const handleCopyCredential = useCallback(async (raw) => {
     const str = raw == null ? '' : String(raw).trim();
@@ -569,6 +929,18 @@ function VPS() {
               const isLast = idx === vpsList.length - 1;
               const isOddColumn = idx % 2 === 0;
               const showOddColumnRightBorder = isOddColumn && !isLast;
+              const restartModes = Array.isArray(item?.restart_modes)
+                ? item.restart_modes
+                  .filter((m) => typeof m === 'string' && m.trim() !== '')
+                  .map((m) => m.trim())
+                : [];
+              const isRestartDisabled = item?.id == null
+                || statusUpper !== 'ACTIVE';
+              const isRestartLoading = restartingVpsId != null && item?.id != null
+                && String(restartingVpsId) === String(item.id);
+              const canShowDelete = ['PENDING', 'PROVISIONING', 'ACTIVE'].includes(statusUpper);
+              const isVpsListPolling = vpsListUiPollId != null && item?.id != null
+                && String(vpsListUiPollId) === String(item.id);
 
               return (
                 <VpsCard
@@ -583,9 +955,17 @@ function VPS() {
                   pillStyle={pillStyle}
                   showOddColumnRightBorder={showOddColumnRightBorder}
                   isViewCredentialsDisabled={item?.id == null}
+                  isVpsListPolling={isVpsListPolling}
                   onViewCredentials={() => {
                     if (item?.id != null) openCredentialsModal(item.id);
                   }}
+                  isRestartDisabled={isRestartDisabled}
+                  isRestartLoading={isRestartLoading}
+                  onRestartRequest={(mode) => handleRestartVps(item.id, mode)}
+                  restartModes={restartModes}
+                  showDeleteButton={canShowDelete}
+                  deleteAriaLabel={t('vps.delete.aria-label')}
+                  onDeleteClick={() => openDeleteVpsModal(item)}
                 />
               );
             })}
@@ -593,6 +973,101 @@ function VPS() {
           )}
         </Box>
       </Box>
+      <Modal
+        isOpen={deleteModalOpen}
+        onClose={closeDeleteVpsModal}
+        closeOnOverlayClick={!isDeletingVps}
+        closeOnEsc={!isDeletingVps}
+        isCentered
+        size="md"
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader
+            fontSize="lg"
+            fontWeight="700"
+            borderBottom="1px solid"
+            borderColor={borderColor2}
+            pr="36px"
+          >
+            {t('vps.delete.title')}
+          </ModalHeader>
+          <ModalCloseButton isDisabled={isDeletingVps} />
+          <ModalBody display="flex" flexDirection="column" gridGap="12px" py="16px">
+            {deleteDetailLoading ? (
+              <Flex alignItems="center" gap={3} py={1}>
+                <Spinner size="sm" color="blue.default" />
+                <Text size="sm" color="gray.600">{t('vps.delete.loading-detail')}</Text>
+              </Flex>
+            ) : null}
+            {!deleteDetailLoading && deleteDetailError ? (
+              <VStack spacing={3} align="stretch">
+                <Text size="sm" color="red.500">{deleteDetailError}</Text>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  alignSelf="flex-start"
+                  onClick={() => deleteTargetVpsId != null && loadVpsDetailForDelete(deleteTargetVpsId)}
+                  isDisabled={deleteTargetVpsId == null || isDeletingVps}
+                >
+                  {t('vps.delete.retry')}
+                </Button>
+              </VStack>
+            ) : null}
+            {!deleteDetailLoading && !deleteDetailError ? (
+              <VStack spacing={3} align="stretch">
+                <Text size="sm" color="gray.600">{t('vps.delete.body')}</Text>
+                {allowMidCycleRebuild ? (
+                  <Box bg="gray.100" p="4" mb="4" borderRadius="md" width="100%">
+                    <Flex alignItems="center" gap={3}>
+                      <Icon icon="info" height="20px" width="30px" />
+                      <Text color="gray.500" fontWeight="bold">
+                        {t('vps.delete.credit-regenerates-alert')}
+                      </Text>
+                    </Flex>
+                  </Box>
+                ) : (
+                  <Box bg="yellow.light" p="4" mb="4" borderRadius="md" width="100%">
+                    <Flex alignItems="center" gap={3}>
+                      <Icon icon="warning" height="20px" width="30px" />
+                      <Text color="gray.500" fontWeight="bold">
+                        {t('vps.delete.no-credit-return-alert')}
+                      </Text>
+                    </Flex>
+                  </Box>
+                )}
+              </VStack>
+            ) : null}
+          </ModalBody>
+          <ModalFooter flexWrap="wrap" gap={2}>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={closeDeleteVpsModal}
+              isDisabled={isDeletingVps}
+            >
+              {t('vps.delete.cancel')}
+            </Button>
+            <Button
+              type="button"
+              variant="solid"
+              backgroundColor={hexColor.danger}
+              color="white"
+              ml={{ base: 0, sm: 'auto' }}
+              onClick={handleConfirmDeleteVps}
+              isLoading={isDeletingVps}
+              isDisabled={
+                isDeletingVps
+                || deleteDetailLoading
+                || Boolean(deleteDetailError)
+              }
+            >
+              {t('vps.delete.confirm')}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Modal isOpen={credentialsModalOpen} onClose={closeCredentialsModal} isCentered size="lg">
         <ModalOverlay />
         <ModalContent>
