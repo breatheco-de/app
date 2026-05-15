@@ -85,6 +85,19 @@
     "requested-at": "Solicitado: {{date}}",
     "plan-label": "Plan: {{plan}}",
     "view-credentials": "Ver credenciales",
+    "delete": {
+      "aria-label": "Eliminar VPS",
+      "title": "¿Eliminar VPS?",
+      "body": "Destruye el servidor. Esta acción no se puede deshacer.",
+      "confirm": "Eliminar VPS",
+      "cancel": "Cancelar",
+      "retry": "Reintentar",
+      "loading-detail": "Cargando detalles del VPS…",
+      "load-detail-error": "No pudimos cargar este VPS.",
+      "success": "Se inició la eliminación del VPS.",
+      "credit-regenerates-alert": "Después de la eliminación, el consumible usado para crear este VPS se regenerará y podrás solicitar otro.",
+      "no-credit-return-alert": "No regeneraremos el consumible usado para crear este VPS. Si no tienes otro crédito para VPS, debes esperar al próximo ciclo de facturación de tu plan para poder solicitar otro."
+    },
     "restart": {
       "aria-label": "Reiniciar VPS",
       "popover-title": "Reiniciar servidor",

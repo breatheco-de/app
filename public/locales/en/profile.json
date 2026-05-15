@@ -85,6 +85,20 @@
     "requested-at": "Requested: {{date}}",
     "plan-label": "Plan: {{plan}}",
     "view-credentials": "View credentials",
+    "delete": {
+      "aria-label": "Delete VPS",
+      "title": "Delete VPS?",
+      "body": "This will destroy the server. This action cannot be undone.",
+      "confirm": "Delete VPS",
+      "cancel": "Cancel",
+      "retry": "Try again",
+      "loading-detail": "Loading VPS details…",
+      "load-detail-error": "We couldn't load this VPS.",
+      "success": "VPS deletion started.",
+      "error": "We could not delete this VPS.",
+      "credit-regenerates-alert": "After the deletion, the consumable used to create this VPS will be regenerated so you can request another one.",
+      "no-credit-return-alert": "We won’t regenerate the consumable used to create this VPS. If you don’t already have another VPS credit, you may need to wait until your plan’s next billing cycle to request another."
+    },
     "restart": {
       "aria-label": "Restart VPS",
       "popover-title": "Restart server",
