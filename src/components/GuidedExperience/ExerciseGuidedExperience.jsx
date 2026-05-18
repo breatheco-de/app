@@ -51,6 +51,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
 
   const isExerciseStarted = !!currentTask?.assignment_telemetry;
   const isInteractiveExercise = !!currentAsset?.interactive && !!currentAsset?.learnpack_deploy_url;
+  const hasIntroVideo = !!currentAsset?.intro_video_url;
 
   useEffect(() => {
     if (!isInteractiveExercise) {
@@ -224,7 +225,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                     overflowY="auto"
                     flexGrow={1}
                     paddingRight={isInteractiveExercise && '8px'}
-                    maxHeight={isInteractiveExercise && '70px'}
+                    maxHeight={isInteractiveExercise && hasIntroVideo ? '70px' : undefined}
                   >
                     <Text color="white" size="l">
                       {currentAsset?.description}
