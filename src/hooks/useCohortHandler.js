@@ -6,7 +6,12 @@ import { useRouter } from 'next/router';
 import useAuth from './useAuth';
 import { getStorageItem, getBrowserInfo, languageFix, removeStorageItem } from '../utils';
 import useCohortAction from '../store/actions/cohortAction';
-import { getMacroSlugForCohortSyllabus, processRelatedAssignments, sortMicroCohortsLikeDashboard } from '../utils/cohorts';
+import {
+  getMacroSlugForCohortSyllabus,
+  processRelatedAssignments,
+  resolveModuleFromCohortState,
+  sortMicroCohortsLikeDashboard,
+} from '../utils/cohorts';
 import { reportDatalayer } from '../utils/requests';
 import bc from '../services/breathecode';
 import { BREATHECODE_HOST, DOMAIN_NAME } from '../utils/variables';
@@ -645,12 +650,13 @@ function useCohortHandler() {
     return () => { };
   };
 
-  const getDailyModuleData = () => {
-    const dailyModule = sortedAssignments.find(
-      (assignment) => assignment.id === cohortSession?.current_module,
-    );
-    return dailyModule;
-  };
+  const getDailyModuleData = () => resolveModuleFromCohortState(
+    sortedAssignments,
+    cohortSession?.current_module,
+    cohortSession?.micro_cohorts,
+    cohortsAssignments,
+    null,
+  );
 
   const getMandatoryProjects = (cohortSlug = null) => {
     const assignments = cohortSlug ? cohortsAssignments[cohortSlug]?.modules : sortedAssignments;

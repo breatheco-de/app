@@ -618,7 +618,9 @@ const useCheckout = () => {
       if (existsPayablePlan) {
         handleStep(stepsEnum.PAYMENT);
       } else {
-        await subscribeFreePlan(checking);
+        // Pass the resolved plan: React state from setSelectedPlan is not flushed yet when this runs,
+        // so subscribeFreePlan would no-op (no plan_id) and leave paymentStatus stuck on 'idle' (empty Summary).
+        await subscribeFreePlan(checking, autoSelectedPlan);
         handleStep(stepsEnum.SUMMARY);
       }
       setLoader('plan', false);
@@ -868,7 +870,7 @@ const useCheckout = () => {
         financingText = selectedPlan?.description;
       }
 
-      if (discountValues.length > 0) {
+      if (discountValues?.length > 0) {
         financingText += ` ${t('limited_time_offer')}`;
       }
 

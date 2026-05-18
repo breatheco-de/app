@@ -93,7 +93,7 @@ function SyllabusContent() {
   const [alertedModuleId, setAlertedModuleId] = useState(null);
   const [showPostDeliveryShareModal, setShowPostDeliveryShareModal] = useState(false);
   const {
-    getCohortUserCapabilities, getCohortData, cohortSession, sortedAssignments, setCohortSession, taskTodo,
+    getCohortUserCapabilities, getCohortData, getDailyModuleData, cohortSession, sortedAssignments, setCohortSession, taskTodo,
     updateAssignment, startDay, updateTask, reviewModalState, handleCloseReviewModal,
     grantAccess, setGrantAccess, checkNavigationAvailability, checkRevisionStatus,
   } = useCohortHandler();
@@ -886,7 +886,7 @@ function SyllabusContent() {
   const repoUrl = (ipynbHtmlUrl && url) ? `${url.replace('.inpynb', `${router.locale === 'en' ? '' : `.${router.locale}`}.inpynb`)}` : url;
   const inputModalLink = currentBlankProps && currentBlankProps.target === 'blank' ? currentBlankProps.url : `${ORIGIN_HOST}/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`;
 
-  const cohortModule = sortedAssignments.find((module) => module?.id === cohortSession?.current_module);
+  const cohortModule = getDailyModuleData();
 
   const projectStyles = {
     DONE: {
@@ -1292,7 +1292,7 @@ function SyllabusContent() {
                             isGuidedExperience={isAvailableAsSaas}
                             grantSyllabusAccess={grantAccess}
                             showTeachAlert={showTeachAlert}
-                            cohortModule={sortedAssignments.find((module) => module?.id === cohortSession?.current_module)}
+                            cohortModule={getDailyModuleData()}
                           />
                         )}
                         {!isQuiz && !isAvailableAsSaas && (

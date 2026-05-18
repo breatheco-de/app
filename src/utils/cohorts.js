@@ -166,6 +166,7 @@ export const getAttendance = ({ attendanceList, students, day }) => {
     attendanceStudents: attendanceLog,
     unattendanceStudents: unattendanceLog,
     current_module: currentDayExists ? attendanceList[day].current_module : null,
+    micro_cohort_id: currentDayExists ? attendanceList[day].micro_cohort_id ?? null : null,
     teacher_comments: currentDayExists ? attendanceList[day].teacher_comments : null,
     day,
   };
@@ -379,4 +380,96 @@ export function sortMicroCohortsLikeDashboard(microCohorts, cohortsOrderCsv) {
     });
   }
   return copy;
+}
+
+/**
+ * Macro cohorts flatten several micro syllabi; each micro reuses day ids (1, 2, 3…).
+ * For those cohorts we persist the 1-based index in the flattened module list as current_module.
+ */
+export function cohortUsesGlobalModuleIndex(microCohorts) {
+  return Array.isArray(microCohorts) && microCohorts.length > 0;
+}
+
+export function resolveModuleListIndex(
+  sortedAssignments,
+  currentModule,
+  microCohorts,
+  cohortsAssignments = null,
+  microCohortId = null,
+) {
+  if (currentModule == null || currentModule < 0 || !Array.isArray(sortedAssignments)) return -1;
+  if (cohortUsesGlobalModuleIndex(microCohorts)) {
+    if (microCohortId != null) {
+      const globalIdx = Number(currentModule) - 1;
+      if (globalIdx >= 0 && globalIdx < sortedAssignments.length) {
+        return globalIdx;
+      }
+    }
+    // Legacy macro logs: only syllabus day id (1, 2, 3…), no micro — first match (ambiguous)
+    return sortedAssignments.findIndex((assignment) => assignment.id === currentModule);
+  }
+  return sortedAssignments.findIndex((assignment) => assignment.id === currentModule);
+}
+
+export function resolveModuleFromCohortState(
+  sortedAssignments,
+  currentModule,
+  microCohorts,
+  cohortsAssignments = null,
+  microCohortId = null,
+) {
+  return resolveModuleFromAttendanceRecord(sortedAssignments, cohortsAssignments, microCohorts, {
+    currentModule,
+    microCohortId,
+  });
+}
+
+export function resolveCurrentModuleValue(sortedAssignments, moduleListIndex, microCohorts) {
+  if (!Array.isArray(sortedAssignments) || moduleListIndex < 0 || moduleListIndex >= sortedAssignments.length) {
+    return null;
+  }
+  if (cohortUsesGlobalModuleIndex(microCohorts)) {
+    return moduleListIndex + 1;
+  }
+  return sortedAssignments[moduleListIndex]?.id ?? null;
+}
+
+/** Micro-cohort id for a flattened module index (macro cohort attendance). */
+export function resolveMicroCohortIdForListIndex(attendanceModuleOptgroups, moduleListIndex) {
+  if (!Array.isArray(attendanceModuleOptgroups)) return null;
+  const match = attendanceModuleOptgroups
+    .flatMap((group) => group.options)
+    .find((opt) => opt.listIndex === moduleListIndex);
+  if (!match) return null;
+  const group = attendanceModuleOptgroups.find((g) => g.options.some((opt) => opt.listIndex === moduleListIndex));
+  const key = group?.key;
+  if (key == null || key === '') return null;
+  const asNumber = Number(key);
+  return Number.isFinite(asNumber) ? asNumber : null;
+}
+
+/**
+ * Resolve module from history_log / cohort state.
+ * Macro cohorts: prefer micro_cohort_id + global index; legacy entries only have syllabus day id.
+ */
+export function resolveModuleFromAttendanceRecord(
+  sortedAssignments,
+  cohortsAssignments,
+  microCohorts,
+  { currentModule, microCohortId },
+) {
+  if (currentModule == null || currentModule < 0) return null;
+
+  if (cohortUsesGlobalModuleIndex(microCohorts)) {
+    if (microCohortId != null) {
+      const globalIdx = Number(currentModule) - 1;
+      if (globalIdx >= 0 && globalIdx < sortedAssignments.length) {
+        return sortedAssignments[globalIdx];
+      }
+    }
+    const legacyIdx = sortedAssignments.findIndex((a) => a.id === currentModule);
+    return legacyIdx >= 0 ? sortedAssignments[legacyIdx] : null;
+  }
+
+  return sortedAssignments.find((a) => a.id === currentModule) || null;
 }

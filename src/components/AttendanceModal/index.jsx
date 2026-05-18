@@ -15,7 +15,14 @@ import ModalInfo from '../ModalInfo';
 import useStyle from '../../hooks/useStyle';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import { getAttendanceList, saveCohortAttendancy } from '../../lib/admissions';
-import { getAttendance, sortMicroCohortsLikeDashboard } from '../../utils/cohorts';
+import {
+  getAttendance,
+  sortMicroCohortsLikeDashboard,
+  cohortUsesGlobalModuleIndex,
+  resolveCurrentModuleValue,
+  resolveModuleListIndex,
+  resolveMicroCohortIdForListIndex,
+} from '../../utils/cohorts';
 import { languageFix } from '../../utils';
 import useCustomToast from '../../hooks/useCustomToast';
 
@@ -76,17 +83,28 @@ function AttendanceModal({
     value: checked,
   });
   const cohortDurationInDays = cohortSession?.syllabus_version.duration_in_days;
+  const microCohorts = cohortSession?.micro_cohorts || [];
+  const usesGlobalModuleIndex = cohortUsesGlobalModuleIndex(microCohorts);
 
   const currentCohortDay = cohortSession?.current_day;
-  const resolvedModuleId = sortedAssignments[moduleListIndex]?.id;
+  const resolvedModuleId = resolveCurrentModuleValue(sortedAssignments, moduleListIndex, microCohorts);
+  const resolvedMicroCohortId = usesGlobalModuleIndex
+    ? resolveMicroCohortIdForListIndex(attendanceModuleOptgroups, moduleListIndex)
+    : null;
 
   useEffect(() => {
     if (sortedAssignments.length === 0) return;
-    const id = cohortSession?.current_module;
-    if (id == null || id < 0) return;
-    const idx = sortedAssignments.findIndex((a) => a.id === id);
+    const stored = cohortSession?.current_module;
+    if (stored == null || stored < 0) return;
+    const idx = resolveModuleListIndex(
+      sortedAssignments,
+      stored,
+      microCohorts,
+      cohortsAssignments,
+      null,
+    );
     if (idx !== -1) setModuleListIndex(idx);
-  }, [cohortSession?.current_module, sortedAssignments]);
+  }, [cohortSession?.current_module, sortedAssignments, microCohorts, cohortsAssignments]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -113,14 +131,21 @@ function AttendanceModal({
 
       setChecked(checkedStudents);
       if (autoSelect) {
-        const id = attendanceTaken?.current_module;
-        if (id != null && id >= 0) {
-          const idx = sortedAssignments.findIndex((a) => a.id === id);
+        const stored = attendanceTaken?.current_module;
+        const storedMicroId = attendanceTaken?.micro_cohort_id;
+        if (stored != null && stored >= 0) {
+          const idx = resolveModuleListIndex(
+            sortedAssignments,
+            stored,
+            microCohorts,
+            cohortsAssignments,
+            storedMicroId,
+          );
           setModuleListIndex(idx >= 0 ? idx : 0);
         }
       }
     }
-  }, [attendanceTaken?.attendanceStudents, sortedAssignments, autoSelect]);
+  }, [attendanceTaken?.attendanceStudents, sortedAssignments, autoSelect, microCohorts]);
 
   const getDailyModuleData = () => {
     if (sortedAssignments.length > 0 && moduleListIndex >= 0) {
@@ -153,7 +178,13 @@ function AttendanceModal({
   };
 
   const saveAttendancy = () => {
-    saveCohortAttendancy({ cohortSlug: cohortSession.slug, students, checked, currentModule: resolvedModuleId })
+    saveCohortAttendancy({
+      cohortSlug: cohortSession.slug,
+      students,
+      checked,
+      currentModule: resolvedModuleId,
+      microCohortId: resolvedMicroCohortId,
+    })
       .then((data) => {
         setAttendanceList(data);
         createToast({
@@ -302,7 +333,9 @@ function AttendanceModal({
                             key={`${String(module.id)}-${languageFix(module?.label, lang) || 'module'}-i${String(listIndex)}`}
                             value={String(listIndex)}
                           >
-                            {`#${module.id} - ${languageFix(module?.label, lang)}`}
+                            {usesGlobalModuleIndex
+                              ? `#${listIndex + 1} - ${languageFix(module?.label, lang)}`
+                              : `#${module.id} - ${languageFix(module?.label, lang)}`}
                           </option>
                         ))}
                       </optgroup>
@@ -312,7 +345,9 @@ function AttendanceModal({
                         key={`${String(module.id)}-${languageFix(module?.label, lang) || 'module'}-i${String(index)}`}
                         value={String(index)}
                       >
-                        {`#${module.id} - ${languageFix(module?.label, lang)}`}
+                        {usesGlobalModuleIndex
+                          ? `#${index + 1} - ${languageFix(module?.label, lang)}`
+                          : `#${module.id} - ${languageFix(module?.label, lang)}`}
                       </option>
                     ))}
                 </Select>
