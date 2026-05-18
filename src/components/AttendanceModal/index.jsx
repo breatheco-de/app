@@ -100,7 +100,6 @@ function AttendanceModal({
       sortedAssignments,
       stored,
       microCohorts,
-      cohortsAssignments,
       null,
     );
     if (idx !== -1) setModuleListIndex(idx);
@@ -138,7 +137,6 @@ function AttendanceModal({
             sortedAssignments,
             stored,
             microCohorts,
-            cohortsAssignments,
             storedMicroId,
           );
           setModuleListIndex(idx >= 0 ? idx : 0);

@@ -390,11 +390,35 @@ export function cohortUsesGlobalModuleIndex(microCohorts) {
   return Array.isArray(microCohorts) && microCohorts.length > 0;
 }
 
+/**
+ * Resolve module from history_log / cohort state.
+ * Macro cohorts: prefer micro_cohort_id + global index; legacy entries only have syllabus day id.
+ */
+export function resolveModuleFromAttendanceRecord(
+  sortedAssignments,
+  microCohorts,
+  { currentModule, microCohortId },
+) {
+  if (currentModule == null || currentModule < 0) return null;
+
+  if (cohortUsesGlobalModuleIndex(microCohorts)) {
+    if (microCohortId != null) {
+      const globalIdx = Number(currentModule) - 1;
+      if (globalIdx >= 0 && globalIdx < sortedAssignments.length) {
+        return sortedAssignments[globalIdx];
+      }
+    }
+    const legacyIdx = sortedAssignments.findIndex((a) => a.id === currentModule);
+    return legacyIdx >= 0 ? sortedAssignments[legacyIdx] : null;
+  }
+
+  return sortedAssignments.find((a) => a.id === currentModule) || null;
+}
+
 export function resolveModuleListIndex(
   sortedAssignments,
   currentModule,
   microCohorts,
-  cohortsAssignments = null,
   microCohortId = null,
 ) {
   if (currentModule == null || currentModule < 0 || !Array.isArray(sortedAssignments)) return -1;
@@ -415,10 +439,9 @@ export function resolveModuleFromCohortState(
   sortedAssignments,
   currentModule,
   microCohorts,
-  cohortsAssignments = null,
   microCohortId = null,
 ) {
-  return resolveModuleFromAttendanceRecord(sortedAssignments, cohortsAssignments, microCohorts, {
+  return resolveModuleFromAttendanceRecord(sortedAssignments, microCohorts, {
     currentModule,
     microCohortId,
   });
@@ -446,30 +469,4 @@ export function resolveMicroCohortIdForListIndex(attendanceModuleOptgroups, modu
   if (key == null || key === '') return null;
   const asNumber = Number(key);
   return Number.isFinite(asNumber) ? asNumber : null;
-}
-
-/**
- * Resolve module from history_log / cohort state.
- * Macro cohorts: prefer micro_cohort_id + global index; legacy entries only have syllabus day id.
- */
-export function resolveModuleFromAttendanceRecord(
-  sortedAssignments,
-  cohortsAssignments,
-  microCohorts,
-  { currentModule, microCohortId },
-) {
-  if (currentModule == null || currentModule < 0) return null;
-
-  if (cohortUsesGlobalModuleIndex(microCohorts)) {
-    if (microCohortId != null) {
-      const globalIdx = Number(currentModule) - 1;
-      if (globalIdx >= 0 && globalIdx < sortedAssignments.length) {
-        return sortedAssignments[globalIdx];
-      }
-    }
-    const legacyIdx = sortedAssignments.findIndex((a) => a.id === currentModule);
-    return legacyIdx >= 0 ? sortedAssignments[legacyIdx] : null;
-  }
-
-  return sortedAssignments.find((a) => a.id === currentModule) || null;
 }

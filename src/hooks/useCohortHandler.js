@@ -654,7 +654,6 @@ function useCohortHandler() {
     sortedAssignments,
     cohortSession?.current_module,
     cohortSession?.micro_cohorts,
-    cohortsAssignments,
     null,
   );
 
