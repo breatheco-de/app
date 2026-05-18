@@ -587,17 +587,18 @@ const useSignup = () => {
     }
   };
 
-  const handlePayment = async (data, disableRedirects = false) => {
-    const manyInstallmentsExists = selectedPlan?.how_many_months > 0 || selectedPlan?.period === 'FINANCING';
-    const isTtrial = ['FREE', 'TRIAL'].includes(selectedPlan?.type);
+  const handlePayment = async (data, disableRedirects = false, planContext = null) => {
+    const plan = planContext || selectedPlan;
+    const manyInstallmentsExists = plan?.how_many_months > 0 || plan?.period === 'FINANCING';
+    const isTtrial = ['FREE', 'TRIAL'].includes(plan?.type);
 
     const getRequests = () => {
       if (!isTtrial) {
         return {
           type: data?.type || checkingData?.type,
           token: data?.token || checkingData?.token,
-          how_many_installments: data?.installments || selectedPlan?.how_many_months || undefined,
-          chosen_period: manyInstallmentsExists ? undefined : (selectedPlan?.period || 'HALF'),
+          how_many_installments: data?.installments || plan?.how_many_months || undefined,
+          chosen_period: manyInstallmentsExists ? undefined : (plan?.period || 'HALF'),
           coupons: checkingData?.coupons,
           add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
           payment_method: 'stripe',
@@ -640,7 +641,7 @@ const useSignup = () => {
           price: transactionData?.amount || 0,
           quantity: 1,
           item_category: 'subscription',
-          subscription_period: selectedPlan?.period_label || 'one-time',
+          subscription_period: plan?.period_label || 'one-time',
         }));
         reportDatalayer({
           dataLayer: {
@@ -649,8 +650,8 @@ const useSignup = () => {
             value: transactionData?.amount || 0,
             currency,
             payment_type: 'Credit card',
-            plan: selectedPlan?.plan_slug || transactionData?.plan?.slug || defaultPlan,
-            period_label: selectedPlan?.period_label || 'one-time',
+            plan: plan?.plan_slug || transactionData?.plan?.slug || defaultPlan,
+            period_label: plan?.period_label || 'one-time',
             items: adaptedItems,
             agent: getBrowserInfo(),
           },
@@ -1053,15 +1054,16 @@ const useSignup = () => {
     }
   };
 
-  const subscribeFreePlan = async (checking) => {
-    if (!isPaymentIdle || isSubmittingPayment || !selectedPlan?.plan_id) return;
+  const subscribeFreePlan = async (checking, planOverride = null) => {
+    const planForCheckout = planOverride || selectedPlan;
+    if (!isPaymentIdle || isSubmittingPayment || !planForCheckout?.plan_id) return;
     setIsSubmittingPayment(true);
 
     try {
       const respPayment = await handlePayment({
         ...checking,
-        installments: selectedPlan?.how_many_months,
-      }, true);
+        installments: planForCheckout?.how_many_months,
+      }, true, planForCheckout);
 
       if (respPayment?.status_code >= 400) {
         setPaymentStatus('error');
@@ -1096,14 +1098,18 @@ const useSignup = () => {
         }
       }
 
-      if (respPayment.status === 'FULFILLED') {
+      if (respPayment?.status === 'FULFILLED') {
         setPaymentStatus('success');
       }
 
-      setIsSubmittingPayment(false);
       setLoader('plan', false);
     } catch (error) {
       setLoader('plan', false);
+      setPaymentStatus('error');
+      setDeclinedPayment({
+        title: t('transaction-denied'),
+        description: t('payment-not-processed'),
+      });
       createToast({
         position: 'top',
         title: t('alert-message:payment-error'),
@@ -1111,6 +1117,8 @@ const useSignup = () => {
         duration: 7000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmittingPayment(false);
     }
   };
 
