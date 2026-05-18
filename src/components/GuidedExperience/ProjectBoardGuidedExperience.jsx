@@ -55,7 +55,7 @@ function ProjectHeading({ currentAsset, isDelivered, handleStartLearnpack }) {
                   {title}
                 </Heading>
               </Box>
-              {currentAsset?.description && (
+              {currentAsset?.description && includesVideo && (
                 <Text style={{ margin: '0px' }} size="l">
                   {currentAsset.description}
                 </Text>
