@@ -13,6 +13,8 @@ import {
   SimpleGrid,
   Text as ChakraText,
 } from '@chakra-ui/react';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import {
@@ -400,8 +402,8 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
         }
 
         const payload = res?.data;
-        const vpsServiceEntry = (payload?.voids ?? []).find(
-          (entry) => String(entry?.slug || '').toLowerCase() === 'vps_server',
+        const vpsServiceEntry = (payload.voids || []).find(
+          (entry) => entry.slug === 'vps_server',
         );
         const items = vpsServiceEntry?.items || [];
         const now = new Date();
@@ -424,6 +426,20 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
             if (!financing || !allowedStatuses.has(financing?.status)) return;
             source = financing;
           } else {
+            if (!item.standalone_invoice || !item.standalone_invoice.academy) return;
+            const { academy } = item.standalone_invoice;
+            const academyId = academy.id;
+            const academyName = academy.name;
+            const dedupeKey = `standalone::${item.id}`;
+            if (seenAcademyPlanKeys.has(dedupeKey)) return;
+            seenAcademyPlanKeys.add(dedupeKey);
+            uniqueValidConsumableCandidates.push({
+              item,
+              plan: null,
+              academyId,
+              academyName,
+              isStandalone: true,
+            });
             return;
           }
           const plan = source?.plans?.[0];
@@ -438,24 +454,39 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
           if (seenAcademyPlanKeys.has(academyPlanKey)) return;
           seenAcademyPlanKeys.add(academyPlanKey);
           uniqueValidConsumableCandidates.push({
-            item, plan, academyId, academyName,
+            item, plan, academyId, academyName, isStandalone: false,
           });
         });
 
         const options = uniqueValidConsumableCandidates.map(({
-          item, plan, academyId, academyName,
-        }) => ({
-          value: item.id,
-          label: (
-            (typeof plan?.title === 'string' && plan.title.trim())
-            || (typeof plan?.slug === 'string' && plan.slug.trim())
-            || '—'
-          ),
-          academyId,
-          academyName,
-          planSlug: typeof plan?.slug === 'string' ? plan.slug.trim() : '',
-          consumableId: item.id,
-        }));
+          item, plan, academyId, academyName, isStandalone,
+        }) => {
+          if (isStandalone) {
+            return {
+              value: item.id,
+              label: t('vps.modal.purchased-credit-option', { consumableId: item.id }),
+              academyId,
+              academyName,
+              planSlug: '',
+              consumableId: item.id,
+              isStandalone: true,
+              validUntil: item.valid_until,
+            };
+          }
+          return {
+            value: item.id,
+            label: (
+              (typeof plan?.title === 'string' && plan.title.trim())
+              || (typeof plan?.slug === 'string' && plan.slug.trim())
+              || '—'
+            ),
+            academyId,
+            academyName,
+            planSlug: typeof plan?.slug === 'string' ? plan.slug.trim() : '',
+            consumableId: item.id,
+            isStandalone: false,
+          };
+        });
 
         setVpsConsumableOptions(options);
       } catch {
@@ -473,6 +504,7 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
     subsState.isLoading,
     subsState.subscriptions,
     lang,
+    t,
   ]);
 
   // Auto-select academy/plan when only one valid option is available.
@@ -743,14 +775,14 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
 
           {requestStep === 'provider' && selectedAcademyOption != null && academyPlanOptions.length > 1 && (
             <Box>
-              <Text size="md" fontWeight="600" mb="6px">{t('vps.modal.plan-label')}</Text>
+              <Text size="md" fontWeight="600" mb="6px">{t('vps.modal.plans-and-credits-label')}</Text>
               <Select
                 id="vps-plan-select"
                 fontWeight="500"
                 fontSize="15px"
                 value={selectedPlanOption}
                 options={academyPlanOptions}
-                placeholder={t('vps.modal.plan-label')}
+                placeholder={t('vps.modal.plans-and-credits-label')}
                 onChange={(opt) => {
                   setSelectedPlanOption(opt);
                   setSelectedProvisioningVendor(null);
@@ -762,6 +794,20 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
 
           {requestStep === 'provider' && selectedAcademyOption != null && selectedPlanOption != null && selectedPlanOption.value != null && academyPlanOptions.length > 0 && (
             <Box mt="8px">
+              {selectedConsumable?.isStandalone && selectedConsumable?.validUntil && (
+                <Box bg="yellow.light" p="4" mb="4" borderRadius="md" width="100%">
+                  <Flex alignItems="center" gap={3}>
+                    <Icon icon="warning" height="20px" width="30px" />
+                    <Text color="gray.500" fontWeight="bold">
+                      {t('vps.modal.purchased-credit-expiry-alert', {
+                        date: format(new Date(selectedConsumable.validUntil), 'PP', {
+                          locale: lang === 'es' ? es : undefined,
+                        }),
+                      })}
+                    </Text>
+                  </Flex>
+                </Box>
+              )}
               {loadingProvisioningVendors && (
                 <Text size="sm" color="gray.600">{t('vps.modal.loading-providers')}</Text>
               )}
