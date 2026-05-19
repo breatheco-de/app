@@ -18,7 +18,7 @@ import {
   useColorModeValue,
   VStack,
 } from '@chakra-ui/react';
-import { formatRelative } from 'date-fns';
+import { format, formatRelative } from 'date-fns';
 import { es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -102,7 +102,10 @@ function getProvisioningErrorMessage(res, fallback) {
 function formatSpendValue(spend) {
   if (spend === null || spend === undefined) return '—';
 
-  return String(`$${spend}`);
+  const amount = Number(spend);
+  if (Number.isNaN(amount)) return '—';
+
+  return `$${amount.toFixed(2)}`;
 }
 
 function getAcademyLabel(entry, lang) {
@@ -184,7 +187,7 @@ function LLMKeyCard({
             display={{ base: 'flex', md: 'none' }}
             onClick={onDelete}
           >
-            <Icon icon="close" width="15px" height="15px" color={hexColor.danger} />
+            <Icon icon="delete" color={hexColor.danger} />
           </Button>
         </Flex>
 
@@ -192,7 +195,7 @@ function LLMKeyCard({
           flexDirection={{ base: 'column', md: 'row' }}
           alignItems={{ base: 'center', md: 'center' }}
           justifyContent={{ base: 'center', md: 'flex-end' }}
-          gap={{ base: 2, md: 3 }}
+          gap={{ base: 2, md: 4 }}
           width={{ base: '100%', md: 'auto' }}
           flexShrink={0}
           ml={{ md: 'auto' }}
@@ -202,6 +205,7 @@ function LLMKeyCard({
               size="sm"
               fontWeight="400"
               color="gray.600"
+              px={1}
               whiteSpace="nowrap"
               display={{ base: 'none', md: 'block' }}
             >
@@ -220,13 +224,14 @@ function LLMKeyCard({
           </Button>
           <Button
             variant="outline"
+            px={2}
             border="none"
             aria-label={deleteAriaLabel}
             isLoading={isDeleteLoading}
             display={{ base: 'none', md: 'flex' }}
             onClick={onDelete}
           >
-            <Icon icon="close" width="15px" height="15px" color={hexColor.danger} />
+            <Icon icon="delete" width="27px" height="27px" />
           </Button>
         </Flex>
       </Flex>
@@ -501,54 +506,115 @@ function LLM() {
   const { t, lang } = useTranslation('profile');
   const { createToast } = useCustomToast();
   const { state: subsState } = useSubscriptions();
-  const isLlmPlansLoading = subsState?.isLoading || !subsState?.areSubscriptionsFetched;
+  const [llmStandaloneAcademies, setLlmStandaloneAcademies] = useState([]);
+  const [llmUsablePlanOptions, setLlmUsablePlanOptions] = useState([]);
+  const [loadingLlmConsumables, setLoadingLlmConsumables] = useState(false);
 
-  const llmConsumableOptions = useMemo(() => {
-    const subs = subsState.subscriptions?.subscriptions ?? [];
-    const financings = subsState.subscriptions?.plan_financings ?? [];
-    const seenPairs = new Set();
-    const options = [];
+  const isLlmPlansLoading = subsState?.isLoading
+    || !subsState?.areSubscriptionsFetched
+    || loadingLlmConsumables;
+
+  useEffect(() => {
+    if (!subsState.areSubscriptionsFetched || subsState.isLoading) return undefined;
+
     const allowedStatuses = new Set(['ACTIVE', 'FREE_TRIAL', 'CANCELLED', 'PAYMENT_ISSUE', 'FULLY_PAID']);
+    const subscriptions = subsState.subscriptions?.subscriptions ?? [];
+    const planFinancings = subsState.subscriptions?.plan_financings ?? [];
+    const subscriptionsById = Object.fromEntries(subscriptions.map((s) => [String(s.id), s]));
+    const financingsById = Object.fromEntries(planFinancings.map((f) => [String(f.id), f]));
 
-    [...subs, ...financings].forEach((entry) => {
-      const entryAcademyId = entry?.academy?.id;
-      if (entryAcademyId == null) return;
-      if (!allowedStatuses.has(entry?.status)) return;
+    let cancelled = false;
 
-      (entry?.plans ?? []).forEach((plan) => {
-        const hasLlmConsumable = (plan?.service_items ?? []).some(
-          (si) => si?.service?.consumer === 'MONTHLY_LLM_BUDGET',
-        );
-        if (!hasLlmConsumable) return;
-        const planSlug = typeof plan?.slug === 'string' ? plan.slug.trim() : '';
-        if (!planSlug) return;
-        const pairKey = `${entryAcademyId}::${planSlug}`;
-        if (seenPairs.has(pairKey)) return;
-        seenPairs.add(pairKey);
-        options.push({
-          academyId: entryAcademyId,
-          academyLabel: getAcademyLabel(entry, lang),
-          planSlug,
-          planLabel: getPlanTitle(plan, lang),
+    const fetchLlmConsumables = async () => {
+      try {
+        setLoadingLlmConsumables(true);
+        const res = await bc.payment().service().consumable();
+        if (cancelled) return;
+        if (!(res?.status >= 200 && res?.status < 300)) {
+          setLlmStandaloneAcademies([]);
+          setLlmUsablePlanOptions([]);
+          return;
+        }
+
+        const llmVoid = (res.data.voids || []).find((entry) => entry.slug === 'free-monthly-llm-budget');
+        const items = llmVoid ? llmVoid.items : [];
+        const now = new Date();
+        const academiesById = new Map();
+        const planOptionsByKey = new Map();
+
+        items.forEach((item) => {
+          if (item.how_many === 0) return;
+          if (item.valid_until) {
+            const validUntil = new Date(item.valid_until);
+            if (Number.isNaN(validUntil.getTime()) || validUntil <= now) return;
+          }
+
+          let source = null;
+          if (item.subscription !== null) {
+            const subscription = subscriptionsById[String(item.subscription)];
+            if (!subscription || !allowedStatuses.has(subscription.status)) return;
+            source = subscription;
+          } else if (item.plan_financing !== null) {
+            const financing = financingsById[String(item.plan_financing)];
+            if (!financing || !allowedStatuses.has(financing.status)) return;
+            source = financing;
+          } else {
+            if (!item.standalone_invoice || !item.standalone_invoice.academy) return;
+            const { academy } = item.standalone_invoice;
+            const existing = academiesById.get(academy.id);
+            if (!existing) {
+              academiesById.set(academy.id, {
+                id: academy.id,
+                name: academy.name,
+                validUntil: item.valid_until,
+              });
+              return;
+            }
+            if (!item.valid_until) return;
+            if (!existing.validUntil || new Date(item.valid_until) < new Date(existing.validUntil)) {
+              academiesById.set(academy.id, {
+                id: academy.id,
+                name: academy.name,
+                validUntil: item.valid_until,
+              });
+            }
+            return;
+          }
+
+          const plan = source.plans?.[0];
+          const academyId = source.academy?.id;
+          const planSlug = typeof plan?.slug === 'string' ? plan.slug.trim() : '';
+          if (!plan || academyId == null || !planSlug) return;
+          const planOptionKey = `${academyId}::${planSlug}`;
+          if (planOptionsByKey.has(planOptionKey)) return;
+          planOptionsByKey.set(planOptionKey, {
+            academyId,
+            academyLabel: getAcademyLabel(source, lang),
+            planSlug,
+            planLabel: getPlanTitle(plan, lang),
+          });
         });
-      });
-    });
 
-    return options;
-  }, [subsState.subscriptions, lang]);
+        setLlmStandaloneAcademies(Array.from(academiesById.values()));
+        setLlmUsablePlanOptions(Array.from(planOptionsByKey.values()));
+      } catch {
+        if (!cancelled) {
+          setLlmStandaloneAcademies([]);
+          setLlmUsablePlanOptions([]);
+        }
+      } finally {
+        if (!cancelled) setLoadingLlmConsumables(false);
+      }
+    };
 
-  const academyOptions = useMemo(() => {
-    const seenAcademies = new Set();
-    return llmConsumableOptions.reduce((acc, option) => {
-      if (seenAcademies.has(option.academyId)) return acc;
-      seenAcademies.add(option.academyId);
-      acc.push({
-        value: option.academyId,
-        label: option.academyLabel,
-      });
-      return acc;
-    }, []);
-  }, [llmConsumableOptions]);
+    fetchLlmConsumables();
+    return () => { cancelled = true; };
+  }, [
+    subsState.areSubscriptionsFetched,
+    subsState.isLoading,
+    subsState.subscriptions,
+    lang,
+  ]);
 
   const [keys, setKeys] = useState([]);
   const [isLoadingList, setIsLoadingList] = useState(true);
@@ -566,16 +632,56 @@ function LLM() {
   const [llmKeysForbidden, setLlmKeysForbidden] = useState(false);
   const [loadKeysError, setLoadKeysError] = useState('');
 
+  const academyOptions = useMemo(() => {
+    const seenAcademies = new Set();
+    const acc = [];
+    llmUsablePlanOptions.forEach((option) => {
+      if (seenAcademies.has(option.academyId)) return;
+      seenAcademies.add(option.academyId);
+      acc.push({
+        value: option.academyId,
+        label: option.academyLabel,
+      });
+    });
+    llmStandaloneAcademies.forEach((academy) => {
+      if (seenAcademies.has(academy.id)) return;
+      seenAcademies.add(academy.id);
+      acc.push({
+        value: academy.id,
+        label: academy.name,
+      });
+    });
+    return acc;
+  }, [llmUsablePlanOptions, llmStandaloneAcademies]);
+
+  const llmStandaloneAcademyIds = useMemo(
+    () => new Set(llmStandaloneAcademies.map((academy) => academy.id)),
+    [llmStandaloneAcademies],
+  );
+
   const academyPlanOptions = useMemo(() => {
     if (!selectedAcademyOption) return [];
-    return llmConsumableOptions
+    return llmUsablePlanOptions
       .filter((option) => option.academyId === selectedAcademyOption.value)
       .map((option) => ({
         value: option.planSlug,
         label: option.planLabel,
         academyId: option.academyId,
       }));
-  }, [llmConsumableOptions, selectedAcademyOption]);
+  }, [llmUsablePlanOptions, selectedAcademyOption]);
+
+  const hasUsablePlanLlmForAcademy = academyPlanOptions.length > 0;
+  const hasStandaloneForAcademy = selectedAcademyOption != null
+    && llmStandaloneAcademyIds.has(selectedAcademyOption.value);
+  const purchasedCreditForAcademy = useMemo(() => {
+    if (!selectedAcademyOption) return null;
+    return llmStandaloneAcademies.find((academy) => academy.id === selectedAcademyOption.value) ?? null;
+  }, [llmStandaloneAcademies, selectedAcademyOption]);
+  const showPurchasedCreditExpiryWarning = !hasUsablePlanLlmForAcademy
+    && hasStandaloneForAcademy
+    && purchasedCreditForAcademy?.validUntil;
+  const canGenerate = selectedAcademyOption != null
+    && (hasUsablePlanLlmForAcademy ? selectedPlanOption != null : hasStandaloneForAcademy);
 
   const fetchKeys = useCallback(async () => {
     setIsLoadingList(true);
@@ -683,8 +789,7 @@ function LLM() {
   ]);
 
   const handleGenerate = async () => {
-    const selected = selectedPlanOption;
-    if (!selected) return;
+    if (!canGenerate) return;
 
     const alias = keyAliasInput.trim();
     if (!alias) {
@@ -696,9 +801,13 @@ function LLM() {
     }
     setIsGenerating(true);
     try {
+      const payload = { key_alias: alias };
+      if (selectedPlanOption) {
+        payload.plan_slug = selectedPlanOption.value;
+      }
       const res = await bc.provisioning().generateLLMKey(
-        { key_alias: alias, plan_slug: selected?.value },
-        selected.academyId,
+        payload,
+        selectedAcademyOption.value,
       );
       if (res?.status >= 200 && res?.status < 300) {
         const tokenId = res?.data?.key;
@@ -1015,6 +1124,20 @@ function LLM() {
                     />
                   </Box>
                 )}
+                {showPurchasedCreditExpiryWarning && (
+                  <Box bg="yellow.light" p="4" borderRadius="md" width="100%">
+                    <Flex alignItems="center" gap={3}>
+                      <Icon icon="warning" height="20px" width="30px" />
+                      <Text color="gray.500" fontWeight="bold">
+                        {t('llm.generate-modal.purchased-credit-expiry-alert', {
+                          date: format(new Date(purchasedCreditForAcademy.validUntil), 'PP', {
+                            locale: lang === 'es' ? es : undefined,
+                          }),
+                        })}
+                      </Text>
+                    </Flex>
+                  </Box>
+                )}
                 <Box>
                   <Text size="md" fontWeight="600" mb="6px">{t('llm.generate-modal.alias-label')}</Text>
                   <Input
@@ -1092,7 +1215,7 @@ function LLM() {
                 <Button
                   variant="default"
                   isLoading={isGenerating}
-                  isDisabled={!selectedPlanOption || llmConsumableOptions.length === 0}
+                  isDisabled={!canGenerate || academyOptions.length === 0}
                   textTransform="uppercase"
                   fontSize="13px"
                   onClick={handleGenerate}

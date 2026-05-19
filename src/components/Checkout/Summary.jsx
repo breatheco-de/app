@@ -237,6 +237,13 @@ function Summary() {
         gridGap="8px"
         borderRadius="14px"
       >
+        {paymentStatus === 'idle' && (
+          <Flex flexDirection="column" gridGap="12px" padding="16px 8px" alignItems="center">
+            <Text size="14px" fontWeight={500} textAlign="center" color="black">
+              {t('processing-payment')}
+            </Text>
+          </Flex>
+        )}
         {paymentStatus !== 'idle' && (
           <Flex flexDirection="column" gridGap="24px" borderRadius="3px" alignItems="center" padding="16px 8px">
             <Icon icon={paymentStatus === 'success' ? 'feedback-like' : 'feedback-dislike'} width="60px" height="60px" />

@@ -126,7 +126,9 @@ export const getAttendanceList = async ({ cohortSlug, academy }) => {
   }
 };
 
-export const saveCohortAttendancy = async ({ cohortSlug, students, checked, currentModule }) => {
+export const saveCohortAttendancy = async ({
+  cohortSlug, students, checked, currentModule, microCohortId,
+}) => {
   try {
     const attendanceIds = students.reduce((accumulator, { user }) => {
       const attended = checked.some((id) => parseInt(id, 10) === user.id);
@@ -140,6 +142,7 @@ export const saveCohortAttendancy = async ({ cohortSlug, students, checked, curr
 
     const dataStruct = {
       current_module: currentModule,
+      ...(microCohortId != null ? { micro_cohort_id: microCohortId } : {}),
       teacher_comments: '',
       attendance_ids: attendanceIds.attended,
       unattendance_ids: attendanceIds.unattended,

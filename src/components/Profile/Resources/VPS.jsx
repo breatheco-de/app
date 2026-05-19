@@ -256,7 +256,7 @@ function VpsCard({
               type="button"
               aria-label={deleteAriaLabel}
               title={deleteAriaLabel}
-              icon={<Icon icon="close" size="18px" color={hexColor.danger} />}
+              icon={<Icon icon="delete" width="27px" height="27px" />}
               variant="ghost"
               size="sm"
               flexShrink={0}
