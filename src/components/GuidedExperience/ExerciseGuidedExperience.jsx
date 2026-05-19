@@ -51,6 +51,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
 
   const isExerciseStarted = !!currentTask?.assignment_telemetry;
   const isInteractiveExercise = !!currentAsset?.interactive && !!currentAsset?.learnpack_deploy_url;
+  const hasIntroVideo = !!currentAsset?.intro_video_url;
 
   useEffect(() => {
     if (!isInteractiveExercise) {
@@ -148,6 +149,17 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
     },
   });
 
+  const descriptionScrollMaxHeight = (() => {
+    if (isInteractiveExercise && hasIntroVideo) return '70px';
+    if (!hasIntroVideo) {
+      return {
+        base: 'calc(83vh - 490px)',
+        md: isInteractiveExercise ? 'calc(83vh - 440px)' : 'calc(83vh - 320px)',
+      };
+    }
+    return undefined;
+  })();
+
   return (
     <Box
       className={`horizontal-sroll ${colorMode}`}
@@ -212,7 +224,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                   overflowY="hidden"
                   maxWidth={{
                     base: 'none',
-                    md: !isInteractiveExercise && currentAsset?.intro_video_url ? '50%' : '100%',
+                    md: !isInteractiveExercise && hasIntroVideo ? '50%' : '100%',
                   }}
                   flexGrow={1}
                 >
@@ -224,14 +236,14 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                     overflowY="auto"
                     flexGrow={1}
                     paddingRight={isInteractiveExercise && '8px'}
-                    maxHeight={isInteractiveExercise && '70px'}
+                    maxHeight={descriptionScrollMaxHeight}
                   >
                     <Text color="white" size="l">
                       {currentAsset?.description}
                     </Text>
                   </Box>
                 </Flex>
-                {currentAsset?.intro_video_url && (
+                {hasIntroVideo && (
                   <Flex justifyContent="center" alignItems="start" flexGrow={0} flexBasis="50%">
                     <Box
                       display="flex"
