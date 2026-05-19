@@ -102,7 +102,10 @@ function getProvisioningErrorMessage(res, fallback) {
 function formatSpendValue(spend) {
   if (spend === null || spend === undefined) return '—';
 
-  return String(`$${spend}`);
+  const amount = Number(spend);
+  if (Number.isNaN(amount)) return '—';
+
+  return `$${amount.toFixed(2)}`;
 }
 
 function getAcademyLabel(entry, lang) {
@@ -184,7 +187,7 @@ function LLMKeyCard({
             display={{ base: 'flex', md: 'none' }}
             onClick={onDelete}
           >
-            <Icon icon="close" width="15px" height="15px" color={hexColor.danger} />
+            <Icon icon="delete" color={hexColor.danger} />
           </Button>
         </Flex>
 
@@ -192,7 +195,7 @@ function LLMKeyCard({
           flexDirection={{ base: 'column', md: 'row' }}
           alignItems={{ base: 'center', md: 'center' }}
           justifyContent={{ base: 'center', md: 'flex-end' }}
-          gap={{ base: 2, md: 3 }}
+          gap={{ base: 2, md: 4 }}
           width={{ base: '100%', md: 'auto' }}
           flexShrink={0}
           ml={{ md: 'auto' }}
@@ -202,6 +205,7 @@ function LLMKeyCard({
               size="sm"
               fontWeight="400"
               color="gray.600"
+              px={1}
               whiteSpace="nowrap"
               display={{ base: 'none', md: 'block' }}
             >
@@ -220,13 +224,14 @@ function LLMKeyCard({
           </Button>
           <Button
             variant="outline"
+            px={2}
             border="none"
             aria-label={deleteAriaLabel}
             isLoading={isDeleteLoading}
             display={{ base: 'none', md: 'flex' }}
             onClick={onDelete}
           >
-            <Icon icon="close" width="15px" height="15px" color={hexColor.danger} />
+            <Icon icon="delete" width="27px" height="27px" />
           </Button>
         </Flex>
       </Flex>
