@@ -572,7 +572,9 @@ function Workshop({ eventData, asset }) {
   const applyAndRedirectToEvent = async ({ eventId, signupData }) => {
     try {
       const tokenForHeader = signupData?.access_token || getStorageItem('accessToken');
-      const resp = await bc.events().applyEvent(eventId, utms, tokenForHeader);
+      const attendeePhone = signupData?.phone || signupData?.phone_number || signupData?.mobile || null;
+      const payload = attendeePhone ? { ...utms, phone: attendeePhone } : utms;
+      const resp = await bc.events().applyEvent(eventId, payload, tokenForHeader);
       if (resp && resp.status < 300) {
         const token = signupData?.access_token ? signupData.access_token : getStorageItem('accessToken');
         router.push(`${BREATHECODE_HOST}/v1/events/me/event/${eventId}/join?token=${token}`);
