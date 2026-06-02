@@ -556,23 +556,22 @@ function Workshop({ eventData, asset }) {
     eventStatus: 'https://schema.org/EventScheduled',
   };
 
-  const currentPageUrl = typeof window !== 'undefined' ? window.location.href : null;
-
   const utms = {
     utm_campaign: userSession?.utm_campaign,
     utm_content: userSession?.utm_content,
-    utm_location: userSession?.utm_location,
     utm_medium: userSession?.utm_medium,
     utm_placement: userSession?.utm_placement,
     utm_source: userSession?.utm_source,
     utm_term: userSession?.utm_term,
-    utm_url: userSession?.utm_url || currentPageUrl,
+    utm_url: userSession?.conversion_url,
   };
 
   const applyAndRedirectToEvent = async ({ eventId, signupData }) => {
     try {
       const tokenForHeader = signupData?.access_token || getStorageItem('accessToken');
-      const resp = await bc.events().applyEvent(eventId, utms, tokenForHeader);
+      const attendeePhone = signupData?.phone || signupData?.phone_number || signupData?.mobile || null;
+      const payload = attendeePhone ? { ...utms, phone: attendeePhone } : utms;
+      const resp = await bc.events().applyEvent(eventId, payload, tokenForHeader);
       if (resp && resp.status < 300) {
         const token = signupData?.access_token ? signupData.access_token : getStorageItem('accessToken');
         router.push(`${BREATHECODE_HOST}/v1/events/me/event/${eventId}/join?token=${token}`);
