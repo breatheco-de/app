@@ -9,6 +9,8 @@ const redirectsList = require('./public/redirects.json');
 const nextTranslate = require('next-translate-plugin');
 
 const externalDevDomain = process.env.VERCEL_ENV !== 'production' ? 'http://localhost:9999' : '';
+const shouldNoIndex = process.env.ROBOTS_NOINDEX === 'true'
+  || (process.env.DOMAIN_NAME || '').toLowerCase().includes('learn.4geeks.com');
 const securityHeaders = [
   {
     key: 'X-Frame-Options',
@@ -18,6 +20,10 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: `frame-ancestors 'self' ${externalDevDomain}`,
   },
+  ...(shouldNoIndex ? [{
+    key: 'X-Robots-Tag',
+    value: 'noindex, nofollow, noarchive',
+  }] : []),
 ];
 
 const removeImports = require('next-remove-imports')();
