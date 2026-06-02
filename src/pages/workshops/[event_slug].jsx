@@ -556,17 +556,14 @@ function Workshop({ eventData, asset }) {
     eventStatus: 'https://schema.org/EventScheduled',
   };
 
-  const currentPageUrl = typeof window !== 'undefined' ? window.location.href : null;
-
   const utms = {
     utm_campaign: userSession?.utm_campaign,
     utm_content: userSession?.utm_content,
-    utm_location: userSession?.utm_location,
     utm_medium: userSession?.utm_medium,
     utm_placement: userSession?.utm_placement,
     utm_source: userSession?.utm_source,
     utm_term: userSession?.utm_term,
-    utm_url: userSession?.utm_url || currentPageUrl,
+    utm_url: userSession?.conversion_url,
   };
 
   const applyAndRedirectToEvent = async ({ eventId, signupData }) => {
