@@ -22,6 +22,7 @@ import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import { parseQuerys } from '../../utils/url';
 import { log } from '../../utils/logging';
 import { types } from '../../components/DynamicContentCard/card-types';
+import PublicPortalGate from '../../components/PublicPortalGate';
 
 const contentPerPage = 20;
 
@@ -170,7 +171,7 @@ export default function HowTo({ data, technologyTags, difficulties, count }) {
   };
 
   return (
-    <>
+    <PublicPortalGate alwaysHide>
       <Box
         display="grid"
         gridTemplateColumns={{
@@ -279,7 +280,7 @@ export default function HowTo({ data, technologyTags, difficulties, count }) {
           />
         )}
       </GridContainer>
-    </>
+    </PublicPortalGate>
   );
 }
 

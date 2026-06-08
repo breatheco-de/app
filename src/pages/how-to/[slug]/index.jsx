@@ -26,6 +26,7 @@ import RelatedContent from '../../../components/RelatedContent';
 import MktEventCards from '../../../components/PrismicComponents/MktEventCards';
 import AssetsBreadcrumbs from '../../../components/AssetsBreadcrumbs';
 import { getMarkdownFromCache } from '../../../utils/requests';
+import PublicPortalGate from '../../../components/PublicPortalGate';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../../public/asset-list.json');
@@ -177,7 +178,7 @@ export default function HowToSlug({ data, markdown }) {
   }, []);
 
   return (
-    <>
+    <PublicPortalGate alwaysHide>
       {data?.structuredData?.name && (
         <Head>
           <script
@@ -285,7 +286,7 @@ export default function HowToSlug({ data, markdown }) {
           <MktSideRecommendations technologies={data.technologies} title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
         </Box>
       </GridContainer>
-    </>
+    </PublicPortalGate>
   );
 }
 

@@ -20,6 +20,7 @@ import { parseQuerys } from '../../utils/url';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import { log } from '../../utils/logging';
 import { types } from '../../components/DynamicContentCard/card-types';
+import PublicPortalGate from '../../components/PublicPortalGate';
 
 const contentPerPage = 20;
 
@@ -165,50 +166,51 @@ function Exercices({ exercises, technologyTags, difficulties, count }) {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   return (
-    <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-      <Box
-        display="grid"
-        gridTemplateColumns={{
-          base: '.5fr repeat(12, 1fr) .5fr',
-          md: '1.5fr repeat(12, 1fr) 1.5fr',
-        }}
-        borderBottom={1}
-        borderStyle="solid"
-        borderColor={useColorModeValue('gray.200', 'gray.700')}
-      >
-        <Flex
-          gridColumn="2 / span 12"
-          width="100%"
-          margin="0 auto"
-          maxWidth="1280px"
-          justifyContent="space-between"
-          flexDirection={{ base: 'column', md: 'row' }}
-          flex="1"
-          gridGap="10px"
-          padding={{ base: '3% 15px 4% 15px', md: '1.5% 0 1.5% 0' }}
+    <PublicPortalGate feature="interactive_exercises">
+      <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
+        <Box
+          display="grid"
+          gridTemplateColumns={{
+            base: '.5fr repeat(12, 1fr) .5fr',
+            md: '1.5fr repeat(12, 1fr) 1.5fr',
+          }}
+          borderBottom={1}
+          borderStyle="solid"
+          borderColor={useColorModeValue('gray.200', 'gray.700')}
         >
-          <TitleContent title={t('title')} icon="strength" color={iconColor} margin={{ base: '0 0 10px 0', md: '0' }} />
-
-          <Search placeholder={t('search')} />
-
-          <Button
-            variant="outline"
-            backgroundColor={useColorModeValue('', 'gray.800')}
-            _hover={{ backgroundColor: useColorModeValue('', 'gray.700') }}
-            border={currentFilters >= 1 ? 2 : 1}
-            onClick={onOpen}
-            borderStyle="solid"
-            minWidth="125px"
-            borderColor={useColorModeValue(
-              `${currentFilters >= 1 ? 'blue.default' : '#DADADA'}`,
-              'gray.800',
-            )}
+          <Flex
+            gridColumn="2 / span 12"
+            width="100%"
+            margin="0 auto"
+            maxWidth="1280px"
+            justifyContent="space-between"
+            flexDirection={{ base: 'column', md: 'row' }}
+            flex="1"
+            gridGap="10px"
+            padding={{ base: '3% 15px 4% 15px', md: '1.5% 0 1.5% 0' }}
           >
-            <Icon icon="setting" width="20px" height="20px" style={{ minWidth: '20px' }} />
-            <Text textTransform="uppercase" pl="10px">
-              {currentFilters >= 2 ? t('filters') : t('filter')}
-            </Text>
-            {currentFilters >= 1 && (
+            <TitleContent title={t('title')} icon="strength" color={iconColor} margin={{ base: '0 0 10px 0', md: '0' }} />
+
+            <Search placeholder={t('search')} />
+
+            <Button
+              variant="outline"
+              backgroundColor={useColorModeValue('', 'gray.800')}
+              _hover={{ backgroundColor: useColorModeValue('', 'gray.700') }}
+              border={currentFilters >= 1 ? 2 : 1}
+              onClick={onOpen}
+              borderStyle="solid"
+              minWidth="125px"
+              borderColor={useColorModeValue(
+                `${currentFilters >= 1 ? 'blue.default' : '#DADADA'}`,
+                'gray.800',
+              )}
+            >
+              <Icon icon="setting" width="20px" height="20px" style={{ minWidth: '20px' }} />
+              <Text textTransform="uppercase" pl="10px">
+                {currentFilters >= 2 ? t('filters') : t('filter')}
+              </Text>
+              {currentFilters >= 1 && (
               <Text
                 as="span"
                 margin="0 10px"
@@ -224,59 +226,60 @@ function Exercices({ exercises, technologyTags, difficulties, count }) {
               >
                 {currentFilters}
               </Text>
-            )}
-          </Button>
+              )}
+            </Button>
 
-          <FilterModal
-            isModalOpen={isOpen}
-            onClose={onClose}
-            contextFilter={filteredBy.exercisesOptions}
-            setFilter={setExerciseFilters}
-            technologyTags={technologyTags}
-            difficulties={difficulties}
+            <FilterModal
+              isModalOpen={isOpen}
+              onClose={onClose}
+              contextFilter={filteredBy.exercisesOptions}
+              setFilter={setExerciseFilters}
+              technologyTags={technologyTags}
+              difficulties={difficulties}
+            />
+          </Flex>
+        </Box>
+
+        {/* margin={{ base: '0 4% 0 4%', md: '0 10% 0 10%' }} */}
+        <GridContainer withContainer gridColumn="1 / span 10" maxWidth="1280px">
+          <Text
+            size="md"
+            display="inline-block"
+            padding={{ base: '30px 8%', md: '30px 28%' }}
+            textAlign="center"
+            dangerouslySetInnerHTML={{ __html: t('description') }}
           />
-        </Flex>
+          {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
+            <ProjectsLoader
+              type={types.exercise}
+              articles={exercises}
+              itemsPerPage={contentPerPage}
+              lang={lang}
+              fetchData={fetchExercises}
+              count={count}
+              searchQuery={search}
+              options={{
+                withoutImage: true,
+                contextFilter: filteredBy.exercisesOptions,
+                pagePath: '/interactive-exercises',
+
+              }}
+            />
+          ) : (
+            <PaginatedView
+              type={types.exercise}
+              queryFunction={queryFunction}
+              options={{
+                pagePath: '/interactive-exercises',
+                contextFilter: filteredBy.exercisesOptions,
+                contentPerPage,
+                disableLangFilter: true,
+              }}
+            />
+          )}
+        </GridContainer>
       </Box>
-
-      {/* margin={{ base: '0 4% 0 4%', md: '0 10% 0 10%' }} */}
-      <GridContainer withContainer gridColumn="1 / span 10" maxWidth="1280px">
-        <Text
-          size="md"
-          display="inline-block"
-          padding={{ base: '30px 8%', md: '30px 28%' }}
-          textAlign="center"
-          dangerouslySetInnerHTML={{ __html: t('description') }}
-        />
-        {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
-          <ProjectsLoader
-            type={types.exercise}
-            articles={exercises}
-            itemsPerPage={contentPerPage}
-            lang={lang}
-            fetchData={fetchExercises}
-            count={count}
-            searchQuery={search}
-            options={{
-              withoutImage: true,
-              contextFilter: filteredBy.exercisesOptions,
-              pagePath: '/interactive-exercises',
-
-            }}
-          />
-        ) : (
-          <PaginatedView
-            type={types.exercise}
-            queryFunction={queryFunction}
-            options={{
-              pagePath: '/interactive-exercises',
-              contextFilter: filteredBy.exercisesOptions,
-              contentPerPage,
-              disableLangFilter: true,
-            }}
-          />
-        )}
-      </GridContainer>
-    </Box>
+    </PublicPortalGate>
   );
 }
 

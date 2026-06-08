@@ -20,6 +20,7 @@ import { parseQuerys } from '../../utils/url';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY, excludeCagetoriesFor } from '../../utils/variables';
 import { log } from '../../utils/logging';
 import { types } from '../../components/DynamicContentCard/card-types';
+import PublicPortalGate from '../../components/PublicPortalGate';
 
 const contentPerPage = 20;
 
@@ -154,50 +155,51 @@ function Projects({ lessons, technologyTags, difficulties, count }) {
     + videoTutorials;
 
   return (
-    <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-      <Box
-        display="grid"
-        gridTemplateColumns={{
-          base: '.5fr repeat(12, 1fr) .5fr',
-          md: '1.5fr repeat(12, 1fr) 1.5fr',
-        }}
-        borderBottom={1}
-        borderStyle="solid"
-        borderColor={useColorModeValue('gray.200', 'gray.700')}
-      >
-        <Flex
-          gridColumn="2 / span 12"
-          width="100%"
-          margin="0 auto"
-          maxWidth="1280px"
-          justifyContent="space-between"
-          flexDirection={{ base: 'column', md: 'row' }}
-          flex="1"
-          gridGap="10px"
-          padding={{ base: '3% 15px 4% 15px', md: '1.5% 0 1.5% 0' }}
+    <PublicPortalGate feature="lessons">
+      <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
+        <Box
+          display="grid"
+          gridTemplateColumns={{
+            base: '.5fr repeat(12, 1fr) .5fr',
+            md: '1.5fr repeat(12, 1fr) 1.5fr',
+          }}
+          borderBottom={1}
+          borderStyle="solid"
+          borderColor={useColorModeValue('gray.200', 'gray.700')}
         >
-          <TitleContent title={t('title')} icon="book" color={iconColor} margin={{ base: '0 0 10px 0', md: '0' }} />
-
-          <Search placeholder={t('search')} />
-
-          <Button
-            variant="outline"
-            backgroundColor={useColorModeValue('', 'gray.800')}
-            _hover={{ backgroundColor: useColorModeValue('', 'gray.700') }}
-            border={currentFilters >= 1 ? 2 : 1}
-            onClick={onOpen}
-            borderStyle="solid"
-            minWidth="125px"
-            borderColor={useColorModeValue(
-              `${currentFilters >= 1 ? 'blue.default' : '#DADADA'}`,
-              'gray.800',
-            )}
+          <Flex
+            gridColumn="2 / span 12"
+            width="100%"
+            margin="0 auto"
+            maxWidth="1280px"
+            justifyContent="space-between"
+            flexDirection={{ base: 'column', md: 'row' }}
+            flex="1"
+            gridGap="10px"
+            padding={{ base: '3% 15px 4% 15px', md: '1.5% 0 1.5% 0' }}
           >
-            <Icon icon="setting" width="20px" height="20px" style={{ minWidth: '20px' }} />
-            <Text textTransform="uppercase" pl="10px">
-              {currentFilters >= 2 ? t('common:filters') : t('common:filter')}
-            </Text>
-            {currentFilters >= 1 && (
+            <TitleContent title={t('title')} icon="book" color={iconColor} margin={{ base: '0 0 10px 0', md: '0' }} />
+
+            <Search placeholder={t('search')} />
+
+            <Button
+              variant="outline"
+              backgroundColor={useColorModeValue('', 'gray.800')}
+              _hover={{ backgroundColor: useColorModeValue('', 'gray.700') }}
+              border={currentFilters >= 1 ? 2 : 1}
+              onClick={onOpen}
+              borderStyle="solid"
+              minWidth="125px"
+              borderColor={useColorModeValue(
+                `${currentFilters >= 1 ? 'blue.default' : '#DADADA'}`,
+                'gray.800',
+              )}
+            >
+              <Icon icon="setting" width="20px" height="20px" style={{ minWidth: '20px' }} />
+              <Text textTransform="uppercase" pl="10px">
+                {currentFilters >= 2 ? t('common:filters') : t('common:filter')}
+              </Text>
+              {currentFilters >= 1 && (
               <Text
                 as="span"
                 margin="0 10px"
@@ -213,57 +215,57 @@ function Projects({ lessons, technologyTags, difficulties, count }) {
               >
                 {currentFilters}
               </Text>
-            )}
-          </Button>
+              )}
+            </Button>
 
-          <FilterModal
-            isModalOpen={isOpen}
-            onClose={onClose}
-            contextFilter={filteredBy.projectsOptions}
-            setFilter={setProjectFilters}
-            technologyTags={technologyTags}
-            difficulties={difficulties}
-          />
-        </Flex>
-      </Box>
+            <FilterModal
+              isModalOpen={isOpen}
+              onClose={onClose}
+              contextFilter={filteredBy.projectsOptions}
+              setFilter={setProjectFilters}
+              technologyTags={technologyTags}
+              difficulties={difficulties}
+            />
+          </Flex>
+        </Box>
 
-      <GridContainer
-        flex="1"
-        withContainer
-        gridColumn="1 / span 10"
-        maxWidth="1280px"
-        padding="0 15px"
-      >
-        <Text
-          size="md"
-          display="flex"
-          padding={{ base: '30px 8%', md: '30px 28%' }}
-          textAlign="center"
+        <GridContainer
+          flex="1"
+          withContainer
+          gridColumn="1 / span 10"
+          maxWidth="1280px"
+          padding="0 15px"
         >
-          {t('description')}
-        </Text>
+          <Text
+            size="md"
+            display="flex"
+            padding={{ base: '30px 8%', md: '30px 28%' }}
+            textAlign="center"
+          >
+            {t('description')}
+          </Text>
 
-        {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
-          <ProjectsLoader
-            type={types.lesson}
-            articles={lessons}
-            itemsPerPage={contentPerPage}
-            lang={lang}
-            fetchData={fetchLessons}
-            count={count}
+          {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
+            <ProjectsLoader
+              type={types.lesson}
+              articles={lessons}
+              itemsPerPage={contentPerPage}
+              lang={lang}
+              fetchData={fetchLessons}
+              count={count}
             // renderItem={false}
-            searchQuery={search}
-            options={{
-              withoutImage: true,
-              withoutDifficulty: true,
-              contextFilter: filteredBy.projectsOptions,
-              projectPath: 'lesson',
-              pagePath: '/lessons',
-            }}
-          />
-        ) : (
-          <>
-            {isWindow && (
+              searchQuery={search}
+              options={{
+                withoutImage: true,
+                withoutDifficulty: true,
+                contextFilter: filteredBy.projectsOptions,
+                projectPath: 'lesson',
+                pagePath: '/lessons',
+              }}
+            />
+          ) : (
+            <>
+              {isWindow && (
               <PaginatedView
                 type={types.lesson}
                 queryFunction={queryFunction}
@@ -275,11 +277,12 @@ function Projects({ lessons, technologyTags, difficulties, count }) {
                   disableLangFilter: false,
                 }}
               />
-            )}
-          </>
-        )}
-      </GridContainer>
-    </Box>
+              )}
+            </>
+          )}
+        </GridContainer>
+      </Box>
+    </PublicPortalGate>
   );
 }
 
