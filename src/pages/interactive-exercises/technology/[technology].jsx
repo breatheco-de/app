@@ -9,6 +9,7 @@ import Heading from '../../../components/Heading';
 import ProjectList from '../../../components/Assets/ProjectList';
 import { parseQuerys } from '../../../utils/url';
 import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
+import PublicPortalGate from '../../../components/PublicPortalGate';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000&academy=${WHITE_LABEL_ACADEMY}`, {
@@ -117,42 +118,43 @@ function ExercisesByTechnology({ exercises, technologyData }) {
   // const translations = exercises?.translations || { es: '', en: '', us: '' };
 
   return (
-    <Box
-      height="100%"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      pt="3rem"
-      margin={{ base: '0 4% 0 4%', md: '0 10% 0 10%' }}
-    >
-      <Text
-        as="h1"
-        fontSize="15px"
-        color={useColorModeValue('blue.default', 'blue.300')}
-        display="inline-block"
-        fontWeight="700"
-        paddingBottom="6px"
+    <PublicPortalGate feature="interactive_exercises">
+      <Box
+        height="100%"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        pt="3rem"
+        margin={{ base: '0 4% 0 4%', md: '0 10% 0 10%' }}
       >
-        {t('landing-technology.title', { technology: toCapitalize(technologyData?.title) })}
-      </Text>
-      <Box flex="1" pb="2rem">
-        <Heading as="span" size="xl">
-          {t('landing-technology.subTitle', { technology: toCapitalize(technologyData?.title) })}
-        </Heading>
-
         <Text
-          size="md"
-          pt="0.6rem"
-          width={{ base: '100%', md: '65%' }}
-          display="flex"
-          // padding={{ base: '30px 8%', md: '30px 28%' }}
-          textAlign="left"
+          as="h1"
+          fontSize="15px"
+          color={useColorModeValue('blue.default', 'blue.300')}
+          display="inline-block"
+          fontWeight="700"
+          paddingBottom="6px"
         >
-          {technologyData?.description || t('description')}
+          {t('landing-technology.title', { technology: toCapitalize(technologyData?.title) })}
         </Text>
-      </Box>
+        <Box flex="1" pb="2rem">
+          <Heading as="span" size="xl">
+            {t('landing-technology.subTitle', { technology: toCapitalize(technologyData?.title) })}
+          </Heading>
 
-      {exercises?.length > 0 && (
+          <Text
+            size="md"
+            pt="0.6rem"
+            width={{ base: '100%', md: '65%' }}
+            display="flex"
+          // padding={{ base: '30px 8%', md: '30px 28%' }}
+            textAlign="left"
+          >
+            {technologyData?.description || t('description')}
+          </Text>
+        </Box>
+
+        {exercises?.length > 0 && (
         <ProjectList
           projects={exercises}
           // withoutImage
@@ -161,8 +163,9 @@ function ExercisesByTechnology({ exercises, technologyData }) {
           projectPath="interactive-exercise"
           notFoundMessage={t('common:asset-not-found-in-current-language')}
         />
-      )}
-    </Box>
+        )}
+      </Box>
+    </PublicPortalGate>
   );
 }
 
