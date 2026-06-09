@@ -8,7 +8,8 @@ import useSession from '../../hooks/useSession';
 import { isWindow, getQueryString, getStorageItem, removeStorageItem, setStorageItem, slugToTitle, getBrowserInfo, parseAddOnIdsFromQuery } from '../../utils';
 import signupAction from '../../store/actions/signupAction';
 import useSignup from '../../hooks/useSignup';
-import { BASE_PLAN, currenciesSymbols } from '../../utils/variables';
+import { currenciesSymbols, resolveCheckoutPlanSlug, isWhiteLabelAcademy } from '../../utils/variables';
+import useWhiteLabel from '../../hooks/useWhiteLabel';
 import { reportDatalayer } from '../../utils/requests';
 import { usePersistentBySession } from '../../hooks/usePersistent';
 import useCustomToast from '../../hooks/useCustomToast';
@@ -189,6 +190,7 @@ const useCheckout = () => {
   const currencySymbol = currenciesSymbols[originalPlan?.currency?.code] || '$';
 
   const { isAuthenticated } = useAuth();
+  const { defaultPlan: academyDefaultPlan } = useWhiteLabel();
   const { userSession, location, isLoadingLocation } = useSession();
   const { createToast } = useCustomToast({ toastId: 'coupon-plan-email-detail' });
   const { coupon: couponQuery } = query;
@@ -196,7 +198,7 @@ const useCheckout = () => {
   const planId = getQueryString('plan_id');
   const callbackUrl = getQueryString('callback');
   const addOnsQS = getQueryString('add_ons');
-  const planFormated = plan || BASE_PLAN;
+  const planFormated = resolveCheckoutPlanSlug(plan, isWhiteLabelAcademy, academyDefaultPlan);
 
   const [couponFromSession] = usePersistentBySession('coupon', '');
   const coupon = couponFromSession || userSession?.ref || '';
