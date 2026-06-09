@@ -111,6 +111,7 @@ function ShowOnSignUp({
               showVerifyEmail={showVerifyEmail}
               columnLayout
               showLoginLink
+              submitText={submitText}
               invertHandlerPosition={invertHandlerPosition}
               subscribeValues={subscribeValues}
               conversionTechnologies={conversionTechnologies}
