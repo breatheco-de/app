@@ -41,7 +41,7 @@ const getReadPages = () => {
 };
 
 const getEvents = async (extraQuerys = {}) => {
-  const qs = parseQuerys(extraQuerys, true);
+  const qs = parseQuerys(extraQuerys);
   const { data } = await axios.get(`${BREATHECODE_HOST}/v1/events/all${qs}`);
 
   return data;
