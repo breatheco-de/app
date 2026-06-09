@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Redis } from '@upstash/redis';
 import TagManager from 'react-gtm-module';
 import { parseQuerys } from './url';
-import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from './variables';
+import { WHITE_LABEL_ACADEMY } from './variables';
 import bc from '../services/breathecode';
 import {
   areWhiteLabelEventsEnabled,
@@ -99,7 +99,7 @@ const getEvents = async (extraQuerys = {}) => {
   if (!areWhiteLabelEventsEnabled(features)) return [];
   const query = buildPublicEventsQueryParams(extraQuerys, features);
   if (!query) return [];
-  const qs = parseQuerys(query, true);
+  const qs = parseQuerys(query);
   const { data } = await axios.get(`${BREATHECODE_HOST}/v1/events/all${qs}`);
 
   return data;

@@ -35,7 +35,7 @@ function UpcomingWorkshops() {
       setCards([]);
       return;
     }
-    const qs = parseQuerys(queryParams, true);
+    const qs = parseQuerys(queryParams);
     axios.get(`${BREATHECODE_HOST}${endpointDefault}${qs}`)
       .then((res) => {
         const data = res?.data;
