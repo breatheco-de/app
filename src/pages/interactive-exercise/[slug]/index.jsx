@@ -32,6 +32,7 @@ import AssetsBreadcrumbs from '../../../components/AssetsBreadcrumbs';
 import Icon from '../../../components/Icon';
 import useStyle from '../../../hooks/useStyle';
 import { getMarkdownFromCache } from '../../../utils/requests';
+import PublicPortalGate from '../../../components/PublicPortalGate';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../../public/asset-list.json');
@@ -203,7 +204,7 @@ function Exercise({ exercise, markdown }) {
   }, []);
 
   return (
-    <>
+    <PublicPortalGate feature="interactive_exercises" mode="login">
       {exercise?.structuredData?.name && (
         <Head>
           <script
@@ -451,7 +452,7 @@ function Exercise({ exercise, markdown }) {
           technologies={exercise?.technologies.join(',')}
         />
       </GridContainer> */}
-    </>
+    </PublicPortalGate>
   );
 }
 

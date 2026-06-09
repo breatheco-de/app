@@ -23,6 +23,7 @@ import RelatedContent from '../../components/RelatedContent';
 import MktEventCards from '../../components/PrismicComponents/MktEventCards';
 import AssetsBreadcrumbs from '../../components/AssetsBreadcrumbs';
 import { getMarkdownFromCache } from '../../utils/requests';
+import PublicPortalGate from '../../components/PublicPortalGate';
 
 export const getStaticPaths = async () => {
   const assetListModule = await import('../../../public/asset-list.json');
@@ -172,7 +173,7 @@ function LessonSlug({ lesson, markdown }) {
   const markdownData = (!isIpynb && typeof markdown === 'string') ? getMarkDownContent(markdown) : null;
 
   return (
-    <>
+    <PublicPortalGate feature="lessons" mode="login">
       {lesson?.structuredData?.name && (
         <Head>
           <script
@@ -322,7 +323,7 @@ function LessonSlug({ lesson, markdown }) {
           )}
         </Box>
       </GridContainer>
-    </>
+    </PublicPortalGate>
   );
 }
 

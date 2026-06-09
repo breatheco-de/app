@@ -87,7 +87,7 @@ function Navbar({ translations, pageProps }) {
     if (enrollButton) {
       enrollButton.click();
     } else {
-      window.location.href = `/${locale}/pricing${parseQuerys({ internal_cta_placement: 'navbar-get-started' }, false)}`;
+      window.location.href = `/${locale}/checkout${parseQuerys({ internal_cta_placement: 'navbar-get-started' }, false)}`;
     }
   };
 

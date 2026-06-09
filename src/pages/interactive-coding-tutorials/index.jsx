@@ -20,6 +20,7 @@ import { parseQuerys } from '../../utils/url';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import { log } from '../../utils/logging';
 import { types } from '../../components/DynamicContentCard/card-types';
+import PublicPortalGate from '../../components/PublicPortalGate';
 
 const contentPerPage = 20;
 
@@ -165,50 +166,51 @@ function Projects({ projects, technologyTags, difficulties, count }) {
   };
 
   return (
-    <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
-      <Box
-        display="grid"
-        gridTemplateColumns={{
-          base: '.5fr repeat(12, 1fr) .5fr',
-          md: '1.5fr repeat(12, 1fr) 1.5fr',
-        }}
-        borderBottom={1}
-        borderStyle="solid"
-        borderColor={useColorModeValue('gray.200', 'gray.700')}
-      >
-        <Flex
-          gridColumn="2 / span 12"
-          width="100%"
-          margin="0 auto"
-          maxWidth="1280px"
-          justifyContent="space-between"
-          flexDirection={{ base: 'column', md: 'row' }}
-          flex="1"
-          gridGap="10px"
-          padding={{ base: '3% 15px 4% 15px', md: '1.5% 0 1.5% 0' }}
+    <PublicPortalGate feature="interactive_coding_tutorials">
+      <Box height="100%" flexDirection="column" justifyContent="center" alignItems="center">
+        <Box
+          display="grid"
+          gridTemplateColumns={{
+            base: '.5fr repeat(12, 1fr) .5fr',
+            md: '1.5fr repeat(12, 1fr) 1.5fr',
+          }}
+          borderBottom={1}
+          borderStyle="solid"
+          borderColor={useColorModeValue('gray.200', 'gray.700')}
         >
-          <TitleContent title={t('title')} icon="laptop" color={iconColor} margin={{ base: '0 0 10px 0', md: '0' }} />
-
-          <Search placeholder={t('search')} />
-
-          <Button
-            variant="outline"
-            backgroundColor={useColorModeValue('', 'gray.800')}
-            _hover={{ backgroundColor: useColorModeValue('', 'gray.700') }}
-            border={currentFilters >= 1 ? 2 : 1}
-            onClick={onOpen}
-            borderStyle="solid"
-            minWidth="125px"
-            borderColor={useColorModeValue(
-              `${currentFilters >= 1 ? 'blue.default' : '#DADADA'}`,
-              'gray.800',
-            )}
+          <Flex
+            gridColumn="2 / span 12"
+            width="100%"
+            margin="0 auto"
+            maxWidth="1280px"
+            justifyContent="space-between"
+            flexDirection={{ base: 'column', md: 'row' }}
+            flex="1"
+            gridGap="10px"
+            padding={{ base: '3% 15px 4% 15px', md: '1.5% 0 1.5% 0' }}
           >
-            <Icon icon="setting" width="20px" height="20px" style={{ minWidth: '20px' }} />
-            <Text textTransform="uppercase" pl="10px">
-              {currentFilters >= 2 ? t('filters') : t('filter')}
-            </Text>
-            {currentFilters >= 1 && (
+            <TitleContent title={t('title')} icon="laptop" color={iconColor} margin={{ base: '0 0 10px 0', md: '0' }} />
+
+            <Search placeholder={t('search')} />
+
+            <Button
+              variant="outline"
+              backgroundColor={useColorModeValue('', 'gray.800')}
+              _hover={{ backgroundColor: useColorModeValue('', 'gray.700') }}
+              border={currentFilters >= 1 ? 2 : 1}
+              onClick={onOpen}
+              borderStyle="solid"
+              minWidth="125px"
+              borderColor={useColorModeValue(
+                `${currentFilters >= 1 ? 'blue.default' : '#DADADA'}`,
+                'gray.800',
+              )}
+            >
+              <Icon icon="setting" width="20px" height="20px" style={{ minWidth: '20px' }} />
+              <Text textTransform="uppercase" pl="10px">
+                {currentFilters >= 2 ? t('filters') : t('filter')}
+              </Text>
+              {currentFilters >= 1 && (
               <Text
                 as="span"
                 margin="0 10px"
@@ -224,61 +226,62 @@ function Projects({ projects, technologyTags, difficulties, count }) {
               >
                 {currentFilters}
               </Text>
-            )}
-          </Button>
+              )}
+            </Button>
 
-          <FilterModal
-            isModalOpen={isOpen}
-            onClose={onClose}
-            contextFilter={filteredBy.projectsOptions}
-            cardHeight="348px"
-            setFilter={setProjectFilters}
-            technologyTags={technologyTags}
-            difficulties={difficulties}
-          />
-        </Flex>
+            <FilterModal
+              isModalOpen={isOpen}
+              onClose={onClose}
+              contextFilter={filteredBy.projectsOptions}
+              cardHeight="348px"
+              setFilter={setProjectFilters}
+              technologyTags={technologyTags}
+              difficulties={difficulties}
+            />
+          </Flex>
+        </Box>
+
+        <GridContainer maxWidth="1280px" position="relative" withContainer gridColumn="1 / span 10">
+          <Text
+            size="md"
+            display="flex"
+            padding={{ base: '30px 8%', md: '30px 28%' }}
+            textAlign="center"
+          >
+            {t('description')}
+          </Text>
+
+          {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
+            <ProjectsLoader
+              type={types.project}
+              articles={projects}
+              itemsPerPage={contentPerPage}
+              count={count}
+              lang={lang}
+              fetchData={fetchProjects}
+              searchQuery={search}
+              options={{
+                withoutImage: true,
+                contextFilter: filteredBy.projectsOptions,
+                pagePath: '/interactive-coding-tutorials',
+              }}
+            />
+          ) : (
+            <PaginatedView
+              type={types.project}
+              queryFunction={queryFunction}
+              options={{
+                pagePath: '/interactive-coding-tutorials',
+                contextFilter: filteredBy.projectsOptions,
+                contentPerPage,
+                disableLangFilter: true,
+              }}
+            />
+          )}
+
+        </GridContainer>
       </Box>
-
-      <GridContainer maxWidth="1280px" position="relative" withContainer gridColumn="1 / span 10">
-        <Text
-          size="md"
-          display="flex"
-          padding={{ base: '30px 8%', md: '30px 28%' }}
-          textAlign="center"
-        >
-          {t('description')}
-        </Text>
-
-        {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
-          <ProjectsLoader
-            type={types.project}
-            articles={projects}
-            itemsPerPage={contentPerPage}
-            count={count}
-            lang={lang}
-            fetchData={fetchProjects}
-            searchQuery={search}
-            options={{
-              withoutImage: true,
-              contextFilter: filteredBy.projectsOptions,
-              pagePath: '/interactive-coding-tutorials',
-            }}
-          />
-        ) : (
-          <PaginatedView
-            type={types.project}
-            queryFunction={queryFunction}
-            options={{
-              pagePath: '/interactive-coding-tutorials',
-              contextFilter: filteredBy.projectsOptions,
-              contentPerPage,
-              disableLangFilter: true,
-            }}
-          />
-        )}
-
-      </GridContainer>
-    </Box>
+    </PublicPortalGate>
   );
 }
 
