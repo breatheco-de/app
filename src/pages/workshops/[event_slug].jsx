@@ -24,6 +24,11 @@ import ShowOnSignUp from '../../components/ShowOnSignup';
 import Timer from '../../components/Timer';
 import Link from '../../components/NextChakraLink';
 import { categoriesFor, BREATHECODE_HOST } from '../../utils/variables';
+import {
+  fetchEventsForStaticGeneration,
+  getWhiteLabelAcademyFeatures,
+  isEventVisibleForWhiteLabel,
+} from '../../utils/whiteLabelEvents';
 import ComponentOnTime from '../../components/ComponentOnTime';
 import MarkDownParser from '../../components/MarkDownParser';
 import MktEventCards from '../../components/PrismicComponents/MktEventCards';
@@ -60,7 +65,7 @@ const assetTypeDict = {
 };
 
 export const getStaticPaths = async ({ locales }) => {
-  const { data } = await bc.events().allEvents();
+  const data = await fetchEventsForStaticGeneration();
 
   const paths = data.filter((ev) => ev?.slug && ['ACTIVE', 'FINISHED'].includes(ev.status))
     .flatMap((res) => locales.map((locale) => ({
@@ -83,7 +88,16 @@ export const getStaticProps = async ({ params, locale }) => {
   }));
   const data = resp?.data;
 
+  const features = await getWhiteLabelAcademyFeatures();
+
   if (resp.statusText === 'not-found' || !data?.slug || !['ACTIVE', 'FINISHED'].includes(data.status)) {
+    return {
+      notFound: true,
+      revalidate: 60,
+    };
+  }
+
+  if (!isEventVisibleForWhiteLabel(data, features)) {
     return {
       notFound: true,
       revalidate: 60,

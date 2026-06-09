@@ -41,7 +41,8 @@ function Navbar({ translations, pageProps }) {
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const { allSubscriptions } = useSubscriptions();
-  const { showMarketingNavigation } = useWhiteLabel();
+  const { showMarketingNavigation, isWhiteLabelFeatureEnabled } = useWhiteLabel();
+  const canShowEvents = isWhiteLabelFeatureEnabled('allow_events');
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const { t } = useTranslation('navbar');
@@ -134,19 +135,23 @@ function Navbar({ translations, pageProps }) {
 
   useEffect(() => {
     if (pageProps?.existsWhiteLabel) {
+      const eventsItem = preDefinedItems.find((item) => item.id === 'live');
       const filteredItems = whiteLabelitems.filter((item) => {
         if (item.type === 'marketing') {
           return showMarketingNavigation;
         }
         return true;
       });
-      setNavbarItems(filteredItems);
+      const itemsWithEvents = canShowEvents && eventsItem
+        ? [...filteredItems, eventsItem]
+        : filteredItems;
+      setNavbarItems(itemsWithEvents);
     } else if (!isLoading && user?.id) {
       setNavbarItems(preDefinedItems.filter((item) => (item.disabled !== true && item.hide_on_auth !== true)));
     } else {
       setNavbarItems(preDefinedItems.filter((item) => item.disabled !== true));
     }
-  }, [user, cohorts, isLoading, cohortSession, mktCourses, router.locale, location, showMarketingNavigation]);
+  }, [user, cohorts, isLoading, cohortSession, mktCourses, router.locale, location, showMarketingNavigation, canShowEvents]);
 
   const closeSettings = () => {
     setIsPopoverOpen(false);
@@ -187,7 +192,9 @@ function Navbar({ translations, pageProps }) {
     };
   };
 
-  const allItems = navbarItems?.length > 0 ? navbarItems : preDefinedItems;
+  const allItems = navbarItems?.length > 0
+    ? navbarItems
+    : preDefinedItems.filter((item) => item.disabled !== true);
 
   const privateItems = allItems?.filter((item) => (isAuthenticated ? item.private : false)) || [];
   const publicItems = allItems?.filter((item) => !item.private) || [];

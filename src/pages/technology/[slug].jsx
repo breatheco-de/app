@@ -21,6 +21,11 @@ import ProjectsLoader from '../../components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
 import useCustomToast from '../../hooks/useCustomToast';
 import PublicPortalGate from '../../components/PublicPortalGate';
+import {
+  fetchEventsForStaticGeneration,
+  isEventVisibleForWhiteLabel,
+  getWhiteLabelAcademyFeatures,
+} from '../../utils/whiteLabelEvents';
 
 let contentPerPage = 10;
 
@@ -152,8 +157,9 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     return tech.lang === locale;
   });
 
-  const workshopResp = await bc.events({ technologies: slug }).allEvents();
-  const workShopsForTech = workshopResp.data || [];
+  const features = await getWhiteLabelAcademyFeatures();
+  const workshopsData = await fetchEventsForStaticGeneration({ technologies: slug });
+  const workShopsForTech = workshopsData.filter((event) => isEventVisibleForWhiteLabel(event, features));
 
   const coursesForTechResponse = await bc.marketing({ technologies: slug }).courses();
   const coursesForTech = coursesForTechResponse?.data || [];
