@@ -32,6 +32,7 @@ import useStyle from '../../hooks/useStyle';
 import useSubscriptions from '../../hooks/useSubscriptions';
 import useWhiteLabel from '../../hooks/useWhiteLabel';
 import LiveWorkshopBadge from '../LiveWorkshopBadge';
+import { buildWhiteLabelPublicPortalNavItem } from '../../utils/publicPortalNav';
 
 function Navbar({ translations, pageProps }) {
   const { location, isLoadingLocation } = useSession();
@@ -43,6 +44,7 @@ function Navbar({ translations, pageProps }) {
   const { allSubscriptions } = useSubscriptions();
   const { showMarketingNavigation, isWhiteLabelFeatureEnabled } = useWhiteLabel();
   const canShowEvents = isWhiteLabelFeatureEnabled('allow_events');
+  const canShowPublicPortal = isWhiteLabelFeatureEnabled('public_portal.enabled');
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const { t } = useTranslation('navbar');
@@ -136,6 +138,11 @@ function Navbar({ translations, pageProps }) {
   useEffect(() => {
     if (pageProps?.existsWhiteLabel) {
       const eventsItem = preDefinedItems.find((item) => item.id === 'live');
+      const bootcampsItem = preDefinedItems.find((item) => item.id === 'bootcamps');
+      const publicPortalItem = buildWhiteLabelPublicPortalNavItem(
+        bootcampsItem,
+        isWhiteLabelFeatureEnabled,
+      );
       const filteredItems = whiteLabelitems.filter((item) => {
         if (item.type === 'marketing') {
           return showMarketingNavigation;
@@ -145,13 +152,16 @@ function Navbar({ translations, pageProps }) {
       const itemsWithEvents = canShowEvents && eventsItem
         ? [...filteredItems, eventsItem]
         : filteredItems;
-      setNavbarItems(itemsWithEvents);
+      const itemsWithPublicPortal = publicPortalItem
+        ? [...itemsWithEvents, publicPortalItem]
+        : itemsWithEvents;
+      setNavbarItems(itemsWithPublicPortal);
     } else if (!isLoading && user?.id) {
       setNavbarItems(preDefinedItems.filter((item) => (item.disabled !== true && item.hide_on_auth !== true)));
     } else {
       setNavbarItems(preDefinedItems.filter((item) => item.disabled !== true));
     }
-  }, [user, cohorts, isLoading, cohortSession, mktCourses, router.locale, location, showMarketingNavigation, canShowEvents]);
+  }, [user, cohorts, isLoading, cohortSession, mktCourses, router.locale, location, showMarketingNavigation, canShowEvents, canShowPublicPortal]);
 
   const closeSettings = () => {
     setIsPopoverOpen(false);
