@@ -11,9 +11,11 @@ import axios from '../axios';
 import { getQueryString, sortToNearestTodayDate } from '../utils';
 import DraggableContainer from './DraggableContainer';
 import DynamicContentCard from './DynamicContentCard';
-import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../utils/variables';
+import { BREATHECODE_HOST } from '../utils/variables';
 import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
+import useWhiteLabel from '../hooks/useWhiteLabel';
+import { buildPublicEventsQueryParams } from '../utils/whiteLabelEvents';
 import { parseQuerys } from '../utils/url';
 
 function MktEventCards({
@@ -36,32 +38,33 @@ function MktEventCards({
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation('workshops');
   const { user } = useAuth();
+  const { features } = useWhiteLabel();
   const { fontColor } = useStyle();
   const router = useRouter();
   const lang = router.locale;
   const search = getQueryString('search');
 
-  const queryParams = {
-    featured: true,
-    academy: WHITE_LABEL_ACADEMY,
-    is_public: true,
+  const getEventQueryParams = () => {
+    const baseParams = {
+      featured: true,
+      is_public: true,
+    };
+
+    if (searchSensitive) {
+      baseParams.status = 'ACTIVE,FINISHED';
+      baseParams.all_time = true;
+    } else if (techFilter) {
+      baseParams.status = 'ACTIVE,FINISHED';
+      baseParams.past = true;
+    } else {
+      baseParams.status = 'ACTIVE';
+    }
+
+    return buildPublicEventsQueryParams(baseParams, features);
   };
-
-  if (searchSensitive) {
-    queryParams.status = 'ACTIVE,FINISHED';
-    queryParams.all_time = true;
-  } else if (techFilter) {
-    queryParams.status = 'ACTIVE,FINISHED';
-    queryParams.past = true;
-  } else {
-    queryParams.status = 'ACTIVE';
-  }
-
-  const qsConnector = parseQuerys(queryParams, (endpoint && endpoint?.includes('?')));
 
   const hoursLimited = hoursToLimit * 60;
   const choosenEndpoint = endpoint || '/v1/events/all';
-  const endpointDefault = `${choosenEndpoint}${qsConnector}`;
   const maxEvents = 10;
 
   const fetchCheckedInEvents = async () => {
@@ -97,6 +100,15 @@ function MktEventCards({
           setLoading(false);
           return;
         }
+        const queryParams = getEventQueryParams();
+        if (!queryParams) {
+          setOriginalEvents([]);
+          setFilteredEvents([]);
+          setLoading(false);
+          return;
+        }
+        const qsConnector = parseQuerys(queryParams, (endpoint && endpoint?.includes('?')));
+        const endpointDefault = `${choosenEndpoint}${qsConnector}`;
         const res = await axios.get(`${BREATHECODE_HOST}${endpointDefault}`);
         const data = res?.data;
 
@@ -129,7 +141,7 @@ function MktEventCards({
     };
 
     fetchEvents();
-  }, [externalEvents, techFilter, sortPrioOneTechs, lang]);
+  }, [externalEvents, techFilter, sortPrioOneTechs, lang, features, searchSensitive, endpoint]);
 
   useEffect(() => {
     if (!searchSensitive || techFilter) return undefined;
