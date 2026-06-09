@@ -8,9 +8,10 @@ import Signup from './Forms/Signup';
 import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 import { setStorageItem } from '../utils';
-import { BREATHECODE_HOST } from '../utils/variables';
+import { BREATHECODE_HOST, resolveCheckoutPlanSlug, isWhiteLabelAcademy } from '../utils/variables';
 import ModalInfo from './ModalInfo';
 import useSignup from '../hooks/useSignup';
+import useWhiteLabel from '../hooks/useWhiteLabel';
 
 function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, footerContent, submitText, padding, isLive,
@@ -20,6 +21,7 @@ function ShowOnSignUp({
 }) {
   const { isAuthenticated, user, logout } = useAuth();
   const { handleSubscribeToPlan, setSelectedPlan } = useSignup();
+  const { defaultPlan: academyDefaultPlan } = useWhiteLabel();
   const { backgroundColor, featuredColor, hexColor } = useStyle();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const [alreadyLogged, setAlreadyLogged] = useState(false);
@@ -29,7 +31,7 @@ function ShowOnSignUp({
   const router = useRouter();
   const isLogged = alreadyLogged || isAuthenticated;
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
-  const defaultPlan = process.env.BASE_PLAN || '4geeks-basic-subscription';
+  const defaultPlan = resolveCheckoutPlanSlug(null, isWhiteLabelAcademy, academyDefaultPlan) || '4geeks-basic-subscription';
 
   useEffect(() => {
     let intervalId;

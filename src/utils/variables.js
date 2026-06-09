@@ -2,6 +2,12 @@ import modifyEnv from '../../modifyEnv';
 
 export const DOMAIN_NAME = process.env.DOMAIN_NAME || '';
 export const BASE_PLAN = process.env.BASE_PLAN || '';
+
+export const resolveCheckoutPlanSlug = (queryPlan, isWhiteLabel, academyDefaultPlan) => {
+  if (queryPlan) return queryPlan;
+  if (isWhiteLabel) return academyDefaultPlan || BASE_PLAN;
+  return '';
+};
 export const BASE_COURSE = process.env.BASE_COURSE || '';
 export const IP_API_KEY = process.env.NEXT_PUBLIC_IP_API_KEY || '';
 export const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST || '' });
