@@ -7,6 +7,11 @@ import TagManager from 'react-gtm-module';
 import { parseQuerys } from './url';
 import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from './variables';
 import bc from '../services/breathecode';
+import {
+  areWhiteLabelEventsEnabled,
+  buildPublicEventsQueryParams,
+  getWhiteLabelAcademyFeatures,
+} from './whiteLabelEvents';
 import { log } from './logging';
 import { getExtensionName } from './index';
 
@@ -90,13 +95,14 @@ const getMktCourses = () => {
 };
 
 const getEvents = async (extraQuerys = {}) => {
-  if (!isWhiteLabelAcademy) {
-    const qs = parseQuerys(extraQuerys, true);
-    const { data } = await axios.get(`${BREATHECODE_HOST}/v1/events/all${qs}`);
+  const features = await getWhiteLabelAcademyFeatures();
+  if (!areWhiteLabelEventsEnabled(features)) return [];
+  const query = buildPublicEventsQueryParams(extraQuerys, features);
+  if (!query) return [];
+  const qs = parseQuerys(query, true);
+  const { data } = await axios.get(`${BREATHECODE_HOST}/v1/events/all${qs}`);
 
-    return data;
-  }
-  return [];
+  return data;
 };
 
 /**

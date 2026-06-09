@@ -5,6 +5,9 @@ import useTranslation from 'next-translate/useTranslation';
 import axios from '../axios';
 import SmallCardsCarousel from './SmallCardsCarousel';
 import { BREATHECODE_HOST } from '../utils/variables';
+import useWhiteLabel from '../hooks/useWhiteLabel';
+import { buildPublicEventsQueryParams } from '../utils/whiteLabelEvents';
+import { parseQuerys } from '../utils/url';
 
 const langsDict = {
   es: 'es',
@@ -15,6 +18,7 @@ const langsDict = {
 function UpcomingWorkshops() {
   const [cards, setCards] = useState([]);
   const { t } = useTranslation('workshops');
+  const { features } = useWhiteLabel();
 
   const endpointDefault = '/v1/events/all';
 
@@ -26,7 +30,13 @@ function UpcomingWorkshops() {
   };
 
   useEffect(() => {
-    axios.get(`${BREATHECODE_HOST}${endpointDefault}`)
+    const queryParams = buildPublicEventsQueryParams({ status: 'ACTIVE' }, features);
+    if (!queryParams) {
+      setCards([]);
+      return;
+    }
+    const qs = parseQuerys(queryParams, true);
+    axios.get(`${BREATHECODE_HOST}${endpointDefault}${qs}`)
       .then((res) => {
         const data = res?.data;
         if (data && data.length > 0) {
@@ -63,7 +73,7 @@ function UpcomingWorkshops() {
           setCards(formatedData);
         }
       });
-  }, []);
+  }, [features]);
 
   return (
     <SmallCardsCarousel
