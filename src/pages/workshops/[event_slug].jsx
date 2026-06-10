@@ -968,11 +968,19 @@ function Workshop({ eventData, asset }) {
       </Box>
       <GridContainer
         height="100%"
+        display={{ base: 'flex', lg: 'grid' }}
+        flexDirection={{ base: 'column', lg: 'unset' }}
         gridTemplateColumns={{ base: 'repeat(12, 1fr)', lg: '2fr repeat(12, 1fr) 2fr' }}
         gridGap="36px"
         padding="0 10px"
       >
-        <Box display={{ base: 'block', lg: 'flex' }} gridGap="30px" flexDirection="column" gridColumn={{ base: '2 / span 6', lg: '2 / span 8' }}>
+        <Box
+          display={{ base: 'block', lg: 'flex' }}
+          gridGap="30px"
+          flexDirection="column"
+          order={{ base: 2, lg: 'unset' }}
+          gridColumn={{ base: '1 / -1', lg: '2 / span 8' }}
+        >
           <Box display="flex" flexDirection="column" gridGap="10px">
             <MarkDownParser content={event?.description} />
           </Box>
@@ -1205,8 +1213,9 @@ function Workshop({ eventData, asset }) {
         </Box>
         <Box
           display="flex"
-          gridColumn={{ base: '8 / span 4', lg: '10 / span 4' }}
-          margin={{ base: '20px 0 0 auto', lg: '-13.42rem 0 0 auto' }}
+          order={{ base: 1, lg: 'unset' }}
+          gridColumn={{ base: '1 / -1', lg: '10 / span 4' }}
+          margin={{ base: '0', lg: '-13.42rem 0 0 auto' }}
           flexDirection="column"
           transition="background 0.2s ease-in-out"
           width={{ base: '100%', md: '320px' }}
@@ -1222,6 +1231,7 @@ function Workshop({ eventData, asset }) {
               <Box display={{ base: isAuth ? 'none' : 'block', md: 'block' }}>
                 <ShowOnSignUp
                   showVerifyEmail={false}
+                  submitText={t('reserv-button-text')}
                   hideForm={isAuth}
                   existsConsumables={existsConsumables}
                   hideSwitchUser={!isFreeForConsumables && (noConsumablesFound && !existsConsumables)}
