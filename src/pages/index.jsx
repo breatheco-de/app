@@ -11,13 +11,17 @@ import { isWhiteLabelAcademy } from '../utils/variables';
 
 const UID_OF_PAGE = 'home';
 
-function Page({ page }) {
+function Page({ page, whiteLabelHome }) {
   const router = useRouter();
   const prismicRef = process.env.PRISMIC_REF;
   const prismicApi = process.env.PRISMIC_API;
   const landingUrl = page?.data?.landing_url;
 
   useEffect(() => {
+    if (whiteLabelHome) {
+      router.replace(router.locale === 'es' ? '/es/login' : '/login');
+      return;
+    }
     if (landingUrl?.length > 0) {
       router.push(landingUrl);
     }
@@ -39,16 +43,23 @@ function Page({ page }) {
 }
 
 Page.propTypes = {
-  page: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  page: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  whiteLabelHome: PropTypes.bool,
+};
+
+Page.defaultProps = {
+  page: null,
+  whiteLabelHome: false,
 };
 export default Page;
 
 export async function getStaticProps({ locale, locales, previewData }) {
   if (isWhiteLabelAcademy) {
     return {
-      redirect: {
-        destination: locale === 'es' ? '/es/login' : '/login',
-        permanent: false,
+      props: {
+        page: null,
+        seo: {},
+        whiteLabelHome: true,
       },
     };
   }
