@@ -4,8 +4,9 @@ import axios from 'axios';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useAuth from './useAuth';
-import { getStorageItem, getBrowserInfo, languageFix, removeStorageItem } from '../utils';
+import { getStorageItem, getBrowserInfo, languageFix, removeStorageItem, assetTypeValues } from '../utils';
 import useCohortAction from '../store/actions/cohortAction';
+import { buildPublicPortalAssetPath } from '../utils/publicPortalNav';
 import {
   getMacroSlugForCohortSyllabus,
   processRelatedAssignments,
@@ -14,7 +15,7 @@ import {
 } from '../utils/cohorts';
 import { reportDatalayer } from '../utils/requests';
 import bc from '../services/breathecode';
-import { BREATHECODE_HOST, DOMAIN_NAME } from '../utils/variables';
+import { BREATHECODE_HOST, DOMAIN_NAME, isWhiteLabelAcademy } from '../utils/variables';
 import useCustomToast from './useCustomToast';
 import useSubscriptions from './useSubscriptions';
 
@@ -45,30 +46,6 @@ function useCohortHandler() {
   const accessToken = getStorageItem('accessToken');
   const assetSlug = router?.query?.lessonSlug;
   const assetType = router?.query?.lesson;
-  const assetTypes = {
-    read: 'lesson',
-    practice: 'exercise',
-    project: 'project',
-    answer: 'quiz',
-  };
-
-  const redirectToPublicPage = (data) => {
-    const englishSlug = {
-      en: data?.translations?.us,
-    };
-    const assetTypeValue = data?.asset_type || assetTypes[assetType];
-    const assetTypeLower = assetTypeValue.toLowerCase();
-    const translationSlug = englishSlug?.[lang] || data?.translations?.[lang] || assetSlug;
-
-    const pathConnector = {
-      lesson: `${lang === 'en' ? `${DOMAIN_NAME}/lesson/${translationSlug}` : `${DOMAIN_NAME}/${lang}/lesson/${translationSlug}`}`,
-      exercise: `${lang === 'en' ? `${DOMAIN_NAME}/interactive-exercise/${translationSlug}` : `${DOMAIN_NAME}/${lang}/interactive-exercise/${translationSlug}`}`,
-      project: `${lang === 'en' ? `${DOMAIN_NAME}/project/${translationSlug}` : `${DOMAIN_NAME}/${lang}/project/${translationSlug}`}`,
-    };
-    if (pathConnector?.[assetTypeLower]) {
-      window.location.href = pathConnector[assetTypeLower];
-    }
-  };
 
   const serializeModulesMap = (moduleData, tasks) => {
     const assignmentsRecopilated = [];
@@ -286,9 +263,30 @@ function useCohortHandler() {
   const handleRedirectToPublicPage = async () => {
     try {
       const response = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`);
-      if (response?.data?.asset_type) {
-        redirectToPublicPage(response.data);
+      const assetData = response?.data;
+
+      if (!assetData?.asset_type) {
+        router.push('/404');
+        return;
       }
+
+      const resolvedAssetType = (assetData.asset_type || assetTypeValues[assetType])?.toLowerCase();
+      const translationSlug = assetData?.translations?.[lang]
+        || (lang === 'en' ? assetData?.translations?.us : null)
+        || assetSlug;
+      const relativePath = buildPublicPortalAssetPath(lang, resolvedAssetType, translationSlug);
+
+      if (!relativePath) {
+        router.push('/404');
+        return;
+      }
+
+      if (isWhiteLabelAcademy) {
+        router.push(relativePath);
+        return;
+      }
+
+      window.location.href = `${DOMAIN_NAME}${relativePath}`;
     } catch (e) {
       router.push('/404');
     }
