@@ -9,8 +9,16 @@ const redirectsList = require('./public/redirects.json');
 const nextTranslate = require('next-translate-plugin');
 
 const externalDevDomain = process.env.VERCEL_ENV !== 'production' ? 'http://localhost:9999' : '';
+const isWhiteLabelAcademy = typeof process.env.DOMAIN_NAME === 'string'
+  && process.env.DOMAIN_NAME !== 'https://4geeks.com';
 const shouldNoIndex = process.env.ROBOTS_NOINDEX === 'true'
   || (process.env.DOMAIN_NAME || '').toLowerCase().includes('learn.4geeks.com');
+const whiteLabelHomeRedirects = isWhiteLabelAcademy
+  ? [
+    { source: '/', destination: '/login', permanent: false },
+    { source: '/es', destination: '/es/login', permanent: false },
+  ]
+  : [];
 const securityHeaders = [
   {
     key: 'X-Frame-Options',
@@ -49,6 +57,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
   },
   async redirects() {
     return [
+      ...whiteLabelHomeRedirects,
       ...redirectsList,
       {
         source: '/interactive-exercises/:slug',
