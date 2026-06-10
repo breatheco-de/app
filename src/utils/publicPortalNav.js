@@ -6,6 +6,22 @@ const PUBLIC_PORTAL_NAV_LINKS = [
   { pattern: 'how-to', feature: null },
 ];
 
+const PUBLIC_PORTAL_ASSET_PATHS = {
+  lesson: 'lesson',
+  exercise: 'interactive-exercise',
+  project: 'interactive-coding-tutorial',
+};
+
+export const getPublicPortalAssetPath = (assetTypeLower) => (
+  PUBLIC_PORTAL_ASSET_PATHS[assetTypeLower] ?? null
+);
+
+export const buildPublicPortalAssetPath = (locale, assetTypeLower, slug) => {
+  const connector = getPublicPortalAssetPath(assetTypeLower);
+  if (!connector || !slug) return null;
+  return locale === 'en' ? `/${connector}/${slug}` : `/${locale}/${connector}/${slug}`;
+};
+
 export const isPublicPortalNavLinkEnabled = (href, isFeatureEnabled) => {
   if (!href || typeof href !== 'string') return false;
 
