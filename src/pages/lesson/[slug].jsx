@@ -168,7 +168,7 @@ function LessonSlug({ lesson, markdown }) {
   const { fontColor, borderColor, featuredLight } = useStyle();
   const { isAuthenticated } = useAuth();
 
-  const exensionName = getExtensionName(lesson.readme_url);
+  const exensionName = getExtensionName(lesson?.readme_url || '');
   const isIpynb = exensionName === 'ipynb';
   const markdownData = (!isIpynb && typeof markdown === 'string') ? getMarkDownContent(markdown) : null;
 
