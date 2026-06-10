@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { createClient } from '../../prismicio';
 import { components } from '../../slices';
+import { isWhiteLabelAcademy } from '../utils/variables';
 
 const UID_OF_PAGE = 'home';
 
@@ -43,6 +44,15 @@ Page.propTypes = {
 export default Page;
 
 export async function getStaticProps({ locale, locales, previewData }) {
+  if (isWhiteLabelAcademy) {
+    return {
+      redirect: {
+        destination: locale === 'es' ? '/es/login' : '/login',
+        permanent: false,
+      },
+    };
+  }
+
   const client = createClient({ previewData });
   const prismicRef = process.env.PRISMIC_REF;
   const prismicApi = process.env.PRISMIC_API;

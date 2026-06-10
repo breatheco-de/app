@@ -178,6 +178,13 @@ function Navbar({ translations, pageProps }) {
 
   if (pageProps?.previewMode) return null;
 
+  let logoHref = '/';
+  if (isAuthenticated) {
+    logoHref = '/choose-program';
+  } else if (pageProps?.existsWhiteLabel) {
+    logoHref = '/login';
+  }
+
   const prepareMenuData = (item, coursesArray) => {
     if (item.id !== 'bootcamps' || !Array.isArray(item.mainMenu)) return item;
     const selfPacedIndex = item.mainMenu.findIndex((sub) => sub.id === 'self-paced-options');
@@ -270,7 +277,7 @@ function Navbar({ translations, pageProps }) {
               height="auto"
               aria-label="Toggle Navigation"
             />
-            <NextLink href={isAuthenticated ? '/choose-program' : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
+            <NextLink href={logoHref} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
               {pageProps?.existsWhiteLabel && logoData?.logo_url ? (
                 <Image
                   src={logoData.logo_url}
@@ -293,7 +300,7 @@ function Navbar({ translations, pageProps }) {
             display={{ base: 'none', lg: 'flex' }}
             justify={{ base: 'center', xl: 'start' }}
           >
-            <NextLink href={isAuthenticated ? '/choose-program' : '/'} style={{ alignSelf: 'center', display: 'flex' }}>
+            <NextLink href={logoHref} style={{ alignSelf: 'center', display: 'flex' }}>
               {pageProps?.existsWhiteLabel && logoData?.logo_url ? (
                 <Image
                   src={logoData.logo_url}
