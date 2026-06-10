@@ -41,20 +41,14 @@ export const buildWhiteLabelPublicPortalNavItem = (bootcampsItem, isFeatureEnabl
 
   if (!bootcampOptions) return null;
 
-  const filteredSubMenu = selfPacedSection
+  const filteredPublicPortalItems = selfPacedSection
     ? filterPublicPortalSubMenu(selfPacedSection.subMenu, isFeatureEnabled)
     : [];
 
-  const mainMenu = [bootcampOptions];
-
-  if (filteredSubMenu.length > 0) {
-    mainMenu.push({
-      label: '',
-      id: 'public-portal-resources',
-      description: '',
-      subMenu: filteredSubMenu,
-    });
-  }
+  const bootcampSubMenu = Array.isArray(bootcampOptions.subMenu) ? [...bootcampOptions.subMenu] : [];
+  const mergedSubMenu = filteredPublicPortalItems.length > 0
+    ? [...bootcampSubMenu, ...filteredPublicPortalItems]
+    : bootcampSubMenu;
 
   return {
     id: 'bootcamps',
@@ -63,6 +57,9 @@ export const buildWhiteLabelPublicPortalNavItem = (bootcampsItem, isFeatureEnabl
     titleColor: bootcampsItem.titleColor,
     description: bootcampsItem.description,
     position: bootcampsItem.position ?? 1,
-    mainMenu,
+    mainMenu: [{
+      ...bootcampOptions,
+      subMenu: mergedSubMenu,
+    }],
   };
 };
