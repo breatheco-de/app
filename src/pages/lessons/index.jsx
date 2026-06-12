@@ -17,7 +17,7 @@ import PaginatedView from '../../components/PaginationView';
 import { getQueryString, isWindow } from '../../utils';
 import ProjectsLoader from '../../components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
-import { ORIGIN_HOST, WHITE_LABEL_ACADEMY, excludeCagetoriesFor } from '../../utils/variables';
+import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
 import { log } from '../../utils/logging';
 import { types } from '../../components/DynamicContentCard/card-types';
 import PublicPortalGate from '../../components/PublicPortalGate';
@@ -33,7 +33,6 @@ const fetchLessons = async (lang, page, query) => {
     status: 'PUBLISHED',
     exclude_category: excludeCagetoriesFor.lessons,
     language: lang,
-    academy: WHITE_LABEL_ACADEMY,
     limit: contentPerPage,
     offset: page ? (page - 1) * contentPerPage : 0,
     technologies,
