@@ -571,10 +571,10 @@ body.chakra-ui-dark .anchorjs-link {
   box-shadow: 0 0 0 1000px #17202A inset !important;
 }
 
-/* Rigobot chat - positioned above the controls panel and always on top */
+/* Rigobot chat - above controls panel (1300) but below popovers/modals (1500+) */
 #rigo-chat {
   position: fixed;
-  z-index: 9999;
+  z-index: 1350;
   bottom: var(--rigo-chat-bottom, calc(20px + 70px + 12px));
   right: 24px;
   width: min(400px, calc(100vw - 32px));
@@ -598,8 +598,12 @@ body.chakra-ui-dark .anchorjs-link {
   }
 }
 
-#rigo-chat > * {
+#rigo-chat:has(input) > * {
   pointer-events: auto;
+}
+
+#rigo-chat:not(:has(input)) > div {
+  display: none !important;
 }
 
 #rigo-chat > div {
@@ -631,7 +635,7 @@ body.chakra-ui-dark .anchorjs-link {
 
 /* Rigobot fallback when mounted directly on body */
 body > div:has(input[placeholder="Ask Rigobot..."]) {
-  z-index: 9999 !important;
+  z-index: 1350 !important;
 }
 
 /* body {
