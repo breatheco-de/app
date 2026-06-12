@@ -41,6 +41,7 @@ import '@fontsource/lato/900.css';
 import '@fontsource-variable/space-grotesk';
 import { BREATHECODE_HOST } from '../utils/variables';
 import useCustomToast from '../hooks/useCustomToast';
+import useWhiteLabel from '../hooks/useWhiteLabel';
 
 function InternalLinkComponent(props) {
   return <Link {...props} />;
@@ -48,19 +49,25 @@ function InternalLinkComponent(props) {
 
 function AppContent({ Component, pagePropsData, pageProps }) {
   const { user } = useAuth();
+  const { isWhiteLabel } = useWhiteLabel();
+
+  const academyPageProps = {
+    ...pagePropsData,
+    existsWhiteLabel: isWhiteLabel,
+  };
 
   return (
     <SessionProvider>
-      <Navbar pageProps={pagePropsData} translations={pageProps?.translations} />
+      <Navbar pageProps={academyPageProps} translations={pageProps?.translations} />
       <InterceptionLoader />
 
       <PrismicProvider internalLinkComponent={InternalLinkComponent}>
         <PrismicPreview repositoryName={repositoryName}>
-          <Component {...pagePropsData} />
+          <Component {...academyPageProps} />
         </PrismicPreview>
       </PrismicProvider>
 
-      <Footer pageProps={pagePropsData} />
+      <Footer pageProps={academyPageProps} />
       <SurveyListener userId={user?.id} />
     </SessionProvider>
   );
@@ -78,13 +85,10 @@ AppContent.defaultProps = {
 };
 
 function App({ Component, pageProps }) {
-  const domainName = process.env.DOMAIN_NAME;
-  const existsWhiteLabel = typeof domainName === 'string' && domainName !== 'https://4geeks.com';
   const { createToast } = useCustomToast({ toastId: 'env-warning' });
 
   const pagePropsData = {
     ...pageProps,
-    existsWhiteLabel,
   } || {};
 
   const isEnvModified = process.env.VERCEL_ENV !== 'production'

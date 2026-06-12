@@ -42,7 +42,7 @@ function Navbar({ translations, pageProps }) {
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const { allSubscriptions } = useSubscriptions();
-  const { showMarketingNavigation, isWhiteLabelFeatureEnabled } = useWhiteLabel();
+  const { showMarketingNavigation, isWhiteLabelFeatureEnabled, isWhiteLabel, defaultPlan } = useWhiteLabel();
   const canShowEvents = isWhiteLabelFeatureEnabled('allow_events');
   const canShowPublicPortal = isWhiteLabelFeatureEnabled('public_portal.enabled');
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -85,12 +85,21 @@ function Navbar({ translations, pageProps }) {
   const handleGetStartedButton = (e) => {
     e.preventDefault();
 
+    if (isWhiteLabel && defaultPlan) {
+      const langPath = locale === 'en' ? '' : `/${locale}`;
+      window.location.href = `${langPath}/checkout${parseQuerys({
+        plan: defaultPlan,
+        internal_cta_placement: 'navbar-get-started',
+      }, false)}`;
+      return;
+    }
+
     const enrollButton = document.getElementById('bootcamp-enroll-button');
 
     if (enrollButton) {
       enrollButton.click();
     } else {
-      window.location.href = `/${locale}/checkout${parseQuerys({ internal_cta_placement: 'navbar-get-started' }, false)}`;
+      window.location.href = `/${locale}/pricing${parseQuerys({ internal_cta_placement: 'navbar-get-started' }, false)}`;
     }
   };
 
@@ -136,7 +145,7 @@ function Navbar({ translations, pageProps }) {
   }, [locale, isLoadingLocation]);
 
   useEffect(() => {
-    if (pageProps?.existsWhiteLabel) {
+    if (isWhiteLabel) {
       const eventsItem = preDefinedItems.find((item) => item.id === 'live');
       const bootcampsItem = preDefinedItems.find((item) => item.id === 'bootcamps');
       const publicPortalItem = buildWhiteLabelPublicPortalNavItem(
@@ -161,7 +170,7 @@ function Navbar({ translations, pageProps }) {
     } else {
       setNavbarItems(preDefinedItems.filter((item) => item.disabled !== true));
     }
-  }, [user, cohorts, isLoading, cohortSession, mktCourses, router.locale, location, showMarketingNavigation, canShowEvents, canShowPublicPortal]);
+  }, [user, cohorts, isLoading, cohortSession, mktCourses, router.locale, location, showMarketingNavigation, canShowEvents, canShowPublicPortal, isWhiteLabel]);
 
   const closeSettings = () => {
     setIsPopoverOpen(false);
