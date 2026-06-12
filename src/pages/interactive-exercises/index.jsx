@@ -17,7 +17,7 @@ import GridContainer from '../../components/GridContainer';
 import PaginatedView from '../../components/PaginationView';
 import ProjectsLoader from '../../components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
-import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { ORIGIN_HOST } from '../../utils/variables';
 import { log } from '../../utils/logging';
 import { types } from '../../components/DynamicContentCard/card-types';
 import PublicPortalGate from '../../components/PublicPortalGate';
@@ -43,7 +43,6 @@ const fetchExercises = async (lang, page, query) => {
     asset_type: 'EXERCISE',
     status: 'PUBLISHED',
     language: lang,
-    academy: WHITE_LABEL_ACADEMY,
     limit: contentPerPage,
     offset: page ? (page - 1) * contentPerPage : 0,
     difficulty: difficulty?.[query?.difficulty] || difficulty[difficultyQueryValues?.[query?.difficulty]],
