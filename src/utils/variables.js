@@ -14,7 +14,12 @@ export const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.en
 export const RIGOBOT_HOST = modifyEnv({ queryString: 'host_rigo', env: process.env.RIGOBOT_HOST || '' });
 export const WHITE_LABEL_ACADEMY = process.env.WHITE_LABEL_ACADEMY || undefined;
 export const ORIGIN_HOST = (typeof window !== 'undefined' && window.location.origin) || DOMAIN_NAME;
-export const isWhiteLabelAcademy = typeof DOMAIN_NAME === 'string' && DOMAIN_NAME !== 'https://4geeks.com';
+const normalizedDomainName = typeof DOMAIN_NAME === 'string'
+  ? DOMAIN_NAME.trim().replace(/\/$/, '')
+  : '';
+/** True when DOMAIN_NAME is set and is not the main 4Geeks site. */
+export const isWhiteLabelAcademy = normalizedDomainName.length > 0
+  && normalizedDomainName !== 'https://4geeks.com';
 export const excludeCagetoriesFor = {
   lessons: 'how-to,como,blog-us,blog-es',
 };
