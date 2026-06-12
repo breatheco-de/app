@@ -350,6 +350,7 @@ function SyllabusContent() {
         const userContext = generateUserContext(user);
         rigo.updateOptions({
           showBubble: false,
+          ...(isAvailableAsSaas && { target: '#rigo-chat' }),
           context: `${userContext ? `Here is some information about this user: ${userContext}. \n` : ''}${processAiContext(aiContext.ai_context, cohortSession)}`,
           completions,
         });
@@ -424,6 +425,55 @@ function SyllabusContent() {
     }
     if (isAuthenticated && (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false)) setGrantAccess(true);
   }, [cohortSession, areSubscriptionsFetched, isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAvailableAsSaas) return undefined;
+
+    const RIGO_CHAT_GAP = 12;
+    const RIGO_CHAT_TOP_MARGIN = 16;
+    const RIGO_CHAT_DEFAULT_HEIGHT = 580;
+    const LG_BREAKPOINT = 992;
+
+    const updateRigoChatPosition = () => {
+      const controls = controlsContainerRef.current;
+      const rigoChat = document.getElementById('rigo-chat');
+      if (!controls || !rigoChat) return;
+
+      const rect = controls.getBoundingClientRect();
+      const bottomOffset = window.innerHeight - rect.top + RIGO_CHAT_GAP;
+      const availableHeight = rect.top - RIGO_CHAT_GAP - RIGO_CHAT_TOP_MARGIN;
+      const chatHeight = Math.min(
+        RIGO_CHAT_DEFAULT_HEIGHT,
+        Math.max(200, availableHeight),
+      );
+
+      rigoChat.style.setProperty('--rigo-chat-bottom', `${bottomOffset}px`);
+      rigoChat.style.setProperty('--rigo-chat-height', `${chatHeight}px`);
+
+      if (window.innerWidth >= LG_BREAKPOINT) {
+        rigoChat.style.right = `${window.innerWidth - rect.right}px`;
+        rigoChat.style.left = 'auto';
+        rigoChat.style.transform = 'none';
+      } else {
+        rigoChat.style.left = `${rect.left + rect.width / 2}px`;
+        rigoChat.style.right = 'auto';
+        rigoChat.style.transform = 'translateX(-50%)';
+      }
+    };
+
+    updateRigoChatPosition();
+    window.addEventListener('resize', updateRigoChatPosition);
+    window.addEventListener('scroll', updateRigoChatPosition, true);
+
+    const observer = new ResizeObserver(updateRigoChatPosition);
+    if (controlsContainerRef.current) observer.observe(controlsContainerRef.current);
+
+    return () => {
+      window.removeEventListener('resize', updateRigoChatPosition);
+      window.removeEventListener('scroll', updateRigoChatPosition, true);
+      observer.disconnect();
+    };
+  }, [isAvailableAsSaas, currentAsset, isOpen, isRigoInitialized]);
 
   const sendProject = async ({ task, githubUrl, taskStatus, flags, showShareModal }) => {
     const result = await updateAssignment({
@@ -1402,7 +1452,7 @@ function SyllabusContent() {
                             <Box
                               ref={controlsContainerRef}
                               position="fixed"
-                              zIndex={1400}
+                              zIndex={1300}
                               bottom={{ base: '20px', md: '50px' }}
                               left={{ base: '50%', lg: 'auto' }}
                               right={{ base: 'auto', lg: '24px' }}
@@ -1540,6 +1590,7 @@ function SyllabusContent() {
           </Box>
         </Box>
       </Flex>
+      {isAvailableAsSaas && <Box id="rigo-chat" />}
       <VideoModal
         isOpen={isVideoModalOpen}
         onClose={() => setIsVideoModalOpen(false)}
