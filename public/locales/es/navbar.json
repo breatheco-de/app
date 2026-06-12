@@ -76,7 +76,6 @@
     {
       "id": "career-booster",
       "label": "Más allá del CV",
-      "disabled": true,
       "bgColor": "#FFE7CC",
       "titleColor": "#FF8800",
       "private": false,
