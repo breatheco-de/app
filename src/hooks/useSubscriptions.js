@@ -66,14 +66,24 @@ const useSubscriptions = () => {
       setSubscriptionsLoading(true);
 
       const data = await getSubscriptions();
+      const planOfferCache = {};
+
+      const manageCachedPlanOffer = async ({ slug }) => {
+        if (!slug) return null;
+        if (!Object.prototype.hasOwnProperty.call(planOfferCache, slug)) {
+          planOfferCache[slug] = managePlanOffer({ slug });
+        }
+
+        return planOfferCache[slug];
+      };
 
       const subscriptionsDataWithPlanOffer = await Promise.all(data.subscriptions.map(async (s) => {
-        const planOffer = await managePlanOffer({ slug: s?.plans[0]?.slug });
+        const planOffer = await manageCachedPlanOffer({ slug: s?.plans[0]?.slug });
         return { ...s, type: 'subscription', planOffer };
       }));
 
       const planFinancingsDataWithPlanOffer = await Promise.all(data.plan_financings.map(async (f) => {
-        const planOffer = await managePlanOffer({ slug: f?.plans[0]?.slug });
+        const planOffer = await manageCachedPlanOffer({ slug: f?.plans[0]?.slug });
         return { ...f, type: 'plan_financing', planOffer };
       }));
 
