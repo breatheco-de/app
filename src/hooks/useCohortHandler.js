@@ -19,6 +19,10 @@ import { BREATHECODE_HOST, DOMAIN_NAME, isWhiteLabelAcademy } from '../utils/var
 import useCustomToast from './useCustomToast';
 import useSubscriptions from './useSubscriptions';
 
+const cohortModulesRequests = new Map();
+
+const getCohortModulesRequestKey = (cohort, macroSlug) => `${cohort?.slug || cohort?.id}:${macroSlug || ''}`;
+
 function useCohortHandler() {
   const router = useRouter();
   const [grantAccess, setGrantAccess] = useState(false);
@@ -108,43 +112,154 @@ function useCohortHandler() {
 
       const cohortsToFetch = cohorts.filter((cohort) => !preFechedCohorts.some(({ slug }) => slug === cohort.slug));
 
-      const syllabusPromises = cohortsToFetch.map((cohort) => {
-        const macroSlug = getMacroSlugForCohortSyllabus(cohort, cohorts, macroSlugOptions);
-        const admissionsForSyllabus = bc.admissions(
-          macroSlug ? { 'macro-cohort': macroSlug } : {},
-        );
-        if (
-          !cohort?.academy?.id
-          || !cohort?.syllabus_version?.slug
-          || cohort?.syllabus_version?.version === undefined
-          || cohort?.syllabus_version?.version === null
-        ) {
-          return Promise.reject(new Error(`Invalid cohort syllabus metadata for ${cohort?.slug || cohort?.id}`));
-        }
+      const getRequestKeyForCohort = (cohort) => getCohortModulesRequestKey(
+        cohort,
+        getMacroSlugForCohortSyllabus(cohort, cohorts, macroSlugOptions),
+      );
 
-        return admissionsForSyllabus.academySyllabus(
-          cohort.academy.id,
-          cohort.syllabus_version.slug,
-          cohort.syllabus_version.version,
-        ).then((res) => ({ cohort: cohort.id, kind: 'syllabus', ...res }));
-      });
-      const tasksPromises = cohortsToFetch.map((cohort) => bc.assignments({ cohort: cohort.id, limit: 1000 }).getMeTasks()
-        .then((res) => ({ cohort: cohort.id, kind: 'tasks', ...res })));
-      const allResults = await Promise.allSettled([
-        ...syllabusPromises,
-        ...tasksPromises,
-      ]);
+      const cohortsToRequest = cohortsToFetch.filter((cohort) => !cohortModulesRequests.has(getRequestKeyForCohort(cohort)));
+
+      const mapTasksByCohort = (tasks = []) => cohortsToRequest.reduce((acc, cohort) => ({
+        ...acc,
+        [cohort.id]: tasks.filter((task) => task?.cohort?.id === cohort.id || task?.cohort?.slug === cohort.slug),
+      }), {});
+
+      const fetchIndividualTasksByCohort = async () => {
+        const taskResults = await Promise.allSettled(cohortsToRequest.map((cohort) => bc.assignments({ cohort: cohort.id, limit: 1000 }).getMeTasks()
+          .then((res) => ({
+            cohort: cohort.id,
+            tasks: res?.data?.results || [],
+          }))));
+
+        taskResults
+          .filter((result) => result.status === 'rejected')
+          .forEach((result) => {
+            const err = result.reason;
+            console.error('[useCohortHandler] Individual tasks fallback error', {
+              message: err?.message,
+              status: err?.response?.status,
+              data: err?.response?.data,
+              code: err?.code,
+              url: err?.config?.url,
+              method: err?.config?.method,
+            });
+          });
+
+        return taskResults
+          .filter((result) => result.status === 'fulfilled')
+          .reduce((acc, result) => ({
+            ...acc,
+            [result.value.cohort]: result.value.tasks,
+          }), {});
+      };
+
+      const fetchTasksByCohort = async () => {
+        if (cohortsToRequest.length === 0) return {};
+
+        try {
+          const cohortIds = cohortsToRequest.map((cohort) => cohort.id).join(',');
+          const { data } = await bc.assignments({
+            cohort: cohortIds,
+            limit: cohortsToRequest.length * 1000,
+          }).getMeTasks();
+          const tasks = data?.results || [];
+          const hasEnoughCohortMetadata = tasks.every((task) => task?.cohort?.id || task?.cohort?.slug);
+
+          if (!hasEnoughCohortMetadata) {
+            throw new Error('Batched tasks response is missing cohort metadata');
+          }
+
+          return mapTasksByCohort(tasks);
+        } catch (err) {
+          console.error('[useCohortHandler] Batched tasks request error', {
+            message: err?.message,
+            status: err?.response?.status,
+            data: err?.response?.data,
+            code: err?.code,
+            url: err?.config?.url,
+            method: err?.config?.method,
+          });
+          return fetchIndividualTasksByCohort();
+        }
+      };
+
+      const tasksByCohortPromise = fetchTasksByCohort();
+
+      const getCohortModulesRequest = (cohort) => {
+        const macroSlug = getMacroSlugForCohortSyllabus(cohort, cohorts, macroSlugOptions);
+        const requestKey = getCohortModulesRequestKey(cohort, macroSlug);
+
+        if (cohortModulesRequests.has(requestKey)) return cohortModulesRequests.get(requestKey);
+
+        const requestPromise = (async () => {
+          const buildRejectedResult = (reason) => ({
+            status: 'rejected',
+            reason,
+          });
+
+          const buildFulfilledResult = (value) => ({
+            status: 'fulfilled',
+            value,
+          });
+
+          const invalidMetadataError = new Error(`Invalid cohort syllabus metadata for ${cohort?.slug || cohort?.id}`);
+
+          let syllabusResult;
+
+          const tasksPromise = tasksByCohortPromise
+            .then((tasksByCohort) => buildFulfilledResult({
+              data: {
+                results: tasksByCohort[cohort.id] || [],
+              },
+            }))
+            .catch(buildRejectedResult);
+
+          if (
+            !cohort?.academy?.id
+            || !cohort?.syllabus_version?.slug
+            || cohort?.syllabus_version?.version === undefined
+            || cohort?.syllabus_version?.version === null
+          ) {
+            syllabusResult = buildRejectedResult(invalidMetadataError);
+          } else {
+            const admissionsForSyllabus = bc.admissions(
+              macroSlug ? { 'macro-cohort': macroSlug } : {},
+            );
+
+            syllabusResult = await admissionsForSyllabus.academySyllabus(
+              cohort.academy.id,
+              cohort.syllabus_version.slug,
+              cohort.syllabus_version.version,
+            ).then(buildFulfilledResult)
+              .catch(buildRejectedResult);
+          }
+
+          const tasksResult = await tasksPromise;
+
+          return {
+            cohort: cohort.id,
+            slug: cohort.slug,
+            syllabusResult,
+            tasksResult,
+          };
+        })().finally(() => {
+          cohortModulesRequests.delete(requestKey);
+        });
+
+        cohortModulesRequests.set(requestKey, requestPromise);
+        return requestPromise;
+      };
+
+      const allResults = await Promise.all(cohortsToFetch.map(getCohortModulesRequest));
 
       preFechedCohorts?.forEach(({ slug }) => {
         assignmentsMap[slug] = { ...cohortsAssignments[slug] };
       });
 
-      const successfulResults = allResults
-        .filter((result) => result.status === 'fulfilled')
-        .map((result) => result.value);
-
-      const failedResults = allResults
-        .filter((result) => result.status === 'rejected')
+      const failedResults = allResults.flatMap((result) => [
+        result.syllabusResult,
+        result.tasksResult,
+      ]).filter((result) => result.status === 'rejected')
         .map((result) => result.reason);
 
       if (failedResults.length > 0) {
@@ -161,13 +276,21 @@ function useCohortHandler() {
       }
 
       cohortsToFetch.forEach((cohort) => {
-        const syllabusResult = successfulResults.find((elem) => elem.cohort === cohort.id && elem.kind === 'syllabus');
-        const tasksResult = successfulResults.find((elem) => elem.cohort === cohort.id && elem.kind === 'tasks');
-        const syllabus = syllabusResult?.data || null;
-        const tasks = tasksResult?.data?.results || [];
+        const cohortResult = allResults.find((elem) => elem.cohort === cohort.id);
+        const syllabus = cohortResult?.syllabusResult?.status === 'fulfilled'
+          ? cohortResult.syllabusResult.value?.data
+          : null;
+        const tasks = cohortResult?.tasksResult?.status === 'fulfilled'
+          ? cohortResult.tasksResult.value?.data?.results || []
+          : [];
         const moduleData = syllabus?.json?.days || syllabus?.json?.modules;
 
-        if (!moduleData || !Array.isArray(moduleData)) return;
+        if (
+          !moduleData
+          || !Array.isArray(moduleData)
+        ) {
+          return;
+        }
 
         const cohortModules = serializeModulesMap(moduleData, tasks);
 
