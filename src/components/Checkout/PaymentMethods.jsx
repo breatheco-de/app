@@ -66,6 +66,7 @@ function PaymentMethods({
   const [accordionIndex, setAccordionIndex] = useState(null);
   const [showInitialInlineLoader, setShowInitialInlineLoader] = useState(hideSectionTitle);
   const [hasAttemptedMethodsFetch, setHasAttemptedMethodsFetch] = useState(false);
+  const [stripeCheckoutMethodId, setStripeCheckoutMethodId] = useState(null);
   const popupMonitorRef = useRef(null);
   const coinbasePollRef = useRef(null);
   const popupRef = useRef(null);
@@ -125,9 +126,9 @@ function PaymentMethods({
 
   useEffect(() => {
     if (selectedPlan?.owner?.id) {
-      getPaymentMethods(selectedPlan.owner.id);
+      getPaymentMethods(selectedPlan.owner.id, selectedPlan.plan_slug);
     }
-  }, [selectedPlan?.owner?.id, isAuthenticated]);
+  }, [selectedPlan?.owner?.id, selectedPlan?.plan_slug, isAuthenticated]);
 
   useEffect(() => {
     const fetchSavedCard = async () => {
@@ -235,7 +236,7 @@ function PaymentMethods({
         }
       } finally {
         actions.setSubmitting(false);
-        getPaymentMethods(selectedPlan.owner.id);
+        getPaymentMethods(selectedPlan.owner.id, selectedPlan.plan_slug);
         const updatedCard = await getSavedCard(selectedPlan.owner.id);
         setSavedCard(updatedCard);
       }
@@ -302,7 +303,7 @@ function PaymentMethods({
         });
         setIsSubmittingCard(false);
 
-        getPaymentMethods(selectedPlan.owner.id);
+        getPaymentMethods(selectedPlan.owner.id, selectedPlan.plan_slug);
         const updatedCard = await getSavedCard(selectedPlan.owner.id);
         setSavedCard(updatedCard);
 
@@ -316,6 +317,31 @@ function PaymentMethods({
       setIsSubmittingCard(false);
       setPaymentStatus('error');
       handlePaymentErrors(error.response?.data || { detail: t('card-error') }, { setSubmitting: () => setIsSubmittingCard(false) });
+    }
+  };
+
+  const handleStripeCheckout = async (paymentMethod) => {
+    setIsSubmittingPayment(true);
+    setStripeCheckoutMethodId(paymentMethod?.id ?? null);
+    try {
+      const result = handleRenewalPayment
+        ? await handleRenewalPayment(paymentMethod)
+        : await handlePayment({}, true, null, paymentMethod);
+
+      if (result?.checkout_url) {
+        window.location.href = result.checkout_url;
+        return;
+      }
+
+      setStripeCheckoutMethodId(null);
+      setPaymentStatus('error');
+      handlePaymentErrors(result || { detail: t('payment-not-processed') }, { setSubmitting: () => setIsSubmittingPayment(false) });
+    } catch (error) {
+      console.error('Error starting Stripe checkout:', error);
+      setStripeCheckoutMethodId(null);
+      setIsSubmittingPayment(false);
+      setPaymentStatus('error');
+      handlePaymentErrors(error?.response?.data, { setSubmitting: () => setIsSubmittingPayment(false) });
     }
   };
 
@@ -485,6 +511,28 @@ function PaymentMethods({
                           {t('click-here')}
                         </NextChakraLink>
                       </Text>
+                    )}
+                    {Boolean(method?.provider_settings?.stripe_payment_method_types?.length) && (
+                      <>
+                        <ModalCardError
+                          isSubmitting={isSubmittingPayment}
+                          declinedModalProps={declinedModalProps}
+                          openDeclinedModal={openDeclinedModal}
+                          setOpenDeclinedModal={setOpenDeclinedModal}
+                          handleTryAgain={handleTryAgain}
+                          disableClose
+                        />
+                        <Button
+                          width="100%"
+                          variant="default"
+                          height="40px"
+                          mt="1rem"
+                          isLoading={isSubmittingPayment && stripeCheckoutMethodId === method.id}
+                          onClick={() => handleStripeCheckout(method)}
+                        >
+                          {t('common:proceed-to-payment')}
+                        </Button>
+                      </>
                     )}
                   </Box>
                 ),

@@ -247,21 +247,47 @@ const useRenewal = () => {
     }
   }, [existingSubscription, originalPlan]);
 
-  const handleRenewalPayment = async () => {
+  const getRenewalPaymentSuccessReturnUrl = () => {
+    if (typeof window === 'undefined') return '';
+    const params = new URLSearchParams();
+    if (selectedPlan?.plan_slug) params.set('plan', selectedPlan.plan_slug);
+    if (subscriptionId) params.set('subscription_id', subscriptionId);
+    if (planFinancingId) params.set('plan_financing_id', planFinancingId);
+    const qs = params.toString();
+    return `${window.location.origin}/payment-success${qs ? `?${qs}` : ''}`;
+  };
+
+  const handleRenewalPayment = async (paymentMethod) => {
+    const paymentMethodPayload = paymentMethod?.id != null
+      ? { payment_method_id: paymentMethod.id }
+      : { payment_method: 'stripe' };
+    const checkoutUrls = paymentMethod?.provider_settings?.stripe_payment_method_types?.length > 0
+      && typeof window !== 'undefined'
+      ? {
+        return_url: getRenewalPaymentSuccessReturnUrl(),
+        cancel_url: `${window.location.origin}${router.asPath}`,
+      }
+      : {};
     try {
       let resp;
       if (subscriptionId) {
         resp = await bc.payment().renewSubscription({
           subscription: subscriptionId,
-          payment_method: 'stripe',
+          ...paymentMethodPayload,
+          ...checkoutUrls,
         });
       } else if (planFinancingId) {
         resp = await bc.payment().renewPlanFinancing({
           planfinancing: planFinancingId,
-          payment_method: 'stripe',
+          ...paymentMethodPayload,
+          ...checkoutUrls,
         });
       } else {
         throw new Error('No subscription_id or plan_financing_id provided');
+      }
+
+      if (resp.data?.checkout_url) {
+        return resp.data;
       }
 
       if (resp.data.status === 'ok') {
@@ -294,13 +320,13 @@ const useRenewal = () => {
       resp = await bc.payment().renewSubscription({
         subscription: subscriptionId,
         payment_method: 'coinbase',
-        return_url: `${window.location.origin}/crypto-payment-success`,
+        return_url: getRenewalPaymentSuccessReturnUrl(),
       });
     } else if (planFinancingId) {
       resp = await bc.payment().renewPlanFinancing({
         planfinancing: planFinancingId,
         payment_method: 'coinbase',
-        return_url: `${window.location.origin}/crypto-payment-success`,
+        return_url: getRenewalPaymentSuccessReturnUrl(),
       });
     } else {
       throw new Error('No subscription_id or plan_financing_id provided');

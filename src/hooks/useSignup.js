@@ -74,6 +74,18 @@ const useSignup = () => {
 
   const isPaymentIdle = paymentStatus === 'idle';
 
+  const getPaymentSuccessReturnUrl = ({
+    planSlug, cohortId, subscriptionId, planFinancingId,
+  } = {}) => {
+    const params = new URLSearchParams();
+    if (planSlug) params.set('plan', planSlug);
+    if (cohortId) params.set('cohort', cohortId);
+    if (subscriptionId) params.set('subscription_id', subscriptionId);
+    if (planFinancingId) params.set('plan_financing_id', planFinancingId);
+    const qs = params.toString();
+    return `${window.location.origin}/payment-success${qs ? `?${qs}` : ''}`;
+  };
+
   const stepsEnum = {
     CONTACT: 1,
     PAYMENT: 2,
@@ -587,7 +599,7 @@ const useSignup = () => {
     }
   };
 
-  const handlePayment = async (data, disableRedirects = false, planContext = null) => {
+  const handlePayment = async (data, disableRedirects = false, planContext = null, paymentMethod = null) => {
     const plan = planContext || selectedPlan;
     const manyInstallmentsExists = plan?.how_many_months > 0 || plan?.period === 'FINANCING';
     const isTtrial = ['FREE', 'TRIAL'].includes(plan?.type);
@@ -601,7 +613,14 @@ const useSignup = () => {
           chosen_period: manyInstallmentsExists ? undefined : (plan?.period || 'HALF'),
           coupons: checkingData?.coupons,
           add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
-          payment_method: 'stripe',
+          ...(paymentMethod?.id != null ? { payment_method_id: paymentMethod.id } : {}),
+          ...(paymentMethod?.provider_settings?.stripe_payment_method_types?.length > 0 ? {
+            return_url: getPaymentSuccessReturnUrl({
+              planSlug: plan?.plan_slug,
+              cohortId: getQueryString('cohort'),
+            }),
+            cancel_url: `${window.location.origin}${router.asPath}`,
+          } : {}),
         };
       }
       return {
@@ -621,6 +640,10 @@ const useSignup = () => {
       });
 
       const transactionData = response.data;
+
+      if (transactionData?.checkout_url) {
+        return transactionData;
+      }
 
       if (transactionData?.status === 'FULFILLED') {
         setSubscriptionProcess({
@@ -720,7 +743,10 @@ const useSignup = () => {
           coupons: checkingData?.coupons,
           add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
           payment_method: 'coinbase',
-          return_url: `${window.location.origin}/crypto-payment-success`,
+          return_url: getPaymentSuccessReturnUrl({
+            planSlug: selectedPlan?.plan_slug,
+            cohortId: getQueryString('cohort'),
+          }),
         };
       }
       return null;
@@ -863,7 +889,7 @@ const useSignup = () => {
     });
   };
 
-  const getPaymentMethods = async (ownerId) => {
+  const getPaymentMethods = async (ownerId, planSlug) => {
     try {
       if (canRequestPaymentData && ownerId) {
         setLoader('paymentMethods', true);
@@ -871,6 +897,7 @@ const useSignup = () => {
           academy_id: ownerId,
           lang: router.locale,
           country_code,
+          plan: planSlug,
         }).getpaymentMethods();
         if (resp.status < 400) {
           setPaymentMethods(resp.data);
