@@ -29,6 +29,7 @@ function PaymentMethods({
   handleRenewalPayment,
   handleCoinbaseRenewalPayment,
   hideSectionTitle,
+  hideProviderFinancedMethods,
 }) {
   const { t } = useTranslation('signup');
   const { isAuthenticated } = useAuth();
@@ -85,11 +86,14 @@ function PaymentMethods({
     if (!a?.is_credit_card && b?.is_credit_card) return 1;
     return 0;
   });
-  const shouldShowMethodsLoader = !hideSectionTitle && loader.paymentMethods && paymentMethods.length === 0;
+  const visiblePaymentMethods = hideProviderFinancedMethods
+    ? orderedPaymentMethods.filter((method) => !method.is_financed_managed_by_provider)
+    : orderedPaymentMethods;
+  const shouldShowMethodsLoader = !hideSectionTitle && loader.paymentMethods && visiblePaymentMethods.length === 0;
   const shouldShowInlineMethodsLoader = hideSectionTitle
-    && paymentMethods.length === 0
+    && visiblePaymentMethods.length === 0
     && (showInitialInlineLoader || loader.paymentMethods);
-  const defaultCreditCardIndex = orderedPaymentMethods.findIndex((method) => method.is_credit_card);
+  const defaultCreditCardIndex = visiblePaymentMethods.findIndex((method) => method.is_credit_card);
 
   useEffect(() => {
     if (defaultCreditCardIndex >= 0) {
@@ -481,7 +485,7 @@ function PaymentMethods({
           width="100%"
           index={typeof accordionIndex === 'number' ? accordionIndex : undefined}
           onChange={handleAccordionChange}
-          list={orderedPaymentMethods.map((method) => {
+          list={visiblePaymentMethods.map((method) => {
             if (!method.is_credit_card && !method.is_crypto) {
               return {
                 ...method,
@@ -696,6 +700,7 @@ PaymentMethods.propTypes = {
   handleRenewalPayment: PropTypes.func,
   handleCoinbaseRenewalPayment: PropTypes.func,
   hideSectionTitle: PropTypes.bool,
+  hideProviderFinancedMethods: PropTypes.bool,
 };
 
 PaymentMethods.defaultProps = {
@@ -704,6 +709,7 @@ PaymentMethods.defaultProps = {
   handleRenewalPayment: null,
   handleCoinbaseRenewalPayment: null,
   hideSectionTitle: false,
+  hideProviderFinancedMethods: false,
 };
 
 export default PaymentMethods;
