@@ -218,7 +218,7 @@ function PaymentMethods({
     }
   };
 
-  const handleSubmit = async (actions, token) => {
+  const handleSubmit = async (actions, token, paymentMethod) => {
     const resp = await bc.payment().addCard({
       token: token.id,
       academy: selectedPlan.owner.id,
@@ -228,7 +228,7 @@ function PaymentMethods({
 
     if (data.status === 'ok') {
       try {
-        const respPayment = await paymentHandler({}, true);
+        const respPayment = await paymentHandler({}, paymentMethod, true);
         if (respPayment.status === 'FULFILLED') {
           setPaymentStatus('success');
           setIsSubmittingPayment(false);
@@ -264,10 +264,10 @@ function PaymentMethods({
     }
   };
 
-  const onSubmitCard = async (token, actions) => {
+  const onSubmitCard = async (token, actions, paymentMethod) => {
     setIsSubmittingPayment(true);
     setIsSubmittingCard(true);
-    await handleSubmit(actions, token);
+    await handleSubmit(actions, token, paymentMethod);
   };
 
   const handleTryAgain = () => {
@@ -328,9 +328,7 @@ function PaymentMethods({
     setIsSubmittingPayment(true);
     setStripeCheckoutMethodId(paymentMethod?.id ?? null);
     try {
-      const result = handleRenewalPayment
-        ? await handleRenewalPayment(paymentMethod)
-        : await handlePayment({}, true, null, paymentMethod);
+      const result = await paymentHandler({}, paymentMethod, true);
 
       if (result?.checkout_url) {
         window.location.href = result.checkout_url;
@@ -349,7 +347,7 @@ function PaymentMethods({
     }
   };
 
-  const handleCoinbaseCharge = async () => {
+  const handleCoinbaseCharge = async (paymentMethod) => {
     setIsCoinbaseLoading(true);
 
     const popup = window.open(
@@ -379,7 +377,7 @@ function PaymentMethods({
     }
 
     try {
-      const result = await coinbaseHandler();
+      const result = await coinbaseHandler({}, paymentMethod);
       const { data } = result;
 
       const chargeId = data?.charge_id;
@@ -551,7 +549,7 @@ function PaymentMethods({
                       {method.description}
                     </Text>
                     <Button
-                      onClick={handleCoinbaseCharge}
+                      onClick={() => handleCoinbaseCharge(method)}
                       width="100%"
                       variant="default"
                       height="40px"
@@ -638,7 +636,7 @@ function PaymentMethods({
                           onClick={async () => {
                             setIsSubmittingPayment(true);
                             try {
-                              const respPayment = await paymentHandler({}, true);
+                              const respPayment = await paymentHandler({}, method, true);
                               if (respPayment?.status === 'FULFILLED') {
                                 setPaymentStatus('success');
                                 setIsSubmittingPayment(false);
@@ -671,7 +669,7 @@ function PaymentMethods({
                           disableClose: true,
                           isSubmitting: isSubmittingCard,
                         }}
-                        onSubmit={onSubmitCard}
+                        onSubmit={(token, actions) => onSubmitCard(token, actions, method)}
                         onSaveCard={handleSaveCardForLater}
                       />
                     )

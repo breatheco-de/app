@@ -257,10 +257,10 @@ const useRenewal = () => {
     return `${window.location.origin}/payment-success${qs ? `?${qs}` : ''}`;
   };
 
-  const handleRenewalPayment = async (paymentMethod) => {
+  const handleRenewalPayment = async (_data, paymentMethod) => {
     const paymentMethodPayload = paymentMethod?.id != null
       ? { payment_method_id: paymentMethod.id }
-      : { payment_method: 'stripe' };
+      : {};
     const checkoutUrls = paymentMethod?.provider_settings?.stripe_payment_method_types?.length > 0
       && typeof window !== 'undefined'
       ? {
@@ -313,19 +313,22 @@ const useRenewal = () => {
     }
   };
 
-  const handleCoinbaseRenewalPayment = async () => {
+  const handleCoinbaseRenewalPayment = async (_data, paymentMethod) => {
+    const paymentMethodPayload = paymentMethod?.id != null
+      ? { payment_method_id: paymentMethod.id }
+      : {};
     let resp;
 
     if (subscriptionId) {
       resp = await bc.payment().renewSubscription({
         subscription: subscriptionId,
-        payment_method: 'coinbase',
+        ...paymentMethodPayload,
         return_url: getRenewalPaymentSuccessReturnUrl(),
       });
     } else if (planFinancingId) {
       resp = await bc.payment().renewPlanFinancing({
         planfinancing: planFinancingId,
-        payment_method: 'coinbase',
+        ...paymentMethodPayload,
         return_url: getRenewalPaymentSuccessReturnUrl(),
       });
     } else {

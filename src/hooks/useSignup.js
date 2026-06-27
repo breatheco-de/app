@@ -599,7 +599,7 @@ const useSignup = () => {
     }
   };
 
-  const handlePayment = async (data, disableRedirects = false, planContext = null, paymentMethod = null) => {
+  const handlePayment = async (data, paymentMethod = null, disableRedirects = false, planContext = null) => {
     const plan = planContext || selectedPlan;
     const manyInstallmentsExists = plan?.how_many_months > 0 || plan?.period === 'FINANCING';
     const isTtrial = ['FREE', 'TRIAL'].includes(plan?.type);
@@ -718,7 +718,7 @@ const useSignup = () => {
     }
   };
 
-  const handleCoinbasePayment = async () => {
+  const handleCoinbasePayment = async (_data, paymentMethod = null) => {
     const manyInstallmentsExists = selectedPlan?.how_many_months > 0 || selectedPlan?.period === 'FINANCING';
     const isTtrial = ['FREE', 'TRIAL'].includes(selectedPlan?.type);
     if (isTtrial) {
@@ -742,7 +742,7 @@ const useSignup = () => {
           chosen_period: manyInstallmentsExists ? undefined : (selectedPlan?.period || 'HALF'),
           coupons: checkingData?.coupons,
           add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
-          payment_method: 'coinbase',
+          ...(paymentMethod?.id != null ? { payment_method_id: paymentMethod.id } : {}),
           return_url: getPaymentSuccessReturnUrl({
             planSlug: selectedPlan?.plan_slug,
             cohortId: getQueryString('cohort'),
@@ -1065,7 +1065,7 @@ const useSignup = () => {
       const respPayment = await handlePayment({
         ...respData,
         installments: respData?.how_many_months,
-      }, disableRedirects);
+      }, null, disableRedirects);
 
       return respPayment;
     } catch (error) {
@@ -1090,7 +1090,7 @@ const useSignup = () => {
       const respPayment = await handlePayment({
         ...checking,
         installments: planForCheckout?.how_many_months,
-      }, true, planForCheckout);
+      }, null, true, planForCheckout);
 
       if (respPayment?.status_code >= 400) {
         setPaymentStatus('error');
