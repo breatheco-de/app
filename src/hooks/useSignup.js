@@ -47,6 +47,7 @@ const useSignup = () => {
   const redirectedFrom = getStorageItem('redirected-from');
   const couponsQuery = getQueryString('coupons');
   const addOnsSimple = getQueryString('add_ons');
+  const teamSeatsQuery = getQueryString('team_seats');
   const countryCodeQueryString = getQueryString('country_code');
 
   const addOnsIds = parseAddOnIdsFromQuery(addOnsSimple);
@@ -795,6 +796,7 @@ const useSignup = () => {
     }
 
     const planAddons = Array.isArray(planAddonsOverride) ? planAddonsOverride : selectedPlanAddons;
+    const teamSeats = Number(teamSeatsQuery);
 
     const checkingBody = {
       type: 'PREVIEW',
@@ -803,6 +805,7 @@ const useSignup = () => {
       coupons: couponsQuery ? [couponsQuery] : undefined,
       country_code,
       service_items: addOnsArray,
+      team_seats: Number.isInteger(teamSeats) && teamSeats > 0 ? teamSeats : undefined,
     };
 
     try {

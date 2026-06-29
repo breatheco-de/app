@@ -65,6 +65,7 @@ function CardFormContent({
     backgroundColor: 'transparent',
     overflow: 'hidden',
     padding: '0 16px',
+    cursor: 'text',
   };
 
   const stripeElementOptions = {
@@ -87,6 +88,11 @@ function CardFormContent({
         color: fontColor,
       },
     },
+  };
+
+  const focusStripeElement = (elementType) => {
+    const element = elements?.getElement(elementType);
+    if (element) element.focus();
   };
 
   const handleFormSubmit = async (values, actions) => {
@@ -294,7 +300,10 @@ function CardFormContent({
               </Field>
 
               <Box display="flex" flexDirection="column" gridGap="8px">
-                <Box sx={{ ...stripeElementStyle, borderColor: cardErrors.cardNumber ? 'red.500' : input.borderColor }}>
+                <Box
+                  onClick={() => focusStripeElement(CardNumberElement)}
+                  sx={{ ...stripeElementStyle, borderColor: cardErrors.cardNumber ? 'red.500' : input.borderColor }}
+                >
                   <CardNumberElement
                     options={{
                       ...stripeElementOptions,
@@ -317,7 +326,10 @@ function CardFormContent({
 
               <Box display="flex" gridGap="18px">
                 <Box display="flex" flexDirection="column" flex={0.5} gridGap="8px">
-                  <Box sx={{ ...stripeElementStyle, borderColor: cardErrors.expiry ? 'red.500' : input.borderColor }}>
+                  <Box
+                    onClick={() => focusStripeElement(CardExpiryElement)}
+                    sx={{ ...stripeElementStyle, borderColor: cardErrors.expiry ? 'red.500' : input.borderColor }}
+                  >
                     <CardExpiryElement
                       options={{
                         ...stripeElementOptions,
@@ -338,7 +350,10 @@ function CardFormContent({
                 </Box>
 
                 <Box display="flex" flexDirection="column" flex={0.5} gridGap="8px">
-                  <Box sx={{ ...stripeElementStyle, borderColor: cardErrors.cvc ? 'red.500' : input.borderColor }}>
+                  <Box
+                    onClick={() => focusStripeElement(CardCvcElement)}
+                    sx={{ ...stripeElementStyle, borderColor: cardErrors.cvc ? 'red.500' : input.borderColor }}
+                  >
                     <CardCvcElement
                       options={{
                         ...stripeElementOptions,
