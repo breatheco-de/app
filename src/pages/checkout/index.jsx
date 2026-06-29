@@ -241,6 +241,12 @@ function Checkout() {
     ? `${currencySymbol}${baseDiscountedPrice.toFixed(2)}`
     : null;
   const selectedPlanTitle = selectedPlan?.title ? ` / ${compactSelectedPlanTitle(selectedPlan.title)}` : '';
+  const seatQuantity = toFiniteNumber(checkingData?.seat_service_item?.how_many) || 0;
+  const seatUnitPrice = toFiniteNumber(originalPlan?.seat_service_price?.price_per_unit) || 0;
+  const seatTotal = seatQuantity > 0 ? seatQuantity * seatUnitPrice : 0;
+  const seatTitle = checkingData?.seat_service_item?.service?.title
+    || checkingData?.seat_service_item?.service?.slug
+    || 'Team seat';
 
   useEffect(() => {
     const shouldShowPrereq = () => {
@@ -792,6 +798,16 @@ function Checkout() {
                           && `${currencySymbol}${(selectedPlanPriceNumber ?? 0).toFixed(2)} ${summaryCurrencyCode}`}
                       </Text>
                     </Flex>
+                    {seatQuantity > 0 && (
+                      <Flex justifyContent="space-between" width="100%" mt="4px">
+                        <Text size="xs" color="gray.500">
+                          {`${seatTitle} x${seatQuantity}`}
+                        </Text>
+                        <Text size="xs" color="gray.500">
+                          {`${currencySymbol}${seatTotal.toFixed(2)} ${summaryCurrencyCode}`}
+                        </Text>
+                      </Flex>
+                    )}
                     <Divider margin="6px 0" />
                     {showPaymentDetails && (
                       <Formik
