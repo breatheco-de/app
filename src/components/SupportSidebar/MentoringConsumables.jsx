@@ -63,18 +63,25 @@ function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mento
   );
 }
 
+function toProfileList(profiles) {
+  if (Array.isArray(profiles)) return profiles;
+  if (Array.isArray(profiles?.results)) return profiles.results;
+  return [];
+}
+
 function ProfilesSection({
   profiles, size, max, ...rest
 }) {
-  let displayProfiles = profiles || [];
+  const profileList = toProfileList(profiles);
+  let displayProfiles = profileList;
 
-  if (profiles?.length === 1) {
-    displayProfiles = [profiles[0], defaultProfiles[0], defaultProfiles[1]];
+  if (profileList.length === 1) {
+    displayProfiles = [profileList[0], defaultProfiles[0], defaultProfiles[1]];
   }
 
   return (
     <AvatarGroup max={max || 4} justifyContent="center" size={{ base: 'sm', md: 'md' }} {...rest}>
-      {displayProfiles?.map((c, i) => {
+      {displayProfiles.map((c, i) => {
         if (!c || !c.user) return null;
         const fullName = c.user.first_name && c.user.last_name ? `${c.user.first_name} ${c.user.last_name}` : '';
         const avatarUrl = c.user.profile?.avatar_url;
@@ -155,7 +162,8 @@ function MentoringConsumables({
     }
   }, [allMentorsAvailable]);
 
-  const manageMentorsData = (service, mentors) => {
+  const manageMentorsData = (service, mentorsData) => {
+    const mentors = toProfileList(mentorsData);
     reportDatalayer({
       dataLayer: {
         event: 'select_mentorship_service',

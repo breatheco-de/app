@@ -194,7 +194,7 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
         status: 'ACTIVE',
         academy: cohortSession?.academy?.id,
       }).getMentor();
-      setMentors(data);
+      setMentors(Array.isArray(data) ? data : (data?.results ?? []));
     } catch (e) {
       console.log(e);
     }

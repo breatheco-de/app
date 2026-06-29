@@ -136,6 +136,7 @@ function Renew() {
                 onPaymentSuccess={onPaymentSuccess}
                 handleRenewalPayment={handleRenewalPayment}
                 handleCoinbaseRenewalPayment={handleCoinbaseRenewalPayment}
+                hideProviderFinancedMethods={Boolean(planFinancingId && !subscriptionId)}
               />
             </Box>
           </Box>

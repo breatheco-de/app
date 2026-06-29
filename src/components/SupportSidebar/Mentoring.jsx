@@ -81,7 +81,7 @@ function Mentoring({
       }).getMentor()
         .then((res) => {
           const allMentors = res?.data;
-          return allMentors;
+          return Array.isArray(allMentors) ? allMentors : (allMentors?.results ?? []);
         }));
       const mentorsList = (await Promise.all(mentors)).flat();
       return mentorsList;

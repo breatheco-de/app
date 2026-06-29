@@ -16,12 +16,26 @@ import useCustomToast from '../../hooks/useCustomToast';
 
 // ___________ HELPERS (pure functions, no hooks) ___________ //
 
-const getBagTotalsForSelectedPlan = (checkingData, selectedPlan, processedPrice) => {
+const getBagTotalsForSelectedPlan = (checkingData, selectedPlan, coupons = [], originalPlan = null) => {
   if (!selectedPlan) return null;
   const toNumber = (value) => {
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : 0;
   };
+  const applyCoupons = (price) => coupons.reduce((currentPrice, coupon) => {
+    const discount = Number(coupon?.discount_value);
+    if (!Number.isFinite(discount) || discount <= 0) return currentPrice;
+
+    if (coupon?.discount_type === 'PERCENT_OFF' || coupon?.discount_type === 'HAGGLING') {
+      return currentPrice * (1 - discount);
+    }
+
+    if (coupon?.discount_type === 'FIXED_PRICE') {
+      return Math.max(currentPrice - discount, 0);
+    }
+
+    return currentPrice;
+  }, price);
 
   const {
     amount_per_month: amountPerMonth = 0,
@@ -39,57 +53,66 @@ const getBagTotalsForSelectedPlan = (checkingData, selectedPlan, processedPrice)
 
   const { period, price } = selectedPlan;
   const selectedPlanPrice = toNumber(price);
-  const processedPlanPrice = toNumber(processedPrice?.price);
+  const seatQuantity = toNumber(checkingData?.seat_service_item?.how_many);
+  const seatUnitPrice = toNumber(originalPlan?.seat_service_price?.price_per_unit);
+  const seatTotal = seatQuantity > 0 && seatUnitPrice > 0 ? seatQuantity * seatUnitPrice : 0;
   let baseOriginal = 0;
-  let baseDiscounted = 0;
+  let extraSeatTotal = 0;
+  let backendDiscounted = null;
 
   // Financing plans: backend `amount_per_*` are not populated.
   // We use the plan monthly price as original and the discounted
   // monthly price (from backend if available, otherwise from
   // processedPrice) as the discounted value.
   if (period === 'FINANCING') {
-    const originalMonthly = selectedPlanPrice;
-
-    const discountedMonthlyFromProcessed = processedPlanPrice > 0 ? processedPlanPrice : undefined;
-
-    const discountedMonthly = [
-      discountedMonthlyFromChecking,
-      selectedPlan?.discounted_monthly_price,
-      discountedMonthlyFromProcessed,
-      originalMonthly,
-    ].find((val) => typeof val === 'number');
-
-    const originalTotal = originalMonthly + (planAddonsAmount || 0);
+    const originalTotal = selectedPlanPrice + seatTotal + (planAddonsAmount || 0);
     const discountedAddons = typeof discountedPlanAddonsAmount === 'number'
       ? discountedPlanAddonsAmount
       : planAddonsAmount;
-    const discountedTotal = discountedMonthly + (discountedAddons || 0);
+    const discountedFinancing = [
+      discountedMonthlyFromChecking,
+      selectedPlan?.discounted_monthly_price,
+    ].find((val) => typeof val === 'number');
+    const discountedTotal = typeof discountedFinancing === 'number'
+      ? discountedFinancing + seatTotal + (discountedAddons || 0)
+      : applyCoupons(originalTotal);
 
     return { originalTotal, discountedTotal };
   }
 
   if (period === 'MONTH') {
-    baseOriginal = toNumber(amountPerMonth) || selectedPlanPrice;
-    baseDiscounted = toNumber(discountedAmountPerMonth ?? amountPerMonth) || processedPlanPrice || selectedPlanPrice;
+    const backendAmount = toNumber(amountPerMonth);
+    baseOriginal = backendAmount || selectedPlanPrice;
+    extraSeatTotal = backendAmount ? 0 : seatTotal;
+    backendDiscounted = discountedAmountPerMonth;
   } else if (period === 'QUARTER') {
-    baseOriginal = toNumber(amountPerQuarter) || selectedPlanPrice;
-    baseDiscounted = toNumber(discountedAmountPerQuarter ?? amountPerQuarter) || processedPlanPrice || selectedPlanPrice;
+    const backendAmount = toNumber(amountPerQuarter);
+    baseOriginal = backendAmount || selectedPlanPrice;
+    extraSeatTotal = backendAmount ? 0 : seatTotal;
+    backendDiscounted = discountedAmountPerQuarter;
   } else if (period === 'HALF') {
-    baseOriginal = toNumber(amountPerHalf) || selectedPlanPrice;
-    baseDiscounted = toNumber(discountedAmountPerHalf ?? amountPerHalf) || processedPlanPrice || selectedPlanPrice;
+    const backendAmount = toNumber(amountPerHalf);
+    baseOriginal = backendAmount || selectedPlanPrice;
+    extraSeatTotal = backendAmount ? 0 : seatTotal;
+    backendDiscounted = discountedAmountPerHalf;
   } else if (period === 'YEAR') {
-    baseOriginal = toNumber(amountPerYear) || selectedPlanPrice;
-    baseDiscounted = toNumber(discountedAmountPerYear ?? amountPerYear) || processedPlanPrice || selectedPlanPrice;
+    const backendAmount = toNumber(amountPerYear);
+    baseOriginal = backendAmount || selectedPlanPrice;
+    extraSeatTotal = backendAmount ? 0 : seatTotal;
+    backendDiscounted = discountedAmountPerYear;
   } else {
     baseOriginal = selectedPlanPrice;
-    baseDiscounted = processedPlanPrice || selectedPlanPrice;
+    extraSeatTotal = seatTotal;
   }
 
-  const originalTotal = baseOriginal + (planAddonsAmount || 0);
+  const originalTotal = baseOriginal + extraSeatTotal + (planAddonsAmount || 0);
   const discountedAddons = typeof discountedPlanAddonsAmount === 'number'
     ? discountedPlanAddonsAmount
     : planAddonsAmount;
-  const discountedTotal = baseDiscounted + (discountedAddons || 0);
+  const hasBackendDiscount = typeof backendDiscounted === 'number';
+  const discountedTotal = hasBackendDiscount
+    ? backendDiscounted + (discountedAddons || 0)
+    : applyCoupons(originalTotal);
 
   return { originalTotal, discountedTotal };
 };
@@ -238,8 +261,8 @@ const useCheckout = () => {
 
   // Totals for the current selection (plan + add-ons)
   const bagTotals = useMemo(
-    () => getBagTotalsForSelectedPlan(checkingData, selectedPlan, processedPrice),
-    [checkingData, selectedPlan, processedPrice],
+    () => getBagTotalsForSelectedPlan(checkingData, selectedPlan, allCoupons, originalPlan),
+    [checkingData, selectedPlan, allCoupons, originalPlan],
   );
 
   // Display data for plan add-ons (titles, discounts, switch state)
