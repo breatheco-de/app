@@ -1090,7 +1090,7 @@ function useCohortHandler() {
         valid_until: sub.valid_until,
         hasSelectedCohortSet: !!sub.selected_cohort_set,
         cohortIdsInSet: sub.selected_cohort_set?.cohorts?.map((c) => c.id) ?? [],
-        includesCurrentCohort: sub.selected_cohort_set?.cohorts?.some((c) => c.id === cohortSession.id),
+          includesCurrentCohort: sub.selected_cohort_set?.cohorts?.some((c) => c.id === cohortSession.id),
         planSlug: sub.plans?.[0]?.slug,
       }));
       console.log('[checkNavigationAvailability] ALL subscriptions (filtering by cohort id:', cohortSession?.id, ')', allSubsSummary);

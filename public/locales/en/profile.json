@@ -216,6 +216,11 @@
       "disabled": false
     },
     {
+      "title": "Team seats",
+      "value": "team-seats",
+      "disabled": false
+    },
+    {
       "title": "Referral Program",
       "value": "referral-program",
       "disabled": false
@@ -362,5 +367,51 @@
   "referral-share-link-text": "Or share this link:",
   "referral-share-message": "Check out this learning opportunity with my referral code! Join 4Geeks Academy and start your coding journey using my discount code, available here:",
   "no-referral-coupon": "Couldn't obtain your referral coupon",
-  "no-reward-coupons": "You don't have reward coupons, refer your code to a friend and get discounts on your next payments"
+  "no-reward-coupons": "You don't have reward coupons, refer your code to a friend and get discounts on your next payments",
+  "team-seats": {
+    "seo-title": "Team seats",
+    "title": "Team seats",
+    "description": "Manage who has access to the seats included in your plan and see what services you are sharing with each member.",
+    "shared-resources-title": "Shared services",
+    "members-title": "Team members",
+    "owner-label": "Plan owner",
+    "pending-invite": "Invitation pending",
+    "remove-seat": "Remove",
+    "add-seat-title": "Add a team member",
+    "cohort-label": "Select a cohort to assign to the invitee",
+    "select-cohort": "Select a cohort",
+    "cohort-required": "Please select a cohort for this member.",
+    "no-cohorts-available": "You have no cohorts available to share with this plan.",
+    "email-placeholder": "member@email.com",
+    "add-seat-button": "Add seat",
+    "seats-limit-reached": "You have reached the seat limit for this plan.",
+    "seats-usage": "{{count}} of {{limit}} seats in use",
+    "empty-state": "You don't have plans with manageable team seats.",
+    "load-error": "We couldn't load your team seats.",
+    "invalid-email": "Please enter a valid email address.",
+    "add-success": "Seat added successfully.",
+    "invite-sent": "Invitation sent successfully.",
+    "add-error": "Could not add the seat. Please try again.",
+    "remove-success": "Seat removed successfully.",
+    "remove-error": "Could not remove the seat. Please try again.",
+    "consumption-strategy": {
+      "per-seat": "Each member receives their own quota of these services.",
+      "per-team": "All team members share these consumables.",
+      "per-seat-title": "Per seat",
+      "per-team-title": "Per team",
+      "per-seat-description": "With a per-seat strategy, every team member gets an individual allocation of the services included in your plan. Usage by one member does not reduce what others have available.",
+      "per-team-description": "With a per-team strategy, all members draw from the same shared pool of consumables. When someone uses a service, it reduces the balance available for the entire team.",
+      "see-details": "See consumption strategy",
+      "modal-title": "How resources are shared",
+      "modal-member-title": "Resources shared with {{email}}",
+      "more-items": "+{{count}} more services"
+    },
+    "view-shared-resources": "View shared resources",
+    "remove-modal": {
+      "title": "Remove team member",
+      "description": "Are you sure you want to remove {{email}} from your team? They will lose access to the shared plan benefits.",
+      "cancel": "Cancel",
+      "confirm": "Remove"
+    }
+  }
 }

@@ -3,29 +3,50 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  memo, useEffect, useState,
+  memo, useEffect, useMemo, useState,
 } from 'react';
 import { useRouter } from 'next/router';
 import Heading from '../../components/Heading';
 import useAuth from '../../hooks/useAuth';
 import useWhiteLabel from '../../hooks/useWhiteLabel';
+import useSubscriptions from '../../hooks/useSubscriptions';
 import asPrivate from '../../context/PrivateRouteWrapper';
 import bc from '../../services/breathecode';
-import { cleanQueryStrings } from '../../utils';
 import GridContainer from '../../components/GridContainer';
 import Subscriptions from '../../components/Profile/Subscriptions';
 import Certificates from '../../components/Profile/Certificates';
 import Information from '../../components/Profile/Information';
 import ReferralProgram from '../../components/Profile/ReferralProgram';
+import TeamSeats from '../../components/Profile/TeamSeats';
 import Resources from '../../components/Profile/Resources/index';
 import useCustomToast from '../../hooks/useCustomToast';
+
+function renderTabPanel(tabValue, { certificates, cohorts }) {
+  switch (tabValue) {
+    case 'info':
+      return <Information />;
+    case 'certificates':
+      return <Certificates certificates={certificates} />;
+    case 'subscriptions':
+      return <Subscriptions cohorts={cohorts} />;
+    case 'team-seats':
+      return <TeamSeats />;
+    case 'referral-program':
+      return <ReferralProgram />;
+    case 'resources':
+      return <Resources />;
+    default:
+      return null;
+  }
+}
 
 function Profile() {
   const { t } = useTranslation('profile');
   const { user, cohorts } = useAuth();
   const { isWhiteLabelFeatureEnabled } = useWhiteLabel();
+  const { state: subscriptionsState, initializeSubscriptionsData } = useSubscriptions();
   const router = useRouter();
-  const { asPath } = router;
+  const { query } = router;
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [certificates, setCertificates] = useState([]);
   const tabListMenu = t('tabList', {}, { returnObjects: true });
@@ -33,28 +54,57 @@ function Profile() {
 
   const canShowReferralProgram = isWhiteLabelFeatureEnabled('allow_referral_program');
 
-  const tabListFiltered = tabListMenu.filter((tab) => {
-    if (tab.value === 'referral-program' && !canShowReferralProgram) return false;
-    return tab.disabled !== true;
-  });
+  const hasManageableSeats = useMemo(() => {
+    const data = subscriptionsState.subscriptions;
+    if (!data) return false;
+    const subs = data.subscriptions || [];
+    const financings = data.plan_financings || [];
+    return [...subs, ...financings].some((plan) => plan.has_billing_team);
+  }, [subscriptionsState.subscriptions]);
 
-  const tabPosition = {
-    '/profile/info': 0,
-    '/profile/info#': 0,
-    '/profile/certificates': 1,
-    '/profile/certificates#': 1,
-    '/profile/subscriptions': 2,
-    '/profile/subscriptions#': 2,
-    '/profile/referral-program': canShowReferralProgram ? 3 : -1,
-    '/profile/referral-program#': canShowReferralProgram ? 3 : -1,
-    '/profile/resources': 4,
-    '/profile/resources#': 4,
-  };
-  const currentPathCleaned = cleanQueryStrings(asPath);
+  const tabListFiltered = useMemo(() => tabListMenu.filter((tab) => {
+    if (tab.value === 'referral-program' && !canShowReferralProgram) return false;
+    if (tab.value === 'team-seats') {
+      if (hasManageableSeats) return true;
+      if (!subscriptionsState.areSubscriptionsFetched || subscriptionsState.isLoading) return true;
+      return false;
+    }
+    return tab.disabled !== true;
+  }), [
+    tabListMenu,
+    canShowReferralProgram,
+    hasManageableSeats,
+    subscriptionsState.areSubscriptionsFetched,
+    subscriptionsState.isLoading,
+  ]);
+
+  const tabListKey = useMemo(
+    () => tabListFiltered.map((tab) => tab.value).join(','),
+    [tabListFiltered],
+  );
+
+  const slug = Array.isArray(query.slug) ? query.slug[0] : query.slug;
 
   useEffect(() => {
-    setCurrentTabIndex(tabPosition[currentPathCleaned]);
-  }, [currentPathCleaned]);
+    const idx = tabListFiltered.findIndex((tab) => tab.value === slug);
+    if (idx >= 0) {
+      if (idx !== currentTabIndex) {
+        setCurrentTabIndex(idx);
+      }
+      return;
+    }
+    if (slug && !tabListFiltered.some((tab) => tab.value === slug)) {
+      router.replace('/profile/info', undefined, { shallow: true });
+    }
+  }, [slug, tabListKey, tabListFiltered, currentTabIndex, router]);
+
+  useEffect(() => {
+    if (!subscriptionsState.areSubscriptionsFetched) {
+      initializeSubscriptionsData();
+    }
+  // initializeSubscriptionsData is recreated each render; only re-run when fetch status changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subscriptionsState.areSubscriptionsFetched]);
 
   useEffect(() => {
     bc.certificate().get()
@@ -121,24 +171,18 @@ function Profile() {
               </Tab>
             ))}
           </TabList>
-          <TabPanels p="0">
-            <TabPanel p="0">
-              <Information />
-            </TabPanel>
-            <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
-              <Certificates certificates={certificates} />
-            </TabPanel>
-            <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
-              <Subscriptions cohorts={cohorts} />
-            </TabPanel>
-            {canShowReferralProgram && (
-              <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
-                <ReferralProgram />
+          <TabPanels p="0" isLazy>
+            {tabListFiltered.map((tab) => (
+              <TabPanel
+                key={tab.value}
+                p="0"
+                display={tab.value === 'info' ? undefined : 'flex'}
+                flexDirection={tab.value === 'info' ? undefined : 'column'}
+                gridGap={tab.value === 'info' ? undefined : '18px'}
+              >
+                {renderTabPanel(tab.value, { certificates, cohorts })}
               </TabPanel>
-            )}
-            <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
-              <Resources />
-            </TabPanel>
+            ))}
           </TabPanels>
         </Tabs>
       </GridContainer>
