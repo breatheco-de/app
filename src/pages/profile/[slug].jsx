@@ -102,8 +102,6 @@ function Profile() {
     if (!subscriptionsState.areSubscriptionsFetched) {
       initializeSubscriptionsData();
     }
-  // initializeSubscriptionsData is recreated each render; only re-run when fetch status changes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subscriptionsState.areSubscriptionsFetched]);
 
   useEffect(() => {

@@ -102,8 +102,6 @@ const useTeamSeats = () => {
   useEffect(() => {
     if (!subscriptionsState.areSubscriptionsFetched) return;
     loadTeamData(basePlans);
-  // loadTeamData depends on createToast which is unstable; billingTeamPlanKey tracks actual plan changes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subscriptionsState.areSubscriptionsFetched, billingTeamPlanKey]);
 
   const refresh = useCallback(() => loadTeamData(basePlans), [loadTeamData, basePlans]);
