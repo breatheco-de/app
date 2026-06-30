@@ -215,6 +215,11 @@
       "disabled": false
     },
     {
+      "title": "Asientos del equipo",
+      "value": "team-seats",
+      "disabled": false
+    },
+    {
       "title": "Programa de Referidos",
       "value": "referral-program",
       "disabled": false
@@ -348,5 +353,51 @@
   "referral-share-link-text": "O comparte este enlace:",
   "referral-share-message": "¡Mira esta oportunidad de aprendizaje con mi código de referido! Únete a 4Geeks Academy y comienza tu viaje en programación utilizando mi código de descuento, disponible aquí:",
   "no-referral-coupon": "No se pudo obtener tu cupón de referido",
-  "no-reward-coupons": "No tienes cupones de recompensa, refiere tu código a un amigo y obtén descuentos en tus próximos pagos"
+  "no-reward-coupons": "No tienes cupones de recompensa, refiere tu código a un amigo y obtén descuentos en tus próximos pagos",
+  "team-seats": {
+    "seo-title": "Asientos del equipo",
+    "title": "Asientos del equipo",
+    "description": "Gestiona quién tiene acceso a los asientos incluidos en tu plan y consulta qué servicios compartes con cada miembro.",
+    "shared-resources-title": "Servicios compartidos",
+    "members-title": "Miembros del equipo",
+    "owner-label": "Dueño del plan",
+    "pending-invite": "Invitación pendiente",
+    "remove-seat": "Quitar",
+    "add-seat-title": "Agregar miembro al equipo",
+    "cohort-label": "Selecciona una cohorte para entregarle al invitado",
+    "select-cohort": "Selecciona una cohorte",
+    "cohort-required": "Por favor selecciona una cohorte para este miembro.",
+    "no-cohorts-available": "No tienes cohortes disponibles para compartir con este plan.",
+    "email-placeholder": "miembro@email.com",
+    "add-seat-button": "Agregar asiento",
+    "seats-limit-reached": "Has alcanzado el límite de asientos para este plan.",
+    "seats-usage": "{{count}} de {{limit}} asientos en uso",
+    "empty-state": "No tienes planes con asientos de equipo gestionables.",
+    "load-error": "No pudimos cargar tus asientos del equipo.",
+    "invalid-email": "Por favor ingresa un correo electrónico válido.",
+    "add-success": "Asiento agregado correctamente.",
+    "invite-sent": "Invitación enviada correctamente.",
+    "add-error": "No se pudo agregar el asiento. Inténtalo de nuevo.",
+    "remove-success": "Asiento eliminado correctamente.",
+    "remove-error": "No se pudo eliminar el asiento. Inténtalo de nuevo.",
+    "consumption-strategy": {
+      "per-seat": "Cada miembro recibe su propia cuota de estos servicios.",
+      "per-team": "Todos los miembros del equipo comparten estos consumibles.",
+      "per-seat-title": "Por asiento",
+      "per-team-title": "Por equipo",
+      "per-seat-description": "Con la estrategia por asiento, cada miembro del equipo recibe una asignación individual de los servicios incluidos en tu plan. El uso de un miembro no reduce lo que tienen disponible los demás.",
+      "per-team-description": "Con la estrategia por equipo, todos los miembros consumen del mismo pool compartido. Cuando alguien usa un servicio, se reduce el saldo disponible para todo el equipo.",
+      "see-details": "Ver estrategia de consumo",
+      "modal-title": "Cómo se comparten los recursos",
+      "modal-member-title": "Recursos compartidos con {{email}}",
+      "more-items": "+{{count}} servicios más"
+    },
+    "view-shared-resources": "Ver recursos compartidos",
+    "remove-modal": {
+      "title": "Quitar miembro del equipo",
+      "description": "¿Estás seguro de que quieres quitar a {{email}} de tu equipo? Perderá acceso a los beneficios compartidos del plan.",
+      "cancel": "Cancelar",
+      "confirm": "Quitar"
+    }
+  }
 }
