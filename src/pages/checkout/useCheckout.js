@@ -245,7 +245,12 @@ const useCheckout = () => {
       (item) => item?.plan_id === (planId || userSelectedPlan?.plan_id),
     );
 
-    return autoSelectedPlanByQueryString || defaultAutoSelectedPlan;
+    const matched = autoSelectedPlanByQueryString || defaultAutoSelectedPlan;
+    if (!matched || userSelectedPlan?.financing_option_id == null) return matched;
+    if (matched.plan_id === userSelectedPlan.plan_id) {
+      return { ...matched, financing_option_id: userSelectedPlan.financing_option_id };
+    }
+    return matched;
   };
 
   const processedPrice = useMemo(() => {
