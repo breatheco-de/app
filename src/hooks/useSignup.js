@@ -250,6 +250,7 @@ const useSignup = () => {
         period: 'ONE_TIME',
         period_label: textInfo.one_payment,
         plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
+        financing_option_id: item?.id,
         description: translations?.one_payment_description || '',
         how_many_months: item?.how_many_months,
         type: 'PAYMENT',
@@ -335,6 +336,7 @@ const useSignup = () => {
           price: item?.monthly_price,
           priceText: `${currenciesSymbols[item?.currency?.code] || '$'}${item?.monthly_price} x ${item?.how_many_months}`,
           plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
+          financing_option_id: item?.id,
           description: financingOptionsDescription || '',
           period: 'FINANCING',
           period_label: textInfo.label.financing,
@@ -614,6 +616,7 @@ const useSignup = () => {
           chosen_period: manyInstallmentsExists ? undefined : (plan?.period || 'HALF'),
           coupons: checkingData?.coupons,
           add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
+          ...(plan?.financing_option_id != null ? { financing_option_id: plan.financing_option_id } : {}),
           ...(paymentMethod?.id != null ? { payment_method_id: paymentMethod.id } : {}),
           ...(paymentMethod?.provider_settings?.stripe_payment_method_types?.length > 0 ? {
             return_url: getPaymentSuccessReturnUrl({
@@ -743,6 +746,7 @@ const useSignup = () => {
           chosen_period: manyInstallmentsExists ? undefined : (selectedPlan?.period || 'HALF'),
           coupons: checkingData?.coupons,
           add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
+          ...(selectedPlan?.financing_option_id != null ? { financing_option_id: selectedPlan.financing_option_id } : {}),
           ...(paymentMethod?.id != null ? { payment_method_id: paymentMethod.id } : {}),
           return_url: getPaymentSuccessReturnUrl({
             planSlug: selectedPlan?.plan_slug,
