@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Avatar, Box, Button, Link, Flex } from '@chakra-ui/react';
+import { Avatar, Box, Button, Link, Flex, Image } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import bc from '../../services/breathecode';
 import signupAction from '../../store/actions/signupAction';
@@ -475,6 +475,17 @@ function ServiceSummary({ service }) {
                                       {t('click-here')}
                                     </NextChakraLink>
                                   </Text>
+                                )}
+                                {method.qr_url && (
+                                  <Box mt="16px" display="flex" justifyContent="center">
+                                    <Image
+                                      src={method.qr_url}
+                                      alt={`${method.title} QR`}
+                                      maxW="180px"
+                                      w="100%"
+                                      h="auto"
+                                    />
+                                  </Box>
                                 )}
                               </Box>
                             ),

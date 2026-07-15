@@ -58,7 +58,6 @@ function Navbar({ translations, pageProps }) {
   const existsCohortWithoutAvailableAsSaas = cohorts?.some((c) => c?.available_as_saas === false);
   const existsPaidSubscription = allSubscriptions?.some((sb) => sb?.invoices?.[0]?.amount > 0);
   const hasPaidSubscription = existsCohortWithoutAvailableAsSaas || existsPaidSubscription;
-
   const disableLangSwitcher = pageProps?.disableLangSwitcher || false;
   const { locale } = router;
 
@@ -383,7 +382,6 @@ function Navbar({ translations, pageProps }) {
                 isOpen={isPopoverOpen}
                 onClose={closeSettings}
                 placement="bottom-start"
-                trigger="click"
               >
                 <PopoverTrigger>
                   <Button
