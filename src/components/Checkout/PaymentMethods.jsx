@@ -125,9 +125,9 @@ function PaymentMethods({
 
   useEffect(() => {
     if (selectedPlan?.owner?.id) {
-      getPaymentMethods(selectedPlan.owner.id);
+      getPaymentMethods(selectedPlan.owner.id, selectedPlan?.plan_slug || selectedPlan?.slug);
     }
-  }, [selectedPlan?.owner?.id, isAuthenticated]);
+  }, [selectedPlan?.owner?.id, selectedPlan?.plan_slug, selectedPlan?.slug, isAuthenticated]);
 
   useEffect(() => {
     const fetchSavedCard = async () => {
@@ -235,7 +235,7 @@ function PaymentMethods({
         }
       } finally {
         actions.setSubmitting(false);
-        getPaymentMethods(selectedPlan.owner.id);
+        getPaymentMethods(selectedPlan.owner.id, selectedPlan?.plan_slug || selectedPlan?.slug);
         const updatedCard = await getSavedCard(selectedPlan.owner.id);
         setSavedCard(updatedCard);
       }
@@ -302,7 +302,7 @@ function PaymentMethods({
         });
         setIsSubmittingCard(false);
 
-        getPaymentMethods(selectedPlan.owner.id);
+        getPaymentMethods(selectedPlan.owner.id, selectedPlan?.plan_slug || selectedPlan?.slug);
         const updatedCard = await getSavedCard(selectedPlan.owner.id);
         setSavedCard(updatedCard);
 
@@ -485,6 +485,17 @@ function PaymentMethods({
                           {t('click-here')}
                         </NextChakraLink>
                       </Text>
+                    )}
+                    {method.qr_url && (
+                      <Box mt="16px" display="flex" justifyContent="center">
+                        <Image
+                          src={method.qr_url}
+                          alt={`${method.title} QR`}
+                          maxW="180px"
+                          w="100%"
+                          h="auto"
+                        />
+                      </Box>
                     )}
                   </Box>
                 ),

@@ -863,15 +863,19 @@ const useSignup = () => {
     });
   };
 
-  const getPaymentMethods = async (ownerId) => {
+  const getPaymentMethods = async (ownerId, planSlug) => {
     try {
       if (canRequestPaymentData && ownerId) {
         setLoader('paymentMethods', true);
-        const resp = await bc.payment({
+        const query = {
           academy_id: ownerId,
           lang: router.locale,
           country_code,
-        }).getpaymentMethods();
+        };
+        if (planSlug) {
+          query.plan = planSlug;
+        }
+        const resp = await bc.payment(query).getpaymentMethods();
         if (resp.status < 400) {
           setPaymentMethods(resp.data);
         }

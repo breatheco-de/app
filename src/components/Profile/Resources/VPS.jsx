@@ -37,7 +37,6 @@ import {
 } from 'react';
 import Text from '../../Text';
 import Icon from '../../Icon';
-import NextChakraLink from '../../NextChakraLink';
 import VPSRequestModal from './VPSRequestModal';
 import useStyle from '../../../hooks/useStyle';
 import useCustomToast from '../../../hooks/useCustomToast';
@@ -461,6 +460,7 @@ function VPS() {
   const [isLoadingList, setIsLoadingList] = useState(true);
   const [loadListError, setLoadListError] = useState('');
   const [canRequestVps, setCanRequestVps] = useState(false);
+  const [availableConsumables, setAvailableConsumables] = useState(0);
 
   const [credentialsModalOpen, setCredentialsModalOpen] = useState(false);
   const [credentialsLoading, setCredentialsLoading] = useState(false);
@@ -510,6 +510,7 @@ function VPS() {
         if (isMountedRef.current) {
           setVpsList([]);
           setCanRequestVps(false);
+          setAvailableConsumables(0);
           setLoadListError(getProvisioningErrorMessage(res, t('vps.load-error')));
         }
         return { ok: false, results: [] };
@@ -520,6 +521,7 @@ function VPS() {
       if (isMountedRef.current) {
         setVpsList(results);
         setCanRequestVps(payload?.can_request_vps === true);
+        setAvailableConsumables(Number(payload?.available_consumables) || 0);
         setLoadListError('');
       }
       return { ok: true, results };
@@ -527,6 +529,7 @@ function VPS() {
       if (isMountedRef.current) {
         setVpsList([]);
         setCanRequestVps(false);
+        setAvailableConsumables(0);
         setLoadListError(getProvisioningErrorMessage(err?.response ?? err, t('vps.load-error')));
       }
       return { ok: false, results: [] };
@@ -856,7 +859,7 @@ function VPS() {
               fontSize="15px"
               textTransform="uppercase"
               alignSelf={{ base: 'center', md: 'auto' }}
-              title={!canRequestVps ? t('vps.cannot-request') : undefined}
+              title={!canRequestVps ? t('vps.consumables-available', { count: availableConsumables }) : undefined}
               isDisabled={!canRequestVps}
               onClick={openRequestModal}
             >
@@ -878,24 +881,15 @@ function VPS() {
           </Text>
           )}
 
-          {!isLoadingList && !loadListError && vpsList.length === 0 && (
+          {!isLoadingList && !loadListError && (
+          <Text size="md" fontWeight="400" mb={vpsList.length > 0 || canRequestVps ? '16px' : '0'}>
+            {t('vps.consumables-available', { count: availableConsumables })}
+          </Text>
+          )}
+
+          {!isLoadingList && !loadListError && canRequestVps && vpsList.length === 0 && (
           <Text size="md" fontWeight="400">
-            {canRequestVps ? t('vps.no-vps') : t('vps.cannot-request')}
-            {!canRequestVps && (
-              <>
-                {' '}
-                <NextChakraLink
-                  href="/pricing"
-                  color="blue.default"
-                  fontWeight="700"
-                  textDecoration="none"
-                  _hover={{ textDecoration: 'underline' }}
-                >
-                  {t('vps.pricing-page')}
-                </NextChakraLink>
-                .
-              </>
-            )}
+            {t('vps.no-vps')}
           </Text>
           )}
 
