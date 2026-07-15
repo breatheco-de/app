@@ -35,6 +35,8 @@ import useCustomToast from '../../../hooks/useCustomToast';
 import useSubscriptions from '../../../hooks/useSubscriptions';
 import bc from '../../../services/breathecode';
 
+const LLM_BUDGET_SERVICE_SLUG = 'llm-budget';
+
 function tryParseDetailAsObject(detail) {
   if (detail != null && typeof detail === 'object') return detail;
   if (typeof detail !== 'string') return null;
@@ -106,6 +108,14 @@ function formatSpendValue(spend) {
   if (Number.isNaN(amount)) return '—';
 
   return `$${amount.toFixed(2)}`;
+}
+
+function getLlmBudgetLabel(item, lang) {
+  const academyName = typeof item?.academy_name === 'string' ? item.academy_name.trim() : '';
+  if (academyName) return academyName;
+  const academyId = item?.academy_id;
+  if (academyId == null) return '—';
+  return lang === 'es' ? `Academia #${academyId}` : `Academy #${academyId}`;
 }
 
 function getAcademyLabel(entry, lang) {
@@ -528,7 +538,7 @@ function LLM() {
     const fetchLlmConsumables = async () => {
       try {
         setLoadingLlmConsumables(true);
-        const res = await bc.payment().service().consumable();
+        const res = await bc.payment({ service_slug: LLM_BUDGET_SERVICE_SLUG }).service().consumable();
         if (cancelled) return;
         if (!(res?.status >= 200 && res?.status < 300)) {
           setLlmStandaloneAcademies([]);
@@ -536,7 +546,7 @@ function LLM() {
           return;
         }
 
-        const llmVoid = (res.data.voids || []).find((entry) => entry.slug === 'free-monthly-llm-budget');
+        const llmVoid = (res.data.voids || []).find((entry) => entry.slug === LLM_BUDGET_SERVICE_SLUG);
         const items = llmVoid ? llmVoid.items : [];
         const now = new Date();
         const academiesById = new Map();
@@ -682,6 +692,27 @@ function LLM() {
     && purchasedCreditForAcademy?.validUntil;
   const canGenerate = selectedAcademyOption != null
     && (hasUsablePlanLlmForAcademy ? selectedPlanOption != null : hasStandaloneForAcademy);
+  const llmBudgetSummaries = useMemo(() => {
+    const budgetsByAcademyId = new Map();
+
+    keys.forEach((item) => {
+      const academyId = item?.academy_id;
+      const spend = item?.member_budget?.spend;
+      const max = item?.member_budget?.max;
+
+      if (academyId == null || spend == null || max == null) return;
+      if (budgetsByAcademyId.has(academyId)) return;
+
+      budgetsByAcademyId.set(academyId, {
+        academyId,
+        academyLabel: getLlmBudgetLabel(item, lang),
+        spend,
+        max,
+      });
+    });
+
+    return Array.from(budgetsByAcademyId.values());
+  }, [keys, lang]);
 
   const fetchKeys = useCallback(async () => {
     setIsLoadingList(true);
@@ -1028,47 +1059,80 @@ function LLM() {
           )}
 
           {!isLoadingList && keys.length > 0 && (
-            <VStack spacing={0} align="stretch" width="100%" divider={<Divider />}>
-              {keys.map((item, index) => {
-                const tokenId = item?.token_id;
-                const academyId = item?.academy_id;
-                const keyAlias = item?.key_alias ?? '—';
-                const usageText = t('llm.key-usage', { usage: formatSpendValue(item?.spend) });
-                const createdAtText = formatCreatedAt(item?.created_at);
-                const planTitle = item?.metadata?.plan_title ?? '';
-                return (
-                  <Box
-                    key={tokenId != null ? String(tokenId) : `llm-key-${index}`}
-                    py={4}
-                    {...(index === 0 ? { pt: 0 } : {})}
-                  >
-                    <LLMKeyCard
-                      keyAlias={keyAlias}
-                      usageText={usageText}
-                      createdAtText={createdAtText}
-                      planTitle={planTitle}
-                      viewDetailsLabel={t('llm.view-details')}
-                      onViewDetails={() => {
-                        setKeyDetails({
-                          keyAlias,
-                          usageText,
-                          host: typeof item?.host === 'string' ? item.host : '',
-                          models: applyVendorPrefixToModels(
-                            Array.isArray(item?.models) ? item.models : [],
-                            item?.vendor_name,
-                          ),
-                        });
-                      }}
-                      deleteAriaLabel={t('llm.key-delete-aria')}
-                      onDelete={() => {
-                        if (tokenId == null || academyId == null) return;
-                        setKeyToDelete({ tokenId, academyId });
-                      }}
-                    />
-                  </Box>
-                );
-              })}
-            </VStack>
+            <>
+              {llmBudgetSummaries.length > 0 && (
+                <Box mb={6}>
+                  {llmBudgetSummaries.length === 1 ? (
+                    <Text fontSize="14px">
+                      <Box as="span" fontWeight="700">
+                        {t('llm.total-usage')}
+                        {': '}
+                      </Box>
+                      {t('llm.budget-usage', {
+                        spend: formatSpendValue(llmBudgetSummaries[0].spend),
+                        max: formatSpendValue(llmBudgetSummaries[0].max),
+                      })}
+                    </Text>
+                  ) : (
+                    <VStack align="stretch" spacing={2}>
+                      {llmBudgetSummaries.map((budget) => (
+                        <Text key={`llm-budget-${budget.academyId}`} fontSize="14px">
+                          <Box as="span" fontWeight="700">
+                            {budget.academyLabel}
+                            {': '}
+                          </Box>
+                          {t('llm.budget-usage', {
+                            spend: formatSpendValue(budget.spend),
+                            max: formatSpendValue(budget.max),
+                          })}
+                        </Text>
+                      ))}
+                    </VStack>
+                  )}
+                </Box>
+              )}
+              <VStack spacing={0} align="stretch" width="100%" divider={<Divider />}>
+                {keys.map((item, index) => {
+                  const tokenId = item?.token_id;
+                  const academyId = item?.academy_id;
+                  const keyAlias = item?.key_alias ?? '—';
+                  const usageText = t('llm.key-usage', { usage: formatSpendValue(item?.spend) });
+                  const createdAtText = formatCreatedAt(item?.created_at);
+                  const planTitle = item?.metadata?.plan_title ?? '';
+                  return (
+                    <Box
+                      key={tokenId != null ? String(tokenId) : `llm-key-${index}`}
+                      py={4}
+                      {...(index === 0 ? { pt: 0 } : {})}
+                    >
+                      <LLMKeyCard
+                        keyAlias={keyAlias}
+                        usageText={usageText}
+                        createdAtText={createdAtText}
+                        planTitle={planTitle}
+                        viewDetailsLabel={t('llm.view-details')}
+                        onViewDetails={() => {
+                          setKeyDetails({
+                            keyAlias,
+                            usageText,
+                            host: typeof item?.host === 'string' ? item.host : '',
+                            models: applyVendorPrefixToModels(
+                              Array.isArray(item?.models) ? item.models : [],
+                              item?.vendor_name,
+                            ),
+                          });
+                        }}
+                        deleteAriaLabel={t('llm.key-delete-aria')}
+                        onDelete={() => {
+                          if (tokenId == null || academyId == null) return;
+                          setKeyToDelete({ tokenId, academyId });
+                        }}
+                      />
+                    </Box>
+                  );
+                })}
+              </VStack>
+            </>
           )}
         </Box>
       </Box>

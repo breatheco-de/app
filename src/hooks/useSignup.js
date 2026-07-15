@@ -47,6 +47,7 @@ const useSignup = () => {
   const redirectedFrom = getStorageItem('redirected-from');
   const couponsQuery = getQueryString('coupons');
   const addOnsSimple = getQueryString('add_ons');
+  const teamSeatsQuery = getQueryString('team_seats');
   const countryCodeQueryString = getQueryString('country_code');
 
   const addOnsIds = parseAddOnIdsFromQuery(addOnsSimple);
@@ -73,6 +74,18 @@ const useSignup = () => {
   } = state;
 
   const isPaymentIdle = paymentStatus === 'idle';
+
+  const getPaymentSuccessReturnUrl = ({
+    planSlug, cohortId, subscriptionId, planFinancingId,
+  } = {}) => {
+    const params = new URLSearchParams();
+    if (planSlug) params.set('plan', planSlug);
+    if (cohortId) params.set('cohort', cohortId);
+    if (subscriptionId) params.set('subscription_id', subscriptionId);
+    if (planFinancingId) params.set('plan_financing_id', planFinancingId);
+    const qs = params.toString();
+    return `${window.location.origin}/payment-success${qs ? `?${qs}` : ''}`;
+  };
 
   const stepsEnum = {
     CONTACT: 1,
@@ -237,6 +250,7 @@ const useSignup = () => {
         period: 'ONE_TIME',
         period_label: textInfo.one_payment,
         plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
+        financing_option_id: item?.id,
         description: translations?.one_payment_description || '',
         how_many_months: item?.how_many_months,
         type: 'PAYMENT',
@@ -322,6 +336,7 @@ const useSignup = () => {
           price: item?.monthly_price,
           priceText: `${currenciesSymbols[item?.currency?.code] || '$'}${item?.monthly_price} x ${item?.how_many_months}`,
           plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
+          financing_option_id: item?.id,
           description: financingOptionsDescription || '',
           period: 'FINANCING',
           period_label: textInfo.label.financing,
@@ -587,7 +602,7 @@ const useSignup = () => {
     }
   };
 
-  const handlePayment = async (data, disableRedirects = false, planContext = null) => {
+  const handlePayment = async (data, paymentMethod = null, disableRedirects = false, planContext = null) => {
     const plan = planContext || selectedPlan;
     const manyInstallmentsExists = plan?.how_many_months > 0 || plan?.period === 'FINANCING';
     const isTtrial = ['FREE', 'TRIAL'].includes(plan?.type);
@@ -601,7 +616,15 @@ const useSignup = () => {
           chosen_period: manyInstallmentsExists ? undefined : (plan?.period || 'HALF'),
           coupons: checkingData?.coupons,
           add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
-          payment_method: 'stripe',
+          ...(plan?.financing_option_id != null ? { financing_option_id: plan.financing_option_id } : {}),
+          ...(paymentMethod?.id != null ? { payment_method_id: paymentMethod.id } : {}),
+          ...(paymentMethod?.provider_settings?.stripe_payment_method_types?.length > 0 ? {
+            return_url: getPaymentSuccessReturnUrl({
+              planSlug: plan?.plan_slug,
+              cohortId: getQueryString('cohort'),
+            }),
+            cancel_url: `${window.location.origin}${router.asPath}`,
+          } : {}),
         };
       }
       return {
@@ -621,6 +644,10 @@ const useSignup = () => {
       });
 
       const transactionData = response.data;
+
+      if (transactionData?.checkout_url) {
+        return transactionData;
+      }
 
       if (transactionData?.status === 'FULFILLED') {
         setSubscriptionProcess({
@@ -695,7 +722,7 @@ const useSignup = () => {
     }
   };
 
-  const handleCoinbasePayment = async () => {
+  const handleCoinbasePayment = async (_data, paymentMethod = null) => {
     const manyInstallmentsExists = selectedPlan?.how_many_months > 0 || selectedPlan?.period === 'FINANCING';
     const isTtrial = ['FREE', 'TRIAL'].includes(selectedPlan?.type);
     if (isTtrial) {
@@ -719,8 +746,12 @@ const useSignup = () => {
           chosen_period: manyInstallmentsExists ? undefined : (selectedPlan?.period || 'HALF'),
           coupons: checkingData?.coupons,
           add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
-          payment_method: 'coinbase',
-          return_url: `${window.location.origin}/crypto-payment-success`,
+          ...(selectedPlan?.financing_option_id != null ? { financing_option_id: selectedPlan.financing_option_id } : {}),
+          ...(paymentMethod?.id != null ? { payment_method_id: paymentMethod.id } : {}),
+          return_url: getPaymentSuccessReturnUrl({
+            planSlug: selectedPlan?.plan_slug,
+            cohortId: getQueryString('cohort'),
+          }),
         };
       }
       return null;
@@ -769,6 +800,7 @@ const useSignup = () => {
     }
 
     const planAddons = Array.isArray(planAddonsOverride) ? planAddonsOverride : selectedPlanAddons;
+    const teamSeats = Number(teamSeatsQuery);
 
     const checkingBody = {
       type: 'PREVIEW',
@@ -777,6 +809,7 @@ const useSignup = () => {
       coupons: couponsQuery ? [couponsQuery] : undefined,
       country_code,
       service_items: addOnsArray,
+      team_seats: Number.isInteger(teamSeats) && teamSeats > 0 ? teamSeats : undefined,
     };
 
     try {
@@ -1042,7 +1075,7 @@ const useSignup = () => {
       const respPayment = await handlePayment({
         ...respData,
         installments: respData?.how_many_months,
-      }, disableRedirects);
+      }, null, disableRedirects);
 
       return respPayment;
     } catch (error) {
@@ -1067,7 +1100,7 @@ const useSignup = () => {
       const respPayment = await handlePayment({
         ...checking,
         installments: planForCheckout?.how_many_months,
-      }, true, planForCheckout);
+      }, null, true, planForCheckout);
 
       if (respPayment?.status_code >= 400) {
         setPaymentStatus('error');

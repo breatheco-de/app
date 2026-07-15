@@ -5,7 +5,6 @@ import axios from 'axios';
 import { Redis } from '@upstash/redis';
 import TagManager from 'react-gtm-module';
 import { parseQuerys } from './url';
-import { WHITE_LABEL_ACADEMY } from './variables';
 import bc from '../services/breathecode';
 import {
   areWhiteLabelEventsEnabled,
@@ -58,7 +57,7 @@ const getPrismicPages = async () => {
 };
 
 const getTechnologyAssets = async (slug) => {
-  const resp = axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset?limit=9000&technologies=${slug}&academy=${WHITE_LABEL_ACADEMY}`)
+  const resp = axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset?limit=9000&technologies=${slug}`)
     .then((res) => res.data.results)
     .catch(() => {
       console.error('SITEMAP: Error fetching Technology Assets');
@@ -119,7 +118,6 @@ const getAsset = async (type = '', extraQuerys = {}, category = '', onlyFirstFet
   const baseQuery = {
     asset_type: type || undefined,
     status: 'PUBLISHED',
-    academy: WHITE_LABEL_ACADEMY,
     expand: 'technologies',
     ...extraQuerys,
   };

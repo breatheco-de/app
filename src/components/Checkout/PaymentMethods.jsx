@@ -29,6 +29,7 @@ function PaymentMethods({
   handleRenewalPayment,
   handleCoinbaseRenewalPayment,
   hideSectionTitle,
+  hideProviderFinancedMethods,
 }) {
   const { t } = useTranslation('signup');
   const { isAuthenticated } = useAuth();
@@ -66,6 +67,7 @@ function PaymentMethods({
   const [accordionIndex, setAccordionIndex] = useState(null);
   const [showInitialInlineLoader, setShowInitialInlineLoader] = useState(hideSectionTitle);
   const [hasAttemptedMethodsFetch, setHasAttemptedMethodsFetch] = useState(false);
+  const [stripeCheckoutMethodId, setStripeCheckoutMethodId] = useState(null);
   const popupMonitorRef = useRef(null);
   const coinbasePollRef = useRef(null);
   const popupRef = useRef(null);
@@ -84,11 +86,14 @@ function PaymentMethods({
     if (!a?.is_credit_card && b?.is_credit_card) return 1;
     return 0;
   });
-  const shouldShowMethodsLoader = !hideSectionTitle && loader.paymentMethods && paymentMethods.length === 0;
+  const visiblePaymentMethods = hideProviderFinancedMethods
+    ? orderedPaymentMethods.filter((method) => !method.is_financed_managed_by_provider)
+    : orderedPaymentMethods;
+  const shouldShowMethodsLoader = !hideSectionTitle && loader.paymentMethods && visiblePaymentMethods.length === 0;
   const shouldShowInlineMethodsLoader = hideSectionTitle
-    && paymentMethods.length === 0
+    && visiblePaymentMethods.length === 0
     && (showInitialInlineLoader || loader.paymentMethods);
-  const defaultCreditCardIndex = orderedPaymentMethods.findIndex((method) => method.is_credit_card);
+  const defaultCreditCardIndex = visiblePaymentMethods.findIndex((method) => method.is_credit_card);
 
   useEffect(() => {
     if (defaultCreditCardIndex >= 0) {
@@ -213,7 +218,7 @@ function PaymentMethods({
     }
   };
 
-  const handleSubmit = async (actions, token) => {
+  const handleSubmit = async (actions, token, paymentMethod) => {
     const resp = await bc.payment().addCard({
       token: token.id,
       academy: selectedPlan.owner.id,
@@ -223,7 +228,7 @@ function PaymentMethods({
 
     if (data.status === 'ok') {
       try {
-        const respPayment = await paymentHandler({}, true);
+        const respPayment = await paymentHandler({}, paymentMethod, true);
         if (respPayment.status === 'FULFILLED') {
           setPaymentStatus('success');
           setIsSubmittingPayment(false);
@@ -259,10 +264,10 @@ function PaymentMethods({
     }
   };
 
-  const onSubmitCard = async (token, actions) => {
+  const onSubmitCard = async (token, actions, paymentMethod) => {
     setIsSubmittingPayment(true);
     setIsSubmittingCard(true);
-    await handleSubmit(actions, token);
+    await handleSubmit(actions, token, paymentMethod);
   };
 
   const handleTryAgain = () => {
@@ -319,7 +324,30 @@ function PaymentMethods({
     }
   };
 
-  const handleCoinbaseCharge = async () => {
+  const handleStripeCheckout = async (paymentMethod) => {
+    setIsSubmittingPayment(true);
+    setStripeCheckoutMethodId(paymentMethod?.id ?? null);
+    try {
+      const result = await paymentHandler({}, paymentMethod, true);
+
+      if (result?.checkout_url) {
+        window.location.href = result.checkout_url;
+        return;
+      }
+
+      setStripeCheckoutMethodId(null);
+      setPaymentStatus('error');
+      handlePaymentErrors(result || { detail: t('payment-not-processed') }, { setSubmitting: () => setIsSubmittingPayment(false) });
+    } catch (error) {
+      console.error('Error starting Stripe checkout:', error);
+      setStripeCheckoutMethodId(null);
+      setIsSubmittingPayment(false);
+      setPaymentStatus('error');
+      handlePaymentErrors(error?.response?.data, { setSubmitting: () => setIsSubmittingPayment(false) });
+    }
+  };
+
+  const handleCoinbaseCharge = async (paymentMethod) => {
     setIsCoinbaseLoading(true);
 
     const popup = window.open(
@@ -349,7 +377,7 @@ function PaymentMethods({
     }
 
     try {
-      const result = await coinbaseHandler();
+      const result = await coinbaseHandler({}, paymentMethod);
       const { data } = result;
 
       const chargeId = data?.charge_id;
@@ -455,7 +483,7 @@ function PaymentMethods({
           width="100%"
           index={typeof accordionIndex === 'number' ? accordionIndex : undefined}
           onChange={handleAccordionChange}
-          list={orderedPaymentMethods.map((method) => {
+          list={visiblePaymentMethods.map((method) => {
             if (!method.is_credit_card && !method.is_crypto) {
               return {
                 ...method,
@@ -497,6 +525,28 @@ function PaymentMethods({
                         />
                       </Box>
                     )}
+                    {Boolean(method?.provider_settings?.stripe_payment_method_types?.length) && (
+                      <>
+                        <ModalCardError
+                          isSubmitting={isSubmittingPayment}
+                          declinedModalProps={declinedModalProps}
+                          openDeclinedModal={openDeclinedModal}
+                          setOpenDeclinedModal={setOpenDeclinedModal}
+                          handleTryAgain={handleTryAgain}
+                          disableClose
+                        />
+                        <Button
+                          width="100%"
+                          variant="default"
+                          height="40px"
+                          mt="1rem"
+                          isLoading={isSubmittingPayment && stripeCheckoutMethodId === method.id}
+                          onClick={() => handleStripeCheckout(method)}
+                        >
+                          {t('common:proceed-to-payment')}
+                        </Button>
+                      </>
+                    )}
                   </Box>
                 ),
               };
@@ -510,7 +560,7 @@ function PaymentMethods({
                       {method.description}
                     </Text>
                     <Button
-                      onClick={handleCoinbaseCharge}
+                      onClick={() => handleCoinbaseCharge(method)}
                       width="100%"
                       variant="default"
                       height="40px"
@@ -597,7 +647,7 @@ function PaymentMethods({
                           onClick={async () => {
                             setIsSubmittingPayment(true);
                             try {
-                              const respPayment = await paymentHandler({}, true);
+                              const respPayment = await paymentHandler({}, method, true);
                               if (respPayment?.status === 'FULFILLED') {
                                 setPaymentStatus('success');
                                 setIsSubmittingPayment(false);
@@ -630,7 +680,7 @@ function PaymentMethods({
                           disableClose: true,
                           isSubmitting: isSubmittingCard,
                         }}
-                        onSubmit={onSubmitCard}
+                        onSubmit={(token, actions) => onSubmitCard(token, actions, method)}
                         onSaveCard={handleSaveCardForLater}
                       />
                     )
@@ -659,6 +709,7 @@ PaymentMethods.propTypes = {
   handleRenewalPayment: PropTypes.func,
   handleCoinbaseRenewalPayment: PropTypes.func,
   hideSectionTitle: PropTypes.bool,
+  hideProviderFinancedMethods: PropTypes.bool,
 };
 
 PaymentMethods.defaultProps = {
@@ -667,6 +718,7 @@ PaymentMethods.defaultProps = {
   handleRenewalPayment: null,
   handleCoinbaseRenewalPayment: null,
   hideSectionTitle: false,
+  hideProviderFinancedMethods: false,
 };
 
 export default PaymentMethods;

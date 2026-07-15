@@ -8,11 +8,10 @@ import { toCapitalize } from '../../../utils';
 import Heading from '../../../components/Heading';
 import ProjectList from '../../../components/Assets/ProjectList';
 import { parseQuerys } from '../../../utils/url';
-import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 import PublicPortalGate from '../../../components/PublicPortalGate';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000&academy=${WHITE_LABEL_ACADEMY}`, {
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000`, {
     method: 'GET',
     headers: {
       Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
@@ -42,7 +41,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     // Fetch technology data
     let techs;
     try {
-      const responseTechs = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?slug=${technology}&limit=1000&academy=${WHITE_LABEL_ACADEMY}`, {
+      const responseTechs = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?slug=${technology}&limit=1000`, {
         method: 'GET',
         headers: {
           Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
@@ -64,7 +63,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         asset_type: 'EXERCISE',
         visibility: 'PUBLIC',
         status: 'PUBLISHED',
-        academy: WHITE_LABEL_ACADEMY,
         limit: 1000,
         technologies: technology,
       });
