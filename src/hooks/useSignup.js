@@ -155,18 +155,18 @@ const useSignup = () => {
     }
   };
 
-  const resolveCheckoutFeaturedInfo = async (planData) => {
-    if (Array.isArray(planData?.features) && planData.features.length > 0) {
-      return normalizeCheckoutBullets(planData.features);
+  const resolveCheckoutFeaturedInfo = async (planInfo) => {
+    if (Array.isArray(planInfo?.features) && planInfo.features.length > 0) {
+      return normalizeCheckoutBullets(planInfo.features);
     }
 
-    const slug = encodeURIComponent(planData?.slug);
+    const slug = encodeURIComponent(planInfo?.slug);
     const resp = await bc.payment({ country_code }).getServiceItemsByPlan(slug);
     if (!resp) {
       throw new Error('The plan does not exist');
     }
 
-    const legacyInfo = await getLegacyCheckoutFeaturedInfo(planData?.slug, resp?.data);
+    const legacyInfo = await getLegacyCheckoutFeaturedInfo(planInfo?.slug, resp?.data);
     return normalizeCheckoutBullets(legacyInfo);
   };
 
