@@ -567,10 +567,7 @@ const useCheckout = () => {
         planType: 'original',
       });
 
-      const accordionList = processedPlan?.featured_info?.map((info) => ({
-        title: info.features[0]?.title || slugToTitle(info.service?.slug),
-        description: info.features[0]?.description,
-      })) || [];
+      const accordionList = processedPlan?.featured_info || [];
 
       let accordionListWithAddOns = accordionList;
       if (addOnsQS) {

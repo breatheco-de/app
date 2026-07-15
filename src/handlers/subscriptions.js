@@ -1,7 +1,39 @@
 /* eslint-disable camelcase */
 import { slugToTitle, unSlugifyCapitalize } from '../utils';
+import normalizeCheckoutBullets from '../utils/normalizeCheckoutBullets';
 import { BASE_PLAN, currenciesSymbols } from '../utils/variables';
 import bc from '../services/breathecode';
+
+const getLegacyCheckoutFeaturedInfo = async (planSlug, fallbackFeaturedInfo, locale = 'en') => {
+  if (typeof window === 'undefined') return fallbackFeaturedInfo;
+
+  try {
+    const response = await fetch(`/locales/${locale}/plans/${planSlug}.json`);
+    if (!response.ok) return fallbackFeaturedInfo;
+
+    const planTranslation = await response.json();
+    const checkoutFeatures = planTranslation?.info?.checkout_features;
+
+    return Array.isArray(checkoutFeatures) ? checkoutFeatures : fallbackFeaturedInfo;
+  } catch (error) {
+    return fallbackFeaturedInfo;
+  }
+};
+
+const resolveCheckoutFeaturedInfo = async (planData, countryCode, locale = 'en') => {
+  if (Array.isArray(planData?.features) && planData.features.length > 0) {
+    return normalizeCheckoutBullets(planData.features);
+  }
+
+  const slug = encodeURIComponent(planData?.slug);
+  const resp = await bc.payment({ country_code: countryCode }).getServiceItemsByPlan(slug);
+  if (!resp) {
+    throw new Error('The plan does not exist');
+  }
+
+  const legacyInfo = await getLegacyCheckoutFeaturedInfo(planData?.slug, resp?.data, locale);
+  return normalizeCheckoutBullets(legacyInfo);
+};
 
 export const SUBS_STATUS = {
   ACTIVE: 'ACTIVE',
@@ -31,6 +63,7 @@ export const processPlans = (data, {
   yearly = true,
   planType = '',
   country_code = undefined,
+  locale = 'en',
 } = {}, translations = {}) => new Promise((resolve, reject) => {
   const process = async () => {
     try {
@@ -41,12 +74,7 @@ export const processPlans = (data, {
         return `${symbol}${numPrice % 1 === 0 ? numPrice.toFixed(0) : numPrice.toFixed(2)}`;
       };
 
-      const slug = encodeURIComponent(data?.slug);
-      const resp = await bc.payment({ country_code }).getServiceItemsByPlan(slug);
-      if (!resp) {
-        throw new Error('The plan does not exist');
-      }
-      const planPropsData = Array.isArray(translations.checkout_featured_info(data?.slug)) ? translations.checkout_featured_info(data?.slug) : resp?.data;
+      const planPropsData = await resolveCheckoutFeaturedInfo(data, country_code, locale);
       const owner = data?.owner;
       const existsAmountPerHalf = data?.price_per_half > 0;
       const existsAmountPerMonth = data?.price_per_month > 0;
@@ -290,7 +318,6 @@ export const getTranslations = (t = () => { }) => {
     quarterly_payment_description: t('signup:quarterly_payment_description'),
     half_yearly_payment_description: t('signup:half_yearly_payment_description'),
     yearly_payment_description: t('signup:yearly_payment_description'),
-    checkout_featured_info: (planSlug) => t(`signup:custom-plans-pricing.${planSlug}.checkout_features`, {}, { returnObjects: true }),
     financing_description: (price, months, currency) => t('signup:financing_many_months_description', { monthly_price: price, many_months: months, currency }),
     monthly: t('signup:info.monthly'),
     quarterly: t('signup:info.quarterly'),

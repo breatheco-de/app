@@ -18,6 +18,7 @@ import {
 } from '../utils';
 import { currenciesSymbols, BASE_PLAN, SILENT_CODE } from '../utils/variables';
 import { reportDatalayer } from '../utils/requests';
+import normalizeCheckoutBullets from '../utils/normalizeCheckoutBullets';
 import { usePersistent } from './usePersistent';
 import useSession from './useSession';
 import useAuth from './useAuth';
@@ -128,7 +129,6 @@ const useSignup = () => {
     quarterly_payment_description: t('signup:quarterly_payment_description'),
     half_yearly_payment_description: t('signup:half_yearly_payment_description'),
     yearly_payment_description: t('signup:yearly_payment_description'),
-    checkout_featured_info: (planSlug) => t(`signup:custom-plans-pricing.${planSlug}.checkout_features`, {}, { returnObjects: true }),
     financing_description: (price, months, currency) => t('signup:financing_many_months_description', { monthly_price: price, many_months: months, currency }),
     monthly: t('signup:info.monthly'),
     quarterly: t('signup:info.quarterly'),
@@ -138,10 +138,7 @@ const useSignup = () => {
     many_months_payment: (qty) => t('signup:many_months_payment', { qty }),
   };
 
-  const getCheckoutFeaturedInfo = async (planSlug, fallbackFeaturedInfo) => {
-    const customCheckoutFeaturedInfo = translations.checkout_featured_info(planSlug);
-    if (Array.isArray(customCheckoutFeaturedInfo)) return customCheckoutFeaturedInfo;
-
+  const getLegacyCheckoutFeaturedInfo = async (planSlug, fallbackFeaturedInfo) => {
     if (typeof window === 'undefined') return fallbackFeaturedInfo;
 
     const localeToUse = locale || 'en';
@@ -156,6 +153,21 @@ const useSignup = () => {
     } catch (error) {
       return fallbackFeaturedInfo;
     }
+  };
+
+  const resolveCheckoutFeaturedInfo = async (planInfo) => {
+    if (Array.isArray(planInfo?.features) && planInfo.features.length > 0) {
+      return normalizeCheckoutBullets(planInfo.features);
+    }
+
+    const slug = encodeURIComponent(planInfo?.slug);
+    const resp = await bc.payment({ country_code }).getServiceItemsByPlan(slug);
+    if (!resp) {
+      throw new Error('The plan does not exist');
+    }
+
+    const legacyInfo = await getLegacyCheckoutFeaturedInfo(planInfo?.slug, resp?.data);
+    return normalizeCheckoutBullets(legacyInfo);
   };
 
   /**
@@ -178,12 +190,7 @@ const useSignup = () => {
     planType = '',
   } = {}) => {
     try {
-      const slug = encodeURIComponent(data?.slug);
-      const resp = await bc.payment({ country_code }).getServiceItemsByPlan(slug);
-      if (!resp) {
-        throw new Error('The plan does not exist');
-      }
-      const featuredInfo = await getCheckoutFeaturedInfo(data?.slug, resp?.data);
+      const featuredInfo = await resolveCheckoutFeaturedInfo(data);
       const owner = data?.owner;
 
       const existsAmountPerHalf = data?.price_per_half > 0;
