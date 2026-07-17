@@ -93,55 +93,55 @@ export const getStaticProps = async ({ params, locale, locales }) => withSafeSta
     },
   ].filter((item) => item?.slug !== undefined);
 
-    const structuredData = {
-      '@context': 'https://schema.org',
-      '@type': 'Article',
-      name: data?.title,
-      description: data?.description,
-      url: `${ORIGIN_HOST}${langPrefix}/how-to/${slug}`,
-      image: preview || staticImage,
-      datePublished: data?.published_at,
-      dateModified: data?.updated_at,
-      author: data?.author ? {
-        '@type': 'Person',
-        name: `${data?.author?.first_name} ${data?.author?.last_name}`,
-      } : null,
-      keywords: data?.seo_keywords,
-      mainEntityOfPage: {
-        '@type': 'WebPage',
-        '@id': `${ORIGIN_HOST}${langPrefix}/how-to/${slug}`,
-      },
-    };
-    const cleanedStructuredData = cleanObject(structuredData);
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    name: data?.title,
+    description: data?.description,
+    url: `${ORIGIN_HOST}${langPrefix}/how-to/${slug}`,
+    image: preview || staticImage,
+    datePublished: data?.published_at,
+    dateModified: data?.updated_at,
+    author: data?.author ? {
+      '@type': 'Person',
+      name: `${data?.author?.first_name} ${data?.author?.last_name}`,
+    } : null,
+    keywords: data?.seo_keywords,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${ORIGIN_HOST}${langPrefix}/how-to/${slug}`,
+    },
+  };
+  const cleanedStructuredData = cleanObject(structuredData);
 
-    return {
-      props: {
-        seo: {
-          title,
-          description: description || '',
-          image: cleanedStructuredData.image,
-          type: 'article',
-          translations: translationArray,
-          pathConnector: '/how-to',
-          url: `/how-to/${slug}`,
-          slug,
-          keywords: data?.seo_keywords || '',
-          card: 'default',
-          locales,
-          locale,
-          publishedTime: data?.created_at || '',
-          modifiedTime: data?.updated_at || '',
-        },
+  return {
+    props: {
+      seo: {
+        title,
+        description: description || '',
+        image: cleanedStructuredData.image,
+        type: 'article',
         translations: translationArray,
-        // page props
-        fallback: false,
-        data: {
-          ...data,
-          structuredData: cleanedStructuredData,
-        },
-        markdown: markdown || '',
+        pathConnector: '/how-to',
+        url: `/how-to/${slug}`,
+        slug,
+        keywords: data?.seo_keywords || '',
+        card: 'default',
+        locales,
+        locale,
+        publishedTime: data?.created_at || '',
+        modifiedTime: data?.updated_at || '',
       },
-    };
+      translations: translationArray,
+      // page props
+      fallback: false,
+      data: {
+        ...data,
+        structuredData: cleanedStructuredData,
+      },
+      markdown: markdown || '',
+    },
+  };
 }, `how-to/${params?.slug}`);
 
 export default function HowToSlug({ data, markdown }) {
