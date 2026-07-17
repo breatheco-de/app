@@ -9,8 +9,12 @@ import Heading from '../../../components/Heading';
 import ProjectList from '../../../components/Assets/ProjectList';
 import { parseQuerys } from '../../../utils/url';
 import PublicPortalGate from '../../../components/PublicPortalGate';
+import {
+  withSafeStaticPaths,
+  buildLocalePaths,
+} from '../../../utils/staticGeneration';
 
-export const getStaticPaths = async ({ locales }) => {
+export const getStaticPaths = async ({ locales }) => withSafeStaticPaths(async () => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000`, {
     method: 'GET',
     headers: {
@@ -18,20 +22,13 @@ export const getStaticPaths = async ({ locales }) => {
       Academy: 4,
     },
   });
-  const data = resp?.status > 400 ? {} : await resp?.json();
+  if (!resp.ok) {
+    throw new Error(`academy technology fetch failed with status ${resp.status}`);
+  }
 
-  const paths = data?.results?.length > 0 ? data?.results?.flatMap((res) => locales.map((locale) => ({
-    params: {
-      technology: res.slug,
-    },
-    locale,
-  }))) : [];
-
-  return {
-    fallback: false,
-    paths,
-  };
-};
+  const data = await resp.json();
+  return buildLocalePaths(data?.results || [], locales, 'technology');
+});
 
 export const getStaticProps = async ({ params, locale, locales }) => {
   try {
