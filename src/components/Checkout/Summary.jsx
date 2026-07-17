@@ -7,7 +7,7 @@ import Text from '../Text';
 import signupAction from '../../store/actions/signupAction';
 import bc from '../../services/breathecode';
 import { reportDatalayer } from '../../utils/requests';
-import { getQueryString, getStorageItem, getBrowserInfo } from '../../utils';
+import { getQueryString, getBrowserInfo } from '../../utils';
 import axiosInstance from '../../axios';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useSubscriptions from '../../hooks/useSubscriptions';
@@ -30,8 +30,6 @@ function Summary() {
   const { createToast } = useCustomToast({ toastId: 'payment-request-data-detail-error' });
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [cohortFound, setCohortFound] = useState(undefined);
-  const redirect = getStorageItem('redirect');
-  const redirectedFrom = getStorageItem('redirected-from');
   const router = useRouter();
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const cohortId = Number(getQueryString('cohort'));
@@ -189,13 +187,11 @@ function Summary() {
             } else {
               await initializeSubscriptionsData();
               clearInterval(interval);
-              if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
-                router.push(redirect || redirectedFrom);
-                localStorage.removeItem('redirect');
-                localStorage.removeItem('redirected-from');
-              } else {
-                router.push('/choose-program');
-              }
+              // After a plan purchase, prefer the program picker over any external
+              // callback redirect so the user can enter their cohort.
+              localStorage.removeItem('redirect');
+              localStorage.removeItem('redirected-from');
+              router.push('/choose-program');
             }
           }
         } finally {

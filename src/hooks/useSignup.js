@@ -692,7 +692,13 @@ const useSignup = () => {
         });
 
         if (!disableRedirects) {
-          if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
+          const cohortInCheckout = getQueryString('cohort');
+          // Cohort checkout must stay in the enrollment flow (Summary / payment-success),
+          // not jump to an external callback URL.
+          if (cohortInCheckout) {
+            localStorage.removeItem('redirect');
+            localStorage.removeItem('redirected-from');
+          } else if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
             router.push(redirect || redirectedFrom);
             localStorage.removeItem('redirect');
             localStorage.removeItem('redirected-from');

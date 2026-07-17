@@ -12,7 +12,7 @@ import useCohortHandler from '../hooks/useCohortHandler';
 import useCustomToast from '../hooks/useCustomToast';
 import bc from '../services/breathecode';
 import { getCohort } from '../lib/admissions';
-import { getStorageItem, getBrowserInfo } from '../utils';
+import { getBrowserInfo } from '../utils';
 import { reportDatalayer } from '../utils/requests';
 import axiosInstance from '../axios';
 import asPrivate from '../context/PrivateRouteWrapper';
@@ -43,16 +43,11 @@ function PaymentSuccess() {
   const [timedOut, setTimedOut] = useState(false);
   const pollAttemptsRef = useRef(0);
 
-  const redirect = getStorageItem('redirect');
-  const redirectedFrom = getStorageItem('redirected-from');
-
   const redirectToPrograms = () => {
-    if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
-      router.push(redirect || redirectedFrom);
-      localStorage.removeItem('redirect');
-      localStorage.removeItem('redirected-from');
-      return;
-    }
+    // After plan checkout, always land on choose-program so the user can enter
+    // their cohort. External callback redirects must not interrupt that flow.
+    localStorage.removeItem('redirect');
+    localStorage.removeItem('redirected-from');
     router.push('/choose-program');
   };
 
