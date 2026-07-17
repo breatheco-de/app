@@ -43,6 +43,10 @@ import useSignup from '../../hooks/useSignup';
 import useCustomToast from '../../hooks/useCustomToast';
 import AddToCalendar from '../../components/addToCalendar';
 import FixedBottomCta from '../../components/Assets/FixedBottomCta';
+import {
+  withSafeStaticPaths,
+  buildLocalePaths,
+} from '../../utils/staticGeneration';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -64,22 +68,13 @@ const assetTypeDict = {
   EXERCISE: 'interactive-exercise',
 };
 
-export const getStaticPaths = async ({ locales }) => {
+export const getStaticPaths = async ({ locales }) => withSafeStaticPaths(async () => {
   const data = await fetchEventsForStaticGeneration();
+  const activeEvents = (Array.isArray(data) ? data : [])
+    .filter((ev) => ev?.slug && ['ACTIVE', 'FINISHED'].includes(ev.status));
 
-  const paths = data.filter((ev) => ev?.slug && ['ACTIVE', 'FINISHED'].includes(ev.status))
-    .flatMap((res) => locales.map((locale) => ({
-      params: {
-        event_slug: res?.slug,
-      },
-      locale,
-    })));
-
-  return {
-    paths,
-    fallback: true,
-  };
-};
+  return buildLocalePaths(activeEvents, locales, 'event_slug');
+}, { fallback: true });
 
 export const getStaticProps = async ({ params, locale }) => {
   const { event_slug: slug } = params;

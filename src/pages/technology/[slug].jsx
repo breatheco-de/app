@@ -26,6 +26,10 @@ import {
   isEventVisibleForWhiteLabel,
   getWhiteLabelAcademyFeatures,
 } from '../../utils/whiteLabelEvents';
+import {
+  withSafeStaticPaths,
+  buildLocalePaths,
+} from '../../utils/staticGeneration';
 
 function DefaultTechnologySection({ technologyData, lessonMaterials, contentPerEachPage, count, lang, fetchData }) {
   const { t } = useTranslation('technologies');
@@ -96,31 +100,33 @@ const resolveLocalizedField = (field, normalizedLocale) => {
   return '';
 };
 
-export const getStaticPaths = async ({ locales }) => {
+export const getStaticPaths = async ({ locales }) => withSafeStaticPaths(async () => {
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/technology?visibility=PUBLIC`);
-  const publicTechs = await response.json();
-
-  if (!publicTechs || publicTechs.length === 0) {
-    return {
-      fallback: true,
-      paths: [],
-    };
+  if (!response.ok) {
+    throw new Error(`public technologies fetch failed with status ${response.status}`);
   }
-  const relevantSlugs = publicTechs.map((tech) => tech.slug);
 
-  const assetList = await import('../../../public/asset-list.json').then((res) => res.default);
-  const filteredTechnologies = assetList.landingTechnologies.filter((tech) => relevantSlugs.includes(tech.slug));
+  const publicTechs = await response.json();
+  if (!Array.isArray(publicTechs) || publicTechs.length === 0) {
+    return [];
+  }
 
-  const paths = filteredTechnologies.flatMap((tech) => locales.map((locale) => ({
-    params: { slug: tech.slug },
-    locale,
-  })));
+  const relevantSlugs = new Set(publicTechs.map((tech) => tech?.slug).filter(Boolean));
+  const assetList = await import('../../../public/asset-list.json').then((res) => res.default || res);
+  const landingTechnologies = Array.isArray(assetList?.landingTechnologies)
+    ? assetList.landingTechnologies
+    : [];
 
-  return {
-    fallback: true,
-    paths,
-  };
-};
+  const uniqueTechs = [];
+  const seen = new Set();
+  landingTechnologies.forEach((tech) => {
+    if (!tech?.slug || !relevantSlugs.has(tech.slug) || seen.has(tech.slug)) return;
+    seen.add(tech.slug);
+    uniqueTechs.push(tech);
+  });
+
+  return buildLocalePaths(uniqueTechs, locales, 'slug');
+}, { fallback: 'blocking' });
 
 export const getStaticProps = async ({ params, locale, locales }) => {
   try {
