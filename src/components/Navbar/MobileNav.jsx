@@ -10,14 +10,13 @@ import MobileNavItem from './MobileNavItem';
 import NextChakraLink from '../NextChakraLink';
 import useStyle from '../../hooks/useStyle';
 import { setStorageItem } from '../../utils';
+import { isPrismicEnabled } from '../../utils/variables';
 
 function MobileNav({
   navbarItems, onClickLink,
 }) {
   const { t } = useTranslation('navbar');
   const router = useRouter();
-  const prismicRef = process.env.PRISMIC_REF;
-  const prismicApi = process.env.PRISMIC_API;
   const { navbarBackground } = useStyle();
 
   return (
@@ -34,7 +33,7 @@ function MobileNav({
       borderColor={useColorModeValue('gray.200', 'gray.900')}
     >
       {navbarItems.map((item) => {
-        if (item.slug === 'courses' && !prismicRef && !prismicApi) {
+        if (item.slug === 'courses' && !isPrismicEnabled) {
           return null;
         }
 

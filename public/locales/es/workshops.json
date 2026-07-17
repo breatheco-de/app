@@ -83,5 +83,61 @@
   "toast-default": "No te pierdas el próximo workshop. ¡Guarda tu plaza!",
   "toast-dynamic": "El evento {{title}} comienza el {{date}}. ¡No te lo pierdas!",
   "toast-dynamic-short": "El evento {{title}} comienza pronto. ¡No te lo pierdas!",
-  "toast-host-fallback": "nuestro equipo"
+  "toast-host-fallback": "nuestro equipo",
+  "public-landing": {
+    "starting-soon": "Empiezan pronto",
+    "hero": {
+      "title": "Únete a otros programadores en vivo resolviendo desafíos técnicos o de",
+      "highlight": "carrera",
+      "description": "Los workshops son uno de los 4 pilares comprobados para dominar habilidades técnicas. ¡Aprende más!",
+      "buttonLabel": "REGÍSTRATE",
+      "buttonUrl": "/es/pricing?plan=basic",
+      "image": "https://images.prismic.io/4geeks/49e5e3dc-81b6-4139-a80d-c79774261961_animacion-header-transparente.gif?auto=compress,format&rect=0,0,600,500&w=400&h=333",
+      "imageAlt": "Avatares de introducción"
+    },
+    "sections": [
+      {
+        "title": "Mira e interactúa con expertos reales mientras resuelven desafíos de la vida real",
+        "bullets": [
+          "Mejor enfoque para diferentes problemas.",
+          "Nuevas técnicas para programar más rápido y mejor.",
+          "Obtén respuestas a tus preguntas."
+        ],
+        "buttonLabel": "REGÍSTRATE GRATIS",
+        "buttonUrl": "/es/pricing?plan=basic",
+        "image": "https://images.prismic.io/4geeks/4d558bc2-2037-49a2-8735-fb10f8980551_Group+6570+%282%29.png?auto=compress,format",
+        "imageAlt": "Mentores",
+        "imagePosition": "right"
+      },
+      {
+        "title": "Más de un workshop",
+        "description": "Los estudios muestran que olvidamos hasta el 50% de la información nueva dentro de la primera hora de aprenderla.\n\nEn un día, habíamos olvidado alrededor del 70% de la información nueva, y después de una semana, habíamos olvidado cerca del 90%.",
+        "buttonLabel": "Suscríbete a los workshops",
+        "buttonUrl": "/es/pricing?plan=basic",
+        "image": "https://images.prismic.io/4geeks/e649cf2c-0723-48c2-a18c-234633c9c872_learning-repetition.gif?auto=compress,format",
+        "imageAlt": "repetición del aprendizaje",
+        "imagePosition": "left"
+      },
+      {
+        "title": "Los temas más populares del mercado",
+        "subtitle": "Suscríbete a tu tecnología favorita",
+        "description": "Data science, React, Python, construcción de perfil, preparación de entrevistas y más temas se cubrirán con proyectos geniales en nuestros workshops semanales.",
+        "buttonLabel": "Ver precios",
+        "buttonUrl": "/es/pricing?plan=basic",
+        "linkButton": true,
+        "image": "https://images.prismic.io/4geeks/7bcad6f9-292b-4eee-b462-6ecf9f850aa3_Group+6584+%281%29.png?auto=compress,format",
+        "imageAlt": "Temas populares",
+        "imagePosition": "right"
+      },
+      {
+        "title": "Conéctate con otros desarrolladores",
+        "description": "Aprender juntos es divertido. Conéctate con cientos de desarrolladores que están a tu mismo nivel y aprendiendo las mismas tecnologías.",
+        "buttonLabel": "Regístrate gratis",
+        "buttonUrl": "/es/pricing?plan=basic",
+        "image": "https://images.prismic.io/4geeks/e6909c01-2fc1-4afa-b0a1-1d10269cab09_Group+6169+%281%29.png?auto=compress,format",
+        "imageAlt": "Conéctate con desarrolladores",
+        "imagePosition": "left"
+      }
+    ]
+  }
 }
