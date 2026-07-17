@@ -83,5 +83,61 @@
   "toast-default": "Don't miss the next workshop. Save your spot!",
   "toast-dynamic": "The event {{title}} starts on {{date}}. Don't miss it!",
   "toast-dynamic-short": "The event {{title}} starts soon. Don't miss it!",
-  "toast-host-fallback": "our team"
+  "toast-host-fallback": "our team",
+  "public-landing": {
+    "starting-soon": "Starting soon",
+    "hero": {
+      "title": "Join other coders live solving technical or career",
+      "highlight": "challenges",
+      "description": "Workshops are one of the 4 proven pillars to mastery when learning technical skills, learn more.",
+      "buttonLabel": "SIGN UP",
+      "buttonUrl": "/pricing?plan=basic",
+      "image": "https://images.prismic.io/4geeks/49e5e3dc-81b6-4139-a80d-c79774261961_animacion-header-transparente.gif?auto=compress,format&rect=0,0,600,500&w=400&h=333",
+      "imageAlt": "Introduction avatars"
+    },
+    "sections": [
+      {
+        "title": "Watch and interact with real experts as they solve real life challenges",
+        "bullets": [
+          "Best approach to different problems.",
+          "New techniques to code faster and better.",
+          "Get your questions answered."
+        ],
+        "buttonLabel": "SIGN UP FOR FREE",
+        "buttonUrl": "/pricing?plan=basic",
+        "image": "https://images.prismic.io/4geeks/4d558bc2-2037-49a2-8735-fb10f8980551_Group+6570+%282%29.png?auto=compress,format",
+        "imageAlt": "Mentors",
+        "imagePosition": "right"
+      },
+      {
+        "title": "More than one workshop",
+        "description": "Studies show that we forget up to 50% of new information within the first hour of learning it.\n\nWithin a day, we had forgotten around 70% of the new information, and after a week, we had forgotten about 90%.",
+        "buttonLabel": "Subscribe to workshops",
+        "buttonUrl": "/pricing?plan=basic",
+        "image": "https://images.prismic.io/4geeks/e649cf2c-0723-48c2-a18c-234633c9c872_learning-repetition.gif?auto=compress,format",
+        "imageAlt": "learning repetition",
+        "imagePosition": "left"
+      },
+      {
+        "title": "The most popular topics in the market",
+        "subtitle": "Subscribe to your favorite technology",
+        "description": "Data science, React, Python, Profile Building, Interview Preparation, and more subjects will be covered with cool projects in our weekly workshops.",
+        "buttonLabel": "See pricing",
+        "buttonUrl": "/pricing?plan=basic",
+        "linkButton": true,
+        "image": "https://images.prismic.io/4geeks/7bcad6f9-292b-4eee-b462-6ecf9f850aa3_Group+6584+%281%29.png?auto=compress,format",
+        "imageAlt": "Popular topics",
+        "imagePosition": "right"
+      },
+      {
+        "title": "Connect with other developers",
+        "description": "Learning together is fun, connect with hundreds of developers who are on your same level and learning the same technologies.",
+        "buttonLabel": "Sign up for free",
+        "buttonUrl": "/pricing?plan=basic",
+        "image": "https://images.prismic.io/4geeks/e6909c01-2fc1-4afa-b0a1-1d10269cab09_Group+6169+%281%29.png?auto=compress,format",
+        "imageAlt": "Connect with developers",
+        "imagePosition": "left"
+      }
+    ]
+  }
 }

@@ -83,16 +83,40 @@ export const getStaticPaths = async ({ locales }) => {
 
 export const getStaticProps = async ({ params, locale }) => {
   const { event_slug: slug } = params;
-  const resp = await bc.events({ context: 'true' }).getEvent(slug).catch(() => ({
-    statusText: 'not-found',
-  }));
+
+  // Axios interceptor resolves HTTP/network errors instead of throwing, so do not rely on .catch().
+  const resp = await bc.events({ context: 'true' }).getEvent(slug);
   const data = resp?.data;
+  const httpStatus = resp?.status;
+  const requestFailed = Boolean(resp?.isAxiosError) || (!httpStatus && !data?.slug);
 
   const features = await getWhiteLabelAcademyFeatures();
 
-  if (resp.statusText === 'not-found' || !data?.slug || !['ACTIVE', 'FINISHED'].includes(data.status)) {
+  // Genuine missing/invalid event → 404. Transient API/host failures let the client refetch.
+  if (httpStatus === 404 || (data?.slug && !['ACTIVE', 'FINISHED'].includes(data.status))) {
     return {
       notFound: true,
+      revalidate: 60,
+    };
+  }
+
+  if (requestFailed || !data?.slug) {
+    return {
+      props: {
+        seo: {
+          title: 'Workshops',
+          description: '',
+          pathConnector: '/workshops',
+          url: `/workshops/${slug}`,
+          slug,
+          type: 'event',
+          locale,
+        },
+        translations: [],
+        disableLangSwitcher: true,
+        eventData: null,
+        asset: null,
+      },
       revalidate: 60,
     };
   }

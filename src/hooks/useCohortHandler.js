@@ -102,6 +102,22 @@ function useCohortHandler() {
   };
 
   const getCohortsModules = async (cohorts, macroSlugOptions = {}) => {
+    const { redirectOnSyllabusError = false, ...slugOptions } = macroSlugOptions;
+
+    const showSyllabusErrorAndMaybeRedirect = () => {
+      createToast({
+        position: 'top',
+        title: t('alert-message:error-fetching-syllabus'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+
+      if (redirectOnSyllabusError) {
+        router.push('/choose-program');
+      }
+    };
+
     try {
       const assignmentsMap = {};
 
@@ -114,7 +130,7 @@ function useCohortHandler() {
 
       const getRequestKeyForCohort = (cohort) => getCohortModulesRequestKey(
         cohort,
-        getMacroSlugForCohortSyllabus(cohort, cohorts, macroSlugOptions),
+        getMacroSlugForCohortSyllabus(cohort, cohorts, slugOptions),
       );
 
       const cohortsToRequest = cohortsToFetch.filter((cohort) => !cohortModulesRequests.has(getRequestKeyForCohort(cohort)));
@@ -186,7 +202,7 @@ function useCohortHandler() {
       const tasksByCohortPromise = fetchTasksByCohort();
 
       const getCohortModulesRequest = (cohort) => {
-        const macroSlug = getMacroSlugForCohortSyllabus(cohort, cohorts, macroSlugOptions);
+        const macroSlug = getMacroSlugForCohortSyllabus(cohort, cohorts, slugOptions);
         const requestKey = getCohortModulesRequestKey(cohort, macroSlug);
 
         if (cohortModulesRequests.has(requestKey)) return cohortModulesRequests.get(requestKey);
@@ -303,14 +319,13 @@ function useCohortHandler() {
 
       setCohortsAssingments({ ...cohortsAssignments, ...assignmentsMap });
 
-      if (Object.keys(assignmentsMap).length === 0 && cohortsToFetch.length > 0) {
-        createToast({
-          position: 'top',
-          title: t('alert-message:error-fetching-syllabus'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
+      const hasLoadedModules = cohorts.some((cohort) => (
+        Array.isArray(assignmentsMap[cohort.slug]?.modules)
+        || Array.isArray(cohortsAssignments[cohort.slug]?.modules)
+      ));
+
+      if (!hasLoadedModules && cohorts.length > 0) {
+        showSyllabusErrorAndMaybeRedirect();
       }
 
       return assignmentsMap;
@@ -323,13 +338,7 @@ function useCohortHandler() {
         url: e?.config?.url,
         method: e?.config?.method,
       });
-      createToast({
-        position: 'top',
-        title: t('alert-message:error-fetching-syllabus'),
-        status: 'error',
-        duration: 7000,
-        isClosable: true,
-      });
+      showSyllabusErrorAndMaybeRedirect();
 
       return {};
     }
@@ -457,7 +466,19 @@ function useCohortHandler() {
           : [currentCohort];
 
         const explicitBatchMacroSlug = currentCohort.micro_cohorts?.length ? currentCohort.slug : undefined;
-        await getCohortsModules(cohorts, { routeMacroSlug, explicitBatchMacroSlug });
+        const assignmentsMap = await getCohortsModules(cohorts, {
+          routeMacroSlug,
+          explicitBatchMacroSlug,
+          redirectOnSyllabusError: true,
+        });
+
+        const hasLoadedModules = cohorts.some((cohort) => (
+          Array.isArray(assignmentsMap?.[cohort.slug]?.modules)
+        ));
+
+        if (!hasLoadedModules) {
+          return undefined;
+        }
 
         setCohortSession(currentCohort);
         return currentCohort;

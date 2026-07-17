@@ -179,6 +179,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     VERCEL_ENV: process.env.VERCEL_ENV,
     PRISMIC_REF: process.env.PRISMIC_REF,
     PRISMIC_API: process.env.PRISMIC_API,
+    PRISMIC_ENABLED: process.env.PRISMIC_ENABLED,
     WHITE_LABEL_ACADEMY: process.env.WHITE_LABEL_ACADEMY,
     DOMAIN_NAME: process.env.DOMAIN_NAME,
     BASE_PLAN: process.env.BASE_PLAN,

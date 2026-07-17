@@ -20,6 +20,13 @@ const normalizedDomainName = typeof DOMAIN_NAME === 'string'
 /** True when DOMAIN_NAME is set and is not the main 4Geeks site. */
 export const isWhiteLabelAcademy = normalizedDomainName.length > 0
   && normalizedDomainName !== 'https://4geeks.com';
+
+/**
+ * Prismic CMS is opt-in for builds/deploys.
+ * Set PRISMIC_ENABLED=true (and valid PRISMIC_API / PRISMIC_REF) to turn it back on.
+ */
+export const isPrismicEnabled = process.env.PRISMIC_ENABLED === 'true';
+
 export const excludeCagetoriesFor = {
   lessons: 'how-to,como,blog-us,blog-es',
 };
