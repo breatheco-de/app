@@ -220,6 +220,7 @@ const useCheckout = () => {
   const plan = getQueryString('plan');
   const planId = getQueryString('plan_id');
   const callbackUrl = getQueryString('callback');
+  const cohortIdFromQuery = getQueryString('cohort');
   const addOnsQS = getQueryString('add_ons');
   const planFormated = resolveCheckoutPlanSlug(plan, isWhiteLabelAcademy, academyDefaultPlan);
 
@@ -979,8 +980,9 @@ const useCheckout = () => {
   // STEP 1: GET THE PLAN DATA (first request the user perceives)
   // Renders: plan title, options list (monthly/annual/financing), and benefits accordion.
   useEffect(() => {
-    // If callback URL is provided, set it as the redirect destination
-    if (callbackUrl) {
+    // Callback is for LearnPack-style returns. Never override cohort enrollment:
+    // when a cohort is in the URL, clear redirect so post-payment joins the cohort.
+    if (callbackUrl && !cohortIdFromQuery) {
       setStorageItem('redirect', callbackUrl);
     } else {
       removeStorageItem('redirect');
@@ -999,7 +1001,7 @@ const useCheckout = () => {
         agent: getBrowserInfo(),
       },
     });
-  }, [router.locale, isLoadingLocation, callbackUrl, pathname]);
+  }, [router.locale, isLoadingLocation, callbackUrl, cohortIdFromQuery, pathname]);
 
   // STEP 1.1: Auto-coupon for plan if available
   // Ensures the discount is applied from the start.
