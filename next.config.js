@@ -9,18 +9,10 @@ const redirectsList = require('./public/redirects.json');
 const nextTranslate = require('next-translate-plugin');
 
 const externalDevDomain = process.env.VERCEL_ENV !== 'production' ? 'http://localhost:9999' : '';
-const normalizedDomainName = typeof process.env.DOMAIN_NAME === 'string'
-  ? process.env.DOMAIN_NAME.trim().replace(/\/$/, '')
-  : '';
-const MAIN_APP_DOMAINS = [
-  'https://4geeks.com',
-  'https://www.4geeks.com',
-  'https://learn.4geeks.com',
-];
-const isWhiteLabelAcademy = normalizedDomainName.length > 0
-  && !MAIN_APP_DOMAINS.includes(normalizedDomainName);
+const isWhiteLabelAcademy = typeof process.env.DOMAIN_NAME === 'string'
+  && process.env.DOMAIN_NAME !== 'https://4geeks.com';
 const shouldNoIndex = process.env.ROBOTS_NOINDEX === 'true'
-  || normalizedDomainName.toLowerCase().includes('learn.4geeks.com');
+  || (process.env.DOMAIN_NAME || '').toLowerCase().includes('learn.4geeks.com');
 const whiteLabelHomeRedirects = isWhiteLabelAcademy
   ? [
     { source: '/', destination: '/login', permanent: false },
