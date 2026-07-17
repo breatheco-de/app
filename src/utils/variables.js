@@ -17,9 +17,16 @@ export const ORIGIN_HOST = (typeof window !== 'undefined' && window.location.ori
 const normalizedDomainName = typeof DOMAIN_NAME === 'string'
   ? DOMAIN_NAME.trim().replace(/\/$/, '')
   : '';
+/** Main 4Geeks app hosts (not white-label academies). */
+const MAIN_APP_DOMAINS = [
+  'https://4geeks.com',
+  'https://www.4geeks.com',
+  'https://learn.4geeks.com',
+];
+
 /** True when DOMAIN_NAME is set and is not the main 4Geeks site. */
 export const isWhiteLabelAcademy = normalizedDomainName.length > 0
-  && normalizedDomainName !== 'https://4geeks.com';
+  && !MAIN_APP_DOMAINS.includes(normalizedDomainName);
 
 /**
  * Prismic CMS is opt-in for builds/deploys.

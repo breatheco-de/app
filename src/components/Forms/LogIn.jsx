@@ -15,10 +15,16 @@ import Text from '../Text';
 import validationSchema from './validationSchemas';
 import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
-import { BREATHECODE_HOST } from '../../utils/variables';
+import { BREATHECODE_HOST, DOMAIN_NAME } from '../../utils/variables';
 import { getBrowserInfo, isValidEmail, isWindow } from '../../utils';
 import useCustomToast from '../../hooks/useCustomToast';
 import ModalInfo from '../ModalInfo';
+
+const buildAuthRedirectUrl = () => {
+  if (!isWindow) return '';
+  const origin = (DOMAIN_NAME || window.location.origin).replace(/\/$/, '');
+  return `${origin}${window.location.pathname}${window.location.search}`;
+};
 
 function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const { t, lang } = useTranslation('login');
@@ -164,8 +170,6 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
             {/* FIRST STEP */}
             <Stack display={step !== 1 && 'none'} spacing={4} justifyContent="space-between">
               <Button
-                as="a"
-                href={isWindow ? `${BREATHECODE_HOST}/v1/auth/google?url=${window.location.href}` : '#'}
                 cursor="pointer"
                 variant="outline"
                 weight="700"
@@ -179,6 +183,9 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                       agent: getBrowserInfo(),
                     },
                   });
+                  if (!isWindow) return;
+                  const redirectUrl = encodeURIComponent(buildAuthRedirectUrl());
+                  window.location.href = `${BREATHECODE_HOST}/v1/auth/google?url=${redirectUrl}`;
                 }}
               >
                 <Icon icon="google" width="18px" height="18px" />
@@ -187,8 +194,6 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                 </Text>
               </Button>
               <Button
-                as="a"
-                href={isWindow ? `${BREATHECODE_HOST}/v1/auth/github?url=${window.location.href}` : '#'}
                 cursor="pointer"
                 variant="outline"
                 weight="700"
@@ -202,6 +207,9 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                       agent: getBrowserInfo(),
                     },
                   });
+                  if (!isWindow) return;
+                  const redirectUrl = encodeURIComponent(buildAuthRedirectUrl());
+                  window.location.href = `${BREATHECODE_HOST}/v1/auth/github?url=${redirectUrl}`;
                 }}
               >
                 <Icon icon="github" width="18px" height="18px" />
@@ -380,7 +388,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                   fontSize={actionfontSize}
                   target="_blank"
                   rel="noopener noreferrer"
-                  href={isWindow ? `${BREATHECODE_HOST}/v1/auth/password/reset?url=${window.location.href}` : ''}
+                  href={isWindow ? `${BREATHECODE_HOST}/v1/auth/password/reset?url=${encodeURIComponent(buildAuthRedirectUrl())}` : undefined}
                 >
                   {t('login:forgot-password')}
                 </Link>

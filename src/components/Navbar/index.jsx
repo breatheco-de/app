@@ -118,19 +118,25 @@ function Navbar({ translations, pageProps }) {
 
     const callbackParam = router.query?.callback;
     const callbackValue = Array.isArray(callbackParam) ? callbackParam[0] : callbackParam;
-    if (!callbackValue) return t('get-started');
+    const hasCallback = typeof callbackValue === 'string' && callbackValue.trim().length > 0;
 
-    const labelParam = router.query?.callback_label;
-    const labelValue = Array.isArray(labelParam) ? labelParam[0] : labelParam;
-    if (typeof labelValue === 'string' && labelValue.trim().length > 0) {
+    const decodeLabel = (param) => {
+      const raw = Array.isArray(param) ? param[0] : param;
+      if (typeof raw !== 'string' || raw.trim().length === 0) return null;
       try {
-        return decodeURIComponent(labelValue);
+        return decodeURIComponent(raw);
       } catch (err) {
-        return labelValue;
+        return raw;
       }
-    }
+    };
 
-    return t('check-programs');
+    const labelEn = decodeLabel(router.query?.callback_label_en);
+    const labelEs = decodeLabel(router.query?.callback_label_es);
+    const localeLabel = locale === 'es' ? labelEs : labelEn;
+
+    if (localeLabel) return localeLabel;
+
+    return hasCallback ? t('check-program') : t('check-programs');
   })();
 
   const fetchMktCourses = async () => {

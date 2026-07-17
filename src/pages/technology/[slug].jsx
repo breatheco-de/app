@@ -27,8 +27,6 @@ import {
   getWhiteLabelAcademyFeatures,
 } from '../../utils/whiteLabelEvents';
 
-let contentPerPage = 10;
-
 function DefaultTechnologySection({ technologyData, lessonMaterials, contentPerEachPage, count, lang, fetchData }) {
   const { t } = useTranslation('technologies');
   return (
@@ -66,13 +64,13 @@ function DefaultTechnologySection({ technologyData, lessonMaterials, contentPerE
   );
 }
 
-const fetchOtherAssets = async (lang, page, tech, mktInfoExist) => {
+const fetchOtherAssets = async (lang, page, tech, mktInfoExist, itemsPerPage = 10) => {
   const querys = parseQuerys({
     status: 'PUBLISHED',
     language: lang,
     technologies: tech,
-    limit: contentPerPage,
-    offset: (page - 1) * contentPerPage,
+    limit: itemsPerPage,
+    offset: (page - 1) * itemsPerPage,
     asset_type: mktInfoExist ? 'LESSON,PROJECT' : 'LESSON,PROJECT,EXERCISE',
     expand: 'technologies',
   });
@@ -85,8 +83,17 @@ const fetchOtherAssets = async (lang, page, tech, mktInfoExist) => {
     return { resp, data };
   } catch (error) {
     console.error('Error en fetchOtherAssets:', error);
-    return { resp: null, data: null };
+    return { resp: null, data: { results: [], count: 0 } };
   }
+};
+
+const resolveLocalizedField = (field, normalizedLocale) => {
+  if (field == null) return '';
+  if (typeof field === 'string' || typeof field === 'number') return String(field);
+  if (typeof field === 'object') {
+    return field[normalizedLocale] || field.en || field.us || field.es || '';
+  }
+  return '';
 };
 
 export const getStaticPaths = async ({ locales }) => {
@@ -116,97 +123,127 @@ export const getStaticPaths = async ({ locales }) => {
 };
 
 export const getStaticProps = async ({ params, locale, locales }) => {
-  const t = await getT(locale, 'technologies');
-  const { slug } = params;
+  try {
+    const t = await getT(locale, 'technologies');
+    const { slug } = params;
 
-  const langMap = {
-    en: 'us',
-    us: 'us',
-    es: 'es',
-  };
-  const normalizedLocale = langMap[locale] || locale;
+    const langMap = {
+      en: 'us',
+      us: 'us',
+      es: 'es',
+    };
+    const normalizedLocale = langMap[locale] || locale;
 
-  const currentTechResp = await bc.registry().techMktInfo(slug);
-  const currentTech = currentTechResp?.data || {};
-  const marketingInfo = currentTech?.marketing_information || {};
-  const featuredCourse = currentTech?.featured_course || {};
-  const { title = '', description = '' } = marketingInfo;
-  const { slug: featuredCourseSlug = '' } = featuredCourse;
+    let currentTech = {};
+    try {
+      const currentTechResp = await bc.registry().techMktInfo(slug);
+      currentTech = currentTechResp?.data || {};
+    } catch (error) {
+      console.error(`Error fetching techMktInfo for ${slug}:`, error);
+    }
 
-  const marketingInfoExist = Object.keys(marketingInfo).length > 0;
-  if (!marketingInfoExist) contentPerPage = 20;
-  else contentPerPage = 10;
+    const marketingInfo = currentTech?.marketing_information || {};
+    const featuredCourse = currentTech?.featured_course || {};
+    const { title = '', description = '' } = marketingInfo;
+    const { slug: featuredCourseSlug = '' } = featuredCourse;
 
-  const response = await bc.registry({ sort_priority: 1, visibility: 'PUBLIC', is_deprecated: false }).techsBySort();
-  const technologiesFetched = response?.data || [];
+    const marketingInfoExist = Object.keys(marketingInfo).length > 0;
 
-  const isSortPriorityOne = technologiesFetched.some((tech) => tech.slug === slug);
-  if (!isSortPriorityOne) contentPerPage = 20;
+    let technologiesFetched = [];
+    try {
+      const response = await bc.registry({ sort_priority: 1, visibility: 'PUBLIC', is_deprecated: false }).techsBySort();
+      technologiesFetched = response?.data || [];
+    } catch (error) {
+      console.error(`Error fetching techsBySort for ${slug}:`, error);
+    }
 
-  const allTechnologies = await import('../../../public/asset-list.json');
-  const assetList = {
-    landingTechnologies: allTechnologies?.landingTechnologies.filter(
+    const isSortPriorityOne = technologiesFetched.some((tech) => tech.slug === slug);
+    const contentPerPage = (!marketingInfoExist || !isSortPriorityOne) ? 20 : 10;
+
+    const allTechnologies = await import('../../../public/asset-list.json').then((res) => res.default || res);
+    const landingTechnologies = allTechnologies?.landingTechnologies || [];
+    const assetList = {
+      landingTechnologies: landingTechnologies.filter(
+        (tech) => tech.lang === locale && tech.slug === slug,
+      ),
+    };
+
+    const techsBySortPriority = technologiesFetched.filter((tech) => {
+      if (!tech.icon_url) return false;
+      if (!tech.lang) return true;
+      if (tech.lang === normalizedLocale) return true;
+      return tech.lang === locale;
+    });
+
+    const features = await getWhiteLabelAcademyFeatures();
+    const workshopsData = await fetchEventsForStaticGeneration({ technologies: slug });
+    const workShopsForTech = workshopsData.filter((event) => isEventVisibleForWhiteLabel(event, features));
+
+    let coursesForTech = [];
+    try {
+      const coursesForTechResponse = await bc.marketing({ technologies: slug }).courses();
+      coursesForTech = coursesForTechResponse?.data || [];
+    } catch (error) {
+      console.error(`Error fetching courses for ${slug}:`, error);
+    }
+
+    const rawTechnologyData = assetList.landingTechnologies.find(
       (tech) => tech.lang === locale && tech.slug === slug,
-    ) || [],
-  };
+    ) || {};
 
-  const techsBySortPriority = technologiesFetched.filter((tech) => {
-    if (!tech.icon_url) return false;
-    if (!tech.lang) return true;
-    if (tech.lang === normalizedLocale) return true;
-    return tech.lang === locale;
-  });
+    const { assets, assetTypesInTechnology, ...technologyData } = rawTechnologyData;
 
-  const features = await getWhiteLabelAcademyFeatures();
-  const workshopsData = await fetchEventsForStaticGeneration({ technologies: slug });
-  const workShopsForTech = workshopsData.filter((event) => isEventVisibleForWhiteLabel(event, features));
+    const exercises = assets?.filter(
+      (l) => l?.asset_type?.toUpperCase() === 'EXERCISE',
+    ).slice(0, 3) || [];
 
-  const coursesForTechResponse = await bc.marketing({ technologies: slug }).courses();
-  const coursesForTech = coursesForTechResponse?.data || [];
+    const assetsResponse = await fetchOtherAssets(locale, 1, slug, marketingInfoExist, contentPerPage);
+    const otherAssets = assetsResponse?.data?.results || [];
+    const count = assetsResponse?.data?.count || 0;
 
-  const rawTechnologyData = assetList.landingTechnologies.find(
-    (tech) => tech.lang === locale && tech.slug === slug,
-  ) || {};
+    const assetData = marketingInfoExist ? [...exercises, ...otherAssets] : [...otherAssets];
 
-  const { assets, assetTypesInTechnology, ...technologyData } = rawTechnologyData;
+    if (!technologyData?.slug || assetData.length === 0) {
+      return { notFound: true };
+    }
 
-  const exercises = assets?.filter(
-    (l) => l?.asset_type?.toUpperCase() === 'EXERCISE',
-  ).slice(0, 3) || [];
+    const ogUrl = {
+      en: `/technology/${slug}`,
+      us: `/technology/${slug}`,
+    };
 
-  const { results: otherAssets = [], count } = (await fetchOtherAssets(locale, 1, slug, marketingInfoExist)).data;
+    const seoTitle = resolveLocalizedField(title, normalizedLocale) || technologyData?.title || '';
+    const seoDescription = resolveLocalizedField(description, normalizedLocale)
+      || t('seo.description', { technology: technologyData?.title });
 
-  const assetData = marketingInfoExist ? [...exercises, ...otherAssets] : [...otherAssets];
-
-  const ogUrl = {
-    en: `/technology/${slug}`,
-    us: `/technology/${slug}`,
-  };
-
-  return {
-    props: {
-      seo: {
-        title: title[normalizedLocale] || title || technologyData?.title || '',
-        description: description[normalizedLocale] || description || t('seo.description', { technology: technologyData?.title }),
-        image: technologyData?.icon_url || '',
-        pathConnector: `/technology/${slug}`,
-        url: ogUrl.en,
-        type: 'website',
-        card: 'default',
-        locales,
-        locale,
+    return {
+      props: {
+        seo: {
+          title: seoTitle,
+          description: seoDescription,
+          image: technologyData?.icon_url || '',
+          pathConnector: `/technology/${slug}`,
+          url: ogUrl.en,
+          type: 'website',
+          card: 'default',
+          locales,
+          locale,
+        },
+        assetData,
+        technologyData,
+        techsBySortPriority,
+        count,
+        coursesForTech,
+        workShopsForTech,
+        marketingInfo,
+        isSortPriorityOne,
+        featuredCourseSlug,
       },
-      assetData,
-      technologyData,
-      techsBySortPriority,
-      count,
-      coursesForTech,
-      workShopsForTech,
-      marketingInfo,
-      isSortPriorityOne,
-      featuredCourseSlug,
-    },
-  };
+    };
+  } catch (error) {
+    console.error(`Error in getStaticProps for technology/${params?.slug}:`, error);
+    return { notFound: true };
+  }
 };
 
 function LessonByTechnology({ assetData, technologyData, techsBySortPriority, count, coursesForTech, workShopsForTech, marketingInfo, isSortPriorityOne, featuredCourseSlug }) {
@@ -220,13 +257,15 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
   const { createToast } = useCustomToast({ toastId: 'errors-no-data-error' });
   const scrollRef = useRef();
   const marketingInfoExist = Object.keys(marketingInfo).length > 0;
+  const contentPerPage = (!marketingInfoExist || !isSortPriorityOne) ? 20 : 10;
   const exercises = assetData?.filter((asset) => asset?.asset_type === 'EXERCISE');
   const lessonMaterials = marketingInfoExist ? assetData?.filter((asset) => asset?.asset_type !== 'EXERCISE') : assetData;
   const coursesAvailable = coursesForTech?.length > 0 || featuredCourseSlug;
 
   const fetchData = async (currentLang, page, tech) => {
-    const { data } = await fetchOtherAssets(currentLang, page, tech.slug, marketingInfoExist);
-    return { data: data || { results: [] } };
+    const itemsPerPage = marketingInfoExist ? 10 : 20;
+    const { data } = await fetchOtherAssets(currentLang, page, tech.slug, marketingInfoExist, itemsPerPage);
+    return { data: data || { results: [], count: 0 } };
   };
 
   const handleTechChange = (technology) => {
@@ -524,7 +563,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
               <DefaultTechnologySection
                 technologyData={technologyData}
                 lessonMaterials={lessonMaterials}
-                contentPerPage={contentPerPage}
+                contentPerEachPage={contentPerPage}
                 count={count}
                 lang={lang}
                 fetchData={fetchData}
@@ -535,7 +574,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
           <DefaultTechnologySection
             technologyData={technologyData}
             lessonMaterials={lessonMaterials}
-            contentPerPage={contentPerPage}
+            contentPerEachPage={contentPerPage}
             count={count}
             lang={lang}
             fetchData={fetchData}
