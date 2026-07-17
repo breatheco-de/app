@@ -13,6 +13,7 @@ import {
 } from './whiteLabelEvents';
 import { log } from './logging';
 import { getExtensionName } from './index';
+import { isPrismicEnabled } from './variables';
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
@@ -35,6 +36,11 @@ const reportDatalayer = (payload) => {
 };
 
 const getPrismicPages = async () => {
+  if (!isPrismicEnabled) {
+    log('SITEMAP: Prismic disabled (PRISMIC_ENABLED!=true), skipping pages fetch');
+    return [];
+  }
+
   try {
     // Obtiene el ref más reciente de Prismic
     const masterRefResponse = await fetch(`${PRISMIC_API}`);
@@ -42,14 +48,15 @@ const getPrismicPages = async () => {
     const PRISMIC_REF = masterRefData?.refs?.[0]?.ref;
 
     if (!PRISMIC_REF) {
-      throw new Error('SITEMAP: No PRISMIC_REF found');
+      console.error('SITEMAP: No PRISMIC_REF found');
+      return [];
     }
 
     const response = await fetch(`${PRISMIC_API}/documents/search?ref=${PRISMIC_REF}&type=page&lang=*`);
     const data = await response.json();
 
     log(`🔍 ${data?.results?.length} pages fetched from Prismic`);
-    return data.results;
+    return data.results || [];
   } catch (error) {
     console.error('SITEMAP:', error);
     return [];

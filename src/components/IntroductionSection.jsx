@@ -134,7 +134,7 @@ function IntroductionSection({
     >
       <Box display={{ base: 'block', md: 'grid' }} flex={getLeftColumnSize()}>
         <Heading fontFamily={fontFamily} as="span">
-          {slice?.primary?.title ? (
+          {Array.isArray(slice?.primary?.title) && slice.primary.title.length > 0 ? (
             <>
               <PrismicTextComponent
                 field={slice?.primary?.title}
@@ -195,7 +195,7 @@ function IntroductionSection({
           )}
         </Heading>
 
-        {slice?.primary?.description.length > 0 ? (
+        {slice?.primary?.description?.length > 0 ? (
           <Text as="div" fontSize="21px" fontWeight={700} pt="16px">
             <PrismicTextComponent field={slice?.primary?.description} fontSize="21px" lineHeight="inherit" />
           </Text>

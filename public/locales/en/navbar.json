@@ -1,6 +1,9 @@
 {
   "login": "Login",
   "get-started": "Get Started",
+  "check-program": "Check Program",
+  "check-programs": "Check Programs",
+  "back": "Back",
   "logout": "Logout",
   "language": "Language",
   "my-profile": "My Profile",

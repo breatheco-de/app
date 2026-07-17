@@ -9,10 +9,18 @@ const redirectsList = require('./public/redirects.json');
 const nextTranslate = require('next-translate-plugin');
 
 const externalDevDomain = process.env.VERCEL_ENV !== 'production' ? 'http://localhost:9999' : '';
-const isWhiteLabelAcademy = typeof process.env.DOMAIN_NAME === 'string'
-  && process.env.DOMAIN_NAME !== 'https://4geeks.com';
+const normalizedDomainName = typeof process.env.DOMAIN_NAME === 'string'
+  ? process.env.DOMAIN_NAME.trim().replace(/\/$/, '')
+  : '';
+const MAIN_APP_DOMAINS = [
+  'https://4geeks.com',
+  'https://www.4geeks.com',
+  'https://learn.4geeks.com',
+];
+const isWhiteLabelAcademy = normalizedDomainName.length > 0
+  && !MAIN_APP_DOMAINS.includes(normalizedDomainName);
 const shouldNoIndex = process.env.ROBOTS_NOINDEX === 'true'
-  || (process.env.DOMAIN_NAME || '').toLowerCase().includes('learn.4geeks.com');
+  || normalizedDomainName.toLowerCase().includes('learn.4geeks.com');
 const whiteLabelHomeRedirects = isWhiteLabelAcademy
   ? [
     { source: '/', destination: '/login', permanent: false },
@@ -179,6 +187,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     VERCEL_ENV: process.env.VERCEL_ENV,
     PRISMIC_REF: process.env.PRISMIC_REF,
     PRISMIC_API: process.env.PRISMIC_API,
+    PRISMIC_ENABLED: process.env.PRISMIC_ENABLED,
     WHITE_LABEL_ACADEMY: process.env.WHITE_LABEL_ACADEMY,
     DOMAIN_NAME: process.env.DOMAIN_NAME,
     BASE_PLAN: process.env.BASE_PLAN,

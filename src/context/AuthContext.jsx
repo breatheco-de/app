@@ -17,7 +17,7 @@ import { getPrismicPagesUrls } from '../utils/url';
 import { warn } from '../utils/logging';
 import { getQueryString, isWindow, removeStorageItem, removeURLParameter, getBrowserInfo } from '../utils';
 import { reportDatalayer, getPrismicPages } from '../utils/requests';
-import { BREATHECODE_HOST, RIGOBOT_HOST, SILENT_CODE } from '../utils/variables';
+import { BREATHECODE_HOST, RIGOBOT_HOST, SILENT_CODE, isPrismicEnabled } from '../utils/variables';
 import { generateUserContext } from '../utils/rigobotContext';
 
 const initialState = {
@@ -413,7 +413,7 @@ function AuthProvider({ children, pageProps }) {
             payload: responseData,
           });
 
-          const prismicPages = await getPrismicPages();
+          const prismicPages = isPrismicEnabled ? await getPrismicPages() : [];
           const prismicPagesUrls = getPrismicPagesUrls(prismicPages);
 
           // disabledRedirectUrls are urls that we will ignore if included as redirect.

@@ -43,6 +43,10 @@ import useSignup from '../../hooks/useSignup';
 import useCustomToast from '../../hooks/useCustomToast';
 import AddToCalendar from '../../components/addToCalendar';
 import FixedBottomCta from '../../components/Assets/FixedBottomCta';
+import {
+  withSafeStaticPaths,
+  buildLocalePaths,
+} from '../../utils/staticGeneration';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -64,35 +68,50 @@ const assetTypeDict = {
   EXERCISE: 'interactive-exercise',
 };
 
-export const getStaticPaths = async ({ locales }) => {
+export const getStaticPaths = async ({ locales }) => withSafeStaticPaths(async () => {
   const data = await fetchEventsForStaticGeneration();
+  const activeEvents = (Array.isArray(data) ? data : [])
+    .filter((ev) => ev?.slug && ['ACTIVE', 'FINISHED'].includes(ev.status));
 
-  const paths = data.filter((ev) => ev?.slug && ['ACTIVE', 'FINISHED'].includes(ev.status))
-    .flatMap((res) => locales.map((locale) => ({
-      params: {
-        event_slug: res?.slug,
-      },
-      locale,
-    })));
-
-  return {
-    paths,
-    fallback: true,
-  };
-};
+  return buildLocalePaths(activeEvents, locales, 'event_slug');
+}, { fallback: true });
 
 export const getStaticProps = async ({ params, locale }) => {
   const { event_slug: slug } = params;
-  const resp = await bc.events({ context: 'true' }).getEvent(slug).catch(() => ({
-    statusText: 'not-found',
-  }));
+
+  // Axios interceptor resolves HTTP/network errors instead of throwing, so do not rely on .catch().
+  const resp = await bc.events({ context: 'true' }).getEvent(slug);
   const data = resp?.data;
+  const httpStatus = resp?.status;
+  const requestFailed = Boolean(resp?.isAxiosError) || (!httpStatus && !data?.slug);
 
   const features = await getWhiteLabelAcademyFeatures();
 
-  if (resp.statusText === 'not-found' || !data?.slug || !['ACTIVE', 'FINISHED'].includes(data.status)) {
+  // Genuine missing/invalid event → 404. Transient API/host failures let the client refetch.
+  if (httpStatus === 404 || (data?.slug && !['ACTIVE', 'FINISHED'].includes(data.status))) {
     return {
       notFound: true,
+      revalidate: 60,
+    };
+  }
+
+  if (requestFailed || !data?.slug) {
+    return {
+      props: {
+        seo: {
+          title: 'Workshops',
+          description: '',
+          pathConnector: '/workshops',
+          url: `/workshops/${slug}`,
+          slug,
+          type: 'event',
+          locale,
+        },
+        translations: [],
+        disableLangSwitcher: true,
+        eventData: null,
+        asset: null,
+      },
       revalidate: 60,
     };
   }

@@ -11,10 +11,16 @@ const PRISMIC_API = process.env.PRISMIC_API || 'https://your-prismic-repo.cdn.pr
 const PRISMIC_REF = process.env.PRISMIC_REF || 'Y-EX4MPL3R3F';
 
 const getPrismicPages = () => {
+  if (process.env.PRISMIC_ENABLED !== 'true') {
+    console.log('SITEMAP: Prismic disabled (PRISMIC_ENABLED!=true), skipping pages fetch');
+    return Promise.resolve([]);
+  }
+
   const data = axios.get(`${PRISMIC_API}/documents/search?ref=${PRISMIC_REF}&type=page&lang=*`)
     .then((res) => res.data.results)
     .catch(() => {
       console.error('SITEMAP: Error fetching Prismic pages');
+      return [];
     });
   return data;
 };

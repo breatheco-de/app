@@ -39,7 +39,7 @@ import '@fontsource/lato/400.css';
 import '@fontsource/lato/700.css';
 import '@fontsource/lato/900.css';
 import '@fontsource-variable/space-grotesk';
-import { BREATHECODE_HOST } from '../utils/variables';
+import { BREATHECODE_HOST, isPrismicEnabled } from '../utils/variables';
 import useCustomToast from '../hooks/useCustomToast';
 import useWhiteLabel from '../hooks/useWhiteLabel';
 
@@ -56,16 +56,20 @@ function AppContent({ Component, pagePropsData, pageProps }) {
     existsWhiteLabel: isWhiteLabel,
   };
 
+  const pageContent = <Component {...academyPageProps} />;
+
   return (
     <SessionProvider>
       <Navbar pageProps={academyPageProps} translations={pageProps?.translations} />
       <InterceptionLoader />
 
-      <PrismicProvider internalLinkComponent={InternalLinkComponent}>
-        <PrismicPreview repositoryName={repositoryName}>
-          <Component {...academyPageProps} />
-        </PrismicPreview>
-      </PrismicProvider>
+      {isPrismicEnabled ? (
+        <PrismicProvider internalLinkComponent={InternalLinkComponent}>
+          <PrismicPreview repositoryName={repositoryName}>
+            {pageContent}
+          </PrismicPreview>
+        </PrismicProvider>
+      ) : pageContent}
 
       <Footer pageProps={academyPageProps} />
       <SurveyListener userId={user?.id} />

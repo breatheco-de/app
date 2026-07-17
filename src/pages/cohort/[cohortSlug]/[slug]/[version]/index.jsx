@@ -325,15 +325,15 @@ function Dashboard() {
     try {
       setIsLoadingAssigments(true);
       const cohort = await getCohortData({ cohortSlug });
-      if (cohort) {
-        reportDatalayer({
-          dataLayer: {
-            current_cohort_id: cohort.id,
-            current_cohort_slug: cohort.slug,
-            agent: getBrowserInfo(),
-          },
-        });
-      }
+      if (!cohort) return;
+
+      reportDatalayer({
+        dataLayer: {
+          current_cohort_id: cohort.id,
+          current_cohort_slug: cohort.slug,
+          agent: getBrowserInfo(),
+        },
+      });
       if (certificates.length === 0) {
         const { data } = await bc.certificate().get();
         if (Array.isArray(data) && data.length > 0) {

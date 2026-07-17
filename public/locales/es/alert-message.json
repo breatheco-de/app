@@ -9,7 +9,7 @@
   "default-version-not-found": "La versión predeterminada no pudo acceder a ningún contenido de este {{lesson}}",
   "invalid-cohort-slug": "Slug de cohorte no válido",
   "finantial-late": "Tienes pagos pendientes. Podrás acceder al programa una vez que hayas pagado.",
-  "error-fetching-syllabus": "Hubo un problema al mostrar la información del plan de estudios",
+  "error-fetching-syllabus": "Hubo un problema al cargar el plan de estudios. Por favor contacta con soporte para recibir ayuda.",
   "no-cohort-modules-found": "No se encontraron módulos de cohorte, primero elija una cohorte válida",
   "language-not-found": "No se encontró información para el idioma \"{{currentLanguageLabel}}\", mostrando la versión en inglés",
   "task-cant-sync-with-cohort": "Algunas tareas no se pueden sincronizar con la cohorte actual",

@@ -27,74 +27,71 @@ import MktEventCards from '../../../components/PrismicComponents/MktEventCards';
 import AssetsBreadcrumbs from '../../../components/AssetsBreadcrumbs';
 import { getMarkdownFromCache } from '../../../utils/requests';
 import PublicPortalGate from '../../../components/PublicPortalGate';
+import {
+  withSafeStaticPaths,
+  withSafeStaticProps,
+  buildLocalePaths,
+} from '../../../utils/staticGeneration';
 
-export const getStaticPaths = async ({ locales }) => {
-  const assetList = await import('../../../../public/asset-list.json');
-  const data = assetList.howTos;
+export const getStaticPaths = async ({ locales }) => withSafeStaticPaths(async () => {
+  const assetListModule = await import('../../../../public/asset-list.json');
+  const assetList = assetListModule?.default || assetListModule || {};
+  const data = Array.isArray(assetList?.howTos) ? assetList.howTos : [];
+  return buildLocalePaths(data, locales, 'slug');
+});
 
-  const paths = data.flatMap((res) => locales.map((locale) => ({
-    params: {
-      slug: res.slug,
-    },
-    locale,
-  })));
-  return {
-    fallback: false,
-    paths,
-  };
-};
-export const getStaticProps = async ({ params, locale, locales }) => {
+export const getStaticProps = async ({ params, locale, locales }) => withSafeStaticProps(async () => {
   const t = await getT(locale, 'how-to');
   const staticImage = t('seo.image', { domain: ORIGIN_HOST });
   const { slug } = params;
 
-  try {
-    const assetList = await import('../../../../public/asset-list.json')
-      .then((res) => res.default)
-      .catch(() => []);
-    const data = assetList.howTos.find((l) => l?.slug === slug);
+  const assetList = await import('../../../../public/asset-list.json')
+    .then((res) => res.default || res)
+    .catch(() => ({}));
+  const howTos = Array.isArray(assetList?.howTos) ? assetList.howTos : [];
+  const data = howTos.find((l) => l?.slug === slug);
 
-    const engPrefix = {
-      us: 'en',
-      en: 'en',
+  const engPrefix = {
+    us: 'en',
+    en: 'en',
+  };
+
+  const isCurrenLang = locale === engPrefix[data?.lang] || locale === data?.lang;
+
+  if (!isCurrenLang) {
+    return {
+      notFound: true,
     };
+  }
+  const langPrefix = locale === 'en' ? '' : `/${locale}`;
 
-    const isCurrenLang = locale === engPrefix[data?.lang] || locale === data?.lang;
+  const markdown = await getMarkdownFromCache(slug, data);
 
-    if (!isCurrenLang) {
-      return {
-        notFound: true,
-      };
-    }
-    const langPrefix = locale === 'en' ? '' : `/${locale}`;
+  if (!data || !markdown) {
+    return {
+      notFound: true,
+    };
+  }
 
-    const markdown = await getMarkdownFromCache(slug, data);
+  const {
+    title, description, translations, preview,
+  } = data;
 
-    if (!data || !markdown) {
-      return {
-        notFound: true,
-      };
-    }
-
-    const {
-      title, description, translations, preview,
-    } = data;
-
-    const translationInEnglish = translations?.en || translations?.us;
-    const translationArray = [
-      {
-        value: 'en',
-        lang: 'en',
-        slug: (data?.lang === 'en' || data?.lang === 'us') ? data?.slug : translationInEnglish,
-        link: `/how-to/${(data?.lang === 'en' || data?.lang === 'us') ? data?.slug : translationInEnglish}`,
-      },
-      {
-        value: 'es',
-        lang: 'es',
-        slug: data?.lang === 'es' ? data.slug : translations?.es,
-        link: `/es/how-to/${data?.lang === 'es' ? data.slug : translations?.es}`,
-      },
-    ].filter((item) => item?.slug !== undefined);
+  const translationInEnglish = translations?.en || translations?.us;
+  const translationArray = [
+    {
+      value: 'en',
+      lang: 'en',
+      slug: (data?.lang === 'en' || data?.lang === 'us') ? data?.slug : translationInEnglish,
+      link: `/how-to/${(data?.lang === 'en' || data?.lang === 'us') ? data?.slug : translationInEnglish}`,
+    },
+    {
+      value: 'es',
+      lang: 'es',
+      slug: data?.lang === 'es' ? data.slug : translations?.es,
+      link: `/es/how-to/${data?.lang === 'es' ? data.slug : translations?.es}`,
+    },
+  ].filter((item) => item?.slug !== undefined);
 
     const structuredData = {
       '@context': 'https://schema.org',
@@ -145,13 +142,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         markdown: markdown || '',
       },
     };
-  } catch (error) {
-    console.error(`Error fetching page type HOW-TO for /${locale}/how-to/${slug}`, error);
-    return {
-      notFound: true,
-    };
-  }
-};
+}, `how-to/${params?.slug}`);
 
 export default function HowToSlug({ data, markdown }) {
   const { t } = useTranslation('how-to');

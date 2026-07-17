@@ -42,7 +42,7 @@ function Navbar({ translations, pageProps }) {
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const { allSubscriptions } = useSubscriptions();
-  const { showMarketingNavigation, isWhiteLabelFeatureEnabled, isWhiteLabel, defaultPlan } = useWhiteLabel();
+  const { showMarketingNavigation, isWhiteLabelFeatureEnabled, isWhiteLabel } = useWhiteLabel();
   const canShowEvents = isWhiteLabelFeatureEnabled('allow_events');
   const canShowPublicPortal = isWhiteLabelFeatureEnabled('public_portal.enabled');
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -84,12 +84,23 @@ function Navbar({ translations, pageProps }) {
   const handleGetStartedButton = (e) => {
     e.preventDefault();
 
-    if (isWhiteLabel && defaultPlan) {
-      const langPath = locale === 'en' ? '' : `/${locale}`;
-      window.location.href = `${langPath}/checkout${parseQuerys({
-        plan: defaultPlan,
-        internal_cta_placement: 'navbar-get-started',
-      }, false)}`;
+    if (isWhiteLabel) {
+      const callbackParam = router.query?.callback;
+      const callbackValue = Array.isArray(callbackParam) ? callbackParam[0] : callbackParam;
+
+      if (callbackValue) {
+        try {
+          const decodedCallback = decodeURIComponent(callbackValue);
+          if (decodedCallback) {
+            window.location.href = decodedCallback;
+          }
+        } catch (err) {
+          console.error('Invalid callback query param:', err);
+        }
+        return;
+      }
+
+      window.location.href = `https://4geeks.com/${locale}/payment-component`;
       return;
     }
 
@@ -101,6 +112,32 @@ function Navbar({ translations, pageProps }) {
       window.location.href = `/${locale}/pricing${parseQuerys({ internal_cta_placement: 'navbar-get-started' }, false)}`;
     }
   };
+
+  const getStartedButtonLabel = (() => {
+    if (!isWhiteLabel) return t('get-started');
+
+    const callbackParam = router.query?.callback;
+    const callbackValue = Array.isArray(callbackParam) ? callbackParam[0] : callbackParam;
+    const hasCallback = typeof callbackValue === 'string' && callbackValue.trim().length > 0;
+
+    const decodeLabel = (param) => {
+      const raw = Array.isArray(param) ? param[0] : param;
+      if (typeof raw !== 'string' || raw.trim().length === 0) return null;
+      try {
+        return decodeURIComponent(raw);
+      } catch (err) {
+        return raw;
+      }
+    };
+
+    const labelEn = decodeLabel(router.query?.callback_label_en);
+    const labelEs = decodeLabel(router.query?.callback_label_es);
+    const localeLabel = locale === 'es' ? labelEs : labelEn;
+
+    if (localeLabel) return localeLabel;
+
+    return hasCallback ? t('check-program') : t('check-programs');
+  })();
 
   const fetchMktCourses = async () => {
     try {
@@ -147,15 +184,17 @@ function Navbar({ translations, pageProps }) {
     if (isWhiteLabel) {
       const eventsItem = preDefinedItems.find((item) => item.id === 'live');
       const bootcampsItem = preDefinedItems.find((item) => item.id === 'bootcamps');
-      const publicPortalItem = buildWhiteLabelPublicPortalNavItem(
-        bootcampsItem,
-        isWhiteLabelFeatureEnabled,
-      );
+      const publicPortalItem = canShowPublicPortal
+        ? buildWhiteLabelPublicPortalNavItem(
+          bootcampsItem,
+          isWhiteLabelFeatureEnabled,
+        )
+        : null;
       const filteredItems = whiteLabelitems.filter((item) => {
         if (item.type === 'marketing') {
           return showMarketingNavigation;
         }
-        return true;
+        return item.id !== 'bootcamps';
       });
       const itemsWithEvents = canShowEvents && eventsItem
         ? [...filteredItems, eventsItem]
@@ -515,7 +554,7 @@ function Navbar({ translations, pageProps }) {
                   variant="default"
                   onClick={handleGetStartedButton}
                 >
-                  {t('get-started')}
+                  {getStartedButtonLabel}
                 </Button>
               </Box>
             )}
