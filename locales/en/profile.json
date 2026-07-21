@@ -278,6 +278,7 @@
     "see-details": "See details",
     "next-payment-with-price": "Next payment: {{currencySymbol}}{{amount}} on {{date}}",
     "next-payment": "Next payment on {{date}}",
+    "payment-difference-note": "Your next charge may differ from your last payment because the plan price changed or your discount no longer applies.",
     "last-payment": "Last payment on {{date}}",
     "duration": "Duration: {{duration}}",
     "renewal": "Renewal: {{renewal}}",
