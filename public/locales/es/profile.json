@@ -277,6 +277,7 @@
     "see-details": "Ver detalles",
     "next-payment-with-price": "Siguiente pago: {{currencySymbol}}{{amount}} el {{date}}",
     "next-payment": "Siguiente pago el {{date}}",
+    "payment-difference-note": "El próximo cobro puede ser distinto al último pago porque el precio del plan se actualizó o tu descuento ya no aplica.",
     "last-payment": "Ultimo pago el {{date}}",
     "duration": "Duración: {{duration}}",
     "renewal": "Renovación: {{renewal}}",

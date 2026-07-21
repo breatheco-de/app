@@ -10,10 +10,17 @@ import SubsriptionButton from './SubsriptionButton';
 
 function SubscriptionInfo({ subscription }) {
   const { lang } = useTranslation('profile');
-  const { backgroundColor3, hexColor } = useStyle();
+  const { backgroundColor3, hexColor, fontColor } = useStyle();
   const { blueDefault } = hexColor;
   const { getSubscriptionDetails } = profileHandlers();
-  const { renewalDate, renewability, paymentInfo, nextPayment, errorMessage } = getSubscriptionDetails(subscription, lang);
+  const {
+    renewalDate,
+    renewability,
+    paymentInfo,
+    nextPayment,
+    errorMessage,
+    paymentDifferenceNote,
+  } = getSubscriptionDetails(subscription, lang);
 
   return (
     <Flex flexDirection="column" gridGap="10px" background={backgroundColor3} borderRadius="4px" padding="8px">
@@ -27,6 +34,15 @@ function SubscriptionInfo({ subscription }) {
         </Flex>
       )}
 
+      {paymentInfo && (
+        <Flex gridGap="4px" alignItems="center">
+          <Icon icon="card" width="18px" height="13px" color={blueDefault} minWidth="18px" />
+          <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
+            {paymentInfo}
+          </Text>
+        </Flex>
+      )}
+
       {nextPayment && (
         <Flex gridGap="4px" alignItems="center">
           <Icon icon="card" width="18px" height="13px" color={blueDefault} minWidth="18px" />
@@ -36,13 +52,10 @@ function SubscriptionInfo({ subscription }) {
         </Flex>
       )}
 
-      {paymentInfo && (
-        <Flex gridGap="4px" alignItems="center">
-          <Icon icon="card" width="18px" height="13px" color={blueDefault} minWidth="18px" />
-          <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
-            {paymentInfo}
-          </Text>
-        </Flex>
+      {paymentDifferenceNote && (
+        <Text fontSize="11px" fontWeight="500" color={fontColor} opacity={0.8} padding="0 0 0 26px" lineHeight="1.4">
+          {paymentDifferenceNote}
+        </Text>
       )}
 
       {renewalDate && (
@@ -118,6 +131,10 @@ SubscriptionInfo.propTypes = {
     invoices: PropTypes.arrayOf(PropTypes.shape({})),
     monthly_price: PropTypes.number,
     next_payment_at: PropTypes.string,
+    next_renewal_amount: PropTypes.number,
+    currency: PropTypes.shape({
+      code: PropTypes.string,
+    }),
     planOffer: PropTypes.shape({
       status: PropTypes.string,
     }),
@@ -170,6 +187,10 @@ SubscriptionCard.propTypes = {
     invoices: PropTypes.arrayOf(PropTypes.shape({})),
     monthly_price: PropTypes.number,
     next_payment_at: PropTypes.string,
+    next_renewal_amount: PropTypes.number,
+    currency: PropTypes.shape({
+      code: PropTypes.string,
+    }),
     planOffer: PropTypes.shape({
       status: PropTypes.string,
     }),
