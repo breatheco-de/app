@@ -26,18 +26,20 @@ import PhoneInput from '../PhoneInput';
 import PaymentMethods from './PaymentMethods';
 import bc from '../../services/breathecode';
 import { BASE_PLAN, SILENT_CODE } from '../../utils/variables';
-import { getQueryString } from '../../utils';
+import { getQueryString, getStorageItem, setStorageItem } from '../../utils';
 
 function CheckoutV2StepsBox({ courseChoosed, setShowPaymentDetails, setVerifyEmailProps }) {
   const { t, lang } = useTranslation('signup');
   const router = useRouter();
   const { userSession, location } = useSession();
-  const { input } = useStyle();
+  const { input, featuredColor } = useStyle();
   const { createToast } = useCustomToast({ toastId: 'checkout-user-form' });
   const { state, handleStep } = signupAction();
   const { stepsEnum } = useSignup();
   const { stepIndex } = state;
   const [userData, setUserData] = useState(null);
+  const redirectStorage = getStorageItem('redirect');
+  const redirectStorageAlreadyExists = typeof redirectStorage === 'string' && redirectStorage.length > 0;
 
   const isStepOneExpanded = stepIndex === stepsEnum.CONTACT;
   const isStepTwoExpanded = stepIndex >= stepsEnum.PAYMENT;
@@ -97,12 +99,19 @@ function CheckoutV2StepsBox({ courseChoosed, setShowPaymentDetails, setVerifyEma
         localStorage.setItem('accessToken', data.access_token);
       }
       axiosInstance.defaults.headers.common.Authorization = `Token ${data.access_token}`;
+      const verifyEmailData = {
+        ...payload,
+        ...data,
+      };
+      // Persist for after payment; do not open the modal until purchase succeeds.
+      setStorageItem('pendingEmailVerification', JSON.stringify({
+        email: verifyEmailData.email,
+        id: verifyEmailData.id,
+        showAfterPayment: false,
+      }));
       setVerifyEmailProps({
-        data: {
-          ...payload,
-          ...data,
-        },
-        state: true,
+        data: verifyEmailData,
+        state: false,
       });
 
       setUserData(payload);
@@ -297,6 +306,31 @@ function CheckoutV2StepsBox({ courseChoosed, setShowPaymentDetails, setVerifyEma
                     <Button mt="14px" width="100%" type="submit" variant="default" isLoading={isSubmitting}>
                       {t('common:continue')}
                     </Button>
+
+                    <Flex
+                      fontSize="13px"
+                      mt="12px"
+                      width="fit-content"
+                      mx="auto"
+                      p="2px 8px"
+                      backgroundColor={featuredColor}
+                      alignItems="center"
+                      justifyContent="center"
+                      borderRadius="4px"
+                      gridGap="6px"
+                    >
+                      {t('already-have-account')}
+                      {' '}
+                      <NextChakraLink
+                        href="/login"
+                        onClick={() => setStorageItem('redirect', router?.asPath)}
+                        redirectAfterLogin={!redirectStorageAlreadyExists}
+                        fontSize="13px"
+                        variant="default"
+                      >
+                        {t('login-here')}
+                      </NextChakraLink>
+                    </Flex>
                   </Form>
                 )}
               </Formik>
