@@ -12,7 +12,7 @@ import useCohortHandler from '../hooks/useCohortHandler';
 import useCustomToast from '../hooks/useCustomToast';
 import bc from '../services/breathecode';
 import { getCohort } from '../lib/admissions';
-import { getBrowserInfo } from '../utils';
+import { getBrowserInfo, getStorageItem, setStorageItem } from '../utils';
 import { reportDatalayer } from '../utils/requests';
 import axiosInstance from '../axios';
 import asPrivate from '../context/PrivateRouteWrapper';
@@ -42,6 +42,22 @@ function PaymentSuccess() {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [timedOut, setTimedOut] = useState(false);
   const pollAttemptsRef = useRef(0);
+
+  // Mark verify-email as ready so AuthContext can show it after this redirect landing.
+  useEffect(() => {
+    try {
+      const raw = getStorageItem('pendingEmailVerification');
+      if (!raw) return;
+      const pending = JSON.parse(raw);
+      if (!pending?.email || pending.showAfterPayment) return;
+      setStorageItem('pendingEmailVerification', JSON.stringify({
+        ...pending,
+        showAfterPayment: true,
+      }));
+    } catch (error) {
+      // ignore malformed storage
+    }
+  }, []);
 
   const redirectToPrograms = () => {
     // After plan checkout, always land on choose-program so the user can enter
