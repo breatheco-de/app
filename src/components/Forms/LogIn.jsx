@@ -386,9 +386,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                   fontWeight="700"
                   align="right"
                   fontSize={actionfontSize}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={isWindow ? `${BREATHECODE_HOST}/v1/auth/password/reset?url=${encodeURIComponent(buildAuthRedirectUrl())}` : undefined}
+                  href={`${BREATHECODE_HOST}/v1/auth/password/reset?callback=${encodeURIComponent(buildAuthRedirectUrl())}`}
                 >
                   {t('login:forgot-password')}
                 </Link>
