@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import bc from '../services/breathecode';
-import { getStorageItem } from '../utils';
+import { getToken } from '../utils';
 
 const useUploadFileInChunks = () => {
   const [isSplitting, setIsSplitting] = useState(false);
@@ -36,7 +36,7 @@ const useUploadFileInChunks = () => {
       formData.append('chunk', chunk);
       formData.append('chunk_index', chunkIndex);
 
-      const accessToken = getStorageItem('accessToken');
+      const accessToken = getToken();
       if (!accessToken && !academyID) {
         throw new Error("Couldn't find the accessToken, make sure you are passing it");
       }

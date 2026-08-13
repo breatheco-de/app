@@ -7,7 +7,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { isWindow, assetTypeValues, getExtensionName, getStorageItem, languageFix, addQueryToURL } from '../../../../../utils';
+import { isWindow, assetTypeValues, getExtensionName, getToken, languageFix, addQueryToURL } from '../../../../../utils';
 import asPrivate from '../../../../../context/PrivateRouteWrapper';
 import Heading from '../../../../../components/Heading';
 import useModuleHandler from '../../../../../hooks/useModuleHandler';
@@ -111,7 +111,7 @@ function SyllabusContent() {
   const hasPendingSubtasks = hasSubtasks && subTasks.some((subtask) => subtask.status === 'PENDING');
 
   const professionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
-  const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
+  const accessToken = isWindow ? getToken() : '';
 
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const taskBarBackground = useColorModeValue('#DCE9FF', 'gray.dark');
@@ -187,7 +187,7 @@ function SyllabusContent() {
     if (!learnpackDeployUrl) return null;
 
     const iframe = 'true';
-    const token = getStorageItem('accessToken');
+    const token = getToken();
     const cohortId = cohortSession?.id;
     const academyId = cohortSession?.academy?.id;
 

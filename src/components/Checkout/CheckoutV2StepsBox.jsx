@@ -27,6 +27,7 @@ import PaymentMethods from './PaymentMethods';
 import bc from '../../services/breathecode';
 import { BASE_PLAN, SILENT_CODE } from '../../utils/variables';
 import { getQueryString, getStorageItem, setStorageItem } from '../../utils';
+import { setTokenCookie } from '../../utils/sessionCookie';
 
 function CheckoutV2StepsBox({ courseChoosed, setShowPaymentDetails, setVerifyEmailProps }) {
   const { t, lang } = useTranslation('signup');
@@ -95,9 +96,7 @@ function CheckoutV2StepsBox({ courseChoosed, setShowPaymentDetails, setVerifyEma
         return;
       }
 
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('accessToken', data.access_token);
-      }
+      setTokenCookie(data.access_token);
       axiosInstance.defaults.headers.common.Authorization = `Token ${data.access_token}`;
       const verifyEmailData = {
         ...payload,
