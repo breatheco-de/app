@@ -16,6 +16,7 @@ import {
   slugToTitle,
   unSlugifyCapitalize,
   parseAddOnIdsFromQuery,
+  pickConversionInfo,
 } from '../utils';
 import { currenciesSymbols, BASE_PLAN, SILENT_CODE } from '../utils/variables';
 import { reportDatalayer } from '../utils/requests';
@@ -646,9 +647,7 @@ const useSignup = () => {
       const response = await bc.payment().pay({
         country_code,
         ...requests,
-        conversion_info: {
-          ...userSession,
-        },
+        conversion_info: pickConversionInfo(userSession),
       });
 
       const transactionData = response.data;
@@ -776,9 +775,7 @@ const useSignup = () => {
       const response = await bc.payment().pay({
         country_code,
         ...requestBody,
-        conversion_info: {
-          ...userSession,
-        },
+        conversion_info: pickConversionInfo(userSession),
       });
       return response;
     } catch (error) {

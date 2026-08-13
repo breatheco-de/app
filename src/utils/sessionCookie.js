@@ -35,7 +35,6 @@ const FIELD_MAP = [
   { session: 'internal_cta_campaign', cookie: ['utm.internal_cta_campaign', 'internal_cta_campaign'] },
   { session: 'landing_url', cookie: 'landing_page' },
   { session: 'conversion_url', cookie: 'conversion_page' },
-  { session: 'campus_location', cookie: 'location', empty: null },
 ];
 
 function getCookiePath(cookie, path) {

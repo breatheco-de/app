@@ -4,6 +4,7 @@ import { es } from 'date-fns/locale';
 import { email as emailRegex } from './regex';
 import { parseQuerys } from './url';
 import { getToken } from './sessionCookie';
+import { pickConversionInfo } from './conversionInfo';
 
 const isWindow = typeof window !== 'undefined';
 
@@ -548,4 +549,5 @@ export {
   adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle, decodeBase64,
   removeSessionStorageItem, languageFix, getBrowserInfo, isValidEmail, addQueryToURL, getColorVariations, parseProp, parseAddOnIdsFromQuery,
   getToken,
+  pickConversionInfo,
 };
