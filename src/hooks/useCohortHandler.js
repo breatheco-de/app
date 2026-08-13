@@ -4,7 +4,7 @@ import axios from 'axios';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useAuth from './useAuth';
-import { getStorageItem, getBrowserInfo, languageFix, removeStorageItem, assetTypeValues } from '../utils';
+import { getToken, getBrowserInfo, languageFix, removeStorageItem, assetTypeValues } from '../utils';
 import useCohortAction from '../store/actions/cohortAction';
 import { buildPublicPortalAssetPath } from '../utils/publicPortalNav';
 import {
@@ -47,7 +47,7 @@ function useCohortHandler() {
     cohortsAssignments,
   } = state;
   const { createToast } = useCustomToast({ toastId: 'fetching-role-cohort-error' });
-  const accessToken = getStorageItem('accessToken');
+  const accessToken = getToken();
   const assetSlug = router?.query?.lessonSlug;
   const assetType = router?.query?.lesson;
 

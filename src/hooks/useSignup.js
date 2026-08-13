@@ -11,6 +11,7 @@ import {
   getNextDateInMonths,
   getQueryString,
   getStorageItem,
+  getToken,
   getBrowserInfo,
   slugToTitle,
   unSlugifyCapitalize,
@@ -55,7 +56,7 @@ const useSignup = () => {
 
   const defaultPlan = process.env.BASE_PLAN || 'basic';
   const country_code = countryCodeQueryString || location?.countryShort;
-  const hasSessionToken = Boolean(getQueryString('token') || getStorageItem('accessToken'));
+  const hasSessionToken = Boolean(getQueryString('token') || getToken());
   const canRequestPaymentData = hasSessionToken || isAuthenticated;
 
   const subscriptionStatusDictionary = {

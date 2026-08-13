@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { isWindow, removeURLParameter, setStorageItem } from '../utils';
+import { getToken, setTokenCookie } from '../utils/sessionCookie';
 import { log } from '../utils/logging';
 import useAuth from '../hooks/useAuth';
 
@@ -8,7 +9,7 @@ export const withGuard = (PassedComponent) => {
     const { isAuthenticated, isLoading } = useAuth();
     const isNotAuthenticated = !isLoading && isWindow && !isAuthenticated;
     const router = useRouter();
-    const tokenExists = isWindow && localStorage.getItem('accessToken');
+    const tokenExists = isWindow && Boolean(getToken());
     const pageToRedirect = isWindow ? `/login${window.location.search}` : '/login';
 
     const query = isWindow && new URLSearchParams(window.location.search || '');
@@ -44,7 +45,7 @@ export const withGuard = (PassedComponent) => {
         router.push(pageToRedirect);
       }
       if (queryTokenExists && isWindow) {
-        localStorage.setItem('accessToken', queryToken);
+        setTokenCookie(queryToken);
         setTimeout(() => {
           router.push(cleanUrl);
         }, 150);

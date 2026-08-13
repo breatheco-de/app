@@ -36,7 +36,7 @@ import Icon from './Icon';
 import StudentsModal from './StudentsModal';
 import { ProfilesSection } from './SupportSidebar/MentoringConsumables';
 import { BREATHECODE_HOST } from '../utils/variables';
-import { getStorageItem, languageFix } from '../utils';
+import { languageFix } from '../utils';
 import LiveEventWidgetV2 from './LiveEvent/LiveEventWidgetV2';
 import StepsModal from './StepsModal';
 import AttendanceModal from './AttendanceModal';
