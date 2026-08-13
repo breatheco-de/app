@@ -688,6 +688,7 @@ const useSignup = () => {
             plan: plan?.plan_slug || transactionData?.plan?.slug || defaultPlan,
             period_label: plan?.period_label || 'one-time',
             items: adaptedItems,
+            conversion_info: userSession,
             agent: getBrowserInfo(),
           },
         });

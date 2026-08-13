@@ -27,7 +27,7 @@ function ServiceSummary({ service }) {
   const serviceTitle = service?.service?.title || unSlugifyCapitalize(service?.service?.slug);
   const { createToast } = useCustomToast({ toastId: 'service-summary' });
   const { isAuthenticated } = useAuth();
-  const { location } = useSession();
+  const { location, userSession } = useSession();
   const { t } = useTranslation('signup');
   const {
     state, setSelectedService, setIsSubmittingCard, setIsSubmittingPayment, setPaymentStatus,
@@ -132,6 +132,7 @@ function ServiceSummary({ service }) {
                 quantity: 1,
               }],
             },
+            conversion_info: userSession,
             agent: getBrowserInfo(),
           } });
         setPaymentStatus('success');
