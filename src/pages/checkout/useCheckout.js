@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import bc from '../../services/breathecode';
 import useAuth from '../../hooks/useAuth';
 import useSession from '../../hooks/useSession';
-import { isWindow, getQueryString, getStorageItem, removeStorageItem, setStorageItem, slugToTitle, getBrowserInfo, parseAddOnIdsFromQuery } from '../../utils';
+import { isWindow, getQueryString, getToken, removeStorageItem, setStorageItem, slugToTitle, getBrowserInfo, parseAddOnIdsFromQuery } from '../../utils';
 import signupAction from '../../store/actions/signupAction';
 import useSignup from '../../hooks/useSignup';
 import { currenciesSymbols, resolveCheckoutPlanSlug, isWhiteLabelAcademy } from '../../utils/variables';
@@ -704,7 +704,7 @@ const useCheckout = () => {
     if (pathname === '/renew') return;
     if (!userSelectedPlan || !planData) return;
 
-    const accessToken = getStorageItem('accessToken');
+    const accessToken = getToken();
     // Keep UI stable immediately when switching options from dropdown.
     setSelectedPlan(userSelectedPlan);
 
@@ -1014,7 +1014,7 @@ const useCheckout = () => {
   useEffect(() => {
     if (pathname === '/renew') return;
 
-    const accessToken = getStorageItem('accessToken');
+    const accessToken = getToken();
     if (!planFormated && isAuthenticated) {
       router.push('/pricing');
     }

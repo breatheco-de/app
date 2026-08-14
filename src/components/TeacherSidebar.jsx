@@ -60,7 +60,7 @@ function TeacherSidebar({
   const { state } = useCohortHandler();
   const { cohortSession } = state;
 
-  // const accessToken = getStorageItem('accessToken');
+  // const accessToken = getToken();
   const router = useRouter();
   const { cohortSlug } = router.query;
 

@@ -3,6 +3,8 @@ import { addDays, format, isAfter } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { email as emailRegex } from './regex';
 import { parseQuerys } from './url';
+import { getToken } from './sessionCookie';
+import { pickConversionInfo } from './conversionInfo';
 
 const isWindow = typeof window !== 'undefined';
 
@@ -87,7 +89,8 @@ const getStorageItem = (key) => {
   }
   return null;
 };
-const tokenExists = String(getStorageItem('accessToken')).length > 5;
+
+const tokenExists = () => String(getToken() || '').length > 5;
 
 const setStorageItem = (key, value) => {
   if (isWindow) {
@@ -545,4 +548,6 @@ export {
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, intervalToHours, capitalizeFirstLetter,
   adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle, decodeBase64,
   removeSessionStorageItem, languageFix, getBrowserInfo, isValidEmail, addQueryToURL, getColorVariations, parseProp, parseAddOnIdsFromQuery,
+  getToken,
+  pickConversionInfo,
 };

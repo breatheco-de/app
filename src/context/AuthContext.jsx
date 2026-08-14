@@ -16,6 +16,7 @@ import Text from '../components/Text';
 import { getPrismicPagesUrls } from '../utils/url';
 import { warn } from '../utils/logging';
 import { getQueryString, getStorageItem, isWindow, removeStorageItem, removeURLParameter, getBrowserInfo } from '../utils';
+import { getToken, setTokenCookie, clearTokenCookie } from '../utils/sessionCookie';
 import { reportDatalayer, getPrismicPages } from '../utils/requests';
 import { BREATHECODE_HOST, RIGOBOT_HOST, SILENT_CODE, isPrismicEnabled } from '../utils/variables';
 import { generateUserContext } from '../utils/rigobotContext';
@@ -123,9 +124,10 @@ const reducer = (state, action) => {
 
 const setTokenSession = (token) => {
   if (token) {
-    localStorage.setItem('accessToken', token);
+    setTokenCookie(token);
     axiosInstance.defaults.headers.common.Authorization = `Token ${token}`;
   } else {
+    clearTokenCookie();
     removeStorageItem('syllabus');
     removeStorageItem('programMentors');
     removeStorageItem('programServices');
@@ -137,16 +139,6 @@ const setTokenSession = (token) => {
     removeStorageItem('isClosedLateModal');
     delete axiosInstance.defaults.headers.common.Authorization;
   }
-};
-
-const getToken = () => {
-  if (isWindow) {
-    const query = new URLSearchParams(window.location.search || '');
-    const queryToken = query.get('token')?.split('?')[0]; // sometimes endpoint redirection returns 2 ?token querystring
-    if (queryToken) return queryToken;
-    return localStorage.getItem('accessToken');
-  }
-  return null;
 };
 
 export const AuthContext = createContext({
