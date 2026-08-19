@@ -289,7 +289,6 @@ function CardFormContent({
                         _focus={{
                           borderColor: hasError ? 'red.500' : input.borderColor,
                         }}
-                        pattern="[A-Za-z ]*"
                       />
                       {hasError && (
                         <Text size="12px" color="red.500">{form.errors.owner_name}</Text>
