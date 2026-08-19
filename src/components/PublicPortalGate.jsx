@@ -25,7 +25,11 @@ function PublicPortalGate({
   const featureEnabled = feature && featureConfig
     ? isWhiteLabelFeatureEnabled(`public_portal.${feature}.enabled`)
     : publicPortalEnabled;
-  const isBlocked = isWhiteLabel && (alwaysHide || !publicPortalEnabled || !featureEnabled);
+  const isBlocked = isWhiteLabel && (
+    alwaysHide
+    || !featureEnabled
+    || (mode === 'login' && !publicPortalEnabled)
+  );
   const shouldRedirectToLogin = isBlocked && mode === 'login' && !isAuthenticated;
   const shouldShowPrivateContent = isBlocked && mode === 'login' && isAuthenticated;
 

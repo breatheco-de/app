@@ -5,7 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import bc from '../services/breathecode';
-import { decodeBase64, getStorageItem, unSlugifyCapitalize, getBrowserInfo } from '../utils';
+import { decodeBase64, getToken, unSlugifyCapitalize, getBrowserInfo } from '../utils';
 import ReviewModal from './ReviewModal';
 import Icon from './Icon';
 import Text from './Text';
@@ -22,7 +22,7 @@ const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}
 function Feedback({ storyConfig, ...rest }) {
   const { t, lang } = useTranslation('choose-program');
   const { isAuthenticated, isAuthenticatedWithRigobot, user, conntectToRigobot } = useAuth();
-  const accessToken = getStorageItem('accessToken');
+  const accessToken = getToken();
   const { backgroundColor, featuredColor, borderColor2, hexColor, featuredLight } = useStyle();
   const [selectedData, setSelectedData] = useState({});
   const [codeRevisions, setCodeRevisions] = useState([]);

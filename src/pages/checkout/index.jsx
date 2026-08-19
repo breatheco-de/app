@@ -32,7 +32,7 @@ import { getDataContentProps } from '../../utils/file';
 import bc from '../../services/breathecode';
 import CheckoutV2StepsBox from '../../components/Checkout/CheckoutV2StepsBox';
 import Summary from '../../components/Checkout/Summary';
-import { removeSessionStorageItem } from '../../utils';
+import { getStorageItem, removeSessionStorageItem, removeStorageItem, setStorageItem } from '../../utils';
 import signupAction from '../../store/actions/signupAction';
 import LoaderScreen from '../../components/LoaderScreen';
 import ModalInfo from '../../components/ModalInfo';
@@ -148,6 +148,43 @@ function Checkout() {
 
   const isPaymentSuccess = paymentStatus === 'success';
   const planDetails = renderPlanDetails();
+
+  const clearPendingEmailVerification = () => {
+    removeStorageItem('pendingEmailVerification');
+  };
+
+  const openVerifyEmailModal = (data) => {
+    if (!data?.email) return;
+    setStorageItem('pendingEmailVerification', JSON.stringify({
+      email: data.email,
+      id: data.id,
+      showAfterPayment: true,
+    }));
+    setVerifyEmailProps({
+      data,
+      state: true,
+    });
+  };
+
+  // Show verify-email only after a successful purchase (not right after signup).
+  useEffect(() => {
+    if (!isPaymentSuccess) return;
+
+    let pendingData = verifyEmailProps?.data;
+    if (!pendingData?.email) {
+      try {
+        const raw = getStorageItem('pendingEmailVerification');
+        pendingData = raw ? JSON.parse(raw) : null;
+      } catch (error) {
+        pendingData = null;
+      }
+    }
+
+    if (pendingData?.email && !verifyEmailProps.state) {
+      openVerifyEmailModal(pendingData);
+    }
+  }, [isPaymentSuccess]);
+
   const compactSelectedPlanTitle = (title = '') => {
     const normalized = String(title).toLowerCase();
     if (normalized.includes('yearly payment')) return 'Year';
@@ -396,6 +433,7 @@ function Checkout() {
         isOpen={(verifyEmailProps.state) || (planFormated && verifyEmailProps.state)}
         buttonHandlerStyles={{ variant: 'default' }}
         actionHandler={() => {
+          clearPendingEmailVerification();
           setVerifyEmailProps({
             ...verifyEmailProps,
             state: false,
@@ -424,10 +462,11 @@ function Checkout() {
             });
           }
         }}
-        handlerText={t('signup:continue-to-purchase')}
+        handlerText={isPaymentSuccess ? t('common:continue') : t('signup:continue-to-purchase')}
         closeText={t('signup:resend')}
         forceHandlerAndClose
         onClose={() => {
+          clearPendingEmailVerification();
           setVerifyEmailProps({
             ...verifyEmailProps,
             state: false,

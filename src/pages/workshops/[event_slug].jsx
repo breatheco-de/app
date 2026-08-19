@@ -14,7 +14,7 @@ import SimpleModal from '../../components/SimpleModal';
 import GridContainer from '../../components/GridContainer';
 import Heading from '../../components/Heading';
 import Text from '../../components/Text';
-import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate, getBrowserInfo, isWindow } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getToken, isValidDate, getBrowserInfo, isWindow } from '../../utils';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../../components/Icon';
 import PublicProfile from '../../components/PublicProfile';
@@ -197,7 +197,7 @@ function Workshop({ eventData, asset }) {
   const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
   const [isCheckinModalOpen, setIsCheckinModalOpen] = useState(false);
   const [randomImage, setRandomImage] = useState(arrayOfImages[0]);
-  const accessToken = getStorageItem('accessToken');
+  const accessToken = getToken();
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
   const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
   const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
@@ -601,7 +601,7 @@ function Workshop({ eventData, asset }) {
 
   const applyAndRedirectToEvent = async ({ eventId, signupData }) => {
     try {
-      const tokenForHeader = signupData?.access_token || getStorageItem('accessToken');
+      const tokenForHeader = signupData?.access_token || getToken();
       const attendeePhone = signupData?.phone || signupData?.phone_number || signupData?.mobile || null;
       const payload = attendeePhone ? { ...utms, phone: attendeePhone } : utms;
       const resp = await bc.events().applyEvent(eventId, payload, tokenForHeader);

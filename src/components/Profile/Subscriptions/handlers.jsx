@@ -5,6 +5,27 @@ import { enUS, es } from 'date-fns/locale';
 import useStyle from '../../../hooks/useStyle';
 import { currenciesSymbols } from '../../../utils/variables';
 
+const AMOUNT_DIFF_THRESHOLD = 0.01;
+
+function getLatestInvoice(invoices = []) {
+  if (!invoices?.length) return null;
+  const fulfilled = invoices.filter((invo) => invo.status === 'FULFILLED');
+  const pool = fulfilled.length ? fulfilled : invoices;
+  return pool.reduce((latest, invoice) => {
+    if (!latest) return invoice;
+    const latestPaid = latest?.paid_at ? new Date(latest.paid_at).getTime() : 0;
+    const invoicePaid = invoice?.paid_at ? new Date(invoice.paid_at).getTime() : 0;
+    if (invoicePaid > latestPaid) return invoice;
+    if (invoicePaid === latestPaid && (invoice?.id || 0) > (latest?.id || 0)) return invoice;
+    return latest;
+  }, null);
+}
+
+function formatAmount(amount) {
+  if (typeof amount !== 'number' || Number.isNaN(amount)) return amount;
+  return amount.toFixed(2);
+}
+
 function profileHandlers() {
   const { t, lang } = useTranslation('profile');
   const { reverseFontColor, fontColor, lightColor } = useStyle();
@@ -89,8 +110,13 @@ function profileHandlers() {
       const nextPaymentDate = formatDate(sub?.next_payment_at);
       const expirationDate = formatDate(sub?.plan_expires_at || sub?.next_payment_at);
       const activeSince = formatDate(sub?.created_at);
-      const subCurrency = currenciesSymbols[sub?.currency?.code] || '$';
-      const invoiceAmount = sub?.invoices[0]?.amount;
+      const latestInvoice = getLatestInvoice(sub?.invoices);
+      const currencyCode = sub?.currency?.code || latestInvoice?.currency?.code;
+      const subCurrency = currenciesSymbols[currencyCode] || '$';
+      const invoiceAmount = latestInvoice?.amount;
+      const formattedInvoiceAmount = formatAmount(invoiceAmount);
+      const nextRenewalAmount = sub?.next_renewal_amount;
+      const formattedNextRenewalAmount = formatAmount(nextRenewalAmount);
       const monthlyPrice = sub?.monthly_price;
       const totalPrice = sub?.how_many_installments * monthlyPrice;
       const payEveryUnit = sub?.pay_every_unit;
@@ -106,6 +132,33 @@ function profileHandlers() {
       const errorMessageText = (error) => t('subscription.error-message', { error: error || 'Something went wrong' });
       const noPaymentsLeft = () => t('subscription.no-payment-left');
 
+      const amountsDiffer = (
+        typeof invoiceAmount === 'number'
+        && typeof nextRenewalAmount === 'number'
+        && Math.abs(invoiceAmount - nextRenewalAmount) > AMOUNT_DIFF_THRESHOLD
+      );
+
+      const getSubscriptionRecurringDetails = ({ includeNextPayment = true, includeRenewalDate = true } = {}) => {
+        const paymentInfo = invoiceAmount === 0
+          ? t('subscription.payment', { payment: t('common:free') })
+          : paymentInfoText(formattedInvoiceAmount, payEveryUnit);
+
+        const showNextPayment = includeNextPayment
+          && typeof nextRenewalAmount === 'number'
+          && nextRenewalAmount > 0
+          && Boolean(sub?.next_payment_at);
+
+        return {
+          renewalDate: includeRenewalDate ? renewalDateText(nextPaymentDate) : false,
+          renewability: activeSince ? activeSinceText(activeSince) : false,
+          paymentInfo,
+          nextPayment: showNextPayment ? paymentText(formattedNextRenewalAmount, nextPaymentDate) : false,
+          paymentDifferenceNote: showNextPayment && amountsDiffer
+            ? t('subscription.payment-difference-note')
+            : false,
+        };
+      };
+
       // Use the functions in statusConfig
       const statusConfig = {
         fully_paid: () => {
@@ -118,11 +171,7 @@ function profileHandlers() {
               nextPayment: isPlanFinancingFullyPaid ? noPaymentsLeft() : paymentText(monthlyPrice, nextPaymentDate),
             };
           }
-          return {
-            renewalDate: renewalDateText(nextPaymentDate),
-            renewability: activeSince ? activeSinceText(activeSince) : false,
-            paymentInfo: invoiceAmount === 0 ? t('subscription.payment', { payment: t('common:free') }) : paymentInfoText(invoiceAmount, payEveryUnit),
-          };
+          return getSubscriptionRecurringDetails();
         },
         active: () => {
           if (isPlanFinancing) {
@@ -134,19 +183,15 @@ function profileHandlers() {
               nextPayment: isPlanFinancingFullyPaid ? noPaymentsLeft() : paymentText(monthlyPrice, nextPaymentDate),
             };
           }
-          return {
-            renewalDate: renewalDateText(nextPaymentDate),
-            renewability: activeSince ? activeSinceText(activeSince) : false,
-            paymentInfo: invoiceAmount === 0 ? t('subscription.payment', { payment: t('common:free') }) : paymentInfoText(invoiceAmount, payEveryUnit),
-          };
+          return getSubscriptionRecurringDetails();
         },
         expired: () => ({
           renewalDate: expiredOnText(expirationDate),
-          paymentInfo: isPlanFinancing ? totallyPaidText(fullFilledInvoicesAmount * monthlyPrice) : paymentInfoText(invoiceAmount, payEveryUnit),
+          paymentInfo: isPlanFinancing ? totallyPaidText(fullFilledInvoicesAmount * monthlyPrice) : paymentInfoText(formattedInvoiceAmount, payEveryUnit),
         }),
         error: () => ({
           errorMessage: errorMessageText(statusMessage),
-          paymentInfo: invoiceAmount ? paymentInfoText(invoiceAmount, payEveryUnit) : 'Error',
+          paymentInfo: invoiceAmount ? paymentInfoText(formattedInvoiceAmount, payEveryUnit) : 'Error',
         }),
         payment_issue: () => {
           if (isPlanFinancing) {
@@ -158,7 +203,7 @@ function profileHandlers() {
           }
           return {
             errorMessage: errorMessageText(statusMessage),
-            paymentInfo: paymentInfoText(invoiceAmount, payEveryUnit),
+            ...getSubscriptionRecurringDetails({ includeRenewalDate: false }),
           };
         },
         cancelled: () => {
@@ -170,7 +215,7 @@ function profileHandlers() {
             };
           }
           return {
-            paymentInfo: paymentInfoText(invoiceAmount, payEveryUnit),
+            paymentInfo: paymentInfoText(formattedInvoiceAmount, payEveryUnit),
           };
         },
         free_trial: () => ({
@@ -186,6 +231,7 @@ function profileHandlers() {
         nextPayment: '',
         errorMessage: '',
         renewability: '',
+        paymentDifferenceNote: '',
       };
     },
   };

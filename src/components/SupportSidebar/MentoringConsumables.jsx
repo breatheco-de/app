@@ -15,7 +15,7 @@ import useAuth from '../../hooks/useAuth';
 import AvatarUser from '../AvatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped, CardSkeleton } from '../Skeleton';
-import { getStorageItem, getBrowserInfo } from '../../utils';
+import { getToken, getBrowserInfo } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
 import { BREATHECODE_HOST, defaultProfiles } from '../../utils/variables';
 import CanAccess from '../CanAccess';
@@ -114,7 +114,7 @@ function MentoringConsumables({
   const { user } = useAuth();
   const { validatePlanExistence } = useSignup();
   const [open, setOpen] = useState(false);
-  const accessToken = getStorageItem('accessToken');
+  const accessToken = getToken();
   const [existsMentors, setExistsMentors] = useState(true);
   const { borderColor, lightColor, hexColor, backgroundColor2 } = useStyle();
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);

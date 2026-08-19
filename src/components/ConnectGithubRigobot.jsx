@@ -7,7 +7,7 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { getStorageItem, isWindow } from '../utils';
+import { getToken, isWindow } from '../utils';
 import { RIGOBOT_HOST, BREATHECODE_HOST } from '../utils/variables';
 import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
@@ -81,7 +81,7 @@ function ConnectGithubRigobot({ ...rest }) {
                 cursor="pointer"
                 onClick={(e) => {
                   e.preventDefault();
-                  const accessToken = getStorageItem('accessToken');
+                  const accessToken = getToken();
                   window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
                 }}
               >

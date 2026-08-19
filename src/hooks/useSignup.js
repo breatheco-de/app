@@ -11,10 +11,12 @@ import {
   getNextDateInMonths,
   getQueryString,
   getStorageItem,
+  getToken,
   getBrowserInfo,
   slugToTitle,
   unSlugifyCapitalize,
   parseAddOnIdsFromQuery,
+  pickConversionInfo,
 } from '../utils';
 import { currenciesSymbols, BASE_PLAN, SILENT_CODE } from '../utils/variables';
 import { reportDatalayer } from '../utils/requests';
@@ -55,7 +57,7 @@ const useSignup = () => {
 
   const defaultPlan = process.env.BASE_PLAN || 'basic';
   const country_code = countryCodeQueryString || location?.countryShort;
-  const hasSessionToken = Boolean(getQueryString('token') || getStorageItem('accessToken'));
+  const hasSessionToken = Boolean(getQueryString('token') || getToken());
   const canRequestPaymentData = hasSessionToken || isAuthenticated;
 
   const subscriptionStatusDictionary = {
@@ -645,9 +647,7 @@ const useSignup = () => {
       const response = await bc.payment().pay({
         country_code,
         ...requests,
-        conversion_info: {
-          ...userSession,
-        },
+        conversion_info: pickConversionInfo(userSession),
       });
 
       const transactionData = response.data;
@@ -687,6 +687,7 @@ const useSignup = () => {
             plan: plan?.plan_slug || transactionData?.plan?.slug || defaultPlan,
             period_label: plan?.period_label || 'one-time',
             items: adaptedItems,
+            conversion_info: userSession,
             agent: getBrowserInfo(),
           },
         });
@@ -774,9 +775,7 @@ const useSignup = () => {
       const response = await bc.payment().pay({
         country_code,
         ...requestBody,
-        conversion_info: {
-          ...userSession,
-        },
+        conversion_info: pickConversionInfo(userSession),
       });
       return response;
     } catch (error) {
