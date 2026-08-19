@@ -606,6 +606,20 @@ function Workshop({ eventData, asset }) {
       const payload = attendeePhone ? { ...utms, phone: attendeePhone } : utms;
       const resp = await bc.events().applyEvent(eventId, payload, tokenForHeader);
       if (resp && resp.status < 300) {
+        reportDatalayer({
+          dataLayer: {
+            event: 'event_order',
+            event_id: event.id,
+            event_slug: event.slug,
+            event_title: event.title,
+            event_type: event.event_type?.slug,
+            event_starting_at: unixFormatedDate.starting_at,
+            event_ending_at: unixFormatedDate.ending_at,
+            event_language: event.lang,
+            event_tags: event.tags || '',
+            agent: getBrowserInfo(),
+          },
+        });
         const token = signupData?.access_token ? signupData.access_token : getStorageItem('accessToken');
         router.push(`${BREATHECODE_HOST}/v1/events/me/event/${eventId}/join?token=${token}`);
       }
@@ -658,6 +672,7 @@ function Workshop({ eventData, asset }) {
                   event_starting_at: unixFormatedDate.starting_at,
                   event_ending_at: unixFormatedDate.ending_at,
                   event_language: event.lang,
+                  event_tags: event.tags || '',
                   agent: getBrowserInfo(),
                 },
               });
