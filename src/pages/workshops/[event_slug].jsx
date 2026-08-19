@@ -620,7 +620,7 @@ function Workshop({ eventData, asset }) {
             agent: getBrowserInfo(),
           },
         });
-        const token = signupData?.access_token ? signupData.access_token : getStorageItem('accessToken');
+        const token = signupData?.access_token ? signupData.access_token : getToken();
         router.push(`${BREATHECODE_HOST}/v1/events/me/event/${eventId}/join?token=${token}`);
       }
     } catch (e) {
