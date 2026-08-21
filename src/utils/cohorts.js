@@ -195,7 +195,7 @@ export const getActiveCohorts = (cohorts) => cohorts.filter((cohort) => {
     && cohort.is_hidden_on_prework === false
     && !hasEnded;
 
-  const showStudent = ['ACTIVE', 'NOT_COMPLETING'].includes(educationalStatus) && programRole === 'STUDENT';
+  const showStudent = ['ACTIVE', 'NOT_COMPLETING', 'DROPPED'].includes(educationalStatus) && programRole === 'STUDENT';
 
   const show = !isGraduated && (cohortIsAvailable || isNotHiddenOnPrework) && (visibleForTeacher || showStudent);
 
