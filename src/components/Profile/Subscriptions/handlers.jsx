@@ -128,7 +128,9 @@ function profileHandlers() {
       const activeSinceText = (date) => t('subscription.active-since', { date });
       const totallyPaidText = (amount) => t('subscription.totally-paid', { amount: amount.toFixed(2), currencySymbol: subCurrency });
       const totalPaidText = (paidAmount, pendingAmount) => t('subscription.total-paid', { paidAmount, pendingAmount, currencySymbol: subCurrency });
-      const paymentInfoText = (amount, unit) => (amount ? t('subscription.payment', { payment: `${subCurrency}${amount}/${t(`signup:payment_unit_short.${unit.toLowerCase()}`)}` }) : false);
+      const paymentInfoText = (amount, unit) => (amount && unit
+        ? t('subscription.payment', { payment: `${subCurrency}${amount}/${t(`signup:payment_unit_short.${String(unit).toLowerCase()}`)}` })
+        : false);
       const errorMessageText = (error) => t('subscription.error-message', { error: error || 'Something went wrong' });
       const noPaymentsLeft = () => t('subscription.no-payment-left');
 
@@ -189,10 +191,20 @@ function profileHandlers() {
           renewalDate: expiredOnText(expirationDate),
           paymentInfo: isPlanFinancing ? totallyPaidText(fullFilledInvoicesAmount * monthlyPrice) : paymentInfoText(formattedInvoiceAmount, payEveryUnit),
         }),
-        error: () => ({
-          errorMessage: errorMessageText(statusMessage),
-          paymentInfo: invoiceAmount ? paymentInfoText(formattedInvoiceAmount, payEveryUnit) : 'Error',
-        }),
+        error: () => {
+          if (isPlanFinancing) {
+            return {
+              errorMessage: errorMessageText(statusMessage),
+              paymentInfo: isPlanFinancingFullyPaid
+                ? totallyPaidText(fullFilledInvoicesAmount * monthlyPrice)
+                : totalPaidText(fullFilledInvoicesAmount * monthlyPrice, totalPrice),
+            };
+          }
+          return {
+            errorMessage: errorMessageText(statusMessage),
+            paymentInfo: invoiceAmount ? paymentInfoText(formattedInvoiceAmount, payEveryUnit) : 'Error',
+          };
+        },
         payment_issue: () => {
           if (isPlanFinancing) {
             return {
