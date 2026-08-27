@@ -35,6 +35,7 @@ import MktEventCards from '../../components/PrismicComponents/MktEventCards';
 import ModalToGetAccess, { stageType } from '../../components/ModalToGetAccess';
 import SmallCardsCarousel from '../../components/SmallCardsCarousel';
 import { SessionContext } from '../../context/SessionContext';
+import { loadUserSession } from '../../utils/sessionCookie';
 import LoaderScreen from '../../components/LoaderScreen';
 import ReactPlayerV2 from '../../components/ReactPlayerV2';
 import DynamicContentCard from '../../components/DynamicContentCard';
@@ -179,7 +180,7 @@ export const getStaticProps = async ({ params, locale }) => {
 
 function Workshop({ eventData, asset }) {
   const { t } = useTranslation('workshops');
-  const { userSession } = useContext(SessionContext);
+  const { userSession, waitForLocation } = useContext(SessionContext);
   const { validatePlanExistence } = useSignup();
   const [users, setUsers] = useState([]);
   const [event, setEvent] = useState(eventData);
@@ -601,6 +602,9 @@ function Workshop({ eventData, asset }) {
 
   const applyAndRedirectToEvent = async ({ eventId, signupData }) => {
     try {
+      const resolvedLocation = await waitForLocation();
+      const session = loadUserSession() || userSession;
+      const userLocation = resolvedLocation?.slug || session?.location?.slug;
       const tokenForHeader = signupData?.access_token || getToken();
       const attendeePhone = signupData?.phone || signupData?.phone_number || signupData?.mobile || null;
       const payload = attendeePhone ? { ...utms, phone: attendeePhone } : utms;
@@ -617,6 +621,7 @@ function Workshop({ eventData, asset }) {
             event_ending_at: unixFormatedDate.ending_at,
             event_language: event.lang,
             event_tags: event.tags || '',
+            user_location: userLocation,
             agent: getBrowserInfo(),
           },
         });
@@ -630,8 +635,11 @@ function Workshop({ eventData, asset }) {
 
   const handleJoin = async () => {
     if (!finishedEvent) {
+      setIsJoiningEvent(true);
+      const resolvedLocation = await waitForLocation();
+      const session = loadUserSession() || userSession;
+      const userLocation = resolvedLocation?.slug || session?.location?.slug;
       if ((readyToJoinEvent && alreadyApplied) || readyToJoinEvent) {
-        setIsJoiningEvent(true);
         reportDatalayer({
           dataLayer: {
             event: 'join_event',
@@ -642,13 +650,12 @@ function Workshop({ eventData, asset }) {
             event_starting_at: unixFormatedDate.starting_at,
             event_ending_at: unixFormatedDate.ending_at,
             event_language: event.lang,
+            user_location: userLocation,
             agent: getBrowserInfo(),
           },
         });
         router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
-      }
-      if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
-        setIsJoiningEvent(true);
+      } else if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
         bc.events().applyEvent(event?.id, utms)
           .then((resp) => {
             if (resp !== undefined) {
@@ -673,6 +680,7 @@ function Workshop({ eventData, asset }) {
                   event_ending_at: unixFormatedDate.ending_at,
                   event_language: event.lang,
                   event_tags: event.tags || '',
+                  user_location: userLocation,
                   agent: getBrowserInfo(),
                 },
               });
@@ -689,6 +697,8 @@ function Workshop({ eventData, asset }) {
           })
           .catch(() => setIsJoiningEvent(false));
         setIsModalConfirmOpen(false);
+      } else {
+        setIsJoiningEvent(false);
       }
     }
   };
