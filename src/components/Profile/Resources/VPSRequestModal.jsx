@@ -198,7 +198,7 @@ function getNormalizedVendorFieldOptions(field, vendorOptionsPayload, vendorSett
 }
 
 function VPSRequestModal({ isOpen, onClose, onSuccess }) {
-  const { borderColor2, backgroundColor3 } = useStyle();
+  const { borderColor2, backgroundColor3, backgroundColor, fontColor3 } = useStyle();
   const { t, lang } = useTranslation('profile');
   const { createToast } = useCustomToast();
   const { state: subsState } = useSubscriptions();
@@ -926,7 +926,7 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
                           borderColor={borderColor2}
                           borderRadius="17px"
                           p="14px"
-                          backgroundColor="white"
+                          backgroundColor={backgroundColor}
                         >
                           <Flex alignItems="center" gap="10px" mb="10px">
                             <Box
@@ -1052,26 +1052,26 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
                                         </Flex>
                                         <Flex alignItems="stretch" justifyContent="space-between" gap="6px" width="100%">
                                           <Box textAlign="center" flex="1" minW={0}>
-                                            <ChakraText fontSize="10px" fontWeight="500" color="gray.700" textTransform="uppercase" lineHeight="short">
+                                            <ChakraText fontSize="10px" fontWeight="500" color={fontColor3} textTransform="uppercase" lineHeight="short">
                                               {t('vps.modal.specs.cpu')}
                                             </ChakraText>
-                                            <ChakraText fontSize="13px" fontWeight="700" color="gray.700" textAlign="center" whiteSpace="nowrap">
+                                            <ChakraText fontSize="13px" fontWeight="700" color={fontColor3} textAlign="center" whiteSpace="nowrap">
                                               {formatSpecsCpuLine(opt.specsCard.cpus)}
                                             </ChakraText>
                                           </Box>
                                           <Box textAlign="center" flex="1" minW={0}>
-                                            <ChakraText fontSize="10px" fontWeight="500" color="gray.700" textTransform="uppercase" lineHeight="short">
+                                            <ChakraText fontSize="10px" fontWeight="500" color={fontColor3} textTransform="uppercase" lineHeight="short">
                                               {t('vps.modal.specs.ram')}
                                             </ChakraText>
-                                            <ChakraText fontSize="13px" fontWeight="700" color="gray.700" textAlign="center" whiteSpace="nowrap">
+                                            <ChakraText fontSize="13px" fontWeight="700" color={fontColor3} textAlign="center" whiteSpace="nowrap">
                                               {formatSpecsGbFromMbString(opt.specsCard.memory)}
                                             </ChakraText>
                                           </Box>
                                           <Box textAlign="center" flex="1" minW={0}>
-                                            <ChakraText fontSize="10px" fontWeight="500" color="gray.700" textTransform="uppercase" lineHeight="short">
+                                            <ChakraText fontSize="10px" fontWeight="500" color={fontColor3} textTransform="uppercase" lineHeight="short">
                                               {t('vps.modal.specs.disk')}
                                             </ChakraText>
-                                            <ChakraText fontSize="13px" fontWeight="700" color="gray.700" textAlign="center" whiteSpace="nowrap">
+                                            <ChakraText fontSize="13px" fontWeight="700" color={fontColor3} textAlign="center" whiteSpace="nowrap">
                                               {formatSpecsDiskForDisplay(opt.specsCard.diskSpace, opt.specsCard.diskUnitHint)}
                                             </ChakraText>
                                           </Box>

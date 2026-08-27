@@ -1,11 +1,20 @@
 /* eslint-disable camelcase */
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { isWindow, getQueryString } from '../utils';
 import { loadUserSession, saveUserSession } from '../utils/sessionCookie';
-import useIPGeolocation from '../hooks/useIPGeolocation';
 import { error } from '../utils/logging';
+import {
+  buildAppLocation,
+  findLocationForUser,
+  getBrowserLanguage,
+  resolveCampusFromQuery,
+} from '../lib/findLocationForUser';
+
+const LOCATION_STALE_MS = 24 * 60 * 60 * 1000;
+const CLIENT_GEO_TIMEOUT_MS = 2500;
+const WAIT_FOR_LOCATION_MS = 3000;
 
 const initialUserSession = {
   utm_placement: '', // the ad placement
@@ -27,33 +36,206 @@ const initialUserSession = {
 export const SessionContext = createContext({
   userSession: initialUserSession,
   location: null,
+  geo: null,
+  campus: null,
   isLoadingLocation: true,
+  waitForLocation: async () => null,
 });
+
+function isLocationFresh(campus, geo, timestamp) {
+  const resolvedAt = geo?.resolved_at || campus?.resolved_at || timestamp;
+  if (!resolvedAt) return false;
+  return Date.now() - resolvedAt < LOCATION_STALE_MS;
+}
+
+function createLocationGate() {
+  let resolve;
+  const promise = new Promise((r) => {
+    resolve = r;
+  });
+  return { promise, resolve, settled: false };
+}
+
+function readCachedLocationState() {
+  if (typeof window === 'undefined') {
+    return { location: null, geo: null, campus: null, ready: false };
+  }
+
+  const stored = loadUserSession() || {};
+  const queryCampus = resolveCampusFromQuery(getQueryString('location'));
+  if (queryCampus) {
+    return {
+      location: buildAppLocation({ geo: stored.geo, campus: queryCampus }),
+      geo: stored.geo || null,
+      campus: queryCampus,
+      ready: true,
+    };
+  }
+
+  const storedCampus = stored.location?.slug ? stored.location : null;
+  const storedGeo = stored.geo || null;
+  const fresh = storedCampus?.reliable !== false
+    && isLocationFresh(storedCampus, storedGeo, stored.timestamp);
+
+  if (storedCampus && fresh) {
+    return {
+      location: buildAppLocation({ geo: storedGeo, campus: storedCampus }),
+      geo: storedGeo,
+      campus: storedCampus,
+      ready: true,
+    };
+  }
+
+  return { location: null, geo: null, campus: null, ready: false };
+}
 
 function SessionProvider({ children }) {
   const [userSession, setUserSession] = useState(initialUserSession);
   const router = useRouter();
-  const [location, setLocation] = useState(null);
-  const [isLoadingLocation, setIsLoadingLocation] = useState(true);
-  const { status, getUserLocation } = useIPGeolocation();
+  const cachedLocation = useRef(readCachedLocationState());
+  const locationGateRef = useRef(null);
+  if (!locationGateRef.current) {
+    locationGateRef.current = createLocationGate();
+    if (cachedLocation.current.ready) {
+      locationGateRef.current.settled = true;
+      locationGateRef.current.resolve(cachedLocation.current.location);
+    }
+  }
+  const [location, setLocation] = useState(cachedLocation.current.location);
+  const [geo, setGeo] = useState(cachedLocation.current.geo);
+  const [campus, setCampus] = useState(cachedLocation.current.campus);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(!cachedLocation.current.ready);
+  const locationRef = useRef(cachedLocation.current.location);
 
-  const initLocation = async () => {
+  const persistCampus = (nextCampus, nextGeo, sessionBase = userSession) => {
+    const campusWithTs = nextCampus
+      ? { ...nextCampus, resolved_at: Date.now() }
+      : null;
+    const geoWithTs = nextGeo
+      ? { ...nextGeo, resolved_at: Date.now() }
+      : nextGeo;
+    saveUserSession({
+      ...sessionBase,
+      location: campusWithTs,
+      geo: geoWithTs,
+    });
+    setUserSession((prev) => ({
+      ...prev,
+      ...sessionBase,
+      location: campusWithTs,
+      geo: geoWithTs,
+    }));
+    return { campusWithTs, geoWithTs };
+  };
+
+  const settleLocation = (appLocation) => {
+    locationRef.current = appLocation;
+    const gate = locationGateRef.current;
+    if (gate && !gate.settled) {
+      gate.settled = true;
+      gate.resolve(appLocation);
+    }
+  };
+
+  const applyResolved = (nextCampus, nextGeo) => {
+    const appLocation = buildAppLocation({ geo: nextGeo, campus: nextCampus });
+    setCampus(nextCampus);
+    setGeo(nextGeo || null);
+    setLocation(appLocation);
+    settleLocation(appLocation);
+  };
+
+  const languageFallbackLocation = () => {
+    const fallbackCampus = findLocationForUser(null, getBrowserLanguage());
+    return buildAppLocation({ geo: null, campus: fallbackCampus });
+  };
+
+  const waitForLocation = () => {
+    if (locationGateRef.current.settled) {
+      return Promise.resolve(locationRef.current);
+    }
+
+    return Promise.race([
+      locationGateRef.current.promise,
+      new Promise((resolve) => {
+        setTimeout(() => {
+          if (!locationGateRef.current.settled) {
+            settleLocation(locationRef.current || languageFallbackLocation());
+          }
+          resolve(locationRef.current);
+        }, WAIT_FOR_LOCATION_MS);
+      }),
+    ]);
+  };
+
+  const fetchGeo = async () => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), CLIENT_GEO_TIMEOUT_MS);
     try {
-      const loc = await getUserLocation();
-      setLocation(loc);
+      const response = await fetch('/api/geo', { signal: controller.signal });
+      const data = await response.json();
+      if (data?.status !== 'success') return null;
+      const { status, ...rest } = data;
+      return rest;
     } catch (e) {
-      error('function getUserLocation()', e);
-      setLocation(null);
+      error('function fetchGeo()', e);
+      return null;
     } finally {
+      clearTimeout(timer);
+    }
+  };
+
+  const initLocation = async (sessionBase = userSession) => {
+    try {
+      const stored = loadUserSession() || sessionBase || {};
+      const queryCampus = resolveCampusFromQuery(getQueryString('location'));
+
+      if (queryCampus) {
+        const storedGeo = stored.geo || null;
+        persistCampus(queryCampus, storedGeo, stored);
+        applyResolved(queryCampus, storedGeo);
+        return;
+      }
+
+      const storedCampus = stored.location?.slug ? stored.location : null;
+      const storedGeo = stored.geo || null;
+      const fresh = storedCampus?.reliable !== false
+        && isLocationFresh(storedCampus, storedGeo, stored.timestamp);
+
+      if (storedCampus && fresh) {
+        applyResolved(storedCampus, storedGeo);
+        return;
+      }
+
+      const nextGeo = storedGeo && isLocationFresh(null, storedGeo, stored.timestamp)
+        ? storedGeo
+        : await fetchGeo();
+      const nextCampus = findLocationForUser(nextGeo, getBrowserLanguage());
+      persistCampus(nextCampus, nextGeo, stored);
+      applyResolved(nextCampus, nextGeo);
+    } catch (e) {
+      error('function initLocation()', e);
+      const fallback = findLocationForUser(null, getBrowserLanguage());
+      applyResolved(fallback, null);
+    } finally {
+      if (locationRef.current) {
+        settleLocation(locationRef.current);
+      } else {
+        const fallback = findLocationForUser(null, getBrowserLanguage());
+        applyResolved(fallback, null);
+      }
       setIsLoadingLocation(false);
     }
   };
 
   useEffect(() => {
-    if (status.loaded) {
+    if (cachedLocation.current.ready) {
+      settleLocation(cachedLocation.current.location);
+    }
+    if (isWindow) {
       initLocation();
     }
-  }, [status.loaded]);
+  }, []);
 
   const setConversionUrl = () => {
     if (isWindow) {
@@ -136,7 +318,10 @@ function SessionProvider({ children }) {
           setUserSession(newSession);
         },
         location,
+        geo,
+        campus,
         isLoadingLocation,
+        waitForLocation,
         setConversionUrl,
       }}
     >
