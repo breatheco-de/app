@@ -8,6 +8,7 @@ import { getToken, getBrowserInfo, languageFix, removeStorageItem, assetTypeValu
 import useCohortAction from '../store/actions/cohortAction';
 import { buildPublicPortalAssetPath } from '../utils/publicPortalNav';
 import {
+  dedupeCohortsBySlug,
   getMacroSlugForCohortSyllabus,
   processRelatedAssignments,
   resolveModuleFromCohortState,
@@ -462,7 +463,9 @@ function useCohortHandler() {
         }
 
         const cohorts = Array.isArray(currentCohort.micro_cohorts) && currentCohort.micro_cohorts.length > 0
-          ? prefetchedCohorts.filter((c) => currentCohort.micro_cohorts.some((elem) => elem.slug === c.slug))
+          ? dedupeCohortsBySlug(
+            prefetchedCohorts.filter((c) => currentCohort.micro_cohorts.some((elem) => elem.slug === c.slug)),
+          )
           : [currentCohort];
 
         const explicitBatchMacroSlug = currentCohort.micro_cohorts?.length ? currentCohort.slug : undefined;

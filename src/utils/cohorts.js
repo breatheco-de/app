@@ -359,6 +359,46 @@ export function getMacroSlugForCohortSyllabus(cohort, cohortsInRequest, options 
   return parentMacro?.slug || null;
 }
 
+const COHORT_USER_ROLE_PRIORITY = {
+  TEACHER: 0,
+  ASSISTANT: 1,
+  REVIEWER: 2,
+  STUDENT: 3,
+};
+
+/**
+ * One entry per cohort slug. Prefer TEACHER > ASSISTANT > REVIEWER > STUDENT when
+ * the same user has multiple CohortUser rows for the same cohort.
+ *
+ * @param {Array<{ slug?: string, cohort_user?: { role?: string }, role?: string }>} cohortList
+ * @returns {Array}
+ */
+export function dedupeCohortsBySlug(cohortList) {
+  if (!Array.isArray(cohortList) || cohortList.length === 0) return [];
+
+  const bySlug = new Map();
+  cohortList.forEach((cohort) => {
+    const slug = cohort?.slug;
+    if (!slug) return;
+
+    const existing = bySlug.get(slug);
+    if (!existing) {
+      bySlug.set(slug, cohort);
+      return;
+    }
+
+    const existingRole = existing.cohort_user?.role || existing.role;
+    const nextRole = cohort.cohort_user?.role || cohort.role;
+    const existingPriority = COHORT_USER_ROLE_PRIORITY[existingRole] ?? 99;
+    const nextPriority = COHORT_USER_ROLE_PRIORITY[nextRole] ?? 99;
+    if (nextPriority < existingPriority) {
+      bySlug.set(slug, cohort);
+    }
+  });
+
+  return [...bySlug.values()];
+}
+
 /**
  * Orden de micro-cohortes igual que en el dashboard del macro
  * (`cohort/[slug]/[slug]/[version]/index.jsx`: sortMicroCohorts).

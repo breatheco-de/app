@@ -56,7 +56,7 @@ import FinalProject from '../../../../../components/FinalProject';
 import useStyle from '../../../../../hooks/useStyle';
 import Feedback from '../../../../../components/Feedback';
 import useCustomToast from '../../../../../hooks/useCustomToast';
-import { sortMicroCohortsLikeDashboard } from '../../../../../utils/cohorts';
+import { dedupeCohortsBySlug, sortMicroCohortsLikeDashboard } from '../../../../../utils/cohorts';
 import ReviewModal, { stages } from '../../../../../components/ReviewModal';
 import ConnectGithubRigobot from '../../../../../components/ConnectGithubRigobot';
 import SimpleModal from '../../../../../components/SimpleModal';
@@ -207,7 +207,9 @@ function Dashboard() {
       if (resp?.status < 400) {
         const { cohorts: updatedCohorts } = await reSetUserAndCohorts();
 
-        const microCohorts = updatedCohorts.filter((c) => cohortSession.micro_cohorts.some((mc) => mc.slug === c.slug));
+        const microCohorts = dedupeCohortsBySlug(
+          updatedCohorts.filter((c) => cohortSession.micro_cohorts.some((mc) => mc.slug === c.slug)),
+        );
         await getCohortsModules(microCohorts, { explicitBatchMacroSlug: cohortSession.slug });
 
         setShowSyncMicroModal(false);
@@ -297,7 +299,9 @@ function Dashboard() {
     if (isRigoInitialized && cohortSession && cohortSession.cohort_user?.role === 'STUDENT' && !isLoadingAssigments) {
       let context = '';
       if (hasMicroCohorts) {
-        const modulesPerProgram = cohorts.filter((cohort) => cohortSession.micro_cohorts.some((microCohort) => microCohort.slug === cohort.slug))
+        const modulesPerProgram = dedupeCohortsBySlug(
+          cohorts.filter((cohort) => cohortSession.micro_cohorts.some((microCohort) => microCohort.slug === cohort.slug)),
+        )
           .map((cohort) => {
             const cohortContext = cohortContextGenerator(cohort, cohortsAssignments[cohort.slug]?.modules);
             return `
@@ -782,7 +786,9 @@ function Dashboard() {
                     <Box display="flex" flexDirection="column" gap="20px">
                       {hasMicroCohorts
                         ? sortMicroCohortsLikeDashboard(
-                          cohorts.filter((cohort) => cohortSession.micro_cohorts.some((elem) => elem.slug === cohort.slug)),
+                          dedupeCohortsBySlug(
+                            cohorts.filter((cohort) => cohortSession.micro_cohorts.some((elem) => elem.slug === cohort.slug)),
+                          ),
                           cohortSession?.cohorts_order,
                         ).map((microCohort) => (
                           <CohortPanel
