@@ -56,6 +56,16 @@ function createLocationGate() {
   return { promise, resolve, settled: false };
 }
 
+function getCampusFromStoredLocation(storedLocation) {
+  if (typeof storedLocation === 'string' && storedLocation.trim()) {
+    return resolveCampusFromQuery(storedLocation.trim());
+  }
+  if (storedLocation && typeof storedLocation === 'object' && storedLocation.slug) {
+    return storedLocation;
+  }
+  return null;
+}
+
 function readCachedLocationState() {
   if (typeof window === 'undefined') {
     return { location: null, geo: null, campus: null, ready: false };
@@ -72,12 +82,13 @@ function readCachedLocationState() {
     };
   }
 
-  const storedCampus = stored.location?.slug ? stored.location : null;
+  const storedCampus = getCampusFromStoredLocation(stored.location);
   const storedGeo = stored.geo || null;
+  const fromSiblingSite = typeof stored.location === 'string';
   const fresh = storedCampus?.reliable !== false
     && isLocationFresh(storedCampus, storedGeo, stored.timestamp);
 
-  if (storedCampus && fresh) {
+  if (storedCampus && (fromSiblingSite || fresh)) {
     return {
       location: buildAppLocation({ geo: storedGeo, campus: storedCampus }),
       geo: storedGeo,
@@ -114,15 +125,22 @@ function SessionProvider({ children }) {
     const geoWithTs = nextGeo
       ? { ...nextGeo, resolved_at: Date.now() }
       : nextGeo;
+    const existingLocation = sessionBase?.location;
+    const incomingLocationSlug = typeof existingLocation === 'string' ? existingLocation.trim() : '';
+    const keepIncomingCookieLocation = Boolean(
+      incomingLocationSlug
+      && (!nextCampus?.slug || incomingLocationSlug === nextCampus.slug),
+    );
+    const persistedLocation = keepIncomingCookieLocation ? incomingLocationSlug : campusWithTs;
     saveUserSession({
       ...sessionBase,
-      location: campusWithTs,
+      location: persistedLocation,
       geo: geoWithTs,
     });
     setUserSession((prev) => ({
       ...prev,
       ...sessionBase,
-      location: campusWithTs,
+      location: persistedLocation,
       geo: geoWithTs,
     }));
     return { campusWithTs, geoWithTs };
@@ -197,12 +215,13 @@ function SessionProvider({ children }) {
         return;
       }
 
-      const storedCampus = stored.location?.slug ? stored.location : null;
+      const storedCampus = getCampusFromStoredLocation(stored.location);
       const storedGeo = stored.geo || null;
+      const fromSiblingSite = typeof stored.location === 'string';
       const fresh = storedCampus?.reliable !== false
         && isLocationFresh(storedCampus, storedGeo, stored.timestamp);
 
-      if (storedCampus && fresh) {
+      if (storedCampus && (fromSiblingSite || fresh)) {
         applyResolved(storedCampus, storedGeo);
         return;
       }
