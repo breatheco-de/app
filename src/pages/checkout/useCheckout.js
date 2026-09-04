@@ -838,71 +838,7 @@ const useCheckout = () => {
     };
 
     if (selectedPlan?.isFreeTier) {
-      const financingOptions = suggestedPlans?.financing_options || [];
-      const monthlyPayment = suggestedPlans?.price_per_month;
-      const yearlyPayment = suggestedPlans?.price_per_year;
-
-      let financingText = '';
-
-      if (financingOptions.length > 0) {
-        financingOptions.sort((a, b) => a.months - b.months);
-
-        if (financingOptions.length === 1) {
-          const finalPrice = applyDiscounts(financingOptions[0].monthly_price, discountValues);
-          financingText = t('free_trial_one_payment', {
-            price: finalPrice.toFixed(2),
-            description: selectedPlan.description,
-            currency: currencySymbol,
-          });
-        }
-
-        if (financingOptions.length > 1) {
-          const firstPrice = applyDiscounts(financingOptions[financingOptions.length - 1].monthly_price, discountValues);
-          const lastPrice = applyDiscounts(financingOptions[0].monthly_price, discountValues);
-
-          financingText = t('free_trial_multiple_payments', {
-            description: selectedPlan.description,
-            numPayments: financingOptions[financingOptions.length - 1].how_many_months,
-            firstPrice: firstPrice.toFixed(2),
-            oneTimePrice: lastPrice.toFixed(2),
-            currency: currencySymbol,
-          });
-        }
-      }
-
-      if (selectedPlan?.type === 'FREE') {
-        return t('free_plan');
-      }
-
-      if (financingOptions.length === 0) {
-        if (monthlyPayment) {
-          const finalMonthlyPrice = applyDiscounts(monthlyPayment, discountValues);
-          financingText = t('free_trial_monthly_payment', {
-            description: selectedPlan.description,
-            monthlyPrice: finalMonthlyPrice.toFixed(2),
-            currency: currencySymbol,
-          });
-        }
-
-        if (yearlyPayment && !monthlyPayment) {
-          const finalYearlyPrice = applyDiscounts(yearlyPayment, discountValues);
-          financingText = t('free_trial_yearly_payment', {
-            description: selectedPlan.description,
-            yearlyPrice: finalYearlyPrice.toFixed(2),
-            currency: currencySymbol,
-          });
-        }
-      }
-
-      if (financingOptions.length === 0 && !monthlyPayment && !yearlyPayment) {
-        financingText = selectedPlan?.description;
-      }
-
-      if (discountValues?.length > 0) {
-        financingText += ` ${t('limited_time_offer')}`;
-      }
-
-      return financingText;
+      return '';
     }
 
     if (selectedPlan?.price > 0 || selectedPlan?.price > 0) {
