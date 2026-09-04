@@ -4,9 +4,8 @@ import axios from 'axios';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useAuth from './useAuth';
-import { getToken, getBrowserInfo, languageFix, removeStorageItem, assetTypeValues } from '../utils';
+import { getToken, getBrowserInfo, languageFix, removeStorageItem, setStorageItem, assetTypeValues } from '../utils';
 import useCohortAction from '../store/actions/cohortAction';
-import { buildPublicPortalAssetPath } from '../utils/publicPortalNav';
 import {
   getMacroSlugForCohortSyllabus,
   processRelatedAssignments,
@@ -15,7 +14,7 @@ import {
 } from '../utils/cohorts';
 import { reportDatalayer } from '../utils/requests';
 import bc from '../services/breathecode';
-import { BREATHECODE_HOST, DOMAIN_NAME, isWhiteLabelAcademy } from '../utils/variables';
+import { BREATHECODE_HOST } from '../utils/variables';
 import useCustomToast from './useCustomToast';
 import useSubscriptions from './useSubscriptions';
 
@@ -48,8 +47,6 @@ function useCohortHandler() {
   } = state;
   const { createToast } = useCustomToast({ toastId: 'fetching-role-cohort-error' });
   const accessToken = getToken();
-  const assetSlug = router?.query?.lessonSlug;
-  const assetType = router?.query?.lesson;
 
   const serializeModulesMap = (moduleData, tasks) => {
     const assignmentsRecopilated = [];
@@ -392,36 +389,20 @@ function useCohortHandler() {
     }
   };
 
-  const handleRedirectToPublicPage = async () => {
-    try {
-      const response = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`);
-      const assetData = response?.data;
-
-      if (!assetData?.asset_type) {
-        router.push('/404');
-        return;
-      }
-
-      const resolvedAssetType = (assetData.asset_type || assetTypeValues[assetType])?.toLowerCase();
-      const translationSlug = assetData?.translations?.[lang]
-        || (lang === 'en' ? assetData?.translations?.us : null)
-        || assetSlug;
-      const relativePath = buildPublicPortalAssetPath(lang, resolvedAssetType, translationSlug);
-
-      if (!relativePath) {
-        router.push('/404');
-        return;
-      }
-
-      if (isWhiteLabelAcademy) {
-        router.push(relativePath);
-        return;
-      }
-
-      window.location.href = `${DOMAIN_NAME}${relativePath}`;
-    } catch (e) {
-      router.push('/404');
+  const redirectWhenCohortUnavailable = () => {
+    const isLoggedIn = Boolean(isAuthenticated || accessToken);
+    if (isLoggedIn) {
+      return router.push({
+        pathname: '/choose-program',
+        locale: lang,
+      });
     }
+
+    setStorageItem('redirect', router.asPath);
+    return router.push({
+      pathname: '/login',
+      locale: lang,
+    });
   };
 
   const getCohortData = async ({
@@ -445,9 +426,7 @@ function useCohortHandler() {
         }
 
         if (!currentCohort) {
-          if (assetSlug) return handleRedirectToPublicPage();
-
-          return router.push('/choose-program');
+          return redirectWhenCohortUnavailable();
         }
 
         if (currentCohort?.cohort_user?.finantial_status === 'LATE') {
@@ -477,16 +456,16 @@ function useCohortHandler() {
         ));
 
         if (!hasLoadedModules) {
-          return undefined;
+          return redirectWhenCohortUnavailable();
         }
 
         setCohortSession(currentCohort);
         return currentCohort;
       }
 
-      return handleRedirectToPublicPage();
+      return redirectWhenCohortUnavailable();
     } catch (error) {
-      handleRedirectToPublicPage();
+      redirectWhenCohortUnavailable();
       createToast({
         position: 'top',
         title: t('alert-message:invalid-cohort-slug'),
