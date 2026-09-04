@@ -32,6 +32,7 @@ import ReferralFeatured from '../../components/ReferralFeatured';
 import Feedback from '../../components/Feedback';
 import axios from '../../axios';
 import LanguageSelector from '../../components/LanguageSelector';
+import { dedupeCohortsBySlug } from '../../utils/cohorts';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -553,7 +554,8 @@ function chooseProgram() {
     return t('invite.singular-word', { invitesLength: invites?.length });
   };
 
-  const isMainCohort = (cohort) => !cohorts.some((elem) => elem.micro_cohorts.some((micro) => micro.slug === cohort.slug));
+  const isMainCohort = (cohort) => !cohorts.some((elem) => Array.isArray(elem?.micro_cohorts)
+    && elem.micro_cohorts.some((micro) => micro?.slug === cohort?.slug));
 
   return (
     <Flex alignItems="center" flexDirection="row" mt="40px">
@@ -708,7 +710,7 @@ function chooseProgram() {
 
           <Box>
             {!isLoading && (
-              <ProgramsDashboard cohorts={cohorts.filter(isMainCohort)} setLateModalProps={setLateModalProps} />
+              <ProgramsDashboard cohorts={dedupeCohortsBySlug(cohorts.filter(isMainCohort))} setLateModalProps={setLateModalProps} />
             )}
           </Box>
           {isRevalidating && (

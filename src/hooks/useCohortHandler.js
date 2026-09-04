@@ -394,13 +394,17 @@ function useCohortHandler() {
   };
 
   const handleRedirectToPublicPage = async () => {
+    if (!assetSlug) {
+      return router.push('/choose-program');
+    }
+
     try {
       const response = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`);
       const assetData = response?.data;
 
       if (!assetData?.asset_type) {
         router.push('/404');
-        return;
+        return undefined;
       }
 
       const resolvedAssetType = (assetData.asset_type || assetTypeValues[assetType])?.toLowerCase();
@@ -411,18 +415,42 @@ function useCohortHandler() {
 
       if (!relativePath) {
         router.push('/404');
-        return;
+        return undefined;
       }
 
       if (isWhiteLabelAcademy) {
-        router.push(relativePath);
-        return;
+        return router.push(relativePath);
       }
 
       window.location.href = `${DOMAIN_NAME}${relativePath}`;
+      return undefined;
     } catch (e) {
-      router.push('/404');
+      return router.push('/404');
     }
+  };
+
+  const resolveCohortsForModules = (currentCohort, prefetchedCohorts) => {
+    const microCohorts = Array.isArray(currentCohort?.micro_cohorts) ? currentCohort.micro_cohorts : [];
+    if (microCohorts.length === 0) {
+      return [currentCohort];
+    }
+
+    const userMicros = dedupeCohortsBySlug(
+      prefetchedCohorts.filter((c) => microCohorts.some((elem) => elem?.slug === c?.slug)),
+    );
+    const bySlug = new Map(userMicros.map((c) => [c.slug, c]));
+
+    // Fill gaps with nested micro cohorts from the macro so the dashboard can still load modules
+    // even when the user has no separate CohortUser row for every micro.
+    microCohorts.forEach((micro) => {
+      if (!micro?.slug || bySlug.has(micro.slug)) return;
+      bySlug.set(micro.slug, {
+        ...micro,
+        academy: micro.academy || currentCohort.academy,
+      });
+    });
+
+    return [...bySlug.values()];
   };
 
   const getCohortData = async ({
@@ -437,7 +465,7 @@ function useCohortHandler() {
         let currentCohort = prefetchedCohorts.find((c) => c.slug === cohortSlug);
 
         //we make sure that we have already loaded the data of the cohort and its micro cohorts
-        if (!currentCohort || (Array.isArray(currentCohort.micro_cohorts) && currentCohort.micro_cohorts.length > 0 && !currentCohort.micro_cohorts.every((cohort) => myCohorts.some(({ slug }) => cohort.slug === slug)))) {
+        if (!currentCohort || (Array.isArray(currentCohort.micro_cohorts) && currentCohort.micro_cohorts.length > 0 && !currentCohort.micro_cohorts.every((cohort) => myCohorts.some(({ slug }) => cohort?.slug === slug)))) {
           const { cohorts: fetchedCohorts } = await fetchUserAndCohorts();
           setCohorts(fetchedCohorts);
           prefetchedCohorts = fetchedCohorts;
@@ -462,11 +490,7 @@ function useCohortHandler() {
           return router.push('/choose-program');
         }
 
-        const cohorts = Array.isArray(currentCohort.micro_cohorts) && currentCohort.micro_cohorts.length > 0
-          ? dedupeCohortsBySlug(
-            prefetchedCohorts.filter((c) => currentCohort.micro_cohorts.some((elem) => elem.slug === c.slug)),
-          )
-          : [currentCohort];
+        const cohorts = resolveCohortsForModules(currentCohort, prefetchedCohorts);
 
         const explicitBatchMacroSlug = currentCohort.micro_cohorts?.length ? currentCohort.slug : undefined;
         const assignmentsMap = await getCohortsModules(cohorts, {
@@ -487,9 +511,20 @@ function useCohortHandler() {
         return currentCohort;
       }
 
-      return handleRedirectToPublicPage();
+      if (assetSlug) return handleRedirectToPublicPage();
+      return router.push('/choose-program');
     } catch (error) {
-      handleRedirectToPublicPage();
+      console.error('[useCohortHandler] getCohortData error', {
+        message: error?.message,
+        status: error?.response?.status,
+        data: error?.response?.data,
+        cohortSlug,
+      });
+      if (assetSlug) {
+        handleRedirectToPublicPage();
+      } else {
+        router.push('/choose-program');
+      }
       createToast({
         position: 'top',
         title: t('alert-message:invalid-cohort-slug'),
