@@ -10,7 +10,7 @@
   "newsletterSucces": "¡Genial! Te has unido exitosamente, Mantengase al pendiente para más información pronto 😁",
   "terms": {
     "label": "Términos y condiciones",
-    "href": "/es/terminos-y-condiciones"
+    "href": "https://4geeks.com/es/terminos-y-condiciones"
   },
   "code-of-conduct": {
     "label": "Codigo de conducta",
@@ -18,7 +18,7 @@
   },
   "privacy": {
     "label": "Políticas de Privacidad",
-    "href": "/es/politicas-de-privacidad"
+    "href": "https://4geeks.com/es/politicas-de-privacidad"
   },
   "company":{
     "title":"EMPRESA",
