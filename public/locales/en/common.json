@@ -760,9 +760,9 @@
   "free": "Free",
   "login": "Login",
   "terms-and-conditions": "Terms and conditions",
-  "terms-and-conditions-link": "/terms-and-conditions",
+  "terms-and-conditions-link": "https://4geeks.com/en/terms-conditions",
   "privacy-policy": "Privacy policy",
-  "privacy-policy-link": "/privacy-policy",
+  "privacy-policy-link": "https://4geeks.com/en/privacy-policy",
   "bootcamp": {
     "planType": "bootcamp",
     "type": "Unlimited Experience",

@@ -321,7 +321,7 @@ function AcceptInvite() {
                           {t('signup:validators.receive-information')}
                           {' '}
                         </Text>
-                        <NextChakraLink variant="default" fontSize="10px" href="/privacy-policy" target="_blank">{t('common:privacy-policy')}</NextChakraLink>
+                        <NextChakraLink variant="default" fontSize="10px" href={t('common:privacy-policy-link')} target="_blank">{t('common:privacy-policy')}</NextChakraLink>
                       </Flex>
                     </Flex>
                     <Button mt="20px" variant="default" width="100%" isLoading={isSubmitting} type="submit" isDisabled={!isChecked}>

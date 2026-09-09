@@ -5,9 +5,11 @@ import Text from '../../Text';
 import { location } from '../../../utils';
 import LLM from './LLM';
 import VPS from './VPS';
+import useStyle from '../../../hooks/useStyle';
 
 function Resources() {
   const { t } = useTranslation('profile');
+  const { lightColor } = useStyle();
 
   return (
     <>
@@ -20,7 +22,7 @@ function Resources() {
         <Text fontSize="15px" fontWeight="700" mb="3px">
           {t('my-resources')}
         </Text>
-        <Text fontSize="14px" color="gray.600" pb="18px">
+        <Text fontSize="14px" color={lightColor} pb="18px">
           {t('my-resources-description')}
         </Text>
       </Box>

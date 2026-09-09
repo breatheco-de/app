@@ -12,6 +12,7 @@ import {
   ModalOverlay,
   SimpleGrid,
   Text as ChakraText,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -198,7 +199,8 @@ function getNormalizedVendorFieldOptions(field, vendorOptionsPayload, vendorSett
 }
 
 function VPSRequestModal({ isOpen, onClose, onSuccess }) {
-  const { borderColor2, backgroundColor3, backgroundColor, fontColor3 } = useStyle();
+  const { borderColor2, backgroundColor3, backgroundColor, fontColor3, lightColor } = useStyle();
+  const optionHighlightBg = useColorModeValue('blue.light', 'featuredDark');
   const { t, lang } = useTranslation('profile');
   const { createToast } = useCustomToast();
   const { state: subsState } = useSubscriptions();
@@ -735,15 +737,15 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
         <ModalCloseButton />
         <ModalBody display="flex" flexDirection="column" gridGap="12px" py="16px">
           {requestStep === 'provider' && (
-            <Text size="sm" color="gray.600">{t('vps.modal.description')}</Text>
+            <Text size="sm" color={lightColor}>{t('vps.modal.description')}</Text>
           )}
 
           {(subsState.isLoading || loadingVpsConsumables) && (
-            <Text size="sm" color="gray.600">{t('vps.modal.loading-plans')}</Text>
+            <Text size="sm" color={lightColor}>{t('vps.modal.loading-plans')}</Text>
           )}
 
           {!subsState.isLoading && !loadingVpsConsumables && academyOptions.length === 0 && (
-            <Text size="sm" color="gray.500">{t('vps.modal.no-academies')}</Text>
+            <Text size="sm" color={lightColor}>{t('vps.modal.no-academies')}</Text>
           )}
 
           {requestStep === 'provider' && academyOptions.length > 1 && (
@@ -809,13 +811,13 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
                 </Box>
               )}
               {loadingProvisioningVendors && (
-                <Text size="sm" color="gray.600">{t('vps.modal.loading-providers')}</Text>
+                <Text size="sm" color={lightColor}>{t('vps.modal.loading-providers')}</Text>
               )}
               {!loadingProvisioningVendors && currentLoadProvidersError && (
                 <Text size="sm" color="red.500">{currentLoadProvidersError}</Text>
               )}
               {!loadingProvisioningVendors && !currentLoadProvidersError && currentProvisioningList.length === 0 && (
-                <Text size="sm" color="gray.500">{t('vps.modal.no-providers')}</Text>
+                <Text size="sm" color={lightColor}>{t('vps.modal.no-providers')}</Text>
               )}
               {!loadingProvisioningVendors && !currentLoadProvidersError && currentProvisioningList.length > 0 && (
                 <Box>
@@ -831,7 +833,7 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
                     mx={currentProvisioningList.length === 1 ? 'auto' : undefined}
                   >
                     {currentProvisioningList.map((row, idx) => {
-                      const vendorCardBackground = idx % 2 === 1 ? 'blue.light' : backgroundColor3;
+                      const vendorCardBackground = idx % 2 === 1 ? optionHighlightBg : backgroundColor3;
                       return (
                         <Box
                           key={String(row.id)}
@@ -847,7 +849,7 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
                           cursor="pointer"
                           transition="all 0.18s ease"
                           _hover={{
-                            filter: 'brightness(0.97)',
+                            backgroundColor: optionHighlightBg,
                             borderColor: 'blue.default',
                           }}
                           _active={{ filter: 'brightness(0.94)' }}
@@ -870,7 +872,7 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
                               <Text fontSize="md" fontWeight="700" lineHeight="short">
                                 {row.vendor.name}
                               </Text>
-                              <Text fontSize="sm" color="gray.600" mt="4px">
+                              <Text fontSize="sm" color={lightColor} mt="4px">
                                 {t('vps.modal.vendor-card-subtitle')}
                               </Text>
                             </Box>
@@ -890,13 +892,13 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
                 {t('vps.modal.configure-provider', { provider: selectedProvisioningVendor?.vendor?.name || '—' })}
               </Text>
               {loadingVendorOptions && (
-                <Text size="sm" color="gray.600">{t('vps.modal.loading-options')}</Text>
+                <Text size="sm" color={lightColor}>{t('vps.modal.loading-options')}</Text>
               )}
               {!loadingVendorOptions && loadVendorOptionsError && (
                 <Text size="sm" color="red.500">{loadVendorOptionsError}</Text>
               )}
               {!loadingVendorOptions && !loadVendorOptionsError && orderedVendorSchemaFields.length === 0 && (
-                <Text size="sm" color="gray.500">{t('vps.modal.no-options-schema')}</Text>
+                <Text size="sm" color={lightColor}>{t('vps.modal.no-options-schema')}</Text>
               )}
               {!loadingVendorOptions && !loadVendorOptionsError && orderedVendorSchemaFields.length > 0 && (
                 <Box display="flex" flexDirection="column" gridGap="12px">
@@ -949,7 +951,7 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
                             </Box>
                           </Flex>
                           {disabledOptionsHintKey ? (
-                            <Text size="sm" color="gray.600" mb="10px" lineHeight="short">
+                            <Text size="sm" color={lightColor} mb="10px" lineHeight="short">
                               {t(`vps.modal.${disabledOptionsHintKey}`)}
                             </Text>
                           ) : null}
@@ -980,13 +982,13 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
                                     borderStyle="solid"
                                     borderWidth="1px"
                                     borderColor={isSelected ? 'blue.default' : borderColor2}
-                                    backgroundColor={isSelected ? 'blue.light' : backgroundColor3}
+                                    backgroundColor={isSelected ? optionHighlightBg : backgroundColor3}
                                     cursor={isOptionDisabled ? 'not-allowed' : 'pointer'}
                                     opacity={isOptionDisabled ? 0.55 : 1}
                                     transition="border-color 0.15s ease, background-color 0.15s ease"
                                     _hover={isOptionDisabled ? {} : {
                                       borderColor: 'blue.default',
-                                      backgroundColor: 'blue.light',
+                                      backgroundColor: optionHighlightBg,
                                     }}
                                     _active={isOptionDisabled ? {} : { filter: 'brightness(0.97)' }}
                                     onClick={() => {
@@ -1019,7 +1021,7 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
                                           <Box flex="1" minWidth={0}>
                                             <ChakraText
                                               fontSize="11px"
-                                              color="gray.500"
+                                              color={lightColor}
                                               fontFamily="mono"
                                               lineHeight="short"
                                               mb="2px"
@@ -1040,7 +1042,7 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
                                               <ChakraText
                                                 fontSize="11px"
                                                 fontWeight="500"
-                                                color="gray.500"
+                                                color={lightColor}
                                                 lineHeight="short"
                                                 textAlign="left"
                                                 noOfLines={1}
@@ -1121,8 +1123,8 @@ function VPSRequestModal({ isOpen, onClose, onSuccess }) {
                                             as="span"
                                             fontSize="12px"
                                             fontWeight="500"
-                                            color="gray.600"
-                                            opacity={0.65}
+                                            color={lightColor}
+                                            opacity={0.85}
                                             flexShrink={0}
                                             whiteSpace="nowrap"
                                           >

@@ -10,7 +10,7 @@
   "newsletterSucces": "Amazing! You have successfully joined, stay tuned for upcoming information soon 😁",
   "terms": {
     "label": "Terms & Conditions",
-    "href": "/terms-and-conditions"
+    "href": "https://4geeks.com/en/terms-conditions"
   },
   "code-of-conduct": {
     "label": "Code of conduct",
@@ -18,7 +18,7 @@
   },
   "privacy": {
     "label": "Privacy Policy",
-    "href": "/privacy-policy"
+    "href": "https://4geeks.com/en/privacy-policy"
   },
   "company":{
     "title":"COMPANY",

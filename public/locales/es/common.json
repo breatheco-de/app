@@ -759,9 +759,9 @@
   "free": "Gratis",
   "login": "Iniciar sesión",
   "terms-and-conditions": "Términos y condiciones",
-  "terms-and-conditions-link": "/es/terminos-y-condiciones",
+  "terms-and-conditions-link": "https://4geeks.com/es/terminos-y-condiciones",
   "privacy-policy": "Política de privacidad",
-  "privacy-policy-link": "/es/politicas-de-privacidad",
+  "privacy-policy-link": "https://4geeks.com/es/politicas-de-privacidad",
   "bootcamp": {
     "planType": "bootcamp",
     "type": "Bootcamp",

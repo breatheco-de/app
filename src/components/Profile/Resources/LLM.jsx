@@ -137,7 +137,7 @@ function LLMKeyCard({
   isDeleteLoading,
   deleteAriaLabel,
 }) {
-  const { hexColor } = useStyle();
+  const { hexColor, lightColor } = useStyle();
 
   return (
     <Box width="100%">
@@ -183,7 +183,7 @@ function LLMKeyCard({
                   </Badge>
                 ) : null}
               </Flex>
-              <Text fontSize="sm" color="gray.600">
+              <Text fontSize="sm" color={lightColor}>
                 {usageText}
               </Text>
             </Box>
@@ -214,7 +214,7 @@ function LLMKeyCard({
             <Text
               size="sm"
               fontWeight="400"
-              color="gray.600"
+              color={lightColor}
               px={1}
               whiteSpace="nowrap"
               display={{ base: 'none', md: 'block' }}
@@ -512,7 +512,7 @@ LLMKeyDetailsInfo.defaultProps = {
 };
 
 function LLM() {
-  const { borderColor2 } = useStyle();
+  const { borderColor2, lightColor } = useStyle();
   const { t, lang } = useTranslation('profile');
   const { createToast } = useCustomToast();
   const { state: subsState } = useSubscriptions();
@@ -1009,7 +1009,7 @@ function LLM() {
               <Text fontSize="16px" fontWeight="700">
                 {t('llm.title')}
               </Text>
-              <Text fontSize="14px" color="gray.600">
+              <Text fontSize="14px" color={lightColor}>
                 {t('llm.description')}
               </Text>
             </Box>
