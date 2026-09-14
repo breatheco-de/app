@@ -404,7 +404,11 @@ export function sortMicroCohortsLikeDashboard(microCohorts, cohortsOrderCsv) {
       return cohortsOrder.indexOf(idA) - cohortsOrder.indexOf(idB);
     });
   }
-  return copy;
+  console.log(copy)
+  const uniqueCopy = copy.filter((item, index, self) => 
+    index === self.findIndex((t) => t.slug === item.slug)
+  );
+  return uniqueCopy;
 }
 
 /**
