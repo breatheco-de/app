@@ -20,8 +20,120 @@ import useCustomToast from './useCustomToast';
 import useSubscriptions from './useSubscriptions';
 
 const cohortModulesRequests = new Map();
+const missingSyllabusTaskRequests = new Set();
 
 const getCohortModulesRequestKey = (cohort, macroSlug) => `${cohort?.slug || cohort?.id}:${macroSlug || ''}`;
+
+const asSlug = (value) => {
+  if (!value) return null;
+  if (typeof value === 'string') return value;
+  if (typeof value === 'object' && typeof value.slug === 'string') return value.slug;
+  return null;
+};
+
+const getAssignmentSlugs = (assignment) => {
+  if (!assignment) return [];
+
+  const translationSlugs = assignment.translations && typeof assignment.translations === 'object'
+    ? Object.values(assignment.translations).map(asSlug).filter(Boolean)
+    : [];
+
+  return [
+    asSlug(assignment.slug),
+    asSlug(assignment.associated_slug),
+    ...translationSlugs,
+  ].filter(Boolean);
+};
+
+const taskMatchesAssignment = (task, assignment) => {
+  if (!task?.associated_slug || !assignment) return false;
+  if (assignment.task_type && task.task_type && assignment.task_type !== task.task_type) {
+    return false;
+  }
+  return getAssignmentSlugs(assignment).includes(task.associated_slug);
+};
+
+const getMissingSyllabusAssignments = (modules, tasks) => {
+  const existing = Array.isArray(tasks) ? tasks : [];
+  return (modules || []).flatMap((module) => (module?.content || []).filter((assignment) => (
+    Boolean(asSlug(assignment?.slug))
+    && Boolean(assignment?.task_type)
+    && !existing.some((task) => taskMatchesAssignment(task, assignment))
+  )));
+};
+
+const buildTaskCreatePayload = (assignment, cohort) => {
+  const slug = asSlug(assignment.slug) || asSlug(assignment.associated_slug);
+  return {
+    associated_slug: slug,
+    title: assignment.title || slug,
+    task_type: assignment.task_type,
+    description: assignment.description || '',
+    cohort: cohort.id,
+  };
+};
+
+const getSyllabusModuleData = (syllabus) => {
+  const days = syllabus?.json?.days;
+  const modules = syllabus?.json?.modules;
+  if (Array.isArray(days) && days.length > 0) return days;
+  return modules || days || [];
+};
+
+const mergeCohortTasks = (existing, incoming, cohort) => {
+  const { id, slug, name } = cohort || {};
+  const byKey = new Map();
+
+  [...(existing || []), ...(incoming || [])].filter(Boolean).forEach((task) => {
+    const normalized = {
+      ...task,
+      cohort: task.cohort && typeof task.cohort === 'object'
+        ? task.cohort
+        : { id, slug, name },
+    };
+    const key = normalized.id
+      ? `id:${normalized.id}`
+      : `slug:${normalized.associated_slug}:${normalized.task_type}`;
+    byKey.set(key, normalized);
+  });
+
+  return [...byKey.values()];
+};
+
+const createMissingSyllabusTasks = async ({ cohort, modules, tasks }) => {
+  const missing = getMissingSyllabusAssignments(modules, tasks);
+  if (!cohort?.id || missing.length === 0) return [];
+
+  const requestKey = `${cohort.id}:${missing
+    .map((assignment) => `${assignment.task_type}:${asSlug(assignment.slug)}`)
+    .sort()
+    .join(',')}`;
+
+  if (missingSyllabusTaskRequests.has(requestKey)) return [];
+  missingSyllabusTaskRequests.add(requestKey);
+
+  try {
+    const response = await bc.assignments().addTasks(
+      missing.map((assignment) => buildTaskCreatePayload(assignment, cohort)),
+    );
+    if (response.status < 400 && Array.isArray(response.data)) {
+      return response.data.filter(Boolean);
+    }
+    missingSyllabusTaskRequests.delete(requestKey);
+    return [];
+  } catch (error) {
+    missingSyllabusTaskRequests.delete(requestKey);
+    console.error('[useCohortHandler] createMissingSyllabusTasks error', {
+      message: error?.message,
+      status: error?.response?.status,
+      data: error?.response?.data,
+      code: error?.code,
+      url: error?.config?.url,
+      method: error?.config?.method,
+    });
+    return [];
+  }
+};
 
 function useCohortHandler() {
   const router = useRouter();
@@ -102,7 +214,7 @@ function useCohortHandler() {
   };
 
   const getCohortsModules = async (cohorts, macroSlugOptions = {}) => {
-    const { redirectOnSyllabusError = false, ...slugOptions } = macroSlugOptions;
+    const { redirectOnSyllabusError = false, suppressEmptyError = false, ...slugOptions } = macroSlugOptions;
 
     const showSyllabusErrorAndMaybeRedirect = () => {
       createToast({
@@ -291,7 +403,7 @@ function useCohortHandler() {
         });
       }
 
-      cohortsToFetch.forEach((cohort) => {
+      const fetchedCohortEntries = cohortsToFetch.map((cohort) => {
         const cohortResult = allResults.find((elem) => elem.cohort === cohort.id);
         const syllabus = cohortResult?.syllabusResult?.status === 'fulfilled'
           ? cohortResult.syllabusResult.value?.data
@@ -299,23 +411,49 @@ function useCohortHandler() {
         const tasks = cohortResult?.tasksResult?.status === 'fulfilled'
           ? cohortResult.tasksResult.value?.data?.results || []
           : [];
-        const moduleData = syllabus?.json?.days || syllabus?.json?.modules;
+        const moduleData = getSyllabusModuleData(syllabus);
 
         if (
           !moduleData
           || !Array.isArray(moduleData)
         ) {
-          return;
+          return null;
         }
 
-        const cohortModules = serializeModulesMap(moduleData, tasks);
-
-        assignmentsMap[cohort.slug] = {
-          modules: cohortModules,
-          syllabus,
-          tasks,
+        return {
+          cohort,
+          data: {
+            modules: serializeModulesMap(moduleData, tasks),
+            syllabus,
+            tasks,
+          },
         };
-      });
+      }).filter(Boolean);
+
+      await Promise.all(fetchedCohortEntries.map(async ({ cohort, data }) => {
+        const startedModules = (data.modules || []).filter((module) => (
+          Array.isArray(module.filteredContent) && module.filteredContent.length > 0
+        ));
+        let nextData = data;
+
+        if (startedModules.length > 0) {
+          const created = await createMissingSyllabusTasks({
+            cohort,
+            modules: startedModules,
+            tasks: data.tasks,
+          });
+          if (created.length > 0) {
+            const mergedTasks = mergeCohortTasks(data.tasks, created, cohort);
+            nextData = {
+              ...data,
+              tasks: mergedTasks,
+              modules: serializeModulesMap(getSyllabusModuleData(data.syllabus), mergedTasks),
+            };
+          }
+        }
+
+        assignmentsMap[cohort.slug] = nextData;
+      }));
 
       setCohortsAssingments({ ...cohortsAssignments, ...assignmentsMap });
 
@@ -324,7 +462,7 @@ function useCohortHandler() {
         || Array.isArray(cohortsAssignments[cohort.slug]?.modules)
       ));
 
-      if (!hasLoadedModules && cohorts.length > 0) {
+      if (!hasLoadedModules && cohorts.length > 0 && !suppressEmptyError) {
         showSyllabusErrorAndMaybeRedirect();
       }
 
@@ -626,22 +764,39 @@ function useCohortHandler() {
   };
 
   const addTasks = (tasks, cohort) => {
-    const { id, slug, name } = cohort;
-    const cohortData = cohortsAssignments[cohort.slug];
+    if (!cohort?.slug || !Array.isArray(tasks) || tasks.length === 0) return;
 
-    const newTasks = [
-      ...cohortData.tasks,
-      ...tasks.map((task) => ({ ...task, cohort: { id, slug, name } })),
-    ];
+    const cohortData = cohortsAssignments[cohort.slug];
+    if (!cohortData) return;
+
+    const newTasks = mergeCohortTasks(cohortData.tasks, tasks, cohort);
+    const moduleData = getSyllabusModuleData(cohortData.syllabus);
 
     setCohortsAssingments({
       ...cohortsAssignments,
       [cohort.slug]: {
         ...cohortData,
         tasks: newTasks,
-        modules: serializeModulesMap(cohortData.syllabus.json.days, newTasks),
+        modules: serializeModulesMap(moduleData, newTasks),
       },
     });
+  };
+
+  const ensureMissingSyllabusTasks = async ({ cohort, modules }) => {
+    if (!cohort?.id || !Array.isArray(modules) || modules.length === 0) return [];
+
+    const cohortData = cohortsAssignments[cohort.slug];
+    const created = await createMissingSyllabusTasks({
+      cohort,
+      modules,
+      tasks: cohortData?.tasks || [],
+    });
+
+    if (created.length > 0) {
+      addTasks(created, cohort);
+    }
+
+    return created;
   };
 
   const updateAssignment = async ({
@@ -1116,7 +1271,16 @@ function useCohortHandler() {
       }));
       console.log('[checkNavigationAvailability] ALL subscriptions (filtering by cohort id:', cohortSession?.id, ')', allSubsSummary);
 
-      const cohortSubscriptions = allSubscriptions?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
+      const routeMacroSlug = typeof router.query?.mainCohortSlug === 'string'
+        ? router.query.mainCohortSlug
+        : null;
+      const cohortSubscriptions = allSubscriptions?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => (
+        cohort.id === cohortSession.id
+        || cohort.slug === cohortSession.slug
+        || (routeMacroSlug && cohort.slug === routeMacroSlug)
+        || (Array.isArray(cohortSession.micro_cohorts)
+          && cohortSession.micro_cohorts.some((mc) => mc.id === cohort.id || mc.slug === cohort.slug))
+      )));
       const currentCohortSlug = cohortSubscriptions[0]?.plans[0]?.slug;
 
       console.log('[checkNavigationAvailability] cohortSubscriptions (filtered for this cohort)', {
@@ -1299,6 +1463,7 @@ function useCohortHandler() {
     taskTodo,
     cohortProgram,
     addTasks,
+    ensureMissingSyllabusTasks,
     updateTask,
     updateTaskReadAt,
     updateAssignment,

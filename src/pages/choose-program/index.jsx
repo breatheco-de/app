@@ -11,6 +11,7 @@ import bc from '../../services/breathecode';
 import Icon from '../../components/Icon';
 import TaskBar from '../../components/TaskBar';
 import { calculateDifferenceDays, getStorageItem, isPlural, isValidDate, removeStorageItem, setStorageItem, sortToNearestTodayDate, syncInterval, getBrowserInfo } from '../../utils';
+import { getActiveCohorts, getCohortsFinished, getMainCohorts, expandCohortsWithMicros } from '../../utils/cohorts';
 import { reportDatalayer } from '../../utils/requests';
 import Heading from '../../components/Heading';
 import useAuth from '../../hooks/useAuth';
@@ -68,6 +69,8 @@ function chooseProgram() {
   const [cohortMembers, setCohortMembers] = useState({});
   const cohortMembersRef = useRef({});
   const pendingCohortMembersRef = useRef(new Set());
+  const finishedProgramsLoadedRef = useRef(false);
+  const activeModulesPromiseRef = useRef(Promise.resolve());
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
   const [lateModalProps, setLateModalProps] = useState({
@@ -100,6 +103,10 @@ function chooseProgram() {
     });
     return syllabus;
   }, [cohorts]);
+
+  const mainCohorts = useMemo(() => getMainCohorts(cohorts), [cohorts]);
+  const activeMainCohorts = useMemo(() => getActiveCohorts(mainCohorts), [mainCohorts]);
+  const finishedMainCohorts = useMemo(() => getCohortsFinished(mainCohorts), [mainCohorts]);
 
   const getServices = useCallback(async (userRoles) => {
     if (!canShowMentoring) {
@@ -306,17 +313,53 @@ function chooseProgram() {
     }
   }, [setCohortMembersBySlug]);
 
-  useEffect(() => {
-    if (cohorts.length > 0) {
-      getCohortsModules(cohorts);
+  const loadFinishedPrograms = useCallback(async () => {
+    if (finishedProgramsLoadedRef.current || finishedMainCohorts.length === 0) return;
+
+    finishedProgramsLoadedRef.current = true;
+    try {
+      await activeModulesPromiseRef.current;
+      await getCohortsModules(
+        expandCohortsWithMicros(finishedMainCohorts, cohorts),
+        { suppressEmptyError: true },
+      );
+      await Promise.all(finishedMainCohorts.map((cohort) => processCohort(cohort)));
+    } catch (error) {
+      finishedProgramsLoadedRef.current = false;
+      console.error('[choose-program] loadFinishedPrograms error', {
+        message: error?.message,
+        status: error?.response?.status,
+        data: error?.response?.data,
+        code: error?.code,
+        url: error?.config?.url,
+        method: error?.config?.method,
+      });
+      throw error;
     }
-  }, [cohorts]);
+  }, [cohorts, finishedMainCohorts, processCohort]);
 
   useEffect(() => {
-    if (cohorts.length > 0) {
-      cohorts.forEach(processCohort);
+    if (activeMainCohorts.length > 0) {
+      activeModulesPromiseRef.current = Promise.resolve(
+        getCohortsModules(expandCohortsWithMicros(activeMainCohorts, cohorts)),
+      ).catch((error) => {
+        console.error('[choose-program] getCohortsModules active error', {
+          message: error?.message,
+          status: error?.response?.status,
+          data: error?.response?.data,
+          code: error?.code,
+          url: error?.config?.url,
+          method: error?.config?.method,
+        });
+      });
     }
-  }, [cohorts, processCohort]);
+  }, [cohorts, activeMainCohorts]);
+
+  useEffect(() => {
+    if (activeMainCohorts.length > 0) {
+      activeMainCohorts.forEach(processCohort);
+    }
+  }, [activeMainCohorts, processCohort]);
 
   useEffect(() => {
     if (!canShowEvents) return;
@@ -553,8 +596,6 @@ function chooseProgram() {
     return t('invite.singular-word', { invitesLength: invites?.length });
   };
 
-  const isMainCohort = (cohort) => !cohorts.some((elem) => elem.micro_cohorts.some((micro) => micro.slug === cohort.slug));
-
   return (
     <Flex alignItems="center" flexDirection="row" mt="40px">
       <SimpleModal
@@ -708,7 +749,11 @@ function chooseProgram() {
 
           <Box>
             {!isLoading && (
-              <ProgramsDashboard cohorts={cohorts.filter(isMainCohort)} setLateModalProps={setLateModalProps} />
+              <ProgramsDashboard
+                cohorts={mainCohorts}
+                setLateModalProps={setLateModalProps}
+                onLoadFinished={loadFinishedPrograms}
+              />
             )}
           </Box>
           {isRevalidating && (

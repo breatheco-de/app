@@ -202,6 +202,31 @@ export const getActiveCohorts = (cohorts) => cohorts.filter((cohort) => {
   return show;
 });
 
+export const getMainCohorts = (cohorts = []) => cohorts.filter((cohort) => (
+  !cohorts.some((elem) => elem.micro_cohorts?.some((micro) => micro.slug === cohort.slug))
+));
+
+export const expandCohortsWithMicros = (mainCohorts = [], allCohorts = []) => {
+  const seen = new Set();
+  const result = [];
+
+  const pushCohort = (cohort) => {
+    if (!cohort?.slug || seen.has(cohort.slug)) return;
+    seen.add(cohort.slug);
+    result.push(cohort);
+  };
+
+  mainCohorts.forEach((cohort) => {
+    pushCohort(cohort);
+    (cohort.micro_cohorts || []).forEach((micro) => {
+      const full = allCohorts.find((item) => item.slug === micro.slug || item.id === micro.id);
+      if (full) pushCohort(full);
+    });
+  });
+
+  return result;
+};
+
 export const getAssignmentsCount = ({
   syllabus, tasks,
 }) => {

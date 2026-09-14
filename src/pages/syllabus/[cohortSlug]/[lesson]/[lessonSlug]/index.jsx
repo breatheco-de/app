@@ -66,6 +66,7 @@ function SyllabusContent() {
     subTasks,
   } = useModuleHandler();
   const mainContainer = useRef(null);
+  const startedModuleKeyRef = useRef(null);
   const [openNextPageModal, setOpenNextPageModal] = useState(false);
   const [readme, setReadme] = useState(null);
   const [ipynbHtmlUrl, setIpynbHtmlUrl] = useState(null);
@@ -94,8 +95,9 @@ function SyllabusContent() {
   const [showPostDeliveryShareModal, setShowPostDeliveryShareModal] = useState(false);
   const {
     getCohortUserCapabilities, getCohortData, getDailyModuleData, cohortSession, sortedAssignments, setCohortSession, taskTodo,
-    updateAssignment, startDay, updateTask, reviewModalState, handleCloseReviewModal,
+    updateAssignment, updateTask, reviewModalState, handleCloseReviewModal,
     grantAccess, setGrantAccess, checkNavigationAvailability, checkRevisionStatus,
+    ensureMissingSyllabusTasks,
   } = useCohortHandler();
   const { areSubscriptionsFetched } = useSubscriptions();
   const allowContributions = currentAsset?.allow_contributions;
@@ -157,15 +159,21 @@ function SyllabusContent() {
   const isProject = lesson === 'project';
   const isLesson = lesson === 'read';
 
-  const filteredCurrentAssignments = sortedAssignments.map((section) => (showPendingTasks
-    ? section.filteredContentByPending
-    : section.filteredContent));
+  const assignmentMatchesLessonSlug = (assignment) => assignment?.slug === lessonSlug
+    || assignment?.translations?.[language]?.slug === lessonSlug
+    || (currentAsset?.id && assignment?.translations?.[language]?.slug === currentAsset.slug);
 
-  const moduleMatchesLessonSlug = (section) => section?.some(
-    (l) => l.slug === lessonSlug
-      || l.translations?.[language]?.slug === lessonSlug
-      || (currentAsset?.id && l.translations?.[language]?.slug === currentAsset.slug),
+  const moduleContainsLesson = (module) => (
+    module?.content?.some(assignmentMatchesLessonSlug)
+    || module?.filteredContent?.some(assignmentMatchesLessonSlug)
+    || module?.filteredContentByPending?.some(assignmentMatchesLessonSlug)
   );
+
+  const filteredCurrentAssignments = sortedAssignments.map((section) => {
+    if (showPendingTasks) return section.filteredContentByPending;
+    if (section.filteredContent?.length > 0) return section.filteredContent;
+    return section.content;
+  });
 
   const routeModuleIndex = routeModuleId != null
     ? sortedAssignments.findIndex((section, idx) => String(section?.id) === String(routeModuleId)
@@ -174,11 +182,11 @@ function SyllabusContent() {
     : -1;
 
   const routeModuleContainsCurrentSlug = routeModuleIndex >= 0
-    && moduleMatchesLessonSlug(filteredCurrentAssignments[routeModuleIndex]);
+    && moduleContainsLesson(sortedAssignments[routeModuleIndex]);
 
   const currentModuleIndex = routeModuleContainsCurrentSlug
     ? routeModuleIndex
-    : filteredCurrentAssignments.findIndex((s) => moduleMatchesLessonSlug(s));
+    : sortedAssignments.findIndex((section) => moduleContainsLesson(section));
 
   const currentModule = sortedAssignments[currentModuleIndex];
 
@@ -264,25 +272,37 @@ function SyllabusContent() {
   }, [isProject, readme, isQuiz, ipynbHtmlUrl, router.asPath]);
 
   const handleStartDay = async (module = null, avoidRedirect = false) => {
-    const moduleToUpdate = module?.content || nextModule.content;
-    const updatedTasks = moduleToUpdate?.map((l) => ({
-      ...l,
-      associated_slug: l.slug,
-      cohort: cohortSession.id,
-    }));
-    const customHandler = () => {
-      if (moduleToUpdate && cohortSlug && firstTask && !avoidRedirect) {
-        router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`);
-      }
-    };
-    if (user?.id) {
-      await startDay({
+    const moduleToUpdate = module || nextModule;
+    if (user?.id && cohortSession?.id && moduleToUpdate) {
+      await ensureMissingSyllabusTasks({
         cohort: cohortSession,
-        newTasks: updatedTasks,
-        customHandler,
+        modules: [moduleToUpdate],
       });
     }
+    if (!avoidRedirect && cohortSlug && firstTask) {
+      router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`);
+    }
   };
+
+  useEffect(() => {
+    if (!user?.id || !cohortSession?.id || !currentModule?.content?.length) return undefined;
+    const lessonAlreadyStarted = currentModule.filteredContent?.some(assignmentMatchesLessonSlug);
+    if (lessonAlreadyStarted) return undefined;
+
+    const startKey = `${cohortSession.id}:${currentModule.id}:${lessonSlug}`;
+    if (startedModuleKeyRef.current === startKey) return undefined;
+    startedModuleKeyRef.current = startKey;
+
+    ensureMissingSyllabusTasks({
+      cohort: cohortSession,
+      modules: [currentModule],
+    }).catch(() => {
+      if (startedModuleKeyRef.current === startKey) {
+        startedModuleKeyRef.current = null;
+      }
+    });
+    return undefined;
+  }, [user?.id, cohortSession?.id, currentModule?.id, lessonSlug, currentModule?.filteredContent?.length]);
 
   const setCohortAndAssignments = async () => {
     const cohort = await getCohortData({
@@ -833,22 +853,15 @@ function SyllabusContent() {
   };
 
   const checkAndUpdateModule = async (module) => {
-    if (!module || !user?.id) return false;
+    if (!module || !user?.id || !cohortSession?.id) return false;
 
     const hasNewActivities = module?.content?.length > (module?.filteredContent?.length || 0);
     if (hasNewActivities) {
-      const moduleToUpdate = module?.content;
-      const updatedTasks = moduleToUpdate?.map((l) => ({
-        ...l,
-        associated_slug: l.slug,
-        cohort: cohortSession.id,
-      }));
-
-      await startDay({
+      const created = await ensureMissingSyllabusTasks({
         cohort: cohortSession,
-        newTasks: updatedTasks,
+        modules: [module],
       });
-      return true;
+      return created.length > 0;
     }
     return false;
   };
