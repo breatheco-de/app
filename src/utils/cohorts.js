@@ -405,8 +405,8 @@ export function sortMicroCohortsLikeDashboard(microCohorts, cohortsOrderCsv) {
     });
   }
   console.log(copy)
-  const uniqueCopy = copy.filter((item, index, self) => 
-    index === self.findIndex((t) => t.slug === item.slug)
+  const uniqueCopy = copy.filter(
+    (item, index, self) => index === self.findIndex((t) => t.slug === item.slug),
   );
   return uniqueCopy;
 }
