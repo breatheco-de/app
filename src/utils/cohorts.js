@@ -392,27 +392,38 @@ export const getAssignmentsCountFromModules = (modules, tasks) => {
   return getAssignmentsCount({ syllabus: syntheticSyllabus, tasks: tasks || [] });
 };
 
+const findParentMacroSlug = (cohort, list) => {
+  const parentMacro = list?.find(
+    (c) => c.slug !== cohort.slug
+      && Array.isArray(c.micro_cohorts)
+      && c.micro_cohorts.some((mc) => mc.slug === cohort.slug || mc.id === cohort.id),
+  );
+  return parentMacro?.slug || null;
+};
+
 /**
  * Slug del macro cohort para query `macro-cohort` al pedir el syllabus de un micro.
- * Prioridad: lo que venga de la ruta (vista) → batch explícito → macro padre en la misma lista de cohorts.
+ * Prioridad: ruta → batch explícito → source_macro_cohort del alumno → padre en el batch → padre en todos los cohorts.
  *
  * @param {Object} cohort - Cohort cuyo syllabus se está pidiendo
  * @param {Object[]} cohortsInRequest - Lista pasada a getCohortsModules (macro + micros o solo micros)
  * @param {Object} [options]
  * @param {string} [options.routeMacroSlug] - p. ej. router.query.mainCohortSlug en `/main-cohort/[mainCohortSlug]/syllabus/...`
  * @param {string} [options.explicitBatchMacroSlug] - macro cuando el batch son solo micros (dashboard del macro)
+ * @param {Object[]} [options.allCohorts] - cohorts del alumno (p. ej. myCohorts) para hallar el padre fuera del batch
  * @returns {string|null}
  */
 export function getMacroSlugForCohortSyllabus(cohort, cohortsInRequest, options = {}) {
-  const { routeMacroSlug, explicitBatchMacroSlug } = options;
+  const { routeMacroSlug, explicitBatchMacroSlug, allCohorts } = options;
   if (routeMacroSlug) return routeMacroSlug;
   if (explicitBatchMacroSlug) return explicitBatchMacroSlug;
-  const parentMacro = cohortsInRequest?.find(
-    (c) => c.slug !== cohort.slug
-      && Array.isArray(c.micro_cohorts)
-      && c.micro_cohorts.some((mc) => mc.slug === cohort.slug || mc.id === cohort.id),
-  );
-  return parentMacro?.slug || null;
+
+  const sourceMacroSlug = cohort?.cohort_user?.source_macro_cohort?.slug;
+  if (sourceMacroSlug) return sourceMacroSlug;
+
+  return findParentMacroSlug(cohort, cohortsInRequest)
+    || findParentMacroSlug(cohort, allCohorts)
+    || null;
 }
 
 /**

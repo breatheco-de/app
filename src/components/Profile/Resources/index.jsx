@@ -3,6 +3,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { Box } from '@chakra-ui/react';
 import Text from '../../Text';
 import { location } from '../../../utils';
+import SessionToken from './SessionToken';
 import LLM from './LLM';
 import VPS from './VPS';
 import useStyle from '../../../hooks/useStyle';
@@ -26,6 +27,7 @@ function Resources() {
           {t('my-resources-description')}
         </Text>
       </Box>
+      <SessionToken />
       <LLM />
       <VPS />
     </>
