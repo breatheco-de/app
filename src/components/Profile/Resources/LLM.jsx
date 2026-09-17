@@ -995,6 +995,7 @@ function LLM() {
         border="1px solid"
         borderColor={borderColor2}
         p="30px"
+        mt="26px"
       >
         <Box width="100%">
           <Flex
