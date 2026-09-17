@@ -214,9 +214,9 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
               )}
               <Timeline
                 variant="guided-experience"
-                assignments={currentModule.filteredContent?.length > 0
-                  ? currentModule.filteredContent
-                  : currentModule.content}
+                assignments={currentModule.content?.length > 0
+                  ? currentModule.content
+                  : currentModule.filteredContent}
                 technologies={currentModule.technologies || []}
                 onClickAssignment={onClickAssignment}
                 moduleId={currentModule?.id}
