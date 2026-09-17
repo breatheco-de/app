@@ -20,6 +20,13 @@ const getCompletedTasksFromModule = (module, tasks) => (module?.length > 0 ? mod
 
 const hasDisplayOrder = (item) => Number.isInteger(item?.display_order) && item.display_order >= 0;
 
+/** Counter/summary order is always reads → exercises → projects → quizzes, even if content is mixed. */
+export const MODULE_ASSET_TYPE_ORDER = ['LESSON', 'EXERCISE', 'PROJECT', 'QUIZ'];
+
+export const orderedModuleAssetTypes = (assignmentsCount = {}) => (
+  MODULE_ASSET_TYPE_ORDER.filter((taskType) => assignmentsCount?.[taskType])
+);
+
 /**
  * Default mixed list is lessons → exercises → projects → quizzes.
  * Assets with `display_order` (integer >= 0) are pulled out and inserted at that index.
