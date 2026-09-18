@@ -215,6 +215,10 @@ function useCohortHandler() {
 
   const getCohortsModules = async (cohorts, macroSlugOptions = {}) => {
     const { redirectOnSyllabusError = false, suppressEmptyError = false, ...slugOptions } = macroSlugOptions;
+    const resolvedSlugOptions = {
+      ...slugOptions,
+      allCohorts: slugOptions.allCohorts || myCohorts,
+    };
 
     const showSyllabusErrorAndMaybeRedirect = () => {
       createToast({
@@ -233,8 +237,15 @@ function useCohortHandler() {
     try {
       const assignmentsMap = {};
 
+      const assignmentMatchesMacroContext = (cohort) => {
+        const cached = cohortsAssignments[cohort?.slug];
+        if (!cached || !Array.isArray(cached.modules)) return false;
+        const neededMacro = getMacroSlugForCohortSyllabus(cohort, cohorts, resolvedSlugOptions) || '';
+        return (cached.macroSlug || '') === neededMacro;
+      };
+
       const preFechedCohorts = cohorts.reduce((acum, curr) => {
-        if (curr.slug in cohortsAssignments) return [...acum, curr];
+        if (assignmentMatchesMacroContext(curr)) return [...acum, curr];
         return acum;
       }, []);
 
@@ -242,7 +253,7 @@ function useCohortHandler() {
 
       const getRequestKeyForCohort = (cohort) => getCohortModulesRequestKey(
         cohort,
-        getMacroSlugForCohortSyllabus(cohort, cohorts, slugOptions),
+        getMacroSlugForCohortSyllabus(cohort, cohorts, resolvedSlugOptions),
       );
 
       const cohortsToRequest = cohortsToFetch.filter((cohort) => !cohortModulesRequests.has(getRequestKeyForCohort(cohort)));
@@ -314,7 +325,7 @@ function useCohortHandler() {
       const tasksByCohortPromise = fetchTasksByCohort();
 
       const getCohortModulesRequest = (cohort) => {
-        const macroSlug = getMacroSlugForCohortSyllabus(cohort, cohorts, slugOptions);
+        const macroSlug = getMacroSlugForCohortSyllabus(cohort, cohorts, resolvedSlugOptions);
         const requestKey = getCohortModulesRequestKey(cohort, macroSlug);
 
         if (cohortModulesRequests.has(requestKey)) return cohortModulesRequests.get(requestKey);
@@ -452,7 +463,10 @@ function useCohortHandler() {
           }
         }
 
-        assignmentsMap[cohort.slug] = nextData;
+        assignmentsMap[cohort.slug] = {
+          ...nextData,
+          macroSlug: getMacroSlugForCohortSyllabus(cohort, cohorts, resolvedSlugOptions) || null,
+        };
       }));
 
       setCohortsAssingments({ ...cohortsAssignments, ...assignmentsMap });
@@ -607,6 +621,7 @@ function useCohortHandler() {
         const assignmentsMap = await getCohortsModules(cohorts, {
           routeMacroSlug,
           explicitBatchMacroSlug,
+          allCohorts: prefetchedCohorts,
           redirectOnSyllabusError: true,
         });
 

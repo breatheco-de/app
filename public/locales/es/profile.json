@@ -12,6 +12,18 @@
   "my-subscriptions": "Mis suscripciones",
   "my-resources": "Mis recursos",
   "my-resources-description": "Los recursos son servicios que te dan acceso a herramientas externas para aprender y construir proyectos.",
+  "session-token": {
+    "title": "Token de sesión",
+    "description": "Usa este token para autenticarte en integraciones de API y para editar la web de 4Geeks. Trátalo como una contraseña.",
+    "label": "Tu token de sesión",
+    "warning": "Cualquiera con este token puede acceder a tu cuenta. No lo compartas ni lo pegues en chats públicos.",
+    "reveal-aria": "Mostrar token de sesión",
+    "hide-aria": "Ocultar token de sesión",
+    "copy-button": "Copiar al portapapeles",
+    "copied": "Token copiado al portapapeles.",
+    "copy-error": "No se pudo copiar el token. Revelalo y copialo manualmente.",
+    "missing": "No encontramos tu token de sesión. Intenta iniciar sesión de nuevo."
+  },
   "llm": {
     "title": "Claves API para LLM",
     "description": "Las claves API para LLM son credenciales que te permiten hacer solicitudes de IA a múltiples modelos a través de un gateway unificado, incluyendo un presupuesto mensual gratuito que se aplica a tu consumo.",

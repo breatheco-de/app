@@ -18,6 +18,39 @@ const getCompletedTasksFromModule = (module, tasks) => (module?.length > 0 ? mod
   }),
 ) : []);
 
+const hasDisplayOrder = (item) => Number.isInteger(item?.display_order) && item.display_order >= 0;
+
+/** Counter/summary order is always reads → exercises → projects → quizzes, even if content is mixed. */
+export const MODULE_ASSET_TYPE_ORDER = ['LESSON', 'EXERCISE', 'PROJECT', 'QUIZ'];
+
+export const orderedModuleAssetTypes = (assignmentsCount = {}) => (
+  MODULE_ASSET_TYPE_ORDER.filter((taskType) => assignmentsCount?.[taskType])
+);
+
+/**
+ * Default mixed list is lessons → exercises → projects → quizzes.
+ * Assets with `display_order` (integer >= 0) are pulled out and inserted at that index.
+ */
+export const applyDisplayOrder = (items = []) => {
+  if (!Array.isArray(items) || items.length === 0) return [];
+
+  const defaults = [];
+  const pinned = [];
+  items.forEach((item) => {
+    if (hasDisplayOrder(item)) pinned.push(item);
+    else defaults.push(item);
+  });
+  if (pinned.length === 0) return items;
+
+  pinned.sort((a, b) => a.display_order - b.display_order);
+  const result = [...defaults];
+  pinned.forEach((item) => {
+    const index = Math.min(Math.max(item.display_order, 0), result.length);
+    result.splice(index, 0, item);
+  });
+  return result;
+};
+
 /**
  * @typedef {Object} RelatedAssignments
  * @property {Array} filteredContent - Content for Module filtered by associated_slug in the tasks
@@ -113,7 +146,12 @@ export const processRelatedAssignments = (syllabusData = {}, tasks = []) => {
       });
     }).sort((a, b) => b.position - a.position);
 
-    const content = [...parsedLessons, ...parsedExercises, ...parsedProjects, ...parsedQuizzes];
+    const content = applyDisplayOrder([
+      ...parsedLessons,
+      ...parsedExercises,
+      ...parsedProjects,
+      ...parsedQuizzes,
+    ]);
 
     const includesDailyTask = (module) => tasks.some((task) => task.associated_slug === module.slug);
 
@@ -287,10 +325,10 @@ export const getAssignmentsCount = ({
     assignmentsCount.quiz += module.quizzesCount;
   });
 
-  const assignmentsProgress = Object.keys(assignmentsCount).map((key) => {
+  const assignmentsProgress = MODULE_ASSET_TYPE_ORDER.map((taskType) => {
+    const key = taskType.toLowerCase();
     const total = assignmentsCount[key];
     const tasksCompleted = assetsCompleted[key];
-    const taskType = key.toUpperCase();
     const completed = tasksCompleted?.length;
     const icon = taskIcons[taskType];
 
@@ -361,27 +399,38 @@ export const getAssignmentsCountFromModules = (modules, tasks) => {
   return getAssignmentsCount({ syllabus: syntheticSyllabus, tasks: tasks || [] });
 };
 
+const findParentMacroSlug = (cohort, list) => {
+  const parentMacro = list?.find(
+    (c) => c.slug !== cohort.slug
+      && Array.isArray(c.micro_cohorts)
+      && c.micro_cohorts.some((mc) => mc.slug === cohort.slug || mc.id === cohort.id),
+  );
+  return parentMacro?.slug || null;
+};
+
 /**
  * Slug del macro cohort para query `macro-cohort` al pedir el syllabus de un micro.
- * Prioridad: lo que venga de la ruta (vista) → batch explícito → macro padre en la misma lista de cohorts.
+ * Prioridad: ruta → batch explícito → source_macro_cohort del alumno → padre en el batch → padre en todos los cohorts.
  *
  * @param {Object} cohort - Cohort cuyo syllabus se está pidiendo
  * @param {Object[]} cohortsInRequest - Lista pasada a getCohortsModules (macro + micros o solo micros)
  * @param {Object} [options]
  * @param {string} [options.routeMacroSlug] - p. ej. router.query.mainCohortSlug en `/main-cohort/[mainCohortSlug]/syllabus/...`
  * @param {string} [options.explicitBatchMacroSlug] - macro cuando el batch son solo micros (dashboard del macro)
+ * @param {Object[]} [options.allCohorts] - cohorts del alumno (p. ej. myCohorts) para hallar el padre fuera del batch
  * @returns {string|null}
  */
 export function getMacroSlugForCohortSyllabus(cohort, cohortsInRequest, options = {}) {
-  const { routeMacroSlug, explicitBatchMacroSlug } = options;
+  const { routeMacroSlug, explicitBatchMacroSlug, allCohorts } = options;
   if (routeMacroSlug) return routeMacroSlug;
   if (explicitBatchMacroSlug) return explicitBatchMacroSlug;
-  const parentMacro = cohortsInRequest?.find(
-    (c) => c.slug !== cohort.slug
-      && Array.isArray(c.micro_cohorts)
-      && c.micro_cohorts.some((mc) => mc.slug === cohort.slug || mc.id === cohort.id),
-  );
-  return parentMacro?.slug || null;
+
+  const sourceMacroSlug = cohort?.cohort_user?.source_macro_cohort?.slug;
+  if (sourceMacroSlug) return sourceMacroSlug;
+
+  return findParentMacroSlug(cohort, cohortsInRequest)
+    || findParentMacroSlug(cohort, allCohorts)
+    || null;
 }
 
 /**
@@ -404,7 +453,10 @@ export function sortMicroCohortsLikeDashboard(microCohorts, cohortsOrderCsv) {
       return cohortsOrder.indexOf(idA) - cohortsOrder.indexOf(idB);
     });
   }
-  return copy;
+  const uniqueCopy = copy.filter(
+    (item, index, self) => index === self.findIndex((t) => t.slug === item.slug),
+  );
+  return uniqueCopy;
 }
 
 /**
