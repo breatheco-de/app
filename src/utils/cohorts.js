@@ -325,10 +325,10 @@ export const getAssignmentsCount = ({
     assignmentsCount.quiz += module.quizzesCount;
   });
 
-  const assignmentsProgress = Object.keys(assignmentsCount).map((key) => {
+  const assignmentsProgress = MODULE_ASSET_TYPE_ORDER.map((taskType) => {
+    const key = taskType.toLowerCase();
     const total = assignmentsCount[key];
     const tasksCompleted = assetsCompleted[key];
-    const taskType = key.toUpperCase();
     const completed = tasksCompleted?.length;
     const icon = taskIcons[taskType];
 
