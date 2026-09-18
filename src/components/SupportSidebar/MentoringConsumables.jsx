@@ -108,7 +108,7 @@ function MentoringConsumables({
   mentoryProps, width, consumables, cohortSessionIsSaaS, setMentoryProps,
   programServices, servicesFiltered, searchProps, setSearchProps, setProgramMentors,
   mentorsFiltered, allMentorsAvailable, subscriptionData, allSubscriptions,
-  queryService, queryMentor, titleSize, withDescription,
+  queryService, queryMentor, titleSize, withDescription, servicesListMaxHeight,
 }) {
   const { t } = useTranslation('dashboard');
   const { user } = useAuth();
@@ -464,7 +464,14 @@ function MentoringConsumables({
                   </InputRightElement>
                 </InputGroup>
 
-                <Box maxHeight="10rem" width="100%" overflow="auto" borderBottomRadius="0.375rem">
+                <Box
+                  maxHeight={servicesListMaxHeight}
+                  width="100%"
+                  overflowY="auto"
+                  overflowX="hidden"
+                  borderBottomRadius="0.375rem"
+                  pr="6px"
+                >
                   {loadingServices ? (
                     <CardSkeleton withoutContainer quantity={2} height="40px" gridGap="20px" marginTop="10px" />
                   ) : (
@@ -606,6 +613,7 @@ MentoringConsumables.propTypes = {
   subscriptionData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   allSubscriptions: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   withDescription: PropTypes.bool,
+  servicesListMaxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 };
 
 MentoringConsumables.defaultProps = {
@@ -620,6 +628,7 @@ MentoringConsumables.defaultProps = {
   subscriptionData: {},
   allSubscriptions: [],
   withDescription: false,
+  servicesListMaxHeight: '18rem',
 };
 
 export default MentoringConsumables;
