@@ -24,6 +24,18 @@ const missingSyllabusTaskRequests = new Set();
 
 const getCohortModulesRequestKey = (cohort, macroSlug) => `${cohort?.slug || cohort?.id}:${macroSlug || ''}`;
 
+const pickCohortEnrollment = (cohorts, cohortSlug, macroSlug) => {
+  const matches = (cohorts || []).filter((cohort) => cohort.slug === cohortSlug);
+  if (matches.length === 0) return undefined;
+  if (macroSlug) {
+    const bySourceMacro = matches.find(
+      (cohort) => cohort.cohort_user?.source_macro_cohort?.slug === macroSlug,
+    );
+    if (bySourceMacro) return bySourceMacro;
+  }
+  return matches[0];
+};
+
 const asSlug = (value) => {
   if (!value) return null;
   if (typeof value === 'string') return value;
@@ -583,9 +595,14 @@ function useCohortHandler() {
     try {
       // Fetch cohort data with pathName structure
       if (cohortSlug && accessToken) {
+        const macroSlug = routeMacroSlug
+          || (typeof router.query?.mainCohortSlug === 'string'
+            ? router.query.mainCohortSlug
+            : router.query?.mainCohortSlug?.[0]);
+
         // find cohort with current slug
         let prefetchedCohorts = myCohorts;
-        let currentCohort = prefetchedCohorts.find((c) => c.slug === cohortSlug);
+        let currentCohort = pickCohortEnrollment(prefetchedCohorts, cohortSlug, macroSlug);
 
         //we make sure that we have already loaded the data of the cohort and its micro cohorts
         if (!currentCohort || (Array.isArray(currentCohort.micro_cohorts) && currentCohort.micro_cohorts.length > 0 && !currentCohort.micro_cohorts.every((cohort) => myCohorts.some(({ slug }) => cohort.slug === slug)))) {
@@ -593,7 +610,7 @@ function useCohortHandler() {
           setCohorts(fetchedCohorts);
           prefetchedCohorts = fetchedCohorts;
 
-          currentCohort = fetchedCohorts.find((c) => c.slug === cohortSlug);
+          currentCohort = pickCohortEnrollment(fetchedCohorts, cohortSlug, macroSlug);
         }
 
         if (!currentCohort) {
@@ -614,12 +631,14 @@ function useCohortHandler() {
         }
 
         const cohorts = Array.isArray(currentCohort.micro_cohorts) && currentCohort.micro_cohorts.length > 0
-          ? prefetchedCohorts.filter((c) => currentCohort.micro_cohorts.some((elem) => elem.slug === c.slug))
+          ? currentCohort.micro_cohorts
+            .map((micro) => pickCohortEnrollment(prefetchedCohorts, micro.slug, currentCohort.slug))
+            .filter(Boolean)
           : [currentCohort];
 
         const explicitBatchMacroSlug = currentCohort.micro_cohorts?.length ? currentCohort.slug : undefined;
         const assignmentsMap = await getCohortsModules(cohorts, {
-          routeMacroSlug,
+          routeMacroSlug: macroSlug,
           explicitBatchMacroSlug,
           allCohorts: prefetchedCohorts,
           redirectOnSyllabusError: true,
