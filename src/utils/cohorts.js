@@ -18,6 +18,39 @@ const getCompletedTasksFromModule = (module, tasks) => (module?.length > 0 ? mod
   }),
 ) : []);
 
+const hasDisplayOrder = (item) => Number.isInteger(item?.display_order) && item.display_order >= 0;
+
+/** Counter/summary order is always reads → exercises → projects → quizzes, even if content is mixed. */
+export const MODULE_ASSET_TYPE_ORDER = ['LESSON', 'EXERCISE', 'PROJECT', 'QUIZ'];
+
+export const orderedModuleAssetTypes = (assignmentsCount = {}) => (
+  MODULE_ASSET_TYPE_ORDER.filter((taskType) => assignmentsCount?.[taskType])
+);
+
+/**
+ * Default mixed list is lessons → exercises → projects → quizzes.
+ * Assets with `display_order` (integer >= 0) are pulled out and inserted at that index.
+ */
+export const applyDisplayOrder = (items = []) => {
+  if (!Array.isArray(items) || items.length === 0) return [];
+
+  const defaults = [];
+  const pinned = [];
+  items.forEach((item) => {
+    if (hasDisplayOrder(item)) pinned.push(item);
+    else defaults.push(item);
+  });
+  if (pinned.length === 0) return items;
+
+  pinned.sort((a, b) => a.display_order - b.display_order);
+  const result = [...defaults];
+  pinned.forEach((item) => {
+    const index = Math.min(Math.max(item.display_order, 0), result.length);
+    result.splice(index, 0, item);
+  });
+  return result;
+};
+
 /**
  * @typedef {Object} RelatedAssignments
  * @property {Array} filteredContent - Content for Module filtered by associated_slug in the tasks
@@ -113,7 +146,12 @@ export const processRelatedAssignments = (syllabusData = {}, tasks = []) => {
       });
     }).sort((a, b) => b.position - a.position);
 
-    const content = [...parsedLessons, ...parsedExercises, ...parsedProjects, ...parsedQuizzes];
+    const content = applyDisplayOrder([
+      ...parsedLessons,
+      ...parsedExercises,
+      ...parsedProjects,
+      ...parsedQuizzes,
+    ]);
 
     const includesDailyTask = (module) => tasks.some((task) => task.associated_slug === module.slug);
 
@@ -287,10 +325,10 @@ export const getAssignmentsCount = ({
     assignmentsCount.quiz += module.quizzesCount;
   });
 
-  const assignmentsProgress = Object.keys(assignmentsCount).map((key) => {
+  const assignmentsProgress = MODULE_ASSET_TYPE_ORDER.map((taskType) => {
+    const key = taskType.toLowerCase();
     const total = assignmentsCount[key];
     const tasksCompleted = assetsCompleted[key];
-    const taskType = key.toUpperCase();
     const completed = tasksCompleted?.length;
     const icon = taskIcons[taskType];
 

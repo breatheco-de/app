@@ -34,6 +34,7 @@ import Icon from './Icon';
 import Progress from './ProgressBar/Progress';
 import { stages } from './ReviewModal';
 import { getColorVariations } from '../utils';
+import { orderedModuleAssetTypes } from '../utils/cohorts';
 import useSocialShare from '../hooks/useSocialShare';
 
 const locales = { es, en: enUS };
@@ -124,7 +125,7 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
         return acc;
       }, {});
 
-      const typesPerModule = Object.keys(assignmentsCount);
+      const typesPerModule = orderedModuleAssetTypes(assignmentsCount);
       const moduleTotalAssignments = typesPerModule.reduce((acc, curr) => assignmentsCount[curr].total + acc, 0);
       const moduleDoneAssignments = typesPerModule.reduce((acc, curr) => assignmentsCount[curr].done + acc, 0);
       const moduleApprovedAssignments = typesPerModule.reduce((acc, curr) => assignmentsCount[curr].approved + acc, 0);
@@ -482,7 +483,7 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
                     const moduleTotalAssignments = modulesProgress?.[module.id]?.moduleTotalAssignments;
                     const moduleApprovedAssignments = modulesProgress?.[module.id]?.moduleApprovedAssignments;
 
-                    const typesPerModule = assignmentsCount ? Object.keys(assignmentsCount) : [];
+                    const typesPerModule = orderedModuleAssetTypes(assignmentsCount);
                     const moduleLabel = getModuleLabel(module);
 
                     return (
