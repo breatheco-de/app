@@ -19,7 +19,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { format, formatRelative } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { enUS, es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import {
@@ -274,6 +274,14 @@ function getPlanTitle(plan, lang) {
   return fallback || plan?.title || plan?.slug || '—';
 }
 
+function formatLlmCreditDate(dateValue, lang) {
+  if (!dateValue) return null;
+  const parsed = new Date(dateValue);
+  if (Number.isNaN(parsed.getTime())) return null;
+  // PPP → "October 15th, 2026" / "15 de octubre de 2026"
+  return format(parsed, 'PPP', { locale: lang === 'es' ? es : enUS });
+}
+
 function applyVendorPrefixToModels(models, vendorName) {
   if (!Array.isArray(models) || models.length === 0) return [];
   const vendor = typeof vendorName === 'string' ? vendorName.trim().toLowerCase() : '';
@@ -516,8 +524,8 @@ function LLM() {
   const { t, lang } = useTranslation('profile');
   const { createToast } = useCustomToast();
   const { state: subsState } = useSubscriptions();
-  const [llmStandaloneAcademies, setLlmStandaloneAcademies] = useState([]);
   const [llmUsablePlanOptions, setLlmUsablePlanOptions] = useState([]);
+  const [llmCreditSchedules, setLlmCreditSchedules] = useState([]);
   const [loadingLlmConsumables, setLoadingLlmConsumables] = useState(false);
 
   const isLlmPlansLoading = subsState?.isLoading
@@ -541,16 +549,19 @@ function LLM() {
         const res = await bc.payment({ service_slug: LLM_BUDGET_SERVICE_SLUG }).service().consumable();
         if (cancelled) return;
         if (!(res?.status >= 200 && res?.status < 300)) {
-          setLlmStandaloneAcademies([]);
           setLlmUsablePlanOptions([]);
+          setLlmCreditSchedules([]);
           return;
         }
 
         const llmVoid = (res.data.voids || []).find((entry) => entry.slug === LLM_BUDGET_SERVICE_SLUG);
         const items = llmVoid ? llmVoid.items : [];
         const now = new Date();
-        const academiesById = new Map();
+        // Plans + purchased credits for the generate-key modal (filtered by academy later).
         const planOptionsByKey = new Map();
+        // Dates under Total usage: one entry per academy+plan or per standalone consumable.
+        // Key = `${academyId}::${planSlug}` or `standalone::${consumableId}`.
+        const creditSchedules = {};
 
         items.forEach((item) => {
           if (item.how_many === 0) return;
@@ -571,22 +582,28 @@ function LLM() {
           } else {
             if (!item.standalone_invoice || !item.standalone_invoice.academy) return;
             const { academy } = item.standalone_invoice;
-            const existing = academiesById.get(academy.id);
-            if (!existing) {
-              academiesById.set(academy.id, {
-                id: academy.id,
-                name: academy.name,
+            const consumableId = item.id;
+            const optionKey = `standalone::${consumableId}`;
+
+            planOptionsByKey.set(optionKey, {
+              academyId: academy.id,
+              academyLabel: academy.name,
+              isStandalone: true,
+              consumableId,
+              validUntil: item.valid_until,
+            });
+
+            // Purchased credit never renews → "Credit valid until …"
+            if (item.valid_until) {
+              creditSchedules[optionKey] = {
+                key: optionKey,
+                academyId: academy.id,
+                consumableId,
+                label: null,
+                isStandalone: true,
                 validUntil: item.valid_until,
-              });
-              return;
-            }
-            if (!item.valid_until) return;
-            if (!existing.validUntil || new Date(item.valid_until) < new Date(existing.validUntil)) {
-              academiesById.set(academy.id, {
-                id: academy.id,
-                name: academy.name,
-                validUntil: item.valid_until,
-              });
+                willRenew: false,
+              };
             }
             return;
           }
@@ -596,21 +613,59 @@ function LLM() {
           const planSlug = typeof plan?.slug === 'string' ? plan.slug.trim() : '';
           if (!plan || academyId == null || !planSlug) return;
           const planOptionKey = `${academyId}::${planSlug}`;
-          if (planOptionsByKey.has(planOptionKey)) return;
-          planOptionsByKey.set(planOptionKey, {
-            academyId,
-            academyLabel: getAcademyLabel(source, lang),
-            planSlug,
-            planLabel: getPlanTitle(plan, lang),
-          });
+          const academyLabel = getAcademyLabel(source, lang);
+          const planLabel = getPlanTitle(plan, lang);
+
+          if (!planOptionsByKey.has(planOptionKey)) {
+            planOptionsByKey.set(planOptionKey, {
+              academyId,
+              academyLabel,
+              planSlug,
+              planLabel,
+              isStandalone: false,
+            });
+          }
+
+          // Plan/financing credit date for the Total usage section.
+          if (item.valid_until) {
+            const prevCredit = creditSchedules[planOptionKey];
+            if (!prevCredit || new Date(item.valid_until) < new Date(prevCredit.validUntil)) {
+              // Date shown is always the consumable's valid_until (API still counts it until then).
+              // willRenew mirrors apiv2 renew_consumables:
+              // - status ACTIVE | FREE_TRIAL | FULLY_PAID
+              // - plan/sub lasts past this consumable cycle (another grant can happen)
+              // - paid up: next_payment_at > now, except FULLY_PAID financing (renews until plan_expires_at)
+              const isPlanFinancing = item.plan_financing != null || source.type === 'plan_financing';
+              const accessEndsAt = isPlanFinancing ? source.plan_expires_at : source.valid_until;
+              const consumableEndsAt = new Date(item.valid_until);
+              const accessEndDate = accessEndsAt ? new Date(accessEndsAt) : null;
+              const canRenewAfterThisCycle = !accessEndDate
+                || (accessEndDate > now && accessEndDate > consumableEndsAt);
+              const isFullyPaidFinancing = isPlanFinancing && source.status === 'FULLY_PAID';
+              const isPaidUp = isFullyPaidFinancing
+                || (source.next_payment_at != null && new Date(source.next_payment_at) > now);
+              const willRenew = ['ACTIVE', 'FREE_TRIAL', 'FULLY_PAID'].includes(source.status)
+                && canRenewAfterThisCycle
+                && isPaidUp;
+
+              creditSchedules[planOptionKey] = {
+                key: planOptionKey,
+                academyId,
+                label: planLabel,
+                isStandalone: false,
+                validUntil: item.valid_until,
+                willRenew,
+              };
+            }
+          }
         });
 
-        setLlmStandaloneAcademies(Array.from(academiesById.values()));
         setLlmUsablePlanOptions(Array.from(planOptionsByKey.values()));
+        setLlmCreditSchedules(Object.values(creditSchedules));
       } catch {
         if (!cancelled) {
-          setLlmStandaloneAcademies([]);
           setLlmUsablePlanOptions([]);
+          setLlmCreditSchedules([]);
         }
       } finally {
         if (!cancelled) setLoadingLlmConsumables(false);
@@ -653,45 +708,38 @@ function LLM() {
         label: option.academyLabel,
       });
     });
-    llmStandaloneAcademies.forEach((academy) => {
-      if (seenAcademies.has(academy.id)) return;
-      seenAcademies.add(academy.id);
-      acc.push({
-        value: academy.id,
-        label: academy.name,
-      });
-    });
     return acc;
-  }, [llmUsablePlanOptions, llmStandaloneAcademies]);
-
-  const llmStandaloneAcademyIds = useMemo(
-    () => new Set(llmStandaloneAcademies.map((academy) => academy.id)),
-    [llmStandaloneAcademies],
-  );
+  }, [llmUsablePlanOptions]);
 
   const academyPlanOptions = useMemo(() => {
     if (!selectedAcademyOption) return [];
     return llmUsablePlanOptions
       .filter((option) => option.academyId === selectedAcademyOption.value)
-      .map((option) => ({
-        value: option.planSlug,
-        label: option.planLabel,
-        academyId: option.academyId,
-      }));
-  }, [llmUsablePlanOptions, selectedAcademyOption]);
+      .map((option) => {
+        if (option.isStandalone) {
+          return {
+            value: `standalone:${option.consumableId}`,
+            label: t('llm.purchased-credit-label', { consumableId: option.consumableId }),
+            isStandalone: true,
+            consumableId: option.consumableId,
+            validUntil: option.validUntil,
+            academyId: option.academyId,
+          };
+        }
+        return {
+          value: option.planSlug,
+          label: option.planLabel,
+          isStandalone: false,
+          planSlug: option.planSlug,
+          academyId: option.academyId,
+        };
+      });
+  }, [llmUsablePlanOptions, selectedAcademyOption, t]);
 
-  const hasUsablePlanLlmForAcademy = academyPlanOptions.length > 0;
-  const hasStandaloneForAcademy = selectedAcademyOption != null
-    && llmStandaloneAcademyIds.has(selectedAcademyOption.value);
-  const purchasedCreditForAcademy = useMemo(() => {
-    if (!selectedAcademyOption) return null;
-    return llmStandaloneAcademies.find((academy) => academy.id === selectedAcademyOption.value) ?? null;
-  }, [llmStandaloneAcademies, selectedAcademyOption]);
-  const showPurchasedCreditExpiryWarning = !hasUsablePlanLlmForAcademy
-    && hasStandaloneForAcademy
-    && purchasedCreditForAcademy?.validUntil;
-  const canGenerate = selectedAcademyOption != null
-    && (hasUsablePlanLlmForAcademy ? selectedPlanOption != null : hasStandaloneForAcademy);
+  const showPurchasedCreditExpiryWarning = selectedPlanOption?.isStandalone
+    && selectedPlanOption?.validUntil;
+  const canGenerate = selectedAcademyOption != null && selectedPlanOption != null;
+  // member_budget (spend/max) is per academy from LiteLLM; credit dates come from consumables.
   const llmBudgetSummaries = useMemo(() => {
     const budgetsByAcademyId = new Map();
 
@@ -711,8 +759,31 @@ function LLM() {
       });
     });
 
-    return Array.from(budgetsByAcademyId.values());
-  }, [keys, lang]);
+    return Array.from(budgetsByAcademyId.values()).map((budget) => ({
+      ...budget,
+      credits: llmCreditSchedules
+        .filter((credit) => credit.academyId === budget.academyId)
+        .slice()
+        .sort((a, b) => new Date(a.validUntil) - new Date(b.validUntil)),
+    }));
+  }, [keys, lang, llmCreditSchedules]);
+
+  // willRenew → budget renews; otherwise credit valid until. Prepend plan/credit label when several share a budget.
+  const getCreditScheduleText = useCallback((schedule, { labeled }) => {
+    const date = formatLlmCreditDate(schedule.validUntil, lang);
+    if (!date) return null;
+
+    const text = schedule.willRenew
+      ? t('llm.budget-renews-on', { date })
+      : t('llm.budget-valid-until', { date });
+
+    if (!labeled) return text;
+
+    const label = schedule.isStandalone
+      ? t('llm.purchased-credit-label', { consumableId: schedule.consumableId })
+      : schedule.label;
+    return label ? `${label}: ${text}` : text;
+  }, [lang, t]);
 
   const fetchKeys = useCallback(async () => {
     setIsLoadingList(true);
@@ -833,8 +904,9 @@ function LLM() {
     setIsGenerating(true);
     try {
       const payload = { key_alias: alias };
-      if (selectedPlanOption) {
-        payload.plan_slug = selectedPlanOption.value;
+      // Standalone credits: omit plan_slug so the API uses purchased credit.
+      if (!selectedPlanOption.isStandalone && selectedPlanOption.planSlug) {
+        payload.plan_slug = selectedPlanOption.planSlug;
       }
       const res = await bc.provisioning().generateLLMKey(
         payload,
@@ -1064,31 +1136,78 @@ function LLM() {
               {llmBudgetSummaries.length > 0 && (
                 <Box mb={6}>
                   {llmBudgetSummaries.length === 1 ? (
-                    <Text fontSize="14px">
-                      <Box as="span" fontWeight="700">
-                        {t('llm.total-usage')}
-                        {': '}
-                      </Box>
-                      {t('llm.budget-usage', {
-                        spend: formatSpendValue(llmBudgetSummaries[0].spend),
-                        max: formatSpendValue(llmBudgetSummaries[0].max),
-                      })}
-                    </Text>
-                  ) : (
-                    <VStack align="stretch" spacing={2}>
-                      {llmBudgetSummaries.map((budget) => (
-                        <Text key={`llm-budget-${budget.academyId}`} fontSize="14px">
-                          <Box as="span" fontWeight="700">
-                            {budget.academyLabel}
-                            {': '}
-                          </Box>
-                          {t('llm.budget-usage', {
-                            spend: formatSpendValue(budget.spend),
-                            max: formatSpendValue(budget.max),
+                    <Box>
+                      <Text fontSize="14px">
+                        <Box as="span" fontWeight="700">
+                          {t('llm.total-usage')}
+                          {': '}
+                        </Box>
+                        {t('llm.budget-usage', {
+                          spend: formatSpendValue(llmBudgetSummaries[0].spend),
+                          max: formatSpendValue(llmBudgetSummaries[0].max),
+                        })}
+                      </Text>
+                      {llmBudgetSummaries[0].credits?.length > 0 && (
+                        <VStack align="stretch" spacing={1} mt={0.5}>
+                          {llmBudgetSummaries[0].credits.map((schedule) => {
+                            const scheduleText = getCreditScheduleText(schedule, {
+                              labeled: llmBudgetSummaries[0].credits.length > 1,
+                            });
+                            if (!scheduleText) return null;
+                            return (
+                              <Text
+                                key={schedule.key}
+                                fontSize="13px"
+                                color={lightColor}
+                              >
+                                {scheduleText}
+                              </Text>
+                            );
                           })}
-                        </Text>
-                      ))}
-                    </VStack>
+                        </VStack>
+                      )}
+                    </Box>
+                  ) : (
+                    <Box>
+                      <Text fontSize="14px" fontWeight="700" mb={2}>
+                        {t('llm.total-usage')}
+                      </Text>
+                      <VStack align="stretch" spacing={3}>
+                        {llmBudgetSummaries.map((budget) => (
+                          <Box key={`llm-budget-${budget.academyId}`}>
+                            <Text fontSize="13px" color={lightColor}>
+                              <Box as="span" fontWeight="600">
+                                {budget.academyLabel}
+                                {': '}
+                              </Box>
+                              {t('llm.budget-usage', {
+                                spend: formatSpendValue(budget.spend),
+                                max: formatSpendValue(budget.max),
+                              })}
+                            </Text>
+                            {budget.credits?.length > 0 && (
+                              <VStack align="stretch" spacing={1} mt={0.5}>
+                                {budget.credits.map((schedule) => {
+                                  const scheduleText = getCreditScheduleText(schedule, {
+                                    labeled: budget.credits.length > 1,
+                                  });
+                                  if (!scheduleText) return null;
+                                  return (
+                                    <Text
+                                      key={schedule.key}
+                                      fontSize="12px"
+                                      color={lightColor}
+                                    >
+                                      {scheduleText}
+                                    </Text>
+                                  );
+                                })}
+                              </VStack>
+                            )}
+                          </Box>
+                        ))}
+                      </VStack>
+                    </Box>
                   )}
                 </Box>
               )}
@@ -1195,9 +1314,7 @@ function LLM() {
                       <Icon icon="warning" height="20px" width="30px" />
                       <Text color="gray.500" fontWeight="bold">
                         {t('llm.generate-modal.purchased-credit-expiry-alert', {
-                          date: format(new Date(purchasedCreditForAcademy.validUntil), 'PP', {
-                            locale: lang === 'es' ? es : undefined,
-                          }),
+                          date: formatLlmCreditDate(selectedPlanOption.validUntil, lang),
                         })}
                       </Text>
                     </Flex>
