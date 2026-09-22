@@ -40,6 +40,9 @@
     "budget-usage": "{{spend}} / {{max}}",
     "total-usage-line": "Consumo total: {{spend}} / {{max}}",
     "academy-budget-usage": "{{academy}}: {{spend}} / {{max}}",
+    "budget-renews-on": "El presupuesto se renueva el {{date}}",
+    "budget-valid-until": "Crédito válido hasta el {{date}}",
+    "purchased-credit-label": "Crédito comprado (#{{consumableId}})",
     "key-created-at": "Creada: {{date}}",
     "key-delete-aria": "Eliminar clave",
     "key-delete-success": "Clave eliminada.",
@@ -61,7 +64,7 @@
     "generate-modal": {
       "title": "Generar clave API para LLM",
       "academy-label": "Academia",
-      "plan-label": "Plan cuyo presupuesto mensual gratuito cubre el uso de esta llave",
+      "plan-label": "Plan cuyo presupuesto mensual cubre el uso de esta llave",
       "alias-label": "Nombre de la clave",
       "description": "Ingresa un nombre para tu clave.",
       "alias-placeholder": "ej. mi-primera-clave",
