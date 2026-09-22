@@ -40,6 +40,9 @@
     "budget-usage": "{{spend}} / {{max}}",
     "total-usage-line": "Total usage: {{spend}} / {{max}}",
     "academy-budget-usage": "{{academy}}: {{spend}} / {{max}}",
+    "budget-renews-on": "Budget renews on {{date}}",
+    "budget-valid-until": "Credit valid until {{date}}",
+    "purchased-credit-label": "Purchased credit (#{{consumableId}})",
     "key-created-at": "Created: {{date}}",
     "key-delete-aria": "Remove API key",
     "key-delete-success": "API key removed.",
@@ -61,7 +64,7 @@
     "generate-modal": {
       "title": "Generate LLM API Key",
       "academy-label": "Academy",
-      "plan-label": "Plan whose monthly free budget covers this key’s usage",
+      "plan-label": "Plan whose monthly budget covers this key’s usage",
       "alias-label": "Key name",
       "description": "Enter a name for your key.",
       "alias-placeholder": "e.g. my-first-key",
