@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import bc from '../../services/breathecode';
 import useAuth from '../../hooks/useAuth';
 import useSession from '../../hooks/useSession';
-import { isWindow, getQueryString, getToken, removeStorageItem, setStorageItem, slugToTitle, getBrowserInfo, parseAddOnIdsFromQuery, pickUtmsFromSession } from '../../utils';
+import { isWindow, getQueryString, getToken, removeStorageItem, setStorageItem, slugToTitle, getBrowserInfo, parseAddOnIdsFromQuery } from '../../utils';
 import signupAction from '../../store/actions/signupAction';
 import useSignup from '../../hooks/useSignup';
 import { currenciesSymbols, resolveCheckoutPlanSlug, isWhiteLabelAcademy } from '../../utils/variables';
@@ -933,7 +933,6 @@ const useCheckout = () => {
         event: 'begin_checkout',
         plan: planFormated,
         path: '/checkout',
-        ...pickUtmsFromSession(userSession),
         conversion_info: userSession,
         agent: getBrowserInfo(),
       },

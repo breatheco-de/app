@@ -26,7 +26,7 @@ import PhoneInput from '../PhoneInput';
 import PaymentMethods from './PaymentMethods';
 import bc from '../../services/breathecode';
 import { BASE_PLAN, SILENT_CODE } from '../../utils/variables';
-import { getQueryString, getStorageItem, setStorageItem, pickConversionInfo, pickUtmsFromSession, getBrowserInfo } from '../../utils';
+import { getQueryString, getStorageItem, setStorageItem, pickConversionInfo, getBrowserInfo } from '../../utils';
 import { setTokenCookie } from '../../utils/sessionCookie';
 import { reportDatalayer } from '../../utils/requests';
 
@@ -115,7 +115,6 @@ function CheckoutV2StepsBox({ courseChoosed, setShowPaymentDetails, setVerifyEma
           country: location?.country,
           city: data.city,
           syllabus: router.query?.syllabus,
-          ...pickUtmsFromSession(userSession),
           conversion_info: userSession,
           agent: getBrowserInfo(),
         },
