@@ -21,7 +21,7 @@ import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
 import useSession from '../../hooks/useSession';
 import { BASE_PLAN, BREATHECODE_HOST, SILENT_CODE } from '../../utils/variables';
-import { getStorageItem, setStorageItem, getQueryString, getBrowserInfo, pickConversionInfo, pickUtmsFromSession } from '../../utils';
+import { getStorageItem, setStorageItem, getQueryString, getBrowserInfo, pickConversionInfo } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
 import ModalInfo from '../ModalInfo';
 import bc from '../../services/breathecode';
@@ -145,7 +145,6 @@ function SignupForm({
             city: data.city,
             syllabus: allValues.syllabus,
             cohort: allValues.cohort,
-            ...pickUtmsFromSession(userSession),
             conversion_info: userSession,
             conversion_technologies: conversionTechnologies,
             agent: getBrowserInfo(),

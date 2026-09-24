@@ -679,7 +679,6 @@ const useSignup = () => {
         }));
         reportDatalayer({
           dataLayer: {
-            ...(userSession || {}),
             event: 'purchase',
             transaction_id: transactionData?.id,
             value: transactionData?.amount || 0,

@@ -117,7 +117,6 @@ function ServiceSummary({ service }) {
       if (res?.status < 400) {
         reportDatalayer({
           dataLayer: {
-            ...(userSession || {}),
             event: 'purchase',
             ecommerce: {
             // transaction_id: '12345',
