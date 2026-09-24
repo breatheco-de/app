@@ -26,8 +26,9 @@ import PhoneInput from '../PhoneInput';
 import PaymentMethods from './PaymentMethods';
 import bc from '../../services/breathecode';
 import { BASE_PLAN, SILENT_CODE } from '../../utils/variables';
-import { getQueryString, getStorageItem, setStorageItem, pickConversionInfo } from '../../utils';
+import { getQueryString, getStorageItem, setStorageItem, pickConversionInfo, pickUtmsFromSession, getBrowserInfo } from '../../utils';
 import { setTokenCookie } from '../../utils/sessionCookie';
+import { reportDatalayer } from '../../utils/requests';
 
 function CheckoutV2StepsBox({ courseChoosed, setShowPaymentDetails, setVerifyEmailProps }) {
   const { t, lang } = useTranslation('signup');
@@ -95,6 +96,30 @@ function CheckoutV2StepsBox({ courseChoosed, setShowPaymentDetails, setVerifyEma
         actions.setSubmitting(false);
         return;
       }
+
+      reportDatalayer({
+        dataLayer: {
+          event: 'sign_up',
+          method: 'native',
+          email: data.email,
+          phone: data.phone || '',
+          first_name: data.first_name,
+          last_name: data.last_name,
+          plan: planFormated,
+          language: lang,
+          has_marketing_consent: true,
+          user_id: data.user,
+          course_slug: getQueryString('course_slug') || courseChoosed || 'undefined',
+          course_title: getQueryString('course_title') || data.course_translation?.title || 'undefined',
+          course: courseChoosed,
+          country: location?.country,
+          city: data.city,
+          syllabus: router.query?.syllabus,
+          ...pickUtmsFromSession(userSession),
+          conversion_info: userSession,
+          agent: getBrowserInfo(),
+        },
+      });
 
       setTokenCookie(data.access_token);
       axiosInstance.defaults.headers.common.Authorization = `Token ${data.access_token}`;
