@@ -20,13 +20,12 @@ function ShareReferralModal({ isOpen, onClose, couponData }) {
   });
   useEffect(() => {
     if (couponData?.plans) {
-      const baseUrl = window.location.origin || '4geeks.com';
       const queryParams = parseQuerys({
         coupon: couponData?.slug,
       });
-      setCheckoutLink(`${baseUrl}${queryParams}`);
+      setCheckoutLink(`${t('referral-checkout-url')}${queryParams}`);
     }
-  }, [couponData]);
+  }, [couponData, t]);
   return (
     <SimpleModal
       isOpen={isOpen}

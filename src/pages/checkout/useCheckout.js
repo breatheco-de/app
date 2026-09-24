@@ -924,10 +924,10 @@ const useCheckout = () => {
       removeStorageItem('redirect');
     }
 
-    if (!isLoadingLocation) {
-      initializePlanData();
-    }
+    // Wait for geolocation so begin_checkout fires once with a ready session/location.
+    if (isLoadingLocation) return;
 
+    initializePlanData();
     reportDatalayer({
       dataLayer: {
         event: 'begin_checkout',
