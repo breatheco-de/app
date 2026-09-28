@@ -67,6 +67,7 @@ const useRenewal = () => {
           subscription: subscriptionId ? id : undefined,
           'plan-financing': planFinancingId ? id : undefined,
           status: 'ACTIVE,CANCELLED,PAYMENT_ISSUE,DEPRECATED,EXPIRED',
+          include_billing: 'true',
         };
 
         const response = await bc.payment(queryParams).subscriptions();
