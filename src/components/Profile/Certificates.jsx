@@ -22,12 +22,13 @@ function CertificateItem({ certificate }) {
     en: formatRelative(new Date(createdAt), new Date()),
   };
 
-  const certfToken = certificate?.preview_url && certificate.preview_url?.split('/')?.pop();
+  const certfToken = (certificate?.preview_url || certificate?.pdf_url)?.split('/')?.pop();
   const { socials, shareLink: certfLink } = useSocialShare({
     info: certfToken,
     type: 'certificate',
     shareMessage: t('share-certificate.shareMessage', { profession: certificate.specialty.name }),
   });
+  const viewLink = certificate?.preview_url ? certfLink : certificate?.pdf_url;
 
   return (
     <Box
@@ -55,15 +56,15 @@ function CertificateItem({ certificate }) {
         </Box>
       </Box>
       <Box display="flex" flexDirection="row" gridGap="18px">
-        <Tooltip placement="top" isDisabled={certfToken !== null} label={t('certificate-preview-not-available')}>
+        <Tooltip placement="top" isDisabled={!!viewLink} label={t('certificate-preview-not-available')}>
           <Link
-            href={certfLink}
+            href={viewLink}
             variant="buttonDefault"
             outline
             colorScheme="blue.default"
-            disabled={!certfToken}
+            disabled={!viewLink}
             textTransform="uppercase"
-            target={certfToken ? '_blank' : '_self'}
+            target={viewLink ? '_blank' : '_self'}
             rel="noopener noreferrer"
             fontSize="13px"
           >
@@ -86,6 +87,7 @@ CertificateItem.propTypes = {
   certificate: PropTypes.shape({
     created_at: PropTypes.string.isRequired,
     preview_url: PropTypes.string,
+    pdf_url: PropTypes.string,
     specialty: PropTypes.shape({
       name: PropTypes.string.isRequired,
     }).isRequired,
@@ -125,6 +127,7 @@ Certificates.propTypes = {
   certificates: PropTypes.arrayOf(PropTypes.shape({
     created_at: PropTypes.string.isRequired,
     preview_url: PropTypes.string,
+    pdf_url: PropTypes.string,
     specialty: PropTypes.shape({
       name: PropTypes.string.isRequired,
     }).isRequired,
