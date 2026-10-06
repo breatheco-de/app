@@ -17,6 +17,7 @@ import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
 import DesktopNavItem from './DesktopNavItem';
 import MobileNav from './MobileNav';
+import NotificationBell from './NotificationBell';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import useSession from '../../hooks/useSession';
 import Heading from '../Heading';
@@ -417,6 +418,7 @@ function Navbar({ translations, pageProps }) {
                 <Icon icon="crown" width="20px" height="26px" color="" />
               </Box>
             )}
+            {isAuthenticated && <NotificationBell />}
             {isAuthenticated || isLoading ? (
               <Popover
                 id="Avatar-Hover"
