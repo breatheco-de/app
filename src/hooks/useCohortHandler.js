@@ -112,7 +112,12 @@ const mergeCohortTasks = (existing, incoming, cohort) => {
   return [...byKey.values()];
 };
 
-const createMissingSyllabusTasks = async ({ cohort, modules, tasks }) => {
+// the backend validates new tasks against the syllabus of the macro the student is working through
+const getTaskCreateQuery = (macroSlug) => (macroSlug ? { 'macro-cohort': macroSlug } : {});
+
+const createMissingSyllabusTasks = async ({
+  cohort, modules, tasks, macroSlug,
+}) => {
   const missing = getMissingSyllabusAssignments(modules, tasks);
   if (!cohort?.id || missing.length === 0) return [];
 
@@ -125,7 +130,7 @@ const createMissingSyllabusTasks = async ({ cohort, modules, tasks }) => {
   missingSyllabusTaskRequests.add(requestKey);
 
   try {
-    const response = await bc.assignments().addTasks(
+    const response = await bc.assignments(getTaskCreateQuery(macroSlug)).addTasks(
       missing.map((assignment) => buildTaskCreatePayload(assignment, cohort)),
     );
     if (response.status < 400 && Array.isArray(response.data)) {
@@ -464,6 +469,7 @@ function useCohortHandler() {
             cohort,
             modules: startedModules,
             tasks: data.tasks,
+            macroSlug: getMacroSlugForCohortSyllabus(cohort, cohorts, resolvedSlugOptions),
           });
           if (created.length > 0) {
             const mergedTasks = mergeCohortTasks(data.tasks, created, cohort);
@@ -824,6 +830,7 @@ function useCohortHandler() {
       cohort,
       modules,
       tasks: cohortData?.tasks || [],
+      macroSlug: cohortData?.macroSlug,
     });
 
     if (created.length > 0) {
@@ -932,7 +939,8 @@ function useCohortHandler() {
     newTasks, cohort, label, customHandler = () => { }, updateContext = true,
   }) => {
     try {
-      const response = await bc.assignments().addTasks(newTasks);
+      const macroSlug = cohortsAssignments[cohort?.slug]?.macroSlug;
+      const response = await bc.assignments(getTaskCreateQuery(macroSlug)).addTasks(newTasks);
 
       if (response.status < 400) {
         createToast({
