@@ -195,6 +195,7 @@ function Assignments() {
   const [openFilter, setOpenFilter] = useState(false);
   const [currentView, setCurrentView] = useState(Number(query.view) || 0);
   const [sort, setSort] = useState(query.sort || undefined);
+  const [timelineScroll, setTimelineScroll] = useState({ target: 'last-delivery', signal: 0 });
 
   const [currentStudentList, setCurrentStudentList] = useState([]);
   const [currentStudentCount, setCurrentStudentCount] = useState(0);
@@ -823,7 +824,23 @@ function Assignments() {
             {t('final-projects')}
           </Button>
         </ButtonGroup>
-        <Box display={currentView === 2 ? 'none' : 'flex'} gridGap="10px">
+        <Box display={currentView === 2 ? 'none' : 'flex'} gridGap="10px" flexWrap="wrap">
+          {currentView === 0 && (
+            <ButtonGroup size="sm" variant="ghost" alignItems="center" spacing="0">
+              <Button
+                color={hexColor.blueDefault}
+                onClick={() => setTimelineScroll((prev) => ({ target: 'start', signal: prev.signal + 1 }))}
+              >
+                {t('timeline-scroll.start')}
+              </Button>
+              <Button
+                color={hexColor.blueDefault}
+                onClick={() => setTimelineScroll((prev) => ({ target: 'last-delivery', signal: prev.signal + 1 }))}
+              >
+                {t('timeline-scroll.last-delivery')}
+              </Button>
+            </ButtonGroup>
+          )}
           <Button
             variant="ghost"
             color={hexColor.blueDefault}
@@ -1064,6 +1081,7 @@ function Assignments() {
               selectedCohort?.cohorts_order,
             )}
             microSyllabusBySlug={microSyllabusBySlug}
+            timelineScroll={timelineScroll}
           />
         )}
         {currentView === 1 && (

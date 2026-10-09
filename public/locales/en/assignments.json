@@ -3,6 +3,10 @@
   "title": "Assignments",
   "students-view": "students",
   "projects-view": "projects",
+  "timeline-scroll": {
+    "start": "Go to start",
+    "last-delivery": "Go to last delivery"
+  },
   "final-projects": "Final Projects",
   "no-final-projects": "No final projects found",
   "no-upload-students": "The following students are still pending to upload their final project information.",

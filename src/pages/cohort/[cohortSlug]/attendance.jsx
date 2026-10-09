@@ -13,6 +13,7 @@ import {
   PopoverCloseButton,
   PopoverBody,
   Button,
+  ButtonGroup,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import asPrivate from '../../../context/PrivateRouteWrapper';
@@ -52,6 +53,7 @@ function Attendance() {
     name: null,
     percentage: true,
   });
+  const [timelineScroll, setTimelineScroll] = useState({ target: 'last-day', signal: 0 });
 
   const status = {
     attended: '#25BF6C',
@@ -275,6 +277,9 @@ function Attendance() {
     setSearchedStudents(filteredStudents);
   };
 
+  const lastLoggedDayIndex = Math.max(-1, ...Object.keys(currentDaysLog).map((day) => Number(day) - 1));
+  const timelineScrollTo = timelineScroll.target === 'start' ? 'start' : lastLoggedDayIndex;
+
   const sortedByNameAndAttendance = searchedStudents?.sort((a, b) => {
     const fullNameA = `${a.user.first_name} ${a.user.last_name}`;
     const fullNameB = `${b.user.first_name} ${b.user.last_name}`;
@@ -380,7 +385,21 @@ function Attendance() {
         // maxW="1080px"
         withContainer
       >
-        <Flex gridGap="25px" justifyContent="flex-end" padding="34px 0">
+        <Flex gridGap="25px" justifyContent="flex-end" alignItems="center" flexWrap="wrap" padding="34px 0">
+          <ButtonGroup size="sm" variant="ghost" spacing="0">
+            <Button
+              color={hexColor.blueDefault}
+              onClick={() => setTimelineScroll((prev) => ({ target: 'start', signal: prev.signal + 1 }))}
+            >
+              {t('timeline-scroll.start')}
+            </Button>
+            <Button
+              color={hexColor.blueDefault}
+              onClick={() => setTimelineScroll((prev) => ({ target: 'last-day', signal: prev.signal + 1 }))}
+            >
+              {t('timeline-scroll.last-day')}
+            </Button>
+          </ButtonGroup>
           <InputGroup width="200px">
             <Input
               onBlur={() => setShowSearch(false)}
@@ -471,6 +490,8 @@ function Attendance() {
                   )}
                   dots={student.days}
                   helpText={percentAttendance}
+                  scrollTo={timelineScrollTo}
+                  scrollSignal={timelineScroll.signal}
                 />
               );
             })}
