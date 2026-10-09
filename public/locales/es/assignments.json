@@ -116,6 +116,7 @@
     "resubmit-assignment": "Reenviar proyecto",
     "start-review-here": "Comienza tu revisión aquí...",
     "send-feedback": "Enviar comentario",
+    "feedback-limit-exceeded": "El texto pegado excede los {{limit}} caracteres disponibles, se recortó para que quepa.",
     "filename": "Nombre del archivo",
     "feedback-status": "Estado del comentario",
     "reviews": "Comentarios", 

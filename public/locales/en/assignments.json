@@ -117,6 +117,7 @@
     "resubmit-assignment": "Resubmit Assignment",
     "start-review-here": "Start your review here...",
     "send-feedback": "Send feedback",
+    "feedback-limit-exceeded": "The pasted text exceeds the {{limit}} available characters, it was trimmed to fit.",
     "filename": "Filename",
     "feedback-status": "Feedback status",
     "reviews": "Reviews", 

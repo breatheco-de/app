@@ -36,7 +36,7 @@ const statusList = {
   REJECTED: 'REJECTED',
 };
 const { APPROVED, REJECTED } = statusList;
-const inputLimit = 450;
+const inputLimit = 800;
 
 function ReviewModal({
   isExternal, externalFiles, isOpen, isStudent, externalData, defaultStage,
@@ -239,7 +239,23 @@ function ReviewModal({
   }, [isOpen, currentTask?.id, externalData]);
 
   const onChangeComment = (e) => {
-    setComment(e.target.value);
+    setComment(e.target.value.slice(0, inputLimit));
+  };
+
+  const onPasteComment = (e) => {
+    const pastedText = e.clipboardData.getData('text');
+    const { selectionStart, selectionEnd, value } = e.target;
+    const resultingLength = value.length - (selectionEnd - selectionStart) + pastedText.length;
+
+    if (resultingLength > inputLimit) {
+      createToast({
+        position: 'top',
+        title: t('code-review.feedback-limit-exceeded', { limit: inputLimit }),
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   const handleResetFlow = () => {
@@ -256,6 +272,7 @@ function ReviewModal({
     setStageHistory(initialStage);
     setReviewStatus('');
     setSelectedText('');
+    setComment('');
   };
 
   const approveOrRejectProject = () => {
@@ -325,7 +342,7 @@ function ReviewModal({
 
   const widthSizes = {
     initial: (!isAuthenticatedWithRigobot || !noFilesToReview) && hasFilesToReview ? '36rem' : '28rem',
-    approve_or_reject_code_revision: '36rem',
+    approve_or_reject_code_revision: '44rem',
     file_list: '42rem',
     code_review: '74rem',
     review_code_revision: '56rem',
@@ -440,12 +457,23 @@ function ReviewModal({
       )}
 
       {stage === stages.approve_or_reject_code_revision && (
-        <Flex flexDirection="column" maxWidth="500px" margin="0 auto" gridGap="15px" width="100%">
+        <Flex flexDirection="column" maxWidth="640px" margin="0 auto" gridGap="15px" width="100%">
           <Box position="relative">
             <Text fontSize="14px" fontWeight={700} mb="18px">
               {reviewHint[reviewStatus]}
             </Text>
-            <Textarea aria-label="feedback input" fontSize="12px" onChange={onChangeComment} minHeight="134" placeholder={t('code-review.start-review-here')} />
+            <Textarea
+              aria-label="feedback input"
+              fontSize="14px"
+              value={comment}
+              onChange={onChangeComment}
+              onPaste={onPasteComment}
+              maxLength={inputLimit}
+              minHeight="280px"
+              resize="vertical"
+              pb="28px"
+              placeholder={t('code-review.start-review-here')}
+            />
             <Box position="absolute" bottom={1.5} right={3} color={comment.length < 10 ? '#EB5757' : 'currentColor'}>
               {`${comment.length} / ${inputLimit}`}
             </Box>
