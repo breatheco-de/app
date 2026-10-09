@@ -2,17 +2,36 @@ import PropTypes from 'prop-types';
 import {
   Box, Flex, Tooltip,
 } from '@chakra-ui/react';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
 import useGrabToScroll from '../hooks/useGrabToScroll';
 import { AnimatedContainer } from './Animated';
 
-function DotsScrollRow({ dots, onClickDots, emptyDotsMessage, rowKeyPrefix }) {
+const scrollToPropType = PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf(['start', 'end'])]);
+
+function DotsScrollRow({ dots, onClickDots, emptyDotsMessage, rowKeyPrefix, scrollTo, scrollSignal }) {
   const { fontColor3, tooltipBackground } = useStyle();
   const scrollContainerRef = useRef(null);
   const { grabToScroll, isScrollable } = useGrabToScroll({ ref: scrollContainerRef, horizontal: true });
   const highLightColor = 'yellow.default';
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container || scrollTo === null || scrollTo === undefined) return;
+    if (scrollTo === 'start' || scrollTo < 0) {
+      container.scrollLeft = 0;
+      return;
+    }
+    if (scrollTo === 'end') {
+      container.scrollLeft = container.scrollWidth;
+      return;
+    }
+    const dotElement = container.children[scrollTo];
+    if (dotElement) {
+      container.scrollLeft = dotElement.offsetLeft - container.clientWidth / 2;
+    }
+  }, [scrollTo, scrollSignal, dots?.length]);
 
   const showEmptyMessage = Boolean(emptyDotsMessage && dots?.length === 0);
   return (
@@ -67,6 +86,8 @@ DotsScrollRow.propTypes = {
   onClickDots: PropTypes.func,
   emptyDotsMessage: PropTypes.string,
   rowKeyPrefix: PropTypes.string,
+  scrollTo: scrollToPropType,
+  scrollSignal: PropTypes.number,
 };
 
 DotsScrollRow.defaultProps = {
@@ -74,6 +95,8 @@ DotsScrollRow.defaultProps = {
   onClickDots: null,
   emptyDotsMessage: '',
   rowKeyPrefix: '',
+  scrollTo: null,
+  scrollSignal: 0,
 };
 
 // we need to fix a bug that causes the tooltip re-render multiple times when the mouse is over it and ref not being updated
@@ -85,6 +108,8 @@ function DottedTimeline({
   width,
   onClickDots,
   extraTimelines,
+  scrollTo,
+  scrollSignal,
 }) {
   const { borderColor, fontColor2, backgroundColor2 } = useStyle();
   const suppressMainDotsRow = extraTimelines?.length > 0 && !(dots?.length > 0);
@@ -103,7 +128,7 @@ function DottedTimeline({
         )}
       </Flex>
       {!suppressMainDotsRow && (
-        <DotsScrollRow dots={dots} onClickDots={onClickDots} emptyDotsMessage={emptyDotsMessage} rowKeyPrefix="main" />
+        <DotsScrollRow dots={dots} onClickDots={onClickDots} emptyDotsMessage={emptyDotsMessage} rowKeyPrefix="main" scrollTo={scrollTo} scrollSignal={scrollSignal} />
       )}
       {extraTimelines?.length > 0 && extraTimelines.map((row) => (
         <Box key={row.key} pt="6px" borderTop="1px solid" borderColor={borderColor} marginTop="4px" paddingTop="10px">
@@ -119,7 +144,7 @@ function DottedTimeline({
               )}
             </Flex>
           )}
-          <DotsScrollRow dots={row.dots} onClickDots={onClickDots} emptyDotsMessage={row.emptyDotsMessage} rowKeyPrefix={row.key} />
+          <DotsScrollRow dots={row.dots} onClickDots={onClickDots} emptyDotsMessage={row.emptyDotsMessage} rowKeyPrefix={row.key} scrollTo={row.scrollTo} scrollSignal={scrollSignal} />
         </Box>
       ))}
     </Flex>
@@ -140,7 +165,10 @@ DottedTimeline.propTypes = {
     meta: PropTypes.node,
     dots: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
     emptyDotsMessage: PropTypes.string,
+    scrollTo: scrollToPropType,
   })),
+  scrollTo: scrollToPropType,
+  scrollSignal: PropTypes.number,
 };
 
 DottedTimeline.defaultProps = {
@@ -151,6 +179,8 @@ DottedTimeline.defaultProps = {
   onClickDots: null,
   emptyDotsMessage: '',
   extraTimelines: undefined,
+  scrollTo: null,
+  scrollSignal: 0,
 };
 
 export default DottedTimeline;
