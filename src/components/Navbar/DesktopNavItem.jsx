@@ -18,6 +18,7 @@ import NextChakraLink from '../NextChakraLink';
 import useStyle from '../../hooks/useStyle';
 import { ArrowDown } from '../Icon/components';
 import { getColorVariations } from '../../utils';
+import LearnMegaMenu from './LearnMegaMenu';
 
 const generateNavItemUrl = (item, parentId = null) => {
   const baseHref = item.asPath || item.href || '#';
@@ -49,6 +50,10 @@ function DesktopNavItem({ item }) {
 
   if (item.id === 'read' && !item.mainMenu && item.subMenu) {
     return null;
+  }
+
+  if (item.variant === 'mega-menu') {
+    return <LearnMegaMenu item={item} />;
   }
 
   return (
@@ -214,6 +219,7 @@ function DesktopNavItem({ item }) {
 DesktopNavItem.propTypes = {
   item: PropTypes.shape({
     id: PropTypes.string,
+    variant: PropTypes.string,
     bgColor: PropTypes.string,
     titleColor: PropTypes.string,
     label: PropTypes.string.isRequired,
