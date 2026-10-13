@@ -3,6 +3,10 @@
   "title": "Asignaciones",
   "students-view": "estudiantes",
   "projects-view": "proyectos",
+  "timeline-scroll": {
+    "start": "Ir al inicio",
+    "last-delivery": "Ir a la última entrega"
+  },
   "final-projects": "proyectos finales",
   "no-final-projects": "No se encontraron proyectos finales",
   "no-upload-students": "Los siguientes estudiantes aún están pendientes de subir la información de su proyecto final.",
