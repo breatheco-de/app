@@ -129,6 +129,52 @@
       "position": 4
     }
   ],
+  "learn-static-item": {
+    "id": "learn-static",
+    "variant": "mega-menu",
+    "label": "Learn",
+    "bgColor": "#F3FAFE",
+    "titleColor": "#0084FF",
+    "railLabel": "Course areas",
+    "description": "Self-paced courses to gain new skills in the most wanted technologies.",
+    "position": 1,
+    "mainMenu": [
+      {
+        "id": "programming",
+        "label": "Programming",
+        "subMenu": [
+          {
+            "href": "/bootcamp/deep-dive-into-python",
+            "label": "Deep Dive into Python"
+          }
+        ]
+      },
+      {
+        "id": "data-science-ai",
+        "label": "Data Science & AI",
+        "subMenu": [
+          {
+            "href": "/bootcamp/data-science-and-machine-learning-selfpaced",
+            "label": "Data Science and Machine Learning"
+          },
+          {
+            "href": "/bootcamp/no-code-and-automations",
+            "label": "No-Code & Automations"
+          }
+        ]
+      },
+      {
+        "id": "cybersecurity",
+        "label": "Cybersecurity",
+        "subMenu": [
+          {
+            "href": "/bootcamp/hack-30-machines-in-30-days",
+            "label": "Hack 30 Machines in 30 Days"
+          }
+        ]
+      }
+    ]
+  },
   "white-label-version-items": [
     {
       "label": "Dashboard",

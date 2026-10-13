@@ -129,6 +129,52 @@
       "position": 4
     }
   ],
+  "learn-static-item": {
+    "id": "learn-static",
+    "variant": "mega-menu",
+    "label": "Aprende",
+    "bgColor": "#F3FAFE",
+    "titleColor": "#0084FF",
+    "railLabel": "Áreas de cursos",
+    "description": "Cursos a tu ritmo para dominar las tecnologías más demandadas.",
+    "position": 1,
+    "mainMenu": [
+      {
+        "id": "programming",
+        "label": "Programación",
+        "subMenu": [
+          {
+            "href": "/bootcamp/deep-dive-into-python",
+            "label": "Inmersión Profunda en Python"
+          }
+        ]
+      },
+      {
+        "id": "data-science-ai",
+        "label": "Data Science e IA",
+        "subMenu": [
+          {
+            "href": "/bootcamp/data-science-and-machine-learning-selfpaced",
+            "label": "Ciencia de Datos y Machine Learning"
+          },
+          {
+            "href": "/bootcamp/no-code-and-automations",
+            "label": "Automatizaciones Sin Código"
+          }
+        ]
+      },
+      {
+        "id": "cybersecurity",
+        "label": "Ciberseguridad",
+        "subMenu": [
+          {
+            "href": "/bootcamp/hack-30-machines-in-30-days",
+            "label": "30 Máquinas que Debes Hackear en 30 días"
+          }
+        ]
+      }
+    ]
+  },
   "white-label-version-items": [
     {
       "label": "Dashboard",
