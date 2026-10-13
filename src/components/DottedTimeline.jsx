@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import {
   Box, Flex, Tooltip,
 } from '@chakra-ui/react';
-import { useEffect, useRef } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
 import useGrabToScroll from '../hooks/useGrabToScroll';
@@ -13,29 +13,67 @@ const scrollToPropType = PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf(
 function DotsScrollRow({ dots, onClickDots, emptyDotsMessage, rowKeyPrefix, scrollTo, scrollSignal }) {
   const { fontColor3, tooltipBackground } = useStyle();
   const scrollContainerRef = useRef(null);
-  const { grabToScroll, isScrollable } = useGrabToScroll({ ref: scrollContainerRef, horizontal: true });
+  const appliedScrollKey = useRef(null);
+  const userScrolled = useRef(false);
+  const applyingScroll = useRef(false);
+  const { grabToScroll } = useGrabToScroll({ ref: scrollContainerRef, horizontal: true });
+  const [showRightHint, setShowRightHint] = useState(false);
   const highLightColor = 'yellow.default';
 
-  useEffect(() => {
+  const syncRightHint = () => {
     const container = scrollContainerRef.current;
-    if (!container || scrollTo === null || scrollTo === undefined) return;
-    if (scrollTo === 'start' || scrollTo < 0) {
-      container.scrollLeft = 0;
-      return;
+    if (!container) return;
+    const remaining = container.scrollWidth - container.scrollLeft - container.clientWidth;
+    const next = remaining > 2;
+    setShowRightHint((prev) => (prev === next ? prev : next));
+  };
+
+  useLayoutEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return undefined;
+
+    const requestKey = `${scrollTo ?? ''}:${scrollSignal ?? 0}`;
+    if (appliedScrollKey.current !== requestKey) {
+      appliedScrollKey.current = requestKey;
+      userScrolled.current = false;
     }
-    if (scrollTo === 'end') {
-      container.scrollLeft = container.scrollWidth;
-      return;
+
+    if (!userScrolled.current) {
+      const maxLeft = Math.max(0, container.scrollWidth - container.clientWidth);
+      let nextLeft = null;
+      if (scrollTo === 'start' || scrollTo < 0) {
+        nextLeft = 0;
+      } else if (scrollTo === 'end') {
+        nextLeft = maxLeft;
+      } else if (scrollTo !== null && scrollTo !== undefined) {
+        const dotElement = container.children[scrollTo];
+        if (dotElement) {
+          const dotCenter = dotElement.offsetLeft + dotElement.offsetWidth / 2;
+          nextLeft = Math.min(Math.max(0, dotCenter - container.clientWidth / 2), maxLeft);
+        }
+      }
+      if (nextLeft !== null && Math.abs(container.scrollLeft - nextLeft) > 1) {
+        applyingScroll.current = true;
+        container.scrollLeft = nextLeft;
+        requestAnimationFrame(() => {
+          applyingScroll.current = false;
+        });
+      }
     }
-    const dotElement = container.children[scrollTo];
-    if (dotElement) {
-      container.scrollLeft = dotElement.offsetLeft - container.clientWidth / 2;
-    }
+    syncRightHint();
+
+    const onScroll = () => {
+      if (applyingScroll.current) return;
+      userScrolled.current = true;
+      syncRightHint();
+    };
+    container.addEventListener('scroll', onScroll, { passive: true });
+    return () => container.removeEventListener('scroll', onScroll);
   }, [scrollTo, scrollSignal, dots?.length]);
 
   const showEmptyMessage = Boolean(emptyDotsMessage && dots?.length === 0);
   return (
-    <AnimatedContainer isScrollable={dots?.length > 0 && isScrollable} position="relative" overflow="hidden">
+    <AnimatedContainer isScrollable={dots?.length > 0 && showRightHint} position="relative" overflow="hidden" style={{ overflowAnchor: 'none' }}>
       <Flex
         ref={scrollContainerRef}
         alignItems="center"
@@ -47,6 +85,7 @@ function DotsScrollRow({ dots, onClickDots, emptyDotsMessage, rowKeyPrefix, scro
         position="relative"
         gridGap="9px"
         overflowX="auto"
+        style={{ overflowAnchor: 'none' }}
       >
         {dots?.length > 0 && dots.map((dot, i) => (
           <Box
