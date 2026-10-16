@@ -4,8 +4,9 @@ import axios from 'axios';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useAuth from './useAuth';
-import { getStorageItem, getBrowserInfo, languageFix, removeStorageItem } from '../utils';
+import { getToken, getBrowserInfo, languageFix, removeStorageItem, assetTypeValues } from '../utils';
 import useCohortAction from '../store/actions/cohortAction';
+import { buildPublicPortalAssetPath } from '../utils/publicPortalNav';
 import {
   getMacroSlugForCohortSyllabus,
   processRelatedAssignments,
@@ -14,9 +15,142 @@ import {
 } from '../utils/cohorts';
 import { reportDatalayer } from '../utils/requests';
 import bc from '../services/breathecode';
-import { BREATHECODE_HOST, DOMAIN_NAME } from '../utils/variables';
+import { BREATHECODE_HOST, DOMAIN_NAME, isWhiteLabelAcademy } from '../utils/variables';
 import useCustomToast from './useCustomToast';
 import useSubscriptions from './useSubscriptions';
+
+const cohortModulesRequests = new Map();
+const missingSyllabusTaskRequests = new Set();
+
+const getCohortModulesRequestKey = (cohort, macroSlug) => `${cohort?.slug || cohort?.id}:${macroSlug || ''}`;
+
+const pickCohortEnrollment = (cohorts, cohortSlug, macroSlug) => {
+  const matches = (cohorts || []).filter((cohort) => cohort.slug === cohortSlug);
+  if (matches.length === 0) return undefined;
+  if (macroSlug) {
+    const bySourceMacro = matches.find(
+      (cohort) => cohort.cohort_user?.source_macro_cohort?.slug === macroSlug,
+    );
+    if (bySourceMacro) return bySourceMacro;
+  }
+  return matches[0];
+};
+
+const asSlug = (value) => {
+  if (!value) return null;
+  if (typeof value === 'string') return value;
+  if (typeof value === 'object' && typeof value.slug === 'string') return value.slug;
+  return null;
+};
+
+const getAssignmentSlugs = (assignment) => {
+  if (!assignment) return [];
+
+  const translationSlugs = assignment.translations && typeof assignment.translations === 'object'
+    ? Object.values(assignment.translations).map(asSlug).filter(Boolean)
+    : [];
+
+  return [
+    asSlug(assignment.slug),
+    asSlug(assignment.associated_slug),
+    ...translationSlugs,
+  ].filter(Boolean);
+};
+
+const taskMatchesAssignment = (task, assignment) => {
+  if (!task?.associated_slug || !assignment) return false;
+  if (assignment.task_type && task.task_type && assignment.task_type !== task.task_type) {
+    return false;
+  }
+  return getAssignmentSlugs(assignment).includes(task.associated_slug);
+};
+
+const getMissingSyllabusAssignments = (modules, tasks) => {
+  const existing = Array.isArray(tasks) ? tasks : [];
+  return (modules || []).flatMap((module) => (module?.content || []).filter((assignment) => (
+    Boolean(asSlug(assignment?.slug))
+    && Boolean(assignment?.task_type)
+    && !existing.some((task) => taskMatchesAssignment(task, assignment))
+  )));
+};
+
+const buildTaskCreatePayload = (assignment, cohort) => {
+  const slug = asSlug(assignment.slug) || asSlug(assignment.associated_slug);
+  return {
+    associated_slug: slug,
+    title: assignment.title || slug,
+    task_type: assignment.task_type,
+    description: assignment.description || '',
+    cohort: cohort.id,
+  };
+};
+
+const getSyllabusModuleData = (syllabus) => {
+  const days = syllabus?.json?.days;
+  const modules = syllabus?.json?.modules;
+  if (Array.isArray(days) && days.length > 0) return days;
+  return modules || days || [];
+};
+
+const mergeCohortTasks = (existing, incoming, cohort) => {
+  const { id, slug, name } = cohort || {};
+  const byKey = new Map();
+
+  [...(existing || []), ...(incoming || [])].filter(Boolean).forEach((task) => {
+    const normalized = {
+      ...task,
+      cohort: task.cohort && typeof task.cohort === 'object'
+        ? task.cohort
+        : { id, slug, name },
+    };
+    const key = normalized.id
+      ? `id:${normalized.id}`
+      : `slug:${normalized.associated_slug}:${normalized.task_type}`;
+    byKey.set(key, normalized);
+  });
+
+  return [...byKey.values()];
+};
+
+// the backend validates new tasks against the syllabus of the macro the student is working through
+const getTaskCreateQuery = (macroSlug) => (macroSlug ? { 'macro-cohort': macroSlug } : {});
+
+const createMissingSyllabusTasks = async ({
+  cohort, modules, tasks, macroSlug,
+}) => {
+  const missing = getMissingSyllabusAssignments(modules, tasks);
+  if (!cohort?.id || missing.length === 0) return [];
+
+  const requestKey = `${cohort.id}:${missing
+    .map((assignment) => `${assignment.task_type}:${asSlug(assignment.slug)}`)
+    .sort()
+    .join(',')}`;
+
+  if (missingSyllabusTaskRequests.has(requestKey)) return [];
+  missingSyllabusTaskRequests.add(requestKey);
+
+  try {
+    const response = await bc.assignments(getTaskCreateQuery(macroSlug)).addTasks(
+      missing.map((assignment) => buildTaskCreatePayload(assignment, cohort)),
+    );
+    if (response.status < 400 && Array.isArray(response.data)) {
+      return response.data.filter(Boolean);
+    }
+    missingSyllabusTaskRequests.delete(requestKey);
+    return [];
+  } catch (error) {
+    missingSyllabusTaskRequests.delete(requestKey);
+    console.error('[useCohortHandler] createMissingSyllabusTasks error', {
+      message: error?.message,
+      status: error?.response?.status,
+      data: error?.response?.data,
+      code: error?.code,
+      url: error?.config?.url,
+      method: error?.config?.method,
+    });
+    return [];
+  }
+};
 
 function useCohortHandler() {
   const router = useRouter();
@@ -42,33 +176,9 @@ function useCohortHandler() {
     cohortsAssignments,
   } = state;
   const { createToast } = useCustomToast({ toastId: 'fetching-role-cohort-error' });
-  const accessToken = getStorageItem('accessToken');
+  const accessToken = getToken();
   const assetSlug = router?.query?.lessonSlug;
   const assetType = router?.query?.lesson;
-  const assetTypes = {
-    read: 'lesson',
-    practice: 'exercise',
-    project: 'project',
-    answer: 'quiz',
-  };
-
-  const redirectToPublicPage = (data) => {
-    const englishSlug = {
-      en: data?.translations?.us,
-    };
-    const assetTypeValue = data?.asset_type || assetTypes[assetType];
-    const assetTypeLower = assetTypeValue.toLowerCase();
-    const translationSlug = englishSlug?.[lang] || data?.translations?.[lang] || assetSlug;
-
-    const pathConnector = {
-      lesson: `${lang === 'en' ? `${DOMAIN_NAME}/lesson/${translationSlug}` : `${DOMAIN_NAME}/${lang}/lesson/${translationSlug}`}`,
-      exercise: `${lang === 'en' ? `${DOMAIN_NAME}/interactive-exercise/${translationSlug}` : `${DOMAIN_NAME}/${lang}/interactive-exercise/${translationSlug}`}`,
-      project: `${lang === 'en' ? `${DOMAIN_NAME}/project/${translationSlug}` : `${DOMAIN_NAME}/${lang}/project/${translationSlug}`}`,
-    };
-    if (pathConnector?.[assetTypeLower]) {
-      window.location.href = pathConnector[assetTypeLower];
-    }
-  };
 
   const serializeModulesMap = (moduleData, tasks) => {
     const assignmentsRecopilated = [];
@@ -121,53 +231,191 @@ function useCohortHandler() {
   };
 
   const getCohortsModules = async (cohorts, macroSlugOptions = {}) => {
+    const { redirectOnSyllabusError = false, suppressEmptyError = false, ...slugOptions } = macroSlugOptions;
+    const resolvedSlugOptions = {
+      ...slugOptions,
+      allCohorts: slugOptions.allCohorts || myCohorts,
+    };
+
+    const showSyllabusErrorAndMaybeRedirect = () => {
+      createToast({
+        position: 'top',
+        title: t('alert-message:error-fetching-syllabus'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+
+      if (redirectOnSyllabusError) {
+        router.push('/choose-program');
+      }
+    };
+
     try {
       const assignmentsMap = {};
 
+      const assignmentMatchesMacroContext = (cohort) => {
+        const cached = cohortsAssignments[cohort?.slug];
+        if (!cached || !Array.isArray(cached.modules)) return false;
+        const neededMacro = getMacroSlugForCohortSyllabus(cohort, cohorts, resolvedSlugOptions) || '';
+        return (cached.macroSlug || '') === neededMacro;
+      };
+
       const preFechedCohorts = cohorts.reduce((acum, curr) => {
-        if (curr.slug in cohortsAssignments) return [...acum, curr];
+        if (assignmentMatchesMacroContext(curr)) return [...acum, curr];
         return acum;
       }, []);
 
       const cohortsToFetch = cohorts.filter((cohort) => !preFechedCohorts.some(({ slug }) => slug === cohort.slug));
 
-      const syllabusPromises = cohortsToFetch.map((cohort) => {
-        const macroSlug = getMacroSlugForCohortSyllabus(cohort, cohorts, macroSlugOptions);
-        const admissionsForSyllabus = bc.admissions(
-          macroSlug ? { 'macro-cohort': macroSlug } : {},
-        );
-        if (
-          !cohort?.academy?.id
-          || !cohort?.syllabus_version?.slug
-          || cohort?.syllabus_version?.version === undefined
-          || cohort?.syllabus_version?.version === null
-        ) {
-          return Promise.reject(new Error(`Invalid cohort syllabus metadata for ${cohort?.slug || cohort?.id}`));
-        }
+      const getRequestKeyForCohort = (cohort) => getCohortModulesRequestKey(
+        cohort,
+        getMacroSlugForCohortSyllabus(cohort, cohorts, resolvedSlugOptions),
+      );
 
-        return admissionsForSyllabus.academySyllabus(
-          cohort.academy.id,
-          cohort.syllabus_version.slug,
-          cohort.syllabus_version.version,
-        ).then((res) => ({ cohort: cohort.id, kind: 'syllabus', ...res }));
-      });
-      const tasksPromises = cohortsToFetch.map((cohort) => bc.assignments({ cohort: cohort.id, limit: 1000 }).getMeTasks()
-        .then((res) => ({ cohort: cohort.id, kind: 'tasks', ...res })));
-      const allResults = await Promise.allSettled([
-        ...syllabusPromises,
-        ...tasksPromises,
-      ]);
+      const cohortsToRequest = cohortsToFetch.filter((cohort) => !cohortModulesRequests.has(getRequestKeyForCohort(cohort)));
+
+      const mapTasksByCohort = (tasks = []) => cohortsToRequest.reduce((acc, cohort) => ({
+        ...acc,
+        [cohort.id]: tasks.filter((task) => task?.cohort?.id === cohort.id || task?.cohort?.slug === cohort.slug),
+      }), {});
+
+      const fetchIndividualTasksByCohort = async () => {
+        const taskResults = await Promise.allSettled(cohortsToRequest.map((cohort) => bc.assignments({ cohort: cohort.id, limit: 1000 }).getMeTasks()
+          .then((res) => ({
+            cohort: cohort.id,
+            tasks: res?.data?.results || [],
+          }))));
+
+        taskResults
+          .filter((result) => result.status === 'rejected')
+          .forEach((result) => {
+            const err = result.reason;
+            console.error('[useCohortHandler] Individual tasks fallback error', {
+              message: err?.message,
+              status: err?.response?.status,
+              data: err?.response?.data,
+              code: err?.code,
+              url: err?.config?.url,
+              method: err?.config?.method,
+            });
+          });
+
+        return taskResults
+          .filter((result) => result.status === 'fulfilled')
+          .reduce((acc, result) => ({
+            ...acc,
+            [result.value.cohort]: result.value.tasks,
+          }), {});
+      };
+
+      const fetchTasksByCohort = async () => {
+        if (cohortsToRequest.length === 0) return {};
+
+        try {
+          const cohortIds = cohortsToRequest.map((cohort) => cohort.id).join(',');
+          const { data } = await bc.assignments({
+            cohort: cohortIds,
+            limit: cohortsToRequest.length * 1000,
+          }).getMeTasks();
+          const tasks = data?.results || [];
+          const hasEnoughCohortMetadata = tasks.every((task) => task?.cohort?.id || task?.cohort?.slug);
+
+          if (!hasEnoughCohortMetadata) {
+            throw new Error('Batched tasks response is missing cohort metadata');
+          }
+
+          return mapTasksByCohort(tasks);
+        } catch (err) {
+          console.error('[useCohortHandler] Batched tasks request error', {
+            message: err?.message,
+            status: err?.response?.status,
+            data: err?.response?.data,
+            code: err?.code,
+            url: err?.config?.url,
+            method: err?.config?.method,
+          });
+          return fetchIndividualTasksByCohort();
+        }
+      };
+
+      const tasksByCohortPromise = fetchTasksByCohort();
+
+      const getCohortModulesRequest = (cohort) => {
+        const macroSlug = getMacroSlugForCohortSyllabus(cohort, cohorts, resolvedSlugOptions);
+        const requestKey = getCohortModulesRequestKey(cohort, macroSlug);
+
+        if (cohortModulesRequests.has(requestKey)) return cohortModulesRequests.get(requestKey);
+
+        const requestPromise = (async () => {
+          const buildRejectedResult = (reason) => ({
+            status: 'rejected',
+            reason,
+          });
+
+          const buildFulfilledResult = (value) => ({
+            status: 'fulfilled',
+            value,
+          });
+
+          const invalidMetadataError = new Error(`Invalid cohort syllabus metadata for ${cohort?.slug || cohort?.id}`);
+
+          let syllabusResult;
+
+          const tasksPromise = tasksByCohortPromise
+            .then((tasksByCohort) => buildFulfilledResult({
+              data: {
+                results: tasksByCohort[cohort.id] || [],
+              },
+            }))
+            .catch(buildRejectedResult);
+
+          if (
+            !cohort?.academy?.id
+            || !cohort?.syllabus_version?.slug
+            || cohort?.syllabus_version?.version === undefined
+            || cohort?.syllabus_version?.version === null
+          ) {
+            syllabusResult = buildRejectedResult(invalidMetadataError);
+          } else {
+            const admissionsForSyllabus = bc.admissions(
+              macroSlug ? { 'macro-cohort': macroSlug } : {},
+            );
+
+            syllabusResult = await admissionsForSyllabus.academySyllabus(
+              cohort.academy.id,
+              cohort.syllabus_version.slug,
+              cohort.syllabus_version.version,
+            ).then(buildFulfilledResult)
+              .catch(buildRejectedResult);
+          }
+
+          const tasksResult = await tasksPromise;
+
+          return {
+            cohort: cohort.id,
+            slug: cohort.slug,
+            syllabusResult,
+            tasksResult,
+          };
+        })().finally(() => {
+          cohortModulesRequests.delete(requestKey);
+        });
+
+        cohortModulesRequests.set(requestKey, requestPromise);
+        return requestPromise;
+      };
+
+      const allResults = await Promise.all(cohortsToFetch.map(getCohortModulesRequest));
 
       preFechedCohorts?.forEach(({ slug }) => {
         assignmentsMap[slug] = { ...cohortsAssignments[slug] };
       });
 
-      const successfulResults = allResults
-        .filter((result) => result.status === 'fulfilled')
-        .map((result) => result.value);
-
-      const failedResults = allResults
-        .filter((result) => result.status === 'rejected')
+      const failedResults = allResults.flatMap((result) => [
+        result.syllabusResult,
+        result.tasksResult,
+      ]).filter((result) => result.status === 'rejected')
         .map((result) => result.reason);
 
       if (failedResults.length > 0) {
@@ -183,34 +431,71 @@ function useCohortHandler() {
         });
       }
 
-      cohortsToFetch.forEach((cohort) => {
-        const syllabusResult = successfulResults.find((elem) => elem.cohort === cohort.id && elem.kind === 'syllabus');
-        const tasksResult = successfulResults.find((elem) => elem.cohort === cohort.id && elem.kind === 'tasks');
-        const syllabus = syllabusResult?.data || null;
-        const tasks = tasksResult?.data?.results || [];
-        const moduleData = syllabus?.json?.days || syllabus?.json?.modules;
+      const fetchedCohortEntries = cohortsToFetch.map((cohort) => {
+        const cohortResult = allResults.find((elem) => elem.cohort === cohort.id);
+        const syllabus = cohortResult?.syllabusResult?.status === 'fulfilled'
+          ? cohortResult.syllabusResult.value?.data
+          : null;
+        const tasks = cohortResult?.tasksResult?.status === 'fulfilled'
+          ? cohortResult.tasksResult.value?.data?.results || []
+          : [];
+        const moduleData = getSyllabusModuleData(syllabus);
 
-        if (!moduleData || !Array.isArray(moduleData)) return;
+        if (
+          !moduleData
+          || !Array.isArray(moduleData)
+        ) {
+          return null;
+        }
 
-        const cohortModules = serializeModulesMap(moduleData, tasks);
+        return {
+          cohort,
+          data: {
+            modules: serializeModulesMap(moduleData, tasks),
+            syllabus,
+            tasks,
+          },
+        };
+      }).filter(Boolean);
+
+      await Promise.all(fetchedCohortEntries.map(async ({ cohort, data }) => {
+        const startedModules = (data.modules || []).filter((module) => (
+          Array.isArray(module.filteredContent) && module.filteredContent.length > 0
+        ));
+        let nextData = data;
+
+        if (startedModules.length > 0) {
+          const created = await createMissingSyllabusTasks({
+            cohort,
+            modules: startedModules,
+            tasks: data.tasks,
+            macroSlug: getMacroSlugForCohortSyllabus(cohort, cohorts, resolvedSlugOptions),
+          });
+          if (created.length > 0) {
+            const mergedTasks = mergeCohortTasks(data.tasks, created, cohort);
+            nextData = {
+              ...data,
+              tasks: mergedTasks,
+              modules: serializeModulesMap(getSyllabusModuleData(data.syllabus), mergedTasks),
+            };
+          }
+        }
 
         assignmentsMap[cohort.slug] = {
-          modules: cohortModules,
-          syllabus,
-          tasks,
+          ...nextData,
+          macroSlug: getMacroSlugForCohortSyllabus(cohort, cohorts, resolvedSlugOptions) || null,
         };
-      });
+      }));
 
       setCohortsAssingments({ ...cohortsAssignments, ...assignmentsMap });
 
-      if (Object.keys(assignmentsMap).length === 0 && cohortsToFetch.length > 0) {
-        createToast({
-          position: 'top',
-          title: t('alert-message:error-fetching-syllabus'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
+      const hasLoadedModules = cohorts.some((cohort) => (
+        Array.isArray(assignmentsMap[cohort.slug]?.modules)
+        || Array.isArray(cohortsAssignments[cohort.slug]?.modules)
+      ));
+
+      if (!hasLoadedModules && cohorts.length > 0 && !suppressEmptyError) {
+        showSyllabusErrorAndMaybeRedirect();
       }
 
       return assignmentsMap;
@@ -223,13 +508,7 @@ function useCohortHandler() {
         url: e?.config?.url,
         method: e?.config?.method,
       });
-      createToast({
-        position: 'top',
-        title: t('alert-message:error-fetching-syllabus'),
-        status: 'error',
-        duration: 7000,
-        isClosable: true,
-      });
+      showSyllabusErrorAndMaybeRedirect();
 
       return {};
     }
@@ -286,9 +565,30 @@ function useCohortHandler() {
   const handleRedirectToPublicPage = async () => {
     try {
       const response = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`);
-      if (response?.data?.asset_type) {
-        redirectToPublicPage(response.data);
+      const assetData = response?.data;
+
+      if (!assetData?.asset_type) {
+        router.push('/404');
+        return;
       }
+
+      const resolvedAssetType = (assetData.asset_type || assetTypeValues[assetType])?.toLowerCase();
+      const translationSlug = assetData?.translations?.[lang]
+        || (lang === 'en' ? assetData?.translations?.us : null)
+        || assetSlug;
+      const relativePath = buildPublicPortalAssetPath(lang, resolvedAssetType, translationSlug);
+
+      if (!relativePath) {
+        router.push('/404');
+        return;
+      }
+
+      if (isWhiteLabelAcademy) {
+        router.push(relativePath);
+        return;
+      }
+
+      window.location.href = `${DOMAIN_NAME}${relativePath}`;
     } catch (e) {
       router.push('/404');
     }
@@ -301,9 +601,14 @@ function useCohortHandler() {
     try {
       // Fetch cohort data with pathName structure
       if (cohortSlug && accessToken) {
+        const macroSlug = routeMacroSlug
+          || (typeof router.query?.mainCohortSlug === 'string'
+            ? router.query.mainCohortSlug
+            : router.query?.mainCohortSlug?.[0]);
+
         // find cohort with current slug
         let prefetchedCohorts = myCohorts;
-        let currentCohort = prefetchedCohorts.find((c) => c.slug === cohortSlug);
+        let currentCohort = pickCohortEnrollment(prefetchedCohorts, cohortSlug, macroSlug);
 
         //we make sure that we have already loaded the data of the cohort and its micro cohorts
         if (!currentCohort || (Array.isArray(currentCohort.micro_cohorts) && currentCohort.micro_cohorts.length > 0 && !currentCohort.micro_cohorts.every((cohort) => myCohorts.some(({ slug }) => cohort.slug === slug)))) {
@@ -311,7 +616,7 @@ function useCohortHandler() {
           setCohorts(fetchedCohorts);
           prefetchedCohorts = fetchedCohorts;
 
-          currentCohort = fetchedCohorts.find((c) => c.slug === cohortSlug);
+          currentCohort = pickCohortEnrollment(fetchedCohorts, cohortSlug, macroSlug);
         }
 
         if (!currentCohort) {
@@ -332,11 +637,26 @@ function useCohortHandler() {
         }
 
         const cohorts = Array.isArray(currentCohort.micro_cohorts) && currentCohort.micro_cohorts.length > 0
-          ? prefetchedCohorts.filter((c) => currentCohort.micro_cohorts.some((elem) => elem.slug === c.slug))
+          ? currentCohort.micro_cohorts
+            .map((micro) => pickCohortEnrollment(prefetchedCohorts, micro.slug, currentCohort.slug))
+            .filter(Boolean)
           : [currentCohort];
 
         const explicitBatchMacroSlug = currentCohort.micro_cohorts?.length ? currentCohort.slug : undefined;
-        await getCohortsModules(cohorts, { routeMacroSlug, explicitBatchMacroSlug });
+        const assignmentsMap = await getCohortsModules(cohorts, {
+          routeMacroSlug: macroSlug,
+          explicitBatchMacroSlug,
+          allCohorts: prefetchedCohorts,
+          redirectOnSyllabusError: true,
+        });
+
+        const hasLoadedModules = cohorts.some((cohort) => (
+          Array.isArray(assignmentsMap?.[cohort.slug]?.modules)
+        ));
+
+        if (!hasLoadedModules) {
+          return undefined;
+        }
 
         setCohortSession(currentCohort);
         return currentCohort;
@@ -484,22 +804,40 @@ function useCohortHandler() {
   };
 
   const addTasks = (tasks, cohort) => {
-    const { id, slug, name } = cohort;
-    const cohortData = cohortsAssignments[cohort.slug];
+    if (!cohort?.slug || !Array.isArray(tasks) || tasks.length === 0) return;
 
-    const newTasks = [
-      ...cohortData.tasks,
-      ...tasks.map((task) => ({ ...task, cohort: { id, slug, name } })),
-    ];
+    const cohortData = cohortsAssignments[cohort.slug];
+    if (!cohortData) return;
+
+    const newTasks = mergeCohortTasks(cohortData.tasks, tasks, cohort);
+    const moduleData = getSyllabusModuleData(cohortData.syllabus);
 
     setCohortsAssingments({
       ...cohortsAssignments,
       [cohort.slug]: {
         ...cohortData,
         tasks: newTasks,
-        modules: serializeModulesMap(cohortData.syllabus.json.days, newTasks),
+        modules: serializeModulesMap(moduleData, newTasks),
       },
     });
+  };
+
+  const ensureMissingSyllabusTasks = async ({ cohort, modules }) => {
+    if (!cohort?.id || !Array.isArray(modules) || modules.length === 0) return [];
+
+    const cohortData = cohortsAssignments[cohort.slug];
+    const created = await createMissingSyllabusTasks({
+      cohort,
+      modules,
+      tasks: cohortData?.tasks || [],
+      macroSlug: cohortData?.macroSlug,
+    });
+
+    if (created.length > 0) {
+      addTasks(created, cohort);
+    }
+
+    return created;
   };
 
   const updateAssignment = async ({
@@ -601,7 +939,8 @@ function useCohortHandler() {
     newTasks, cohort, label, customHandler = () => { }, updateContext = true,
   }) => {
     try {
-      const response = await bc.assignments().addTasks(newTasks);
+      const macroSlug = cohortsAssignments[cohort?.slug]?.macroSlug;
+      const response = await bc.assignments(getTaskCreateQuery(macroSlug)).addTasks(newTasks);
 
       if (response.status < 400) {
         createToast({
@@ -974,7 +1313,16 @@ function useCohortHandler() {
       }));
       console.log('[checkNavigationAvailability] ALL subscriptions (filtering by cohort id:', cohortSession?.id, ')', allSubsSummary);
 
-      const cohortSubscriptions = allSubscriptions?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
+      const routeMacroSlug = typeof router.query?.mainCohortSlug === 'string'
+        ? router.query.mainCohortSlug
+        : null;
+      const cohortSubscriptions = allSubscriptions?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => (
+        cohort.id === cohortSession.id
+        || cohort.slug === cohortSession.slug
+        || (routeMacroSlug && cohort.slug === routeMacroSlug)
+        || (Array.isArray(cohortSession.micro_cohorts)
+          && cohortSession.micro_cohorts.some((mc) => mc.id === cohort.id || mc.slug === cohort.slug))
+      )));
       const currentCohortSlug = cohortSubscriptions[0]?.plans[0]?.slug;
 
       console.log('[checkNavigationAvailability] cohortSubscriptions (filtered for this cohort)', {
@@ -1157,6 +1505,7 @@ function useCohortHandler() {
     taskTodo,
     cohortProgram,
     addTasks,
+    ensureMissingSyllabusTasks,
     updateTask,
     updateTaskReadAt,
     updateAssignment,

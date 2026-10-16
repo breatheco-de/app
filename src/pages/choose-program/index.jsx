@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import {
   Flex, Box, Button,
 } from '@chakra-ui/react';
@@ -11,6 +11,7 @@ import bc from '../../services/breathecode';
 import Icon from '../../components/Icon';
 import TaskBar from '../../components/TaskBar';
 import { calculateDifferenceDays, getStorageItem, isPlural, isValidDate, removeStorageItem, setStorageItem, sortToNearestTodayDate, syncInterval, getBrowserInfo } from '../../utils';
+import { getActiveCohorts, getCohortsFinished, getMainCohorts, expandCohortsWithMicros } from '../../utils/cohorts';
 import { reportDatalayer } from '../../utils/requests';
 import Heading from '../../components/Heading';
 import useAuth from '../../hooks/useAuth';
@@ -52,7 +53,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
 function chooseProgram() {
   const { t } = useTranslation('choose-program');
-  const { setCohortSession, getCohortsModules, cohortsAssignments } = useCohortHandler();
+  const { setCohortSession, getCohortsModules } = useCohortHandler();
   const { subscriptionStatusDictionary } = useSignup();
   const { user, cohorts, isLoading, reSetUserAndCohorts, fetchUserAndCohorts, setCohorts } = useAuth();
   const [subscriptionProcess] = usePersistent('subscription-process', null);
@@ -66,6 +67,10 @@ function chooseProgram() {
   const { state: subscriptionsState } = useSubscriptions();
   const { isLoading: subscriptionLoading, subscriptions } = subscriptionsState;
   const [cohortMembers, setCohortMembers] = useState({});
+  const cohortMembersRef = useRef({});
+  const pendingCohortMembersRef = useRef(new Set());
+  const finishedProgramsLoadedRef = useRef(false);
+  const activeModulesPromiseRef = useRef(Promise.resolve());
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
   const [lateModalProps, setLateModalProps] = useState({
@@ -99,7 +104,11 @@ function chooseProgram() {
     return syllabus;
   }, [cohorts]);
 
-  const getServices = async (userRoles) => {
+  const mainCohorts = useMemo(() => getMainCohorts(cohorts), [cohorts]);
+  const activeMainCohorts = useMemo(() => getActiveCohorts(mainCohorts), [mainCohorts]);
+  const finishedMainCohorts = useMemo(() => getCohortsFinished(mainCohorts), [mainCohorts]);
+
+  const getServices = useCallback(async (userRoles) => {
     if (!canShowMentoring) {
       setMentorshipServices({
         isLoading: false,
@@ -110,7 +119,7 @@ function chooseProgram() {
 
     if (userRoles?.length > 0) {
       delete axios.defaults.headers.common.Academy;
-      const mentorshipPromises = await userRoles.map((role) => bc.mentorship({ academy: role?.academy?.id }, true).getService()
+      const mentorshipPromises = userRoles.map((role) => bc.mentorship({ academy: role?.academy?.id }, true).getService()
         .then((resp) => {
           const data = resp?.data;
           if (data !== undefined && data.length > 0) {
@@ -125,20 +134,33 @@ function chooseProgram() {
           }
           return [];
         }));
-      const mentorshipResults = await Promise.all(mentorshipPromises);
-      const recopilatedServices = mentorshipResults.flat();
+      const mentorshipResults = await Promise.allSettled(mentorshipPromises);
+      const recopilatedServices = mentorshipResults
+        .filter((result) => result.status === 'fulfilled')
+        .flatMap((result) => result.value);
 
       setMentorshipServices({
         isLoading: false,
         data: recopilatedServices,
       });
+      return;
     }
-  };
+
+    setMentorshipServices({
+      isLoading: false,
+      data: [],
+    });
+  }, [canShowMentoring]);
+
+  useEffect(() => {
+    if (user) {
+      getServices(user.roles);
+    }
+  }, [getServices, user?.id]);
 
   useEffect(() => {
     let revalidate;
     if (user) {
-      getServices(user.roles);
       const cohortIsReady = cohorts?.length > 0 && cohorts?.some((cohort) => {
         const academy = cohort?.academy;
         if (cohort?.id === subscriptionProcess?.id
@@ -229,41 +251,115 @@ function chooseProgram() {
     }
   }, [user?.id]);
 
-  const processCohort = async (cohort) => {
-    if (cohort?.slug) {
-      const isFinantialStatusLate = cohort.cohort_user.finantial_status === 'LATE' || cohort.cohort_user.educational_status === 'SUSPENDED';
-      const { slug } = cohort;
-      const studentAndTeachers = isFinantialStatusLate ? {} : await bc.admissions({
-        role: 'TEACHER,ASSISTANT',
+  const setCohortMembersBySlug = useCallback((slug, members) => {
+    setCohortMembers((prev) => {
+      if (prev[slug]) return prev;
+
+      const next = {
+        ...prev,
+        [slug]: members,
+      };
+
+      cohortMembersRef.current = next;
+      return next;
+    });
+  }, []);
+
+  const processCohort = useCallback(async (cohort) => {
+    const slug = cohort?.slug;
+
+    if (!slug || cohortMembersRef.current[slug] || pendingCohortMembersRef.current.has(slug)) return;
+
+    const isFinantialStatusLate = cohort.cohort_user?.finantial_status === 'LATE'
+      || cohort.cohort_user?.educational_status === 'SUSPENDED';
+
+    if (isFinantialStatusLate || !cohort.academy?.id) {
+      setCohortMembersBySlug(slug, {
+        teacher: [],
+        assistant: [],
+      });
+      return;
+    }
+
+    pendingCohortMembersRef.current.add(slug);
+
+    try {
+      const studentAndTeachers = await bc.admissions({
+        roles: 'TEACHER,ASSISTANT',
         cohorts: slug,
-        academy: cohort.academy?.id,
-      }).getAcademyCohortUsers();
+      }).cohortUsers(cohort.academy.id);
       const teacher = studentAndTeachers?.data?.filter((st) => st.role === 'TEACHER') || [];
       const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT') || [];
 
-      setCohortMembers((prev) => ({
-        ...prev,
-        [slug]: {
-          teacher,
-          assistant,
-        },
-      }));
+      setCohortMembersBySlug(slug, {
+        teacher,
+        assistant,
+      });
+    } catch (error) {
+      console.error('[choose-program] processCohort error', {
+        message: error?.message,
+        status: error?.response?.status,
+        data: error?.response?.data,
+        code: error?.code,
+        url: error?.config?.url,
+        method: error?.config?.method,
+      });
+      setCohortMembersBySlug(slug, {
+        teacher: [],
+        assistant: [],
+      });
+    } finally {
+      pendingCohortMembersRef.current.delete(slug);
     }
-  };
+  }, [setCohortMembersBySlug]);
+
+  const loadFinishedPrograms = useCallback(async () => {
+    if (finishedProgramsLoadedRef.current || finishedMainCohorts.length === 0) return;
+
+    finishedProgramsLoadedRef.current = true;
+    try {
+      await activeModulesPromiseRef.current;
+      await getCohortsModules(
+        expandCohortsWithMicros(finishedMainCohorts, cohorts),
+        { suppressEmptyError: true },
+      );
+      await Promise.all(finishedMainCohorts.map((cohort) => processCohort(cohort)));
+    } catch (error) {
+      finishedProgramsLoadedRef.current = false;
+      console.error('[choose-program] loadFinishedPrograms error', {
+        message: error?.message,
+        status: error?.response?.status,
+        data: error?.response?.data,
+        code: error?.code,
+        url: error?.config?.url,
+        method: error?.config?.method,
+      });
+      throw error;
+    }
+  }, [cohorts, finishedMainCohorts, processCohort]);
 
   useEffect(() => {
-    if (cohorts.length > 0) {
-      getCohortsModules(cohorts);
+    if (activeMainCohorts.length > 0) {
+      activeModulesPromiseRef.current = Promise.resolve(
+        getCohortsModules(expandCohortsWithMicros(activeMainCohorts, cohorts)),
+      ).catch((error) => {
+        console.error('[choose-program] getCohortsModules active error', {
+          message: error?.message,
+          status: error?.response?.status,
+          data: error?.response?.data,
+          code: error?.code,
+          url: error?.config?.url,
+          method: error?.config?.method,
+        });
+      });
     }
-  }, [cohorts]);
+  }, [cohorts, activeMainCohorts]);
 
   useEffect(() => {
-    // const cohortSlugs = Object.keys(cohortsAssignments);
-    // if (cohorts.length > 0 && cohorts.every((cohort) => cohortSlugs.includes(cohort.slug))) {
-    if (cohorts.length > 0) {
-      cohorts.map(processCohort);
+    if (activeMainCohorts.length > 0) {
+      activeMainCohorts.forEach(processCohort);
     }
-  }, [cohorts, cohortsAssignments]);
+  }, [activeMainCohorts, processCohort]);
 
   useEffect(() => {
     if (!canShowEvents) return;
@@ -277,6 +373,16 @@ function chooseProgram() {
           return false;
         }).slice(0, 3) : [];
         setEvents(eventsRemain);
+      }).catch((error) => {
+        console.error('[choose-program] meOnlineEvents error', {
+          message: error?.message,
+          status: error?.response?.status,
+          data: error?.response?.data,
+          code: error?.code,
+          url: error?.config?.url,
+          method: error?.config?.method,
+        });
+        setEvents([]);
       });
 
     bc.events({
@@ -289,6 +395,16 @@ function chooseProgram() {
         const sortDateToLiveClass = sortToNearestTodayDate(validatedEventList, TwentyFourHoursInMinutes);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         setLiveClasses(existentLiveClasses);
+      }).catch((error) => {
+        console.error('[choose-program] liveClass error', {
+          message: error?.message,
+          status: error?.response?.status,
+          data: error?.response?.data,
+          code: error?.code,
+          url: error?.config?.url,
+          method: error?.config?.method,
+        });
+        setLiveClasses([]);
       });
     syncInterval(() => {
       setLiveClasses((prev) => {
@@ -324,11 +440,23 @@ function chooseProgram() {
     }
 
     setLoadingReferral(true);
-    const response = await bc.payment().getMyCoupon();
-    if (response?.data?.length > 0) {
-      setReferralCoupon(response?.data?.[0]);
+    try {
+      const response = await bc.payment().getMyCoupon();
+      if (response?.data?.length > 0) {
+        setReferralCoupon(response?.data?.[0]);
+      }
+    } catch (error) {
+      console.error('[choose-program] getReferralCoupon error', {
+        message: error?.message,
+        status: error?.response?.status,
+        data: error?.response?.data,
+        code: error?.code,
+        url: error?.config?.url,
+        method: error?.config?.method,
+      });
+    } finally {
+      setLoadingReferral(false);
     }
-    setLoadingReferral(false);
   };
 
   useEffect(() => {
@@ -467,8 +595,6 @@ function chooseProgram() {
     }
     return t('invite.singular-word', { invitesLength: invites?.length });
   };
-
-  const isMainCohort = (cohort) => !cohorts.some((elem) => elem.micro_cohorts.some((micro) => micro.slug === cohort.slug));
 
   return (
     <Flex alignItems="center" flexDirection="row" mt="40px">
@@ -623,7 +749,11 @@ function chooseProgram() {
 
           <Box>
             {!isLoading && (
-              <ProgramsDashboard cohorts={cohorts.filter(isMainCohort)} setLateModalProps={setLateModalProps} />
+              <ProgramsDashboard
+                cohorts={mainCohorts}
+                setLateModalProps={setLateModalProps}
+                onLoadFinished={loadFinishedPrograms}
+              />
             )}
           </Box>
           {isRevalidating && (

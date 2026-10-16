@@ -14,7 +14,7 @@ import SimpleModal from '../../components/SimpleModal';
 import GridContainer from '../../components/GridContainer';
 import Heading from '../../components/Heading';
 import Text from '../../components/Text';
-import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate, getBrowserInfo, isWindow } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getToken, isValidDate, getBrowserInfo, isWindow } from '../../utils';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../../components/Icon';
 import PublicProfile from '../../components/PublicProfile';
@@ -24,6 +24,11 @@ import ShowOnSignUp from '../../components/ShowOnSignup';
 import Timer from '../../components/Timer';
 import Link from '../../components/NextChakraLink';
 import { categoriesFor, BREATHECODE_HOST } from '../../utils/variables';
+import {
+  fetchEventsForStaticGeneration,
+  getWhiteLabelAcademyFeatures,
+  isEventVisibleForWhiteLabel,
+} from '../../utils/whiteLabelEvents';
 import ComponentOnTime from '../../components/ComponentOnTime';
 import MarkDownParser from '../../components/MarkDownParser';
 import MktEventCards from '../../components/PrismicComponents/MktEventCards';
@@ -38,6 +43,10 @@ import useSignup from '../../hooks/useSignup';
 import useCustomToast from '../../hooks/useCustomToast';
 import AddToCalendar from '../../components/addToCalendar';
 import FixedBottomCta from '../../components/Assets/FixedBottomCta';
+import {
+  withSafeStaticPaths,
+  buildLocalePaths,
+} from '../../utils/staticGeneration';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -59,31 +68,55 @@ const assetTypeDict = {
   EXERCISE: 'interactive-exercise',
 };
 
-export const getStaticPaths = async ({ locales }) => {
-  const { data } = await bc.events().allEvents();
+export const getStaticPaths = async ({ locales }) => withSafeStaticPaths(async () => {
+  const data = await fetchEventsForStaticGeneration();
+  const activeEvents = (Array.isArray(data) ? data : [])
+    .filter((ev) => ev?.slug && ['ACTIVE', 'FINISHED'].includes(ev.status));
 
-  const paths = data.filter((ev) => ev?.slug && ['ACTIVE', 'FINISHED'].includes(ev.status))
-    .flatMap((res) => locales.map((locale) => ({
-      params: {
-        event_slug: res?.slug,
-      },
-      locale,
-    })));
-
-  return {
-    paths,
-    fallback: true,
-  };
-};
+  return buildLocalePaths(activeEvents, locales, 'event_slug');
+}, { fallback: true });
 
 export const getStaticProps = async ({ params, locale }) => {
   const { event_slug: slug } = params;
-  const resp = await bc.events({ context: 'true' }).getEvent(slug).catch(() => ({
-    statusText: 'not-found',
-  }));
-  const data = resp?.data;
 
-  if (resp.statusText === 'not-found' || !data?.slug || !['ACTIVE', 'FINISHED'].includes(data.status)) {
+  // Axios interceptor resolves HTTP/network errors instead of throwing, so do not rely on .catch().
+  const resp = await bc.events({ context: 'true' }).getEvent(slug);
+  const data = resp?.data;
+  const httpStatus = resp?.status;
+  const requestFailed = Boolean(resp?.isAxiosError) || (!httpStatus && !data?.slug);
+
+  const features = await getWhiteLabelAcademyFeatures();
+
+  // Genuine missing/invalid event → 404. Transient API/host failures let the client refetch.
+  if (httpStatus === 404 || (data?.slug && !['ACTIVE', 'FINISHED'].includes(data.status))) {
+    return {
+      notFound: true,
+      revalidate: 60,
+    };
+  }
+
+  if (requestFailed || !data?.slug) {
+    return {
+      props: {
+        seo: {
+          title: 'Workshops',
+          description: '',
+          pathConnector: '/workshops',
+          url: `/workshops/${slug}`,
+          slug,
+          type: 'event',
+          locale,
+        },
+        translations: [],
+        disableLangSwitcher: true,
+        eventData: null,
+        asset: null,
+      },
+      revalidate: 60,
+    };
+  }
+
+  if (!isEventVisibleForWhiteLabel(data, features)) {
     return {
       notFound: true,
       revalidate: 60,
@@ -164,7 +197,7 @@ function Workshop({ eventData, asset }) {
   const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
   const [isCheckinModalOpen, setIsCheckinModalOpen] = useState(false);
   const [randomImage, setRandomImage] = useState(arrayOfImages[0]);
-  const accessToken = getStorageItem('accessToken');
+  const accessToken = getToken();
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
   const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
   const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
@@ -568,12 +601,26 @@ function Workshop({ eventData, asset }) {
 
   const applyAndRedirectToEvent = async ({ eventId, signupData }) => {
     try {
-      const tokenForHeader = signupData?.access_token || getStorageItem('accessToken');
+      const tokenForHeader = signupData?.access_token || getToken();
       const attendeePhone = signupData?.phone || signupData?.phone_number || signupData?.mobile || null;
       const payload = attendeePhone ? { ...utms, phone: attendeePhone } : utms;
       const resp = await bc.events().applyEvent(eventId, payload, tokenForHeader);
       if (resp && resp.status < 300) {
-        const token = signupData?.access_token ? signupData.access_token : getStorageItem('accessToken');
+        reportDatalayer({
+          dataLayer: {
+            event: 'event_order',
+            event_id: event.id,
+            event_slug: event.slug,
+            event_title: event.title,
+            event_type: event.event_type?.slug,
+            event_starting_at: unixFormatedDate.starting_at,
+            event_ending_at: unixFormatedDate.ending_at,
+            event_language: event.lang,
+            event_tags: event.tags || '',
+            agent: getBrowserInfo(),
+          },
+        });
+        const token = signupData?.access_token ? signupData.access_token : getToken();
         router.push(`${BREATHECODE_HOST}/v1/events/me/event/${eventId}/join?token=${token}`);
       }
     } catch (e) {
@@ -583,8 +630,8 @@ function Workshop({ eventData, asset }) {
 
   const handleJoin = async () => {
     if (!finishedEvent) {
+      setIsJoiningEvent(true);
       if ((readyToJoinEvent && alreadyApplied) || readyToJoinEvent) {
-        setIsJoiningEvent(true);
         reportDatalayer({
           dataLayer: {
             event: 'join_event',
@@ -599,9 +646,7 @@ function Workshop({ eventData, asset }) {
           },
         });
         router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
-      }
-      if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
-        setIsJoiningEvent(true);
+      } else if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
         bc.events().applyEvent(event?.id, utms)
           .then((resp) => {
             if (resp !== undefined) {
@@ -625,6 +670,7 @@ function Workshop({ eventData, asset }) {
                   event_starting_at: unixFormatedDate.starting_at,
                   event_ending_at: unixFormatedDate.ending_at,
                   event_language: event.lang,
+                  event_tags: event.tags || '',
                   agent: getBrowserInfo(),
                 },
               });
@@ -641,6 +687,8 @@ function Workshop({ eventData, asset }) {
           })
           .catch(() => setIsJoiningEvent(false));
         setIsModalConfirmOpen(false);
+      } else {
+        setIsJoiningEvent(false);
       }
     }
   };
@@ -954,11 +1002,19 @@ function Workshop({ eventData, asset }) {
       </Box>
       <GridContainer
         height="100%"
+        display={{ base: 'flex', lg: 'grid' }}
+        flexDirection={{ base: 'column', lg: 'unset' }}
         gridTemplateColumns={{ base: 'repeat(12, 1fr)', lg: '2fr repeat(12, 1fr) 2fr' }}
         gridGap="36px"
         padding="0 10px"
       >
-        <Box display={{ base: 'block', lg: 'flex' }} gridGap="30px" flexDirection="column" gridColumn={{ base: '2 / span 6', lg: '2 / span 8' }}>
+        <Box
+          display={{ base: 'block', lg: 'flex' }}
+          gridGap="30px"
+          flexDirection="column"
+          order={{ base: 2, lg: 'unset' }}
+          gridColumn={{ base: '1 / -1', lg: '2 / span 8' }}
+        >
           <Box display="flex" flexDirection="column" gridGap="10px">
             <MarkDownParser content={event?.description} />
           </Box>
@@ -1191,8 +1247,9 @@ function Workshop({ eventData, asset }) {
         </Box>
         <Box
           display="flex"
-          gridColumn={{ base: '8 / span 4', lg: '10 / span 4' }}
-          margin={{ base: '20px 0 0 auto', lg: '-13.42rem 0 0 auto' }}
+          order={{ base: 1, lg: 'unset' }}
+          gridColumn={{ base: '1 / -1', lg: '10 / span 4' }}
+          margin={{ base: '0', lg: '-13.42rem 0 0 auto' }}
           flexDirection="column"
           transition="background 0.2s ease-in-out"
           width={{ base: '100%', md: '320px' }}
@@ -1208,6 +1265,7 @@ function Workshop({ eventData, asset }) {
               <Box display={{ base: isAuth ? 'none' : 'block', md: 'block' }}>
                 <ShowOnSignUp
                   showVerifyEmail={false}
+                  submitText={t('reserv-button-text')}
                   hideForm={isAuth}
                   existsConsumables={existsConsumables}
                   hideSwitchUser={!isFreeForConsumables && (noConsumablesFound && !existsConsumables)}

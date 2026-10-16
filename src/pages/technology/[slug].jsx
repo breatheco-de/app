@@ -20,8 +20,16 @@ import MktEventCards from '../../components/PrismicComponents/MktEventCards';
 import ProjectsLoader from '../../components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
 import useCustomToast from '../../hooks/useCustomToast';
-
-let contentPerPage = 10;
+import PublicPortalGate from '../../components/PublicPortalGate';
+import {
+  fetchEventsForStaticGeneration,
+  isEventVisibleForWhiteLabel,
+  getWhiteLabelAcademyFeatures,
+} from '../../utils/whiteLabelEvents';
+import {
+  withSafeStaticPaths,
+  buildLocalePaths,
+} from '../../utils/staticGeneration';
 
 function DefaultTechnologySection({ technologyData, lessonMaterials, contentPerEachPage, count, lang, fetchData }) {
   const { t } = useTranslation('technologies');
@@ -60,13 +68,13 @@ function DefaultTechnologySection({ technologyData, lessonMaterials, contentPerE
   );
 }
 
-const fetchOtherAssets = async (lang, page, tech, mktInfoExist) => {
+const fetchOtherAssets = async (lang, page, tech, mktInfoExist, itemsPerPage = 10) => {
   const querys = parseQuerys({
     status: 'PUBLISHED',
     language: lang,
     technologies: tech,
-    limit: contentPerPage,
-    offset: (page - 1) * contentPerPage,
+    limit: itemsPerPage,
+    offset: (page - 1) * itemsPerPage,
     asset_type: mktInfoExist ? 'LESSON,PROJECT' : 'LESSON,PROJECT,EXERCISE',
     expand: 'technologies',
   });
@@ -79,127 +87,169 @@ const fetchOtherAssets = async (lang, page, tech, mktInfoExist) => {
     return { resp, data };
   } catch (error) {
     console.error('Error en fetchOtherAssets:', error);
-    return { resp: null, data: null };
+    return { resp: null, data: { results: [], count: 0 } };
   }
 };
 
-export const getStaticPaths = async ({ locales }) => {
+const resolveLocalizedField = (field, normalizedLocale) => {
+  if (field == null) return '';
+  if (typeof field === 'string' || typeof field === 'number') return String(field);
+  if (typeof field === 'object') {
+    return field[normalizedLocale] || field.en || field.us || field.es || '';
+  }
+  return '';
+};
+
+export const getStaticPaths = async ({ locales }) => withSafeStaticPaths(async () => {
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/technology?visibility=PUBLIC`);
-  const publicTechs = await response.json();
-
-  if (!publicTechs || publicTechs.length === 0) {
-    return {
-      fallback: true,
-      paths: [],
-    };
+  if (!response.ok) {
+    throw new Error(`public technologies fetch failed with status ${response.status}`);
   }
-  const relevantSlugs = publicTechs.map((tech) => tech.slug);
 
-  const assetList = await import('../../../public/asset-list.json').then((res) => res.default);
-  const filteredTechnologies = assetList.landingTechnologies.filter((tech) => relevantSlugs.includes(tech.slug));
+  const publicTechs = await response.json();
+  if (!Array.isArray(publicTechs) || publicTechs.length === 0) {
+    return [];
+  }
 
-  const paths = filteredTechnologies.flatMap((tech) => locales.map((locale) => ({
-    params: { slug: tech.slug },
-    locale,
-  })));
+  const relevantSlugs = new Set(publicTechs.map((tech) => tech?.slug).filter(Boolean));
+  const assetList = await import('../../../public/asset-list.json').then((res) => res.default || res);
+  const landingTechnologies = Array.isArray(assetList?.landingTechnologies)
+    ? assetList.landingTechnologies
+    : [];
 
-  return {
-    fallback: true,
-    paths,
-  };
-};
-
-export const getStaticProps = async ({ params, locale, locales }) => {
-  const t = await getT(locale, 'technologies');
-  const { slug } = params;
-
-  const langMap = {
-    en: 'us',
-    us: 'us',
-    es: 'es',
-  };
-  const normalizedLocale = langMap[locale] || locale;
-
-  const currentTechResp = await bc.registry().techMktInfo(slug);
-  const currentTech = currentTechResp?.data || {};
-  const marketingInfo = currentTech?.marketing_information || {};
-  const featuredCourse = currentTech?.featured_course || {};
-  const { title = '', description = '' } = marketingInfo;
-  const { slug: featuredCourseSlug = '' } = featuredCourse;
-
-  const marketingInfoExist = Object.keys(marketingInfo).length > 0;
-  if (!marketingInfoExist) contentPerPage = 20;
-  else contentPerPage = 10;
-
-  const response = await bc.registry({ sort_priority: 1, visibility: 'PUBLIC', is_deprecated: false }).techsBySort();
-  const technologiesFetched = response?.data || [];
-
-  const isSortPriorityOne = technologiesFetched.some((tech) => tech.slug === slug);
-  if (!isSortPriorityOne) contentPerPage = 20;
-
-  const allTechnologies = await import('../../../public/asset-list.json');
-  const assetList = {
-    landingTechnologies: allTechnologies?.landingTechnologies.filter(
-      (tech) => tech.lang === locale && tech.slug === slug,
-    ) || [],
-  };
-
-  const techsBySortPriority = technologiesFetched.filter((tech) => {
-    if (!tech.icon_url) return false;
-    if (!tech.lang) return true;
-    if (tech.lang === normalizedLocale) return true;
-    return tech.lang === locale;
+  const uniqueTechs = [];
+  const seen = new Set();
+  landingTechnologies.forEach((tech) => {
+    if (!tech?.slug || !relevantSlugs.has(tech.slug) || seen.has(tech.slug)) return;
+    seen.add(tech.slug);
+    uniqueTechs.push(tech);
   });
 
-  const workshopResp = await bc.events({ technologies: slug }).allEvents();
-  const workShopsForTech = workshopResp.data || [];
+  return buildLocalePaths(uniqueTechs, locales, 'slug');
+}, { fallback: 'blocking' });
 
-  const coursesForTechResponse = await bc.marketing({ technologies: slug }).courses();
-  const coursesForTech = coursesForTechResponse?.data || [];
+export const getStaticProps = async ({ params, locale, locales }) => {
+  try {
+    const t = await getT(locale, 'technologies');
+    const { slug } = params;
 
-  const rawTechnologyData = assetList.landingTechnologies.find(
-    (tech) => tech.lang === locale && tech.slug === slug,
-  ) || {};
+    const langMap = {
+      en: 'us',
+      us: 'us',
+      es: 'es',
+    };
+    const normalizedLocale = langMap[locale] || locale;
 
-  const { assets, assetTypesInTechnology, ...technologyData } = rawTechnologyData;
+    let currentTech = {};
+    try {
+      const currentTechResp = await bc.registry().techMktInfo(slug);
+      currentTech = currentTechResp?.data || {};
+    } catch (error) {
+      console.error(`Error fetching techMktInfo for ${slug}:`, error);
+    }
 
-  const exercises = assets?.filter(
-    (l) => l?.asset_type?.toUpperCase() === 'EXERCISE',
-  ).slice(0, 3) || [];
+    const marketingInfo = currentTech?.marketing_information || {};
+    const featuredCourse = currentTech?.featured_course || {};
+    const { title = '', description = '' } = marketingInfo;
+    const { slug: featuredCourseSlug = '' } = featuredCourse;
 
-  const { results: otherAssets = [], count } = (await fetchOtherAssets(locale, 1, slug, marketingInfoExist)).data;
+    const marketingInfoExist = Object.keys(marketingInfo).length > 0;
 
-  const assetData = marketingInfoExist ? [...exercises, ...otherAssets] : [...otherAssets];
+    let technologiesFetched = [];
+    try {
+      const response = await bc.registry({ sort_priority: 1, visibility: 'PUBLIC', is_deprecated: false }).techsBySort();
+      technologiesFetched = response?.data || [];
+    } catch (error) {
+      console.error(`Error fetching techsBySort for ${slug}:`, error);
+    }
 
-  const ogUrl = {
-    en: `/technology/${slug}`,
-    us: `/technology/${slug}`,
-  };
+    const isSortPriorityOne = technologiesFetched.some((tech) => tech.slug === slug);
+    const contentPerPage = (!marketingInfoExist || !isSortPriorityOne) ? 20 : 10;
 
-  return {
-    props: {
-      seo: {
-        title: title[normalizedLocale] || title || technologyData?.title || '',
-        description: description[normalizedLocale] || description || t('seo.description', { technology: technologyData?.title }),
-        image: technologyData?.icon_url || '',
-        pathConnector: `/technology/${slug}`,
-        url: ogUrl.en,
-        type: 'website',
-        card: 'default',
-        locales,
-        locale,
+    const allTechnologies = await import('../../../public/asset-list.json').then((res) => res.default || res);
+    const landingTechnologies = allTechnologies?.landingTechnologies || [];
+    const assetList = {
+      landingTechnologies: landingTechnologies.filter(
+        (tech) => tech.lang === locale && tech.slug === slug,
+      ),
+    };
+
+    const techsBySortPriority = technologiesFetched.filter((tech) => {
+      if (!tech.icon_url) return false;
+      if (!tech.lang) return true;
+      if (tech.lang === normalizedLocale) return true;
+      return tech.lang === locale;
+    });
+
+    const features = await getWhiteLabelAcademyFeatures();
+    const workshopsData = await fetchEventsForStaticGeneration({ technologies: slug });
+    const workShopsForTech = workshopsData.filter((event) => isEventVisibleForWhiteLabel(event, features));
+
+    let coursesForTech = [];
+    try {
+      const coursesForTechResponse = await bc.marketing({ technologies: slug }).courses();
+      coursesForTech = coursesForTechResponse?.data || [];
+    } catch (error) {
+      console.error(`Error fetching courses for ${slug}:`, error);
+    }
+
+    const rawTechnologyData = assetList.landingTechnologies.find(
+      (tech) => tech.lang === locale && tech.slug === slug,
+    ) || {};
+
+    const { assets, assetTypesInTechnology, ...technologyData } = rawTechnologyData;
+
+    const exercises = assets?.filter(
+      (l) => l?.asset_type?.toUpperCase() === 'EXERCISE',
+    ).slice(0, 3) || [];
+
+    const assetsResponse = await fetchOtherAssets(locale, 1, slug, marketingInfoExist, contentPerPage);
+    const otherAssets = assetsResponse?.data?.results || [];
+    const count = assetsResponse?.data?.count || 0;
+
+    const assetData = marketingInfoExist ? [...exercises, ...otherAssets] : [...otherAssets];
+
+    if (!technologyData?.slug || assetData.length === 0) {
+      return { notFound: true };
+    }
+
+    const ogUrl = {
+      en: `/technology/${slug}`,
+      us: `/technology/${slug}`,
+    };
+
+    const seoTitle = resolveLocalizedField(title, normalizedLocale) || technologyData?.title || '';
+    const seoDescription = resolveLocalizedField(description, normalizedLocale)
+      || t('seo.description', { technology: technologyData?.title });
+
+    return {
+      props: {
+        seo: {
+          title: seoTitle,
+          description: seoDescription,
+          image: technologyData?.icon_url || '',
+          pathConnector: `/technology/${slug}`,
+          url: ogUrl.en,
+          type: 'website',
+          card: 'default',
+          locales,
+          locale,
+        },
+        assetData,
+        technologyData,
+        techsBySortPriority,
+        count,
+        coursesForTech,
+        workShopsForTech,
+        marketingInfo,
+        isSortPriorityOne,
+        featuredCourseSlug,
       },
-      assetData,
-      technologyData,
-      techsBySortPriority,
-      count,
-      coursesForTech,
-      workShopsForTech,
-      marketingInfo,
-      isSortPriorityOne,
-      featuredCourseSlug,
-    },
-  };
+    };
+  } catch (error) {
+    console.error(`Error in getStaticProps for technology/${params?.slug}:`, error);
+    return { notFound: true };
+  }
 };
 
 function LessonByTechnology({ assetData, technologyData, techsBySortPriority, count, coursesForTech, workShopsForTech, marketingInfo, isSortPriorityOne, featuredCourseSlug }) {
@@ -213,13 +263,15 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
   const { createToast } = useCustomToast({ toastId: 'errors-no-data-error' });
   const scrollRef = useRef();
   const marketingInfoExist = Object.keys(marketingInfo).length > 0;
+  const contentPerPage = (!marketingInfoExist || !isSortPriorityOne) ? 20 : 10;
   const exercises = assetData?.filter((asset) => asset?.asset_type === 'EXERCISE');
   const lessonMaterials = marketingInfoExist ? assetData?.filter((asset) => asset?.asset_type !== 'EXERCISE') : assetData;
   const coursesAvailable = coursesForTech?.length > 0 || featuredCourseSlug;
 
   const fetchData = async (currentLang, page, tech) => {
-    const { data } = await fetchOtherAssets(currentLang, page, tech.slug, marketingInfoExist);
-    return { data: data || { results: [] } };
+    const itemsPerPage = marketingInfoExist ? 10 : 20;
+    const { data } = await fetchOtherAssets(currentLang, page, tech.slug, marketingInfoExist, itemsPerPage);
+    return { data: data || { results: [], count: 0 } };
   };
 
   const handleTechChange = (technology) => {
@@ -315,15 +367,16 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
   };
 
   return technologyData?.slug && assetData?.length > 0 && (
-    <Container maxWidth="1280px">
-      {isSortPriorityOne ? (
-        <>
-          <Flex padding={{ base: '30px 0px', md: '30px 20px' }} gap="10px" mt="30px" alignItems="center" position="relative">
-            <Button onClick={() => scrollBy(-250)} display={{ base: 'none', md: 'block' }} variant="ghost" p="0" minW="auto" _hover="none" _active="none" paddingBottom="10px">
-              <Icon icon="arrowLeft3" color={fontColor} width="15px" height="15px" />
-            </Button>
+    <PublicPortalGate feature="technology">
+      <Container maxWidth="1280px">
+        {isSortPriorityOne ? (
+          <>
+            <Flex padding={{ base: '30px 0px', md: '30px 20px' }} gap="10px" mt="30px" alignItems="center" position="relative">
+              <Button onClick={() => scrollBy(-250)} display={{ base: 'none', md: 'block' }} variant="ghost" p="0" minW="auto" _hover="none" _active="none" paddingBottom="10px">
+                <Icon icon="arrowLeft3" color={fontColor} width="15px" height="15px" />
+              </Button>
 
-            {!isAtStart && (
+              {!isAtStart && (
               <Box
                 position="absolute"
                 display={{ base: 'none', md: 'block' }}
@@ -335,34 +388,34 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
                 background={`linear-gradient(to right, ${colorMode}, rgba(255, 255, 255, 0))`}
                 zIndex="2"
               />
-            )}
+              )}
 
-            <DraggableContainer ref={scrollRef}>
-              <Flex
-                flexGrow="1"
-                w="100%"
-                h="100%"
-                alignItems="center"
-                gap={{ base: '40px', md: '80px' }}
-                whiteSpace="nowrap"
-                onMouseMove={handleMouseMove}
-              >
-                {techsBySortPriority.map((tech) => (
-                  <Box
-                    boxSizing="border-box"
-                    key={tech.title}
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="center"
-                    gap="5px"
-                    onMouseDown={handleMouseDown}
-                    onMouseUp={() => handleMouseUp(tech)}
-                    cursor="pointer"
-                    borderBottom="2px solid"
-                    borderColor={tech.slug === technologyData.slug ? 'blue.1000' : 'transparent'}
-                    _hover={tech.slug !== technologyData.slug && { borderColor: 'gray.200' }}
-                  >
-                    {tech?.icon_url && (
+              <DraggableContainer ref={scrollRef}>
+                <Flex
+                  flexGrow="1"
+                  w="100%"
+                  h="100%"
+                  alignItems="center"
+                  gap={{ base: '40px', md: '80px' }}
+                  whiteSpace="nowrap"
+                  onMouseMove={handleMouseMove}
+                >
+                  {techsBySortPriority.map((tech) => (
+                    <Box
+                      boxSizing="border-box"
+                      key={tech.title}
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="center"
+                      gap="5px"
+                      onMouseDown={handleMouseDown}
+                      onMouseUp={() => handleMouseUp(tech)}
+                      cursor="pointer"
+                      borderBottom="2px solid"
+                      borderColor={tech.slug === technologyData.slug ? 'blue.1000' : 'transparent'}
+                      _hover={tech.slug !== technologyData.slug && { borderColor: 'gray.200' }}
+                    >
+                      {tech?.icon_url && (
                       <>
                         <Image
                           alt={`${tech.title}`}
@@ -380,17 +433,17 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
                           </Text>
                         </Box>
                       </>
-                    )}
-                  </Box>
-                ))}
-              </Flex>
-            </DraggableContainer>
+                      )}
+                    </Box>
+                  ))}
+                </Flex>
+              </DraggableContainer>
 
-            <Button onClick={() => scrollBy(250)} display={{ base: 'none', md: 'block' }} variant="ghost" p="0" minW="auto" _hover="none" _active="none" paddingBottom="10px">
-              <Icon icon="arrowRight" color={fontColor} width="15px" height="15px" />
-            </Button>
+              <Button onClick={() => scrollBy(250)} display={{ base: 'none', md: 'block' }} variant="ghost" p="0" minW="auto" _hover="none" _active="none" paddingBottom="10px">
+                <Icon icon="arrowRight" color={fontColor} width="15px" height="15px" />
+              </Button>
 
-            {!isAtEnd && (
+              {!isAtEnd && (
               <Box
                 position="absolute"
                 display={{ base: 'none', md: 'block' }}
@@ -402,27 +455,27 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
                 background={`linear-gradient(to left, ${colorMode}, rgba(255, 255, 255, 0))`}
                 zIndex="2"
               />
-            )}
-          </Flex>
+              )}
+            </Flex>
 
-          {marketingInfoExist ? (
-            <>
-              <Flex
-                height="100%"
-                padding="0 10px"
-                gap="20px"
-                flexDirection={{ base: 'column', md: 'row' }}
-                alignItems="center"
-              >
-                <Flex direction="column" pb="15px" flex="1" maxWidth={{ base: '100%', md: '50%' }}>
-                  <Heading as="h1" fontSize={{ base: '40px', md: '50px' }} display="inline-block" fontWeight="700" paddingBottom="6px">
-                    {marketingInfo.title ? languageFix(marketingInfo.title, lang) : t('landing-technology.title', { technology: toCapitalize(technologyData?.title) })}
-                  </Heading>
-                  <Text size="md">
-                    {marketingInfo.description ? languageFix(marketingInfo.description, lang) : t('landing-technology.defaultDescription')}
-                  </Text>
-                  <Flex gap="10px" marginTop="50px" wrap="wrap">
-                    {showFirstButton
+            {marketingInfoExist ? (
+              <>
+                <Flex
+                  height="100%"
+                  padding="0 10px"
+                  gap="20px"
+                  flexDirection={{ base: 'column', md: 'row' }}
+                  alignItems="center"
+                >
+                  <Flex direction="column" pb="15px" flex="1" maxWidth={{ base: '100%', md: '50%' }}>
+                    <Heading as="h1" fontSize={{ base: '40px', md: '50px' }} display="inline-block" fontWeight="700" paddingBottom="6px">
+                      {marketingInfo.title ? languageFix(marketingInfo.title, lang) : t('landing-technology.title', { technology: toCapitalize(technologyData?.title) })}
+                    </Heading>
+                    <Text size="md">
+                      {marketingInfo.description ? languageFix(marketingInfo.description, lang) : t('landing-technology.defaultDescription')}
+                    </Text>
+                    <Flex gap="10px" marginTop="50px" wrap="wrap">
+                      {showFirstButton
                       && (
                         <Link href={coursesAvailable ? `/${lang}/bootcamp/${featuredCourseSlug || coursesForTech[0].slug}` : getAssetUrl(assetData[0])}>
                           <Button background="blue.1000" color="white" alignContent="center" alignItems="center" gap="10px" display="flex" _hover="none" borderRadius="3px">
@@ -431,70 +484,70 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
                           </Button>
                         </Link>
                       )}
-                    <Link href={!isAuthenticated ? `/${lang}/pricing?plan=${process.env.BASE_PLAN}` : 'https://calendly.com/tgonzalez-o0o/30min-1'}>
-                      <Button border={showFirstButton && '1px'} borderColor={showFirstButton && 'blue.1000'} color={showFirstButton ? 'blue.1000' : 'white'} background={showFirstButton ? 'auto' : 'blue.1000'} _hover="none" borderRadius="3px">
-                        {t('request-mentorship', { tech: technologyData?.title })}
-                      </Button>
-                    </Link>
+                      <Link href={!isAuthenticated ? `/${lang}/pricing?plan=${process.env.BASE_PLAN}` : 'https://calendly.com/tgonzalez-o0o/30min-1'}>
+                        <Button border={showFirstButton && '1px'} borderColor={showFirstButton && 'blue.1000'} color={showFirstButton ? 'blue.1000' : 'white'} background={showFirstButton ? 'auto' : 'blue.1000'} _hover="none" borderRadius="3px">
+                          {t('request-mentorship', { tech: technologyData?.title })}
+                        </Button>
+                      </Link>
+                    </Flex>
                   </Flex>
-                </Flex>
 
-                <Box flex="1" maxWidth={{ base: '100%', md: '50%' }} width="100%">
-                  {marketingInfo?.video ? (
-                    <ReactPlayerV2
-                      url={languageFix(marketingInfo.video, lang)}
-                      controls
-                      withThumbnail
-                      withModal
-                      title={technologyData?.title || 'Technology Video'}
-                      iframeStyle={{
-                        borderRadius: '8px',
-                        width: '100%',
-                        maxHeight: '100%',
-                        aspectRatio: '16/9',
-                      }}
-                    />
-                  ) : (
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Image
-                        borderRadius="8px"
-                        alt="python image related"
-                        src={marketingInfo?.image ? marketingInfo?.image : '/static/images/happy-male-with-laptop.png'}
-                        objectFit="cover"
+                  <Box flex="1" maxWidth={{ base: '100%', md: '50%' }} width="100%">
+                    {marketingInfo?.video ? (
+                      <ReactPlayerV2
+                        url={languageFix(marketingInfo.video, lang)}
+                        controls
+                        withThumbnail
+                        withModal
+                        title={technologyData?.title || 'Technology Video'}
+                        iframeStyle={{
+                          borderRadius: '8px',
+                          width: '100%',
+                          maxHeight: '100%',
+                          aspectRatio: '16/9',
+                        }}
                       />
-                    </Box>
-                  )}
-                </Box>
-              </Flex>
-              {exercises.length > 0 && (
-                <Flex marginTop="20px" flexDirection="column" gap="15px">
-                  <Heading as="h2" fontSize="38px" fontWeight="700" mb="20px">
-                    {t('popular-exercises')}
-                  </Heading>
-                  <GridContainer withContainer gridColumn="1 / span 10" maxWidth="100%" padding="0" justifyContent="flex-start" margin="0">
-                    <ProjectList
-                      projects={exercises}
-                      withoutImage
-                      notFoundMessage={t('common:asset-not-found-in-current-language')}
-                    />
-                  </GridContainer>
-                </Flex>
-              )}
-              {workShopsForTech?.length > 0 && (
-                <Flex marginTop="50px" flexDirection="column" gap="15px">
-                  <Box width="100%">
-                    <MktEventCards
-                      externalEvents={workShopsForTech}
-                      title={t('tech-workshops', { tech: technologyData?.title })}
-                    />
+                    ) : (
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <Image
+                          borderRadius="8px"
+                          alt="python image related"
+                          src={marketingInfo?.image ? marketingInfo?.image : '/static/images/happy-male-with-laptop.png'}
+                          objectFit="cover"
+                        />
+                      </Box>
+                    )}
                   </Box>
                 </Flex>
-              )}
-              {lessonMaterials?.length > 0 && (
+                {exercises.length > 0 && (
+                  <Flex marginTop="20px" flexDirection="column" gap="15px">
+                    <Heading as="h2" fontSize="38px" fontWeight="700" mb="20px">
+                      {t('popular-exercises')}
+                    </Heading>
+                    <GridContainer withContainer gridColumn="1 / span 10" maxWidth="100%" padding="0" justifyContent="flex-start" margin="0">
+                      <ProjectList
+                        projects={exercises}
+                        withoutImage
+                        notFoundMessage={t('common:asset-not-found-in-current-language')}
+                      />
+                    </GridContainer>
+                  </Flex>
+                )}
+                {workShopsForTech?.length > 0 && (
+                  <Flex marginTop="50px" flexDirection="column" gap="15px">
+                    <Box width="100%">
+                      <MktEventCards
+                        externalEvents={workShopsForTech}
+                        title={t('tech-workshops', { tech: technologyData?.title })}
+                      />
+                    </Box>
+                  </Flex>
+                )}
+                {lessonMaterials?.length > 0 && (
                 <Flex marginTop="50px" flexDirection="column" gap="15px">
                   <Heading as="h2" fontSize="38px" fontWeight="700" mb="20px">
                     {t('tech-materials', { tech: technologyData?.title })}
@@ -510,30 +563,31 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
                     />
                   </GridContainer>
                 </Flex>
-              )}
-            </>
-          ) : (
-            <DefaultTechnologySection
-              technologyData={technologyData}
-              lessonMaterials={lessonMaterials}
-              contentPerPage={contentPerPage}
-              count={count}
-              lang={lang}
-              fetchData={fetchData}
-            />
-          )}
-        </>
-      ) : (
-        <DefaultTechnologySection
-          technologyData={technologyData}
-          lessonMaterials={lessonMaterials}
-          contentPerPage={contentPerPage}
-          count={count}
-          lang={lang}
-          fetchData={fetchData}
-        />
-      )}
-    </Container>
+                )}
+              </>
+            ) : (
+              <DefaultTechnologySection
+                technologyData={technologyData}
+                lessonMaterials={lessonMaterials}
+                contentPerEachPage={contentPerPage}
+                count={count}
+                lang={lang}
+                fetchData={fetchData}
+              />
+            )}
+          </>
+        ) : (
+          <DefaultTechnologySection
+            technologyData={technologyData}
+            lessonMaterials={lessonMaterials}
+            contentPerEachPage={contentPerPage}
+            count={count}
+            lang={lang}
+            fetchData={fetchData}
+          />
+        )}
+      </Container>
+    </PublicPortalGate>
   );
 }
 

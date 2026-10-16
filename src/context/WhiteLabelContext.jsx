@@ -1,19 +1,20 @@
 import React, { createContext, useReducer, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import bc from '../services/breathecode';
-import { WHITE_LABEL_ACADEMY, isWhiteLabelAcademy } from '../utils/variables';
+import { WHITE_LABEL_ACADEMY } from '../utils/variables';
+import { fetchWhiteLabelAcademy, isWhiteLabelConfigured } from '../lib/whiteLabel';
 
 const initialState = {
   isLoading: true,
   features: null,
   isWhiteLabel: false,
   whiteLabelParams: null,
+  defaultPlan: null,
 };
 
 const WhiteLabelContext = createContext(initialState);
 
 const CACHE_KEY = 'white-label-features-cache';
-const CACHE_VERSION = '1.2';
+const CACHE_VERSION = '1.3';
 
 const featureFlagMapping = {
   allow_referral_program: 'marketing.referral_program.enabled',
@@ -26,13 +27,14 @@ const featureFlagMapping = {
 const reducer = (state, action) => {
   switch (action.type) {
     case 'INIT': {
-      const { features, isWhiteLabel, whiteLabelParams } = action.payload;
+      const { features, isWhiteLabel, whiteLabelParams, defaultPlan } = action.payload;
       return {
         ...state,
         isLoading: false,
         features,
         isWhiteLabel,
         whiteLabelParams,
+        defaultPlan: defaultPlan || null,
       };
     }
     case 'SET_LOADING': {
@@ -102,6 +104,7 @@ function WhiteLabelProvider({ children }) {
           return {
             features: parsed.data,
             whiteLabelParams: parsed.whiteLabelParams || null,
+            defaultPlan: parsed.defaultPlan || null,
           };
         }
       }
@@ -111,13 +114,14 @@ function WhiteLabelProvider({ children }) {
     }
   };
 
-  const setCachedFeatures = (features, whiteLabelParams) => {
+  const setCachedFeatures = (features, whiteLabelParams, defaultPlan) => {
     try {
       sessionStorage.setItem(CACHE_KEY, JSON.stringify({
         version: CACHE_VERSION,
         academy: WHITE_LABEL_ACADEMY,
         data: features,
         whiteLabelParams,
+        defaultPlan: defaultPlan || null,
         timestamp: new Date().toISOString(),
       }));
     } catch (error) {
@@ -126,12 +130,14 @@ function WhiteLabelProvider({ children }) {
   };
 
   const fetchWhiteLabelFeatures = async () => {
-    if (!isWhiteLabelAcademy || !WHITE_LABEL_ACADEMY) {
+    // White label requires: custom domain, WHITE_LABEL_ACADEMY env, and academy data from API.
+    if (!isWhiteLabelConfigured()) {
       dispatch({
         type: 'INIT',
         payload: {
           features: null,
           isWhiteLabel: false,
+          defaultPlan: null,
         },
       });
       return;
@@ -145,19 +151,34 @@ function WhiteLabelProvider({ children }) {
           features: cachedData.features,
           isWhiteLabel: true,
           whiteLabelParams: cachedData.whiteLabelParams,
+          defaultPlan: cachedData.defaultPlan,
         },
       });
       return;
     }
 
     try {
-      const { data } = await bc.admissions().getAcademy(WHITE_LABEL_ACADEMY);
+      const data = await fetchWhiteLabelAcademy();
 
-      const features = data?.academy_features || null;
-      const whiteLabelParams = parseWhiteLabelParams(data?.white_label_params);
+      if (!data) {
+        dispatch({
+          type: 'INIT',
+          payload: {
+            features: null,
+            isWhiteLabel: false,
+            whiteLabelParams: null,
+            defaultPlan: null,
+          },
+        });
+        return;
+      }
+
+      const features = data.academy_features;
+      const whiteLabelParams = parseWhiteLabelParams(data.white_label_params);
+      const defaultPlan = data?.default_plan?.slug || null;
 
       if (features) {
-        setCachedFeatures(features, whiteLabelParams);
+        setCachedFeatures(features, whiteLabelParams, defaultPlan);
       }
 
       dispatch({
@@ -166,6 +187,7 @@ function WhiteLabelProvider({ children }) {
           features,
           isWhiteLabel: features !== null,
           whiteLabelParams,
+          defaultPlan,
         },
       });
     } catch (error) {
@@ -176,6 +198,7 @@ function WhiteLabelProvider({ children }) {
           features: null,
           isWhiteLabel: false,
           whiteLabelParams: null,
+          defaultPlan: null,
         },
       });
     }

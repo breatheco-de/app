@@ -6,7 +6,7 @@ import {
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import { getStorageItem } from '../../utils';
+import { getToken } from '../../utils';
 import useAuth from '../../hooks/useAuth';
 import Heading from '../Heading';
 import Text from '../Text';
@@ -31,7 +31,7 @@ const TabletWithForm = React.forwardRef(({
   const [formSended, setFormSended] = useState(false);
   const [showCloneModal, setShowCloneModal] = useState(false);
   const currentThemeValue = useColorModeValue('light', 'dark');
-  const userToken = getStorageItem('accessToken');
+  const userToken = getToken();
   const textColor = commonTextColor || lightColor;
   const conversionTechnologies = technologies?.map((item) => item?.slug).join(',');
 

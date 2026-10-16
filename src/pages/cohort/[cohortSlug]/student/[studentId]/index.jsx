@@ -35,6 +35,44 @@ import Link from '../../../../../components/NextChakraLink';
 import { isWindow } from '../../../../../utils';
 import axiosInstance from '../../../../../axios';
 import useCustomToast from '../../../../../hooks/useCustomToast';
+import { sortMicroCohortsLikeDashboard } from '../../../../../utils/cohorts';
+
+/** Extrae items tipados (lessons / assignments / replits) del JSON del syllabus. */
+function extractFromSyllabusDays(json, key) {
+  if (!json?.days) return [];
+  const chunks = json.days
+    .filter((obj) => obj[key] && Array.isArray(obj[key]) && obj[key].length > 0 && typeof obj[key][0] === 'object')
+    .map((obj) => obj[key]);
+  return [].concat(...chunks);
+}
+
+function mergeSyllabusItemsBySlug(itemArrays) {
+  const bySlug = new Map();
+  (itemArrays || []).forEach((arr) => {
+    if (!Array.isArray(arr)) return;
+    arr.forEach((item) => {
+      if (item?.slug && !bySlug.has(item.slug)) bySlug.set(item.slug, item);
+    });
+  });
+  return [...bySlug.values()];
+}
+
+function mergeTasksById(taskArrays) {
+  const byId = new Map();
+  (taskArrays || []).forEach((arr) => {
+    if (!Array.isArray(arr)) return;
+    arr.forEach((task) => {
+      if (task?.id != null && !byId.has(task.id)) byId.set(task.id, task);
+    });
+  });
+  return [...byId.values()];
+}
+
+function normalizeActivitiesResponse(data) {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.results)) return data.results;
+  return [];
+}
 
 const activitiesTemplate = {
   invite_created: {
@@ -178,16 +216,26 @@ function StudentReport() {
   const fetchActivities = async () => {
     try {
       setIsFetchingActivities(true);
-      const res = await bc.activity({ user_id: studentId, limit, order: 'timestamp', ...paramsActivities }).getActivity(academy);
-      const newActivities = res?.data || [];
+      const { append, ...activityQuery } = paramsActivities;
+      const res = await bc.activity({
+        user_id: studentId,
+        limit,
+        order: 'timestamp',
+        ...activityQuery,
+      }).getActivity(academy);
+      const newActivities = normalizeActivitiesResponse(res?.data);
       setFetchMoreActivities(limit === newActivities.length);
 
-      if (paramsActivities.append) setActivities([...activities, ...newActivities]);
-      else setActivities(newActivities);
+      if (append) {
+        setActivities((prev) => [...(Array.isArray(prev) ? prev : []), ...newActivities]);
+      } else {
+        setActivities(newActivities);
+      }
 
       setIsFetchingActivities(false);
     } catch (e) {
       setIsFetchingActivities(false);
+      setActivities([]);
       console.log(e);
     }
   };
@@ -238,40 +286,110 @@ function StudentReport() {
       ])
         .then(async (res) => {
           const [resDaysLog, resAssignments, resCohort, resNps, resEvents, resMentorships] = res;
-          const currentDaysLog = resDaysLog.data;
-          const durationInDays = resCohort.data?.syllabus_version?.duration_in_days;
-          const days = Array.from(Array(durationInDays).keys()).map((i) => {
+          const currentDaysLog = resDaysLog.data || {};
+          const cohortData = resCohort?.data;
+          const durationInDays = cohortData?.syllabus_version?.duration_in_days;
+          const days = Array.from(Array(durationInDays || 0).keys()).map((i) => {
             const day = i + 1;
             const dayData = currentDaysLog[day];
             return dayData;
           });
           setAttendance(days);
 
-          const sudentProjects = resAssignments.data.results.filter((elem) => elem.task_type === 'PROJECT');
+          const micros = sortMicroCohortsLikeDashboard(
+            cohortData?.micro_cohorts || [],
+            cohortData?.cohorts_order,
+          );
+          const isMacroWithMicros = micros.length > 0;
 
-          setStudentAssignments({
-            lessons: resAssignments.data.results.filter((elem) => elem.task_type === 'LESSON'),
-            projects: sudentProjects,
-            exercises: resAssignments.data.results.filter((elem) => elem.task_type === 'EXERCISE'),
-          });
-          const syllabusInfo = await bc.admissions().syllabus(resCohort.data.syllabus_version.slug, resCohort.data.syllabus_version.version, academy);
+          let allStudentTasks = Array.isArray(resAssignments?.data?.results)
+            ? resAssignments.data.results
+            : [];
 
-          let projects;
-          if (syllabusInfo?.data) {
-            projects = syllabusInfo.data.json.days.filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object').map((obj) => obj.assignments);
-            projects = [].concat(...projects);
-            let lessons = syllabusInfo.data.json.days.filter((obj) => obj.lessons && Array.isArray(obj.lessons) && obj.lessons.length > 0 && typeof obj.lessons[0] === 'object').map((obj) => obj.lessons);
-            lessons = [].concat(...lessons);
-            let exercises = syllabusInfo.data.json.days.filter((obj) => obj.replits && Array.isArray(obj.replits) && obj.replits.length > 0 && typeof obj.replits[0] === 'object').map((obj) => obj.replits);
-            exercises = [].concat(...exercises);
-            setCohortAssignments({
-              projects,
-              lessons,
-              exercises,
-            });
+          // En macros las tareas viven en las micros (igual que /assignments).
+          if (isMacroWithMicros) {
+            const taskLists = await Promise.all(
+              micros.map((micro) => bc.assignments({
+                academy,
+                limit: 1000,
+                task_type: 'PROJECT,LESSON,EXERCISE',
+                student: studentId,
+              })
+                .getCohortAssignments({ id: micro.id ?? micro.slug, academy })
+                .then((r) => (Array.isArray(r?.data?.results) ? r.data.results : []))
+                .catch(() => [])),
+            );
+            allStudentTasks = mergeTasksById(taskLists);
           }
 
-          const processedEvents = resEvents.data.reduce((acum, elem) => {
+          const sudentProjects = allStudentTasks.filter((elem) => elem.task_type === 'PROJECT');
+
+          setStudentAssignments({
+            lessons: allStudentTasks.filter((elem) => elem.task_type === 'LESSON'),
+            projects: sudentProjects,
+            exercises: allStudentTasks.filter((elem) => elem.task_type === 'EXERCISE'),
+          });
+
+          let projects = [];
+          let lessons = [];
+          let exercises = [];
+
+          if (isMacroWithMicros) {
+            const perMicroSyllabus = await Promise.all(
+              micros.map(async (micro) => {
+                try {
+                  let slug = micro.syllabus_version?.slug;
+                  let version = micro.syllabus_version?.version;
+                  if (slug == null || version == null) {
+                    const { data: microCohortData } = await bc.admissions().cohort(micro.slug, academy);
+                    slug = microCohortData?.syllabus_version?.slug;
+                    version = microCohortData?.syllabus_version?.version;
+                  }
+                  if (slug == null || version == null) {
+                    return { projects: [], lessons: [], exercises: [] };
+                  }
+                  // Misma API que /assignments y el dashboard: overrides del macro sobre el syllabus de la micro.
+                  const syllabusQuery = cohortData?.syllabus_version?.slug
+                    ? { 'macro-cohort': cohortData.slug }
+                    : {};
+                  const syllabusInfo = await bc.admissions(syllabusQuery).syllabus(slug, version, academy);
+                  const json = syllabusInfo?.data?.json;
+                  if (!json) return { projects: [], lessons: [], exercises: [] };
+                  return {
+                    projects: extractFromSyllabusDays(json, 'assignments'),
+                    lessons: extractFromSyllabusDays(json, 'lessons'),
+                    exercises: extractFromSyllabusDays(json, 'replits'),
+                  };
+                } catch (err) {
+                  console.log(err);
+                  return { projects: [], lessons: [], exercises: [] };
+                }
+              }),
+            );
+            projects = mergeSyllabusItemsBySlug(perMicroSyllabus.map((row) => row.projects));
+            lessons = mergeSyllabusItemsBySlug(perMicroSyllabus.map((row) => row.lessons));
+            exercises = mergeSyllabusItemsBySlug(perMicroSyllabus.map((row) => row.exercises));
+          } else if (cohortData?.syllabus_version?.slug) {
+            const syllabusInfo = await bc.admissions().syllabus(
+              cohortData.syllabus_version.slug,
+              cohortData.syllabus_version.version,
+              academy,
+            );
+            if (syllabusInfo?.data?.json) {
+              projects = extractFromSyllabusDays(syllabusInfo.data.json, 'assignments');
+              lessons = extractFromSyllabusDays(syllabusInfo.data.json, 'lessons');
+              exercises = extractFromSyllabusDays(syllabusInfo.data.json, 'replits');
+            }
+          }
+
+          setCohortAssignments({
+            projects,
+            lessons,
+            exercises,
+          });
+
+          const eventsList = Array.isArray(resEvents?.data) ? resEvents.data : [];
+          const processedEvents = eventsList.reduce((acum, elem) => {
             const index = acum.findIndex((e) => e.meta.event_id === elem.meta.event_id);
             if (index > -1) {
               const copy = [...acum];
@@ -284,14 +402,16 @@ function StudentReport() {
 
           const attendanceTaken = days.filter((day) => getAttendanceStatus(day) !== 'NOT-TAKEN');
           const attendancePresent = days.filter((day) => getAttendanceStatus(day) === 'ATTENDED');
-          const npsAnswered = resNps.data?.find((obj) => obj.kind === 'nps_answered')?.avg__meta__score;
+          const npsList = Array.isArray(resNps?.data) ? resNps.data : [];
+          const npsAnswered = npsList.find((obj) => obj.kind === 'nps_answered')?.avg__meta__score;
+          const mentorshipsList = Array.isArray(resMentorships?.data) ? resMentorships.data : [];
 
           const attendancePercentage = (attendancePresent.length * 100) / attendanceTaken.length;
           setReport([{
             label: t('analitics.total-mentorships'),
             icon: 'book',
             variationColor: hexColor.blueDefault,
-            value: resMentorships.data[0].count__kind,
+            value: mentorshipsList[0]?.count__kind || 0,
           }, {
             label: t('analitics.projects-completed'),
             icon: 'bookClosed',
@@ -762,7 +882,7 @@ function StudentReport() {
               {t('common:filters')}
             </Button>
           </Flex>
-          {!isFetching && activities.length === 0 && (
+          {!isFetching && Array.isArray(activities) && activities.length === 0 && (
             <Box width="100%" mt="20px">
               <Heading size="xsm" color={hexColor.fontColor2} fontWeight="700">
                 {t('activities-section.no-activities')}
@@ -770,7 +890,7 @@ function StudentReport() {
             </Box>
           )}
           <Box padding="0 10px">
-            {activities?.length > 0 && activities.map((activity) => {
+            {Array.isArray(activities) && activities.length > 0 && activities.map((activity) => {
               const { kind } = activity;
               const template = activitiesTemplate[kind];
 
@@ -823,7 +943,7 @@ function StudentReport() {
               <Spinner color={hexColor.blueDefault} />
             </Box>
           )}
-          {activities.length > 0 && fetchMoreActivities && (
+          {Array.isArray(activities) && activities.length > 0 && fetchMoreActivities && (
             <Button
               width="100%"
               color={hexColor.blueDefault}

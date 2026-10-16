@@ -188,12 +188,12 @@ function MentorshipSchedule() {
             <Box as="span">{`${t('consumables.back-to-dashboard')}`}</Box>
           </Box>
         </Link>
-        <Container as="div" display="flex" flexDirection="column" justifyContent="center" alignItems="center" marginTop="2.5rem" textAlign="center" padding="0px" borderRadius="10px">
-          <Box textAlign="start" borderRadius="10px" background={() => useColorModeValue('white', '#27333f')}>
+        <Container as="div" display="flex" flexDirection="column" justifyContent="center" alignItems="center" marginTop="2.5rem" textAlign="center" padding={{ base: '0 16px 24px', md: '0 0 24px' }} borderRadius="10px">
+          <Box textAlign="start" borderRadius="10px" width={{ base: '100%', md: 'auto' }} background={() => useColorModeValue('white', '#27333f')}>
             <MentoringConsumables
               {...{
                 mentoryProps,
-                width: { base: '350px', md: '650px' },
+                width: { base: '100%', md: '760px', lg: '920px' },
                 titleSize: { base: '14px', md: '24px' },
                 consumables,
                 setMentoryProps,
@@ -209,6 +209,7 @@ function MentorshipSchedule() {
                 queryService: service,
                 queryMentor: mentor,
                 withDescription: true,
+                servicesListMaxHeight: { base: '12rem', md: '23rem' },
               }}
             />
           </Box>

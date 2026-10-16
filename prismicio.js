@@ -17,12 +17,16 @@ const routes = [
 ];
 
 /**
- * Creates a Prismic client for the project's repository. The client is used to
- * query content from the Prismic API.
+ * Creates a Prismic client for the project's repository.
+ * Returns null when Prismic is disabled (PRISMIC_ENABLED !== 'true').
  *
  * @param config {prismicNext.CreateClientConfig} - Configuration for the Prismic client.
  */
 export const createClient = (config = {}) => {
+  if (process.env.PRISMIC_ENABLED !== 'true') {
+    return null;
+  }
+
   const client = prismic.createClient(sm.apiEndpoint, {
     routes,
     ...config,

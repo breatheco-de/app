@@ -14,12 +14,16 @@ import Program from './Program';
 import UpgradeAccessModal from '../UpgradeAccessModal';
 import ProgramCard from '../ProgramCard';
 import Heading from '../Heading';
+import { SimpleSkeleton } from '../Skeleton';
 import useStyle from '../../hooks/useStyle';
 
-function ProgramsDashboard({ cohorts, setLateModalProps }) {
+function ProgramsDashboard({
+  cohorts, setLateModalProps, onLoadFinished,
+}) {
   const { t } = useTranslation('choose-program');
   const [marketingCursesList, setMarketingCursesList] = useState([]);
   const [showFinished, setShowFinished] = useState(false);
+  const [finishedReady, setFinishedReady] = useState(false);
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
   const { featuredColor, backgroundColor } = useStyle();
   const router = useRouter();
@@ -115,7 +119,15 @@ function ProgramsDashboard({ cohorts, setLateModalProps }) {
               color="blue.default"
               display="flex"
               alignItems="center"
-              onClick={() => setShowFinished(!showFinished)}
+              onClick={() => {
+                const nextShowFinished = !showFinished;
+                setShowFinished(nextShowFinished);
+                if (nextShowFinished && !finishedReady) {
+                  Promise.resolve(onLoadFinished())
+                    .then(() => setFinishedReady(true))
+                    .catch(() => {});
+                }
+              }}
             >
               {showFinished ? t('finished.hide') : t('finished.show')}
               <Icon
@@ -134,13 +146,22 @@ function ProgramsDashboard({ cohorts, setLateModalProps }) {
             gridRowGap="3rem"
             height="auto"
           >
-            {showFinished && finishedCohorts.map((cohort) => (
-              <Program
-                key={cohort?.slug}
-                cohort={cohort}
-                onOpenModal={() => setUpgradeModalIsOpen(true)}
-              />
-            ))}
+            {showFinished && (!finishedReady
+              ? finishedCohorts.map((cohort) => (
+                <SimpleSkeleton
+                  key={`finished-skeleton-${cohort?.slug}`}
+                  width="100%"
+                  height="286px"
+                  borderRadius="17px"
+                />
+              ))
+              : finishedCohorts.map((cohort) => (
+                <Program
+                  key={cohort?.slug}
+                  cohort={cohort}
+                  onOpenModal={() => setUpgradeModalIsOpen(true)}
+                />
+              )))}
           </Box>
         </>
       )}
@@ -183,10 +204,12 @@ function ProgramsDashboard({ cohorts, setLateModalProps }) {
 ProgramsDashboard.propTypes = {
   cohorts: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   setLateModalProps: PropTypes.func,
+  onLoadFinished: PropTypes.func,
 };
 ProgramsDashboard.defaultProps = {
   cohorts: [],
   setLateModalProps: () => {},
+  onLoadFinished: () => {},
 };
 
 export default ProgramsDashboard;

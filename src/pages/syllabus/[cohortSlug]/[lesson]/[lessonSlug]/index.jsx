@@ -7,7 +7,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { isWindow, assetTypeValues, getExtensionName, getStorageItem, languageFix, addQueryToURL } from '../../../../../utils';
+import { isWindow, assetTypeValues, getExtensionName, getToken, languageFix, addQueryToURL } from '../../../../../utils';
 import asPrivate from '../../../../../context/PrivateRouteWrapper';
 import Heading from '../../../../../components/Heading';
 import useModuleHandler from '../../../../../hooks/useModuleHandler';
@@ -66,6 +66,7 @@ function SyllabusContent() {
     subTasks,
   } = useModuleHandler();
   const mainContainer = useRef(null);
+  const startedModuleKeyRef = useRef(null);
   const [openNextPageModal, setOpenNextPageModal] = useState(false);
   const [readme, setReadme] = useState(null);
   const [ipynbHtmlUrl, setIpynbHtmlUrl] = useState(null);
@@ -94,8 +95,9 @@ function SyllabusContent() {
   const [showPostDeliveryShareModal, setShowPostDeliveryShareModal] = useState(false);
   const {
     getCohortUserCapabilities, getCohortData, getDailyModuleData, cohortSession, sortedAssignments, setCohortSession, taskTodo,
-    updateAssignment, startDay, updateTask, reviewModalState, handleCloseReviewModal,
+    updateAssignment, updateTask, reviewModalState, handleCloseReviewModal,
     grantAccess, setGrantAccess, checkNavigationAvailability, checkRevisionStatus,
+    ensureMissingSyllabusTasks,
   } = useCohortHandler();
   const { areSubscriptionsFetched } = useSubscriptions();
   const allowContributions = currentAsset?.allow_contributions;
@@ -111,7 +113,7 @@ function SyllabusContent() {
   const hasPendingSubtasks = hasSubtasks && subTasks.some((subtask) => subtask.status === 'PENDING');
 
   const professionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
-  const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
+  const accessToken = isWindow ? getToken() : '';
 
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
   const taskBarBackground = useColorModeValue('#DCE9FF', 'gray.dark');
@@ -157,15 +159,21 @@ function SyllabusContent() {
   const isProject = lesson === 'project';
   const isLesson = lesson === 'read';
 
-  const filteredCurrentAssignments = sortedAssignments.map((section) => (showPendingTasks
-    ? section.filteredContentByPending
-    : section.filteredContent));
+  const assignmentMatchesLessonSlug = (assignment) => assignment?.slug === lessonSlug
+    || assignment?.translations?.[language]?.slug === lessonSlug
+    || (currentAsset?.id && assignment?.translations?.[language]?.slug === currentAsset.slug);
 
-  const moduleMatchesLessonSlug = (section) => section?.some(
-    (l) => l.slug === lessonSlug
-      || l.translations?.[language]?.slug === lessonSlug
-      || (currentAsset?.id && l.translations?.[language]?.slug === currentAsset.slug),
+  const moduleContainsLesson = (module) => (
+    module?.content?.some(assignmentMatchesLessonSlug)
+    || module?.filteredContent?.some(assignmentMatchesLessonSlug)
+    || module?.filteredContentByPending?.some(assignmentMatchesLessonSlug)
   );
+
+  const filteredCurrentAssignments = sortedAssignments.map((section) => {
+    if (showPendingTasks) return section.filteredContentByPending;
+    if (section.filteredContent?.length > 0) return section.filteredContent;
+    return section.content;
+  });
 
   const routeModuleIndex = routeModuleId != null
     ? sortedAssignments.findIndex((section, idx) => String(section?.id) === String(routeModuleId)
@@ -174,11 +182,11 @@ function SyllabusContent() {
     : -1;
 
   const routeModuleContainsCurrentSlug = routeModuleIndex >= 0
-    && moduleMatchesLessonSlug(filteredCurrentAssignments[routeModuleIndex]);
+    && moduleContainsLesson(sortedAssignments[routeModuleIndex]);
 
   const currentModuleIndex = routeModuleContainsCurrentSlug
     ? routeModuleIndex
-    : filteredCurrentAssignments.findIndex((s) => moduleMatchesLessonSlug(s));
+    : sortedAssignments.findIndex((section) => moduleContainsLesson(section));
 
   const currentModule = sortedAssignments[currentModuleIndex];
 
@@ -187,7 +195,7 @@ function SyllabusContent() {
     if (!learnpackDeployUrl) return null;
 
     const iframe = 'true';
-    const token = getStorageItem('accessToken');
+    const token = getToken();
     const cohortId = cohortSession?.id;
     const academyId = cohortSession?.academy?.id;
 
@@ -264,25 +272,37 @@ function SyllabusContent() {
   }, [isProject, readme, isQuiz, ipynbHtmlUrl, router.asPath]);
 
   const handleStartDay = async (module = null, avoidRedirect = false) => {
-    const moduleToUpdate = module?.content || nextModule.content;
-    const updatedTasks = moduleToUpdate?.map((l) => ({
-      ...l,
-      associated_slug: l.slug,
-      cohort: cohortSession.id,
-    }));
-    const customHandler = () => {
-      if (moduleToUpdate && cohortSlug && firstTask && !avoidRedirect) {
-        router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`);
-      }
-    };
-    if (user?.id) {
-      await startDay({
+    const moduleToUpdate = module || nextModule;
+    if (user?.id && cohortSession?.id && moduleToUpdate) {
+      await ensureMissingSyllabusTasks({
         cohort: cohortSession,
-        newTasks: updatedTasks,
-        customHandler,
+        modules: [moduleToUpdate],
       });
     }
+    if (!avoidRedirect && cohortSlug && firstTask) {
+      router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`);
+    }
   };
+
+  useEffect(() => {
+    if (!user?.id || !cohortSession?.id || !currentModule?.content?.length) return undefined;
+    const lessonAlreadyStarted = currentModule.filteredContent?.some(assignmentMatchesLessonSlug);
+    if (lessonAlreadyStarted) return undefined;
+
+    const startKey = `${cohortSession.id}:${currentModule.id}:${lessonSlug}`;
+    if (startedModuleKeyRef.current === startKey) return undefined;
+    startedModuleKeyRef.current = startKey;
+
+    ensureMissingSyllabusTasks({
+      cohort: cohortSession,
+      modules: [currentModule],
+    }).catch(() => {
+      if (startedModuleKeyRef.current === startKey) {
+        startedModuleKeyRef.current = null;
+      }
+    });
+    return undefined;
+  }, [user?.id, cohortSession?.id, currentModule?.id, lessonSlug, currentModule?.filteredContent?.length]);
 
   const setCohortAndAssignments = async () => {
     const cohort = await getCohortData({
@@ -350,6 +370,7 @@ function SyllabusContent() {
         const userContext = generateUserContext(user);
         rigo.updateOptions({
           showBubble: false,
+          ...(isAvailableAsSaas && { target: '#rigo-chat' }),
           context: `${userContext ? `Here is some information about this user: ${userContext}. \n` : ''}${processAiContext(aiContext.ai_context, cohortSession)}`,
           completions,
         });
@@ -424,6 +445,55 @@ function SyllabusContent() {
     }
     if (isAuthenticated && (cohortSession?.cohort_user?.role !== 'STUDENT' || cohortSession?.available_as_saas === false)) setGrantAccess(true);
   }, [cohortSession, areSubscriptionsFetched, isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAvailableAsSaas) return undefined;
+
+    const RIGO_CHAT_GAP = 12;
+    const RIGO_CHAT_TOP_MARGIN = 16;
+    const RIGO_CHAT_DEFAULT_HEIGHT = 580;
+    const LG_BREAKPOINT = 992;
+
+    const updateRigoChatPosition = () => {
+      const controls = controlsContainerRef.current;
+      const rigoChat = document.getElementById('rigo-chat');
+      if (!controls || !rigoChat) return;
+
+      const rect = controls.getBoundingClientRect();
+      const bottomOffset = window.innerHeight - rect.top + RIGO_CHAT_GAP;
+      const availableHeight = rect.top - RIGO_CHAT_GAP - RIGO_CHAT_TOP_MARGIN;
+      const chatHeight = Math.min(
+        RIGO_CHAT_DEFAULT_HEIGHT,
+        Math.max(200, availableHeight),
+      );
+
+      rigoChat.style.setProperty('--rigo-chat-bottom', `${bottomOffset}px`);
+      rigoChat.style.setProperty('--rigo-chat-height', `${chatHeight}px`);
+
+      if (window.innerWidth >= LG_BREAKPOINT) {
+        rigoChat.style.right = `${window.innerWidth - rect.right}px`;
+        rigoChat.style.left = 'auto';
+        rigoChat.style.transform = 'none';
+      } else {
+        rigoChat.style.left = `${rect.left + rect.width / 2}px`;
+        rigoChat.style.right = 'auto';
+        rigoChat.style.transform = 'translateX(-50%)';
+      }
+    };
+
+    updateRigoChatPosition();
+    window.addEventListener('resize', updateRigoChatPosition);
+    window.addEventListener('scroll', updateRigoChatPosition, true);
+
+    const observer = new ResizeObserver(updateRigoChatPosition);
+    if (controlsContainerRef.current) observer.observe(controlsContainerRef.current);
+
+    return () => {
+      window.removeEventListener('resize', updateRigoChatPosition);
+      window.removeEventListener('scroll', updateRigoChatPosition, true);
+      observer.disconnect();
+    };
+  }, [isAvailableAsSaas, currentAsset, isOpen, isRigoInitialized]);
 
   const sendProject = async ({ task, githubUrl, taskStatus, flags, showShareModal }) => {
     const result = await updateAssignment({
@@ -783,22 +853,15 @@ function SyllabusContent() {
   };
 
   const checkAndUpdateModule = async (module) => {
-    if (!module || !user?.id) return false;
+    if (!module || !user?.id || !cohortSession?.id) return false;
 
     const hasNewActivities = module?.content?.length > (module?.filteredContent?.length || 0);
     if (hasNewActivities) {
-      const moduleToUpdate = module?.content;
-      const updatedTasks = moduleToUpdate?.map((l) => ({
-        ...l,
-        associated_slug: l.slug,
-        cohort: cohortSession.id,
-      }));
-
-      await startDay({
+      const created = await ensureMissingSyllabusTasks({
         cohort: cohortSession,
-        newTasks: updatedTasks,
+        modules: [module],
       });
-      return true;
+      return created.length > 0;
     }
     return false;
   };
@@ -1402,7 +1465,7 @@ function SyllabusContent() {
                             <Box
                               ref={controlsContainerRef}
                               position="fixed"
-                              zIndex={1400}
+                              zIndex={1300}
                               bottom={{ base: '20px', md: '50px' }}
                               left={{ base: '50%', lg: 'auto' }}
                               right={{ base: 'auto', lg: '24px' }}
@@ -1540,6 +1603,7 @@ function SyllabusContent() {
           </Box>
         </Box>
       </Flex>
+      {isAvailableAsSaas && <Box id="rigo-chat" />}
       <VideoModal
         isOpen={isVideoModalOpen}
         onClose={() => setIsVideoModalOpen(false)}

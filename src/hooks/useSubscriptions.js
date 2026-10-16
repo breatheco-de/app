@@ -5,6 +5,12 @@ import bc from '../services/breathecode';
 import useCustomToast from './useCustomToast';
 import { toCapitalize, unSlugify } from '../utils';
 
+let subscriptionsViewOpen = false;
+
+export const setSubscriptionsViewOpen = (open) => {
+  subscriptionsViewOpen = open;
+};
+
 const useSubscriptions = () => {
   const { state, setAreSubscriptionsFetched, setSubscriptionsLoading, setSubscriptions, setCancelSubscription, setReactivateSubscription } = subscriptionAction();
   const { subscriptions } = state;
@@ -53,27 +59,40 @@ const useSubscriptions = () => {
     }
   };
 
-  const getSubscriptions = async () => {
-    const { data } = await bc.payment({
+  const getSubscriptions = async ({ includeBilling = false } = {}) => {
+    const query = {
       status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED,ERROR',
-    }).subscriptions();
+    };
+    if (includeBilling) query.include_billing = 'true';
+
+    const { data } = await bc.payment(query).subscriptions();
     return data;
   };
 
-  const initializeSubscriptionsData = async () => {
+  const initializeSubscriptionsData = async ({ includeBilling = false } = {}) => {
     let result;
     try {
       setSubscriptionsLoading(true);
 
-      const data = await getSubscriptions();
+      const data = await getSubscriptions({ includeBilling });
+      const planOfferCache = {};
+
+      const manageCachedPlanOffer = async ({ slug }) => {
+        if (!slug) return null;
+        if (!Object.prototype.hasOwnProperty.call(planOfferCache, slug)) {
+          planOfferCache[slug] = managePlanOffer({ slug });
+        }
+
+        return planOfferCache[slug];
+      };
 
       const subscriptionsDataWithPlanOffer = await Promise.all(data.subscriptions.map(async (s) => {
-        const planOffer = await managePlanOffer({ slug: s?.plans[0]?.slug });
+        const planOffer = await manageCachedPlanOffer({ slug: s?.plans[0]?.slug });
         return { ...s, type: 'subscription', planOffer };
       }));
 
       const planFinancingsDataWithPlanOffer = await Promise.all(data.plan_financings.map(async (f) => {
-        const planOffer = await managePlanOffer({ slug: f?.plans[0]?.slug });
+        const planOffer = await manageCachedPlanOffer({ slug: f?.plans[0]?.slug });
         return { ...f, type: 'plan_financing', planOffer };
       }));
 
@@ -82,7 +101,9 @@ const useSubscriptions = () => {
         plan_financings: planFinancingsDataWithPlanOffer,
       };
 
-      setSubscriptions(result);
+      if (includeBilling || !subscriptionsViewOpen) {
+        setSubscriptions(result);
+      }
     } catch (error) {
       result = error;
     } finally {

@@ -1,7 +1,13 @@
 import { setPreviewData, redirectToPreviewURL } from '@prismicio/next';
 import { createClient } from '../../../prismicio';
+import { isPrismicEnabled } from '../../utils/variables';
 
 export default async (req, res) => {
+  if (!isPrismicEnabled) {
+    res.status(404).json({ message: 'Prismic preview is disabled' });
+    return;
+  }
+
   const client = createClient({ req });
 
   await setPreviewData({ req, res });

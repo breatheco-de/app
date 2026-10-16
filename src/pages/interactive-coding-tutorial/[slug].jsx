@@ -29,6 +29,7 @@ import MktEventCards from '../../components/PrismicComponents/MktEventCards';
 import SupplementaryMaterial from '../../components/SupplementaryMaterial';
 import AssetsBreadcrumbs from '../../components/AssetsBreadcrumbs';
 import { getMarkdownFromCache } from '../../utils/requests';
+import PublicPortalGate from '../../components/PublicPortalGate';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../public/asset-list.json');
@@ -234,7 +235,7 @@ function ProjectSlug({ project, markdown }) {
   }, []);
 
   return (
-    <>
+    <PublicPortalGate feature="interactive_coding_tutorials" mode="login">
       {project?.structuredData?.name && (
         <Head>
           <script
@@ -399,7 +400,7 @@ function ProjectSlug({ project, markdown }) {
           )}
         </Box>
       </GridContainer>
-    </>
+    </PublicPortalGate>
   );
 }
 

@@ -15,9 +15,10 @@ import ModalInfo from '../components/ModalInfo';
 import Text from '../components/Text';
 import { getPrismicPagesUrls } from '../utils/url';
 import { warn } from '../utils/logging';
-import { getQueryString, isWindow, removeStorageItem, removeURLParameter, getBrowserInfo } from '../utils';
+import { getQueryString, getStorageItem, isWindow, removeStorageItem, removeURLParameter, getBrowserInfo } from '../utils';
+import { getToken, setTokenCookie, clearTokenCookie } from '../utils/sessionCookie';
 import { reportDatalayer, getPrismicPages } from '../utils/requests';
-import { BREATHECODE_HOST, RIGOBOT_HOST, SILENT_CODE } from '../utils/variables';
+import { BREATHECODE_HOST, RIGOBOT_HOST, SILENT_CODE, isPrismicEnabled } from '../utils/variables';
 import { generateUserContext } from '../utils/rigobotContext';
 
 const initialState = {
@@ -123,9 +124,10 @@ const reducer = (state, action) => {
 
 const setTokenSession = (token) => {
   if (token) {
-    localStorage.setItem('accessToken', token);
+    setTokenCookie(token);
     axiosInstance.defaults.headers.common.Authorization = `Token ${token}`;
   } else {
+    clearTokenCookie();
     removeStorageItem('syllabus');
     removeStorageItem('programMentors');
     removeStorageItem('programServices');
@@ -137,16 +139,6 @@ const setTokenSession = (token) => {
     removeStorageItem('isClosedLateModal');
     delete axiosInstance.defaults.headers.common.Authorization;
   }
-};
-
-const getToken = () => {
-  if (isWindow) {
-    const query = new URLSearchParams(window.location.search || '');
-    const queryToken = query.get('token')?.split('?')[0]; // sometimes endpoint redirection returns 2 ?token querystring
-    if (queryToken) return queryToken;
-    return localStorage.getItem('accessToken');
-  }
-  return null;
 };
 
 export const AuthContext = createContext({
@@ -198,6 +190,29 @@ function AuthProvider({ children, pageProps }) {
   useEffect(() => {
     if (state.isAuthenticated && (router.pathname === '/' || router.pathname === '')) {
       router.push('/choose-program');
+    }
+  }, [state.isAuthenticated, router.pathname]);
+
+  // After checkout payment + redirect, show verify-email if the purchase just completed.
+  useEffect(() => {
+    if (!state.isAuthenticated || router.pathname === '/checkout') return;
+
+    try {
+      const raw = getStorageItem('pendingEmailVerification');
+      if (!raw) return;
+      const pending = JSON.parse(raw);
+      const landedOnPaymentSuccess = router.pathname === '/payment-success';
+      if (!pending?.email || (!pending.showAfterPayment && !landedOnPaymentSuccess)) return;
+
+      setModalState({
+        email: pending.email,
+        data: [{ id: pending.id }],
+        state: true,
+      });
+      // Clear so navigating between pages does not reopen the modal.
+      removeStorageItem('pendingEmailVerification');
+    } catch (error) {
+      // ignore malformed storage
     }
   }, [state.isAuthenticated, router.pathname]);
 
@@ -407,13 +422,15 @@ function AuthProvider({ children, pageProps }) {
         }
 
         if (response.status === 200) {
+          // Drop checkout signup leftovers; this user authenticated via login.
+          removeStorageItem('pendingEmailVerification');
           handleSession(responseData.token || response.token);
           dispatch({
             type: 'LOGIN',
             payload: responseData,
           });
 
-          const prismicPages = await getPrismicPages();
+          const prismicPages = isPrismicEnabled ? await getPrismicPages() : [];
           const prismicPagesUrls = getPrismicPagesUrls(prismicPages);
 
           // disabledRedirectUrls are urls that we will ignore if included as redirect.
@@ -565,10 +582,13 @@ function AuthProvider({ children, pageProps }) {
             });
         }}
         handlerText={t('signup:resend')}
-        onClose={() => setModalState({
-          ...modalState,
-          state: false,
-        })}
+        onClose={() => {
+          removeStorageItem('pendingEmailVerification');
+          setModalState({
+            ...modalState,
+            state: false,
+          });
+        }}
       />
     </AuthContext.Provider>
   );

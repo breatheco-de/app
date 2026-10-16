@@ -18,7 +18,7 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import Editor, { DiffEditor } from '@monaco-editor/react';
-import { setStorageItem, getStorageItem, isWindow } from '../utils';
+import { setStorageItem, getStorageItem, getToken, isWindow } from '../utils';
 import { RIGOBOT_HOST, BREATHECODE_HOST } from '../utils/variables';
 import ModalInfo from './ModalInfo';
 import useAuth from '../hooks/useAuth';
@@ -160,7 +160,7 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, compareMode, .
     rigobotToken = JSON.parse(rigobotToken);
 
     if (!rigobotToken || rigobotToken.expires_at < new Date().toISOString()) {
-      const bcToken = getStorageItem('accessToken');
+      const bcToken = getToken();
 
       const resp = await fetch(`${RIGOBOT_HOST}/v1/auth/me/token?breathecode_token=${bcToken}`);
       const data = await resp.json();

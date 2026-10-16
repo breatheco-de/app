@@ -180,7 +180,7 @@ const breathecode = {
       getMeTasks: () => axios.get(`${url}/user/me/task${qs}`),
       getTask: (taskId) => axios.get(`${url}/task/${taskId}`),
       updateTask: (args) => axios.put(`${url}/task/${args.id}`, args),
-      addTasks: (args) => axios.post(`${url}/user/me/task`, args),
+      addTasks: (args) => axios.post(`${url}/user/me/task${qs}`, args),
       getDeletionOrders: () => axios.get(`${url}/me/deletion_order${qs}`),
       getCodeRevisions: (taskId) => breathecode.get(`${url}/academy/task/${taskId}/coderevision`),
       getFinalProjects: (cohortId) => axios.get(`${url}/academy/cohort/${cohortId}/final_project`),
@@ -308,6 +308,14 @@ const breathecode = {
       getMyCoupon: () => axios.get(`${url}/me/coupon${qs}`),
       getMyUserCoupons: () => axios.get(`${url}/me/user/coupons${qs}`),
       updateCoupon: (couponSlug) => axios.put(`${url}/me/user/coupons/${couponSlug}`),
+      getSubscriptionBillingTeam: (id) => axios.get(`${url}/subscription/${id}/billing-team${qs}`),
+      getSubscriptionSeats: (id) => axios.get(`${url}/subscription/${id}/billing-team/seat${qs}`),
+      updateSubscriptionSeats: (id, data) => axios.put(`${url}/subscription/${id}/billing-team/seat${qs}`, data),
+      deleteSubscriptionSeat: (id, seatId) => axios.delete(`${url}/subscription/${id}/billing-team/seat/${seatId}${qs}`),
+      getPlanFinancingTeam: (id) => axios.get(`${url}/plan-financing/${id}/team${qs}`),
+      getPlanFinancingSeats: (id) => axios.get(`${url}/plan-financing/${id}/team/seat${qs}`),
+      updatePlanFinancingSeats: (id, data) => axios.put(`${url}/plan-financing/${id}/team/seat${qs}`, data),
+      deletePlanFinancingSeat: (id, seatId) => axios.delete(`${url}/plan-financing/${id}/team/seat/${seatId}${qs}`),
     };
   },
   events: (query = {}) => {

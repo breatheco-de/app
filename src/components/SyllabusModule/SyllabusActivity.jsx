@@ -60,14 +60,15 @@ function SyllabusActivity({
   const taskTranslations = lang === 'en' ? (data?.translations?.en || data?.translations?.us) : (data?.translations?.[lang] || {});
 
   const isProject = data?.task_type === 'PROJECT' || data?.type === 'PROJECT';
-  const baseLink = `${langLink}/syllabus/${cohortSlug || cohortSession?.slug}/${data.type.toLowerCase()}/${taskTranslations?.slug || currentTask?.associated_slug}`;
+  const activityType = (data.type || data.task_type || '').toLowerCase();
+  const activitySlug = taskTranslations?.slug || currentTask?.associated_slug || currentSlug;
+  const syllabusPath = `/syllabus/${cohortSlug || cohortSession?.slug}/${activityType}/${activitySlug}`;
+  const isMicroCohortContext = cohortSlug
+    && cohortSession?.micro_cohorts?.some((microCohort) => microCohort.slug === cohortSlug);
   const generateLink = () => {
-    let generatedUrl;
-    if (cohortSlug) {
-      generatedUrl = `/main-cohort/${cohortSession?.slug}${baseLink}`;
-    } else {
-      generatedUrl = baseLink;
-    }
+    const generatedUrl = isMicroCohortContext
+      ? `${langLink}/main-cohort/${cohortSession.slug}${syllabusPath}`
+      : `${langLink}${syllabusPath}`;
     return isProject ? `${generatedUrl}#readme` : generatedUrl;
   };
   const link = isDisabled ? '#disabled' : generateLink();

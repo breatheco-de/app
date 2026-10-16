@@ -18,10 +18,11 @@ import useFilter from '../../store/actions/filterAction';
 import Search from '../../components/Assets/Search';
 import TitleContent from '../../components/Assets/TitleContent';
 import { getQueryString } from '../../utils';
-import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { ORIGIN_HOST } from '../../utils/variables';
 import { parseQuerys } from '../../utils/url';
 import { log } from '../../utils/logging';
 import { types } from '../../components/DynamicContentCard/card-types';
+import PublicPortalGate from '../../components/PublicPortalGate';
 
 const contentPerPage = 20;
 
@@ -42,7 +43,6 @@ const fetchArticles = async (lang, page, query) => {
   const querys = parseQuerys({
     asset_type: 'LESSON,ARTICLE',
     status: 'PUBLISHED',
-    academy: WHITE_LABEL_ACADEMY,
     language: lang,
     limit: contentPerPage,
     category: categories[lang],
@@ -170,7 +170,7 @@ export default function HowTo({ data, technologyTags, difficulties, count }) {
   };
 
   return (
-    <>
+    <PublicPortalGate alwaysHide>
       <Box
         display="grid"
         gridTemplateColumns={{
@@ -279,7 +279,7 @@ export default function HowTo({ data, technologyTags, difficulties, count }) {
           />
         )}
       </GridContainer>
-    </>
+    </PublicPortalGate>
   );
 }
 

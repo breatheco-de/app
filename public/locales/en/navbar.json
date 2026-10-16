@@ -1,9 +1,13 @@
 {
   "login": "Login",
   "get-started": "Get Started",
+  "check-program": "Check Program",
+  "check-programs": "Check Programs",
+  "back": "Back",
   "logout": "Logout",
   "language": "Language",
   "my-profile": "My Profile",
+  "team-seats": "Team seats",
   "course-details": "Course details",
   "upgrade-experience": "Upgrade Experience",
   "member-since": "Member since {{date}}",

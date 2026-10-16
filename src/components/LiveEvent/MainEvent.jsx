@@ -8,7 +8,7 @@ import Text from '../Text';
 import Icon from '../Icon';
 import useStyle from '../../hooks/useStyle';
 import CustomTheme from '../../../styles/theme';
-import { getStorageItem, lengthOfString } from '../../utils';
+import { getToken, lengthOfString } from '../../utils';
 
 function MainEvent({
   layoutVariant,
@@ -26,7 +26,7 @@ function MainEvent({
   const truncatedTime = lengthOfString(currentDateText) >= 16 ? `${currentDateText?.substring(0, 15)}...` : currentDateText;
   const { fontColor, disabledColor, backgroundColor2, hexColor } = useStyle();
 
-  const accessToken = getStorageItem('accessToken');
+  const accessToken = getToken();
   const liveStartsAtDate = new Date(event?.starting_at);
   const liveEndsAtDate = new Date(event?.ended_at || event?.ending_at);
   const isCurrentEventLive = isLive(liveStartsAtDate, liveEndsAtDate);

@@ -2,13 +2,32 @@ import modifyEnv from '../../modifyEnv';
 
 export const DOMAIN_NAME = process.env.DOMAIN_NAME || '';
 export const BASE_PLAN = process.env.BASE_PLAN || '';
+
+export const resolveCheckoutPlanSlug = (queryPlan, isWhiteLabel, academyDefaultPlan) => {
+  if (queryPlan) return queryPlan;
+  if (isWhiteLabel) return academyDefaultPlan || BASE_PLAN;
+  return '';
+};
 export const BASE_COURSE = process.env.BASE_COURSE || '';
 export const IP_API_KEY = process.env.NEXT_PUBLIC_IP_API_KEY || '';
 export const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST || '' });
 export const RIGOBOT_HOST = modifyEnv({ queryString: 'host_rigo', env: process.env.RIGOBOT_HOST || '' });
 export const WHITE_LABEL_ACADEMY = process.env.WHITE_LABEL_ACADEMY || undefined;
 export const ORIGIN_HOST = (typeof window !== 'undefined' && window.location.origin) || DOMAIN_NAME;
-export const isWhiteLabelAcademy = typeof DOMAIN_NAME === 'string' && DOMAIN_NAME !== 'https://4geeks.com';
+const normalizedDomainName = typeof DOMAIN_NAME === 'string'
+  ? DOMAIN_NAME.trim().replace(/\/$/, '')
+  : '';
+
+/** True when DOMAIN_NAME is set and is not the main 4Geeks site. */
+export const isWhiteLabelAcademy = normalizedDomainName.length > 0
+  && normalizedDomainName !== 'https://4geeks.com';
+
+/**
+ * Prismic CMS is opt-in for builds/deploys.
+ * Set PRISMIC_ENABLED=true (and valid PRISMIC_API / PRISMIC_REF) to turn it back on.
+ */
+export const isPrismicEnabled = process.env.PRISMIC_ENABLED === 'true';
+
 export const excludeCagetoriesFor = {
   lessons: 'how-to,como,blog-us,blog-es',
 };

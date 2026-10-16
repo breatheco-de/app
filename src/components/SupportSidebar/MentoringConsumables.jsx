@@ -15,7 +15,7 @@ import useAuth from '../../hooks/useAuth';
 import AvatarUser from '../AvatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped, CardSkeleton } from '../Skeleton';
-import { getStorageItem, getBrowserInfo } from '../../utils';
+import { getToken, getBrowserInfo } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
 import { BREATHECODE_HOST, defaultProfiles } from '../../utils/variables';
 import CanAccess from '../CanAccess';
@@ -63,18 +63,25 @@ function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mento
   );
 }
 
+function toProfileList(profiles) {
+  if (Array.isArray(profiles)) return profiles;
+  if (Array.isArray(profiles?.results)) return profiles.results;
+  return [];
+}
+
 function ProfilesSection({
   profiles, size, max, ...rest
 }) {
-  let displayProfiles = profiles || [];
+  const profileList = toProfileList(profiles);
+  let displayProfiles = profileList;
 
-  if (profiles?.length === 1) {
-    displayProfiles = [profiles[0], defaultProfiles[0], defaultProfiles[1]];
+  if (profileList.length === 1) {
+    displayProfiles = [profileList[0], defaultProfiles[0], defaultProfiles[1]];
   }
 
   return (
     <AvatarGroup max={max || 4} justifyContent="center" size={{ base: 'sm', md: 'md' }} {...rest}>
-      {displayProfiles?.map((c, i) => {
+      {displayProfiles.map((c, i) => {
         if (!c || !c.user) return null;
         const fullName = c.user.first_name && c.user.last_name ? `${c.user.first_name} ${c.user.last_name}` : '';
         const avatarUrl = c.user.profile?.avatar_url;
@@ -101,13 +108,13 @@ function MentoringConsumables({
   mentoryProps, width, consumables, cohortSessionIsSaaS, setMentoryProps,
   programServices, servicesFiltered, searchProps, setSearchProps, setProgramMentors,
   mentorsFiltered, allMentorsAvailable, subscriptionData, allSubscriptions,
-  queryService, queryMentor, titleSize, withDescription,
+  queryService, queryMentor, titleSize, withDescription, servicesListMaxHeight,
 }) {
   const { t } = useTranslation('dashboard');
   const { user } = useAuth();
   const { validatePlanExistence } = useSignup();
   const [open, setOpen] = useState(false);
-  const accessToken = getStorageItem('accessToken');
+  const accessToken = getToken();
   const [existsMentors, setExistsMentors] = useState(true);
   const { borderColor, lightColor, hexColor, backgroundColor2 } = useStyle();
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
@@ -133,16 +140,18 @@ function MentoringConsumables({
   };
   const existConsumablesOnCurrentService = calculateExistenceOfConsumable();
 
-  const getMostRecentPaidAt = (invoices) => invoices.reduce((latest, invoice) => {
-    const paidAtDate = new Date(invoice.paid_at);
-    return paidAtDate > latest ? paidAtDate : latest;
-  }, new Date(0));
-
-  const sortByMostRecentInvoice = (a, b) => {
-    const latestA = getMostRecentPaidAt(a.invoices);
-    const latestB = getMostRecentPaidAt(b.invoices);
-    return latestB - latestA;
+  const getMostRecentPaidAt = (entry) => {
+    const invoices = entry?.invoices;
+    if (invoices?.length) {
+      return invoices.reduce((latest, invoice) => {
+        const paidAtDate = new Date(invoice.paid_at);
+        return paidAtDate > latest ? paidAtDate : latest;
+      }, new Date(0));
+    }
+    return entry?.paid_at ? new Date(entry.paid_at) : new Date(0);
   };
+
+  const sortByMostRecentInvoice = (a, b) => getMostRecentPaidAt(b) - getMostRecentPaidAt(a);
 
   const currentServiceSubscription = Array.isArray(allSubscriptions) && allSubscriptions.sort(sortByMostRecentInvoice).find((subscription) => subscription.selected_mentorship_service_set?.mentorship_services?.some((service) => service.slug === mentoryProps?.service?.slug));
   const currentSubscription = currentServiceSubscription || allSubscriptions?.[0];
@@ -155,7 +164,8 @@ function MentoringConsumables({
     }
   }, [allMentorsAvailable]);
 
-  const manageMentorsData = (service, mentors) => {
+  const manageMentorsData = (service, mentorsData) => {
+    const mentors = toProfileList(mentorsData);
     reportDatalayer({
       dataLayer: {
         event: 'select_mentorship_service',
@@ -456,7 +466,14 @@ function MentoringConsumables({
                   </InputRightElement>
                 </InputGroup>
 
-                <Box maxHeight="10rem" width="100%" overflow="auto" borderBottomRadius="0.375rem">
+                <Box
+                  maxHeight={servicesListMaxHeight}
+                  width="100%"
+                  overflowY="auto"
+                  overflowX="hidden"
+                  borderBottomRadius="0.375rem"
+                  pr="6px"
+                >
                   {loadingServices ? (
                     <CardSkeleton withoutContainer quantity={2} height="40px" gridGap="20px" marginTop="10px" />
                   ) : (
@@ -598,6 +615,7 @@ MentoringConsumables.propTypes = {
   subscriptionData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   allSubscriptions: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   withDescription: PropTypes.bool,
+  servicesListMaxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 };
 
 MentoringConsumables.defaultProps = {
@@ -612,6 +630,7 @@ MentoringConsumables.defaultProps = {
   subscriptionData: {},
   allSubscriptions: [],
   withDescription: false,
+  servicesListMaxHeight: '18rem',
 };
 
 export default MentoringConsumables;

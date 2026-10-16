@@ -13,26 +13,23 @@ import Link from '../../components/NextChakraLink';
 import GridContainer from '../../components/GridContainer';
 import { cleanObject } from '../../utils';
 import { ORIGIN_HOST } from '../../utils/variables';
+import {
+  withSafeStaticPaths,
+  withSafeStaticProps,
+  buildLocalePaths,
+} from '../../utils/staticGeneration';
 
-export const getStaticPaths = async ({ locales }) => {
+export const getStaticPaths = async ({ locales }) => withSafeStaticPaths(async () => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`);
+  if (!resp.ok) {
+    throw new Error(`public syllabus fetch failed with status ${resp.status}`);
+  }
+
   const lessonList = await resp.json();
+  return buildLocalePaths(lessonList, locales, 'slug');
+});
 
-  // generate locale each param.slug with flatMap
-  const paths = lessonList.flatMap((res) => locales.map((locale) => ({
-    params: {
-      slug: res.slug,
-    },
-    locale,
-  })));
-
-  return {
-    fallback: false,
-    paths,
-  };
-};
-
-export const getStaticProps = async ({ locale, locales, params }) => {
+export const getStaticProps = async ({ locale, locales, params }) => withSafeStaticProps(async () => {
   const { slug } = params;
 
   const resp = await fetch(
@@ -46,7 +43,6 @@ export const getStaticProps = async ({ locale, locales, params }) => {
       },
     },
   );
-  const data = await resp.json();
 
   if (resp.status >= 400) {
     console.error(`ERROR with /read/${slug}: something went wrong fetching "/v1/admissions/syllabus/${slug}/version/1", probably the env "BC_ACADEMY_TOKEN" has expired`);
@@ -54,6 +50,8 @@ export const getStaticProps = async ({ locale, locales, params }) => {
       notFound: true,
     };
   }
+
+  const data = await resp.json();
 
   const structuredData = cleanObject({
     '@context': 'http://schema.org',
@@ -95,7 +93,7 @@ export const getStaticProps = async ({ locale, locales, params }) => {
       },
     },
   };
-};
+}, `read/${params?.slug}`);
 
 function Read({ data }) {
   const router = useRouter();

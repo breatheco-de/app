@@ -1,9 +1,13 @@
 {
   "login": "Ingresar",
   "get-started": "Empezar",
+  "check-program": "Ver programa",
+  "check-programs": "Ver programas",
+  "back": "Volver",
   "logout": "Cerrar sesión",
   "language": "Idioma",
   "my-profile": "Mi perfil",
+  "team-seats": "Asientos del equipo",
   "course-details": "Detalles del curso",
   "upgrade-experience": "Comprar curso",
   "member-since": "Miembro desde {{date}}",

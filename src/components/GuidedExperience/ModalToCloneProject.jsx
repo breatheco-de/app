@@ -18,6 +18,7 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import Icon from '../Icon';
 import { BREATHECODE_HOST } from '../../utils/variables';
+import { getToken, getBrowserInfo } from '../../utils';
 import Heading from '../Heading';
 import Text from '../Text';
 import NextChakraLink from '../NextChakraLink';
@@ -27,7 +28,6 @@ import useStyle from '../../hooks/useStyle';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import CustomBanner from '../CustomBanner';
 import { reportDatalayer } from '../../utils/requests';
-import { getBrowserInfo } from '../../utils';
 
 function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID, currentAssetURL, selectedOption, osList, selectedOs,
   setSelectedOs, resetOsSelector, resetOptionSelector, expanded, setExpanded, steps, onClose, isOnlyReadme, publicView, provisioningVendors, assetUrl,
@@ -35,7 +35,7 @@ function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID,
 }) {
   const { t } = useTranslation('syllabus');
   const { featuredLight, hexColor, borderColor } = useStyle();
-  const accessToken = localStorage.getItem('accessToken');
+  const accessToken = getToken();
 
   const handleOpenInPublicView = (vendor) => {
     if (!vendor) return;

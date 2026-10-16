@@ -1,4 +1,6 @@
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Flex, Text } from '@chakra-ui/react';
+import {
+  Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Flex, Image, Text,
+} from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
@@ -48,21 +50,43 @@ function AcordionList({
                   {leftIcon && (
                     <Icon icon={leftIcon} color={iconColor} width="16px" height="16px" marginRight="10px" />
                   )}
-                  {titleAsHtml ? (
-                    <Box
-                      as="span"
-                      flex="1"
-                      fontSize="14px"
-                      textAlign="left"
-                      textTransform="uppercase"
-                      dangerouslySetInnerHTML={{ __html: item?.title || '' }}
-                      {...titleStyle}
-                    />
-                  ) : (
-                    <Box as="span" flex="1" fontSize="14px" textAlign="left" textTransform="uppercase" {...titleStyle}>
-                      {item?.title}
-                    </Box>
-                  )}
+                  <Flex
+                    as="span"
+                    flex="1"
+                    align="center"
+                    gap="10px"
+                    flexWrap="wrap"
+                    minW="0"
+                    {...titleStyle}
+                  >
+                    {titleAsHtml ? (
+                      <Box
+                        as="span"
+                        fontSize="14px"
+                        textAlign="left"
+                        textTransform="uppercase"
+                        dangerouslySetInnerHTML={{ __html: item?.title || '' }}
+                      />
+                    ) : (
+                      <Box as="span" fontSize="14px" textAlign="left" textTransform="uppercase">
+                        {item?.title}
+                      </Box>
+                    )}
+                    {item?.logo_urls?.length > 0 && (
+                      <Flex gap="7px" align="center" flexShrink={0}>
+                        {item.logo_urls.filter(Boolean).map((url) => (
+                          <Image
+                            key={url}
+                            src={url}
+                            alt=""
+                            height="20px"
+                            maxW="60px"
+                            objectFit="contain"
+                          />
+                        ))}
+                      </Flex>
+                    )}
+                  </Flex>
                   {expanderText && (
                     <Text fontSize="13px">
                       {!isExpanded ? expanderText : `${t('common:hide')} ${expanderText.toLowerCase()}`}

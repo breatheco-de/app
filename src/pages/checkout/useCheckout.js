@@ -5,22 +5,37 @@ import { useRouter } from 'next/router';
 import bc from '../../services/breathecode';
 import useAuth from '../../hooks/useAuth';
 import useSession from '../../hooks/useSession';
-import { isWindow, getQueryString, getStorageItem, removeStorageItem, setStorageItem, slugToTitle, getBrowserInfo, parseAddOnIdsFromQuery } from '../../utils';
+import { isWindow, getQueryString, getToken, removeStorageItem, setStorageItem, slugToTitle, getBrowserInfo, parseAddOnIdsFromQuery } from '../../utils';
 import signupAction from '../../store/actions/signupAction';
 import useSignup from '../../hooks/useSignup';
-import { BASE_PLAN, currenciesSymbols } from '../../utils/variables';
+import { currenciesSymbols, resolveCheckoutPlanSlug, isWhiteLabelAcademy } from '../../utils/variables';
+import useWhiteLabel from '../../hooks/useWhiteLabel';
 import { reportDatalayer } from '../../utils/requests';
 import { usePersistentBySession } from '../../hooks/usePersistent';
 import useCustomToast from '../../hooks/useCustomToast';
 
 // ___________ HELPERS (pure functions, no hooks) ___________ //
 
-const getBagTotalsForSelectedPlan = (checkingData, selectedPlan, processedPrice) => {
+const getBagTotalsForSelectedPlan = (checkingData, selectedPlan, coupons = [], originalPlan = null) => {
   if (!selectedPlan) return null;
   const toNumber = (value) => {
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : 0;
   };
+  const applyCoupons = (price) => coupons.reduce((currentPrice, coupon) => {
+    const discount = Number(coupon?.discount_value);
+    if (!Number.isFinite(discount) || discount <= 0) return currentPrice;
+
+    if (coupon?.discount_type === 'PERCENT_OFF' || coupon?.discount_type === 'HAGGLING') {
+      return currentPrice * (1 - discount);
+    }
+
+    if (coupon?.discount_type === 'FIXED_PRICE') {
+      return Math.max(currentPrice - discount, 0);
+    }
+
+    return currentPrice;
+  }, price);
 
   const {
     amount_per_month: amountPerMonth = 0,
@@ -38,57 +53,66 @@ const getBagTotalsForSelectedPlan = (checkingData, selectedPlan, processedPrice)
 
   const { period, price } = selectedPlan;
   const selectedPlanPrice = toNumber(price);
-  const processedPlanPrice = toNumber(processedPrice?.price);
+  const seatQuantity = toNumber(checkingData?.seat_service_item?.how_many);
+  const seatUnitPrice = toNumber(originalPlan?.seat_service_price?.price_per_unit);
+  const seatTotal = seatQuantity > 0 && seatUnitPrice > 0 ? seatQuantity * seatUnitPrice : 0;
   let baseOriginal = 0;
-  let baseDiscounted = 0;
+  let extraSeatTotal = 0;
+  let backendDiscounted = null;
 
   // Financing plans: backend `amount_per_*` are not populated.
   // We use the plan monthly price as original and the discounted
   // monthly price (from backend if available, otherwise from
   // processedPrice) as the discounted value.
   if (period === 'FINANCING') {
-    const originalMonthly = selectedPlanPrice;
-
-    const discountedMonthlyFromProcessed = processedPlanPrice > 0 ? processedPlanPrice : undefined;
-
-    const discountedMonthly = [
-      discountedMonthlyFromChecking,
-      selectedPlan?.discounted_monthly_price,
-      discountedMonthlyFromProcessed,
-      originalMonthly,
-    ].find((val) => typeof val === 'number');
-
-    const originalTotal = originalMonthly + (planAddonsAmount || 0);
+    const originalTotal = selectedPlanPrice + seatTotal + (planAddonsAmount || 0);
     const discountedAddons = typeof discountedPlanAddonsAmount === 'number'
       ? discountedPlanAddonsAmount
       : planAddonsAmount;
-    const discountedTotal = discountedMonthly + (discountedAddons || 0);
+    const discountedFinancing = [
+      discountedMonthlyFromChecking,
+      selectedPlan?.discounted_monthly_price,
+    ].find((val) => typeof val === 'number');
+    const discountedTotal = typeof discountedFinancing === 'number'
+      ? discountedFinancing + seatTotal + (discountedAddons || 0)
+      : applyCoupons(originalTotal);
 
     return { originalTotal, discountedTotal };
   }
 
   if (period === 'MONTH') {
-    baseOriginal = toNumber(amountPerMonth) || selectedPlanPrice;
-    baseDiscounted = toNumber(discountedAmountPerMonth ?? amountPerMonth) || processedPlanPrice || selectedPlanPrice;
+    const backendAmount = toNumber(amountPerMonth);
+    baseOriginal = backendAmount || selectedPlanPrice;
+    extraSeatTotal = backendAmount ? 0 : seatTotal;
+    backendDiscounted = discountedAmountPerMonth;
   } else if (period === 'QUARTER') {
-    baseOriginal = toNumber(amountPerQuarter) || selectedPlanPrice;
-    baseDiscounted = toNumber(discountedAmountPerQuarter ?? amountPerQuarter) || processedPlanPrice || selectedPlanPrice;
+    const backendAmount = toNumber(amountPerQuarter);
+    baseOriginal = backendAmount || selectedPlanPrice;
+    extraSeatTotal = backendAmount ? 0 : seatTotal;
+    backendDiscounted = discountedAmountPerQuarter;
   } else if (period === 'HALF') {
-    baseOriginal = toNumber(amountPerHalf) || selectedPlanPrice;
-    baseDiscounted = toNumber(discountedAmountPerHalf ?? amountPerHalf) || processedPlanPrice || selectedPlanPrice;
+    const backendAmount = toNumber(amountPerHalf);
+    baseOriginal = backendAmount || selectedPlanPrice;
+    extraSeatTotal = backendAmount ? 0 : seatTotal;
+    backendDiscounted = discountedAmountPerHalf;
   } else if (period === 'YEAR') {
-    baseOriginal = toNumber(amountPerYear) || selectedPlanPrice;
-    baseDiscounted = toNumber(discountedAmountPerYear ?? amountPerYear) || processedPlanPrice || selectedPlanPrice;
+    const backendAmount = toNumber(amountPerYear);
+    baseOriginal = backendAmount || selectedPlanPrice;
+    extraSeatTotal = backendAmount ? 0 : seatTotal;
+    backendDiscounted = discountedAmountPerYear;
   } else {
     baseOriginal = selectedPlanPrice;
-    baseDiscounted = processedPlanPrice || selectedPlanPrice;
+    extraSeatTotal = seatTotal;
   }
 
-  const originalTotal = baseOriginal + (planAddonsAmount || 0);
+  const originalTotal = baseOriginal + extraSeatTotal + (planAddonsAmount || 0);
   const discountedAddons = typeof discountedPlanAddonsAmount === 'number'
     ? discountedPlanAddonsAmount
     : planAddonsAmount;
-  const discountedTotal = baseDiscounted + (discountedAddons || 0);
+  const hasBackendDiscount = typeof backendDiscounted === 'number';
+  const discountedTotal = hasBackendDiscount
+    ? backendDiscounted + (discountedAddons || 0)
+    : applyCoupons(originalTotal);
 
   return { originalTotal, discountedTotal };
 };
@@ -183,20 +207,22 @@ const useCheckout = () => {
   const [discountCode, setDiscountCode] = useState('');
   const [discountCoupon, setDiscountCoupon] = useState(null);
   const [couponError, setCouponError] = useState(false);
-  const [suggestedPlans, setSuggestedPlans] = useState(undefined);
+  const [, setSuggestedPlans] = useState(undefined);
   const [discountValues, setDiscountValues] = useState(undefined);
   const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
   const currencySymbol = currenciesSymbols[originalPlan?.currency?.code] || '$';
 
   const { isAuthenticated } = useAuth();
+  const { defaultPlan: academyDefaultPlan } = useWhiteLabel();
   const { userSession, location, isLoadingLocation } = useSession();
   const { createToast } = useCustomToast({ toastId: 'coupon-plan-email-detail' });
   const { coupon: couponQuery } = query;
   const plan = getQueryString('plan');
   const planId = getQueryString('plan_id');
   const callbackUrl = getQueryString('callback');
+  const cohortIdFromQuery = getQueryString('cohort');
   const addOnsQS = getQueryString('add_ons');
-  const planFormated = plan || BASE_PLAN;
+  const planFormated = resolveCheckoutPlanSlug(plan, isWhiteLabelAcademy, academyDefaultPlan);
 
   const [couponFromSession] = usePersistentBySession('coupon', '');
   const coupon = couponFromSession || userSession?.ref || '';
@@ -220,7 +246,12 @@ const useCheckout = () => {
       (item) => item?.plan_id === (planId || userSelectedPlan?.plan_id),
     );
 
-    return autoSelectedPlanByQueryString || defaultAutoSelectedPlan;
+    const matched = autoSelectedPlanByQueryString || defaultAutoSelectedPlan;
+    if (!matched || userSelectedPlan?.financing_option_id == null) return matched;
+    if (matched.plan_id === userSelectedPlan.plan_id) {
+      return { ...matched, financing_option_id: userSelectedPlan.financing_option_id };
+    }
+    return matched;
   };
 
   const processedPrice = useMemo(() => {
@@ -236,8 +267,8 @@ const useCheckout = () => {
 
   // Totals for the current selection (plan + add-ons)
   const bagTotals = useMemo(
-    () => getBagTotalsForSelectedPlan(checkingData, selectedPlan, processedPrice),
-    [checkingData, selectedPlan, processedPrice],
+    () => getBagTotalsForSelectedPlan(checkingData, selectedPlan, allCoupons, originalPlan),
+    [checkingData, selectedPlan, allCoupons, originalPlan],
   );
 
   // Display data for plan add-ons (titles, discounts, switch state)
@@ -537,10 +568,7 @@ const useCheckout = () => {
         planType: 'original',
       });
 
-      const accordionList = processedPlan?.featured_info?.map((info) => ({
-        title: info.features[0]?.title || slugToTitle(info.service?.slug),
-        description: info.features[0]?.description,
-      })) || [];
+      const accordionList = processedPlan?.featured_info || [];
 
       let accordionListWithAddOns = accordionList;
       if (addOnsQS) {
@@ -676,7 +704,7 @@ const useCheckout = () => {
     if (pathname === '/renew') return;
     if (!userSelectedPlan || !planData) return;
 
-    const accessToken = getStorageItem('accessToken');
+    const accessToken = getToken();
     // Keep UI stable immediately when switching options from dropdown.
     setSelectedPlan(userSelectedPlan);
 
@@ -810,71 +838,7 @@ const useCheckout = () => {
     };
 
     if (selectedPlan?.isFreeTier) {
-      const financingOptions = suggestedPlans?.financing_options || [];
-      const monthlyPayment = suggestedPlans?.price_per_month;
-      const yearlyPayment = suggestedPlans?.price_per_year;
-
-      let financingText = '';
-
-      if (financingOptions.length > 0) {
-        financingOptions.sort((a, b) => a.months - b.months);
-
-        if (financingOptions.length === 1) {
-          const finalPrice = applyDiscounts(financingOptions[0].monthly_price, discountValues);
-          financingText = t('free_trial_one_payment', {
-            price: finalPrice.toFixed(2),
-            description: selectedPlan.description,
-            currency: currencySymbol,
-          });
-        }
-
-        if (financingOptions.length > 1) {
-          const firstPrice = applyDiscounts(financingOptions[financingOptions.length - 1].monthly_price, discountValues);
-          const lastPrice = applyDiscounts(financingOptions[0].monthly_price, discountValues);
-
-          financingText = t('free_trial_multiple_payments', {
-            description: selectedPlan.description,
-            numPayments: financingOptions[financingOptions.length - 1].how_many_months,
-            firstPrice: firstPrice.toFixed(2),
-            oneTimePrice: lastPrice.toFixed(2),
-            currency: currencySymbol,
-          });
-        }
-      }
-
-      if (selectedPlan?.type === 'FREE') {
-        return t('free_plan');
-      }
-
-      if (financingOptions.length === 0) {
-        if (monthlyPayment) {
-          const finalMonthlyPrice = applyDiscounts(monthlyPayment, discountValues);
-          financingText = t('free_trial_monthly_payment', {
-            description: selectedPlan.description,
-            monthlyPrice: finalMonthlyPrice.toFixed(2),
-            currency: currencySymbol,
-          });
-        }
-
-        if (yearlyPayment && !monthlyPayment) {
-          const finalYearlyPrice = applyDiscounts(yearlyPayment, discountValues);
-          financingText = t('free_trial_yearly_payment', {
-            description: selectedPlan.description,
-            yearlyPrice: finalYearlyPrice.toFixed(2),
-            currency: currencySymbol,
-          });
-        }
-      }
-
-      if (financingOptions.length === 0 && !monthlyPayment && !yearlyPayment) {
-        financingText = selectedPlan?.description;
-      }
-
-      if (discountValues?.length > 0) {
-        financingText += ` ${t('limited_time_offer')}`;
-      }
-
-      return financingText;
+      return '';
     }
 
     if (selectedPlan?.price > 0 || selectedPlan?.price > 0) {
@@ -952,17 +916,18 @@ const useCheckout = () => {
   // STEP 1: GET THE PLAN DATA (first request the user perceives)
   // Renders: plan title, options list (monthly/annual/financing), and benefits accordion.
   useEffect(() => {
-    // If callback URL is provided, set it as the redirect destination
-    if (callbackUrl) {
+    // Callback is for LearnPack-style returns. Never override cohort enrollment:
+    // when a cohort is in the URL, clear redirect so post-payment joins the cohort.
+    if (callbackUrl && !cohortIdFromQuery) {
       setStorageItem('redirect', callbackUrl);
     } else {
       removeStorageItem('redirect');
     }
 
-    if (!isLoadingLocation) {
-      initializePlanData();
-    }
+    // Wait for geolocation so begin_checkout fires once with a ready session/location.
+    if (isLoadingLocation) return;
 
+    initializePlanData();
     reportDatalayer({
       dataLayer: {
         event: 'begin_checkout',
@@ -972,7 +937,7 @@ const useCheckout = () => {
         agent: getBrowserInfo(),
       },
     });
-  }, [router.locale, isLoadingLocation, callbackUrl, pathname]);
+  }, [router.locale, isLoadingLocation, callbackUrl, cohortIdFromQuery, pathname]);
 
   // STEP 1.1: Auto-coupon for plan if available
   // Ensures the discount is applied from the start.
@@ -985,7 +950,7 @@ const useCheckout = () => {
   useEffect(() => {
     if (pathname === '/renew') return;
 
-    const accessToken = getStorageItem('accessToken');
+    const accessToken = getToken();
     if (!planFormated && isAuthenticated) {
       router.push('/pricing');
     }

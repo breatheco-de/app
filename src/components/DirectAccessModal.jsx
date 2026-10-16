@@ -9,7 +9,7 @@ import useStyle from '../hooks/useStyle';
 import useSession from '../hooks/useSession';
 import FieldForm from './Forms/FieldForm';
 import Heading from './Heading';
-import { setStorageItem, toCapitalize } from '../utils';
+import { setStorageItem, toCapitalize, pickConversionInfo } from '../utils';
 import { BREATHECODE_HOST } from '../utils/variables';
 import { log } from '../utils/logging';
 import useCustomToast from '../hooks/useCustomToast';
@@ -53,7 +53,8 @@ function DirectAccessModal({ title, modalIsOpen }) {
       },
       body: JSON.stringify({
         ...allValues,
-        conversion_info: userSession,
+        conversion_info: pickConversionInfo(userSession),
+
       }),
     });
 

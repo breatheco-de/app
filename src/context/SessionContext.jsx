@@ -3,6 +3,7 @@ import React, { createContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { isWindow, getQueryString } from '../utils';
+import { loadUserSession, saveUserSession } from '../utils/sessionCookie';
 import useIPGeolocation from '../hooks/useIPGeolocation';
 import { error } from '../utils/logging';
 
@@ -62,14 +63,14 @@ function SessionProvider({ children }) {
         conversion_url: window.location.pathname,
       };
       setUserSession(session);
-      localStorage.setItem('userSession', JSON.stringify(session));
+      saveUserSession(session);
     }
   };
 
   // validate non authorized and authorized users session information
   const handleUserSession = () => {
     if (isWindow) {
-      const storedSession = JSON.parse(localStorage.getItem('userSession'));
+      const storedSession = loadUserSession() || {};
       const { userAgent } = window.navigator;
       const landingUrl = storedSession?.landing_url && storedSession?.landing_url !== '' ? storedSession?.landing_url : window.location.pathname;
 
@@ -113,7 +114,7 @@ function SessionProvider({ children }) {
         ref,
       };
       setUserSession(session);
-      localStorage.setItem('userSession', JSON.stringify(session));
+      saveUserSession(session);
     }
   };
 
@@ -127,11 +128,12 @@ function SessionProvider({ children }) {
       value={{
         userSession,
         setUserSession: (session) => {
-          localStorage.setItem('userSession', JSON.stringify(session));
-          setUserSession({
+          const newSession = {
             ...userSession,
             ...session,
-          });
+          };
+          saveUserSession(newSession);
+          setUserSession(newSession);
         },
         location,
         isLoadingLocation,

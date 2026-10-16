@@ -85,7 +85,10 @@ function Program({ cohort, onOpenModal, setLateModalProps }) {
 
   const subscription = isAvailableAsSaas && (currentCohort?.plan_financing || currentCohort?.subscription);
 
-  const isBought = subscription?.invoices?.[0]?.amount >= 0;
+  const isBought = Boolean(
+    subscription?.has_invoice
+    || subscription?.invoices?.some((invoice) => invoice.amount >= 0),
+  );
   const availableAsSaasButNotBought = isAvailableAsSaas && !isBought;
   const isFreeTrial = subscription?.status === 'FREE_TRIAL' || availableAsSaasButNotBought;
   const isFinantialStatusLate = cohort.cohort_user.finantial_status === 'LATE' || cohort.cohort_user.educational_status === 'SUSPENDED';

@@ -17,6 +17,7 @@ import {
   slugify,
   includesToLowerCase,
   getStorageItem,
+  getToken,
   sortToNearestTodayDate,
   getBrowserSize,
   calculateDifferenceDays,
@@ -130,7 +131,7 @@ function Dashboard() {
     ? undefined
     : `${slideLeft} 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both`;
 
-  const accessToken = getStorageItem('accessToken');
+  const accessToken = getToken();
   const showGithubWarning = getStorageItem('showGithubWarning');
   const TwentyFourHours = 720;
 
@@ -325,15 +326,15 @@ function Dashboard() {
     try {
       setIsLoadingAssigments(true);
       const cohort = await getCohortData({ cohortSlug });
-      if (cohort) {
-        reportDatalayer({
-          dataLayer: {
-            current_cohort_id: cohort.id,
-            current_cohort_slug: cohort.slug,
-            agent: getBrowserInfo(),
-          },
-        });
-      }
+      if (!cohort) return;
+
+      reportDatalayer({
+        dataLayer: {
+          current_cohort_id: cohort.id,
+          current_cohort_slug: cohort.slug,
+          agent: getBrowserInfo(),
+        },
+      });
       if (certificates.length === 0) {
         const { data } = await bc.certificate().get();
         if (Array.isArray(data) && data.length > 0) {

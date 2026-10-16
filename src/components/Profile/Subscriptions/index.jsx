@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import Head from 'next/head';
 import Text from '../../Text';
 import useStyle from '../../../hooks/useStyle';
-import useSubscriptions from '../../../hooks/useSubscriptions';
+import useSubscriptions, { setSubscriptionsViewOpen } from '../../../hooks/useSubscriptions';
 import profileHandlers from './handlers';
 import { location } from '../../../utils';
 import { CardSkeleton, SimpleSkeleton } from '../../Skeleton';
@@ -26,7 +26,7 @@ const ModalInfo = lazy(() => import('../../ModalInfo'));
 
 function Subscriptions({ cohorts }) {
   const { t } = useTranslation('profile');
-  const { state, isLoading, cancelSubscription } = useSubscriptions();
+  const { state, isLoading, cancelSubscription, initializeSubscriptionsData } = useSubscriptions();
   const { fontColor } = useStyle();
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
   const [servicesModal, setServicesModal] = useState(null);
@@ -48,6 +48,12 @@ function Subscriptions({ cohorts }) {
   const { formatDate } = profileHandlers();
 
   const onOpenCancelSubscription = () => setCancelModalIsOpen(true);
+
+  useEffect(() => {
+    setSubscriptionsViewOpen(true);
+    initializeSubscriptionsData({ includeBilling: true });
+    return () => setSubscriptionsViewOpen(false);
+  }, []);
 
   const getConsumables = async () => {
     try {

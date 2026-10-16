@@ -136,18 +136,18 @@ function FixedBottomCta({
             <Heading size="sm" mt="10px" color="white">
               {eventTitle || tWorkshops('form.title')}
             </Heading>
-            <Text color="white" mb="16px">
-              {eventDescription || tWorkshops('form.description')}
-            </Text>
             <Button
               width="95%"
-              margin="10px auto"
+              margin="10px auto 16px"
               background="white"
               color="gray.700"
               onClick={onClick}
             >
               {eventWording || tWorkshops('reserv-button-text')}
             </Button>
+            <Text color="white" mb="16px">
+              {eventDescription || tWorkshops('form.description')}
+            </Text>
           </>
         )}
       </Box>

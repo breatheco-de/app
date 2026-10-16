@@ -11,13 +11,16 @@ import {
   getNextDateInMonths,
   getQueryString,
   getStorageItem,
+  getToken,
   getBrowserInfo,
   slugToTitle,
   unSlugifyCapitalize,
   parseAddOnIdsFromQuery,
+  pickConversionInfo,
 } from '../utils';
 import { currenciesSymbols, BASE_PLAN, SILENT_CODE } from '../utils/variables';
 import { reportDatalayer } from '../utils/requests';
+import normalizeCheckoutBullets from '../utils/normalizeCheckoutBullets';
 import { usePersistent } from './usePersistent';
 import useSession from './useSession';
 import useAuth from './useAuth';
@@ -47,13 +50,14 @@ const useSignup = () => {
   const redirectedFrom = getStorageItem('redirected-from');
   const couponsQuery = getQueryString('coupons');
   const addOnsSimple = getQueryString('add_ons');
+  const teamSeatsQuery = getQueryString('team_seats');
   const countryCodeQueryString = getQueryString('country_code');
 
   const addOnsIds = parseAddOnIdsFromQuery(addOnsSimple);
 
   const defaultPlan = process.env.BASE_PLAN || 'basic';
   const country_code = countryCodeQueryString || location?.countryShort;
-  const hasSessionToken = Boolean(getQueryString('token') || getStorageItem('accessToken'));
+  const hasSessionToken = Boolean(getQueryString('token') || getToken());
   const canRequestPaymentData = hasSessionToken || isAuthenticated;
 
   const subscriptionStatusDictionary = {
@@ -73,6 +77,18 @@ const useSignup = () => {
   } = state;
 
   const isPaymentIdle = paymentStatus === 'idle';
+
+  const getPaymentSuccessReturnUrl = ({
+    planSlug, cohortId, subscriptionId, planFinancingId,
+  } = {}) => {
+    const params = new URLSearchParams();
+    if (planSlug) params.set('plan', planSlug);
+    if (cohortId) params.set('cohort', cohortId);
+    if (subscriptionId) params.set('subscription_id', subscriptionId);
+    if (planFinancingId) params.set('plan_financing_id', planFinancingId);
+    const qs = params.toString();
+    return `${window.location.origin}/payment-success${qs ? `?${qs}` : ''}`;
+  };
 
   const stepsEnum = {
     CONTACT: 1,
@@ -115,7 +131,6 @@ const useSignup = () => {
     quarterly_payment_description: t('signup:quarterly_payment_description'),
     half_yearly_payment_description: t('signup:half_yearly_payment_description'),
     yearly_payment_description: t('signup:yearly_payment_description'),
-    checkout_featured_info: (planSlug) => t(`signup:custom-plans-pricing.${planSlug}.checkout_features`, {}, { returnObjects: true }),
     financing_description: (price, months, currency) => t('signup:financing_many_months_description', { monthly_price: price, many_months: months, currency }),
     monthly: t('signup:info.monthly'),
     quarterly: t('signup:info.quarterly'),
@@ -125,10 +140,7 @@ const useSignup = () => {
     many_months_payment: (qty) => t('signup:many_months_payment', { qty }),
   };
 
-  const getCheckoutFeaturedInfo = async (planSlug, fallbackFeaturedInfo) => {
-    const customCheckoutFeaturedInfo = translations.checkout_featured_info(planSlug);
-    if (Array.isArray(customCheckoutFeaturedInfo)) return customCheckoutFeaturedInfo;
-
+  const getLegacyCheckoutFeaturedInfo = async (planSlug, fallbackFeaturedInfo) => {
     if (typeof window === 'undefined') return fallbackFeaturedInfo;
 
     const localeToUse = locale || 'en';
@@ -143,6 +155,21 @@ const useSignup = () => {
     } catch (error) {
       return fallbackFeaturedInfo;
     }
+  };
+
+  const resolveCheckoutFeaturedInfo = async (planInfo) => {
+    if (Array.isArray(planInfo?.features) && planInfo.features.length > 0) {
+      return normalizeCheckoutBullets(planInfo.features);
+    }
+
+    const slug = encodeURIComponent(planInfo?.slug);
+    const resp = await bc.payment({ country_code }).getServiceItemsByPlan(slug);
+    if (!resp) {
+      throw new Error('The plan does not exist');
+    }
+
+    const legacyInfo = await getLegacyCheckoutFeaturedInfo(planInfo?.slug, resp?.data);
+    return normalizeCheckoutBullets(legacyInfo);
   };
 
   /**
@@ -165,12 +192,7 @@ const useSignup = () => {
     planType = '',
   } = {}) => {
     try {
-      const slug = encodeURIComponent(data?.slug);
-      const resp = await bc.payment({ country_code }).getServiceItemsByPlan(slug);
-      if (!resp) {
-        throw new Error('The plan does not exist');
-      }
-      const featuredInfo = await getCheckoutFeaturedInfo(data?.slug, resp?.data);
+      const featuredInfo = await resolveCheckoutFeaturedInfo(data);
       const owner = data?.owner;
 
       const existsAmountPerHalf = data?.price_per_half > 0;
@@ -237,6 +259,7 @@ const useSignup = () => {
         period: 'ONE_TIME',
         period_label: textInfo.one_payment,
         plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
+        financing_option_id: item?.id,
         description: translations?.one_payment_description || '',
         how_many_months: item?.how_many_months,
         type: 'PAYMENT',
@@ -322,6 +345,7 @@ const useSignup = () => {
           price: item?.monthly_price,
           priceText: `${currenciesSymbols[item?.currency?.code] || '$'}${item?.monthly_price} x ${item?.how_many_months}`,
           plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
+          financing_option_id: item?.id,
           description: financingOptionsDescription || '',
           period: 'FINANCING',
           period_label: textInfo.label.financing,
@@ -587,7 +611,7 @@ const useSignup = () => {
     }
   };
 
-  const handlePayment = async (data, disableRedirects = false, planContext = null) => {
+  const handlePayment = async (data, paymentMethod = null, disableRedirects = false, planContext = null) => {
     const plan = planContext || selectedPlan;
     const manyInstallmentsExists = plan?.how_many_months > 0 || plan?.period === 'FINANCING';
     const isTtrial = ['FREE', 'TRIAL'].includes(plan?.type);
@@ -601,7 +625,15 @@ const useSignup = () => {
           chosen_period: manyInstallmentsExists ? undefined : (plan?.period || 'HALF'),
           coupons: checkingData?.coupons,
           add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
-          payment_method: 'stripe',
+          ...(plan?.financing_option_id != null ? { financing_option_id: plan.financing_option_id } : {}),
+          ...(paymentMethod?.id != null ? { payment_method_id: paymentMethod.id } : {}),
+          ...(paymentMethod?.provider_settings?.stripe_payment_method_types?.length > 0 ? {
+            return_url: getPaymentSuccessReturnUrl({
+              planSlug: plan?.plan_slug,
+              cohortId: getQueryString('cohort'),
+            }),
+            cancel_url: `${window.location.origin}${router.asPath}`,
+          } : {}),
         };
       }
       return {
@@ -615,12 +647,14 @@ const useSignup = () => {
       const response = await bc.payment().pay({
         country_code,
         ...requests,
-        conversion_info: {
-          ...userSession,
-        },
+        conversion_info: pickConversionInfo(userSession),
       });
 
       const transactionData = response.data;
+
+      if (transactionData?.checkout_url) {
+        return transactionData;
+      }
 
       if (transactionData?.status === 'FULFILLED') {
         setSubscriptionProcess({
@@ -653,12 +687,19 @@ const useSignup = () => {
             plan: plan?.plan_slug || transactionData?.plan?.slug || defaultPlan,
             period_label: plan?.period_label || 'one-time',
             items: adaptedItems,
+            conversion_info: userSession,
             agent: getBrowserInfo(),
           },
         });
 
         if (!disableRedirects) {
-          if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
+          const cohortInCheckout = getQueryString('cohort');
+          // Cohort checkout must stay in the enrollment flow (Summary / payment-success),
+          // not jump to an external callback URL.
+          if (cohortInCheckout) {
+            localStorage.removeItem('redirect');
+            localStorage.removeItem('redirected-from');
+          } else if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
             router.push(redirect || redirectedFrom);
             localStorage.removeItem('redirect');
             localStorage.removeItem('redirected-from');
@@ -695,7 +736,7 @@ const useSignup = () => {
     }
   };
 
-  const handleCoinbasePayment = async () => {
+  const handleCoinbasePayment = async (_data, paymentMethod = null) => {
     const manyInstallmentsExists = selectedPlan?.how_many_months > 0 || selectedPlan?.period === 'FINANCING';
     const isTtrial = ['FREE', 'TRIAL'].includes(selectedPlan?.type);
     if (isTtrial) {
@@ -719,8 +760,12 @@ const useSignup = () => {
           chosen_period: manyInstallmentsExists ? undefined : (selectedPlan?.period || 'HALF'),
           coupons: checkingData?.coupons,
           add_ons: (checkingData?.add_ons || []).filter((ao) => addOnsIds.includes(ao?.id)),
-          payment_method: 'coinbase',
-          return_url: `${window.location.origin}/crypto-payment-success`,
+          ...(selectedPlan?.financing_option_id != null ? { financing_option_id: selectedPlan.financing_option_id } : {}),
+          ...(paymentMethod?.id != null ? { payment_method_id: paymentMethod.id } : {}),
+          return_url: getPaymentSuccessReturnUrl({
+            planSlug: selectedPlan?.plan_slug,
+            cohortId: getQueryString('cohort'),
+          }),
         };
       }
       return null;
@@ -730,9 +775,7 @@ const useSignup = () => {
       const response = await bc.payment().pay({
         country_code,
         ...requestBody,
-        conversion_info: {
-          ...userSession,
-        },
+        conversion_info: pickConversionInfo(userSession),
       });
       return response;
     } catch (error) {
@@ -769,6 +812,7 @@ const useSignup = () => {
     }
 
     const planAddons = Array.isArray(planAddonsOverride) ? planAddonsOverride : selectedPlanAddons;
+    const teamSeats = Number(teamSeatsQuery);
 
     const checkingBody = {
       type: 'PREVIEW',
@@ -777,6 +821,7 @@ const useSignup = () => {
       coupons: couponsQuery ? [couponsQuery] : undefined,
       country_code,
       service_items: addOnsArray,
+      team_seats: Number.isInteger(teamSeats) && teamSeats > 0 ? teamSeats : undefined,
     };
 
     try {
@@ -863,15 +908,19 @@ const useSignup = () => {
     });
   };
 
-  const getPaymentMethods = async (ownerId) => {
+  const getPaymentMethods = async (ownerId, planSlug) => {
     try {
       if (canRequestPaymentData && ownerId) {
         setLoader('paymentMethods', true);
-        const resp = await bc.payment({
+        const query = {
           academy_id: ownerId,
           lang: router.locale,
           country_code,
-        }).getpaymentMethods();
+        };
+        if (planSlug) {
+          query.plan = planSlug;
+        }
+        const resp = await bc.payment(query).getpaymentMethods();
         if (resp.status < 400) {
           setPaymentMethods(resp.data);
         }
@@ -1038,7 +1087,7 @@ const useSignup = () => {
       const respPayment = await handlePayment({
         ...respData,
         installments: respData?.how_many_months,
-      }, disableRedirects);
+      }, null, disableRedirects);
 
       return respPayment;
     } catch (error) {
@@ -1063,7 +1112,7 @@ const useSignup = () => {
       const respPayment = await handlePayment({
         ...checking,
         installments: planForCheckout?.how_many_months,
-      }, true, planForCheckout);
+      }, null, true, planForCheckout);
 
       if (respPayment?.status_code >= 400) {
         setPaymentStatus('error');

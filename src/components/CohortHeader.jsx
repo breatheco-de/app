@@ -36,7 +36,7 @@ import Icon from './Icon';
 import StudentsModal from './StudentsModal';
 import { ProfilesSection } from './SupportSidebar/MentoringConsumables';
 import { BREATHECODE_HOST } from '../utils/variables';
-import { getStorageItem, languageFix } from '../utils';
+import { languageFix } from '../utils';
 import LiveEventWidgetV2 from './LiveEvent/LiveEventWidgetV2';
 import StepsModal from './StepsModal';
 import AttendanceModal from './AttendanceModal';
@@ -194,7 +194,7 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
         status: 'ACTIVE',
         academy: cohortSession?.academy?.id,
       }).getMentor();
-      setMentors(data);
+      setMentors(Array.isArray(data) ? data : (data?.results ?? []));
     } catch (e) {
       console.log(e);
     }
@@ -236,8 +236,8 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
   const kickoffYear = cohortSession?.kickoff_date ? new Date(cohortSession.kickoff_date).getFullYear() : null;
   const showYear = kickoffYear && kickoffYear !== currentYear;
   const todayIs = {
-    en: formatDate(new Date(), "'Today is' do 'of' MMMM"),
-    es: formatDate(new Date(), "'Hoy es' dd 'de' MMMM", { locale: es }),
+    en: formatDate(new Date(), "do 'of' MMMM"),
+    es: formatDate(new Date(), "dd 'de' MMMM", { locale: es }),
   };
   const formatKickoffDate = cohortSession?.kickoff_date ? new Date(cohortSession.kickoff_date) : new Date();
   const kickoffDate = {

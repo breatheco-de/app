@@ -44,20 +44,20 @@ function ProjectsSection({
         completed: syllabusContent.completedLessons,
       });
     }
-    if (syllabusContent?.totalProjects) {
-      contentArray.push({
-        name: 'projects',
-        icon: 'laptop',
-        total: syllabusContent.totalProjects,
-        completed: syllabusContent.completedProjects,
-      });
-    }
     if (syllabusContent?.totalExercises) {
       contentArray.push({
         name: 'exercises',
         icon: 'strength',
         total: syllabusContent.totalExercises,
         completed: syllabusContent.completedExercises,
+      });
+    }
+    if (syllabusContent?.totalProjects) {
+      contentArray.push({
+        name: 'projects',
+        icon: 'laptop',
+        total: syllabusContent.totalProjects,
+        completed: syllabusContent.completedProjects,
       });
     }
     if (syllabusContent?.totalQuizzes) {

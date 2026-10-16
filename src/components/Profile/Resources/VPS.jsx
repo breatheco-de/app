@@ -37,7 +37,6 @@ import {
 } from 'react';
 import Text from '../../Text';
 import Icon from '../../Icon';
-import NextChakraLink from '../../NextChakraLink';
 import VPSRequestModal from './VPSRequestModal';
 import useStyle from '../../../hooks/useStyle';
 import useCustomToast from '../../../hooks/useCustomToast';
@@ -156,7 +155,7 @@ function VpsCard({
   deleteAriaLabel,
   onDeleteClick,
 }) {
-  const { borderColor2, backgroundColor3, hexColor } = useStyle();
+  const { borderColor2, backgroundColor3, hexColor, lightColor } = useStyle();
   const { t } = useTranslation('profile');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const restartModeHoverBg = useColorModeValue('blue.light', 'featuredDark');
@@ -244,11 +243,11 @@ function VpsCard({
             </Flex>
           </Flex>
           {errorMessageText ? (
-            <Text fontSize="xs" color="gray.500" lineHeight="short">
+            <Text fontSize="xs" color={lightColor} lineHeight="short">
               {errorMessageText}
             </Text>
           ) : null}
-          {ipText ? <Text fontSize="sm" color="gray.600">{ipText}</Text> : null}
+          {ipText ? <Text fontSize="sm" color={lightColor}>{ipText}</Text> : null}
         </Box>
         {showDeleteButton ? (
           <Flex alignItems="center" justifyContent="center" height="100%">
@@ -288,8 +287,8 @@ function VpsCard({
           gridGap={{ base: '8px', md: '12px' }}
         >
           <Box flex="1" minWidth={0}>
-            {providerText ? <Text fontSize="sm" color="gray.600">{providerText}</Text> : null}
-            {planText ? <Text fontSize="sm" color="gray.600">{planText}</Text> : null}
+            {providerText ? <Text fontSize="sm" color={lightColor}>{providerText}</Text> : null}
+            {planText ? <Text fontSize="sm" color={lightColor}>{planText}</Text> : null}
           </Box>
           {createdAtText ? (
             <Text
@@ -392,7 +391,7 @@ function VpsCard({
                                 </ChakraText>
                               ) : null}
                             </Flex>
-                            <Text size="xs" color="gray.600" fontWeight="400">
+                            <Text size="xs" color={lightColor} fontWeight="400">
                               {t(`vps.restart.modes.${mode}.description`, {}, { fallback: '' })}
                             </Text>
                           </Box>
@@ -451,7 +450,7 @@ VpsCard.defaultProps = {
 function VPS() {
   const VPS_POLL_INTERVAL_MS = 4000;
   const VPS_POLL_MAX_ATTEMPTS = 20;
-  const { borderColor2, hexColor } = useStyle();
+  const { borderColor2, hexColor, lightColor } = useStyle();
   const { t, lang } = useTranslation('profile');
   const { createToast } = useCustomToast();
   const { statusStyles } = profileHandlers();
@@ -461,6 +460,7 @@ function VPS() {
   const [isLoadingList, setIsLoadingList] = useState(true);
   const [loadListError, setLoadListError] = useState('');
   const [canRequestVps, setCanRequestVps] = useState(false);
+  const [availableConsumables, setAvailableConsumables] = useState(0);
 
   const [credentialsModalOpen, setCredentialsModalOpen] = useState(false);
   const [credentialsLoading, setCredentialsLoading] = useState(false);
@@ -510,6 +510,7 @@ function VPS() {
         if (isMountedRef.current) {
           setVpsList([]);
           setCanRequestVps(false);
+          setAvailableConsumables(0);
           setLoadListError(getProvisioningErrorMessage(res, t('vps.load-error')));
         }
         return { ok: false, results: [] };
@@ -520,6 +521,7 @@ function VPS() {
       if (isMountedRef.current) {
         setVpsList(results);
         setCanRequestVps(payload?.can_request_vps === true);
+        setAvailableConsumables(Number(payload?.available_consumables) || 0);
         setLoadListError('');
       }
       return { ok: true, results };
@@ -527,6 +529,7 @@ function VPS() {
       if (isMountedRef.current) {
         setVpsList([]);
         setCanRequestVps(false);
+        setAvailableConsumables(0);
         setLoadListError(getProvisioningErrorMessage(err?.response ?? err, t('vps.load-error')));
       }
       return { ok: false, results: [] };
@@ -845,7 +848,7 @@ function VPS() {
               <Text fontSize="16px" fontWeight="700">
                 {t('vps.title')}
               </Text>
-              <Text fontSize="14px" color="gray.600">
+              <Text fontSize="14px" color={lightColor}>
                 {t('vps.description')}
               </Text>
             </Box>
@@ -856,7 +859,7 @@ function VPS() {
               fontSize="15px"
               textTransform="uppercase"
               alignSelf={{ base: 'center', md: 'auto' }}
-              title={!canRequestVps ? t('vps.cannot-request') : undefined}
+              title={!canRequestVps ? t('vps.consumables-available', { count: availableConsumables }) : undefined}
               isDisabled={!canRequestVps}
               onClick={openRequestModal}
             >
@@ -878,24 +881,15 @@ function VPS() {
           </Text>
           )}
 
-          {!isLoadingList && !loadListError && vpsList.length === 0 && (
+          {!isLoadingList && !loadListError && (
+          <Text size="md" fontWeight="400" mb={vpsList.length > 0 || canRequestVps ? '16px' : '0'}>
+            {t('vps.consumables-available', { count: availableConsumables })}
+          </Text>
+          )}
+
+          {!isLoadingList && !loadListError && canRequestVps && vpsList.length === 0 && (
           <Text size="md" fontWeight="400">
-            {canRequestVps ? t('vps.no-vps') : t('vps.cannot-request')}
-            {!canRequestVps && (
-              <>
-                {' '}
-                <NextChakraLink
-                  href="/pricing"
-                  color="blue.default"
-                  fontWeight="700"
-                  textDecoration="none"
-                  _hover={{ textDecoration: 'underline' }}
-                >
-                  {t('vps.pricing-page')}
-                </NextChakraLink>
-                .
-              </>
-            )}
+            {t('vps.no-vps')}
           </Text>
           )}
 
@@ -997,7 +991,7 @@ function VPS() {
             {deleteDetailLoading ? (
               <Flex alignItems="center" gap={3} py={1}>
                 <Spinner size="sm" color="blue.default" />
-                <Text size="sm" color="gray.600">{t('vps.delete.loading-detail')}</Text>
+                <Text size="sm" color={lightColor}>{t('vps.delete.loading-detail')}</Text>
               </Flex>
             ) : null}
             {!deleteDetailLoading && deleteDetailError ? (
@@ -1017,7 +1011,7 @@ function VPS() {
             ) : null}
             {!deleteDetailLoading && !deleteDetailError ? (
               <VStack spacing={3} align="stretch">
-                <Text size="sm" color="gray.600">{t('vps.delete.body')}</Text>
+                <Text size="sm" color={lightColor}>{t('vps.delete.body')}</Text>
                 {allowMidCycleRebuild ? (
                   <Box bg="gray.100" p="4" mb="4" borderRadius="md" width="100%">
                     <Flex alignItems="center" gap={3}>
@@ -1082,7 +1076,7 @@ function VPS() {
           <ModalCloseButton />
           <ModalBody display="flex" flexDirection="column" gridGap="12px" py="16px">
             {credentialsLoading && (
-            <Text size="sm" color="gray.600">{t('vps.credentials-modal.loading')}</Text>
+            <Text size="sm" color={lightColor}>{t('vps.credentials-modal.loading')}</Text>
             )}
             {!credentialsLoading && credentialsLoadError && (
             <Text size="sm" color="red.500">{credentialsLoadError}</Text>

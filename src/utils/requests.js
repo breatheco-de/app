@@ -5,10 +5,15 @@ import axios from 'axios';
 import { Redis } from '@upstash/redis';
 import TagManager from 'react-gtm-module';
 import { parseQuerys } from './url';
-import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from './variables';
 import bc from '../services/breathecode';
+import {
+  areWhiteLabelEventsEnabled,
+  buildPublicEventsQueryParams,
+  getWhiteLabelAcademyFeatures,
+} from './whiteLabelEvents';
 import { log } from './logging';
 import { getExtensionName } from './index';
+import { isPrismicEnabled } from './variables';
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
@@ -31,6 +36,11 @@ const reportDatalayer = (payload) => {
 };
 
 const getPrismicPages = async () => {
+  if (!isPrismicEnabled) {
+    log('SITEMAP: Prismic disabled (PRISMIC_ENABLED!=true), skipping pages fetch');
+    return [];
+  }
+
   try {
     // Obtiene el ref más reciente de Prismic
     const masterRefResponse = await fetch(`${PRISMIC_API}`);
@@ -38,14 +48,15 @@ const getPrismicPages = async () => {
     const PRISMIC_REF = masterRefData?.refs?.[0]?.ref;
 
     if (!PRISMIC_REF) {
-      throw new Error('SITEMAP: No PRISMIC_REF found');
+      console.error('SITEMAP: No PRISMIC_REF found');
+      return [];
     }
 
     const response = await fetch(`${PRISMIC_API}/documents/search?ref=${PRISMIC_REF}&type=page&lang=*`);
     const data = await response.json();
 
     log(`🔍 ${data?.results?.length} pages fetched from Prismic`);
-    return data.results;
+    return data.results || [];
   } catch (error) {
     console.error('SITEMAP:', error);
     return [];
@@ -53,7 +64,7 @@ const getPrismicPages = async () => {
 };
 
 const getTechnologyAssets = async (slug) => {
-  const resp = axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset?limit=9000&technologies=${slug}&academy=${WHITE_LABEL_ACADEMY}`)
+  const resp = axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset?limit=9000&technologies=${slug}`)
     .then((res) => res.data.results)
     .catch(() => {
       console.error('SITEMAP: Error fetching Technology Assets');
@@ -90,13 +101,14 @@ const getMktCourses = () => {
 };
 
 const getEvents = async (extraQuerys = {}) => {
-  if (!isWhiteLabelAcademy) {
-    const qs = parseQuerys(extraQuerys, true);
-    const { data } = await axios.get(`${BREATHECODE_HOST}/v1/events/all${qs}`);
+  const features = await getWhiteLabelAcademyFeatures();
+  if (!areWhiteLabelEventsEnabled(features)) return [];
+  const query = buildPublicEventsQueryParams(extraQuerys, features);
+  if (!query) return [];
+  const qs = parseQuerys(query);
+  const { data } = await axios.get(`${BREATHECODE_HOST}/v1/events/all${qs}`);
 
-    return data;
-  }
-  return [];
+  return data;
 };
 
 /**
@@ -113,7 +125,6 @@ const getAsset = async (type = '', extraQuerys = {}, category = '', onlyFirstFet
   const baseQuery = {
     asset_type: type || undefined,
     status: 'PUBLISHED',
-    academy: WHITE_LABEL_ACADEMY,
     expand: 'technologies',
     ...extraQuerys,
   };
