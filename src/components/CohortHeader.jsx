@@ -236,8 +236,8 @@ function Header({ onOpenGithubModal, upcomingEvents, liveClasses }) {
   const kickoffYear = cohortSession?.kickoff_date ? new Date(cohortSession.kickoff_date).getFullYear() : null;
   const showYear = kickoffYear && kickoffYear !== currentYear;
   const todayIs = {
-    en: formatDate(new Date(), "'Today is' do 'of' MMMM"),
-    es: formatDate(new Date(), "'Hoy es' dd 'de' MMMM", { locale: es }),
+    en: formatDate(new Date(), "do 'of' MMMM"),
+    es: formatDate(new Date(), "dd 'de' MMMM", { locale: es }),
   };
   const formatKickoffDate = cohortSession?.kickoff_date ? new Date(cohortSession.kickoff_date) : new Date();
   const kickoffDate = {

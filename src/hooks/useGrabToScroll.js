@@ -1,86 +1,80 @@
 /* eslint-disable no-unsafe-optional-chaining */
-import { useEffect, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 const useGrabToScroll = ({ ref, vertical, horizontal }) => {
   const [isScrollable, setIsScrollable] = useState(false);
-  const [isContentScrollable, setIsContentScrollable] = useState(false);
-  let position = { top: 0, left: 0, x: 0, y: 0 };
-  const container = ref.current;
-  const rect = container?.getBoundingClientRect();
-  const isVerticalScrollable = container?.scrollHeight > rect?.height;
-  const isHorizontalScrollable = container?.scrollWidth > rect?.width;
+  const position = useRef({ top: 0, left: 0, x: 0, y: 0 });
+  const axis = useRef({ vertical, horizontal });
+  axis.current = { vertical, horizontal };
 
-  // Detect if ref is scrollable
-  useEffect(() => {
-    const scrollable = isVerticalScrollable || isHorizontalScrollable;
-    setIsScrollable(scrollable);
-    setIsContentScrollable(scrollable);
-  }, [isVerticalScrollable, isHorizontalScrollable]);
+  const measure = useCallback(() => {
+    const container = ref.current;
+    if (!container) return { vertical: false, horizontal: false, content: false };
+    const rect = container.getBoundingClientRect();
+    const isVerticalScrollable = container.scrollHeight > rect.height + 1;
+    const isHorizontalScrollable = container.scrollWidth > rect.width + 1;
+    return {
+      vertical: Boolean(axis.current.vertical && isVerticalScrollable),
+      horizontal: Boolean(axis.current.horizontal && isHorizontalScrollable),
+      content: isVerticalScrollable || isHorizontalScrollable,
+    };
+  }, [ref]);
 
-  if (typeof document !== 'undefined') {
-    const mouseMoveHandler = (e) => {
-      // How far the mouse has been moved
-      const dx = e.clientX - position.x;
-      const dy = e.clientY - position.y;
+  const grabToScroll = useCallback((e) => {
+    const container = ref.current;
+    if (!container?.style || typeof document === 'undefined') return;
+    const flags = measure();
+    if (!flags.content) {
+      container.style.cursor = 'default';
+      container.style.userSelect = 'none';
+      return;
+    }
 
-      // If vertical scroll has reached the end
-      if (vertical && isVerticalScrollable) {
-        container.scrollTop = position.top - dy;
-        if (container.scrollTop <= (container?.scrollHeight - (rect.height + 1))) {
-          setIsScrollable(true);
-        } else {
-          setIsScrollable(false);
-        }
+    container.style.cursor = 'grabbing';
+    container.style.userSelect = 'none';
+    position.current = {
+      left: container.scrollLeft,
+      top: container.scrollTop,
+      x: e.clientX,
+      y: e.clientY,
+    };
+
+    const mouseMoveHandler = (event) => {
+      const el = ref.current;
+      if (!el) return;
+      const dx = event.clientX - position.current.x;
+      const dy = event.clientY - position.current.y;
+      const rect = el.getBoundingClientRect();
+      const live = measure();
+
+      if (live.vertical) {
+        el.scrollTop = position.current.top - dy;
+        const atEnd = el.scrollTop > (el.scrollHeight - rect.height - 1);
+        setIsScrollable(!atEnd);
       }
-
-      // If horizontal scroll has reached the end
-      if (horizontal && isHorizontalScrollable) {
-        container.scrollLeft = position.left - dx;
-        if (container.scrollLeft <= (container?.scrollWidth - (rect.width + 1))) {
-          setIsScrollable(true);
-        } else {
-          setIsScrollable(false);
-        }
+      if (live.horizontal) {
+        el.scrollLeft = position.current.left - dx;
+        const remaining = el.scrollWidth - el.scrollLeft - rect.width;
+        setIsScrollable(remaining > 1);
       }
     };
     const mouseUpHandler = () => {
       document.removeEventListener('mousemove', mouseMoveHandler);
       document.removeEventListener('mouseup', mouseUpHandler);
-
-      if (container.style) {
-        container.style.cursor = 'grab';
-        container.style.removeProperty('user-select');
+      document.removeEventListener('mouseleave', mouseUpHandler);
+      const el = ref.current;
+      if (el?.style) {
+        el.style.cursor = 'grab';
+        el.style.removeProperty('user-select');
       }
     };
-    const grabToScroll = (e) => {
-      if (container?.style) {
-        if (isContentScrollable) {
-          container.style.cursor = 'grabbing';
-          container.style.userSelect = 'none';
-          position = {
-            // The current scroll
-            left: container.scrollLeft,
-            top: container.scrollTop,
-            // Get the current mouse position
-            x: e.clientX,
-            y: e.clientY,
-          };
 
-          document.addEventListener('mousemove', mouseMoveHandler);
-          document.addEventListener('mouseup', mouseUpHandler);
-          document.addEventListener('mouseleave', mouseUpHandler);
-        } else {
-          container.style.cursor = 'default';
-          container.style.userSelect = 'none';
-        }
-      }
-    };
-    return { grabToScroll, isScrollable };
-  }
-  return {
-    grabToScroll: () => {},
-    isScrollable,
-  };
+    document.addEventListener('mousemove', mouseMoveHandler);
+    document.addEventListener('mouseup', mouseUpHandler);
+    document.addEventListener('mouseleave', mouseUpHandler);
+  }, [measure, ref]);
+
+  return { grabToScroll, isScrollable };
 };
 
 export default useGrabToScroll;

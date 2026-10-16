@@ -71,6 +71,7 @@ function ProgramCard({
   syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
   width, assistants, teacher, handleChoose, isHiddenOnPrework, isAvailableAsSaas,
   subscriptionStatus, subscription, isMarketingCourse, iconLink, bullets, background, bulletsBackground, isFinantialStatusLate, isLoadingPageContent,
+  marketingButtonText,
 }) {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
@@ -534,7 +535,7 @@ function ProgramCard({
                 onClick={handleChoose}
                 isLoading={isLoadingPageContent}
               >
-                {t('learn-more')}
+                {marketingButtonText || t('learn-more')}
               </Button>
             </>
           ) : (
@@ -584,6 +585,7 @@ ProgramCard.propTypes = {
   bulletsBackground: PropTypes.string,
   isLoadingPageContent: PropTypes.bool,
   isFinantialStatusLate: PropTypes.bool,
+  marketingButtonText: PropTypes.string,
 };
 
 ProgramCard.defaultProps = {
@@ -613,6 +615,7 @@ ProgramCard.defaultProps = {
   bulletsBackground: '',
   isLoadingPageContent: false,
   isFinantialStatusLate: false,
+  marketingButtonText: null,
 };
 
 export default memo(ProgramCard);

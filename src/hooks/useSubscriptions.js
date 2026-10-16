@@ -5,6 +5,12 @@ import bc from '../services/breathecode';
 import useCustomToast from './useCustomToast';
 import { toCapitalize, unSlugify } from '../utils';
 
+let subscriptionsViewOpen = false;
+
+export const setSubscriptionsViewOpen = (open) => {
+  subscriptionsViewOpen = open;
+};
+
 const useSubscriptions = () => {
   const { state, setAreSubscriptionsFetched, setSubscriptionsLoading, setSubscriptions, setCancelSubscription, setReactivateSubscription } = subscriptionAction();
   const { subscriptions } = state;
@@ -53,19 +59,22 @@ const useSubscriptions = () => {
     }
   };
 
-  const getSubscriptions = async () => {
-    const { data } = await bc.payment({
+  const getSubscriptions = async ({ includeBilling = false } = {}) => {
+    const query = {
       status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED,ERROR',
-    }).subscriptions();
+    };
+    if (includeBilling) query.include_billing = 'true';
+
+    const { data } = await bc.payment(query).subscriptions();
     return data;
   };
 
-  const initializeSubscriptionsData = async () => {
+  const initializeSubscriptionsData = async ({ includeBilling = false } = {}) => {
     let result;
     try {
       setSubscriptionsLoading(true);
 
-      const data = await getSubscriptions();
+      const data = await getSubscriptions({ includeBilling });
       const planOfferCache = {};
 
       const manageCachedPlanOffer = async ({ slug }) => {
@@ -92,7 +101,9 @@ const useSubscriptions = () => {
         plan_financings: planFinancingsDataWithPlanOffer,
       };
 
-      setSubscriptions(result);
+      if (includeBilling || !subscriptionsViewOpen) {
+        setSubscriptions(result);
+      }
     } catch (error) {
       result = error;
     } finally {
