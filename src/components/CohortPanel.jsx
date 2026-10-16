@@ -241,7 +241,7 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
     };
   };
 
-  const certfToken = certificate?.preview_url?.split('/')?.pop();
+  const certfToken = (certificate?.preview_url || certificate?.pdf_url)?.split('/')?.pop();
 
   const { socials, shareLink: certfLink } = useSocialShare({
     info: certfToken,
@@ -257,6 +257,15 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
   const showFeedback = (e) => {
     e.stopPropagation();
     handleOpenReviewModal({ defaultStage: stages.pending_activities, cohortSlug: cohort.slug, fixedStage: true });
+  };
+
+  const openCertificate = (e) => {
+    e.stopPropagation();
+    if (!certificate?.preview_url && certificate?.pdf_url) {
+      window.open(certificate.pdf_url, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    onCertificateModalOpen();
   };
 
   useEffect(() => {
@@ -375,7 +384,7 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
                 </Box>
                 <Box mt={isGraduated && '10px'} width="100%" display="flex">
                   {isGraduated && (
-                    <Box onClick={onCertificateModalOpen} justifyContent="center" display="flex" flexDirection="column" gap="10px" background={colorVariations[colorMode]?.mode4 || hexColor.lightColor} borderRadius="4px" padding="8px 16px">
+                    <Box onClick={openCertificate} cursor="pointer" justifyContent="center" display="flex" flexDirection="column" gap="10px" background={colorVariations[colorMode]?.mode4 || hexColor.lightColor} borderRadius="4px" padding="8px 16px">
                       <Icon
                         icon="certificate-2"
                         props={{
@@ -621,9 +630,10 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
         <ModalContent>
           <ModalBody padding="10px">
             <VStack spacing={4} align="stretch" flexDirection="column" borderRadius="8px">
-              {certificate?.preview_url ? (
+              {certificate?.preview_url && (
                 <Image src={certificate?.preview_url} width="100%" height="400px" border="none" flexGrow={1} title={t('certificate-preview-title')} />
-              ) : (
+              )}
+              {!certificate?.preview_url && (
                 <Text>{t('certificate-preview-unavailable')}</Text>
               )}
               <Box display="flex" flexDirection="column" gap="10px">
