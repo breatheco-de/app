@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
   Box,
@@ -48,7 +48,7 @@ function extractAssignmentsFromSyllabusDays(json) {
   return [].concat(...chunks);
 }
 
-/** Varias llamadas getStudentsWithTasks (una por micro); devuelve tareas unificadas por user.id */
+/** Une filas de alumnos (una o varias páginas) y agrupa las tareas por user.id */
 function mergeTasksFromMicroStudentPages(microResultsArrays) {
   const tasksByUserId = new Map();
   const userSeenInMicro = new Set();
@@ -74,6 +74,51 @@ function mergeTasksFromMicroStudentPages(microResultsArrays) {
 
 /** Límites por micro al listar proyectos en una macro (misma API que cohort simple, sin backend nuevo). */
 const MACRO_COHORT_TASKS_LIMIT_PER_MICRO = 500;
+const MACRO_COHORT_TASKS_CONCURRENCY = 2;
+
+let macroTaskSlotsInUse = 0;
+const macroTaskSlotWaiters = [];
+const macroTaskInflight = new Map();
+
+function acquireMacroTaskSlot() {
+  if (macroTaskSlotsInUse < MACRO_COHORT_TASKS_CONCURRENCY) {
+    macroTaskSlotsInUse += 1;
+    return Promise.resolve();
+  }
+  return new Promise((resolve) => {
+    macroTaskSlotWaiters.push(resolve);
+  });
+}
+
+function releaseMacroTaskSlot() {
+  const next = macroTaskSlotWaiters.shift();
+  if (next) {
+    next();
+    return;
+  }
+  macroTaskSlotsInUse -= 1;
+}
+
+async function mapWithConcurrency(items, concurrency, mapper, shouldAbort) {
+  const results = new Array(items.length);
+  let cursor = 0;
+  const workerCount = Math.min(concurrency, items.length);
+
+  const worker = async () => {
+    while (cursor < items.length) {
+      if (shouldAbort?.()) return;
+      const index = cursor;
+      cursor += 1;
+      if (shouldAbort?.()) return;
+      // El await es el tope: el worker no toma el siguiente micro hasta que este termina.
+      // eslint-disable-next-line no-await-in-loop
+      results[index] = await mapper(items[index]);
+    }
+  };
+
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
+  return results;
+}
 
 /** Une listas de tareas de varias cohortes y ordena como la vista de proyectos (pendientes de revisión primero). */
 /** Next.js puede devolver query params duplicados como array. */
@@ -202,10 +247,20 @@ function Assignments() {
   const [finalProjects, setFinalProjects] = useState([]);
 
   const [selectedCohort, setSelectedCohort] = useState(null);
-  const [loadStatus, setLoadStatus] = useState({
+  const [studentLoadStatus, setStudentLoadStatus] = useState({
     loading: true,
     status: 'loading',
   });
+  const [projectLoadStatus, setProjectLoadStatus] = useState({
+    loading: true,
+    status: 'loading',
+  });
+  const [finalProjectLoadStatus, setFinalProjectLoadStatus] = useState({
+    loading: true,
+    status: 'loading',
+  });
+  const macroTaskCursorRef = useRef({});
+  const macroFetchGenerationRef = useRef(0);
 
   const reverseStatus = (status) => {
     if (status === 'delivered') return { task_status: 'DONE', revision_status: 'PENDING' };
@@ -217,7 +272,7 @@ function Assignments() {
   };
 
   const getFilterAssignments = (cohortId, academyId, limit = 20, offset = 0, appendMore = false) => {
-    setLoadStatus({ loading: true, status: 'loading' });
+    setProjectLoadStatus({ loading: true, status: 'loading' });
 
     const microsAll = sortMicroCohortsLikeDashboard(
       selectedCohort?.micro_cohorts || [],
@@ -254,26 +309,101 @@ function Assignments() {
     };
 
     if (isMacroWithMicros) {
-      if (appendMore) {
-        setLoadStatus({ loading: false, status: 'idle' });
+      const generation = appendMore
+        ? macroFetchGenerationRef.current
+        : macroFetchGenerationRef.current + 1;
+      if (!appendMore) macroFetchGenerationRef.current = generation;
+      const isStale = () => macroFetchGenerationRef.current !== generation;
+
+      const previousCursors = appendMore ? macroTaskCursorRef.current : {};
+      const seenMicroKeys = new Set();
+      const pendingMicros = microsForFetch.filter((micro) => {
+        const key = String(micro.id ?? micro.slug);
+        if (seenMicroKeys.has(key)) return false;
+        seenMicroKeys.add(key);
+        if (!appendMore) return true;
+        const cursor = previousCursors[key];
+        if (!cursor) return true;
+        return cursor.offset < cursor.count;
+      });
+
+      if (pendingMicros.length === 0) {
+        setContextState({
+          allTasks: contextState.allTasks,
+          tasksCount: contextState.allTasks.length,
+        });
+        setProjectLoadStatus({ loading: false, status: 'idle' });
         return;
       }
-      Promise.all(
-        microsForFetch.map((micro) => bc.assignments(assignmentQuery(MACRO_COHORT_TASKS_LIMIT_PER_MICRO, 0))
-          .getCohortAssignments({ id: micro.id ?? micro.slug, academy: academyId })
-          .then((projectList) => projectList.data || {})
-          .catch(() => ({ results: [], count: 0 }))),
-      )
-        .then((dataList) => {
-          const arrays = dataList.map((d) => d.results || []);
-          const merged = mergeAndSortCohortProjectTasks(arrays);
+
+      (async () => {
+        try {
+          const dataList = await mapWithConcurrency(
+            pendingMicros,
+            MACRO_COHORT_TASKS_CONCURRENCY,
+            async (micro) => {
+              if (isStale()) return null;
+              const key = String(micro.id ?? micro.slug);
+              const microOffset = appendMore ? (previousCursors[key]?.offset || 0) : 0;
+              const taskQuery = assignmentQuery(MACRO_COHORT_TASKS_LIMIT_PER_MICRO, microOffset);
+              const requestKey = `${micro.id ?? micro.slug}|${JSON.stringify(taskQuery)}`;
+              const existing = macroTaskInflight.get(requestKey);
+              if (existing) return existing;
+
+              await acquireMacroTaskSlot();
+              try {
+                if (isStale()) return null;
+                const alreadyStarted = macroTaskInflight.get(requestKey);
+                if (alreadyStarted) return alreadyStarted;
+
+                const request = bc.assignments(taskQuery)
+                  .getCohortAssignments({ id: micro.id ?? micro.slug, academy: academyId })
+                  .then((projectList) => ({ key, offset: microOffset, data: projectList.data || {} }))
+                  .catch(() => ({ key, offset: microOffset, data: { results: [], count: 0 } }))
+                  .finally(() => {
+                    macroTaskInflight.delete(requestKey);
+                  });
+                macroTaskInflight.set(requestKey, request);
+                return await request;
+              } finally {
+                releaseMacroTaskSlot();
+              }
+            },
+            isStale,
+          );
+
+          if (isStale()) return;
+
+          const nextCursors = appendMore ? { ...previousCursors } : {};
+          dataList.filter(Boolean).forEach(({ key, offset: fetchedOffset, data }) => {
+            const fetched = (data.results || []).length;
+            const count = data.count ?? 0;
+            nextCursors[key] = {
+              offset: fetched === 0 ? count : fetchedOffset + fetched,
+              count,
+            };
+          });
+          macroTaskCursorRef.current = nextCursors;
+
+          const pageTasks = mergeAndSortCohortProjectTasks(
+            dataList.filter(Boolean).map(({ data }) => data.results || []),
+          );
+          const merged = appendMore
+            ? mergeAndSortCohortProjectTasks([contextState.allTasks, pageTasks])
+            : pageTasks;
+          const tasksCount = Object.values(nextCursors)
+            .reduce((sum, cursor) => sum + (cursor.count || 0), 0);
+
           setContextState({
             allTasks: merged,
-            tasksCount: merged.length,
+            tasksCount,
           });
-        })
-        .catch(onFetchError)
-        .finally(() => setLoadStatus({ loading: false, status: 'idle' }));
+        } catch (error) {
+          if (!isStale()) onFetchError(error);
+        } finally {
+          if (!isStale()) setProjectLoadStatus({ loading: false, status: 'idle' });
+        }
+      })();
       return;
     }
 
@@ -288,7 +418,7 @@ function Assignments() {
         });
       })
       .catch(onFetchError)
-      .finally(() => setLoadStatus({ loading: false, status: 'idle' }));
+      .finally(() => setProjectLoadStatus({ loading: false, status: 'idle' }));
   };
 
   useEffect(() => {
@@ -436,17 +566,9 @@ function Assignments() {
   }, [selectedCohort]);
 
   const loadStudents = async (limit = 20, offset = 0, appendMore = false) => {
-    setLoadStatus({ loading: true, status: 'loading' });
+    setStudentLoadStatus({ loading: true, status: 'loading' });
     const academyId = selectedCohort.academy.id || academy;
     const { slug } = selectedCohort;
-
-    const admissionsBase = {
-      limit,
-      offset,
-      sort,
-      users: query.student,
-      educational_status: educationalLabel.length > 0 ? educationalLabel.map((val) => val.value).join(',').toUpperCase() : undefined,
-    };
 
     const sortedMicros = sortMicroCohortsLikeDashboard(
       selectedCohort.micro_cohorts || [],
@@ -454,42 +576,70 @@ function Assignments() {
     );
     const isMacro = sortedMicros.length > 0;
 
+    const admissionsBase = {
+      limit,
+      offset,
+      sort,
+      users: query.student,
+      educational_status: educationalLabel.length > 0 ? educationalLabel.map((val) => val.value).join(',').toUpperCase() : undefined,
+      ...(isMacro ? { completion: false } : {}),
+    };
+
+    const withTaskList = (list) => (list || []).map((row) => ({
+      ...row,
+      tasks: Array.isArray(row.tasks) ? row.tasks : [],
+    }));
+
     try {
       const res = await bc.admissions(admissionsBase).getStudentsWithTasks(slug, academyId);
-      let rows = res?.data?.results || [];
-
-      if (isMacro && rows.length > 0) {
-        const userIdsCsv = rows.map((r) => r.user.id).filter((id) => id != null).join(',');
-        const edu = admissionsBase.educational_status;
-
-        const microPages = await Promise.all(
-          sortedMicros.map((micro) => bc.admissions({
-            limit: 2000,
-            offset: 0,
-            sort,
-            users: userIdsCsv,
-            educational_status: edu,
-          })
-            .getStudentsWithTasks(micro.slug, academyId)
-            .then((r) => r?.data?.results || [])
-            .catch(() => [])),
-        );
-
-        const { tasksByUserId, userSeenInMicro } = mergeTasksFromMicroStudentPages(microPages);
-
-        rows = rows.map((row) => {
-          const uid = row.user?.id;
-          if (uid == null) return row;
-          if (!userSeenInMicro.has(uid)) return row;
-          return {
-            ...row,
-            tasks: tasksByUserId.get(uid) || [],
-          };
-        });
-      }
+      let rows = withTaskList(res?.data?.results);
 
       setCurrentStudentList((prev) => (appendMore ? [...prev, ...rows] : rows));
       setCurrentStudentCount(res?.data?.count ?? 0);
+      setStudentLoadStatus({ loading: false, status: 'idle' });
+
+      if (isMacro && rows.length > 0) {
+        try {
+          const userIdsCsv = rows.map((r) => r.user.id).filter((id) => id != null).join(',');
+          const edu = admissionsBase.educational_status;
+          const microSlugs = sortedMicros.map((micro) => micro.slug).filter(Boolean).join(',');
+
+          const tasksResponse = await bc.admissions({
+            limit: 2000,
+            offset: 0,
+            users: userIdsCsv,
+            educational_status: edu,
+            completion: false,
+          }).getStudentsWithTasks(microSlugs, academyId);
+
+          const { tasksByUserId, userSeenInMicro } = mergeTasksFromMicroStudentPages([
+            tasksResponse?.data?.results || [],
+          ]);
+
+          rows = rows.map((row) => {
+            const uid = row.user?.id;
+            if (uid == null || !userSeenInMicro.has(uid)) return row;
+            return {
+              ...row,
+              tasks: tasksByUserId.get(uid) || [],
+            };
+          });
+
+          setCurrentStudentList((prev) => {
+            if (!appendMore) return rows;
+            const start = Math.max(0, prev.length - rows.length);
+            return [...prev.slice(0, start), ...rows];
+          });
+        } catch {
+          createToast({
+            position: 'top',
+            title: t('alert-message:error-fetching-students'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
+        }
+      }
     } catch {
       createToast({
         position: 'top',
@@ -498,14 +648,13 @@ function Assignments() {
         duration: 7000,
         isClosable: true,
       });
-    } finally {
-      setLoadStatus({ loading: false, status: 'idle' });
+      setStudentLoadStatus({ loading: false, status: 'idle' });
     }
   };
 
   const loadFinalProjects = async () => {
     try {
-      setLoadStatus({ loading: true, status: 'loading' });
+      setFinalProjectLoadStatus({ loading: true, status: 'loading' });
       const resp = await bc.assignments().getFinalProjects(selectedCohort?.id);
       setFinalProjects(resp.data);
     } catch (e) {
@@ -517,7 +666,7 @@ function Assignments() {
         isClosable: true,
       });
     } finally {
-      setLoadStatus({ loading: false, status: 'idle' });
+      setFinalProjectLoadStatus({ loading: false, status: 'idle' });
     }
   };
 
@@ -571,7 +720,15 @@ function Assignments() {
     }
   }, [
     selectedCohort,
-    router.query,
+    query.academy,
+    query.student,
+    query.project,
+    query.status,
+    query.task_type,
+    query.educational_status,
+    query.micro_cohort,
+    query.sort,
+    query.host,
   ]);
 
   const closeFilterModal = () => setOpenFilter(false);
@@ -1052,7 +1209,7 @@ function Assignments() {
         {currentView === 0 && (
           <StudentAssignments
             currentStudentList={currentStudentList}
-            loadStatus={loadStatus}
+            loadStatus={studentLoadStatus}
             selectedCohort={selectedCohort}
             syllabusData={syllabusData}
             updpateAssignment={updpateAssignment}
@@ -1069,7 +1226,7 @@ function Assignments() {
         {currentView === 1 && (
           <Projects
             updpateAssignment={updpateAssignment}
-            loadStatus={loadStatus}
+            loadStatus={projectLoadStatus}
             syllabusData={syllabusData}
             getFilterAssignments={getFilterAssignments}
             selectedCohort={selectedCohort}
@@ -1078,7 +1235,7 @@ function Assignments() {
         {currentView === 2 && (
           <FinalProjects
             finalProjects={finalProjects}
-            loadStatus={loadStatus}
+            loadStatus={finalProjectLoadStatus}
             updpateProject={updateFinalProject}
           />
         )}
