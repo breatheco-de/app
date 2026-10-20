@@ -1,4 +1,4 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, Tooltip } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import Image from 'next/image';
@@ -28,9 +28,9 @@ const getIntervalDurationTranslation = (date) => {
   return null;
 };
 
-function HeadInfo({ technologies, duration, type, date }) {
+function HeadInfo({ technologies, duration, type, date, series }) {
   const { t } = useTranslation('common');
-  const { backgroundColor, lightColor, featuredLight } = useStyle();
+  const { backgroundColor, lightColor, featuredLight, hexColor } = useStyle();
   const startedButNotEnded = date?.started && date?.ended === false;
   const intervalDurationText = getIntervalDurationTranslation(date);
   const existsDuration = intervalDurationText || duration;
@@ -38,9 +38,25 @@ function HeadInfo({ technologies, duration, type, date }) {
 
   return (
     <Flex minHeight="24px" alignItems="center" justifyContent="space-between" width="100%">
-      {technologies?.length > 0 ? (
+      {(technologies?.length > 0 || series?.total >= 2) ? (
         <Flex alignItems="center" gridGap="8px">
-          {technologies.filter((tech) => tech.icon_url).map((tech) => {
+          {isWorkshop && series?.total >= 2 && (
+            <Tooltip label={t('workshops:event-group.series', { count: series.total })} placement="top">
+              <Box
+                width="fit-content"
+                borderRadius="full"
+                background={hexColor.greenLight}
+                color="white"
+                fontSize="12px"
+                fontWeight={700}
+                lineHeight="1"
+                padding="5.5px 10px"
+              >
+                {t('workshops:event-group.day', { day: series.index })}
+              </Box>
+            </Tooltip>
+          )}
+          {(technologies || []).filter((tech) => tech.icon_url).map((tech) => {
             if (tech?.icon_url) {
               return (
                 <Image src={tech?.icon_url} width={20} height={20} />
@@ -100,10 +116,15 @@ HeadInfo.propTypes = {
   duration: PropTypes.number,
   type: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
+  series: PropTypes.shape({
+    index: PropTypes.number,
+    total: PropTypes.number,
+  }),
 };
 HeadInfo.defaultProps = {
   technologies: [],
   duration: null,
+  series: null,
 };
 
 export default HeadInfo;

@@ -61,6 +61,10 @@
   "join-workshop": "Regístrarse al workshop",
   "join": "Unirse ahora",
   "event-finished": "Evento finalizado",
+  "event-group": {
+    "day": "Día {{day}}",
+    "series": "Este workshop forma parte de una serie de {{count}} sesiones."
+  },
   "checkin-modal": {
     "title": "Gracias por inscribirte en nuestro workshop, ahora es el momento de prepararte.",
     "sub-title": "Aprovecha al máximo este workshop",
@@ -71,7 +75,8 @@
       "Practica de forma interactiva gracias a Learnpack y nuestro mentor de IA"
     ],
     "join-conversation": "Unirse a la conversación",
-    "conversation-link": "https://chat.whatsapp.com/K39ELB5TIK63r4INTBd7SG"
+    "conversation-link": "https://chat.whatsapp.com/K39ELB5TIK63r4INTBd7SG",
+    "group-registered": "Este workshop forma parte de una serie de {{count}} sesiones, así que quedaste inscrito en las sesiones que siguen abiertas."
   },
   "no-consumables": {
     "description": "Te has quedado sin acceso a workshops, pero no te preocupes, puedes conseguir más con unos pocos clics.",

@@ -126,6 +126,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
         date={date}
         duration={data?.duration}
         type={type}
+        series={isWorkshop ? data?.eventGroupSeries : null}
       />
       <Flex flexDirection="column" gridGap="10px">
         <Heading as="h3" size="18px" lineHeight="normal">

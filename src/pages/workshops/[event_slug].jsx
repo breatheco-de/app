@@ -1,5 +1,5 @@
 import {
-  Box, Button, Grid, useColorModeValue, Image, Avatar, Skeleton, Flex, Portal, IconButton,
+  Box, Button, Grid, useColorModeValue, Image, Avatar, Skeleton, Flex, Portal, IconButton, Tooltip,
 } from '@chakra-ui/react';
 import { useEffect, useState, useContext, useRef } from 'react';
 import { intervalToDuration, format } from 'date-fns';
@@ -47,6 +47,7 @@ import {
   withSafeStaticPaths,
   buildLocalePaths,
 } from '../../utils/staticGeneration';
+import { pickGroupRepresentative, seriesPosition } from '../../utils/eventGroups';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -67,6 +68,10 @@ const assetTypeDict = {
   PROJECT: 'interactive-coding-tutorial',
   EXERCISE: 'interactive-exercise',
 };
+
+const checkinErrorDetail = (resp, fallback) => (
+  typeof resp?.data?.detail === 'string' && resp.data.detail.trim() ? resp.data.detail : fallback
+);
 
 export const getStaticPaths = async ({ locales }) => withSafeStaticPaths(async () => {
   const data = await fetchEventsForStaticGeneration();
@@ -122,6 +127,28 @@ export const getStaticProps = async ({ params, locale }) => {
       revalidate: 60,
     };
   }
+
+  let eventGroupSeries = null;
+  if (data.event_group) {
+    const listResp = await bc.events({ all_time: true }).allEvents();
+    const list = Array.isArray(listResp?.data) ? listResp.data : [];
+    const siblings = list.filter((item) => item?.event_group === data.event_group);
+    const groupEvents = siblings.some((item) => item?.slug === data.slug) ? siblings : [data, ...siblings];
+    const chosen = pickGroupRepresentative(groupEvents);
+    eventGroupSeries = seriesPosition(groupEvents, data);
+    if (chosen?.slug && chosen.slug !== data.slug) {
+      const destination = locale === 'es' ? `/es/workshops/${chosen.slug}` : `/workshops/${chosen.slug}`;
+      return {
+        redirect: {
+          destination,
+          permanent: false,
+          locale: false,
+        },
+        revalidate: 60,
+      };
+    }
+  }
+
   const lang = (data?.lang === 'us' || data?.lang === null) ? 'en' : data?.lang;
 
   const translationArray = [
@@ -170,7 +197,7 @@ export const getStaticProps = async ({ params, locale }) => {
       },
       translations: translationArray,
       disableLangSwitcher: true,
-      eventData: data,
+      eventData: eventGroupSeries ? { ...data, eventGroupSeries } : data,
       asset,
     },
     revalidate: isEventFinished ? false : 5,
@@ -196,6 +223,7 @@ function Workshop({ eventData, asset }) {
   const [assetData, setAssetData] = useState(asset);
   const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
   const [isCheckinModalOpen, setIsCheckinModalOpen] = useState(false);
+  const [joinAfterCheckin, setJoinAfterCheckin] = useState('');
   const [randomImage, setRandomImage] = useState(arrayOfImages[0]);
   const accessToken = getToken();
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
@@ -227,7 +255,9 @@ function Workshop({ eventData, asset }) {
       const assetResp = await bc.registry().getAsset(data?.asset_slug);
       setAssetData(assetResp?.data);
     }
-    setEvent(data);
+    setEvent(eventData?.eventGroupSeries
+      ? { ...data, eventGroupSeries: eventData.eventGroupSeries }
+      : data);
   };
 
   useEffect(() => {
@@ -273,6 +303,29 @@ function Workshop({ eventData, asset }) {
         .catch(() => { });
     }
   }, [eventData]);
+
+  useEffect(() => {
+    if (!event?.event_group || !event?.slug || event?.eventGroupSeries?.total >= 2) return undefined;
+
+    let cancelled = false;
+    const { event_group: eventGroup, slug } = event;
+
+    const loadSeries = async () => {
+      const listResp = await bc.events({ all_time: true }).allEvents();
+      const list = Array.isArray(listResp?.data) ? listResp.data : [];
+      const siblings = list.filter((item) => item?.event_group === eventGroup);
+      const seriesEvents = siblings.some((item) => item?.slug === slug) ? siblings : [{ slug, event_group: eventGroup }, ...siblings];
+      const series = seriesPosition(seriesEvents, { slug });
+      if (!cancelled && series) {
+        setEvent((current) => (current?.slug === slug ? { ...current, eventGroupSeries: series } : current));
+      }
+    };
+
+    loadSeries();
+    return () => {
+      cancelled = true;
+    };
+  }, [event?.event_group, event?.slug, event?.eventGroupSeries?.total]);
 
   useEffect(() => {
     let currentIndex = 0;
@@ -605,7 +658,7 @@ function Workshop({ eventData, asset }) {
       const attendeePhone = signupData?.phone || signupData?.phone_number || signupData?.mobile || null;
       const payload = attendeePhone ? { ...utms, phone: attendeePhone } : utms;
       const resp = await bc.events().applyEvent(eventId, payload, tokenForHeader);
-      if (resp && resp.status < 300) {
+      if (resp?.status >= 200 && resp?.status < 300) {
         reportDatalayer({
           dataLayer: {
             event: 'event_order',
@@ -621,8 +674,26 @@ function Workshop({ eventData, asset }) {
           },
         });
         const token = signupData?.access_token ? signupData.access_token : getToken();
-        router.push(`${BREATHECODE_HOST}/v1/events/me/event/${eventId}/join?token=${token}`);
+        const joinUrl = `${BREATHECODE_HOST}/v1/events/me/event/${eventId}/join?token=${token}`;
+        const hasNotStarted = event?.starting_at && new Date(event.starting_at) > new Date();
+        if (event?.event_group && hasNotStarted) {
+          setApplied(true);
+          setJoinAfterCheckin(joinUrl);
+          setIsCheckinModalOpen(true);
+          setIsJoiningEvent(false);
+          return;
+        }
+        router.push(joinUrl);
+        return;
       }
+      setIsJoiningEvent(false);
+      createToast({
+        position: 'top',
+        status: 'error',
+        title: checkinErrorDetail(resp, t('alert-message:event-access-error')),
+        isClosable: true,
+        duration: 6000,
+      });
     } catch (e) {
       setIsJoiningEvent(false);
     }
@@ -649,7 +720,7 @@ function Workshop({ eventData, asset }) {
       } else if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
         bc.events().applyEvent(event?.id, utms)
           .then((resp) => {
-            if (resp !== undefined) {
+            if (resp?.status >= 200 && resp?.status < 300) {
               setApplied(true);
               setIsCheckinModalOpen(true);
               createToast({
@@ -677,8 +748,8 @@ function Workshop({ eventData, asset }) {
             } else {
               createToast({
                 position: 'top',
-                status: 'info',
-                title: t('alert-message:event-access-error'),
+                status: 'error',
+                title: checkinErrorDetail(resp, t('alert-message:event-access-error')),
                 isClosable: true,
                 duration: 6000,
               });
@@ -743,7 +814,14 @@ function Workshop({ eventData, asset }) {
       />
       <SimpleModal
         isOpen={isCheckinModalOpen}
-        onClose={() => setIsCheckinModalOpen(false)}
+        onClose={() => {
+          setIsCheckinModalOpen(false);
+          if (joinAfterCheckin) {
+            const destination = joinAfterCheckin;
+            setJoinAfterCheckin('');
+            router.push(destination);
+          }
+        }}
         closeOnOverlayClick={false}
         padding="0px 0px 16px 0px"
         maxWidth="52rem"
@@ -762,6 +840,7 @@ function Workshop({ eventData, asset }) {
             {t('checkin-modal.title')}
           </Heading>
           <Text size="l" fontWeight="700" color={hexColor.fontColor2}>
+            {event?.event_group && event?.eventGroupSeries?.total >= 2 && `${t('checkin-modal.group-registered', { count: event.eventGroupSeries.total })} `}
             {t('checkin-modal.sub-title')}
           </Text>
           <Flex flexDirection="column" gap="16px">
@@ -973,8 +1052,7 @@ function Workshop({ eventData, asset }) {
                 </Box>
               )}
               {formatedDate[locale] && (
-
-                <Box display="flex" gridGap="10px">
+                <Box display="flex" gridGap="10px" alignItems="center">
                   <Icon icon="calendar" width="20px" height="20px" color={hexColor.blueDefault} />
                   {finishedEvent ? (
                     <Text size="14px" fontWeight={700}>
@@ -994,6 +1072,22 @@ function Workshop({ eventData, asset }) {
                     {t('duration-hours', { hours: duration.hours })}
                   </Text>
                 </Box>
+              )}
+              {event?.eventGroupSeries?.total >= 2 && (
+                <Tooltip label={t('event-group.series', { count: event.eventGroupSeries.total })} placement="top">
+                  <Box
+                    width="fit-content"
+                    borderRadius="full"
+                    background={hexColor.greenLight}
+                    color="white"
+                    fontSize="12px"
+                    fontWeight={700}
+                    lineHeight="1"
+                    padding="6px 10px"
+                  >
+                    {t('event-group.day', { day: event.eventGroupSeries.index })}
+                  </Box>
+                </Tooltip>
               )}
             </Box>
           </Box>
