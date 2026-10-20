@@ -7,6 +7,7 @@ import SmallCardsCarousel from './SmallCardsCarousel';
 import { BREATHECODE_HOST } from '../utils/variables';
 import useWhiteLabel from '../hooks/useWhiteLabel';
 import { buildPublicEventsQueryParams } from '../utils/whiteLabelEvents';
+import { collapseEventsByGroup } from '../utils/eventGroups';
 import { parseQuerys } from '../utils/url';
 
 const langsDict = {
@@ -40,7 +41,7 @@ function UpcomingWorkshops() {
       .then((res) => {
         const data = res?.data;
         if (data && data.length > 0) {
-          const formatedData = data.map((event) => {
+          const formatedData = collapseEventsByGroup(data).map((event) => {
             const startDate = new Date(event.starting_at);
             const endDate = new Date(event.ending_at);
             return {

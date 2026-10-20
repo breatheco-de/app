@@ -61,6 +61,10 @@
   "join-workshop": "Register for this Workshop",
   "join": "Join Now",
   "event-finished": "Event Finished",
+  "event-group": {
+    "day": "Day {{day}}",
+    "series": "This workshop is part of a series of {{count}} sessions."
+  },
   "checkin-modal": {
     "title": "Thank you for signing up for our workshop, now is time to get ready",
     "sub-title": "Get the most out of this workshop",
@@ -71,7 +75,8 @@
       "Practice interactively thanks to Learnpack and our AI mentor"
     ],
     "join-conversation": "Join the conversation",
-    "conversation-link": "https://chat.whatsapp.com/CBppI0ulMt8Dx4Fsw9AreG"
+    "conversation-link": "https://chat.whatsapp.com/CBppI0ulMt8Dx4Fsw9AreG",
+    "group-registered": "This workshop is part of a series of {{count}} sessions, so you were registered for the sessions that are still open."
   },
   "no-consumables": {
     "description": "You have run out of workshops, but don't worry, you can get more in a few clicks.",
