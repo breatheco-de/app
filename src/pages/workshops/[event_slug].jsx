@@ -6,6 +6,7 @@ import { intervalToDuration, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import { PHASE_PRODUCTION_BUILD } from 'next/constants';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { reportDatalayer } from '../../utils/requests';
@@ -73,10 +74,32 @@ const checkinErrorDetail = (resp, fallback) => (
   typeof resp?.data?.detail === 'string' && resp.data.detail.trim() ? resp.data.detail : fallback
 );
 
+const fetchGroupSiblingsList = async () => {
+  const listResp = await bc.events({ all_time: true }).allEvents();
+  return Array.isArray(listResp?.data) ? listResp.data : [];
+};
+
+const resolveGroupRepresentative = (event, list) => {
+  const siblings = list.filter((item) => item?.event_group === event.event_group);
+  const groupEvents = siblings.some((item) => item?.slug === event.slug) ? siblings : [event, ...siblings];
+  return { chosen: pickGroupRepresentative(groupEvents), groupEvents };
+};
+
 export const getStaticPaths = async ({ locales }) => withSafeStaticPaths(async () => {
   const data = await fetchEventsForStaticGeneration();
-  const activeEvents = (Array.isArray(data) ? data : [])
+  let activeEvents = (Array.isArray(data) ? data : [])
     .filter((ev) => ev?.slug && ['ACTIVE', 'FINISHED'].includes(ev.status));
+
+  // Non-representative events of a group redirect in getStaticProps, and Next.js
+  // forbids redirects while prerendering: leave them to on-demand generation.
+  if (activeEvents.some((ev) => ev.event_group)) {
+    const list = await fetchGroupSiblingsList();
+    activeEvents = activeEvents.filter((ev) => {
+      if (!ev.event_group) return true;
+      const { chosen } = resolveGroupRepresentative(ev, list);
+      return !chosen?.slug || chosen.slug === ev.slug;
+    });
+  }
 
   return buildLocalePaths(activeEvents, locales, 'event_slug');
 }, { fallback: true });
@@ -130,13 +153,12 @@ export const getStaticProps = async ({ params, locale }) => {
 
   let eventGroupSeries = null;
   if (data.event_group) {
-    const listResp = await bc.events({ all_time: true }).allEvents();
-    const list = Array.isArray(listResp?.data) ? listResp.data : [];
-    const siblings = list.filter((item) => item?.event_group === data.event_group);
-    const groupEvents = siblings.some((item) => item?.slug === data.slug) ? siblings : [data, ...siblings];
-    const chosen = pickGroupRepresentative(groupEvents);
+    const list = await fetchGroupSiblingsList();
+    const { chosen, groupEvents } = resolveGroupRepresentative(data, list);
     eventGroupSeries = seriesPosition(groupEvents, data);
-    if (chosen?.slug && chosen.slug !== data.slug) {
+    // The representative can change mid-build; render now and let ISR redirect later.
+    const isPrerendering = process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD;
+    if (chosen?.slug && chosen.slug !== data.slug && !isPrerendering) {
       const destination = locale === 'es' ? `/es/workshops/${chosen.slug}` : `/workshops/${chosen.slug}`;
       return {
         redirect: {
