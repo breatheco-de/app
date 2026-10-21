@@ -75,7 +75,7 @@ const checkinErrorDetail = (resp, fallback) => (
 );
 
 const fetchGroupSiblingsList = async () => {
-  const listResp = await bc.events({ all_time: true }).allEvents();
+  const listResp = await bc.events({ all_time: true, status: 'ACTIVE,FINISHED' }).allEvents();
   return Array.isArray(listResp?.data) ? listResp.data : [];
 };
 
@@ -327,17 +327,17 @@ function Workshop({ eventData, asset }) {
   }, [eventData]);
 
   useEffect(() => {
-    if (!event?.event_group || !event?.slug || event?.eventGroupSeries?.total >= 2) return undefined;
+    if (!event?.event_group || !event?.slug || event?.eventGroupSeries) return undefined;
 
     let cancelled = false;
     const { event_group: eventGroup, slug } = event;
 
     const loadSeries = async () => {
-      const listResp = await bc.events({ all_time: true }).allEvents();
+      const listResp = await bc.events({ all_time: true, status: 'ACTIVE,FINISHED' }).allEvents();
       const list = Array.isArray(listResp?.data) ? listResp.data : [];
       const siblings = list.filter((item) => item?.event_group === eventGroup);
-      const seriesEvents = siblings.some((item) => item?.slug === slug) ? siblings : [{ slug, event_group: eventGroup }, ...siblings];
-      const series = seriesPosition(seriesEvents, { slug });
+      const seriesEvents = siblings.some((item) => item?.slug === slug) ? siblings : [...siblings, event];
+      const series = seriesPosition(seriesEvents, event);
       if (!cancelled && series) {
         setEvent((current) => (current?.slug === slug ? { ...current, eventGroupSeries: series } : current));
       }
@@ -347,7 +347,7 @@ function Workshop({ eventData, asset }) {
     return () => {
       cancelled = true;
     };
-  }, [event?.event_group, event?.slug, event?.eventGroupSeries?.total]);
+  }, [event?.event_group, event?.slug, event?.eventGroupSeries]);
 
   useEffect(() => {
     let currentIndex = 0;
@@ -1095,8 +1095,8 @@ function Workshop({ eventData, asset }) {
                   </Text>
                 </Box>
               )}
-              {event?.eventGroupSeries?.total >= 2 && (
-                <Tooltip label={t('event-group.series', { count: event.eventGroupSeries.total })} placement="top">
+              {event?.eventGroupSeries?.index && (
+                <Tooltip label={t('event-group.series', { name: event.event_group, count: event.eventGroupSeries.total })} placement="top" textAlign="center">
                   <Box
                     width="fit-content"
                     borderRadius="full"
