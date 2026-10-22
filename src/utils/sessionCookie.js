@@ -3,10 +3,12 @@
  * Shared consumer cookies with domain=.4geeks.com and subdomains:
  * - 4g_ctx: visit/attribution session
  * - 4g_tok: auth token
+ * Hosts whose parent domain is a public suffix (e.g. *.vercel.app) get host-only cookies.
  */
 
 const SESSION_COOKIE_NAME = '4g_ctx';
 const CONSUMER_TOKEN_COOKIE_NAME = '4g_tok';
+const DOMAIN_PROBE_COOKIE_NAME = '4g_probe';
 const SESSION_VERSION = 4;
 const LEGACY_USER_SESSION_KEY = 'userSession';
 const LEGACY_ACCESS_TOKEN_KEY = 'accessToken';
@@ -79,13 +81,34 @@ function readCookie(name) {
   return row.slice(prefix.length);
 }
 
+let probedCookieDomain = null;
+
+/**
+ * Parent domain to write cookies with, or undefined for host-only cookies.
+ * Browsers reject `domain=` on public suffixes (e.g. `.vercel.app`, `.co.uk`),
+ * so probe it once per page load and fall back to host-only when rejected.
+ */
+function getWritableCookieDomain() {
+  const domain = getParentCookieDomain();
+  if (!domain) return undefined;
+
+  if (probedCookieDomain?.domain !== domain) {
+    document.cookie = `${DOMAIN_PROBE_COOKIE_NAME}=1; path=/; max-age=60; samesite=lax; domain=${domain}`;
+    const accepted = readCookie(DOMAIN_PROBE_COOKIE_NAME) === '1';
+    document.cookie = `${DOMAIN_PROBE_COOKIE_NAME}=; path=/; max-age=0; samesite=lax; domain=${domain}`;
+    probedCookieDomain = { domain, accepted };
+  }
+
+  return probedCookieDomain.accepted ? domain : undefined;
+}
+
 function writeCookie(name, value, maxAge = COOKIE_MAX_AGE_SECONDS) {
   if (typeof document === 'undefined') return;
   const attributes = ['path=/', `max-age=${maxAge}`, 'samesite=lax'];
   if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
     attributes.push('secure');
   }
-  const domain = getParentCookieDomain();
+  const domain = getWritableCookieDomain();
   if (domain) attributes.push(`domain=${domain}`);
   document.cookie = `${name}=${value}; ${attributes.join('; ')}`;
 }
