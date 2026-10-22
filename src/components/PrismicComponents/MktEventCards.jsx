@@ -16,7 +16,7 @@ import bc from '../../services/breathecode';
 import useAuth from '../../hooks/useAuth';
 import useWhiteLabel from '../../hooks/useWhiteLabel';
 import { buildPublicEventsQueryParams } from '../../utils/whiteLabelEvents';
-import { collapseEventsByGroup } from '../../utils/eventGroups';
+import { collapseEventsByGroup, withFullGroupSeries } from '../../utils/eventGroups';
 import { parseQuerys } from '../../utils/url';
 
 function MktEventCards({
@@ -128,7 +128,9 @@ function MktEventCards({
           const eventsFilteredByLang = isMoreThanAnyEvents ? filteredByLang : existentLiveClasses;
           const eventsWithTechnologies = transformEventsWithTechnologies(eventsFilteredByLang, sortPrioOneTechs);
           const eventsFilteredByTech = techFilter ? eventsWithTechnologies.filter((event) => event?.event_type?.technologies?.split(',').includes(techFilter.toLowerCase())) : eventsWithTechnologies;
-          const eventsForCards = collapseEventsByGroup(eventsFilteredByTech);
+          const catalogResp = await bc.events({ all_time: true, status: 'ACTIVE,FINISHED' }).allEvents();
+          const catalog = Array.isArray(catalogResp?.data) ? catalogResp.data : eventsFilteredByTech;
+          const eventsForCards = withFullGroupSeries(collapseEventsByGroup(eventsFilteredByTech), catalog);
 
           setOriginalEvents(eventsForCards);
           setFilteredEvents(eventsForCards);

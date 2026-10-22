@@ -213,7 +213,7 @@ function SyllabusContent() {
       try {
         const { data: updatedTask } = await bc.assignments().getTask(currentTask.id);
         if (updatedTask) {
-          updateTask(updatedTask, cohortSession);
+          updateTask(updatedTask, currentTask.cohort?.slug ? currentTask.cohort : cohortSession);
         }
       } catch (error) {
         console.error('Error updating task telemetry:', error);
@@ -395,7 +395,7 @@ function SyllabusContent() {
         try {
           const { data: updatedTask } = await bc.assignments().getTask(currentTask.id);
           if (updatedTask) {
-            updateTask(updatedTask, cohortSession);
+            updateTask(updatedTask, currentTask.cohort?.slug ? currentTask.cohort : cohortSession);
           }
         } catch (error) {
           console.error('Error fetching exercise task telemetry:', error);

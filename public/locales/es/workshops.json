@@ -63,7 +63,7 @@
   "event-finished": "Evento finalizado",
   "event-group": {
     "day": "Día {{day}}",
-    "series": "Este workshop forma parte de una serie de {{count}} sesiones."
+    "series": "Este workshop forma parte de {{name}}, una serie de {{count}} sesiones. Te reservaremos un lugar para toda la serie."
   },
   "checkin-modal": {
     "title": "Gracias por inscribirte en nuestro workshop, ahora es el momento de prepararte.",

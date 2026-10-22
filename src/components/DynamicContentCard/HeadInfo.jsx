@@ -38,10 +38,10 @@ function HeadInfo({ technologies, duration, type, date, series }) {
 
   return (
     <Flex minHeight="24px" alignItems="center" justifyContent="space-between" width="100%">
-      {(technologies?.length > 0 || series?.total >= 2) ? (
+      {(technologies?.length > 0 || series?.index) ? (
         <Flex alignItems="center" gridGap="8px">
-          {isWorkshop && series?.total >= 2 && (
-            <Tooltip label={t('workshops:event-group.series', { count: series.total })} placement="top">
+          {isWorkshop && series?.index && (
+            <Tooltip label={t('workshops:event-group.series', { name: series.name, count: series.total })} placement="top" textAlign="center">
               <Box
                 width="fit-content"
                 borderRadius="full"
@@ -119,6 +119,7 @@ HeadInfo.propTypes = {
   series: PropTypes.shape({
     index: PropTypes.number,
     total: PropTypes.number,
+    name: PropTypes.string,
   }),
 };
 HeadInfo.defaultProps = {
