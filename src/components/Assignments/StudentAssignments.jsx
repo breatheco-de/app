@@ -23,12 +23,20 @@ import Icon from '../Icon';
 import Text from '../Text';
 import useAssignments from '../../store/actions/assignmentsAction';
 
+const timelineScrollPropType = PropTypes.shape({
+  target: PropTypes.oneOf(['last-delivery', 'start']),
+  signal: PropTypes.number,
+});
+const defaultTimelineScroll = { target: 'last-delivery', signal: 0 };
+
 const MacroStudentProgressCard = forwardRef(({
   studentHeaderNode,
   extraTimelines,
   mergedDots,
   mergedEmptyMessage,
   onClickDots,
+  mergedScrollTo,
+  scrollSignal,
 }, ref) => {
   const { t } = useTranslation('assignments');
   const { hexColor, fontColor2 } = useStyle();
@@ -81,6 +89,8 @@ const MacroStudentProgressCard = forwardRef(({
         extraTimelines={showMicroBreakdown ? extraTimelines : undefined}
         emptyDotsMessage={showMicroBreakdown ? '' : mergedEmptyMessage}
         helpText=""
+        scrollTo={showMicroBreakdown ? null : mergedScrollTo}
+        scrollSignal={scrollSignal}
       />
     </Box>
   );
@@ -97,6 +107,8 @@ MacroStudentProgressCard.propTypes = {
   mergedDots: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   mergedEmptyMessage: PropTypes.string,
   onClickDots: PropTypes.func,
+  mergedScrollTo: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  scrollSignal: PropTypes.number,
 };
 
 MacroStudentProgressCard.defaultProps = {
@@ -104,6 +116,8 @@ MacroStudentProgressCard.defaultProps = {
   mergedDots: [],
   mergedEmptyMessage: '',
   onClickDots: undefined,
+  mergedScrollTo: null,
+  scrollSignal: 0,
 };
 
 const StudentsRows = forwardRef(({
@@ -115,6 +129,7 @@ const StudentsRows = forwardRef(({
   isMacroCohort,
   microCohortOrder,
   microSyllabusBySlug,
+  timelineScroll,
 }, ref) => {
   const { t } = useTranslation('assignments');
   const router = useRouter();
@@ -327,6 +342,11 @@ const StudentsRows = forwardRef(({
       || pickBestTask(candidates);
   };
 
+  const getScrollTarget = (dots) => {
+    if (timelineScroll.target === 'start') return 'start';
+    return dots.reduce((lastIndex, dot, index) => (dot.task_status === 'DONE' ? index : lastIndex), -1);
+  };
+
   const hasMicroLayout = isMacroCohort
     && Array.isArray(microCohortOrder)
     && microCohortOrder.length > 0
@@ -383,6 +403,7 @@ const StudentsRows = forwardRef(({
               meta: assignmentsList.length ? `${pctMicro}${t('delivered-percentage')}` : '',
               dots,
               emptyDotsMessage: assignmentsList.length === 0 ? t('syllabus-no-projects-in-cohort') : '',
+              scrollTo: getScrollTarget(dots),
             };
           });
 
@@ -424,6 +445,8 @@ const StudentsRows = forwardRef(({
               mergedDots={mergedDots}
               mergedEmptyMessage={mergedEmptyMessage}
               onClickDots={showSingleTask}
+              mergedScrollTo={getScrollTarget(mergedDots)}
+              scrollSignal={timelineScroll.signal}
             />
           );
         }
@@ -459,6 +482,8 @@ const StudentsRows = forwardRef(({
                 !(syllabusData.assignments || []).length ? t('syllabus-no-projects-in-cohort') : ''
               }
               helpText={`${t('educational-status')}: ${student.educational_status}`}
+              scrollTo={getScrollTarget(dots)}
+              scrollSignal={timelineScroll.signal}
             />
           </Box>
         );
@@ -478,6 +503,7 @@ function StudentAssignments({
   isMacroCohort = false,
   microCohortOrder = [],
   microSyllabusBySlug = {},
+  timelineScroll,
 }) {
   const router = useRouter();
   const [currentTask, setCurrentTask] = useState(null);
@@ -525,6 +551,7 @@ function StudentAssignments({
             isMacroCohort={isMacroCohort}
             microCohortOrder={microCohortOrder}
             microSyllabusBySlug={microSyllabusBySlug}
+            timelineScroll={timelineScroll}
           />
         </InfiniteScroll>
       </Flex>
@@ -588,12 +615,14 @@ StudentAssignments.propTypes = {
   isMacroCohort: PropTypes.bool,
   microCohortOrder: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   microSyllabusBySlug: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  timelineScroll: timelineScrollPropType,
 };
 
 StudentAssignments.defaultProps = {
   isMacroCohort: false,
   microCohortOrder: [],
   microSyllabusBySlug: {},
+  timelineScroll: defaultTimelineScroll,
 };
 
 StudentsRows.propTypes = {
@@ -605,12 +634,14 @@ StudentsRows.propTypes = {
   isMacroCohort: PropTypes.bool,
   microCohortOrder: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   microSyllabusBySlug: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  timelineScroll: timelineScrollPropType,
 };
 
 StudentsRows.defaultProps = {
   isMacroCohort: false,
   microCohortOrder: [],
   microSyllabusBySlug: {},
+  timelineScroll: defaultTimelineScroll,
 };
 
 export default StudentAssignments;

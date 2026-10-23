@@ -264,9 +264,17 @@ function Navbar({ translations, pageProps }) {
 
   const privateItems = allItems?.filter((item) => (isAuthenticated ? item.private : false)) || [];
   const publicItems = allItems?.filter((item) => !item.private) || [];
-  const allNavbarItems = [...privateItems, ...publicItems]
-    .map((item) => prepareMenuData(item, mktCourses))
-    .sort((a, b) => a.position - b.position);
+  const baseNavbarItems = [...privateItems, ...publicItems]
+    .map((item) => prepareMenuData(item, mktCourses));
+
+  // Alejandro pidió dejar este item "Learn" estático (cursos fijos en navbar.json, sin backend)
+  // porque esta página va de salida. Solo se muestra si no existe ya el "Learn" de white label.
+  const learnStaticItem = t('learn-static-item', {}, { returnObjects: true });
+  const hasLearnItem = baseNavbarItems.some((item) => item.id === 'bootcamps');
+  const allNavbarItems = (!hasLearnItem && learnStaticItem?.id
+    ? [...baseNavbarItems, learnStaticItem]
+    : baseNavbarItems
+  ).sort((a, b) => a.position - b.position);
 
   return (
     <>
