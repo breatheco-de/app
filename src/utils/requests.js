@@ -12,7 +12,7 @@ import {
   getWhiteLabelAcademyFeatures,
 } from './whiteLabelEvents';
 import { log } from './logging';
-import { getExtensionName } from './index';
+import { getExtensionName, getQueryString } from './index';
 import { isPrismicEnabled } from './variables';
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
@@ -31,8 +31,32 @@ const mapDifficulty = (difficulty) => {
   return difficultyStr || 'unknown';
 };
 
+const parseGtmPayload = (raw) => {
+  if (!raw || typeof raw !== 'string') return null;
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
 const reportDatalayer = (payload) => {
-  TagManager.dataLayer(payload);
+  const dataLayer = payload?.dataLayer;
+  const tracking = parseGtmPayload(getQueryString('gtm_payload'));
+  if (!dataLayer || !tracking) {
+    TagManager.dataLayer(payload);
+    return;
+  }
+
+  TagManager.dataLayer({
+    ...payload,
+    dataLayer: {
+      ...tracking,
+      ...dataLayer,
+    },
+  });
 };
 
 const getPrismicPages = async () => {
