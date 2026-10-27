@@ -693,6 +693,11 @@ function Workshop({ eventData, asset }) {
             event_language: event.lang,
             event_tags: event.tags || '',
             agent: getBrowserInfo(),
+            product: event.product,
+            persona: event.persona,
+            product_persona: event.product_persona,
+            variant: event.variant,
+            experiment_id: event.experiment_id,
           },
         });
         const token = signupData?.access_token ? signupData.access_token : getToken();
@@ -736,6 +741,11 @@ function Workshop({ eventData, asset }) {
             event_ending_at: unixFormatedDate.ending_at,
             event_language: event.lang,
             agent: getBrowserInfo(),
+            product: event.product,
+            persona: event.persona,
+            product_persona: event.product_persona,
+            variant: event.variant,
+            experiment_id: event.experiment_id,
           },
         });
         router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
@@ -765,6 +775,11 @@ function Workshop({ eventData, asset }) {
                   event_language: event.lang,
                   event_tags: event.tags || '',
                   agent: getBrowserInfo(),
+                  product: event.product,
+                  persona: event.persona,
+                  product_persona: event.product_persona,
+                  variant: event.variant,
+                  experiment_id: event.experiment_id,
                 },
               });
             } else {
