@@ -277,6 +277,7 @@
     "totally-paid": "Total pagado: Has pagado el precio completo del plan de {{currencySymbol}}{{amount}}.",
     "error-message": "Mensaje de error: {{error}}",
     "total-paid": "Total pagado hasta la fecha: {{currencySymbol}}{{paidAmount}}/{{currencySymbol}}{{pendingAmount}}",
+    "managed-by-4geeks": "Gestionado por 4Geeks",
     "expiration-date": "Fecha de Expiración: {{date}}",
     "expired-on": "Su plan expiró el: {{date}}",
     "active-since": "Activa desde: {{date}}",
