@@ -6,7 +6,6 @@ import { intervalToDuration, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import { PHASE_PRODUCTION_BUILD } from 'next/constants';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { reportDatalayer } from '../../utils/requests';
@@ -90,8 +89,8 @@ export const getStaticPaths = async ({ locales }) => withSafeStaticPaths(async (
   let activeEvents = (Array.isArray(data) ? data : [])
     .filter((ev) => ev?.slug && ['ACTIVE', 'FINISHED'].includes(ev.status));
 
-  // Non-representative events of a group redirect in getStaticProps, and Next.js
-  // forbids redirects while prerendering: leave them to on-demand generation.
+  // Non-representative events of a group client-redirect to the representative;
+  // leave them to on-demand generation so we don't prerender bounce pages.
   if (activeEvents.some((ev) => ev.event_group)) {
     const list = await fetchGroupSiblingsList();
     activeEvents = activeEvents.filter((ev) => {
@@ -152,22 +151,14 @@ export const getStaticProps = async ({ params, locale }) => {
   }
 
   let eventGroupSeries = null;
+  // Client redirects so UTM/querystring from short links survive the hop.
+  let redirectToSlug = null;
   if (data.event_group) {
     const list = await fetchGroupSiblingsList();
     const { chosen, groupEvents } = resolveGroupRepresentative(data, list);
     eventGroupSeries = seriesPosition(groupEvents, data);
-    // The representative can change mid-build; render now and let ISR redirect later.
-    const isPrerendering = process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD;
-    if (chosen?.slug && chosen.slug !== data.slug && !isPrerendering) {
-      const destination = locale === 'es' ? `/es/workshops/${chosen.slug}` : `/workshops/${chosen.slug}`;
-      return {
-        redirect: {
-          destination,
-          permanent: false,
-          locale: false,
-        },
-        revalidate: 60,
-      };
+    if (chosen?.slug && chosen.slug !== data.slug) {
+      redirectToSlug = chosen.slug;
     }
   }
 
@@ -221,12 +212,13 @@ export const getStaticProps = async ({ params, locale }) => {
       disableLangSwitcher: true,
       eventData: eventGroupSeries ? { ...data, eventGroupSeries } : data,
       asset,
+      redirectToSlug,
     },
     revalidate: isEventFinished ? false : 5,
   });
 };
 
-function Workshop({ eventData, asset }) {
+function Workshop({ eventData, asset, redirectToSlug }) {
   const { t } = useTranslation('workshops');
   const { userSession } = useContext(SessionContext);
   const { validatePlanExistence } = useSignup();
@@ -265,8 +257,24 @@ function Workshop({ eventData, asset }) {
   const { isAuthenticated, user, cohorts } = useAuth();
   const { featuredColor, hexColor } = useStyle();
   const endDate = event?.ended_at || event?.ending_at;
+  const shouldRedirectToGroupRepresentative = Boolean(
+    redirectToSlug && redirectToSlug !== eventSlug,
+  );
 
   const eventRecap = event?.recap;
+
+  useEffect(() => {
+    if (!redirectToSlug || !router.isReady) return;
+    if (redirectToSlug === router.query.event_slug) return;
+    router.replace(
+      {
+        pathname: '/workshops/[event_slug]',
+        query: { ...router.query, event_slug: redirectToSlug },
+      },
+      undefined,
+      { locale: router.locale },
+    );
+  }, [redirectToSlug, router]);
 
   const getDefaultData = async () => {
     const resp = await bc.events().getEvent(eventData?.slug || eventSlug).catch(() => ({
@@ -838,6 +846,10 @@ function Workshop({ eventData, asset }) {
       stickyCtaRefTarget.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  if (shouldRedirectToGroupRepresentative) {
+    return <LoaderScreen />;
+  }
 
   return (
     <Box as="div">
@@ -1678,10 +1690,12 @@ function Workshop({ eventData, asset }) {
 Workshop.propTypes = {
   eventData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   asset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  redirectToSlug: PropTypes.string,
 };
 Workshop.defaultProps = {
   eventData: {},
   asset: null,
+  redirectToSlug: null,
 };
 
 export default Workshop;
