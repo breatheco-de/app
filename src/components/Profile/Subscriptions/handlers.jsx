@@ -134,6 +134,17 @@ function profileHandlers() {
       const errorMessageText = (error) => t('subscription.error-message', { error: error || 'Something went wrong' });
       const noPaymentsLeft = () => t('subscription.no-payment-left');
 
+      if (isPlanFinancing && sub?.created_by_admin) {
+        return {
+          renewalDate: status === 'expired' ? expiredOnText(expirationDate) : expirationDateText(expirationDate),
+          paymentInfo: t('subscription.managed-by-4geeks'),
+          nextPayment: false,
+          errorMessage: status === 'error' ? errorMessageText(statusMessage) : '',
+          renewability: '',
+          paymentDifferenceNote: '',
+        };
+      }
+
       const amountsDiffer = (
         typeof invoiceAmount === 'number'
         && typeof nextRenewalAmount === 'number'

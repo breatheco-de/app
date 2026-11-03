@@ -165,6 +165,7 @@ SubscriptionInfo.propTypes = {
     }),
     type: PropTypes.string,
     valid_until: PropTypes.string,
+    created_by_admin: PropTypes.bool,
   }).isRequired,
 };
 
@@ -221,6 +222,7 @@ SubscriptionCard.propTypes = {
     }),
     type: PropTypes.string,
     valid_until: PropTypes.string,
+    created_by_admin: PropTypes.bool,
   }).isRequired,
   allSubscriptions: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   setSubscriptionProps: PropTypes.func.isRequired,
