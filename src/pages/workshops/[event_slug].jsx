@@ -99,6 +99,7 @@ export const getStaticPaths = async ({ locales }) => withSafeStaticPaths(async (
       return !chosen?.slug || chosen.slug === ev.slug;
     });
   }
+  // test
 
   return buildLocalePaths(activeEvents, locales, 'event_slug');
 }, { fallback: true });
