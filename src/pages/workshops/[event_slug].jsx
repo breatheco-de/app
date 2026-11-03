@@ -99,6 +99,7 @@ export const getStaticPaths = async ({ locales }) => withSafeStaticPaths(async (
       return !chosen?.slug || chosen.slug === ev.slug;
     });
   }
+  // test
 
   return buildLocalePaths(activeEvents, locales, 'event_slug');
 }, { fallback: true });
@@ -399,7 +400,21 @@ function Workshop({ eventData, asset, redirectToSlug }) {
   const isAwesomeScreenshotRecording = recordingUrl?.toLowerCase?.().includes('awesomescreenshot.com');
   const alreadyApplied = users.some((l) => l?.attendee?.id === user?.id) || applied;
 
+  const DENIED_PLAN_STATUSES = ['ACTIVE', 'FULLY_PAID', 'FREE_TRIAL', 'PAYMENT_ISSUE'];
+  const planDeniedForEvent = (() => {
+    const deniedSlugs = event?.denied_plans;
+    if (!isAuth || !Array.isArray(deniedSlugs) || deniedSlugs.length === 0) return false;
+    return subscriptions.some((item) => {
+      if (!DENIED_PLAN_STATUSES.includes(item?.status)) return false;
+      const plans = item?.plans || [];
+      return plans.some((plan) => deniedSlugs.includes(typeof plan === 'string' ? plan : plan?.slug));
+    });
+  })();
+
   const getWording = () => {
+    if (planDeniedForEvent && !finishedEvent) {
+      return t('denny-access.button');
+    }
     if (!finishedEvent && (alreadyApplied || readyToJoinEvent)) {
       return t('join');
     }
@@ -463,7 +478,9 @@ function Workshop({ eventData, asset, redirectToSlug }) {
   const allUsersJoinedLength = users?.length || 0;
   const spotsRemain = (capacity - allUsersJoinedLength);
 
-  const buttonEnabled = ((finishedEvent && recordingUrl) || !finishedEvent) && (readyToJoinEvent || !alreadyApplied);
+  const buttonEnabled = !planDeniedForEvent
+    && ((finishedEvent && recordingUrl) || !finishedEvent)
+    && (readyToJoinEvent || !alreadyApplied);
 
   const handleGetMoreEventConsumables = () => {
     setIsFetchingDataForModal(true);
@@ -527,12 +544,19 @@ function Workshop({ eventData, asset, redirectToSlug }) {
   }, [subscriptionsForCurrentEvent]);
 
   const getDescriptionForAuthUser = () => {
+    if (planDeniedForEvent) return t('denny-access.plan-denied');
     if (isJoiningEvent) return t('form.joining-event');
     if (readyToJoinEvent) return t('form.ready-to-join-description-logged');
     return t('form.joined-description');
   };
 
   const dynamicFormInfo = () => {
+    if (isAuth && planDeniedForEvent && !finishedEvent) {
+      return ({
+        title: '',
+        description: t('denny-access.plan-denied'),
+      });
+    }
     if (!isAuth) {
       if (finishedEvent && recordingUrl) {
         return ({
@@ -735,6 +759,7 @@ function Workshop({ eventData, asset, redirectToSlug }) {
   };
 
   const handleJoin = async () => {
+    if (planDeniedForEvent) return;
     if (!finishedEvent) {
       setIsJoiningEvent(true);
       if ((readyToJoinEvent && alreadyApplied) || readyToJoinEvent) {
@@ -1272,7 +1297,8 @@ function Workshop({ eventData, asset, redirectToSlug }) {
                           width="100%"
                           display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
                           isDisabled={(
-                            (!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated)))
+                            planDeniedForEvent
+                            || (!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated)))
                             || (!finishedEvent && isJoiningEvent)
                           )}
                           _disabled={{
@@ -1288,6 +1314,7 @@ function Workshop({ eventData, asset, redirectToSlug }) {
                             cursor: buttonEnabled ? 'pointer' : 'not-allowed',
                           }}
                           onClick={() => {
+                            if (planDeniedForEvent) return;
                             if (!event?.online_event && isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
                               setIsModalConfirmOpen(true);
                             } else {
@@ -1304,7 +1331,7 @@ function Workshop({ eventData, asset, redirectToSlug }) {
                         >
                           {getWording()}
                         </Button>
-                        {readyToJoinEvent && (
+                        {readyToJoinEvent && !planDeniedForEvent && (
                           <Box display="flex" gap="10px" alignItems="center" height="40px" fontWeight="700" color="gray.dark" textTransform="uppercase" background="red.light" borderRadius="4px" padding="10px">
                             {t('common:live')}
                             <Icon className="pulse-red" icon="dot" color={hexColor.danger} width="8px" height="8px" borderRadius="50px" />
@@ -1357,10 +1384,12 @@ function Workshop({ eventData, asset, redirectToSlug }) {
                         color={buttonEnabled ? hexColor.greenLight : 'white'}
                         textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
                         isDisabled={(
-                          (!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated)))
+                          planDeniedForEvent
+                          || (!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated)))
                           || (!finishedEvent && isJoiningEvent)
                         )}
                         onClick={() => {
+                          if (planDeniedForEvent) return;
                           if (finishedEvent && recordingUrl) {
                             if (isAwesomeScreenshotRecording) {
                               window.open(recordingUrl, '_blank', 'noopener,noreferrer');
@@ -1534,7 +1563,8 @@ function Workshop({ eventData, asset, redirectToSlug }) {
                       background={buttonEnabled ? hexColor.greenLight : 'gray.350'}
                       textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
                       isDisabled={(
-                        (!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated)))
+                        planDeniedForEvent
+                        || (!readyToJoinEvent && (alreadyApplied || (eventNotExists && !isAuthenticated)))
                         || (!finishedEvent && isJoiningEvent)
                       )}
                       _disabled={{
@@ -1550,6 +1580,7 @@ function Workshop({ eventData, asset, redirectToSlug }) {
                         cursor: buttonEnabled ? 'pointer' : 'not-allowed',
                       }}
                       onClick={() => {
+                        if (planDeniedForEvent) return;
                         if (finishedEvent && recordingUrl) {
                           if (isAwesomeScreenshotRecording) {
                             window.open(recordingUrl, '_blank', 'noopener,noreferrer');

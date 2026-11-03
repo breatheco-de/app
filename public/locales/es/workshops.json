@@ -24,7 +24,8 @@
   "denny-access": {
     "description": "Esto es un evento privado, solo estudiantes con acceso a",
     "button": "No tienes acceso a este evento.",
-    "can-join": "pueden entrar"
+    "can-join": "pueden entrar",
+    "plan-denied": "Tu plan actual no te permite acceder a este evento"
   },
   "intro": {
     "top-title": "Bienvenido a los Workshops de 4Geeks",
