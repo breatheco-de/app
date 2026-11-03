@@ -13,6 +13,7 @@ import {
   PopoverCloseButton,
   PopoverBody,
   Button,
+  ButtonGroup,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import asPrivate from '../../../context/PrivateRouteWrapper';
@@ -47,11 +48,12 @@ function Attendance() {
     loading: true,
     status: 'loading',
   });
-  const [loadingStudents, setLoadingStudents] = useState(false);
+  const [loadingStudents, setLoadingStudents] = useState(true);
   const [sortSettings, setSortSettings] = useState({
     name: null,
     percentage: true,
   });
+  const [timelineScroll, setTimelineScroll] = useState({ target: 'last-day', signal: 0 });
 
   const status = {
     attended: '#25BF6C',
@@ -121,67 +123,78 @@ function Attendance() {
     setSelectedCohort(dataStruct.find((c) => c.slug === cohortSlug));
   }, [cohorts]);
 
+  const academyFromList = allCohorts.find((cohort) => cohort.slug === cohortSlug)?.academy;
+  const academyId = academyFromList || academy;
+
   useEffect(() => {
+    if (!academyId || !cohortSlug) return undefined;
+
+    let cancelled = false;
     setLoadingStudents(true);
-    const findSelectedCohort = allCohorts.find((l) => l.slug === cohortSlug);
+    setLoadStatus({ loading: true, status: 'loading' });
 
-    const academyId = findSelectedCohort?.academy || academy;
-    const slug = findSelectedCohort?.slug || cohortSlug;
-
-    // setSelectedCohort(findSelectedCohort);
-    if (academyId) {
-      getAttendanceList({ cohortSlug: slug, academy: academyId })
-        .then((daysLog) => {
-          if (Object.keys(daysLog).length <= 0) {
-            setCurrentDaysLog({});
-            createToast({
-              position: 'top',
-              title: t('alert-message:no-attendance-list-found'),
-              status: 'warning',
-              duration: 7000,
-              isClosable: true,
-            });
-          } else {
-            setCurrentDaysLog(daysLog);
-          }
-        })
-        .catch(() => {
-          createToast({
-            position: 'top',
-            title: t('alert-message:error-fetching-activities'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
+    Promise.all([
+      getAttendanceList({ cohortSlug, academy: academyId }),
+      getStudents(cohortSlug, academyId),
+    ]).then(([daysLog, students]) => {
+      if (cancelled) return;
+      const hasDaysLog = daysLog && typeof daysLog === 'object' && !Array.isArray(daysLog) && Object.keys(daysLog).length > 0;
+      if (!hasDaysLog) {
+        setCurrentDaysLog({});
+        createToast({
+          position: 'top',
+          title: t('alert-message:no-attendance-list-found'),
+          status: 'warning',
+          duration: 7000,
+          isClosable: true,
         });
-      getStudents(slug, academyId)
-        .then((students) => {
-          setCurrentStudentList(students);
-        })
-        .catch(() => {
-          createToast({
-            position: 'top',
-            title: t('alert-message:error-fetching-students'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
-        })
-        .finally(() => setLoadingStudents(false));
-    } else {
-      setLoadingStudents(false);
-    }
-  }, [cohortSlug, router.query.student, allCohorts]);
+      } else {
+        setCurrentDaysLog(daysLog);
+      }
+      setCurrentStudentList(Array.isArray(students) ? students : []);
+    }).catch(() => {
+      if (cancelled) return;
+      setCurrentDaysLog({});
+      setCurrentStudentList([]);
+      createToast({
+        position: 'top',
+        title: t('alert-message:error-fetching-activities'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+    }).finally(() => {
+      if (!cancelled) setLoadingStudents(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [cohortSlug, academyId]);
+
+  const cohortMetaReady = selectedCohort?.slug === cohortSlug
+    || (allCohorts.length > 0 && !allCohorts.some((cohort) => cohort.slug === cohortSlug));
 
   useEffect(() => {
-    const durationInDays = selectedCohort?.durationInDays || 48;
-    setLoadStatus({
-      loading: true,
-      status: 'loading',
-    });
-    if (loadingStudents) return () => {};
+    if (loadingStudents || !cohortMetaReady) return () => {};
 
+    const durationInDays = selectedCohort?.durationInDays || 48;
     const currentDaysLogExists = Object.keys(currentDaysLog).length > 0;
+    if (!currentStudentList?.length) {
+      setLoadStatus({
+        loading: false,
+        status: 'no-data',
+      });
+      return () => {};
+    }
+    if (!currentDaysLogExists) {
+      setLoadStatus({
+        loading: false,
+        status: 'no-attendance-list-found',
+      });
+      return () => {};
+    }
+
     if (currentStudentList?.length > 0) {
       const studentsWithDays = currentStudentList.map((student) => {
         const days = Array.from(Array(durationInDays).keys()).map((i) => {
@@ -243,25 +256,11 @@ function Attendance() {
         loading: false,
         status: 'success',
       });
-      setTimeout(() => {
-        setShowSearch(true);
-      }, 300);
-    }
-    if (currentStudentList.length <= 0) {
-      setLoadStatus({
-        loading: false,
-        status: 'no-data',
-      });
-    }
-    if (currentDaysLogExists <= 0) {
-      setLoadStatus({
-        loading: false,
-        status: 'no-attendance-list-found',
-      });
+      setShowSearch(true);
     }
 
     return () => {};
-  }, [currentStudentList, currentDaysLog, selectedCohort?.durationInDays, loadingStudents]);
+  }, [currentStudentList, currentDaysLog, selectedCohort?.durationInDays, loadingStudents, cohortMetaReady]);
 
   const handleSearch = (e) => {
     const { value } = e.target;
@@ -274,6 +273,9 @@ function Attendance() {
 
     setSearchedStudents(filteredStudents);
   };
+
+  const lastLoggedDayIndex = Math.max(-1, ...Object.keys(currentDaysLog).map((day) => Number(day) - 1));
+  const timelineScrollTo = timelineScroll.target === 'start' ? 'start' : lastLoggedDayIndex;
 
   const sortedByNameAndAttendance = searchedStudents?.sort((a, b) => {
     const fullNameA = `${a.user.first_name} ${a.user.last_name}`;
@@ -380,7 +382,21 @@ function Attendance() {
         // maxW="1080px"
         withContainer
       >
-        <Flex gridGap="25px" justifyContent="flex-end" padding="34px 0">
+        <Flex gridGap="25px" justifyContent="flex-end" alignItems="center" flexWrap="wrap" padding="34px 0">
+          <ButtonGroup size="sm" variant="ghost" spacing="0">
+            <Button
+              color={hexColor.blueDefault}
+              onClick={() => setTimelineScroll((prev) => ({ target: 'start', signal: prev.signal + 1 }))}
+            >
+              {t('timeline-scroll.start')}
+            </Button>
+            <Button
+              color={hexColor.blueDefault}
+              onClick={() => setTimelineScroll((prev) => ({ target: 'last-day', signal: prev.signal + 1 }))}
+            >
+              {t('timeline-scroll.last-day')}
+            </Button>
+          </ButtonGroup>
           <InputGroup width="200px">
             <Input
               onBlur={() => setShowSearch(false)}
@@ -471,6 +487,8 @@ function Attendance() {
                   )}
                   dots={student.days}
                   helpText={percentAttendance}
+                  scrollTo={timelineScrollTo}
+                  scrollSignal={timelineScroll.signal}
                 />
               );
             })}

@@ -3,6 +3,10 @@
   "title": "Asignaciones",
   "students-view": "estudiantes",
   "projects-view": "proyectos",
+  "timeline-scroll": {
+    "start": "Ir al inicio",
+    "last-delivery": "Ir a la última entrega"
+  },
   "final-projects": "proyectos finales",
   "no-final-projects": "No se encontraron proyectos finales",
   "no-upload-students": "Los siguientes estudiantes aún están pendientes de subir la información de su proyecto final.",
@@ -116,6 +120,7 @@
     "resubmit-assignment": "Reenviar proyecto",
     "start-review-here": "Comienza tu revisión aquí...",
     "send-feedback": "Enviar comentario",
+    "feedback-limit-exceeded": "El texto pegado excede los {{limit}} caracteres disponibles, se recortó para que quepa.",
     "filename": "Nombre del archivo",
     "feedback-status": "Estado del comentario",
     "reviews": "Comentarios", 

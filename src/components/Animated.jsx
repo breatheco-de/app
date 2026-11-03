@@ -71,8 +71,8 @@ export function AnimatedContainer({ children, isScrollable, ...rest }) {
       <AnimatePresence>
         {isScrollable && (
           <>
-            <MotionBox position="absolute" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} animation={`${animateShadow} 2s infinite`} top="0px" right="0px" width="0px" height="25px" boxShadow="0 0 80px 34px rgb(0 0 0 / 75%)" zIndex="1" background="#000000" />
-            <MotionBox initial="hidden" animate="show" exit="hidden" variants={breathAnimation} animation={`${animateBreathing} 2s infinite`} style={{ position: 'absolute', top: '4.4px', right: '0px' }} zIndex="1">
+            <MotionBox position="absolute" initial={false} animate={{ opacity: 1 }} exit={{ opacity: 0 }} animation={`${animateShadow} 2s infinite`} top="0px" right="0px" width="0px" height="25px" boxShadow="0 0 80px 34px rgb(0 0 0 / 75%)" zIndex="1" background="#000000" />
+            <MotionBox initial={false} animate="show" exit="hidden" variants={breathAnimation} animation={`${animateBreathing} 2s infinite`} style={{ position: 'absolute', top: '4.4px', right: '0px' }} zIndex="1">
               <Icon icon="arrowRight" width="15px" height="15px" />
             </MotionBox>
           </>
