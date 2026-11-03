@@ -1,5 +1,5 @@
 import {
-  Box, Button, Grid, useColorModeValue, Image, Avatar, Skeleton, Flex, Portal, IconButton,
+  Box, Button, Grid, useColorModeValue, Image, Avatar, Skeleton, Flex, Portal, IconButton, Tooltip,
 } from '@chakra-ui/react';
 import { useEffect, useState, useContext, useRef } from 'react';
 import { intervalToDuration, format } from 'date-fns';
@@ -47,6 +47,7 @@ import {
   withSafeStaticPaths,
   buildLocalePaths,
 } from '../../utils/staticGeneration';
+import { pickGroupRepresentative, seriesPosition } from '../../utils/eventGroups';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -68,10 +69,36 @@ const assetTypeDict = {
   EXERCISE: 'interactive-exercise',
 };
 
+const checkinErrorDetail = (resp, fallback) => (
+  typeof resp?.data?.detail === 'string' && resp.data.detail.trim() ? resp.data.detail : fallback
+);
+
+const fetchGroupSiblingsList = async () => {
+  const listResp = await bc.events({ all_time: true, status: 'ACTIVE,FINISHED' }).allEvents();
+  return Array.isArray(listResp?.data) ? listResp.data : [];
+};
+
+const resolveGroupRepresentative = (event, list) => {
+  const siblings = list.filter((item) => item?.event_group === event.event_group);
+  const groupEvents = siblings.some((item) => item?.slug === event.slug) ? siblings : [event, ...siblings];
+  return { chosen: pickGroupRepresentative(groupEvents), groupEvents };
+};
+
 export const getStaticPaths = async ({ locales }) => withSafeStaticPaths(async () => {
   const data = await fetchEventsForStaticGeneration();
-  const activeEvents = (Array.isArray(data) ? data : [])
+  let activeEvents = (Array.isArray(data) ? data : [])
     .filter((ev) => ev?.slug && ['ACTIVE', 'FINISHED'].includes(ev.status));
+
+  // Non-representative events of a group client-redirect to the representative;
+  // leave them to on-demand generation so we don't prerender bounce pages.
+  if (activeEvents.some((ev) => ev.event_group)) {
+    const list = await fetchGroupSiblingsList();
+    activeEvents = activeEvents.filter((ev) => {
+      if (!ev.event_group) return true;
+      const { chosen } = resolveGroupRepresentative(ev, list);
+      return !chosen?.slug || chosen.slug === ev.slug;
+    });
+  }
 
   return buildLocalePaths(activeEvents, locales, 'event_slug');
 }, { fallback: true });
@@ -122,6 +149,19 @@ export const getStaticProps = async ({ params, locale }) => {
       revalidate: 60,
     };
   }
+
+  let eventGroupSeries = null;
+  // Client redirects so UTM/querystring from short links survive the hop.
+  let redirectToSlug = null;
+  if (data.event_group) {
+    const list = await fetchGroupSiblingsList();
+    const { chosen, groupEvents } = resolveGroupRepresentative(data, list);
+    eventGroupSeries = seriesPosition(groupEvents, data);
+    if (chosen?.slug && chosen.slug !== data.slug) {
+      redirectToSlug = chosen.slug;
+    }
+  }
+
   const lang = (data?.lang === 'us' || data?.lang === null) ? 'en' : data?.lang;
 
   const translationArray = [
@@ -170,14 +210,15 @@ export const getStaticProps = async ({ params, locale }) => {
       },
       translations: translationArray,
       disableLangSwitcher: true,
-      eventData: data,
+      eventData: eventGroupSeries ? { ...data, eventGroupSeries } : data,
       asset,
+      redirectToSlug,
     },
     revalidate: isEventFinished ? false : 5,
   });
 };
 
-function Workshop({ eventData, asset }) {
+function Workshop({ eventData, asset, redirectToSlug }) {
   const { t } = useTranslation('workshops');
   const { userSession } = useContext(SessionContext);
   const { validatePlanExistence } = useSignup();
@@ -196,6 +237,7 @@ function Workshop({ eventData, asset }) {
   const [assetData, setAssetData] = useState(asset);
   const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
   const [isCheckinModalOpen, setIsCheckinModalOpen] = useState(false);
+  const [joinAfterCheckin, setJoinAfterCheckin] = useState('');
   const [randomImage, setRandomImage] = useState(arrayOfImages[0]);
   const accessToken = getToken();
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
@@ -215,8 +257,24 @@ function Workshop({ eventData, asset }) {
   const { isAuthenticated, user, cohorts } = useAuth();
   const { featuredColor, hexColor } = useStyle();
   const endDate = event?.ended_at || event?.ending_at;
+  const shouldRedirectToGroupRepresentative = Boolean(
+    redirectToSlug && redirectToSlug !== eventSlug,
+  );
 
   const eventRecap = event?.recap;
+
+  useEffect(() => {
+    if (!redirectToSlug || !router.isReady) return;
+    if (redirectToSlug === router.query.event_slug) return;
+    router.replace(
+      {
+        pathname: '/workshops/[event_slug]',
+        query: { ...router.query, event_slug: redirectToSlug },
+      },
+      undefined,
+      { locale: router.locale },
+    );
+  }, [redirectToSlug, router]);
 
   const getDefaultData = async () => {
     const resp = await bc.events().getEvent(eventData?.slug || eventSlug).catch(() => ({
@@ -227,7 +285,9 @@ function Workshop({ eventData, asset }) {
       const assetResp = await bc.registry().getAsset(data?.asset_slug);
       setAssetData(assetResp?.data);
     }
-    setEvent(data);
+    setEvent(eventData?.eventGroupSeries
+      ? { ...data, eventGroupSeries: eventData.eventGroupSeries }
+      : data);
   };
 
   useEffect(() => {
@@ -273,6 +333,29 @@ function Workshop({ eventData, asset }) {
         .catch(() => { });
     }
   }, [eventData]);
+
+  useEffect(() => {
+    if (!event?.event_group || !event?.slug || event?.eventGroupSeries) return undefined;
+
+    let cancelled = false;
+    const { event_group: eventGroup, slug } = event;
+
+    const loadSeries = async () => {
+      const listResp = await bc.events({ all_time: true, status: 'ACTIVE,FINISHED' }).allEvents();
+      const list = Array.isArray(listResp?.data) ? listResp.data : [];
+      const siblings = list.filter((item) => item?.event_group === eventGroup);
+      const seriesEvents = siblings.some((item) => item?.slug === slug) ? siblings : [...siblings, event];
+      const series = seriesPosition(seriesEvents, event);
+      if (!cancelled && series) {
+        setEvent((current) => (current?.slug === slug ? { ...current, eventGroupSeries: series } : current));
+      }
+    };
+
+    loadSeries();
+    return () => {
+      cancelled = true;
+    };
+  }, [event?.event_group, event?.slug, event?.eventGroupSeries]);
 
   useEffect(() => {
     let currentIndex = 0;
@@ -605,7 +688,7 @@ function Workshop({ eventData, asset }) {
       const attendeePhone = signupData?.phone || signupData?.phone_number || signupData?.mobile || null;
       const payload = attendeePhone ? { ...utms, phone: attendeePhone } : utms;
       const resp = await bc.events().applyEvent(eventId, payload, tokenForHeader);
-      if (resp && resp.status < 300) {
+      if (resp?.status >= 200 && resp?.status < 300) {
         reportDatalayer({
           dataLayer: {
             event: 'event_order',
@@ -618,11 +701,34 @@ function Workshop({ eventData, asset }) {
             event_language: event.lang,
             event_tags: event.tags || '',
             agent: getBrowserInfo(),
+            product: event.product,
+            persona: event.persona,
+            product_persona: event.product_persona,
+            variant: event.variant,
+            experiment_id: event.experiment_id,
           },
         });
         const token = signupData?.access_token ? signupData.access_token : getToken();
-        router.push(`${BREATHECODE_HOST}/v1/events/me/event/${eventId}/join?token=${token}`);
+        const joinUrl = `${BREATHECODE_HOST}/v1/events/me/event/${eventId}/join?token=${token}`;
+        const hasNotStarted = event?.starting_at && new Date(event.starting_at) > new Date();
+        if (event?.event_group && hasNotStarted) {
+          setApplied(true);
+          setJoinAfterCheckin(joinUrl);
+          setIsCheckinModalOpen(true);
+          setIsJoiningEvent(false);
+          return;
+        }
+        router.push(joinUrl);
+        return;
       }
+      setIsJoiningEvent(false);
+      createToast({
+        position: 'top',
+        status: 'error',
+        title: checkinErrorDetail(resp, t('alert-message:event-access-error')),
+        isClosable: true,
+        duration: 6000,
+      });
     } catch (e) {
       setIsJoiningEvent(false);
     }
@@ -643,13 +749,18 @@ function Workshop({ eventData, asset }) {
             event_ending_at: unixFormatedDate.ending_at,
             event_language: event.lang,
             agent: getBrowserInfo(),
+            product: event.product,
+            persona: event.persona,
+            product_persona: event.product_persona,
+            variant: event.variant,
+            experiment_id: event.experiment_id,
           },
         });
         router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
       } else if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
         bc.events().applyEvent(event?.id, utms)
           .then((resp) => {
-            if (resp !== undefined) {
+            if (resp?.status >= 200 && resp?.status < 300) {
               setApplied(true);
               setIsCheckinModalOpen(true);
               createToast({
@@ -672,13 +783,18 @@ function Workshop({ eventData, asset }) {
                   event_language: event.lang,
                   event_tags: event.tags || '',
                   agent: getBrowserInfo(),
+                  product: event.product,
+                  persona: event.persona,
+                  product_persona: event.product_persona,
+                  variant: event.variant,
+                  experiment_id: event.experiment_id,
                 },
               });
             } else {
               createToast({
                 position: 'top',
-                status: 'info',
-                title: t('alert-message:event-access-error'),
+                status: 'error',
+                title: checkinErrorDetail(resp, t('alert-message:event-access-error')),
                 isClosable: true,
                 duration: 6000,
               });
@@ -731,6 +847,10 @@ function Workshop({ eventData, asset }) {
     }
   };
 
+  if (shouldRedirectToGroupRepresentative) {
+    return <LoaderScreen />;
+  }
+
   return (
     <Box as="div">
       <ModalToGetAccess
@@ -743,7 +863,14 @@ function Workshop({ eventData, asset }) {
       />
       <SimpleModal
         isOpen={isCheckinModalOpen}
-        onClose={() => setIsCheckinModalOpen(false)}
+        onClose={() => {
+          setIsCheckinModalOpen(false);
+          if (joinAfterCheckin) {
+            const destination = joinAfterCheckin;
+            setJoinAfterCheckin('');
+            router.push(destination);
+          }
+        }}
         closeOnOverlayClick={false}
         padding="0px 0px 16px 0px"
         maxWidth="52rem"
@@ -762,6 +889,7 @@ function Workshop({ eventData, asset }) {
             {t('checkin-modal.title')}
           </Heading>
           <Text size="l" fontWeight="700" color={hexColor.fontColor2}>
+            {event?.event_group && event?.eventGroupSeries?.total >= 2 && `${t('checkin-modal.group-registered', { count: event.eventGroupSeries.total })} `}
             {t('checkin-modal.sub-title')}
           </Text>
           <Flex flexDirection="column" gap="16px">
@@ -973,8 +1101,7 @@ function Workshop({ eventData, asset }) {
                 </Box>
               )}
               {formatedDate[locale] && (
-
-                <Box display="flex" gridGap="10px">
+                <Box display="flex" gridGap="10px" alignItems="center">
                   <Icon icon="calendar" width="20px" height="20px" color={hexColor.blueDefault} />
                   {finishedEvent ? (
                     <Text size="14px" fontWeight={700}>
@@ -994,6 +1121,22 @@ function Workshop({ eventData, asset }) {
                     {t('duration-hours', { hours: duration.hours })}
                   </Text>
                 </Box>
+              )}
+              {event?.eventGroupSeries?.index && (
+                <Tooltip label={t('event-group.series', { name: event.event_group, count: event.eventGroupSeries.total })} placement="top" textAlign="center">
+                  <Box
+                    width="fit-content"
+                    borderRadius="full"
+                    background={hexColor.greenLight}
+                    color="white"
+                    fontSize="12px"
+                    fontWeight={700}
+                    lineHeight="1"
+                    padding="6px 10px"
+                  >
+                    {t('event-group.day', { day: event.eventGroupSeries.index })}
+                  </Box>
+                </Tooltip>
               )}
             </Box>
           </Box>
@@ -1547,10 +1690,12 @@ function Workshop({ eventData, asset }) {
 Workshop.propTypes = {
   eventData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   asset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  redirectToSlug: PropTypes.string,
 };
 Workshop.defaultProps = {
   eventData: {},
   asset: null,
+  redirectToSlug: null,
 };
 
 export default Workshop;
