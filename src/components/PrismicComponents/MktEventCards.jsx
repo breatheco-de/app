@@ -16,6 +16,7 @@ import bc from '../../services/breathecode';
 import useAuth from '../../hooks/useAuth';
 import useWhiteLabel from '../../hooks/useWhiteLabel';
 import { buildPublicEventsQueryParams } from '../../utils/whiteLabelEvents';
+import { collapseEventsByGroup, withFullGroupSeries } from '../../utils/eventGroups';
 import { parseQuerys } from '../../utils/url';
 
 function MktEventCards({
@@ -99,8 +100,9 @@ function MktEventCards({
       setLoading(true);
       try {
         if (externalEvents) {
-          setOriginalEvents(externalEvents);
-          setFilteredEvents(externalEvents);
+          const eventsForCards = Array.isArray(externalEvents) ? collapseEventsByGroup(externalEvents) : externalEvents;
+          setOriginalEvents(eventsForCards);
+          setFilteredEvents(eventsForCards);
           setLoading(false);
           return;
         }
@@ -126,9 +128,12 @@ function MktEventCards({
           const eventsFilteredByLang = isMoreThanAnyEvents ? filteredByLang : existentLiveClasses;
           const eventsWithTechnologies = transformEventsWithTechnologies(eventsFilteredByLang, sortPrioOneTechs);
           const eventsFilteredByTech = techFilter ? eventsWithTechnologies.filter((event) => event?.event_type?.technologies?.split(',').includes(techFilter.toLowerCase())) : eventsWithTechnologies;
+          const catalogResp = await bc.events({ all_time: true, status: 'ACTIVE,FINISHED' }).allEvents();
+          const catalog = Array.isArray(catalogResp?.data) ? catalogResp.data : eventsFilteredByTech;
+          const eventsForCards = withFullGroupSeries(collapseEventsByGroup(eventsFilteredByTech), catalog);
 
-          setOriginalEvents(eventsFilteredByTech);
-          setFilteredEvents(eventsFilteredByTech);
+          setOriginalEvents(eventsForCards);
+          setFilteredEvents(eventsForCards);
 
           if (showCheckedInEvents && user?.id) {
             fetchCheckedInEvents();
