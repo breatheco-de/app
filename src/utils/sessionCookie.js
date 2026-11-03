@@ -6,15 +6,15 @@
  * Hosts whose parent domain is a public suffix (e.g. *.vercel.app) get host-only cookies.
  */
 
-const SESSION_COOKIE_NAME = '4g_ctx';
+export const SESSION_COOKIE_NAME = '4g_ctx';
 const CONSUMER_TOKEN_COOKIE_NAME = '4g_tok';
 const DOMAIN_PROBE_COOKIE_NAME = '4g_probe';
 const SESSION_VERSION = 4;
 const LEGACY_USER_SESSION_KEY = 'userSession';
 const LEGACY_ACCESS_TOKEN_KEY = 'accessToken';
 
-const COOKIE_MAX_AGE_SECONDS = 180 * 24 * 60 * 60; // 180 days
-const SESSION_COOKIE_SIZE_LIMIT = 3500;
+export const COOKIE_MAX_AGE_SECONDS = 180 * 24 * 60 * 60; // 180 days
+const SESSION_COOKIE_SIZE_LIMIT = 4000;
 const UTM_TRUNCATE_LEN = 200;
 
 /**
@@ -54,7 +54,7 @@ function fieldMapDenylistKeys() {
  * Derive parent cookie Domain for sibling subdomain sharing.
  * `learn.4geeks.com` → `.4geeks.com`. Omit on localhost / IPs / single-label hosts.
  */
-function getParentCookieDomain(hostname) {
+export function getParentCookieDomain(hostname) {
   const host = hostname
     ?? (typeof window !== 'undefined' ? window.location.hostname : undefined);
   if (!host) return undefined;
@@ -122,7 +122,7 @@ function clearCookie(name) {
   }
 }
 
-function encodeCookiePayload(payload) {
+export function encodeCookiePayload(payload) {
   let candidate = payload;
   let encoded = encodeURIComponent(JSON.stringify(candidate));
 
@@ -268,6 +268,66 @@ function mergeSessionCookie(existing, patch) {
     },
     timestamp: patch.timestamp || Date.now(),
   };
+}
+
+function parseExistingSessionCookie(raw) {
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed.version === SESSION_VERSION ? parsed : null;
+  } catch {
+    try {
+      const parsed = JSON.parse(decodeURIComponent(raw));
+      return parsed.version === SESSION_VERSION ? parsed : null;
+    } catch {
+      return null;
+    }
+  }
+}
+
+/**
+ * Capture attribution query params into 4g_ctx (edge-safe).
+ * Same keys SessionContext reads. Returns raw JSON for NextResponse.cookies.set
+ * (which encodes once). Null when there is nothing to write / payload too large.
+ */
+export function captureAttributionFromSearch(existingRawCookie, searchParams) {
+  if (!searchParams) return null;
+
+  const get = (...keys) => {
+    for (let i = 0; i < keys.length; i += 1) {
+      const value = searchParams.get(keys[i]);
+      if (value) return value;
+    }
+    return '';
+  };
+
+  const attribution = {
+    utm_source: get('utm_source'),
+    utm_medium: get('utm_medium'),
+    utm_campaign: get('utm_campaign'),
+    utm_content: get('utm_content'),
+    utm_term: get('utm_term'),
+    utm_placement: get('utm_placement'),
+    utm_plan: get('utm_plan'),
+    utm_referrer: get('utm_referrer', 'utm_ref', 'referrer', 'ref'),
+    ref: get('ref'),
+    internal_cta_placement: get('internal_cta_placement'),
+    internal_cta_content: get('internal_cta_content'),
+    internal_cta_campaign: get('internal_cta_campaign'),
+  };
+  Object.keys(attribution).forEach((key) => {
+    if (!attribution[key]) delete attribution[key];
+  });
+  if (Object.keys(attribution).length === 0) return null;
+
+  const merged = mergeSessionCookie(
+    parseExistingSessionCookie(existingRawCookie),
+    userSessionToCookiePatch(attribution),
+  );
+  // Size-check / truncate like the browser path; return raw JSON so cookies.set encodes once.
+  const encoded = encodeCookiePayload(merged);
+  if (!encoded) return null;
+  return decodeURIComponent(encoded);
 }
 
 /**
