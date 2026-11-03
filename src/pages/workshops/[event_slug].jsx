@@ -156,6 +156,7 @@ export const getStaticProps = async ({ params, locale }) => {
     const list = await fetchGroupSiblingsList();
     const { chosen, groupEvents } = resolveGroupRepresentative(data, list);
     eventGroupSeries = seriesPosition(groupEvents, data);
+    // Attribution querystrings are persisted to 4g_ctx in middleware before this 302.
     // The representative can change mid-build; render now and let ISR redirect later.
     const isPrerendering = process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD;
     if (chosen?.slug && chosen.slug !== data.slug && !isPrerendering) {

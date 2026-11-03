@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, test } from 'bun:test';
-import { clearTokenCookie, getToken, setTokenCookie } from '../utils/sessionCookie';
+import {
+  clearTokenCookie,
+  getToken,
+  setTokenCookie,
+  captureAttributionFromSearch,
+} from '../utils/sessionCookie';
 
 // Minimal cookie jar that, like real browsers, rejects `domain=` on public suffixes.
 const PUBLIC_SUFFIXES = ['.vercel.app'];
@@ -70,5 +75,24 @@ describe('session cookies on localhost', () => {
   test('stores the token as a host-only cookie', () => {
     setTokenCookie('first');
     expect(jar).toEqual([{ name: '4g_tok', value: 'first', domain: null }]);
+  });
+});
+
+describe('attribution capture from search params', () => {
+  test('returns null when no attribution params are present', () => {
+    expect(captureAttributionFromSearch(null, new URLSearchParams('page=2'))).toBeNull();
+  });
+
+  test('merges attribution into 4g_ctx for middleware redirects', () => {
+    const rawJson = captureAttributionFromSearch(
+      null,
+      new URLSearchParams('utm_source=google&utm_medium=cpc&utm_ref=partner&ref=coupon1'),
+    );
+    expect(rawJson).toBeTruthy();
+    const parsed = JSON.parse(rawJson);
+    expect(parsed.utm.utm_source).toBe('google');
+    expect(parsed.utm.utm_medium).toBe('cpc');
+    expect(parsed.utm.referral).toBe('partner');
+    expect(parsed.utm.ref).toBe('coupon1');
   });
 });

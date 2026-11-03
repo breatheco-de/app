@@ -3,6 +3,12 @@ import aliasRedirects from '../public/alias-redirects.json';
 import redirectsFromApi from '../public/redirects-from-api.json';
 import staticRedirects from '../public/redirects.json';
 import { log } from './utils/logging';
+import {
+  SESSION_COOKIE_NAME,
+  COOKIE_MAX_AGE_SECONDS,
+  getParentCookieDomain,
+  captureAttributionFromSearch,
+} from './utils/sessionCookie';
 
 export const config = {
   matcher: [
@@ -16,6 +22,28 @@ export const config = {
     '/((?!api|static|_next|favicon.ico).*)',
   ],
 };
+
+function applyAttributionCookie(req, response) {
+  const encoded = captureAttributionFromSearch(
+    req.cookies.get(SESSION_COOKIE_NAME)?.value,
+    req.nextUrl.searchParams,
+  );
+  if (!encoded) return response;
+
+  const cookie = {
+    name: SESSION_COOKIE_NAME,
+    value: encoded,
+    path: '/',
+    maxAge: COOKIE_MAX_AGE_SECONDS,
+    sameSite: 'lax',
+  };
+  if (req.nextUrl.protocol === 'https:') cookie.secure = true;
+  const domain = getParentCookieDomain(req.nextUrl.hostname);
+  if (domain) cookie.domain = domain;
+
+  response.cookies.set(cookie);
+  return response;
+}
 
 async function middleware(req) {
   const url = req.nextUrl.clone();
@@ -64,7 +92,7 @@ async function middleware(req) {
       url.search = searchParams.toString();
       log(`Middleware: removing invalid params from individual page: ${pathname}`);
       log(`Middleware: redirecting ${href} → ${url.toString()}`);
-      return NextResponse.redirect(url, 301);
+      return applyAttributionCookie(req, NextResponse.redirect(url, 301));
     }
   }
   const localeMatch = fullPath.match(/^\/(es|en|us)(\/|$)/);
@@ -90,14 +118,14 @@ async function middleware(req) {
     const destinationUrl = `${origin}${currentProject.destination}${url.search}`;
     if (destinationUrl === href) {
       log('Middleware: already on destination URL, skipping redirect.');
-      return NextResponse.next();
+      return applyAttributionCookie(req, NextResponse.next());
     }
 
     log(`Middleware: redirecting from ${href} → ${currentProject.destination}`);
-    return NextResponse.redirect(destinationUrl, 301);
+    return applyAttributionCookie(req, NextResponse.redirect(destinationUrl, 301));
   }
 
-  return NextResponse.next();
+  return applyAttributionCookie(req, NextResponse.next());
 }
 
 export default middleware;
