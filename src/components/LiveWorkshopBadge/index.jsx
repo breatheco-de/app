@@ -3,22 +3,34 @@ import { Box, Text, Tooltip } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import useTranslation from 'next-translate/useTranslation';
 import bc from '../../services/breathecode';
+import useAuth from '../../hooks/useAuth';
 
 function LiveWorkshopBadge() {
   const [liveWorkshopData, setLiveWorkshopData] = useState(false);
   const { t } = useTranslation('navbar');
+  const { isLoading, isAuthenticated } = useAuth();
 
   useEffect(() => {
+    // Wait for auth so the token is on axios and the API can apply denied_plans.
+    if (isLoading) return undefined;
+
+    let cancelled = false;
     const checkLiveWorkshop = async () => {
       try {
         const res = await bc.events().liveWorkshopStatus();
-        setLiveWorkshopData(res.data.slug && res.data);
+        if (!cancelled) {
+          setLiveWorkshopData(res.data?.slug ? res.data : false);
+        }
       } catch (e) {
         console.error(e);
+        if (!cancelled) setLiveWorkshopData(false);
       }
     };
     checkLiveWorkshop();
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [isLoading, isAuthenticated]);
 
   if (!liveWorkshopData) {
     return null;
