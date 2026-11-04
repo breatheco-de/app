@@ -75,6 +75,10 @@ const breathecode = {
 
     return {
       chunkNotification: (args) => axios.get(`${url}/me/notification`, { ...args }),
+      inbox: (query = {}) => axios.get(`${url}/me/inbox${parseQuerys(query)}`),
+      inboxUnread: () => axios.get(`${url}/me/inbox/unread`),
+      // without id it marks every notification as read
+      readInbox: (id) => axios.put(id ? `${url}/me/inbox/${id}` : `${url}/me/inbox`),
     };
   },
 

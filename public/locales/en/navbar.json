@@ -11,6 +11,11 @@
   "course-details": "Course details",
   "upgrade-experience": "Upgrade Experience",
   "member-since": "Member since {{date}}",
+  "notifications": {
+    "title": "Notifications",
+    "mark-all-as-read": "Mark all as read",
+    "empty": "You have no notifications"
+  },
   "items": [
     {
       "label": "Dashboard",
