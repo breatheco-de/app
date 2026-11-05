@@ -70,6 +70,11 @@ function Timeline({
     scrollTop();
   };
 
+  const getAssignmentTypeLabel = (item) => {
+    if (!item?.task_type) return item?.type || '';
+    return t(`asset-type.${item.task_type}`, {}, { fallback: item.type || '' });
+  };
+
   const getAssignmentTitle = (item) => {
     if (!item) return '';
     const fromTranslations = lang === 'en' || lang === 'us'
@@ -140,7 +145,7 @@ function Timeline({
                 <Flex gap="10px" mb="10px">
                   <Text size="sm" color={muted ? '#6883B4' : hexColor.blueDefault} fontWeight="900" marginY={0}>{index + 1}</Text>
                   <Icon width="16px" height="16px" icon={item.icon} color={muted ? '#6883B4' : hexColor.blueDefault} />
-                  <Text size="sm" color={muted ? '#6883B4' : hexColor.blueDefault} fontWeight="900" marginY={0}>{item.type}</Text>
+                  <Text size="sm" color={muted ? '#6883B4' : hexColor.blueDefault} fontWeight="900" marginY={0}>{getAssignmentTypeLabel(item)}</Text>
                 </Flex>
                 <Text size="sm" fontWeight="400" marginY={0} color={muted ? '#6883B4' : fontColor}>{assignmentTitle}</Text>
               </Box>
@@ -217,7 +222,7 @@ function Timeline({
                   <Icon width="20px" height="20px" icon={item && item?.icon} color={muted ? 'gray' : 'white'} />
                 </Box>
                 <Box marginLeft="12px">
-                  <Text size="sm" color={fontColor2} fontWeight="900" marginY={0}>{item.type}</Text>
+                  <Text size="sm" color={fontColor2} fontWeight="900" marginY={0}>{getAssignmentTypeLabel(item)}</Text>
                   <Text size="l" fontWeight="400" marginY={0} color={fontColor2}>{assignmentTitle}</Text>
                 </Box>
               </Flex>
