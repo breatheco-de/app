@@ -40,6 +40,9 @@ export const currenciesSymbols = {
   EUR: '€',
 };
 
+/** sessionStorage key set before OAuth redirect; read after callback to fire login analytics. */
+export const PENDING_OAUTH_LOGIN_KEY = 'pending_oauth_login';
+
 export const SILENT_CODE = {
   USER_EXISTS: 'user-exists',
   USER_INVITE_ACCEPTED_EXISTS: 'user-invite-exists-status-accepted',

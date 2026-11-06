@@ -18,7 +18,7 @@ import { warn } from '../utils/logging';
 import { getQueryString, getStorageItem, isWindow, removeStorageItem, removeURLParameter, getBrowserInfo } from '../utils';
 import { getToken, setTokenCookie, clearTokenCookie } from '../utils/sessionCookie';
 import { reportDatalayer, getPrismicPages } from '../utils/requests';
-import { BREATHECODE_HOST, RIGOBOT_HOST, SILENT_CODE, isPrismicEnabled } from '../utils/variables';
+import { BREATHECODE_HOST, RIGOBOT_HOST, SILENT_CODE, isPrismicEnabled, PENDING_OAUTH_LOGIN_KEY } from '../utils/variables';
 import { generateUserContext } from '../utils/rigobotContext';
 
 const initialState = {
@@ -277,6 +277,8 @@ function AuthProvider({ children, pageProps }) {
 
   const authHandler = async () => {
     const token = getToken();
+    const oauthMethod = isWindow ? sessionStorage.getItem(PENDING_OAUTH_LOGIN_KEY) : null;
+    const isOauthLogin = queryTokenExists && ['google', 'github'].includes(oauthMethod);
 
     if (token !== undefined && token !== null) {
       const requestToken = await fetch(`${BREATHECODE_HOST}/v1/auth/token/${token}`, {
@@ -332,6 +334,24 @@ function AuthProvider({ children, pageProps }) {
                 agent: getBrowserInfo(),
               },
             });
+
+            // OAuth login (google/github): event fires after redirect with user data available.
+            if (isOauthLogin) {
+              reportDatalayer({
+                dataLayer: {
+                  event: 'login',
+                  path: router.pathname,
+                  method: oauthMethod,
+                  user_id: userData.id,
+                  email: userData.email,
+                  agent: getBrowserInfo(),
+                },
+              });
+            }
+            if (oauthMethod && isWindow) {
+              sessionStorage.removeItem(PENDING_OAUTH_LOGIN_KEY);
+            }
+
             if (userData.github) {
               localStorage.setItem('showGithubWarning', 'closed');
             } else if (!localStorage.getItem('showGithubWarning') || localStorage.getItem('showGithubWarning') !== 'postponed') {
