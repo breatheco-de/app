@@ -8,15 +8,14 @@ import {
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 import { useRouter } from 'next/router';
-import { reportDatalayer } from '../../utils/requests';
 import bc from '../../services/breathecode';
 import Icon from '../Icon';
 import Text from '../Text';
 import validationSchema from './validationSchemas';
 import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
-import { BREATHECODE_HOST, DOMAIN_NAME } from '../../utils/variables';
-import { getBrowserInfo, isValidEmail, isWindow } from '../../utils';
+import { BREATHECODE_HOST, DOMAIN_NAME, PENDING_OAUTH_LOGIN_KEY } from '../../utils/variables';
+import { isValidEmail, isWindow } from '../../utils';
 import useCustomToast from '../../hooks/useCustomToast';
 import ModalInfo from '../ModalInfo';
 
@@ -175,15 +174,8 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                 weight="700"
                 width="100%"
                 onClick={() => {
-                  reportDatalayer({
-                    dataLayer: {
-                      event: 'login',
-                      path: '/login',
-                      method: 'google',
-                      agent: getBrowserInfo(),
-                    },
-                  });
                   if (!isWindow) return;
+                  sessionStorage.setItem(PENDING_OAUTH_LOGIN_KEY, 'google');
                   const redirectUrl = encodeURIComponent(buildAuthRedirectUrl());
                   window.location.href = `${BREATHECODE_HOST}/v1/auth/google?url=${redirectUrl}`;
                 }}
@@ -199,15 +191,8 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                 weight="700"
                 width="100%"
                 onClick={() => {
-                  reportDatalayer({
-                    dataLayer: {
-                      event: 'login',
-                      path: '/login',
-                      method: 'github',
-                      agent: getBrowserInfo(),
-                    },
-                  });
                   if (!isWindow) return;
+                  sessionStorage.setItem(PENDING_OAUTH_LOGIN_KEY, 'github');
                   const redirectUrl = encodeURIComponent(buildAuthRedirectUrl());
                   window.location.href = `${BREATHECODE_HOST}/v1/auth/github?url=${redirectUrl}`;
                 }}
