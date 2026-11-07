@@ -278,7 +278,10 @@ function AuthProvider({ children, pageProps }) {
   const authHandler = async () => {
     const token = getToken();
     const oauthMethod = isWindow ? sessionStorage.getItem(PENDING_OAUTH_LOGIN_KEY) : null;
-    const isOauthLogin = queryTokenExists && ['google', 'github'].includes(oauthMethod);
+    if (oauthMethod && isWindow) {
+      sessionStorage.removeItem(PENDING_OAUTH_LOGIN_KEY);
+    }
+    const isOauthLogin = queryTokenExists && Boolean(oauthMethod);
 
     if (token !== undefined && token !== null) {
       const requestToken = await fetch(`${BREATHECODE_HOST}/v1/auth/token/${token}`, {
@@ -347,9 +350,6 @@ function AuthProvider({ children, pageProps }) {
                   agent: getBrowserInfo(),
                 },
               });
-            }
-            if (oauthMethod && isWindow) {
-              sessionStorage.removeItem(PENDING_OAUTH_LOGIN_KEY);
             }
 
             if (userData.github) {
