@@ -23,9 +23,20 @@ const hasDisplayOrder = (item) => Number.isInteger(item?.display_order) && item.
 /** Counter/summary order is always reads → exercises → projects → quizzes, even if content is mixed. */
 export const MODULE_ASSET_TYPE_ORDER = ['LESSON', 'EXERCISE', 'PROJECT', 'QUIZ'];
 
+export const MODULE_ASSET_TYPE_ICONS = { ...taskIcons };
+
 export const orderedModuleAssetTypes = (assignmentsCount = {}) => (
   MODULE_ASSET_TYPE_ORDER.filter((taskType) => assignmentsCount?.[taskType])
 );
+
+/**
+ * Same criterion as syllabus builder stars: required when mandatory !== false.
+ * Ignores grading_strategy for chips / gift / path UI.
+ */
+export const isAssetRequired = (asset) => {
+  if (!asset) return false;
+  return asset.mandatory !== false;
+};
 
 /**
  * Default mixed list is lessons → exercises → projects → quizzes.
@@ -86,6 +97,7 @@ export const processRelatedAssignments = (syllabusData = {}, tasks = []) => {
         revision_status: task?.revision_status || '',
         created_at: task?.created_at || '',
         position: el?.position || 0,
+        mandatory: el?.mandatory,
         type: 'Read',
         icon: 'book',
         task_type: 'LESSON',
@@ -102,6 +114,7 @@ export const processRelatedAssignments = (syllabusData = {}, tasks = []) => {
         revision_status: task?.revision_status || '',
         created_at: task?.created_at || '',
         position: el?.position || 0,
+        mandatory: el?.mandatory,
         type: 'Practice',
         icon: 'strength',
         task_type: 'EXERCISE',
@@ -121,7 +134,7 @@ export const processRelatedAssignments = (syllabusData = {}, tasks = []) => {
         created_at: task?.created_at || '',
         daysDiff: task?.created_at ? differenceInDays(currentDate, new Date(task.created_at)) : '',
         position: el?.position || 0,
-        mandatory: el?.mandatory || false,
+        mandatory: el?.mandatory,
         read_at: task?.read_at,
         reviewed_at: task?.reviewed_at,
         type: 'Project',
@@ -140,6 +153,7 @@ export const processRelatedAssignments = (syllabusData = {}, tasks = []) => {
         revision_status: task?.revision_status || '',
         created_at: task?.created_at || '',
         position: el?.position || 0,
+        mandatory: el?.mandatory,
         type: 'Answer',
         icon: 'answer',
         task_type: 'QUIZ',

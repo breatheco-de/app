@@ -13,6 +13,8 @@ import { languageFix } from '../utils';
 import useStyle from '../hooks/useStyle';
 import Icon from './Icon';
 import Text from './Text';
+import BonusTooltip from './BonusTooltip';
+import { isAssetRequired } from '../utils/cohorts';
 
 function Timeline({
   title, assignments, technologies, width, onClickAssignment, showPendingTasks, variant, moduleId,
@@ -118,6 +120,12 @@ function Timeline({
           const mapIndex = index;
           const muted = item?.slug !== currentAssignment?.slug;
           const assignmentTitle = getAssignmentTitle(item);
+          const isBonus = !isAssetRequired(item);
+          const statusIndicator = getAssignmentStatusIndicator(item);
+          let statusColumnJustify = 'center';
+          if (isBonus) {
+            statusColumnJustify = statusIndicator ? 'space-between' : 'flex-start';
+          }
 
           return (
             <Box
@@ -136,7 +144,7 @@ function Timeline({
               gap="5px"
               _hover={{ background: backgroundColor3 }}
             >
-              <Box>
+              <Box flex="1" minWidth="0">
                 <Flex gap="10px" mb="10px">
                   <Text size="sm" color={muted ? '#6883B4' : hexColor.blueDefault} fontWeight="900" marginY={0}>{index + 1}</Text>
                   <Icon width="16px" height="16px" icon={item.icon} color={muted ? '#6883B4' : hexColor.blueDefault} />
@@ -144,7 +152,20 @@ function Timeline({
                 </Flex>
                 <Text size="sm" fontWeight="400" marginY={0} color={muted ? '#6883B4' : fontColor}>{assignmentTitle}</Text>
               </Box>
-              {getAssignmentStatusIndicator(item)}
+              <Flex
+                direction="column"
+                alignItems="flex-end"
+                justifyContent={statusColumnJustify}
+                alignSelf="stretch"
+                flexShrink={0}
+              >
+                {isBonus && (
+                  <BonusTooltip>
+                    <Icon icon="gift" width="16px" height="16px" />
+                  </BonusTooltip>
+                )}
+                {statusIndicator}
+              </Flex>
             </Box>
           );
         }) : (
