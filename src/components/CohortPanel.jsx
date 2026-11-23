@@ -31,10 +31,16 @@ import Heading from './Heading';
 import ShareButton from './ShareButton';
 import Text from './Text';
 import Icon from './Icon';
+import BonusTooltip from './BonusTooltip';
 import Progress from './ProgressBar/Progress';
 import { stages } from './ReviewModal';
 import { getColorVariations } from '../utils';
-import { orderedModuleAssetTypes } from '../utils/cohorts';
+import {
+  orderedModuleAssetTypes,
+  isAssetRequired,
+  MODULE_ASSET_TYPE_ICONS,
+  MODULE_ASSET_TYPE_ORDER,
+} from '../utils/cohorts';
 import useSocialShare from '../hooks/useSocialShare';
 
 const locales = { es, en: enUS };
@@ -96,17 +102,19 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
     });
 
     modules.forEach((module) => {
-      const assignmentsCount = module.content.reduce((acc, curr) => {
+      const requiredContent = (module.content || []).filter((asset) => isAssetRequired(asset));
+      const bonusContent = (module.content || []).filter((asset) => !isAssetRequired(asset));
+
+      const assignmentsCount = requiredContent.reduce((acc, curr) => {
         const isApproved = isTaskApproved(curr);
         const isRejected = curr.revision_status === 'REJECTED';
         const isPendingProject = curr.task_type === 'PROJECT' && curr.revision_status === 'PENDING' && curr.task_status === 'DONE';
         if (!(curr.task_type in acc)) {
-          // Check if any assignment in the module has a pending revision
-          const pendingRevisionsCount = module.content.filter((assignment) => pendingRevisions.some((task) => task.associated_slug === assignment.slug && task.task_type === curr.task_type)).length;
+          const pendingRevisionsCount = requiredContent.filter((assignment) => pendingRevisions.some((task) => task.associated_slug === assignment.slug && task.task_type === curr.task_type)).length;
 
           acc[curr.task_type] = {
             total: 1,
-            icon: curr.icon,
+            icon: curr.icon || MODULE_ASSET_TYPE_ICONS[curr.task_type],
             done: curr.task_status === 'DONE' || (curr.task_type === 'PROJECT' && curr.revision_status === 'IGNORED') ? 1 : 0,
             pendingRevision: pendingRevisionsCount,
             approved: isApproved ? 1 : 0,
@@ -125,6 +133,22 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
         return acc;
       }, {});
 
+      const bonusByType = MODULE_ASSET_TYPE_ORDER.reduce((acc, taskType) => {
+        const assetsOfType = bonusContent.filter((asset) => asset.task_type === taskType);
+        if (assetsOfType.length > 0) {
+          acc.push({
+            taskType,
+            total: assetsOfType.length,
+            done: assetsOfType.filter((asset) => isTaskApproved(asset)).length,
+            icon: MODULE_ASSET_TYPE_ICONS[taskType],
+          });
+        }
+        return acc;
+      }, []);
+
+      const bonusTotal = bonusContent.length;
+      const bonusDone = bonusContent.filter((asset) => isTaskApproved(asset)).length;
+
       const typesPerModule = orderedModuleAssetTypes(assignmentsCount);
       const moduleTotalAssignments = typesPerModule.reduce((acc, curr) => assignmentsCount[curr].total + acc, 0);
       const moduleDoneAssignments = typesPerModule.reduce((acc, curr) => assignmentsCount[curr].done + acc, 0);
@@ -141,6 +165,9 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
         assignmentsCount,
         hasPendingRevisions,
         isStarted,
+        bonusTotal,
+        bonusDone,
+        bonusByType,
       };
     });
 
@@ -156,7 +183,12 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
     const rejectedAssignments = allModules.reduce((acc, curr) => curr.moduleRejectedAssignments + acc, 0);
     const hasPendingRevisions = allModules.some((module) => module.hasPendingRevisions);
 
-    const percentage = cohort.cohort_user.educational_status === 'GRADUATED' ? 100 : Math.ceil((approvedAssignments * 100) / (totalAssignments || 1));
+    let percentage = 0;
+    if (cohort.cohort_user.educational_status === 'GRADUATED') {
+      percentage = 100;
+    } else if (totalAssignments > 0) {
+      percentage = Math.ceil((approvedAssignments * 100) / totalAssignments);
+    }
 
     const isCohortStarted = allModules.some((module) => module.isStarted);
 
@@ -489,11 +521,16 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
                 <AccordionPanel paddingX="0" display="flex" flexDirection="column" gap="16px">
                   {modules?.map((module) => {
                     const assignmentsCount = modulesProgress?.[module.id]?.assignmentsCount;
-                    const moduleTotalAssignments = modulesProgress?.[module.id]?.moduleTotalAssignments;
-                    const moduleApprovedAssignments = modulesProgress?.[module.id]?.moduleApprovedAssignments;
+                    const moduleTotalAssignments = modulesProgress?.[module.id]?.moduleTotalAssignments || 0;
+                    const moduleApprovedAssignments = modulesProgress?.[module.id]?.moduleApprovedAssignments || 0;
+                    const bonusTotal = modulesProgress?.[module.id]?.bonusTotal || 0;
+                    const bonusDone = modulesProgress?.[module.id]?.bonusDone || 0;
+                    const bonusByType = modulesProgress?.[module.id]?.bonusByType || [];
 
                     const typesPerModule = orderedModuleAssetTypes(assignmentsCount);
                     const moduleLabel = getModuleLabel(module);
+                    const requiredComplete = moduleTotalAssignments === 0
+                      || moduleTotalAssignments === moduleApprovedAssignments;
 
                     return (
                       <Box key={moduleLabel} onClick={() => redirectToModule(module)} background={backgroundColor} cursor="pointer" _hover={{ opacity: 0.7 }} display="flex" alignItems="center" justifyContent="space-between" padding="8px" borderRadius="8px">
@@ -503,10 +540,9 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
                           ) : (
                             <>
                               {(() => {
-                                // Get the 'isStarted' status for this specific module
                                 const moduleIsStarted = modulesProgress?.[module.id]?.isStarted;
 
-                                if (!moduleIsStarted) { // Case 1: Not started at all
+                                if (!moduleIsStarted) {
                                   return (
                                     <Box
                                       display="flex"
@@ -520,11 +556,12 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
                                       <Icon icon="play" width="12px" height="12px" color="white" />
                                     </Box>
                                   );
-                                } if (moduleTotalAssignments === moduleApprovedAssignments) { // Case 2: Started and Complete
+                                }
+                                if (requiredComplete) {
                                   return (
                                     <Icon icon="verified" width="26px" height="26px" color={hexColor.green} />
                                   );
-                                } // else: Case 3: Started but In Progress (including 0 done)
+                                }
                                 return (
                                   <CircularProgress color={hexColor.green} size="26px" value={(moduleApprovedAssignments * 100) / (moduleTotalAssignments || 1)} />
                                 );
@@ -608,6 +645,39 @@ function CohortPanel({ cohort, modules, mainCohort, certificate, openByDefault, 
                               </Box>
                             );
                           })}
+                          {bonusTotal > 0 && (
+                            <BonusTooltip
+                              byType={bonusByType}
+                              showProgress={bonusDone > 0}
+                              allCompleted={bonusDone === bonusTotal}
+                              iconColor={cohortColor}
+                            >
+                              <Box
+                                background="yellow.light"
+                                color="black"
+                                padding="4px 8px"
+                                borderRadius="18px"
+                                display="flex"
+                                gap="5px"
+                                alignItems="center"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  redirectToModule(module);
+                                }}
+                              >
+                                <Icon icon="gift" width="13px" height="13px" />
+                                {bonusDone === 0 && (
+                                  <Text color="black">{bonusTotal}</Text>
+                                )}
+                                {bonusDone > 0 && (
+                                  <Text color="black">{`${bonusDone}/${bonusTotal}`}</Text>
+                                )}
+                                {bonusDone === bonusTotal && (
+                                  <Icon icon="checked2" color={hexColor.green} width="13px" height="13px" />
+                                )}
+                              </Box>
+                            </BonusTooltip>
+                          )}
                         </Box>
                       </Box>
                     );

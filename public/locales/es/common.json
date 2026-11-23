@@ -1,4 +1,10 @@
 {
+  "bonus": {
+    "title": "Contenido bonus",
+    "description": "Contenido opcional para profundizar en el tema y practicar más.",
+    "completed-title": "¡Bonus completado!",
+    "completed-description": "Completaste todo este bonus."
+  },
   "change-language": "Cambiar idioma",
   "see-more": "Ver más",
   "reviews": "Reseñas",
