@@ -405,7 +405,7 @@ function Workshop({ eventData, asset }) {
   })();
 
   const getWording = () => {
-    if (planDeniedForEvent && !finishedEvent) {
+    if (planDeniedForEvent) {
       return t('denny-access.button');
     }
     if (!finishedEvent && (alreadyApplied || readyToJoinEvent)) {
@@ -544,9 +544,9 @@ function Workshop({ eventData, asset }) {
   };
 
   const dynamicFormInfo = () => {
-    if (isAuth && planDeniedForEvent && !finishedEvent) {
+    if (isAuth && planDeniedForEvent) {
       return ({
-        title: '',
+        title: finishedEvent ? t('form.finished-title') : '',
         description: t('denny-access.plan-denied'),
       });
     }
@@ -951,7 +951,7 @@ function Workshop({ eventData, asset }) {
 
       </SimpleModal>
 
-      {isVideoModalOpen && (
+      {isVideoModalOpen && !planDeniedForEvent && recordingUrl && (
         <Portal>
           <Box
             position="fixed"
@@ -985,7 +985,7 @@ function Workshop({ eventData, asset }) {
                 icon={<Icon icon="close" color={hexColor.black} width="25px" height="25px" />}
               />
               <ReactPlayerV2
-                url={event?.recording_url}
+                url={recordingUrl}
                 autoPlay
                 controls
                 width="100%"
@@ -1455,7 +1455,7 @@ function Workshop({ eventData, asset }) {
                   }}
                   headContent={readyToJoinEvent ? (
                     <Box position="relative" zIndex={1} width="100%" height={177}>
-                      {recordingUrl && isAwesomeScreenshotRecording && (
+                      {recordingUrl && !planDeniedForEvent && isAwesomeScreenshotRecording && (
                         <Flex
                           as="button"
                           type="button"
@@ -1501,13 +1501,13 @@ function Workshop({ eventData, asset }) {
                           </Flex>
                         </Flex>
                       )}
-                      {recordingUrl && !isAwesomeScreenshotRecording && (
+                      {recordingUrl && !planDeniedForEvent && !isAwesomeScreenshotRecording && (
                         <ReactPlayerV2
                           url={recordingUrl}
                           withThumbnail
                           withModal
                           preview
-                          isPlayDisabled={!isAuthenticated}
+                          isPlayDisabled={!isAuthenticated || planDeniedForEvent}
                           previewDuration={10}
                           thumbnailStyle={{
                             borderRadius: '17px 17px 0 0',
@@ -1515,7 +1515,7 @@ function Workshop({ eventData, asset }) {
                           margin="0 0 12px 0"
                         />
                       )}
-                      {!recordingUrl && (
+                      {(!recordingUrl || planDeniedForEvent) && (
                         <Image src={randomImage} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" alt="head banner" />
                       )}
                     </Box>
