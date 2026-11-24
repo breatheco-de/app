@@ -78,5 +78,11 @@
   "pending": "Pending",
   "approved-tooltip": "This project was approved by the teacher",
   "rejected-tooltip": "This project was rejected by the teacher, read teachers feedback below",
-  "pending-tooltip": "This project is pending to be reviewed by a teacher"
+  "pending-tooltip": "This project is pending to be reviewed by a teacher",
+  "asset-type": {
+    "LESSON": "Read",
+    "EXERCISE": "Practice",
+    "PROJECT": "Project",
+    "QUIZ": "Answer"
+  }
 }
